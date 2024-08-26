@@ -10,7 +10,7 @@
     @include('partials.seo')
 
     <!-- Bootstrap CSS -->
-    <link href="{{ asset('assets/global/css/bootstrap.min.css') }}" rel="stylesheet">
+    <link href="{{ asset('assets/global/css/line-awesome.min.css') }}" rel="stylesheet">
 
     <link href="{{ asset('assets/global/css/all.min.css') }}" rel="stylesheet">
 
@@ -43,7 +43,8 @@
     <!-- preloader start -->
     <div class="preloader">
 
-        <img alt="{{ __(gs()->site_name) }}" class="logo__is" src="{{ getImage(getFilepath('logoIcon') . '/logo_dark.png') }}" />
+        <img alt="{{ __(gs()->site_name) }}" class="logo__is"
+            src="{{ getImage(getFilepath('logoIcon') . '/logo_dark.png') }}" />
         <!-- Logo End -->
         <div class='preloader-dotline'>
             <div class='dot'></div>
