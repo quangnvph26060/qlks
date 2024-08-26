@@ -1,0 +1,737 @@
+{
+    "dashboard": {
+        "keyword": [
+            "Dashboard",
+            "Home",
+            "Panel",
+            "Admin",
+            "Control center",
+            "Overview",
+            "Main hub",
+            "Management hub",
+            "Administrative hub",
+            "Central hub",
+            "Command center",
+            "Administrator portal",
+            "Centralized interface",
+            "Admin console",
+            "Management dashboard",
+            "Main screen",
+            "Administrative dashboard",
+            "Command dashboard",
+            "Main control panel"
+        ],
+        "title": "Dashboard",
+        "icon": "las la-home",
+        "route_name": "admin.dashboard",
+        "menu_active": "admin.dashboard"
+    },
+    "manage_hotels": {
+        "title": "Manage Hotels",
+        "icon": "las la-city",
+        "menu_active": "admin.hotel*",
+        "submenu": [
+            {
+                "keyword": [
+                    "Amenities",
+                    "Amenity"
+                ],
+                "title": "Amenities",
+                "route_name": "admin.hotel.amenity.all",
+                "menu_active": "admin.hotel.amenity.all"
+            },
+            {
+                "keyword": [
+                    "Facilities"
+                ],
+                "title": "Facilities",
+                "route_name": "admin.hotel.facility.all",
+                "menu_active": "admin.hotel.facility.all"
+            },
+            {
+                "keyword": [
+                    "Bed Types"
+                ],
+                "title": "Bed Types",
+                "route_name": "admin.hotel.bed.all",
+                "menu_active": "admin.hotel.bed.all"
+            },
+            {
+                "keyword": [
+                    "Room Types"
+                ],
+                "title": "Room Types",
+                "route_name": "admin.hotel.room.type.all",
+                "menu_active": [
+                    "admin.hotel.room.type.all",
+                    "admin.hotel.room.type.create",
+                    "admin.hotel.room.type.edit"
+                ]
+            },
+            {
+                "keyword": [
+                    "Room"
+                ],
+                "title": "Room",
+                "route_name": "admin.hotel.room.all",
+                "menu_active": "admin.hotel.room.all"
+            },
+            {
+                "keyword": [
+                    "Premium Services",
+                    "Premium Services",
+                    "Services"
+                ],
+                "title": "Premium Services",
+                "route_name": "admin.hotel.premium.service.all",
+                "menu_active": "admin.hotel.premium.service.all"
+            }
+        ]
+    },
+    "delayed_checkout": {
+        "keyword": [
+            "Delayed Checkouts"
+        ],
+        "title": "Delayed Checkouts",
+        "header": "Booking",
+        "icon": "las la-calendar-day",
+        "route_name": "admin.delayed.booking.checkout",
+        "menu_active": "admin.delayed.booking.checkout"
+    },
+    "pending_check_ins": {
+        "keyword": [
+            "Pending Check-Ins"
+        ],
+        "title": "Pending Check-Ins",
+        "icon": "la la-spinner",
+        "route_name": "admin.pending.booking.checkin",
+        "menu_active": "admin.pending.booking.checkin"
+    },
+    "upcoming_check_ins": {
+        "keyword": [
+            "Upcoming Check-Ins"
+        ],
+        "title": "Upcoming Check-Ins",
+        "icon": "la la-sign-in",
+        "route_name": "admin.upcoming.booking.checkin",
+        "menu_active": "admin.upcoming.booking.checkin"
+    },
+    "upcoming_checkouts": {
+        "keyword": [
+            "Upcoming Checkouts"
+        ],
+        "title": "Upcoming Checkouts",
+        "icon": "la la-sign-out transform-rotate-180",
+        "route_name": "admin.upcoming.booking.checkout",
+        "menu_active": "admin.upcoming.booking.checkout"
+    },
+    "book_room": {
+        "keyword": [
+            "Book Room"
+        ],
+        "title": "Book Room",
+        "icon": "la la-hand-o-right",
+        "route_name": "admin.book.room",
+        "menu_active": "admin.book.room"
+    },
+    "manage_bookings": {
+        "title": "Manage Bookings",
+        "icon": "las la-list",
+        "counters": [
+            "delayedCheckoutCount",
+            "refundableBookingCount"
+        ],
+        "menu_active": "admin.booking.*",
+        "submenu": [
+            {
+                "keyword": [
+                    "Todays Booked",
+                    "Today",
+                    "Booked"
+                ],
+                "title": "Todays Booked",
+                "route_name": "admin.booking.todays.booked",
+                "menu_active": "admin.booking.todays.booked"
+            },
+            {
+                "keyword": [
+                    "Todays Checkin",
+                    "Todays Checkin",
+                    "Checkin"
+                ],
+                "title": "Todays Check-In",
+                "route_name": "admin.booking.todays.checkin",
+                "menu_active": "admin.booking.todays.checkin"
+            },
+            {
+                "keyword": [
+                    "Todays checkout",
+                    "checkout"
+                ],
+                "title": "Todays Checkout",
+                "route_name": "admin.booking.todays.checkout",
+                "menu_active": "admin.booking.todays.checkout"
+            },
+            {
+                "keyword": [
+                    "Active Bookings"
+                ],
+                "title": "Active Bookings",
+                "route_name": "admin.booking.active",
+                "menu_active": "admin.booking.active"
+            },
+            {
+                "keyword": [
+                    "Checked Out Bookings"
+                ],
+                "title": "Checked Out Bookings",
+                "route_name": "admin.booking.checked.out.list",
+                "menu_active": "admin.booking.checked.out.list"
+            },
+            {
+                "keyword": [
+                    "Canceled Bookings"
+                ],
+                "title": "Canceled Bookings",
+                "route_name": "admin.booking.canceled.list",
+                "menu_active": "admin.booking.canceled.list"
+            },
+            {
+                "keyword": [
+                    "Refundable Bookings"
+                ],
+                "title": "Refundable Bookings",
+                "route_name": "admin.booking.refundable",
+                "menu_active": "admin.booking.refundable",
+                "counter": "refundableBookingCount"
+            },
+            {
+                "keyword": [
+                    "Delayed Checkout"
+                ],
+                "title": "Delayed Checkout",
+                "route_name": "admin.booking.checkout.delayed",
+                "menu_active": "admin.booking.checkout.delayed",
+                "counter": "delayedCheckoutCount"
+            },
+            {
+                "keyword": [
+                    "All Bookings"
+                ],
+                "title": "All Bookings",
+                "route_name": "admin.booking.all",
+                "menu_active": "admin.booking.all"
+            }
+        ]
+    },
+    "premium_services": {
+        "title": "Premium Service",
+        "icon": "las la-clipboard-list",
+        "menu_active": "admin.premium.service*",
+        "submenu": [
+            {
+                "keyword": [
+                    "Add Premium Service",
+                    "Add Service"
+                ],
+                "title": "Add Service",
+                "route_name": "admin.premium.service.add",
+                "menu_active": "admin.premium.service.add",
+                "icon": "las la-plus-circle"
+            },
+            {
+                "keyword": [
+                    "Added Premium Services",
+                    "Added Services"
+                ],
+                "title": "Added Services",
+                "route_name": "admin.premium.service.list",
+                "menu_active": "admin.premium.service.list"
+            }
+        ]
+    },
+    "payments": {
+        "title": "Online Payments",
+        "icon": "las la-file-invoice-dollar",
+        "counters": [
+            "pendingDepositsCount"
+        ],
+        "menu_active": "admin.deposit*",
+        "submenu": [
+            {
+                "keyword": [
+                    "Pending Payments",
+                    "Payments",
+                    "Payment management",
+                    "Payment control",
+                    "Payment status",
+                    "Payment activity"
+                ],
+                "title": "Pending Payments",
+                "route_name": "admin.deposit.pending",
+                "menu_active": "admin.deposit.pending",
+                "counter": "pendingDepositsCount",
+                "params": {
+                    "user_id": ""
+                }
+            },
+            {
+                "keyword": [
+                    "Approved Payments",
+                    "Payments",
+                    "Payment management",
+                    "Payment activity"
+                ],
+                "title": "Approved Payments",
+                "route_name": "admin.deposit.approved",
+                "menu_active": "admin.deposit.approved"
+            },
+            {
+                "keyword": [
+                    "Successful Payments",
+                    "Payments",
+                    "Payment management",
+                    "Payment activity"
+                ],
+                "title": "Successful Payments",
+                "route_name": "admin.deposit.successful",
+                "menu_active": "admin.deposit.successful",
+                "params": {
+                    "user_id": ""
+                }
+            },
+            {
+                "keyword": [
+                    "Rejected Payments",
+                    "Payments",
+                    "Payment management",
+                    "Payment activity"
+                ],
+                "title": "Rejected Payments",
+                "route_name": "admin.deposit.rejected",
+                "menu_active": "admin.deposit.rejected",
+                "params": {
+                    "user_id": ""
+                }
+            },
+            {
+                "keyword": [
+                    "Failed Payments",
+                    "Payments",
+                    "Payment management",
+                    "Payment activity"
+                ],
+                "title": "Failed Payments",
+                "route_name": "admin.deposit.initiated",
+                "menu_active": "admin.deposit.initiated",
+                "params": {
+                    "user_id": ""
+                }
+            },
+            {
+                "keyword": [
+                    "All Payments",
+                    "Payments",
+                    "Payment management",
+                    "Payment control",
+                    "Payment activity"
+                ],
+                "title": "All Payments",
+                "route_name": "admin.deposit.list",
+                "menu_active": "admin.deposit.list",
+                "params": {
+                    "user_id": ""
+                }
+            }
+        ]
+    },
+    "manage_staff": {
+        "title": "Manage Staff",
+        "header": "Actors",
+        "icon": "las la-users",
+        "menu_active": [
+            "admin.staff*",
+            "admin.roles.*"
+        ],
+        "submenu": [
+            {
+                "keyword": [
+                    "All Staff"
+                ],
+                "title": "All Staff",
+                "route_name": "admin.staff.index",
+                "menu_active": "admin.staff.index"
+            },
+            {
+                "keyword": [
+                    "Roles"
+                ],
+                "title": "Roles",
+                "route_name": "admin.roles.index",
+                "menu_active": "admin.roles.index"
+            }
+        ]
+    },
+    "manage_users": {
+        "title": "Manage Guests",
+        "icon": "las la-users",
+        "counters": [
+            "bannedUsersCount",
+            "emailUnverifiedUsersCount",
+            "mobileUnverifiedUsersCount"
+        ],
+        "menu_active": "admin.users*",
+        "submenu": [
+            {
+                "keyword": [
+                    "active guests",
+                    "Manage Guests",
+                    "Guest management",
+                    "Guest control",
+                    "Guest status",
+                    "Guest activity",
+                    "Guest analytics"
+                ],
+                "title": "Active Guests",
+                "route_name": "admin.users.active",
+                "menu_active": "admin.users.active"
+            },
+            {
+                "keyword": [
+                    "banned guests",
+                    "Manage Guests",
+                    "Guest management",
+                    "Account bans",
+                    "Guest activity"
+                ],
+                "title": "Banned Guests",
+                "route_name": "admin.users.banned",
+                "menu_active": "admin.users.banned",
+                "counter": "bannedUsersCount"
+            },
+            {
+                "keyword": [
+                    "email unverified guests",
+                    "Manage guests",
+                    "Guest verification",
+                    "Guest authentication",
+                    "Guest management"
+                ],
+                "title": "Email Unverified",
+                "route_name": "admin.users.email.unverified",
+                "menu_active": "admin.users.email.unverified",
+                "counter": "emailUnverifiedUsersCount"
+            },
+            {
+                "keyword": [
+                    "mobile unverified guests",
+                    "Manage Guests",
+                    "Guest verification",
+                    "Guest authentication",
+                    "Guest management"
+                ],
+                "title": "Mobile Unverified",
+                "route_name": "admin.users.mobile.unverified",
+                "menu_active": "admin.users.mobile.unverified",
+                "counter": "mobileUnverifiedUsersCount"
+            },
+            {
+                "keyword": [
+                    "all guests",
+                    "Manage Guests",
+                    "Guest management",
+                    "Guest control",
+                    "Guest activity",
+                    "Guest analytics"
+                ],
+                "title": "All Guests",
+                "route_name": "admin.users.all",
+                "menu_active": "admin.users.all"
+            },
+            {
+                "keyword": [
+                    "send notification guests",
+                    "Manage Guests",
+                    "Guest notifications",
+                    "Guest management",
+                    "Guest activity"
+                ],
+                "title": "Send Notification",
+                "route_name": "admin.users.notification.all",
+                "menu_active": "admin.users.notification.all"
+            }
+        ]
+    },
+    "subscriber": {
+        "keyword": [
+            "subscriber",
+            "subscribers",
+            "Subscription management",
+            "Subscriber list",
+            "Subscriber activity"
+        ],
+        "title": "Subscribers",
+        "icon": "las la-thumbs-up",
+        "route_name": "admin.subscriber.index",
+        "menu_active": "admin.subscriber.*"
+    },
+    "support_ticket": {
+        "title": "Support Ticket",
+        "header": "Support & Report",
+        "icon": "la la-ticket",
+        "counters": [
+            "pendingTicketCount"
+        ],
+        "menu_active": "admin.ticket*",
+        "submenu": [
+            {
+                "keyword": [
+                    "Pending Ticket",
+                    "Support Ticket",
+                    "Ticket management",
+                    "Ticket control",
+                    "Ticket status",
+                    "Ticket activity"
+                ],
+                "title": "Pending Ticket",
+                "route_name": "admin.ticket.pending",
+                "menu_active": "admin.ticket.pending",
+                "counter": "pendingTicketCount"
+            },
+            {
+                "keyword": [
+                    "Closed Ticket",
+                    "Support Ticket",
+                    "Ticket management",
+                    "Ticket activity"
+                ],
+                "title": "Closed Ticket",
+                "route_name": "admin.ticket.closed",
+                "menu_active": "admin.ticket.closed"
+            },
+            {
+                "keyword": [
+                    "Answered Ticket",
+                    "Support Ticket",
+                    "Ticket management",
+                    "Ticket activity"
+                ],
+                "title": "Answered Ticket",
+                "route_name": "admin.ticket.answered",
+                "menu_active": "admin.ticket.answered"
+            },
+            {
+                "keyword": [
+                    "All Ticket",
+                    "Support Ticket",
+                    "Ticket management",
+                    "Ticket control",
+                    "Ticket activity"
+                ],
+                "title": "All Ticket",
+                "route_name": "admin.ticket.index",
+                "menu_active": "admin.ticket.index"
+            }
+        ]
+    },
+    "reports": {
+        "title": "Report",
+        "icon": "la la-list",
+        "menu_active": "admin.report*",
+        "submenu": [
+            {
+                "keyword": [
+                    "Booking Actions"
+                ],
+                "title": "Booking Actions",
+                "route_name": "admin.report.booking.history",
+                "menu_active": "admin.report.booking.history"
+            },
+            {
+                "keyword": [
+                    "Received Payments"
+                ],
+                "title": "Received Payments",
+                "route_name": "admin.report.payments.received",
+                "menu_active": "admin.report.payments.received"
+            },
+            {
+                "keyword": [
+                    "Returned Payments"
+                ],
+                "title": "Returned Payments",
+                "route_name": "admin.report.payments.returned",
+                "menu_active": "admin.report.payments.returned"
+            },
+            {
+                "keyword": [
+                    "Login History",
+                    "Report",
+                    "Login report",
+                    "Login history",
+                    "Login activity"
+                ],
+                "title": "Login History",
+                "route_name": "admin.report.login.history",
+                "menu_active": [
+                    "admin.report.login.history",
+                    "admin.report.login.ipHistory"
+                ]
+            },
+            {
+                "keyword": [
+                    "Notification History",
+                    "Report",
+                    "Notification report",
+                    "Notification history",
+                    "Notification activity",
+                    "email log",
+                    "email history",
+                    "sms log",
+                    "sms history",
+                    "push notification log",
+                    "push notification history"
+                ],
+                "title": "Notification History",
+                "route_name": "admin.report.notification.history",
+                "menu_active": "admin.report.notification.history"
+            }
+        ]
+    },
+    "system_setting": {
+        "keyword": [
+            "System Setting",
+            "setting",
+            "System configuration",
+            "System preferences",
+            "Configuration management",
+            "System setup"
+        ],
+        "title": "System Setting",
+        "header": "System Settings",
+        "icon": "las la-life-ring",
+        "route_name": "admin.setting.system",
+        "menu_active": [
+            "admin.setting.system",
+            "admin.setting.general",
+            "admin.setting.socialite.credentials",
+            "admin.cron*",
+            "admin.setting.system.configuration",
+            "admin.setting.logo.icon",
+            "admin.extensions.index",
+            "admin.language.manage",
+            "admin.language.key",
+            "admin.seo",
+            "admin.frontend.templates",
+            "admin.frontend.manage.*",
+            "admin.maintenance.mode",
+            "admin.setting.cookie",
+            "admin.setting.custom.css",
+            "admin.setting.sitemap",
+            "admin.setting.robot",
+            "admin.setting.notification.global.email",
+            "admin.setting.notification.global.sms",
+            "admin.setting.notification.global.push",
+            "admin.setting.notification.email",
+            "admin.setting.notification.sms",
+            "admin.setting.notification.push",
+            "admin.setting.notification.templates",
+            "admin.setting.notification.template.edit",
+            "admin.frontend.index",
+            "admin.frontend.sections*",
+            "admin.gateway*",
+            "admin.withdraw.method*",
+            "admin.setting.app.purchase"
+        ]
+    },
+    "extra": {
+        "title": "Extra",
+        "header": "Extra",
+        "icon": "la la-server",
+        "menu_active": "admin.system*",
+        "counters": [
+            "updateAvailable"
+        ],
+        "submenu": [
+            {
+                "keyword": [
+                    "Application",
+                    "System",
+                    "Application management",
+                    "Application settings",
+                    "System information",
+                    "version",
+                    "laravel",
+                    "timezone"
+                ],
+                "title": "Application",
+                "route_name": "admin.system.info",
+                "menu_active": "admin.system.info"
+            },
+            {
+                "keyword": [
+                    "Server",
+                    "System",
+                    "Server management",
+                    "Server settings",
+                    "System information",
+                    "version",
+                    "php version",
+                    "software",
+                    "ip address",
+                    "server ip address",
+                    "server port",
+                    "http host"
+                ],
+                "title": "Server",
+                "route_name": "admin.system.server.info",
+                "menu_active": "admin.system.server.info"
+            },
+            {
+                "keyword": [
+                    "Cache",
+                    "System",
+                    "Cache management",
+                    "Cache optimization",
+                    "System performance",
+                    "clear cache"
+                ],
+                "title": "Cache",
+                "route_name": "admin.system.optimize",
+                "menu_active": "admin.system.optimize"
+            },
+            {
+                "keyword": [
+                    "Update",
+                    "System",
+                    "Update management",
+                    "System update",
+                    "Software updates",
+                    "version update",
+                    "upgrade",
+                    "latest version"
+                ],
+                "title": "Update",
+                "route_name": "admin.system.update",
+                "menu_active": "admin.system.update*",
+                "counter": "updateAvailable"
+            }
+        ]
+    },
+    "report_and_request": {
+        "keyword": [
+            "Report & Request",
+            "Report and Request",
+            "Reports and Requests",
+            "Reporting and Requests",
+            "Report management",
+            "Request management",
+            "feature request",
+            "bug report"
+        ],
+        "title": "Report & Request",
+        "icon": "las la-bug",
+        "route_name": "admin.request.report",
+        "menu_active": "admin.request.report"
+    }
+}

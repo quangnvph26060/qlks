@@ -1,0 +1,85 @@
+.room-container .cancel-btn {
+    display: flex;
+    align-items: center;
+    position: absolute;
+    left: -4px;
+    top: -8px;
+    background: #EA0000;
+    border-radius: 50%;
+    width: 18px;
+    height: 18px;
+    font-size: 10px;
+    justify-content: center;
+    color: #fff;
+}
+
+
+.room-container {
+    position: relative;
+    isolation: isolate;
+    display: inline-block;
+    min-width: 100px;
+    text-align: center;
+}
+
+.room-container .cancel-btn i {
+    margin: 0;
+    display: inline-block;
+}
+
+button[disabled] {
+    opacity: 0.8;
+    cursor: not-allowed !important;
+    pointer-events: initial !important;
+}
+
+.custom--label {
+    display: inline-block;
+    width: 24px;
+    height: 18px;
+    border-radius: .2rem;
+}
+
+.f-size--18 {
+    font-size: 18px;
+}
+
+.btn--xs {
+    padding: 0.1rem 0.3rem;
+    font-size: 12px !important;
+    border-radius: 0.3rem;
+}
+
+
+
+/* Table Dropdown Solve Css End */
+
+.navbar-wrapper {
+    gap: 15px;
+}
+
+.breadcrumb-plugins:has(form) .btn {
+    height: 45px;
+    line-height: 2.4;
+}
+.fw-500{
+    font-weight: 500;
+}
+
+
+@media (max-width: 576px) {
+    .profile-dropdown{
+      flex: unset;
+      width: 100%;
+      margin-top: 12px;
+      justify-content: flex-start;
+    }
+
+    .booking-req{
+        font-size: 12px;
+    }
+}  
+
+.cursor-pointer{
+    cursor: pointer;
+}
