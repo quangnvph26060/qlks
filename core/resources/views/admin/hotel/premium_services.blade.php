@@ -114,8 +114,8 @@
 
 @can('admin.hotel.premium.service.save')
     @push('breadcrumb-plugins')
-        <button class="btn btn-sm btn-outline--primary cuModalBtn" data-modal_title="@lang('Add Premium Service')" type="button">
-            <i class="las la-plus"></i>@lang('Add New ')
+        <button class="btn btn-sm btn-outline--primary cuModalBtn" data-modal_title="@lang('Thêm mới dịch vụ cao cấp')" type="button">
+            <i class="las la-plus"></i>@lang('Thêm mới')
         </button>
     @endpush
 @endcan

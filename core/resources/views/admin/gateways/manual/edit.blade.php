@@ -108,7 +108,7 @@
                                         <div class="card border--primary mt-3">
                                             <div class="card-header bg--primary d-flex justify-content-between">
                                                 <h5 class="text-white">@lang('User Data')</h5>
-                                                <button type="button" class="btn btn-sm btn-outline-light float-end form-generate-btn"> <i class="la la-fw la-plus"></i>@lang('Add New')</button>
+                                                <button type="button" class="btn btn-sm btn-outline-light float-end form-generate-btn"> <i class="la la-fw la-plus"></i>@lang('Thêm mới')</button>
                                             </div>
                                             <div class="card-body">
                                                 <x-generated-form :form=$form />

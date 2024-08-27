@@ -85,7 +85,7 @@
         <div class="modal-dialog">
             <div class="modal-content">
                 <div class="modal-header">
-                    <h4 class="modal-title" id="createModalLabel"> @lang('Add New Language')</h4>
+                    <h4 class="modal-title" id="createModalLabel"> @lang('Thêm mới ngôn ngữ')</h4>
                     <button type="button" class="close" data-bs-dismiss="modal" aria-label="Close"><i class="las la-times"></i></button>
                 </div>
                 <form class="form-horizontal" method="post" action="{{ route('admin.language.manage.store') }}" enctype="multipart/form-data">
@@ -186,8 +186,8 @@
 @endsection
 
 @push('breadcrumb-plugins')
-    <button type="button" class="btn btn-sm btn-outline--primary" data-bs-toggle="modal" data-bs-target="#createModal"><i class="las la-plus"></i>@lang('Add New')</button>
-    <button type="button" class="btn btn-sm btn-outline--info keyBtn" data-bs-toggle="modal" data-bs-target="#getLangModal"><i class="las la-code"></i>@lang('Language Keywords')</button>
+    <button type="button" class="btn btn-sm btn-outline--primary" data-bs-toggle="modal" data-bs-target="#createModal"><i class="las la-plus"></i>@lang('Thêm mới')</button>
+    <button type="button" class="btn btn-sm btn-outline--info keyBtn" data-bs-toggle="modal" data-bs-target="#getLangModal"><i class="las la-code"></i>@lang('Từ khóa ngôn ngữ')</button>
 @endpush
 
 @push('style')

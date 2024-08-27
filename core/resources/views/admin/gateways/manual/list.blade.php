@@ -78,6 +78,6 @@
         <button class="btn btn--primary input-group-text"><i class="fas fa-search"></i></button>
     </div>
     @can('admin.gateway.manual.create')
-        <a class="btn btn-outline--primary" href="{{ route('admin.gateway.manual.create') }}"><i class="las la-plus"></i>@lang('Add New')</a>
+        <a class="btn btn-outline--primary" href="{{ route('admin.gateway.manual.create') }}"><i class="las la-plus"></i>@lang('Thêm mới')</a>
     @endcan
 @endpush

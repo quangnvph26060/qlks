@@ -44,6 +44,6 @@
 
 @can('admin.roles.add')
     @push('breadcrumb-plugins')
-        <a class="btn btn-sm btn-outline--primary" href="{{ route('admin.roles.add') }}"><i class="las la-plus"></i>@lang('Add New')</a>
+        <a class="btn btn-sm btn-outline--primary" href="{{ route('admin.roles.add') }}"><i class="las la-plus"></i>@lang('Thêm mới')</a>
     @endpush
 @endcan

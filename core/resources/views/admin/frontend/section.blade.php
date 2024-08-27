@@ -219,7 +219,7 @@
                 <div class="modal-dialog" role="document">
                     <div class="modal-content">
                         <div class="modal-header">
-                            <h5 class="modal-title"> @lang('Add New') {{ __(keyToTitle($key)) }} @lang('Item')</h5>
+                            <h5 class="modal-title"> @lang('Thêm mới') {{ __(keyToTitle($key)) }} @lang('Item')</h5>
                             <button type="button" class="close" data-bs-dismiss="modal" aria-label="Close">
                                 <i class="las la-times"></i>
                             </button>
@@ -367,9 +367,9 @@
         @can('admin.frontend.sections.element')
             @if (@$section->element)
                 @if ($section->element->modal)
-                    <a href="javascript:void(0)" class="btn btn-sm btn-outline--primary addBtn"><i class="las la-plus"></i>@lang('Add New')</a>
+                    <a href="javascript:void(0)" class="btn btn-sm btn-outline--primary addBtn"><i class="las la-plus"></i>@lang('Thêm mới')</a>
                 @else
-                    <a href="{{ route('admin.frontend.sections.element', $key) }}" class="btn btn-sm btn-outline--primary"><i class="las la-plus"></i>@lang('Add New')</a>
+                    <a href="{{ route('admin.frontend.sections.element', $key) }}" class="btn btn-sm btn-outline--primary"><i class="las la-plus"></i>@lang('Thêm mới')</a>
                 @endif
             @endif
         @endcan

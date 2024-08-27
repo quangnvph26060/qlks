@@ -104,8 +104,8 @@
 @endsection
 @can('admin.hotel.facility.save')
     @push('breadcrumb-plugins')
-        <button class="btn btn-sm btn-outline--primary cuModalBtn" data-modal_title="@lang('Add New Facility')" type="button">
-            <i class="las la-plus"></i>@lang('Add New ')
+        <button class="btn btn-sm btn-outline--primary cuModalBtn" data-modal_title="@lang('Thêm Cơ sở mới')" type="button">
+            <i class="las la-plus"></i>@lang('Thêm mới ')
         </button>
     @endpush
 @endcan
