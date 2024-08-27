@@ -19,7 +19,7 @@ class ManageBookingRequestController extends Controller
 
     public function index()
     {
-        $pageTitle       = 'All Booking Request';
+        $pageTitle       = 'Tất cả yêu cầu đặt chỗ';
         $bookingRequests = $this->bookingRequestData('initial');
         return view('admin.booking.request_list', compact('pageTitle', 'bookingRequests'));
     }

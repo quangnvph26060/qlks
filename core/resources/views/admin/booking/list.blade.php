@@ -38,18 +38,18 @@
                         <table class="table--light style--two table bg-white">
                             <thead>
                                 <tr>
-                                    <th>@lang('Booking Number')</th>
-                                    <th>@lang('Guest')</th>
-                                    <th>@lang('Check In') | @lang('Check Out')</th>
-                                    <th>@lang('Total Amount')</th>
-                                    <th>@lang('Total Paid')</th>
-                                    <th>@lang('Due')</th>
+                                    <th>@lang('Số đặt chỗ')</th>
+                                    <th>@lang('Khách hàng')</th>
+                                    <th>@lang('Ngày vào') | @lang('Ngày ra')</th>
+                                    <th>@lang('Tổng số tiền')</th>
+                                    <th>@lang('Tổng số tiền đã trả')</th>
+                                    <th>@lang('Quá hạn')</th>
                                     @if (request()->routeIs('admin.booking.all') || request()->routeIs('admin.booking.active'))
                                         <th>@lang('Status')</th>
                                     @endif
 
                                     @can(['admin.booking.details', 'admin.booking.booked.rooms', 'admin.booking.service.details', 'admin.booking.payment', 'admin.booking.key.handover', 'admin.booking.merge', 'admin.booking.cancel', 'admin.booking.extra.charge', 'admin.booking.checkout', 'admin.booking.invoice'])
-                                        <th>@lang('Action')</th>
+                                        <th>@lang('Hành động')</th>
                                     @endcan
                                 </tr>
                             </thead>

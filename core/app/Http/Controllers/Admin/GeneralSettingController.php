@@ -12,13 +12,13 @@ class GeneralSettingController extends Controller
 {
     public function systemSetting()
     {
-        $pageTitle = 'System Settings';
+        $pageTitle = 'Cài đặt hệ thống';
         $settings = json_decode(file_get_contents(resource_path('views/admin/setting/settings.json')));
         return view('admin.setting.system', compact('pageTitle', 'settings'));
     }
     public function general()
     {
-        $pageTitle = 'General Setting';
+        $pageTitle = 'Thiết lập chung';
         $timezones = timezone_identifiers_list();
         $currentTimezone = array_search(config('app.timezone'), $timezones);
         return view('admin.setting.general', compact('pageTitle', 'timezones', 'currentTimezone'));
@@ -64,13 +64,13 @@ class GeneralSettingController extends Controller
         $timezoneFile = config_path('timezone.php');
         $content = '<?php $timezone = "' . $timezone . '" ?>';
         file_put_contents($timezoneFile, $content);
-        $notify[] = ['success', 'General setting updated successfully'];
+        $notify[] = ['success', 'Cài đặt chung đã được cập nhật thành công'];
         return back()->withNotify($notify);
     }
 
     public function systemConfiguration()
     {
-        $pageTitle = 'System Configuration';
+        $pageTitle = 'Cấu hình hệ thống';
         return view('admin.setting.configuration', compact('pageTitle'));
     }
 
@@ -90,7 +90,7 @@ class GeneralSettingController extends Controller
         $general->agree = $request->agree ? Status::ENABLE : Status::DISABLE;
         $general->multi_language = $request->multi_language ? Status::ENABLE : Status::DISABLE;
         $general->save();
-        $notify[] = ['success', 'System configuration updated successfully'];
+        $notify[] = ['success', 'Cấu hình hệ thống đã được cập nhật thành công'];
         return back()->withNotify($notify);
     }
 
@@ -134,7 +134,7 @@ class GeneralSettingController extends Controller
                 return back()->withNotify($notify);
             }
         }
-        $notify[] = ['success', 'Logo & favicon updated successfully'];
+        $notify[] = ['success', 'Logo & favicon đã được cập nhật thành công'];
         return back()->withNotify($notify);
     }
 

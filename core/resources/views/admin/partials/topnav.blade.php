@@ -22,7 +22,7 @@
     <div class="navbar__left">
         <button type="button" class="res-sidebar-open-btn me-3"><i class="las la-bars"></i></button>
         <form class="navbar-search">
-            <input type="search" name="#0" class="navbar-search-field" id="searchInput" autocomplete="off" placeholder="@lang('Search here...')">
+            <input type="search" name="#0" class="navbar-search-field" id="searchInput" autocomplete="off" placeholder="@lang('Tìm kiếm ở đây...')">
             <i class="las la-search"></i>
             <ul class="search-list"></ul>
         </form>
@@ -37,7 +37,7 @@
             @can('admin.request.booking.all')
                 <li>
                     <a class="btn btn--danger booking-req me-2 me-md-3" href="{{ route('admin.request.booking.all') }}">
-                        @lang('Booking Requests') <small class="fw-bold px-2 rounded bg-light text--danger">{{ $bookingRequestCount }}</small>
+                        @lang('Yêu cầu đặt phòng') <small class="fw-bold px-2 rounded bg-light text--danger">{{ $bookingRequestCount }}</small>
                     </a>
                 </li>
             @endcan

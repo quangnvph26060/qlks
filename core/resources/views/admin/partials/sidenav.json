@@ -27,40 +27,40 @@
         "menu_active": "admin.dashboard"
     },
     "manage_hotels": {
-        "title": "Manage Hotels",
+        "title": "Quản lý khách sạn",
         "icon": "las la-city",
         "menu_active": "admin.hotel*",
         "submenu": [
             {
                 "keyword": [
-                    "Amenities",
+                    "Tiện nghi",
                     "Amenity"
                 ],
-                "title": "Amenities",
+                "title": "Tiện nghi",
                 "route_name": "admin.hotel.amenity.all",
                 "menu_active": "admin.hotel.amenity.all"
             },
             {
                 "keyword": [
-                    "Facilities"
+                    "Cơ sở"
                 ],
-                "title": "Facilities",
+                "title": "Cơ sở",
                 "route_name": "admin.hotel.facility.all",
                 "menu_active": "admin.hotel.facility.all"
             },
             {
                 "keyword": [
-                    "Bed Types"
+                    "Loại giường"
                 ],
-                "title": "Bed Types",
+                "title": "Loại giường",
                 "route_name": "admin.hotel.bed.all",
                 "menu_active": "admin.hotel.bed.all"
             },
             {
                 "keyword": [
-                    "Room Types"
+                    "Loại phòng"
                 ],
-                "title": "Room Types",
+                "title": "Loại phòng",
                 "route_name": "admin.hotel.room.type.all",
                 "menu_active": [
                     "admin.hotel.room.type.all",
@@ -70,19 +70,19 @@
             },
             {
                 "keyword": [
-                    "Room"
+                    "Phòng"
                 ],
-                "title": "Room",
+                "title": "Phòng",
                 "route_name": "admin.hotel.room.all",
                 "menu_active": "admin.hotel.room.all"
             },
             {
                 "keyword": [
-                    "Premium Services",
-                    "Premium Services",
+                    "Dịch vụ cao cấp",
+                    "Dịch vụ cao cấp",
                     "Services"
                 ],
-                "title": "Premium Services",
+                "title": "Dịch vụ cao cấp",
                 "route_name": "admin.hotel.premium.service.all",
                 "menu_active": "admin.hotel.premium.service.all"
             }
@@ -90,9 +90,9 @@
     },
     "delayed_checkout": {
         "keyword": [
-            "Delayed Checkouts"
+            "Thanh toán chậm trễ"
         ],
-        "title": "Delayed Checkouts",
+        "title": "Thanh toán chậm trễ",
         "header": "Booking",
         "icon": "las la-calendar-day",
         "route_name": "admin.delayed.booking.checkout",
@@ -100,42 +100,42 @@
     },
     "pending_check_ins": {
         "keyword": [
-            "Pending Check-Ins"
+            "Đang chờ kiểm tra"
         ],
-        "title": "Pending Check-Ins",
+        "title": "Đang chờ kiểm tra",
         "icon": "la la-spinner",
         "route_name": "admin.pending.booking.checkin",
         "menu_active": "admin.pending.booking.checkin"
     },
     "upcoming_check_ins": {
         "keyword": [
-            "Upcoming Check-Ins"
+            "Các lần kiểm tra sắp tới"
         ],
-        "title": "Upcoming Check-Ins",
+        "title": "Các lần kiểm tra sắp tới",
         "icon": "la la-sign-in",
         "route_name": "admin.upcoming.booking.checkin",
         "menu_active": "admin.upcoming.booking.checkin"
     },
     "upcoming_checkouts": {
         "keyword": [
-            "Upcoming Checkouts"
+            "Thanh toán sắp tới"
         ],
-        "title": "Upcoming Checkouts",
+        "title": "Thanh toán sắp tới",
         "icon": "la la-sign-out transform-rotate-180",
         "route_name": "admin.upcoming.booking.checkout",
         "menu_active": "admin.upcoming.booking.checkout"
     },
     "book_room": {
         "keyword": [
-            "Book Room"
+            "Đặt phòng"
         ],
-        "title": "Book Room",
+        "title": "Đặt phòng",
         "icon": "la la-hand-o-right",
         "route_name": "admin.book.room",
         "menu_active": "admin.book.room"
     },
     "manage_bookings": {
-        "title": "Manage Bookings",
+        "title": "Quản lý Đặt chỗ",
         "icon": "las la-list",
         "counters": [
             "delayedCheckoutCount",
@@ -145,18 +145,18 @@
         "submenu": [
             {
                 "keyword": [
-                    "Todays Booked",
-                    "Today",
-                    "Booked"
+                    "Đã đặt chỗ hôm nay",
+                    "Hôm nay",
+                    "Đã đặt chỗ"
                 ],
-                "title": "Todays Booked",
+                "title": "Đã đặt chỗ hôm nay",
                 "route_name": "admin.booking.todays.booked",
                 "menu_active": "admin.booking.todays.booked"
             },
             {
                 "keyword": [
-                    "Todays Checkin",
-                    "Todays Checkin",
+                    "Kiểm tra hôm nay",
+                    "Kiểm tra hôm nay",
                     "Checkin"
                 ],
                 "title": "Todays Check-In",
@@ -165,93 +165,93 @@
             },
             {
                 "keyword": [
-                    "Todays checkout",
+                    "Thanh toán hôm nay",
                     "checkout"
                 ],
-                "title": "Todays Checkout",
+                "title": "Thanh toán hôm nay",
                 "route_name": "admin.booking.todays.checkout",
                 "menu_active": "admin.booking.todays.checkout"
             },
             {
                 "keyword": [
-                    "Active Bookings"
+                    "Đặt chỗ đang hoạt động"
                 ],
-                "title": "Active Bookings",
+                "title": "Đặt chỗ đang hoạt động",
                 "route_name": "admin.booking.active",
                 "menu_active": "admin.booking.active"
             },
             {
                 "keyword": [
-                    "Checked Out Bookings"
+                    "Đã kiểm tra Đặt phòng"
                 ],
-                "title": "Checked Out Bookings",
+                "title": "Đã kiểm tra Đặt phòng",
                 "route_name": "admin.booking.checked.out.list",
                 "menu_active": "admin.booking.checked.out.list"
             },
             {
                 "keyword": [
-                    "Canceled Bookings"
+                    "Đặt phòng đã hủy"
                 ],
-                "title": "Canceled Bookings",
+                "title": "Đặt phòng đã hủy",
                 "route_name": "admin.booking.canceled.list",
                 "menu_active": "admin.booking.canceled.list"
             },
             {
                 "keyword": [
-                    "Refundable Bookings"
+                    "Đặt chỗ có thể hoàn lại"
                 ],
-                "title": "Refundable Bookings",
+                "title": "Đặt chỗ có thể hoàn lại",
                 "route_name": "admin.booking.refundable",
                 "menu_active": "admin.booking.refundable",
                 "counter": "refundableBookingCount"
             },
             {
                 "keyword": [
-                    "Delayed Checkout"
+                    "Thanh toán chậm trễ"
                 ],
-                "title": "Delayed Checkout",
+                "title": "Thanh toán chậm trễ",
                 "route_name": "admin.booking.checkout.delayed",
                 "menu_active": "admin.booking.checkout.delayed",
                 "counter": "delayedCheckoutCount"
             },
             {
                 "keyword": [
-                    "All Bookings"
+                    "Tất cả các đặt phòng"
                 ],
-                "title": "All Bookings",
+                "title": "Tất cả các đặt phòng",
                 "route_name": "admin.booking.all",
                 "menu_active": "admin.booking.all"
             }
         ]
     },
     "premium_services": {
-        "title": "Premium Service",
+        "title": "Dịch vụ cao cấp",
         "icon": "las la-clipboard-list",
         "menu_active": "admin.premium.service*",
         "submenu": [
             {
                 "keyword": [
-                    "Add Premium Service",
-                    "Add Service"
+                    "Thêm Dịch vụ cao cấp",
+                    "Thêm dịch vụ"
                 ],
-                "title": "Add Service",
+                "title": "Thêm dịch vụ",
                 "route_name": "admin.premium.service.add",
                 "menu_active": "admin.premium.service.add",
                 "icon": "las la-plus-circle"
             },
             {
                 "keyword": [
-                    "Added Premium Services",
-                    "Added Services"
+                    "Đã thêm dịch vụ cao cấp",
+                    "Đã thêm dịch vụ"
                 ],
-                "title": "Added Services",
+                "title": "Đã thêm dịch vụ",
                 "route_name": "admin.premium.service.list",
                 "menu_active": "admin.premium.service.list"
             }
         ]
     },
     "payments": {
-        "title": "Online Payments",
+        "title": "Thanh toán trực tuyến",
         "icon": "las la-file-invoice-dollar",
         "counters": [
             "pendingDepositsCount"
@@ -260,14 +260,14 @@
         "submenu": [
             {
                 "keyword": [
-                    "Pending Payments",
-                    "Payments",
-                    "Payment management",
-                    "Payment control",
-                    "Payment status",
-                    "Payment activity"
+                    "Thanh toán đang chờ xử lý",
+                    "Thanh toán",
+                    "Quản lý thanh toán",
+                    "Kiểm soát thanh toán",
+                    "Trạng thái thanh toán",
+                    "Hoạt động thanh toán"
                 ],
-                "title": "Pending Payments",
+                "title": "Thanh toán đang chờ xử lý",
                 "route_name": "admin.deposit.pending",
                 "menu_active": "admin.deposit.pending",
                 "counter": "pendingDepositsCount",
@@ -277,23 +277,23 @@
             },
             {
                 "keyword": [
-                    "Approved Payments",
-                    "Payments",
-                    "Payment management",
-                    "Payment activity"
+                    "Thanh toán đã được chấp thuận",
+                    "Thanh toán",
+                    "Quản lý thanh toán",
+                    "Hoạt động thanh toán"
                 ],
-                "title": "Approved Payments",
+                "title": "Thanh toán đã được chấp thuận",
                 "route_name": "admin.deposit.approved",
                 "menu_active": "admin.deposit.approved"
             },
             {
                 "keyword": [
-                    "Successful Payments",
-                    "Payments",
-                    "Payment management",
-                    "Payment activity"
+                    "Thanh toán thành công",
+                    "Thanh toán",
+                    "Quản lý thanh toán",
+                    "Hoạt động thanh toán"
                 ],
-                "title": "Successful Payments",
+                "title": "SThanh toán thành công",
                 "route_name": "admin.deposit.successful",
                 "menu_active": "admin.deposit.successful",
                 "params": {
@@ -302,12 +302,12 @@
             },
             {
                 "keyword": [
-                    "Rejected Payments",
-                    "Payments",
-                    "Payment management",
-                    "Payment activity"
+                    "Thanh toán bị từ chối",
+                    "Thanh toán",
+                    "Quản lý thanh toán",
+                    "Hoạt động thanh toán"
                 ],
-                "title": "Rejected Payments",
+                "title": "Thanh toán bị từ chối",
                 "route_name": "admin.deposit.rejected",
                 "menu_active": "admin.deposit.rejected",
                 "params": {
@@ -316,12 +316,12 @@
             },
             {
                 "keyword": [
-                    "Failed Payments",
-                    "Payments",
-                    "Payment management",
-                    "Payment activity"
+                    "Thanh toán không thành công",
+                    "Thanh toán",
+                    "Quản lý thanh toán",
+                    "Hoạt động thanh toán"
                 ],
-                "title": "Failed Payments",
+                "title": "Thanh toán không thành công",
                 "route_name": "admin.deposit.initiated",
                 "menu_active": "admin.deposit.initiated",
                 "params": {
@@ -330,13 +330,13 @@
             },
             {
                 "keyword": [
-                    "All Payments",
-                    "Payments",
-                    "Payment management",
-                    "Payment control",
-                    "Payment activity"
+                    "Tất cả thanh toán",
+                    "Thanh toán",
+                    "Quản lý thanh toán",
+                    "Kiểm soát thanh toán",
+                    "Hoạt động thanh toán"
                 ],
-                "title": "All Payments",
+                "title": "Tất cả thanh toán",
                 "route_name": "admin.deposit.list",
                 "menu_active": "admin.deposit.list",
                 "params": {
@@ -346,7 +346,7 @@
         ]
     },
     "manage_staff": {
-        "title": "Manage Staff",
+        "title": "Quản lý nhân viên",
         "header": "Actors",
         "icon": "las la-users",
         "menu_active": [
@@ -356,24 +356,24 @@
         "submenu": [
             {
                 "keyword": [
-                    "All Staff"
+                    "Tất cả nhân viên"
                 ],
-                "title": "All Staff",
+                "title": "Tất cả nhân viên",
                 "route_name": "admin.staff.index",
                 "menu_active": "admin.staff.index"
             },
             {
                 "keyword": [
-                    "Roles"
+                    "Vai trò"
                 ],
-                "title": "Roles",
+                "title": "Vai trò",
                 "route_name": "admin.roles.index",
                 "menu_active": "admin.roles.index"
             }
         ]
     },
     "manage_users": {
-        "title": "Manage Guests",
+        "title": "Quản lý khách hàng",
         "icon": "las la-users",
         "counters": [
             "bannedUsersCount",

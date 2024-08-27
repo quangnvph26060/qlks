@@ -41,7 +41,7 @@
                 <div class="card-body">
                     <div class="d-flex flex-wrap justify-content-between">
                         <div class="d-flex justify-content-start align-items-center gap-1">
-                            <h5 class="card-title mb-0">@lang('Booking Report')</h5> <span class="text--small fw-bold">(@lang('Excluding Tax'))</span>
+                            <h5 class="card-title mb-0">@lang('Báo cáo đặt phòng')</h5> <span class="text--small fw-bold">(@lang('Không bao gồm thuế'))</span>
                         </div>
 
                         <div id="bookingDatePicker" class="border p-1 cursor-pointer rounded">

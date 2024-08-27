@@ -13,7 +13,7 @@ class ReportController extends Controller
 {
     public function loginHistory(Request $request)
     {
-        $pageTitle = 'User Login History';
+        $pageTitle = 'Lịch sử đăng nhập của người dùng';
         $loginLogs = UserLogin::orderBy('id', 'desc')->searchable(['user:username'])->dateFilter()->with('user')->paginate(getPaginate());
         return view('admin.reports.logins', compact('pageTitle', 'loginLogs'));
     }

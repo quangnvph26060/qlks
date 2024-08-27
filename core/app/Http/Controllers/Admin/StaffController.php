@@ -12,7 +12,7 @@ use Illuminate\Support\Facades\Hash;
 class StaffController extends Controller {
 
     public function index() {
-        $pageTitle = 'All Staff';
+        $pageTitle = 'Tất cả nhân viên';
         $allStaff = Admin::where('id', '!=', 1)->with('role')->paginate(getPaginate());
         $roles = Role::all();
         return view('admin.staff.index', compact('pageTitle', 'allStaff', 'roles'));
@@ -27,10 +27,10 @@ class StaffController extends Controller {
         $this->validation($request, $id);
         if ($id) {
             $staff   = Admin::findOrFail($id);
-            $message = "Staff updated successfully";
+            $message = "Nhân viên đã cập nhật thành công";
         } else {
             $staff   = new Admin();
-            $message = "New staff added successfully";
+            $message = "Đã thêm nhân viên mới thành công";
         }
 
         $staff->name        = $request->name;

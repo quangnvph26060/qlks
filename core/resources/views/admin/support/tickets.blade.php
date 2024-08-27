@@ -89,5 +89,5 @@
 @endsection
 
 @push('breadcrumb-plugins')
-    <x-search-form placeholder="Search here..." />
+    <x-search-form placeholder="Tìm kiếm ở đây..." />
 @endpush

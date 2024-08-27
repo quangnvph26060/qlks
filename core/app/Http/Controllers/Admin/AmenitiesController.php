@@ -8,7 +8,7 @@ use Illuminate\Http\Request;
 
 class AmenitiesController extends Controller {
     public function index() {
-        $pageTitle = 'All Amenities';
+        $pageTitle = 'Tất cả các tiện nghi';
         $amenities = Amenity::orderBy('title')->Paginate(getPaginate());
         return view('admin.hotel.amenities', compact('pageTitle', 'amenities'));
     }

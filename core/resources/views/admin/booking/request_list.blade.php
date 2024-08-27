@@ -106,7 +106,7 @@
 @push('breadcrumb-plugins')
     <x-search-form placeholder="User/Email" />
     @can('admin.booking.active')
-        <a class="btn btn--success" href="{{ route('admin.booking.active') }}"><i class="las la-check-circle"></i>@lang('Active Bookings')</a>
+        <a class="btn btn--success" href="{{ route('admin.booking.active') }}"><i class="las la-check-circle"></i>@lang('Đặt chỗ đang hoạt động')</a>
     @endcan
 
     @can('admin.request.booking.canceled')

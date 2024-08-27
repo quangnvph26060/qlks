@@ -10,7 +10,7 @@ class PremiumServiceController extends Controller
 {
     public function index()
     {
-        $pageTitle     = 'Premium Services';
+        $pageTitle     = 'Dịch vụ cao cấp';
         $premiumServices = PremiumService::latest()->paginate(getPaginate());
         return view('admin.hotel.premium_services', compact('pageTitle', 'premiumServices'));
     }
@@ -24,10 +24,10 @@ class PremiumServiceController extends Controller
 
         if ($id) {
             $premiumService         = PremiumService::findOrFail($id);
-            $notification          = 'Service updated successfully';
+            $notification          = 'Dịch vụ đã được cập nhật thành công';
         } else {
             $premiumService = new PremiumService();
-            $notification  = 'Service added successfully';
+            $notification  = 'Dịch vụ đã được thêm thành công';
         }
 
         $premiumService->name = $request->name;

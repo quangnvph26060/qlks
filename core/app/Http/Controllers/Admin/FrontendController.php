@@ -12,14 +12,14 @@ class FrontendController extends Controller
 {
 
     public function index(){
-        $pageTitle = 'Manage Frontend Content';
+        $pageTitle = 'Quản lý nội dung Frontend';
         return view('admin.frontend.index', compact('pageTitle'));
     }
 
     public function templates()
     {
         abort(404);
-        $pageTitle = 'Templates';
+        $pageTitle = 'Mẫu';
         $temPaths = array_filter(glob('core/resources/views/templates/*'), 'is_dir');
         foreach ($temPaths as $key => $temp) {
             $arr = explode('/', $temp);
@@ -45,7 +45,7 @@ class FrontendController extends Controller
 
     public function seoEdit()
     {
-        $pageTitle = 'SEO Configuration';
+        $pageTitle = 'Cấu hình SEO';
         $seo = Frontend::where('data_keys', 'seo.data')->first();
         if(!$seo){
             $data_values = '{"keywords":[],"description":"","social_title":"","social_description":"","image":null}';

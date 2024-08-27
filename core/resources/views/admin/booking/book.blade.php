@@ -78,7 +78,7 @@
                         <div class="row">
                             <div class="col-12">
                                 <div class="form-group">
-                                    <label>@lang('Guest Type')</label>
+                                    <label>@lang('Loại khách hàng')</label>
                                     <select class="form-control" name="guest_type">
                                         <option selected value="0">@lang('Walk-In Guest')</option>
                                         <option value="1">@lang('Existing Guest')</option>

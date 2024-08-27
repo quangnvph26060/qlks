@@ -54,7 +54,7 @@
                 <div class="col">
                     <div class="card">
                         <div class="card-body">
-                            <h4 class="text--muted">@lang('No Room Booked Yet')</h4>
+                            <h4 class="text--muted">@lang('Chưa có phòng nào được đặt')</h4>
                         </div>
                     </div>
                 </div>
@@ -64,7 +64,7 @@
 
     @if ($emptyRooms->count())
         @if (!$availableOnly)
-            <h5 class="my-4">@lang('Available for Booking')</h5>
+            <h5 class="my-4">@lang('Có sẵn để đặt chỗ')</h5>
         @endif
         <div class="row gy-4">
             @foreach ($emptyRooms as $room)

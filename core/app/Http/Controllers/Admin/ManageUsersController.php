@@ -19,14 +19,14 @@ class ManageUsersController extends Controller
 
     public function allUsers()
     {
-        $pageTitle = 'All Guests';
+        $pageTitle = 'Tất cả khách hàng';
         $users = $this->userData();
         return view('admin.users.list', compact('pageTitle', 'users'));
     }
 
     public function activeUsers()
     {
-        $pageTitle = 'Active Guests';
+        $pageTitle = 'Khách hàng tích cực';
         $users = $this->userData('active');
         return view('admin.users.list', compact('pageTitle', 'users'));
     }

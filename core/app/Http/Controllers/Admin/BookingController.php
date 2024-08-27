@@ -10,7 +10,7 @@ use App\Models\Room;
 
 class BookingController extends Controller {
     public function todaysBooked() {
-        $pageTitle = request()->type == 'not_booked' ? 'Available Rooms to Book Today' : 'Todays Booked Rooms';
+        $pageTitle = request()->type == 'not_booked' ? 'Phòng có sẵn để đặt hôm nay' : 'Phòng đã đặt hôm nay';
 
         $rooms = BookedRoom::active()
             ->with([
@@ -31,77 +31,77 @@ class BookingController extends Controller {
     }
 
     public function activeBookings() {
-        $pageTitle = 'Active Bookings';
+        $pageTitle = 'Đặt chỗ đang hoạt động';
         $bookings = $this->bookingData('active');
         return view('admin.booking.list', compact('pageTitle', 'bookings'));
     }
 
     public function checkedOutBookingList() {
-        $pageTitle = 'Checked Out Bookings';
+        $pageTitle = 'Đã kiểm tra Đặt phòng';
         $bookings = $this->bookingData('checkedOut');
         return view('admin.booking.list', compact('pageTitle', 'bookings'));
     }
 
     public function delayedCheckout() {
-        $pageTitle = 'Delayed Checkout Bookings';
+        $pageTitle = 'Đặt phòng thanh toán bị trì hoãn';
         $bookings = $this->bookingData('delayedCheckOut');
         return view('admin.booking.list', compact('pageTitle', 'bookings'));
     }
 
     public function canceledBookingList() {
-        $pageTitle = 'Canceled Bookings';
+        $pageTitle = 'Đặt phòng đã hủy';
         $bookings = $this->bookingData('canceled');
 
         return view('admin.booking.list', compact('pageTitle', 'bookings'));
     }
 
     public function allBookingList() {
-        $pageTitle = 'All Bookings';
+        $pageTitle = 'Tất cả phòng';
         $bookings = $this->bookingData('ALL');
         return view('admin.booking.list', compact('pageTitle', 'bookings'));
     }
 
     public function todayCheckInBooking() {
-        $pageTitle = 'Today\'s Check In';
+        $pageTitle = 'Kiểm tra hôm nay';
         $bookings = $this->bookingData('todayCheckIn');
         return view('admin.booking.list', compact('pageTitle', 'bookings'));
     }
 
     public function todayCheckoutBooking() {
-        $pageTitle = 'Today\'s Checkout';
+        $pageTitle = 'Thanh toán hôm nay';
         $bookings = $this->bookingData('todayCheckout');
         return view('admin.booking.list', compact('pageTitle', 'bookings'));
     }
 
     public function refundableBooking() {
-        $pageTitle = 'Refundable Booking';
+        $pageTitle = 'Đặt chỗ có thể hoàn lại';
         $bookings = $this->bookingData('refundable');
         return view('admin.booking.list', compact('pageTitle', 'bookings'));
     }
 
     public function pendingCheckIn() {
 
-        $pageTitle         = 'Pending Check-Ins';
+        $pageTitle         = 'Đang chờ kiểm tra';
         $bookings   = Booking::active()->keyNotGiven()->whereDate('check_in', '<=', now())->with('user')->withCount('activeBookedRooms as total_room')->get();
-        $emptyMessage = 'No pending check-in found';
-        $alertText = 'The check-in periods for these bookings have passed, but the guests have not arrived yet.';
+        $emptyMessage = 'Không tìm thấy check-in đang chờ xử lý';
+        $alertText = 'Thời gian nhận phòng cho những đặt phòng này đã qua nhưng khách vẫn chưa đến.';
 
         return view('admin.booking.pending_checkin_checkout', compact('pageTitle', 'bookings', 'emptyMessage', 'alertText'));
     }
 
     public function delayedCheckouts() {
-        $pageTitle    = 'Delayed Checkouts';
+        $pageTitle    = 'Thanh toán bị trì hoãn';
         $bookings     = Booking::delayedCheckout()->get();
-        $emptyMessage = 'No delayed checkout found';
-        $alertText = 'The checkout periods for these bookings have passed, but the guests have not checked out yet.';
+        $emptyMessage = 'Không tìm thấy thanh toán chậm trễ';
+        $alertText = 'Thời hạn trả phòng cho những đặt phòng này đã qua nhưng khách vẫn chưa trả phòng.';
         return view('admin.booking.pending_checkin_checkout', compact('pageTitle', 'bookings', 'emptyMessage', 'alertText'));
     }
 
     public function upcomingCheckIn() {
 
-        $pageTitle         = 'Upcoming Check In Bookings';
+        $pageTitle         = 'Đặt phòng sắp tới';
         $bookings          = Booking::active()->whereDate('check_in', '>', now())->whereDate('check_in', '<=', now()->addDays(gs('upcoming_checkin_days')))->with('user')->withCount('activeBookedRooms as total_room')->orderBy('check_in')->get()->groupBy('check_in');
-        $emptyMessage = 'No upcoming check-in found';
+        $emptyMessage = 'Không tìm thấy thông tin đăng ký sắp tới';
 
         return view('admin.booking.upcoming_checkin_checkout', compact('pageTitle', 'bookings', 'emptyMessage'));
     }
@@ -126,7 +126,7 @@ class BookingController extends Controller {
             'payments'
         ])->findOrFail($id);
 
-        $pageTitle = 'Booking Details';
+        $pageTitle = 'Chi tiết đặt chỗ';
         return view('admin.booking.details', compact('pageTitle', 'booking'));
     }
 

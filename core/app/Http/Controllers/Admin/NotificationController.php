@@ -13,7 +13,7 @@ class NotificationController extends Controller
 {
     public function globalEmail()
     {
-        $pageTitle = 'Global Email Template';
+        $pageTitle = 'Mẫu Email Toàn Cầu';
         return view('admin.notification.global_email_template', compact('pageTitle'));
     }
 
@@ -31,13 +31,13 @@ class NotificationController extends Controller
         $general->email_template = $request->email_template;
         $general->save();
 
-        $notify[] = ['success', 'Global email template updated successfully'];
+        $notify[] = ['success', 'Mẫu email toàn cầu đã được cập nhật thành công'];
         return back()->withNotify($notify);
     }
 
     public function globalSms()
     {
-        $pageTitle = 'Global Sms Template';
+        $pageTitle = 'Mẫu SMS toàn cầu';
         return view('admin.notification.global_sms_template', compact('pageTitle'));
     }
 
@@ -53,13 +53,13 @@ class NotificationController extends Controller
         $general->sms_template = $request->sms_template;
         $general->save();
 
-        $notify[] = ['success', 'Global sms template updated successfully'];
+        $notify[] = ['success', 'Mẫu tin nhắn SMS toàn cầu đã được cập nhật thành công'];
         return back()->withNotify($notify);
     }
 
     public function globalPush()
     {
-        $pageTitle = 'Global Push Notification Template';
+        $pageTitle = 'Mẫu thông báo đẩy toàn cầu';
         return view('admin.notification.global_push_template', compact('pageTitle'));
     }
 
