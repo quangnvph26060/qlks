@@ -102,7 +102,7 @@
                         </li>
                     </ul>
                     <div class="nav-right justify-content-xl-end ps-0 ps-xl-5">
-                        <a class="btn btn-sm btn--base" href="{{ route('room.types') }}"><i class="las la-hand-point-right"></i> @lang('BOOK ROOM')</a>
+                        <a class="btn btn-sm btn--base" href="{{ route('room.types') }}"><i class="las la-hand-point-right"></i> __('BOOK ROOM')</a>
                     </div>
                 </div>
             </nav>

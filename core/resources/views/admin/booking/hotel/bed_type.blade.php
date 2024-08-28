@@ -90,8 +90,8 @@
 @endsection
 @can('admin.hotel.bed.save')
     @push('breadcrumb-plugins')
-        <button class="btn btn-sm btn-outline--primary cuModalBtn" data-modal_title="@lang('Add New Bed Type')" type="button">
-            <i class="las la-plus"></i>@lang('Add New ')
+        <button class="btn btn-sm btn-outline--primary cuModalBtn" data-modal_title="@lang('Thêm loại giường mới')" type="button">
+            <i class="las la-plus"></i>@lang('Thêm mới ')
         </button>
     @endpush
 @endcan

@@ -22,35 +22,35 @@ class DepositController extends Controller
 
     public function approved($userId = null)
     {
-        $pageTitle = 'Approved Payments';
+        $pageTitle = 'Thanh toán đã được chấp thuận';
         $deposits = $this->depositData('approved', userId: $userId);
         return view('admin.deposit.log', compact('pageTitle', 'deposits'));
     }
 
     public function successful($userId = null)
     {
-        $pageTitle = 'Successful Payments';
+        $pageTitle = 'Thanh toán thành công';
         $deposits = $this->depositData('successful', userId: $userId);
         return view('admin.deposit.log', compact('pageTitle', 'deposits'));
     }
 
     public function rejected($userId = null)
     {
-        $pageTitle = 'Rejected Payments';
+        $pageTitle = 'Thanh toán bị từ chối';
         $deposits = $this->depositData('rejected', userId: $userId);
         return view('admin.deposit.log', compact('pageTitle', 'deposits'));
     }
 
     public function initiated($userId = null)
     {
-        $pageTitle = 'Initiated Payments';
+        $pageTitle = 'Thanh toán đã khởi tạo';
         $deposits = $this->depositData('initiated', userId: $userId);
         return view('admin.deposit.log', compact('pageTitle', 'deposits'));
     }
 
     public function deposit($userId = null)
     {
-        $pageTitle = 'Payment History';
+        $pageTitle = 'Lịch sử thanh toán';
         $depositData = $this->depositData($scope = null, $summary = true, userId: $userId);
         $deposits = $depositData['data'];
         $summary = $depositData['summary'];

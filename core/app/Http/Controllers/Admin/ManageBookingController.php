@@ -23,17 +23,17 @@ class ManageBookingController extends Controller
         $booking = Booking::active()->findOrFail($id);
 
         if ($booking->key_status == Status::ENABLE) {
-            $notify[] = ['error', 'Keys have already been given to the guest'];
+            $notify[] = ['error', 'Chìa khóa đã được trao cho khách'];
             return back()->withNotify($notify);
         }
 
         if (now()->format('Y-m-d') < $booking->check_in) {
-            $notify[] = ['error', 'You can\'t handover keys before the check-in date'];
+            $notify[] = ['error', 'Bạn không thể giao chìa khóa trước ngày nhận phòng'];
             return back()->withNotify($notify);
         }
 
         if (now()->format('Y-m-d') >= $booking->check_out) {
-            $notify[] = ['error', 'You can\'t handover keys after the check-out date'];
+            $notify[] = ['error', 'Bạn không thể giao chìa khóa sau ngày trả phòng'];
             return back()->withNotify($notify);
         }
 
@@ -43,7 +43,7 @@ class ManageBookingController extends Controller
 
         $booking->createActionHistory('key_handover');
 
-        $notify[] = ['success', 'Key handover successfully'];
+        $notify[] = ['success', 'Bàn giao chìa khóa thành công'];
         return back()->withNotify($notify);
     }
 

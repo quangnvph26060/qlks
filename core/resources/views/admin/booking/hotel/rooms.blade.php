@@ -63,7 +63,7 @@
             <div class="modal-dialog" role="document">
                 <div class="modal-content">
                     <div class="modal-header">
-                        <h5 class="modal-title">@lang('Add New Room')</h5>
+                        <h5 class="modal-title">@lang('Thêm mới phòng')</h5>
                         <button aria-label="Close" class="close" data-bs-dismiss="modal" type="button">
                             <i class="las la-times"></i>
                         </button>
@@ -144,7 +144,7 @@
 @endsection
 
 @push('breadcrumb-plugins')
-    <button class="btn btn-outline--primary" data-bs-target="#addModal" data-bs-toggle="modal"><i class="las la-plus"></i> @lang('Add New')</button>
+    <button class="btn btn-outline--primary" data-bs-target="#addModal" data-bs-toggle="modal"><i class="las la-plus"></i> @lang('Thêm mới')</button>
     <x-search-form filter='yes' />
 @endpush
 

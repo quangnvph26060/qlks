@@ -17,7 +17,7 @@
                             </div>
                             @can('admin.language.store.key')
                                 <div class="col-md-5 mt-md-0 mt-3">
-                                    <button type="button" data-bs-toggle="modal" data-bs-target="#addModal" class="btn btn-sm btn-outline--primary float-end"><i class="fas fa-plus"></i> @lang('Add New Key') </button>
+                                    <button type="button" data-bs-toggle="modal" data-bs-target="#addModal" class="btn btn-sm btn-outline--primary float-end"><i class="fas fa-plus"></i> @lang('Thêm khóa mới') </button>
                                 </div>
                             @endcan
                         </div>
@@ -87,7 +87,7 @@
                 <div class="modal-dialog modal-lg">
                     <div class="modal-content">
                         <div class="modal-header">
-                            <h4 class="modal-title" id="addModalLabel"> @lang('Add New')</h4>
+                            <h4 class="modal-title" id="addModalLabel"> @lang('Thêm mới')</h4>
                             <button type="button" class="close" data-bs-dismiss="modal" aria-label="Close">
                                 <i class="las la-times"></i>
                             </button>

@@ -15,11 +15,11 @@
                     <div class="d-flex flex-column gap-3">
 
                         <div>
-                            <small class="fw-500"> <i class="las la-user-edit"></i> @lang('Guest Type')</small><br>
+                            <small class="fw-500"> <i class="las la-user-edit"></i> @lang('Loại khách hàng')</small><br>
                             @if ($booking->user_id)
-                                <span class="d-bock">@lang('Registered Guest')</span>
+                                <span class="d-bock">@lang('Khách hàng đã đăng ký')</span>
                             @else
-                                <span class="d-bock">@lang('Walk In Guest')</span>
+                                <span class="d-bock">@lang('Khách đi bộ')</span>
                             @endif
                         </div>
 
@@ -43,7 +43,7 @@
                         </div>
 
                         <div>
-                            <small class="fw-500"><i class="la la-mobile"></i> @lang('Mobile')</small>
+                            <small class="fw-500"><i class="la la-mobile"></i> @lang('Di động')</small>
 
                             <span class="d-block">
                                 @if ($booking->user_id)
@@ -59,7 +59,7 @@
                         @endphp
 
                         <div>
-                            <small class="fw-500"><i class="la la-map"></i> @lang('Address')</small> <br>
+                            <small class="fw-500"><i class="la la-map"></i> @lang('Địa chỉ')</small> <br>
                             <span>
                                 {{ $address ?? __('N/A') }}
                             </span>
@@ -81,22 +81,22 @@
                     <div class="d-flex flex-wrap justify-content-between gap-3">
                         <div class="d-flex flex-column gap-3">
                             <div>
-                                <small class="fw-500">@lang('Booking No.')</small> <br>
+                                <small class="fw-500">@lang('Số đặt chỗ')</small> <br>
                                 <span>#{{ $booking->booking_number }}</span>
                             </div>
 
                             <div>
-                                <small class="fw-500">@lang('Total Room')</small> <br>
+                                <small class="fw-500">@lang('Tổng phòng')</small> <br>
                                 <span>{{ $booking->bookedRooms->count() }}</span>
                             </div>
 
                             <div>
-                                <small class="fw-500">@lang('Total Charge')</small> <br>
+                                <small class="fw-500">@lang('Tổng phí')</small> <br>
                                 <span>{{ showAmount($booking->total_amount) }}</span>
                             </div>
 
                             <div>
-                                <small class="fw-500">@lang('Paid Amount')</small> <br>
+                                <small class="fw-500">@lang('Số tiền đã thanh toán')</small> <br>
                                 <span>{{ showAmount($booking->paid_amount) }}</span>
                             </div>
 
@@ -105,7 +105,7 @@
                                     <small class="fw-500">@lang('Refundable') </small> <br>
                                     <span class="text--warning">{{ showAmount(abs($due)) }}</span>
                                 @else
-                                    <small class="fw-500">@lang('Receivable from User')</small><br>
+                                    <small class="fw-500">@lang('Phải thu từ khách hàng')</small><br>
                                     <span class="@if ($due > 0) text--danger @else text--success @endif"> {{ showAmount(abs($due)) }}</span>
                                 @endif
                             </div>

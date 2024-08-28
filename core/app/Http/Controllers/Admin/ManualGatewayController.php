@@ -14,14 +14,14 @@ class ManualGatewayController extends Controller
 {
     public function index()
     {
-        $pageTitle = 'Manual Gateways';
+        $pageTitle = 'Cổng thủ công';
         $gateways = Gateway::manual()->orderBy('id','desc')->get();
         return view('admin.gateways.manual.list', compact('pageTitle', 'gateways'));
     }
 
     public function create()
     {
-        $pageTitle = 'Add Manual Gateway';
+        $pageTitle = 'Thêm Cổng thủ công';
         return view('admin.gateways.manual.create', compact('pageTitle'));
     }
 

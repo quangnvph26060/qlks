@@ -22,28 +22,28 @@ class SupportTicketController extends Controller
 
     public function tickets()
     {
-        $pageTitle = 'Support Tickets';
+        $pageTitle = 'Vé hỗ trợ';
         $items = SupportTicket::searchable(['name','subject','ticket'])->orderBy('id','desc')->with('user')->paginate(getPaginate());
         return view('admin.support.tickets', compact('items', 'pageTitle'));
     }
 
     public function pendingTicket()
     {
-        $pageTitle = 'Pending Tickets';
+        $pageTitle = 'Vé đang chờ xử lý';
         $items = SupportTicket::searchable(['name','subject','ticket'])->pending()->orderBy('id','desc')->with('user')->paginate(getPaginate());
         return view('admin.support.tickets', compact('items', 'pageTitle'));
     }
 
     public function closedTicket()
     {
-        $pageTitle = 'Closed Tickets';
+        $pageTitle = 'Vé đã đóng';
         $items = SupportTicket::searchable(['name','subject','ticket'])->closed()->orderBy('id','desc')->with('user')->paginate(getPaginate());
         return view('admin.support.tickets', compact('items', 'pageTitle'));
     }
 
     public function answeredTicket()
     {
-        $pageTitle = 'Answered Tickets';
+        $pageTitle = 'Vé đã trả lời';
         $items = SupportTicket::searchable(['name','subject','ticket'])->orderBy('id','desc')->with('user')->answered()->paginate(getPaginate());
         return view('admin.support.tickets', compact('items', 'pageTitle'));
     }
@@ -51,7 +51,7 @@ class SupportTicketController extends Controller
     public function ticketReply($id)
     {
         $ticket = SupportTicket::with('user')->where('id', $id)->firstOrFail();
-        $pageTitle = 'Reply Ticket';
+        $pageTitle = 'Trả lời vé';
         $messages = SupportMessage::with('ticket','admin','attachments')->where('support_ticket_id', $ticket->id)->orderBy('id','desc')->get();
         return view('admin.support.reply', compact('ticket', 'messages', 'pageTitle'));
     }

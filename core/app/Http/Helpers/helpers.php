@@ -159,17 +159,17 @@ function osBrowser() {
     return $osBrowser;
 }
 
-function getTemplates() {
-    $param['purchasecode'] = env("PURCHASECODE");
-    $param['website']      = @$_SERVER['HTTP_HOST'] . @$_SERVER['REQUEST_URI'] . ' - ' . env("APP_URL");
-    $url                   = VugiChugi::gttmp() . systemDetails()['name'];
-    $response              = CurlRequest::curlPostContent($url, $param);
-    if ($response) {
-        return $response;
-    } else {
-        return null;
-    }
-}
+// function getTemplates() {
+//     $param['purchasecode'] = env("PURCHASECODE");
+//     $param['website']      = @$_SERVER['HTTP_HOST'] . @$_SERVER['REQUEST_URI'] . ' - ' . env("APP_URL");
+//     $url                   = VugiChugi::gttmp() . systemDetails()['name'];
+//     $response              = CurlRequest::curlPostContent($url, $param);
+//     if ($response) {
+//         return $response;
+//     } else {
+//         return null;
+//     }
+// }
 
 function getPageSections($arr = false) {
     $jsonUrl  = resource_path('views/') . str_replace('.', '/', activeTemplate()) . 'sections.json';

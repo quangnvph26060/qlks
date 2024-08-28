@@ -115,7 +115,7 @@
 @can('admin.hotel.extra_services.save')
     @push('breadcrumb-plugins')
         <button class="btn btn-sm btn-outline--primary cuModalBtn" data-modal_title="@lang('Add Extra Service')" type="button">
-            <i class="las la-plus"></i>@lang('Add New ')
+            <i class="las la-plus"></i>@lang('Thêm mới')
         </button>
     @endpush
 @endcan

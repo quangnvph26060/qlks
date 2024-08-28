@@ -75,7 +75,7 @@
         <div class="modal-dialog" role="document">
             <div class="modal-content">
                 <div class="modal-header">
-                    <h5 class="modal-title">@lang('Booking Details')</h5>
+                    <h5 class="modal-title">@lang('Chi tiết đặt chỗ')</h5>
                     <button aria-label="Close" class="close" data-bs-dismiss="modal" type="button">
                         <i class="las la-times"></i>
                     </button>

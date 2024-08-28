@@ -4,7 +4,7 @@
         <li class="{{ menuActive('user.home') }}"><a href="{{ route('user.home') }}"><i class="la la-home"></i>
                 @lang('Dashboard')</a></li>
 
-        <li class="{{ menuActive('user.booking.request.all') }}"><a href="{{ route('user.booking.request.all') }}"><i class="la la-list"></i> @lang('Booking Requests')</a>
+        <li class="{{ menuActive('user.booking.request.all') }}"><a href="{{ route('user.booking.request.all') }}"><i class="la la-list"></i> @lang('Yêu cầu đặt phòng')</a>
         </li>
 
         <li class="{{ menuActive('user.booking.all') }}">

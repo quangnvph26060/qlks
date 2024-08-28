@@ -153,8 +153,8 @@
     <x-search-form placeholder="Username" />
     <!-- Modal Trigger Button -->
     @can('admin.staff.save')
-        <button class="btn btn-sm btn-outline--primary cuModalBtn" data-modal_title="@lang('Add New Staff')" type="button">
-            <i class="las la-plus"></i>@lang('Add New')
+        <button class="btn btn-sm btn-outline--primary cuModalBtn" data-modal_title="@lang('Thêm mới nhân viên')" type="button">
+            <i class="las la-plus"></i>@lang('Thêm mới')
         </button>
     @endcan
 @endpush

@@ -11,18 +11,18 @@ class RolesController extends Controller {
 
     public function index() {
         $roles = Role::all();
-        $pageTitle = "All Roles";
+        $pageTitle = "Tất cả vai trò";
         return view('admin.roles.index', compact('roles', 'pageTitle'));
     }
 
     public function add() {
-        $pageTitle = "Add New Role";
+        $pageTitle = "Thêm mới vai trò";
         $permissionGroups = Permission::all()->groupBy('group');
         return view('admin.roles.add', compact('pageTitle', 'permissionGroups'));
     }
 
     public function edit($id) {
-        $pageTitle = "Edit Role";
+        $pageTitle = "Sửa vai trò";
         $role = Role::with('permissions')->findOrFail($id);
         $permissions = $role->permissions->pluck('pivot.permission_id');
         $permissionGroups = Permission::all()->groupBy('group');
@@ -38,10 +38,10 @@ class RolesController extends Controller {
 
         if (!$id) {
             $role = new Role();
-            $notification = 'New role added successfully';
+            $notification = 'Vai trò mới đã được thêm thành công';
         } else {
             $role = Role::findOrFail($id);
-            $notification = 'New role updated successfully';
+            $notification = 'Vai trò mới đã được cập nhật thành công';
         }
         $role->name = $request->name;
         $role->save();

@@ -30,7 +30,7 @@
                                                 @endforelse
 
                                             </select>
-                                            <button type="button" class="btn btn--primary input-group-text newCurrencyBtn" data-crypto="{{ $gateway->crypto }}" data-name="{{ $gateway->name }}">@lang('Add new')</button>
+                                            <button type="button" class="btn btn--primary input-group-text newCurrencyBtn" data-crypto="{{ $gateway->crypto }}" data-name="{{ $gateway->name }}">@lang('Thêm mới')</button>
                                         </div>
                                     @endif
                                 </div>

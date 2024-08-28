@@ -15,7 +15,7 @@ class CancelBookingController extends Controller {
 
     public function cancelBooking($id) {
         $booking   = Booking::active()->with('activeBookedRooms.room.roomType')->findOrFail($id);
-        $pageTitle = 'Cancel Booking';
+        $pageTitle = 'Hủy đặt phòng';
         return view('admin.booking.cancel', compact('pageTitle', 'booking'));
     }
 
