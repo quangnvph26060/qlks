@@ -45,17 +45,17 @@
                                                     @if ($staff->id > 1)
                                                         @can('admin.staff.save')
                                                             <button class="btn btn-sm btn-outline--primary cuModalBtn" data-modal_title="@lang('Update Staff')" data-resource="{{ $staff }}" type="button">
-                                                                <i class="la la-pencil"></i>@lang('Edit')
+                                                                <i class="la la-pencil"></i>@lang('Sửa')
                                                             </button>
                                                         @endcan
                                                         @can('admin.staff.status')
                                                             @if ($staff->status)
-                                                                <button class="btn btn-sm confirmationBtn btn-outline--danger" data-action="{{ route('admin.staff.status', $staff->id) }}" data-question="@lang('Are you sure to ban this staff?')" type="button">
-                                                                    <i class="las la-user-alt-slash"></i>@lang('Ban')
+                                                                <button class="btn btn-sm confirmationBtn btn-outline--danger" data-action="{{ route('admin.staff.status', $staff->id) }}" data-question="@lang('Bạn có chắc chắn cấm nhân viên này?')" type="button">
+                                                                    <i class="las la-user-alt-slash"></i>@lang('Cấm')
                                                                 </button>
                                                             @else
-                                                                <button class="btn btn-sm confirmationBtn btn-outline--success" data-action="{{ route('admin.staff.status', $staff->id) }}" data-question="@lang('Are you sure to unban this staff?')" type="button">
-                                                                    <i class="las la-user-check"></i>@lang('Unban')
+                                                                <button class="btn btn-sm confirmationBtn btn-outline--success" data-action="{{ route('admin.staff.status', $staff->id) }}" data-question="@lang('Bạn có chắc chắn bỏ lệnh cấm nhân viên này không?')" type="button">
+                                                                    <i class="las la-user-check"></i>@lang('Bỏ cấm')
                                                                 </button>
                                                             @endif
                                                         @endcan

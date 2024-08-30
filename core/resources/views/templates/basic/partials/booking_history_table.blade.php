@@ -2,12 +2,12 @@
     <table class="custom--table head--base table">
         <thead>
             <tr>
-                <th>@lang('Booking No.')</th>
-                <th>@lang('Check In') - @lang('Check Out')</th>
-                <th>@lang('Total Amount')</th>
-                <th>@lang('Due')</th>
-                <th>@lang('Status')</th>
-                <th>@lang('Action')</th>
+                <th>@lang('ID hóa đơn.')</th>
+                <th>@lang('Ngày nhận phòng') - @lang('Ngày trả phòng')</th>
+                <th>@lang('Tổng tiền')</th>
+                <th>@lang('Quá hạn')</th>
+                <th>@lang('Trạng thái')</th>
+                <th>@lang('Hành động')</th>
             </tr>
         </thead>
 
@@ -28,11 +28,11 @@
                     <td>
                         <div class="group-button">
                             <a class="btn btn-sm btn-outline--info ms-1 @if ($due == 0) disabled @endif" href="{{ route('user.booking.payment', $booking->id) }}">
-                                <i class="las la-wallet"></i> @lang('Pay Now')
+                                <i class="las la-wallet"></i> @lang('Thanh toán ngay')
                             </a>
 
                             <a class="btn btn-sm btn-outline--base ms-1" href="{{ route('user.booking.details', $booking->id) }}">
-                                <i class="las la-desktop"></i> @lang('Details')
+                                <i class="las la-desktop"></i> @lang('Chi tiết')
                             </a>
                         </div>
 

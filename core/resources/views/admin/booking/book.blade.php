@@ -8,7 +8,7 @@
                         <form action="{{ route('admin.room.search') }}" class="formRoomSearch" method="get">
                             <div class="d-flex justify-content-between align-items-end flex-wrap gap-2">
                                 <div class="form-group flex-fill">
-                                    <label>@lang('Room Type')</label>
+                                    <label>@lang('Loại phòng')</label>
                                     <select class="form-control" name="room_type" required>
                                         <option value="">@lang('Select One')</option>
                                         @foreach ($roomTypes as $type)
@@ -18,17 +18,17 @@
                                 </div>
 
                                 <div class="form-group flex-fill">
-                                    <label>@lang('Check In - Check Out Date')</label>
-                                    <input autocomplete="off" class="bookingDatePicker form-control bg--white" name="date" placeholder="@lang('Select Date')" required type="text">
+                                    <label>@lang('Ngày nhận phòng - Ngày trả phòng')</label>
+                                    <input autocomplete="off" class="bookingDatePicker form-control bg--white" name="date" placeholder="@lang('Chọn ngày')" required type="text">
                                 </div>
                                 <div class="form-group flex-fill">
-                                    <label>@lang('Room')</label>
-                                    <input class="form-control" name="rooms" placeholder="@lang('How many room?')" required type="text">
+                                    <label>@lang('Phòng')</label>
+                                    <input class="form-control" name="rooms" placeholder="@lang('Có bao nhiêu phòng?')" required type="text">
                                 </div>
 
                                 <div class="form-group flex-fill">
                                     <button class="btn btn--primary w-100 h-45 search" type="submit">
-                                        <i class="la la-search"></i>@lang('Search')
+                                        <i class="la la-search"></i>@lang('Tìm kiếm')
                                     </button>
                                 </div>
                             </div>
@@ -44,7 +44,7 @@
             <div class="card">
                 <div class="card-header">
                     <div class="card-title d-flex justify-content-between booking-info-title mb-0">
-                        <h5>@lang('Booking Information')</h5>
+                        <h5>@lang('Thông tin đặt phòng')</h5>
                     </div>
                 </div>
                 <div class="card-body">

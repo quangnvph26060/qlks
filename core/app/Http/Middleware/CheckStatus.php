@@ -22,7 +22,7 @@ class CheckStatus
                 return $next($request);
             } else {
                 if ($request->is('api/*')) {
-                    $notify[] = 'You need to verify your account first.';
+                    $notify[] = 'Trước tiên, bạn cần xác minh tài khoản của mình.';
                     return response()->json([
                         'remark'=>'unverified',
                         'status'=>'error',

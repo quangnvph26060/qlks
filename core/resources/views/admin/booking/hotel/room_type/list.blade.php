@@ -8,15 +8,15 @@
                         <table class="table--light style--two table">
                             <thead>
                                 <tr>
-                                    <th>@lang('Name')</th>
-                                    <th>@lang('Fare')</th>
-                                    <th>@lang('Rooms')</th>
-                                    <th>@lang('Adult')</th>
-                                    <th>@lang('Child')</th>
-                                    <th>@lang('Feature Status')</th>
-                                    <th>@lang('Status')</th>
+                                    <th>@lang('Tên phòng')</th>
+                                    <th>@lang('Giá')</th>
+                                    <th>@lang('Phòng')</th>
+                                    <th>@lang('Người lớn')</th>
+                                    <th>@lang('Trẻ con')</th>
+                                    <th>@lang('Trạng thái tính năng')</th>
+                                    <th>@lang('Trạng thái')</th>
                                     @can(['admin.hotel.room.type.edit', 'admin.hotel.room.type.status'])
-                                        <th>@lang('Action')</th>
+                                        <th>@lang('Hành động')</th>
                                     @endcan
                                 </tr>
                             </thead>

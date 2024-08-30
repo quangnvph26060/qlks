@@ -19,7 +19,7 @@ class PaymentController extends Controller
         $gatewayCurrency = GatewayCurrency::whereHas('method', function ($gate) {
             $gate->where('status', Status::ENABLE);
         })->with('method')->orderby('name')->get();
-        $pageTitle = 'Deposit Methods';
+        $pageTitle = 'Phương thức thanh toán';
         return view('Template::user.payment.deposit', compact('gatewayCurrency', 'pageTitle'));
     }
 

@@ -1,6 +1,6 @@
 @extends($activeTemplate . 'layouts.master')
 @section('content')
-    <h5 class="text--secondary mb-3">@lang('Booking Overview')</h5>
+    <h5 class="text--secondary mb-3">@lang('Tổng quan về đặt phòng')</h5>
     <div class="row gy-4 pb-3">
         <div class="col-xxl-4 col-xs-6">
             <div class="widget widget--base">
@@ -10,7 +10,7 @@
                     </div>
                 </div>
                 <div class="widget__body">
-                    <h6 class="widget__title"> @lang('Total')</h6>
+                    <h6 class="widget__title"> @lang('Tổng ')</h6>
                     <h3 class="widget__amount">{{ $booking['total'] }}</h3>
                 </div>
             </div>
@@ -24,7 +24,7 @@
                     </div>
                 </div>
                 <div class="widget__body">
-                    <h6 class="widget__title"> @lang('Requested')</h6>
+                    <h6 class="widget__title"> @lang('Đã yêu cầu')</h6>
                     <h3 class="widget__amount">{{ $booking['request'] }}</h3>
                 </div>
             </div>
@@ -38,7 +38,7 @@
                     </div>
                 </div>
                 <div class="widget__body">
-                    <h6 class="widget__title"> @lang('Active')</h6>
+                    <h6 class="widget__title"> @lang('Hoạt động')</h6>
                     <h3 class="widget__amount">{{ $booking['successful'] }}</h3>
                 </div>
             </div>
@@ -51,7 +51,7 @@
                     </div>
                 </div>
                 <div class="widget__body">
-                    <h6 class="widget__title"> @lang('Canceled')</h6>
+                    <h6 class="widget__title"> @lang('Đã hủy')</h6>
                     <h3 class="widget__amount">{{ $booking['canceled'] }}</h3>
                 </div>
             </div>
@@ -64,7 +64,7 @@
                     </div>
                 </div>
                 <div class="widget__body">
-                    <h6 class="widget__title"> @lang('Checked Out')</h6>
+                    <h6 class="widget__title"> @lang('Ngày trả phòng')</h6>
                     <h3 class="widget__amount">{{ $booking['checkedOut'] }}</h3>
                 </div>
             </div>
@@ -77,14 +77,14 @@
                     </div>
                 </div>
                 <div class="widget__body">
-                    <h6 class="widget__title"> @lang('Payment')</h6>
+                    <h6 class="widget__title"> @lang('Thanh toán')</h6>
                     <h3 class="widget__amount">{{ showAmount($booking['total_payment']) }}</h3>
                 </div>
             </div>
         </div>
     </div>
 
-    <h5 class="text--secondary my-3">@lang('Recent Bookings')</h5>
+    <h5 class="text--secondary my-3">@lang('Đặt phòng gần đây')</h5>
     @include($activeTemplate . 'partials.booking_history_table', $bookings)
 @endsection
 

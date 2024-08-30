@@ -98,7 +98,7 @@ class LoginController extends Controller
         $this->guard()->logout();
         request()->session()->invalidate();
 
-        $notify[] = ['success', 'You have been logged out.'];
+        $notify[] = ['success', 'Bạn đã đăng xuất.'];
         return to_route('user.login')->withNotify($notify);
     }
 

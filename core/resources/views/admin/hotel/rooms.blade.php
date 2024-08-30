@@ -8,11 +8,11 @@
                         <table class="table--light style--two table">
                             <thead>
                                 <tr>
-                                    <th>@lang('Room Number')</th>
-                                    <th>@lang('Type')</th>
-                                    <th>@lang('Status')</th>
+                                    <th>@lang('Số phòng')</th>
+                                    <th>@lang('Tên phòng')</th>
+                                    <th>@lang('Trạng thái')</th>
                                     @can(['admin.hotel.room.status', 'admin.hotel.room.add'])
-                                        <th>@lang('Action')</th>
+                                        <th>@lang('Hành động')</th>
                                     @endcan
                                 </tr>
                             </thead>
@@ -74,7 +74,7 @@
                         @csrf
                         <div class="modal-body">
                             <div class="form-group">
-                                <label>@lang('Room Type')</label>
+                                <label>@lang('Loại phòng')</label>
                                 <select class="form-control" name="room_type_id" required>
                                     <option disabled selected value="">@lang('Select One')</option>
                                     @foreach ($roomTypes as $roomType)
@@ -83,7 +83,7 @@
                                 </select>
                             </div>
                             <div class="form-group">
-                                <label>@lang('Room Number')</label>
+                                <label>@lang('Số phòng')</label>
 
                                 <div class="d-flex">
                                     <div class="input-group row gx-0">

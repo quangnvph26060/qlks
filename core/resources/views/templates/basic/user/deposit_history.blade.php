@@ -14,12 +14,12 @@
         <table class="custom--table table">
             <thead>
                 <tr>
-                    <th>@lang('Gateway | Transaction')</th>
-                    <th>@lang('Booking No.') | @lang('Initiated At')</th>
-                    <th>@lang('Amount')</th>
-                    <th>@lang('Conversion')</th>
-                    <th>@lang('Status')</th>
-                    <th>@lang('Details')</th>
+                    <th>@lang('Cổng vào | Giao dịch')</th>
+                    <th>@lang('Số đặt chỗ') | @lang('Khởi tạo tại')</th>
+                    <th>@lang('Số lượng')</th>
+                    <th>@lang('Chuyển đổi')</th>
+                    <th>@lang('Trạng thái')</th>
+                    <th>@lang('Chi tiết')</th>
                 </tr>
             </thead>
             <tbody>
@@ -37,7 +37,7 @@
                         <td>
                             ={{ showAmount($deposit->amount) }} + <span class="text-danger" data-bs-toggle="tooltip" title="@lang('Charge')">{{ showAmount($deposit->charge, currencyFormat: false) }} </span>
                             <br>
-                            <strong data-bs-toggle="tooltip" title="@lang('Amount with charge')">
+                            <strong data-bs-toggle="tooltip" title="@lang('Số tiền có tính phí')">
                                 {{ showAmount($deposit->amount + $deposit->charge) }}
                             </strong>
                         </td>
@@ -77,7 +77,7 @@
         <div class="modal-dialog" role="document">
             <div class="modal-content">
                 <div class="modal-header">
-                    <h5 class="modal-title">@lang('Details')</h5>
+                    <h5 class="modal-title">@lang('Chi tiết')</h5>
                     <span aria-label="Close" class="close" data-bs-dismiss="modal" type="button">
                         <i class="las la-times"></i>
                     </span>
@@ -87,7 +87,7 @@
                     <div class="feedback"></div>
                 </div>
                 <div class="modal-footer">
-                    <button class="btn btn-dark btn-sm" data-bs-dismiss="modal" type="button">@lang('Close')</button>
+                    <button class="btn btn-dark btn-sm" data-bs-dismiss="modal" type="button">@lang('Đóng')</button>
                 </div>
             </div>
         </div>

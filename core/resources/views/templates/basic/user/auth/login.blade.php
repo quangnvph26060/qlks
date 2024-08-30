@@ -18,18 +18,18 @@
                             @csrf
                             <div class="col-md-12">
                                 <div class="form-group">
-                                    <label>@lang('Username or Email')</label>
+                                    <label>@lang('Tên người dùng hoặc Email')</label>
                                     <div class="custom-icon-field">
-                                        <input type="text" name="username" value="{{ old('username') }}" class="form--control" placeholder="@lang('Username or email')" required>
+                                        <input type="text" name="username" value="{{ old('username') }}" class="form--control" placeholder="@lang('Tên người dùng hoặc Email')" required>
                                         <i class="fas fa-user"></i>
                                     </div>
                                 </div>
                             </div>
                             <div class="col-md-12">
                                 <div class="form-group">
-                                    <label>@lang('Password')</label>
+                                    <label>@lang('Mật khẩu')</label>
                                     <div class="custom-icon-field">
-                                        <input type="password" class="form--control" id="password-seen" name="password" placeholder="@lang('Password')" required>
+                                        <input type="password" class="form--control" id="password-seen" name="password" placeholder="@lang('Mật khẩu')" required>
                                         <i class="fas fa-lock"></i>
                                         <span class="input-eye"><i class="la la-eye"></i></span>
                                     </div>
@@ -48,10 +48,10 @@
                                     </label>
                                 </div>
 
-                                <a href="{{ route('user.password.request') }}" class="text--base">@lang('Forgot Password?')</a>
+                                <a href="{{ route('user.password.request') }}" class="text--base">@lang('Quên mật khẩu?')</a>
                             </div>
                             <div class="col-md-12">
-                                <button type="submit" class="btn btn--base w-100">@lang('SIGN IN ACCOUNT')</button>
+                                <button type="submit" class="btn btn--base w-100">@lang('Đăng nhập tài khoản')</button>
                             </div>
                         </form>
 

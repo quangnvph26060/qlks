@@ -5,15 +5,15 @@
             <div class="card">
                 <div class="card-header d-flex gap-2 flex-wrap justify-content-between">
                     <div class="card-title d-flex justify-content-between booking-info-title mb-0">
-                        <h5>@lang('Booking Information')</h5>
+                        <h5>@lang('Thông tin đặt phòng')</h5>
                     </div>
                     <div>
                         <span class="fas fa-circle text--danger" disabled></span>
-                        <span class="mr-5">@lang('Booked')</span>
+                        <span class="mr-5">@lang('Đã đặt')</span>
                         <span class="fas fa-circle text--success"></span>
-                        <span class="mr-5">@lang('Selected')</span>
+                        <span class="mr-5">@lang('Đã chọn')</span>
                         <span class="fas fa-circle text--primary"></span>
-                        <span>@lang('Available')</span>
+                        <span>@lang('Có sẵn')</span>
                     </div>
                 </div>
 
@@ -22,17 +22,17 @@
                     <div class="d-flex flex-wrap gap-3 justify-content-between mb-1">
                         <div class="d-flex flex-column mb-3">
                             <h6 class="text--primary">{{ $bookingRequest->roomType->name }}</h6>
-                            <small class="text-muted">@lang('Room Type')</small>
+                            <small class="text-muted">@lang('Loại phòng')</small>
                         </div>
 
                         <div class="d-flex flex-column mb-3">
                             <h6>{{ $bookingRequest->user->fullname }}</h6>
-                            <small class="text-muted">@lang('Guest Name')</small>
+                            <small class="text-muted">@lang('Tên khách hàng')</small>
                         </div>
 
                         <div class="d-flex flex-column mb-3">
                             <h6>+{{ $bookingRequest->user->mobile }}</h6>
-                            <small class="text-muted">@lang('Mobile')</small>
+                            <small class="text-muted">@lang('Di động')</small>
                         </div>
 
                         <div class="d-flex flex-column">

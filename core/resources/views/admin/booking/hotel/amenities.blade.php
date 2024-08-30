@@ -26,17 +26,17 @@
                                             <td>
                                                 <div class="button--group">
                                                     @can('admin.hotel.amenity.save')
-                                                        <button class="btn btn-sm btn-outline--primary cuModalBtn" data-has_status="1" data-modal_title="@lang('Update Amenity')" data-resource="{{ $item }}" type="button">
+                                                        <button class="btn btn-sm btn-outline--primary cuModalBtn" data-has_status="1" data-modal_title="@lang('Cập nhật tiện ích')" data-resource="{{ $item }}" type="button">
                                                             <i class="la la-pencil"></i>@lang('Edit')
                                                         </button>
                                                     @endcan
                                                     @can('admin.hotel.amenity.status')
                                                         @if ($item->status == Status::DISABLE)
-                                                            <button class="btn btn-sm btn-outline--success me-1 confirmationBtn" data-action="{{ route('admin.hotel.amenity.status', $item->id) }}" data-question="@lang('Are you sure to enable this amenities?')" type="button">
+                                                            <button class="btn btn-sm btn-outline--success me-1 confirmationBtn" data-action="{{ route('admin.hotel.amenity.status', $item->id) }}" data-question="@lang('Bạn có chắc chắn muốn bật tiện ích này không?')" type="button">
                                                                 <i class="la la-eye"></i> @lang('Enable')
                                                             </button>
                                                         @else
-                                                            <button class="btn btn-sm btn-outline--danger confirmationBtn" data-action="{{ route('admin.hotel.amenity.status', $item->id) }}" data-question="@lang('Are you sure to disable this amenities?')" type="button">
+                                                            <button class="btn btn-sm btn-outline--danger confirmationBtn" data-action="{{ route('admin.hotel.amenity.status', $item->id) }}" data-question="@lang('Bạn có chắc chắn muốn tắt tiện ích này không?')" type="button">
                                                                 <i class="la la-eye-slash"></i> @lang('Disable')
                                                             </button>
                                                         @endif
@@ -78,11 +78,11 @@
                         @csrf
                         <div class="modal-body">
                             <div class="form-group">
-                                <label> @lang('Amenities Title')</label>
+                                <label> @lang('Tiện ích')</label>
                                 <input class="form-control" name="title" required type="text" value="{{ old('title') }}">
                             </div>
                             <div class="form-group">
-                                <label> @lang('Icon')</label>
+                                <label> @lang('Biểu tượng')</label>
                                 <div class="input-group">
                                     <input autocomplete="off" class="form-control iconPicker icon" name="icon" required type="text">
                                     <span class="input-group-text input-group-addon" data-icon="las la-home" role="iconpicker"></span>
@@ -91,7 +91,7 @@
                         </div>
 
                         <div class="modal-footer">
-                            <button class="btn btn--primary w-100 h-45" type="submit">@lang('Submit')</button>
+                            <button class="btn btn--primary w-100 h-45" type="submit">@lang('Lưu')</button>
                         </div>
                     </form>
                 </div>

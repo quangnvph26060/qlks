@@ -16,14 +16,14 @@ class RoomTypeController extends Controller
 {
     public function index()
     {
-        $pageTitle   = 'All Room Types';
+        $pageTitle   = 'Tất cả các loại phòng';
         $typeList    = RoomType::with('amenities', 'facilities')->withCount('rooms')->latest()->paginate(getPaginate());
         return view('admin.hotel.room_type.list', compact('pageTitle', 'typeList'));
     }
 
     public function create()
     {
-        $pageTitle   = 'Add Room Type';
+        $pageTitle   = 'Thêm loại phòng';
         $amenities   = Amenity::active()->get();
         $facilities  = Facility::active()->get();
         $bedTypes    = BedType::all();
@@ -65,10 +65,10 @@ class RoomTypeController extends Controller
 
         if ($id) {
             $roomType         = RoomType::findOrFail($id);
-            $notification     = 'Room type updated successfully';
+            $notification     = 'Đã cập nhật loại phòng thành công';
         } else {
             $roomType         = new RoomType();
-            $notification     = 'Room type added successfully';
+            $notification     = 'Đã thêm loại phòng thành công';
         }
 
         $roomType->name                = $request->name;

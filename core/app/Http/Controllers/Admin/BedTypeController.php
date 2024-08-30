@@ -8,7 +8,7 @@ use App\Models\BedType;
 
 class BedTypeController extends Controller {
     public function index() {
-        $pageTitle   = "Bed List";
+        $pageTitle   = "Danh sách giường";
         $bedTypes = BedType::latest()->paginate(getPaginate());
         return view('admin.hotel.bed_type', compact('pageTitle', 'bedTypes'));
     }
@@ -20,10 +20,10 @@ class BedTypeController extends Controller {
 
         if ($id) {
             $bedType      = BedType::findOrFail($id);
-            $notification = 'Bed type updated successfully';
+            $notification = 'Đã cập nhật loại giường thành công';
         } else {
             $bedType      = new BedType();
-            $notification = 'Bed type added successfully';
+            $notification = 'Đã thêm loại giường thành công';
         }
 
         $bedType->name = $request->name;
@@ -35,7 +35,7 @@ class BedTypeController extends Controller {
 
     public function delete($id) {
         BedType::findOrFail($id)->delete();
-        $notify[] = ['success', 'Bed type deleted successfully'];
+        $notify[] = ['success', 'Đã xóa loại giường thành công'];
         return back()->withNotify($notify);
     }
 }

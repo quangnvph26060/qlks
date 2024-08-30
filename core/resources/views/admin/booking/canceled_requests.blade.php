@@ -8,10 +8,10 @@
                         <table class="table--light style--two table">
                             <thead>
                                 <tr>
-                                    <th>@lang('Username') | @lang('Email')</th>
-                                    <th>@lang('Room Qty') | @lang('Room Type')</th>
+                                    <th>@lang('Tên khách hàng') | @lang('Email')</th>
+                                    <th>@lang('Số lượng phòng') | @lang('Loại phòng')</th>
                                     <th>@lang('Check In') | @lang('Check Out')</th>
-                                    <th>@lang('Fare /Night') | @lang('Total Fare')</th>
+                                    <th>@lang('Giá /Đêm') | @lang('Tổng giá')</th>
                                 </tr>
                             </thead>
                             <tbody>

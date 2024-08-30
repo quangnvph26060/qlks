@@ -18,7 +18,7 @@ class BookRoomController extends Controller {
     use BookingActions;
 
     public function room() {
-        $pageTitle = 'Book Room';
+        $pageTitle = 'Đặt phòng';
         $roomTypes = RoomType::active()->get(['id', 'name']);
         $countries = json_decode(file_get_contents(resource_path('views/partials/country.json')));
         return view('admin.booking.book', compact('pageTitle', 'roomTypes', 'countries'));

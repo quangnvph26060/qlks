@@ -16,7 +16,7 @@ class BookingPremiumServiceController extends Controller
 {
     public function all()
     {
-        $pageTitle     = 'Add Premium Service';
+        $pageTitle     = 'Thêm dịch vụ cao cấp';
         $premiumService = PremiumService::active()->get();
         $services      = UsedPremiumService::searchable(['premiumService:name', 'room:room_number'])->with('premiumService', 'room', 'admin')->paginate(getPaginate());
         return view('admin.booking.service_details', compact('pageTitle', 'services'));
@@ -24,7 +24,7 @@ class BookingPremiumServiceController extends Controller
 
     public function addNew()
     {
-        $pageTitle     = 'Add Premium Service';
+        $pageTitle     = 'Thêm dịch vụ cao cấp';
         $premiumServices = PremiumService::active()->get();
         return view('admin.premium_service.add', compact('pageTitle', 'premiumServices'));
     }

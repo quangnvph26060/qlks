@@ -2,7 +2,7 @@
     <button class="sidebar-close d-xl-none"><i class="las la-times"></i></button>
     <ul class="user-sidebar__menu">
         <li class="{{ menuActive('user.home') }}"><a href="{{ route('user.home') }}"><i class="la la-home"></i>
-                @lang('Dashboard')</a></li>
+                @lang('Thống kê')</a></li>
 
         <li class="{{ menuActive('user.booking.request.all') }}"><a href="{{ route('user.booking.request.all') }}"><i class="la la-list"></i> @lang('Yêu cầu đặt phòng')</a>
         </li>
