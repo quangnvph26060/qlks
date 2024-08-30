@@ -22,24 +22,24 @@
                     @foreach ($bookedRoom as $booked)
                         <tr>
                             @if ($loop->first)
-                                <td class="bg--date text-center" data-label="@lang('Booked For')" rowspan="{{ count($bookedRoom) }}">
+                                <td class="bg--date text-center" data-label="@lang(' Đã đặt chỗ cho')" rowspan="{{ count($bookedRoom) }}">
                                     {{ showDateTime($booked->booked_for, 'd M, Y') }}
                                 </td>
                             @endif
-                            <td class="text-center" data-label="@lang('Room Type')">{{ __($booked->room->roomType->name) }}</td>
-                            <td data-label="@lang('Room No.')">{{ __($booked->room->room_number) }}
+                            <td class="text-center" data-label="@lang('Loại phòng')">{{ __($booked->room->roomType->name) }}</td>
+                            <td data-label="@lang('Phòng số')">{{ __($booked->room->room_number) }}
                                 @if ($booked->status == Status::ROOM_CANCELED)
-                                    <span class="text--danger text-sm">(@lang('Canceled'))</span>
+                                    <span class="text--danger text-sm">(@lang('Đã hủy'))</span>
                                 @endif
                             </td>
-                            <td data-label="@lang('Fare') / @lang('Night')">{{ showAmount($booked->fare) }}</td>
+                            <td data-label="@lang('Giá') / @lang('Đêm')">{{ showAmount($booked->fare) }}</td>
                         </tr>
                     @endforeach
                 @endforeach
 
                 <tr>
                     <td class="text-end" colspan="3">
-                        <span class="fw-bold">@lang('Total Fare')</span>
+                        <span class="fw-bold">@lang('Tổng giá')</span>
                     </td>
                     <td class="fw-bold">
                         {{ showAmount($totalFare) }}

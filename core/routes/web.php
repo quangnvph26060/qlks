@@ -7,7 +7,7 @@ Route::get('/clear', function () {
 });
 
 
-Route::get('cron', 'CronController@cron')->name('cron');
+// Route::get('cron', 'CronController@cron')->name('cron');
 
 // User Support Ticket
 Route::controller('TicketController')->prefix('ticket')->name('ticket.')->group(function () {

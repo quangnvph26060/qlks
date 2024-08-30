@@ -49,10 +49,11 @@ class RoomType extends Model {
                 $html = '';
 
                 if ($this->is_featured == Status::ROOM_TYPE_FEATURED) {
-                    $html = '<span class="badge badge--primary">' . trans('Featured') . '</span>';
+                    $html = '<span class="badge badge--primary">' . trans('Nổi bật') . '</span>';
+                    //Featured
                 } else {
-                    $html = '<span><span class="badge badge--dark">' . trans('Unfeatured') . '</span></span>';
-                }
+                    $html = '<span><span class="badge badge--dark">' . trans('Không có gì nổi bật') . '</span></span>';
+                }   //Unfeatured
 
                 return $html;
             }

@@ -207,7 +207,7 @@ class SiteController extends Controller
 
     public function maintenance()
     {
-        $pageTitle = 'Maintenance Mode';
+        $pageTitle = 'Chế độ bảo trì';
         if (gs('maintenance_mode') == Status::DISABLE) {
             return to_route('home');
         }
@@ -217,14 +217,14 @@ class SiteController extends Controller
 
     public function roomTypes()
     {
-        $pageTitle = 'Room Types';
+        $pageTitle = 'Loại phòng';
         $roomTypes = RoomType::active()->with('images', 'amenities')->with(['images', 'amenities'])->get();
         return view('Template::room.types', compact('pageTitle', 'roomTypes'));
     }
 
     public function filterRoomType(Request $request)
     {
-        $pageTitle = 'Room Types';
+        $pageTitle = 'Loại phòng';
         $roomTypes = RoomType::active();
         $date      = explode('-', $request->date);
 

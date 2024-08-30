@@ -88,11 +88,11 @@
                         @csrf
                         <div class="modal-body">
                             <div class="form-group">
-                                <label> @lang('Service Name')</label>
+                                <label> @lang('Tên Dịch vụ')</label>
                                 <input class="form-control" name="name" required type="text" value="{{ old('name') }}">
                             </div>
                             <div class="form-group">
-                                <label> @lang('Cost')</label>
+                                <label> @lang('Giá')</label>
                                 <div class="input-group">
                                     <input class="form-control" name="cost" required step="0.01" type="number" value="{{ old('cost') }}">
                                     <span class="input-group-text"> {{ $general->cur_text }}</span>
@@ -101,7 +101,7 @@
                         </div>
 
                         <div class="modal-footer">
-                            <button class="btn btn--primary w-100 h-45" type="submit">@lang('Submit')</button>
+                            <button class="btn btn--primary w-100 h-45" type="submit">@lang('Lưu')</button>
                         </div>
                     </form>
                 </div>

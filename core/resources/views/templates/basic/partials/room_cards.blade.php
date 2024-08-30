@@ -17,25 +17,25 @@
                 <div class="room-card__bottom justify-content-between align-items-center mt-2 gap-3">
                     <div>
                         <h6 class="price text--base">
-                            {{ showAmount($type->fare) }} / @lang('Night')
+                            {{ showAmount($type->fare) }} / @lang('Đêm')
                         </h6>
 
                         @isset($type->available_rooms)
                             <small class="text--muted ">
-                                @lang('Available Rooms'): {{ $type->available_rooms }}
+                                @lang('Phòng trống'): {{ $type->available_rooms }}
                             </small>
                         @endisset
 
                         <div class="room-capacity text--base d-flex align-items-center justify-content-center flex-wrap gap-3 mt-3">
                             <span class="custom--badge">
-                                @lang('Adult') &nbsp; {{ $type->total_adult }}
+                                @lang('Người lớn') &nbsp; {{ $type->total_adult }}
                             </span>
                             <span class="custom--badge">
-                                @lang('Child') &nbsp; {{ $type->total_child }}
+                                @lang('Trẻ em') &nbsp; {{ $type->total_child }}
                             </span>
 
                             <a class="btn btn-sm btn--base" href="{{ route('room.type.details', $type->slug) }}">
-                                <i class="la la-desktop me-2"></i>@lang('Book Now')
+                                <i class="la la-desktop me-2"></i>@lang('Đặt ngay')
                             </a>
                         </div>
 

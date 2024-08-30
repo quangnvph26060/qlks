@@ -18,21 +18,21 @@
                     @endif
 
                     <div class="d-flex flex-column fw-bold w-100">
-                        <p class="text--muted text--small">@lang('Mobile'):
+                        <p class="text--muted text--small">@lang('Số điện thoại'):
                             @if ($booking->user_id)
                                 +{{ $booking->user->mobile }}
                             @else
                                 +{{ $booking->guest_details->mobile }}
                             @endif
                         </p>
-                        <p class="text--muted text--small">@lang('Booking No.'):
+                        <p class="text--muted text--small">@lang('Số đặt chỗ'):
                             @can('admin.booking.all')
                                 <a class="text--small fw-bold" href="{{ route('admin.booking.details', $booking->id) }}">{{ $booking->booking_number }}</a>
                             @else
                                 <span class="text--small fw-bold">{{ $booking->booking_number }}</span>
                             @endcan
                         </p>
-                        <p class="text--muted text--small">@lang('Total Rooms'): {{ $booking->total_room }}</p>
+                        <p class="text--muted text--small">@lang('Tổng số phòng đặt'): {{ $booking->total_room }}</p>
 
                     </div>
                 </div>

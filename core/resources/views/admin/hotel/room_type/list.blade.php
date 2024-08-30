@@ -8,15 +8,15 @@
                         <table class="table--light style--two table">
                             <thead>
                                 <tr>
-                                    <th>@lang('Name')</th>
-                                    <th>@lang('Fare')</th>
-                                    <th>@lang('Rooms')</th>
-                                    <th>@lang('Adult')</th>
-                                    <th>@lang('Child')</th>
-                                    <th>@lang('Feature Status')</th>
-                                    <th>@lang('Status')</th>
+                                    <th>@lang('Tên phòng')</th>
+                                    <th>@lang('Giá')</th>
+                                    <th>@lang('Phòng')</th>
+                                    <th>@lang('Người lớn')</th>
+                                    <th>@lang('Trẻ em')</th>
+                                    <th>@lang('Trạng thái tính năng')</th>
+                                    <th>@lang('Trạng thái')</th>
                                     @can(['admin.hotel.room.type.edit', 'admin.hotel.room.type.status'])
-                                        <th>@lang('Action')</th>
+                                        <th>@lang('Hành động')</th>
                                     @endcan
                                 </tr>
                             </thead>
@@ -51,11 +51,11 @@
                                                     @endcan
                                                     @can('admin.hotel.room.type.status')
                                                         @if ($type->status == 0)
-                                                            <button class="btn btn-sm btn-outline--success ms-1 confirmationBtn" data-action="{{ route('admin.hotel.room.type.status', $type->id) }}" data-question="@lang('Are you sure to enable this room type?')">
+                                                            <button class="btn btn-sm btn-outline--success ms-1 confirmationBtn" data-action="{{ route('admin.hotel.room.type.status', $type->id) }}" data-question="@lang('Bạn có chắc chắn muốn bật loại phòng này không?')">
                                                                 <i class="la la-eye"></i>@lang('Enable')
                                                             </button>
                                                         @else
-                                                            <button class="btn btn-sm btn-outline--danger ms-1 confirmationBtn" data-action="{{ route('admin.hotel.room.type.status', $type->id) }}" data-question="@lang('Are you sure to disable this room type?')">
+                                                            <button class="btn btn-sm btn-outline--danger ms-1 confirmationBtn" data-action="{{ route('admin.hotel.room.type.status', $type->id) }}" data-question="@lang('Bạn có chắc chắn muốn vô hiệu hóa loại phòng này không?')">
                                                                 <i class="la la-eye-slash"></i>@lang('Disable')
                                                             </button>
                                                         @endif

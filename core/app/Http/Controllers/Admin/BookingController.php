@@ -107,9 +107,9 @@ class BookingController extends Controller {
     }
 
     public function upcomingCheckout() {
-        $pageTitle       = 'Upcoming Checkout Bookings';
+        $pageTitle       = 'Đặt phòng thanh toán sắp tới';
         $bookings        = Booking::active()->whereDate('check_out', '>', now())->whereDate('check_out', '<=', now()->addDays(gs('upcoming_checkout_days')))->with('user')->withCount('activeBookedRooms as total_room')->orderBy('check_out')->get()->groupBy('check_out');
-        $emptyMessage    = 'No upcoming checkout found';
+        $emptyMessage    = 'Không tìm thấy khoản thanh toán sắp tới';
 
         return view('admin.booking.upcoming_checkin_checkout', compact('pageTitle', 'bookings', 'emptyMessage'));
     }
@@ -132,7 +132,7 @@ class BookingController extends Controller {
 
     public function bookedRooms($id) {
         $booking = Booking::findOrFail($id);
-        $pageTitle = 'Booked Rooms';
+        $pageTitle = 'Phòng đã đặt';
         $bookedRooms = BookedRoom::where('booking_id', $id)->with('booking.user', 'room.roomType')->orderBy('booked_for')->get()->groupBy('booked_for');
         return view('admin.booking.booked_rooms', compact('pageTitle', 'bookedRooms', 'booking'));
     }

@@ -13,7 +13,7 @@
     <link href="{{ asset('assets/global/css/line-awesome.min.css') }}" rel="stylesheet">
 
     <link href="{{ asset('assets/global/css/all.min.css') }}" rel="stylesheet">
-
+    <link href="{{ asset('assets/global/css/bootstrap.min.css') }}" rel="stylesheet">
     <link href="{{ asset('assets/global/css/line-awesome.min.css') }}" rel="stylesheet" />
 
     <!-- slick slider css -->

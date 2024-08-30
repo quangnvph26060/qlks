@@ -21,7 +21,7 @@
             "Command dashboard",
             "Main control panel"
         ],
-        "title": "Dashboard",
+        "title": "Thống kê",
         "icon": "las la-home",
         "route_name": "admin.dashboard",
         "menu_active": "admin.dashboard"
@@ -392,7 +392,7 @@
                     "Guest activity",
                     "Guest analytics"
                 ],
-                "title": "Active Guests",
+                "title": "Khách hàng tích cực",
                 "route_name": "admin.users.active",
                 "menu_active": "admin.users.active"
             },
@@ -404,7 +404,7 @@
                     "Account bans",
                     "Guest activity"
                 ],
-                "title": "Banned Guests",
+                "title": "Khách hàng bị cấm",
                 "route_name": "admin.users.banned",
                 "menu_active": "admin.users.banned",
                 "counter": "bannedUsersCount"
@@ -417,7 +417,7 @@
                     "Guest authentication",
                     "Guest management"
                 ],
-                "title": "Email Unverified",
+                "title": "Email chưa được xác minh",
                 "route_name": "admin.users.email.unverified",
                 "menu_active": "admin.users.email.unverified",
                 "counter": "emailUnverifiedUsersCount"
@@ -430,7 +430,7 @@
                     "Guest authentication",
                     "Guest management"
                 ],
-                "title": "Mobile Unverified",
+                "title": "Di động chưa được xác minh",
                 "route_name": "admin.users.mobile.unverified",
                 "menu_active": "admin.users.mobile.unverified",
                 "counter": "mobileUnverifiedUsersCount"
@@ -444,7 +444,7 @@
                     "Guest activity",
                     "Guest analytics"
                 ],
-                "title": "All Guests",
+                "title": "Tất cả khách",
                 "route_name": "admin.users.all",
                 "menu_active": "admin.users.all"
             },
@@ -456,7 +456,7 @@
                     "Guest management",
                     "Guest activity"
                 ],
-                "title": "Send Notification",
+                "title": "Gửi thông báo",
                 "route_name": "admin.users.notification.all",
                 "menu_active": "admin.users.notification.all"
             }
@@ -470,13 +470,13 @@
             "Subscriber list",
             "Subscriber activity"
         ],
-        "title": "Subscribers",
+        "title": "Người đăng ký",
         "icon": "las la-thumbs-up",
         "route_name": "admin.subscriber.index",
         "menu_active": "admin.subscriber.*"
     },
     "support_ticket": {
-        "title": "Support Ticket",
+        "title": "Hỗ trợ",
         "header": "Support & Report",
         "icon": "la la-ticket",
         "counters": [

@@ -16,11 +16,11 @@
                     </div>
                     <ul class="list-group">
                         <li class="list-group-item d-flex justify-content-between align-items-center">
-                            @lang('Name')
+                            @lang('Tên')
                             <span class="fw-bold">{{ __($admin->name) }}</span>
                         </li>
                         <li class="list-group-item d-flex justify-content-between align-items-center">
-                            @lang('Username')
+                            @lang('Tên người dùng')
                             <span  class="fw-bold">{{ __($admin->username) }}</span>
                         </li>
                         <li class="list-group-item d-flex justify-content-between align-items-center">
@@ -35,26 +35,26 @@
         <div class="col-lg-9 col-md-9 mb-30">
             <div class="card">
                 <div class="card-body">
-                    <h5 class="card-title mb-4 border-bottom pb-2">@lang('Change Password')</h5>
+                    <h5 class="card-title mb-4 border-bottom pb-2">@lang('Thay đổi mật khẩu')</h5>
 
                     <form action="{{ route('admin.password.update') }}" method="POST" enctype="multipart/form-data">
                         @csrf
 
                         <div class="form-group">
-                            <label>@lang('Password')</label>
+                            <label>@lang('Mật khẩu')</label>
                             <input class="form-control" type="password" name="old_password" required>
                         </div>
 
                         <div class="form-group">
-                            <label>@lang('New Password')</label>
+                            <label>@lang('Mật khẩu mới ')</label>
                             <input class="form-control" type="password" name="password" required>
                         </div>
 
                         <div class="form-group">
-                            <label>@lang('Confirm Password')</label>
+                            <label>@lang('Xác nhận mật khẩu')</label>
                             <input class="form-control" type="password" name="password_confirmation" required>
                         </div>
-                        <button type="submit" class="btn btn--primary w-100 btn-lg h-45">@lang('Submit')</button>
+                        <button type="submit" class="btn btn--primary w-100 btn-lg h-45">@lang('Xác nhận')</button>
                     </form>
                 </div>
             </div>
@@ -65,7 +65,7 @@
 @endsection
 
 @push('breadcrumb-plugins')
-    <a href="{{route('admin.profile')}}" class="btn btn-sm btn-outline--primary" ><i class="las la-user"></i>@lang('Profile Setting')</a>
+    <a href="{{route('admin.profile')}}" class="btn btn-sm btn-outline--primary" ><i class="las la-user"></i>@lang('Thiết lập hồ sơ')</a>
 @endpush
 @push('style')
     <style>
