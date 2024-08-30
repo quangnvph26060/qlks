@@ -1,9 +1,9 @@
 <div class="card">
     <div class="card-body">
-        <h5 class="card-title">@lang('Guest Info')</h5>
+        <h5 class="card-title">@lang('Thông tin khách')</h5>
         <div class="list">
             <div class="list-item">
-                <span>@lang('Name')</span>
+                <span>@lang('Họ tên khách hàng')</span>
                 <span>
                     @if ($booking->user_id)
                         @can('admin.users.detail')
@@ -27,7 +27,7 @@
                 </span>
             </div>
             <div class="list-item">
-                <span>@lang('Phone')</span>
+                <span>@lang('Di động')</span>
                 <span>
                     @if ($booking->user_id)
                         +{{ $booking->user->mobile }}
@@ -37,7 +37,7 @@
                 </span>
             </div>
             <div class="list-item">
-                <span>@lang('Address')</span>
+                <span>@lang('Địa chỉ')</span>
                 <span>
                     @if ($booking->user_id)
                         {{ $booking->user->address ?? 'N/A' }}

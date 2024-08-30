@@ -378,7 +378,7 @@
                 <div class="accordion-item">
                     <h2 class="accordion-header" id="summaryHeading">
                         <button aria-controls="summaryBody" aria-expanded="false" class="accordion-button" data-bs-target="#summaryBody" data-bs-toggle="collapse" type="button">
-                            @lang('Payment Info')
+                            @lang('Thông tin thanh toán')
                         </button>
                     </h2>
                     <div aria-labelledby="summaryHeading" class="accordion-collapse collapse show" data-bs-parent="#s" id="summaryBody">

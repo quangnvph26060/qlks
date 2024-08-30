@@ -9,7 +9,7 @@
                     </div>
                     <div class="widget-card-content">
                         <h6 class="widget-card-amount">{{ showAmount($successful) }}</h6>
-                        <p class="widget-card-title">@lang('Successful Payment')</p>
+                        <p class="widget-card-title">@lang('Thanh toán thành công')</p>
                     </div>
                 </div>
                 <span class="widget-card-arrow">
@@ -25,7 +25,7 @@
                     </div>
                     <div class="widget-card-content">
                         <h6 class="widget-card-amount">{{ showAmount($pending) }}</h6>
-                        <p class="widget-card-title">@lang('Pending Payment')</p>
+                        <p class="widget-card-title">@lang('Đang chờ thanh toán')</p>
                     </div>
                 </div>
                 <span class="widget-card-arrow">
@@ -41,7 +41,7 @@
                     </div>
                     <div class="widget-card-content">
                         <h6 class="widget-card-amount">{{ showAmount($rejected) }}</h6>
-                        <p class="widget-card-title">@lang('Rejected Payment')</p>
+                        <p class="widget-card-title">@lang('Thanh toán bị từ chối')</p>
                     </div>
                 </div>
                 <span class="widget-card-arrow">
@@ -57,7 +57,7 @@
                     </div>
                     <div class="widget-card-content">
                         <h6 class="widget-card-amount">{{ showAmount($initiated) }}</h6>
-                        <p class="widget-card-title">@lang('Initiated Payment')</p>
+                        <p class="widget-card-title">@lang('Thanh toán đã khởi tạo')</p>
                     </div>
                 </div>
                 <span class="widget-card-arrow">

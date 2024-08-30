@@ -159,7 +159,7 @@
                     "Kiểm tra hôm nay",
                     "Checkin"
                 ],
-                "title": "Todays Check-In",
+                "title": "Check-in hôm nay",
                 "route_name": "admin.booking.todays.checkin",
                 "menu_active": "admin.booking.todays.checkin"
             },
@@ -293,7 +293,7 @@
                     "Quản lý thanh toán",
                     "Hoạt động thanh toán"
                 ],
-                "title": "SThanh toán thành công",
+                "title": "Thanh toán thành công",
                 "route_name": "admin.deposit.successful",
                 "menu_active": "admin.deposit.successful",
                 "params": {

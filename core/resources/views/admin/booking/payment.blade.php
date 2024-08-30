@@ -23,24 +23,24 @@
                     <div class="card">
                         <div class="card-body">
                             @if ($due < 0)
-                                <h5 class="card-title">@lang('Refund Amount')</h5>
-                                <h5 class="text--danger text-center">@lang('Refundable Amount'): {{ showAmount(abs($due)) }}</h5>
+                                <h5 class="card-title">@lang('Số tiền hoàn lại')</h5>
+                                <h5 class="text--danger text-center">@lang('Số tiền hoàn lại'): {{ showAmount(abs($due)) }}</h5>
                             @else
-                                <h5 class="card-title"> @lang('Receive Payment')</h5>
-                                <h5 class="text-center text--success"> @lang('Receivable Amount'): {{ showAmount(abs($due)) }}</h5>
+                                <h5 class="card-title"> @lang('Nhận thanh toán')</h5>
+                                <h5 class="text-center text--success"> @lang('Số tiền phải thu'): {{ showAmount(abs($due)) }}</h5>
                             @endif
 
                             <form action="{{ route('admin.booking.payment', $booking->id) }}" method="post">
                                 @csrf
                                 <div class="form-group">
-                                    <label>@lang('Enter Amount')</label>
+                                    <label>@lang('Nhập số tiền')</label>
                                     <div class="input-group">
                                         <input class="form-control" min="0" name="amount" required step="any" type="number">
                                         <span class="input-group-text">{{ __(gs()->cur_text) }}</span>
                                     </div>
                                 </div>
                                 @can('admin.booking.payment')
-                                    <button @disabled(abs($due) == 0) class="btn btn--primary w-100 h-45" type="submit">@lang('Submit')</button>
+                                    <button @disabled(abs($due) == 0) class="btn btn--primary w-100 h-45" type="submit">@lang('Xác nhận')</button>
                                 @endcan
                             </form>
                         </div>
@@ -65,20 +65,20 @@
                             <input name="type" type="hidden">
                             <div class="modal-body">
                                 <div class="form-group">
-                                    <label>@lang('Amount')</label>
+                                    <label>@lang('Tổng')</label>
                                     <div class="input-group">
                                         <input class="form-control" min="0" name="amount" required step="any" type="number">
                                         <span class="input-group-text">{{ __(gs()->cur_text) }}</span>
                                     </div>
                                 </div>
                                 <div class="form-group">
-                                    <label>@lang('Reason')</label>
+                                    <label>@lang('Lý do')</label>
                                     <textarea class="form-control" name="reason" required rows="4"></textarea>
                                 </div>
                             </div>
 
                             <div class="modal-footer">
-                                <button class="btn btn--primary h-45 w-100" type="submit">@lang('Submit')</button>
+                                <button class="btn btn--primary h-45 w-100" type="submit">@lang('Xác nhận')</button>
                             </div>
                         </form>
                     </div>
@@ -90,12 +90,12 @@
     @push('breadcrumb-plugins')
         @can('admin.booking.extra.charge.add')
             <button class="btn btn--success extraChargeBtn" data-id="{{ $booking->id }}" data-type="add">
-                <i class="las la-plus-circle"></i>@lang('Add Extra Charge')
+                <i class="las la-plus-circle"></i>@lang('Thêm phí bổ sung')
             </button>
         @endcan
 
         @can('admin.booking.extra.charge.subtract')
-            <button class="btn btn--danger extraChargeBtn" data-id="{{ $booking->id }}" data-type="subtract"><i class="las la-minus-circle"></i>@lang('Subtract Extra Charge')</button>
+            <button class="btn btn--danger extraChargeBtn" data-id="{{ $booking->id }}" data-type="subtract"><i class="las la-minus-circle"></i>@lang('Trừ Phí Thêm')</button>
         @endcan
     @endpush
 

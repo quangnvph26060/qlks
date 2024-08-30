@@ -182,13 +182,13 @@
         $due = $booking->total_amount - $booking->paid_amount;
     @endphp
 
-    <h5 class="text--secondary mt-4 mb-3 text-center">@lang('Payment Info')</h5>
+    <h5 class="text--secondary mt-4 mb-3 text-center">@lang('Thông tin thanh toán')</h5>
     <div class="card shadow">
         <div class="card-body">
             <ul class="list-group list-group-flush">
 
                 <li class="d-flex justify-content-between list-group-item align-items-start">
-                    <span>@lang('Total Fare')</span>
+                    <span>@lang('Tổng giá')</span>
                     <span> +{{ showAmount($totalFare) }}</span>
                 </li>
                 <li class="d-flex justify-content-between list-group-item align-items-start">
@@ -198,7 +198,7 @@
 
                 @if ($canceledFare > 0)
                     <li class="d-flex justify-content-between list-group-item align-items-start">
-                        <span>@lang('Canceled Tax')</span>
+                        <span>@lang('Thuế đã hủy')</span>
                         <span> -{{ showAmount($canceledFare) }}</span>
                     </li>
                 @endif

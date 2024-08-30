@@ -13,14 +13,14 @@
 
                                     <div class="col-md-12">
                                         <div class="form-group">
-                                            <label class="form-label">@lang('Username')</label>
+                                            <label class="form-label">@lang('Tên khách hàng')</label>
                                             <input type="text" class="form-control form--control checkUser" name="username" value="{{ old('username') }}" required>
                                             <small class="text--danger usernameExist"></small>
                                         </div>
                                     </div>
                                     <div class="col-md-6">
                                         <div class="form-group">
-                                            <label class="form-label">@lang('Country')</label>
+                                            <label class="form-label">@lang('Quốc gia')</label>
                                             <select name="country" class="form-control form--control select2" required>
                                                 @foreach ($countries as $key => $country)
                                                     <option data-mobile_code="{{ $country->dial_code }}" value="{{ $country->country }}" data-code="{{ $key }}">{{ __($country->country) }}
@@ -32,7 +32,7 @@
 
                                     <div class="col-md-6">
                                         <div class="form-group">
-                                            <label class="form-label">@lang('Mobile')</label>
+                                            <label class="form-label">@lang('Di động')</label>
                                             <div class="input-group ">
                                                 <span class="input-group-text mobile-code">
 
@@ -46,26 +46,26 @@
                                     </div>
 
                                     <div class="form-group col-sm-6">
-                                        <label class="form-label">@lang('Address')</label>
+                                        <label class="form-label">@lang('Địa chỉ')</label>
                                         <input class="form-control form--control" name="address" type="text" value="{{ old('address') }}">
                                     </div>
                                     <div class="form-group col-sm-6">
-                                        <label class="form-label">@lang('State')</label>
+                                        <label class="form-label">@lang('Tình trạng')</label>
                                         <input class="form-control form--control" name="state" type="text" value="{{ old('state') }}">
                                     </div>
                                     <div class="form-group col-sm-6">
-                                        <label class="form-label">@lang('Zip Code')</label>
+                                        <label class="form-label">@lang('Mã bưu điện')</label>
                                         <input class="form-control form--control" name="zip" type="text" value="{{ old('zip') }}">
                                     </div>
 
                                     <div class="form-group col-sm-6">
-                                        <label class="form-label">@lang('City')</label>
+                                        <label class="form-label">@lang('Thành phố')</label>
                                         <input class="form-control form--control" name="city" type="text" value="{{ old('city') }}">
                                     </div>
                                 </div>
                                 <div class="form-group">
                                     <button class="btn btn--base w-100" type="submit">
-                                        @lang('Submit')
+                                        @lang('Xác nhận')
                                     </button>
                                 </div>
                             </form>

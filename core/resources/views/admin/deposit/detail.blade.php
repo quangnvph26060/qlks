@@ -4,7 +4,7 @@
         <div class="col-xl-4 col-md-6 mb-30">
             <div class="card overflow-hidden box--shadow1">
                 <div class="card-body">
-                    <h5 class="mb-20 text-muted">@lang('Payment Via') @if ($deposit->method_code < 5000)
+                    <h5 class="mb-20 text-muted">@lang('Thanh toán') @if ($deposit->method_code < 5000)
                             {{ __(@$deposit->gateway->name) }}
                         @else
                             @lang('Google Pay')
@@ -12,21 +12,21 @@
                     </h5>
                     <ul class="list-group">
                         <li class="list-group-item d-flex justify-content-between align-items-center">
-                            @lang('Date')
+                            @lang('Ngày')
                             <span class="fw-bold">{{ showDateTime($deposit->created_at) }}</span>
                         </li>
                         <li class="list-group-item d-flex justify-content-between align-items-center">
-                            @lang('Transaction Number')
+                            @lang('Số giao dịch')
                             <span class="fw-bold">{{ $deposit->trx }}</span>
                         </li>
                         <li class="list-group-item d-flex justify-content-between align-items-center">
-                            @lang('Username')
+                            @lang('Khách hàng')
                             <span class="fw-bold">
                                 <a href="{{ route('admin.users.detail', $deposit->user_id) }}"><span>@</span>{{ @$deposit->user->username }}</a>
                             </span>
                         </li>
                         <li class="list-group-item d-flex justify-content-between align-items-center">
-                            @lang('Method')
+                            @lang('Phương thức')
                             <span class="fw-bold">
                                 @if ($deposit->method_code < 5000)
                                     {{ __(@$deposit->gateway->name) }}
@@ -36,7 +36,7 @@
                             </span>
                         </li>
                         <li class="list-group-item d-flex justify-content-between align-items-center">
-                            @lang('Amount')
+                            @lang('Tổng tiền')
                             <span class="fw-bold">{{ showAmount($deposit->amount) }}</span>
                         </li>
                         <li class="list-group-item d-flex justify-content-between align-items-center">
@@ -48,7 +48,7 @@
                             <span class="fw-bold">{{ showAmount($deposit->amount + $deposit->charge) }}</span>
                         </li>
                         <li class="list-group-item d-flex justify-content-between align-items-center">
-                            @lang('Rate')
+                            @lang('Tỷ lệ')
                             <span class="fw-bold">1 {{ __(gs('cur_text')) }}
                                 = {{ showAmount($deposit->rate, currencyFormat: false) }} {{ __($deposit->baseCurrency()) }}</span>
                         </li>
@@ -57,7 +57,7 @@
                             <span class="fw-bold">{{ showAmount($deposit->final_amount, currencyFormat: false) }} {{ __($deposit->method_currency) }}</span>
                         </li>
                         <li class="list-group-item d-flex justify-content-between align-items-center">
-                            @lang('Status')
+                            @lang('Trạng thái')
                             @php echo $deposit->statusBadge @endphp
                         </li>
                         @if ($deposit->admin_feedback)
@@ -75,7 +75,7 @@
             <div class="col-xl-8 col-md-6 mb-30">
                 <div class="card overflow-hidden box--shadow1">
                     <div class="card-body">
-                        <h5 class="card-title border-bottom pb-2">@lang('User Payment Information')</h5>
+                        <h5 class="card-title border-bottom pb-2">@lang('Thông tin thanh toán của khách hàng')</h5>
                         @if ($details != null)
                             @foreach (json_decode($details) as $val)
                                 @if ($deposit->method_code >= 1000)
@@ -89,10 +89,10 @@
                                                     @can('admin.download.attachment')
                                                         <a href="{{ route('admin.download.attachment', encrypt(getFilePath('verify') . '/' . $val->value)) }}" class="me-3"><i class="fa-regular fa-file"></i> @lang('Attachment') </a>
                                                     @else
-                                                        <small class="text-muted">@lang('You don\'t have permission to access this file')</small>
+                                                        <small class="text-muted">@lang('Bạn không có quyền truy cập vào tập tin này')</small>
                                                     @endcan
                                                 @else
-                                                    @lang('No File')
+                                                    @lang('Không có tập tin')
                                                 @endif
                                             @else
                                                 <p>{{ __($val->value) }}</p>

@@ -526,7 +526,7 @@
 								</script>
 							<?php
                                 } else if ($action == 'requirements') {
-                                    $btnText = 'View Detailed Check Result';
+                                    $btnText = 'Xem kết quả kiểm tra chi tiết';
                                     if (count($failed)) {
                                         $btnText = 'View Passed Check';
                                         echo '<div class="item table-area"><table class="requirment-table">';
