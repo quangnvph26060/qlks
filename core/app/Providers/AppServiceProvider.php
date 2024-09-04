@@ -49,7 +49,7 @@ class AppServiceProvider extends ServiceProvider
         $activeTemplate = activeTemplate();
         $viewShare['activeTemplate'] = $activeTemplate;
         $viewShare['activeTemplateTrue'] = activeTemplate(true);
-        $viewShare['emptyMessage'] = 'Data not found';
+        $viewShare['emptyMessage'] = 'Không tìm thấy dữ liệu';
         view()->share($viewShare);
 
 

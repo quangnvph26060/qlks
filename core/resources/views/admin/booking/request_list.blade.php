@@ -56,7 +56,7 @@
                                             {{ $bookingRequest->bookFor() }} @lang('Night')
                                             <br>
                                             <span>
-                                                {{ $bookingRequest->number_of_rooms }} @lang('Room')
+                                                {{ $bookingRequest->number_of_rooms }} @lang('Phòng')
                                             </span>
                                         </td>
                                         <td>
@@ -69,12 +69,12 @@
                                         @can(['admin.request.booking.approve', 'admin.request.booking.cancel'])
                                             <td>
                                                 @can('admin.request.booking.approve')
-                                                    <a class="btn btn-sm btn-outline--success ms-1" href="{{ route('admin.request.booking.approve', $bookingRequest->id) }}"><i class="las la-check"></i>@lang('Approve')</a>
+                                                    <a class="btn btn-sm btn-outline--success ms-1" href="{{ route('admin.request.booking.approve', $bookingRequest->id) }}"><i class="las la-check"></i>@lang('Chấp thuận')</a>
                                                 @endcan
 
                                                 @can('admin.request.booking.cancel')
-                                                    <button class="btn btn-sm btn-outline--danger confirmationBtn ms-1" data-action="{{ route('admin.request.booking.cancel', $bookingRequest->id) }}" data-question="@lang('Are you sure, you want to cancel this booking request?')">
-                                                        <i class="las la-times-circle"></i>@lang('Cancel')
+                                                    <button class="btn btn-sm btn-outline--danger confirmationBtn ms-1" data-action="{{ route('admin.request.booking.cancel', $bookingRequest->id) }}" data-question="@lang('Bạn có chắc chắn muốn hủy yêu cầu đặt chỗ này không?')">
+                                                        <i class="las la-times-circle"></i>@lang('Hủy bỏ')
                                                     </button>
                                                 @endcan
                                             </td>
@@ -110,6 +110,6 @@
     @endcan
 
     @can('admin.request.booking.canceled')
-        <a class="btn btn-outline--danger" href="{{ route('admin.request.booking.canceled') }}"><i class="las la-times-circle"></i>@lang('Canceled Requests')</a>
+        <a class="btn btn-outline--danger" href="{{ route('admin.request.booking.canceled') }}"><i class="las la-times-circle"></i>@lang('Yêu cầu đã hủy')</a>
     @endcan
 @endpush

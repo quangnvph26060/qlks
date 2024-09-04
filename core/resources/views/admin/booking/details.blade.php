@@ -102,7 +102,7 @@
 
                             <div>
                                 @if ($due < 0)
-                                    <small class="fw-500">@lang('Refundable') </small> <br>
+                                    <small class="fw-500">@lang('Có thể hoàn trả') </small> <br>
                                     <span class="text--warning">{{ showAmount(abs($due)) }}</span>
                                 @else
                                     <small class="fw-500">@lang('Phải thu từ khách hàng')</small><br>
@@ -336,7 +336,7 @@
                 <div class="accordion-item">
                     <h2 class="accordion-header" id="paymentReturned">
                         <button aria-controls="paymentsReturned" aria-expanded="false" class="accordion-button" data-bs-target="#paymentsReturned" data-bs-toggle="collapse" type="button">
-                            @lang('Payments Returned')
+                            @lang('Thanh toán được trả lại')
                         </button>
                     </h2>
                     <div aria-labelledby="paymentReturned" class="accordion-collapse collapse show" data-bs-parent="#s" id="paymentsReturned">
@@ -344,9 +344,9 @@
                             <table class="custom--table head--base table table-striped">
                                 <thead>
                                     <tr>
-                                        <th>@lang('Time')</th>
-                                        <th>@lang('Payment Type')</th>
-                                        <th>@lang('Amount')</th>
+                                        <th>@lang('Thời gian')</th>
+                                        <th>@lang('Phương thức thanh toán')</th>
+                                        <th>@lang('Tổng')</th>
                                     </tr>
                                 </thead>
 
@@ -386,7 +386,7 @@
                             <ul class="list-group list-group-flush">
 
                                 <li class="d-flex justify-content-between list-group-item align-items-start">
-                                    <span>@lang('Total Fare')</span>
+                                    <span>@lang('Tổng giá vé')</span>
                                     <span> +{{ showAmount($totalFare) }}</span>
                                 </li>
                                 <li class="d-flex justify-content-between list-group-item align-items-start">
@@ -395,46 +395,46 @@
                                 </li>
 
                                 <li class="d-flex justify-content-between list-group-item align-items-start">
-                                    <span>@lang('Canceled Tax')</span>
+                                    <span>@lang('Thuế đã hủy')</span>
                                     <span> -{{ showAmount($canceledFare) }}</span>
                                 </li>
 
                                 <li class="d-flex justify-content-between list-group-item align-items-start">
-                                    <span>@lang('Canceled') {{ __(gs()->tax_name) }} @lang('Charge')</span>
+                                    <span>@lang('Đã hủy') {{ __(gs()->tax_name) }} @lang('Charge')</span>
                                     <span> -{{ showAmount($canceledTaxCharge) }}</span>
                                 </li>
 
                                 <li class="d-flex justify-content-between list-group-item align-items-start">
-                                    <span>@lang('Extra Service Charge')</span>
+                                    <span>@lang('Phí dịch vụ bổ sung')</span>
                                     <span> +{{ showAmount($booking->service_cost) }}</span>
                                 </li>
 
                                 @if ($booking->extraCharge() > 0)
                                     <li class="d-flex justify-content-between list-group-item align-items-start">
-                                        <span>@lang('Other Charges')</span>
+                                        <span>@lang('Các khoản phí khác')</span>
                                         <span> +{{ showAmount($booking->extraCharge()) }}</span>
                                     </li>
                                 @endif
 
                                 @if ($booking->cancellation_fee > 0)
                                     <li class="d-flex justify-content-between list-group-item align-items-start">
-                                        <span>@lang('Cancellation Fee')</span>
+                                        <span>@lang('Phí hủy bỏ')</span>
                                         <span> +{{ showAmount($booking->cancellation_fee) }}</span>
                                     </li>
                                 @endif
 
                                 <li class="d-flex justify-content-between list-group-item align-items-start">
-                                    <span class="fw-bold">@lang('Total Amount')</span>
+                                    <span class="fw-bold">@lang('Tổng số tiền')</span>
                                     <span class="fw-bold"> = {{ showAmount($booking->total_amount) }}</span>
                                 </li>
 
                                 <li class="d-flex justify-content-between list-group-item align-items-start">
-                                    <span>@lang('Payment Received')</span>
+                                    <span>@lang('Thanh toán đã nhận')</span>
                                     <span>{{ showAmount($receivedPyaments->sum('amount')) }}</span>
                                 </li>
 
                                 <li class="d-flex justify-content-between list-group-item align-items-start">
-                                    <span>@lang('Refunded')</span>
+                                    <span>@lang('Đã hoàn lại')</span>
                                     <span>{{ showAmount($returnedPyaments->sum('amount')) }}</span>
                                 </li>
 
@@ -442,10 +442,10 @@
 
                                 <li class="d-flex justify-content-between list-group-item align-items-start">
                                     @if ($due < 0)
-                                        <span class="text--warning fw-bold">@lang('Refundable') </span>
+                                        <span class="text--warning fw-bold">@lang('Có thể hoàn trả') </span>
                                         <span class="text--warning fw-bold">{{ showAmount(abs($due)) }}</span>
                                     @else
-                                        <span class="@if ($due > 0) text--danger @else text--success @endif fw-bold">@lang('Receivable from User')</span>
+                                        <span class="@if ($due > 0) text--danger @else text--success @endif fw-bold">@lang('Phải thu từ người dùng')</span>
                                         <span class="@if ($due > 0) text--danger @else text--success @endif fw-bold"> {{ showAmount(abs($due)) }}</span>
                                     @endif
                                 </li>
@@ -463,7 +463,7 @@
         @push('breadcrumb-plugins')
             @can('admin.booking.all')
                 <a class="btn btn-sm btn--primary" href="{{ route('admin.booking.all') }}">
-                    <i class="la la-list"></i>@lang('All Bookings')
+                    <i class="la la-list"></i>@lang('Tất cả các đặt phòng')
                 </a>
             @endcan
 

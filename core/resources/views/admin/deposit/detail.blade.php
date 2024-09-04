@@ -110,12 +110,12 @@
                                 <div class="row mt-4">
                                     <div class="col-md-12">
                                         @can('admin.deposit.approve')
-                                            <button class="btn btn-outline--success btn-sm ms-1 confirmationBtn" data-action="{{ route('admin.deposit.approve', $deposit->id) }}" data-question="@lang('Are you sure to approve this transaction?')"><i class="las la-check"></i>
-                                                @lang('Approve')
+                                            <button class="btn btn-outline--success btn-sm ms-1 confirmationBtn" data-action="{{ route('admin.deposit.approve', $deposit->id) }}" data-question="@lang('Bạn có chắc chắn chấp thuận giao dịch này không?')"><i class="las la-check"></i>
+                                                @lang('Chấp thuận')
                                             </button>
                                         @endcan
                                         @can('admin.deposit.reject')
-                                            <button class="btn btn-outline--danger btn-sm ms-1" data-bs-toggle="modal" data-bs-target="#rejectModal"><i class="las la-ban"></i> @lang('Reject')
+                                            <button class="btn btn-outline--danger btn-sm ms-1" data-bs-toggle="modal" data-bs-target="#rejectModal"><i class="las la-ban"></i> @lang('Từ chối')
                                             </button>
                                         @endcan
                                     </div>

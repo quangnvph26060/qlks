@@ -47,7 +47,7 @@ class BookingRequest extends Model {
             $text = 'Pending';
         } elseif ($this->status == Status::BOOKING_REQUEST_APPROVED) {
             $className .= 'success';
-            $text = 'Approved';
+            $text = 'Chấp thuận';
         } elseif ($this->status == Status::BOOKING_REQUEST_CANCELED) {
             $className .= 'danger';
             $text = 'Canceled';

@@ -19,7 +19,7 @@
 
             <div class="list-item fw-bold">
                 @if ($due < 0)
-                    <span class="text-danger">@lang('Refundable') </span>
+                    <span class="text-danger">@lang('Có thể hoàn trả') </span>
                     <span class="text-danger"> = {{ showAmount(abs($due)) }}</span>
                 @else
                     <span>@lang('Phải thu từ người dùng')</span>

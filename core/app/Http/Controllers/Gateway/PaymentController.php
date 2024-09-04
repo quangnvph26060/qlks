@@ -37,12 +37,12 @@ class PaymentController extends Controller
             $gate->where('status', Status::ENABLE);
         })->where('method_code', $request->gateway)->where('currency', $request->currency)->first();
         if (!$gate) {
-            $notify[] = ['error', 'Invalid gateway'];
+            $notify[] = ['error', 'Cổng không hợp lệ'];
             return back()->withNotify($notify);
         }
 
         if ($gate->min_amount > $request->amount || $gate->max_amount < $request->amount) {
-            $notify[] = ['error', 'Please follow deposit limit'];
+            $notify[] = ['error', 'Vui lòng tuân thủ giới hạn tiền gửi'];
             return back()->withNotify($notify);
         }
 
@@ -50,7 +50,7 @@ class PaymentController extends Controller
         $booking = Booking::find($bookingId);
 
         if ($request->amount > ($booking->total_amount - $booking->paid_amount)) {
-            $notify[] = ['error', 'Amount should be less than or equal to payable amount'];
+            $notify[] = ['error', 'Số tiền phải nhỏ hơn hoặc bằng số tiền phải trả'];
             return back()->withNotify($notify);
         }
 
@@ -150,7 +150,7 @@ class PaymentController extends Controller
 
             $adminNotification = new AdminNotification();
             $adminNotification->user_id   = $user->id;
-            $adminNotification->title     = 'Payment successful via ' . $methodName;
+            $adminNotification->title     = 'Thanh toán thành công qua ' . $methodName;
             $adminNotification->click_url = urlPath('admin.deposit.successful');
             $adminNotification->save();
 
@@ -158,7 +158,7 @@ class PaymentController extends Controller
             if (!$isManual) {
                 $adminNotification = new AdminNotification();
                 $adminNotification->user_id   = $user->id;
-                $adminNotification->title     = 'Deposit successful via ' . $methodName;
+                $adminNotification->title     = 'Gửi tiền thành công qua ' . $methodName;
                 $adminNotification->click_url = urlPath('admin.deposit.successful');
                 $adminNotification->save();
             }

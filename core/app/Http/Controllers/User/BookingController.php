@@ -38,7 +38,7 @@ class BookingController extends Controller {
             'payments'
         ])->findOrFail($id);
 
-        $pageTitle = 'Booking Details';
+        $pageTitle = 'Chi tiết đặt phòng';
 
         return view('Template::user.booking.details', compact('pageTitle', 'booking'));
     }

@@ -161,7 +161,7 @@
                                     </div>
 
                                     <div class="d-flex flex-wrap justify-content-between gap-2 mt-2">
-                                        <h6 class="text-white">@lang('Refundable Amount')</h6>
+                                        <h6 class="text-white">@lang('Số tiền hoàn lại')</h6>
                                         <span class="text-white refundableAmount"></span>
                                     </div>
                                 </div>
@@ -171,8 +171,8 @@
                         </div>
                         <div class="modal-footer">
                             <h6 class="w-100">@lang('Are you sure to cancel this booking?')</h6>
-                            <button aria-label="Close" class="btn btn--dark" data-bs-dismiss="modal" type="button">@lang('No')</button>
-                            <button class="btn btn--primary" type="submit">@lang('Yes')</button>
+                            <button aria-label="Close" class="btn btn--dark" data-bs-dismiss="modal" type="button">@lang('Không')</button>
+                            <button class="btn btn--primary" type="submit">@lang('Có ')</button>
                         </div>
                     </form>
                 </div>

@@ -252,7 +252,7 @@
                         let messageBox = $('.bookingLimitationMsg');
                         if (response.success) {
                             maxRoomBookingLimit = response.success;
-                            messageBox.text(`@lang('You can book maximum ${response.success} rooms')`);
+                            messageBox.text(`@lang('Bạn có thể đặt tối đa ${response.success} phòng')`);
                             btnRequest.removeAttr('disabled');
                         } else {
                             notify('error', response.error);

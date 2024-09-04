@@ -109,9 +109,9 @@
     },
     "upcoming_check_ins": {
         "keyword": [
-            "Các lần kiểm tra sắp tới"
+            "Lần kiểm tra sắp tới"
         ],
-        "title": "Các lần kiểm tra sắp tới",
+        "title": "Lần kiểm tra sắp tới",
         "icon": "la la-sign-in",
         "route_name": "admin.upcoming.booking.checkin",
         "menu_active": "admin.upcoming.booking.checkin"
@@ -277,12 +277,12 @@
             },
             {
                 "keyword": [
-                    "Thanh toán đã được chấp thuận",
+                    "Thanh toán được chấp thuận",
                     "Thanh toán",
                     "Quản lý thanh toán",
                     "Hoạt động thanh toán"
                 ],
-                "title": "Thanh toán đã được chấp thuận",
+                "title": "Thanh toán được chấp thuận",
                 "route_name": "admin.deposit.approved",
                 "menu_active": "admin.deposit.approved"
             },
