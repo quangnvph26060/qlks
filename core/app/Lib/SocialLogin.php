@@ -134,7 +134,7 @@ class SocialLogin
 
         $adminNotification = new AdminNotification();
         $adminNotification->user_id = $newUser->id;
-        $adminNotification->title = 'New member registered';
+        $adminNotification->title = 'Thành viên mới đã đăng ký';
         $adminNotification->click_url = urlPath('admin.users.detail', $newUser->id);
         $adminNotification->save();
 

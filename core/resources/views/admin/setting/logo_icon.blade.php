@@ -4,7 +4,7 @@
         <div class="col-md-12 mb-30">
             <div class="card bl--5 border--primary">
                 <div class="card-body">
-                    <p class="text--primary">@lang('If the logo and favicon are not changed after you update from this page, please') <a href="{{ route('admin.system.optimize.clear') }}" class="text--info text-decoration-underline">@lang('clear the cache')</a> @lang('from your browser. As we keep the filename the same after the update, it may show the old image for the cache. usually, it works after clear the cache but if you still see the old logo or favicon, it may be caused by server level or network level caching. Please clear them too.')</p>
+                    <p class="text--primary">@lang('Nếu logo và favicon không thay đổi sau khi bạn cập nhật từ trang này, vui lòng') <a href="{{ route('admin.system.optimize.clear') }}" class="text--info text-decoration-underline">@lang('Xóa bộ nhớ đệm')</a> @lang('từ trình duyệt của bạn. Vì chúng tôi giữ nguyên tên tệp sau khi cập nhật, nên có thể hiển thị hình ảnh cũ cho bộ nhớ đệm. Thông thường, nó hoạt động sau khi xóa bộ nhớ đệm nhưng nếu bạn vẫn thấy logo hoặc favicon cũ, có thể do bộ nhớ đệm cấp máy chủ hoặc cấp mạng. Vui lòng xóa chúng.')</p>
                 </div>
             </div>
         </div>
@@ -16,7 +16,7 @@
                         <div class="row justify-content-center">
 
                             <div class="form-group col-md-4 col-sm-6">
-                                <label> @lang('Logo For White Background')</label>
+                                <label> @lang('Logo cho nền trắng')</label>
                                 <x-image-uploader name="logo_dark" :imagePath="siteLogo('dark') . '?' . time()" :size="false" class="w-100" id="uploadLogo" :required="false" />
                             </div>
                             <div class="form-group col-md-4 col-sm-6">
@@ -30,7 +30,7 @@
                         </div>
 
                         @can('admin.setting.update.logo.icon')
-                            <button type="submit" class="btn btn--primary w-100 h-45">@lang('Submit')</button>
+                            <button type="submit" class="btn btn--primary w-100 h-45">@lang('Lưu')</button>
                         @endcan
                     </form>
                 </div>

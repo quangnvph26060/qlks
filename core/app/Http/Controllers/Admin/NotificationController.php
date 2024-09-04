@@ -192,8 +192,8 @@ class NotificationController extends Controller
 
         $config = gs('mail_config');
         $receiverName = explode('@', $request->email)[0];
-        $subject = strtoupper($config->name) . ' Configuration Success';
-        $message = 'Your email notification setting is configured successfully for ' . gs('site_name');
+        $subject = strtoupper($config->name) . ' Cấu hình thành công';
+        $message = 'Cài đặt thông báo email của bạn đã được cấu hình thành công cho ' . gs('site_name');
 
         if (gs('en')) {
             $user = [
@@ -214,7 +214,7 @@ class NotificationController extends Controller
         if (session('mail_error')) {
             $notify[] = ['error', session('mail_error')];
         } else {
-            $notify[] = ['success', 'Email sent to ' . $request->email . ' successfully'];
+            $notify[] = ['success', 'Email đã được gửi đến ' . $request->email . ' thành công'];
         }
 
         return back()->withNotify($notify);

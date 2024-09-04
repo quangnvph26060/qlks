@@ -607,8 +607,8 @@
             "Configuration management",
             "System setup"
         ],
-        "title": "System Setting",
-        "header": "System Settings",
+        "title": "Thiết lập hệ thống",
+        "header": "Thiết lập hệ thống",
         "icon": "las la-life-ring",
         "route_name": "admin.setting.system",
         "menu_active": [

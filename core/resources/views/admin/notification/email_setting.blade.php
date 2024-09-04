@@ -98,7 +98,7 @@
             <div class="modal-dialog" role="document">
                 <div class="modal-content">
                     <div class="modal-header">
-                        <h5 class="modal-title">@lang('Test Mail Setup')</h5>
+                        <h5 class="modal-title">@lang('Thiết lập Mail thử nghiệm')</h5>
                         <button type="button" class="close" data-bs-dismiss="modal" aria-label="Close">
                             <i class="las la-times"></i>
                         </button>
@@ -110,14 +110,14 @@
                             <div class="row">
                                 <div class="col-md-12">
                                     <div class="form-group">
-                                        <label>@lang('Sent to') </label>
-                                        <input type="text" name="email" class="form-control" placeholder="@lang('Email Address')">
+                                        <label>@lang('Gửi đến') </label>
+                                        <input type="text" name="email" class="form-control" placeholder="@lang('Địa chỉ Email')">
                                     </div>
                                 </div>
                             </div>
                         </div>
                         <div class="modal-footer">
-                            <button type="submit" class="btn btn--primary w-100 h-45">@lang('Submit')</button>
+                            <button type="submit" class="btn btn--primary w-100 h-45">@lang('Gửi')</button>
                         </div>
                     </form>
                 </div>
@@ -128,7 +128,7 @@
 
 @can('admin.setting.notification.email.test')
     @push('breadcrumb-plugins')
-        <button type="button" data-bs-target="#testMailModal" data-bs-toggle="modal" class="btn btn-sm btn-outline--primary"><i class="las la-paper-plane"></i> @lang('Send Test Mail')</button>
+        <button type="button" data-bs-target="#testMailModal" data-bs-toggle="modal" class="btn btn-sm btn-outline--primary"><i class="las la-paper-plane"></i> @lang('Gửi Email Kiểm Tra')</button>
     @endpush
 @endcan
 
