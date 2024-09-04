@@ -339,7 +339,7 @@ class SiteController extends Controller
         $availableRoom = $this->getMinimumAvailableRoom($request);
 
         if ($request->number_of_rooms > $availableRoom) {
-            $notify[] = ['error', 'Number of rooms exceeds the limit'];
+            $notify[] = ['error', 'Số lượng phòng vượt quá giới hạn'];
             return back()->withNotify($notify);
         }
 
@@ -365,7 +365,7 @@ class SiteController extends Controller
         $adminNotification->click_url = urlPath('admin.request.booking.approve', $bookingRequest->id);
         $adminNotification->save();
 
-        $notify[] = ['success', 'Booking request sent successfully'];
+        $notify[] = ['success', 'Yêu cầu đặt chỗ đã được gửi thành công'];
         return to_route('user.booking.request.all')->withNotify($notify);
     }
 
@@ -384,7 +384,7 @@ class SiteController extends Controller
         $availableRoom = $this->getMinimumAvailableRoom($request);
 
         if (!$availableRoom) {
-            return response()->json(['error' => 'No room available between these dates']);
+            return response()->json(['error' => 'Không có phòng trống giữa những ngày này']);
         }
 
         return response()->json(['success' => $availableRoom]);

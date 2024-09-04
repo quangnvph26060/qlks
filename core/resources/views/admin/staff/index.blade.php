@@ -8,14 +8,14 @@
                         <table class="table--light style--two table">
                             <thead>
                                 <tr>
-                                    <th>@lang('S.N.')</th>
-                                    <th>@lang('Username')</th>
-                                    <th>@lang('Name')</th>
+                                    <th>@lang('#ID')</th>
+                                    <th>@lang('Tên người dùng')</th>
+                                    <th>@lang('Tên')</th>
                                     <th>@lang('Email')</th>
-                                    <th>@lang('Role')</th>
-                                    <th>@lang('Status')</th>
+                                    <th>@lang('Vai trò')</th>
+                                    <th>@lang('Trạng thái')</th>
                                     @can(['admin.staff.*'])
-                                        <th>@lang('Action')</th>
+                                        <th>@lang('Hành động')</th>
                                     @endcan
                                 </tr>
                             </thead>
@@ -61,7 +61,7 @@
                                                         @endcan
                                                         @can('admin.staff.login')
                                                             <a class="btn btn-sm btn-outline--dark" href="{{ route('admin.staff.login', $staff->id) }}" target="_blank">
-                                                                <i class="las la-sign-in-alt"></i>@lang('Login')
+                                                                <i class="las la-sign-in-alt"></i>@lang('Đăng nhập')
                                                             </a>
                                                         @endcan
                                                     @endif
@@ -104,14 +104,13 @@
                     <form action="{{ route('admin.staff.save') }}" method="POST">
                         @csrf
                         <div class="modal-body">
-
                             <div class="form-group">
-                                <label>@lang('Name')</label>
+                                <label>@lang('Tên')</label>
                                 <input class="form-control" name="name" required type="text">
                             </div>
 
                             <div class="form-group">
-                                <label>@lang('Username')</label>
+                                <label>@lang('Họ và tên')</label>
                                 <input class="form-control" name="username" required type="text">
                             </div>
 
@@ -121,9 +120,9 @@
                             </div>
 
                             <div class="form-group">
-                                <label>@lang('Role')</label>
+                                <label>@lang('Vai trò')</label>
                                 <select class="form-control" name="role_id" required>
-                                    <option disabled selected value="">@lang('Select One')</option>
+                                    <option disabled selected value="">@lang('Chọn')</option>
                                     @foreach ($roles as $role)
                                         <option value="{{ $role->id }}">{{ $role->name }}</option>
                                     @endforeach
@@ -131,16 +130,16 @@
                             </div>
 
                             <div class="form-group">
-                                <label>@lang('Password')</label>
+                                <label>@lang('Mật khẩu')</label>
                                 <div class="input-group">
                                     <input class="form-control" name="password" required type="text">
-                                    <button class="input-group-text generatePassword" type="button">@lang('Generate')</button>
+                                    <button class="input-group-text generatePassword" type="button">@lang('Tạo')</button>
                                 </div>
                             </div>
 
                         </div>
                         <div class="modal-footer">
-                            <button class="btn btn--primary w-100 h-45" type="submit">@lang('Submit')</button>
+                            <button class="btn btn--primary w-100 h-45" type="submit">@lang('Xác nhận')</button>
                         </div>
                     </form>
                 </div>

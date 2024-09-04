@@ -51,7 +51,7 @@
             <div class="card">
                 <div class="card-header">
                     <div class="card-title mb-0">
-                        <h5>@lang('Book Room')</h5>
+                        <h5>@lang('Đặt phòng')</h5>
                     </div>
                 </div>
                 <div class="card-body">
@@ -61,10 +61,10 @@
                     <div class="orderList d-none">
                         <ul class="list-group list-group-flush orderItem">
                             <li class="list-group-item d-flex justify-content-between align-items-center">
-                                <h6>@lang('Room')</h6>
-                                <h6>@lang('Days')</h6>
-                                <h6>@lang('Fare')</h6>
-                                <h6>@lang('Total')</h6>
+                                <h6>@lang('Phòng')</h6>
+                                <h6>@lang('Ngày')</h6>
+                                <h6>@lang('Giá')</h6>
+                                <h6>@lang('Tổng')</h6>
                             </li>
                         </ul>
                         <div class="d-flex justify-content-between align-items-center border-top p-2 px-3">
@@ -77,12 +77,12 @@
                             <input name="tax_charge" type="hidden">
                         </div>
                         <div class="d-flex justify-content-between align-items-center border-top p-2 px-3">
-                            <span>@lang('Total Fare')</span>
+                            <span>@lang('Tổng giá')</span>
                             <span class="grandTotalFare"></span>
                         </div>
                     </div>
                     <div class="form-group">
-                        <label for="paid_amount">@lang('Paying Amount')</label>
+                        <label for="paid_amount">@lang('Số tiền thanh toán')</label>
                         <div class="input-group">
                             <input class="form-control" form="confirmation-form" id="paid_amount" min="0" name="paid_amount" step="any" type="number">
                             <span class="input-group-text">{{ __(gs()->cur_text) }}</span>
@@ -90,7 +90,7 @@
                     </div>
 
                     @can('admin.request.booking.assign.room')
-                        <button class="btn btn--primary w-100 h-45 btn-book confirmationBtn" data-action="{{ route('admin.request.booking.assign.room') }}" data-question="@lang('Are you sure to book these rooms?')" type="button">@lang('Book Now')</button>
+                        <button class="btn btn--primary w-100 h-45 btn-book confirmationBtn" data-action="{{ route('admin.request.booking.assign.room') }}" data-question="@lang('Bạn có chắc chắn muốn đặt những phòng này không?')" type="button">@lang('Book Now')</button>
                     @endcan
 
                 </div>

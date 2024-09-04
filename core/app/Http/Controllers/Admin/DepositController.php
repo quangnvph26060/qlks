@@ -14,7 +14,7 @@ class DepositController extends Controller
 {
     public function pending($userId = null)
     {
-        $pageTitle = 'Pending Payments';
+        $pageTitle = 'Thanh toán đang chờ xử lý';
         $deposits = $this->depositData('pending', userId: $userId);
         return view('admin.deposit.log', compact('pageTitle', 'deposits'));
     }
@@ -22,7 +22,7 @@ class DepositController extends Controller
 
     public function approved($userId = null)
     {
-        $pageTitle = 'Thanh toán đã được chấp thuận';
+        $pageTitle = 'Thanh toán được chấp thuận';
         $deposits = $this->depositData('approved', userId: $userId);
         return view('admin.deposit.log', compact('pageTitle', 'deposits'));
     }

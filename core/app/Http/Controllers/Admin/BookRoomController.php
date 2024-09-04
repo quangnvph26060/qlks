@@ -157,6 +157,6 @@ class BookRoomController extends Controller {
         $booking->check_out = Carbon::parse($checkout)->addDay()->toDateString();
         $booking->save();
 
-        return response()->json(['success' => 'Room booked successfully']);
+        return response()->json(['success' => 'Đặt phòng thành công']);
     }
 }

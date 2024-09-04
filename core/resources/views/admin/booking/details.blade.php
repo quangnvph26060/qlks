@@ -102,7 +102,7 @@
 
                             <div>
                                 @if ($due < 0)
-                                    <small class="fw-500">@lang('Refundable') </small> <br>
+                                    <small class="fw-500">@lang('Có thể hoàn trả') </small> <br>
                                     <span class="text--warning">{{ showAmount(abs($due)) }}</span>
                                 @else
                                     <small class="fw-500">@lang('Phải thu từ khách hàng')</small><br>
@@ -154,7 +154,7 @@
                 <div class="accordion-item">
                     <h2 class="accordion-header" id="bookedRoomsHeading">
                         <button aria-controls="bookedRooms" aria-expanded="true" class="accordion-button" data-bs-target="#bookedRooms" data-bs-toggle="collapse" type="button">
-                            @lang('Booked Rooms')
+                            @lang('Phòng đã đặt')
                         </button>
                     </h2>
                     <div aria-labelledby="bookedRoomsHeading" class="accordion-collapse collapse show" data-bs-parent="#s" id="bookedRooms">
@@ -163,10 +163,10 @@
                                 <table class="custom--table table table-striped">
                                     <thead>
                                         <tr>
-                                            <th class="text-center">@lang('Booked For')</th>
-                                            <th>@lang('Room Type')</th>
-                                            <th>@lang('Room No.')</th>
-                                            <th class="text-end">@lang('Fare') / @lang('Night')</th>
+                                            <th class="text-center">@lang('Đã đặt chỗ')</th>
+                                            <th>@lang('Loại phòng')</th>
+                                            <th>@lang('Phòng số')</th>
+                                            <th class="text-end">@lang('Giá') / @lang('Đêm')</th>
                                         </tr>
                                     </thead>
 
@@ -180,16 +180,16 @@
                                                         </td>
                                                     @endif
 
-                                                    <td class="text-center" data-label="@lang('Room Type')">
+                                                    <td class="text-center" data-label="@lang('Loại phòng')">
                                                         {{ __($booked->room->roomType->name) }}
                                                     </td>
                                                     <td data-label="@lang('Room No.')">
                                                         {{ __($booked->room->room_number) }}
                                                         @if ($booked->status == Status::ROOM_CANCELED)
-                                                            <span class="text--danger text-sm">(@lang('Canceled'))</span>
+                                                            <span class="text--danger text-sm">(@lang('Đã hủy'))</span>
                                                         @endif
                                                     </td>
-                                                    <td class="text-end" data-label="@lang('Fare')">
+                                                    <td class="text-end" data-label="@lang('Giá')">
                                                         {{ showAmount($booked->fare) }}
                                                     </td>
 
@@ -198,7 +198,7 @@
                                         @endforeach
                                         <tr>
                                             <td class="text-end" colspan="3">
-                                                <span class="fw-bold">@lang('Total Fare')</span>
+                                                <span class="fw-bold">@lang('Tổng giá')</span>
                                             </td>
 
                                             <td class="fw-bold text-end">
@@ -214,7 +214,7 @@
                 <div class="accordion-item">
                     <h2 class="accordion-header" id="premiumServiceHeading">
                         <button aria-controls="premiumService" aria-expanded="false" class="accordion-button" data-bs-target="#premiumService" data-bs-toggle="collapse" type="button">
-                            @lang('Premium Services')
+                            @lang('Dịch vụ cao cấp')
                         </button>
                     </h2>
                     <div aria-labelledby="premiumServiceHeading" class="accordion-collapse collapse show" data-bs-parent="#s" id="premiumService">
@@ -224,10 +224,10 @@
                                     <table class="custom--table head--base table table-striped">
                                         <thead>
                                             <tr>
-                                                <th>@lang('Date')</th>
-                                                <th>@lang('Room No.')</th>
-                                                <th>@lang('Service')</th>
-                                                <th>@lang('Total')</th>
+                                                <th>@lang('Ngày')</th>
+                                                <th>@lang('Phòng số')</th>
+                                                <th>@lang('Dịch vụ')</th>
+                                                <th>@lang('Tổng')</th>
                                             </tr>
                                         </thead>
 
@@ -241,17 +241,17 @@
                                                             </td>
                                                         @endif
 
-                                                        <td data-label="@lang('Room No.')">
+                                                        <td data-label="@lang('Phòng số')">
                                                             <span class="fw-bold">{{ __($service->room->room_number) }}</span>
                                                         </td>
-                                                        <td data-label="@lang('Service')">
+                                                        <td data-label="@lang('Dịch vụ')">
                                                             <span class="fw-bold">
                                                                 {{ __($service->premiumService->name) }}
                                                             </span>
                                                             <br>
                                                             {{ showAmount($service->unit_price) }} x {{ $service->qty }}
                                                         </td>
-                                                        <td data-label="@lang('Total')">
+                                                        <td data-label="@lang('Tổng')">
                                                             <span class="fw-bold text-end">
                                                                 {{ showAmount($service->total_amount) }}
                                                             </span>
@@ -262,7 +262,7 @@
 
                                             <tr>
                                                 <td class="text-end" colspan="3">
-                                                    <span class="fw-bold">@lang('Total')</span>
+                                                    <span class="fw-bold">@lang('Tổng')</span>
                                                 </td>
                                                 <td class="fw-bold text-end">
                                                     {{ showAmount($booking->service_cost) }}
@@ -273,7 +273,7 @@
                                 </div>
                             @else
                                 <div class="text-center">
-                                    <h6 class="p-3">@lang('No extra service used')</h6>
+                                    <h6 class="p-3">@lang('Không sử dụng dịch vụ bổ sung')</h6>
                                 </div>
                             @endif
                         </div>
@@ -288,7 +288,7 @@
                 <div class="accordion-item">
                     <h2 class="accordion-header" id="paymentReceived">
                         <button aria-controls="paymentsReceived" aria-expanded="false" class="accordion-button" data-bs-target="#paymentsReceived" data-bs-toggle="collapse" type="button">
-                            @lang('Payments Recevied')
+                            @lang('Thanh toán đã nhận')
                         </button>
                     </h2>
                     <div aria-labelledby="paymentReceived" class="accordion-collapse collapse show" data-bs-parent="#s" id="paymentsReceived">
@@ -297,8 +297,8 @@
                                 <table class="custom--table head--base table table-striped">
                                     <thead>
                                         <tr>
-                                            <th>@lang('Time')</th>
-                                            <th>@lang('Payment Type')</th>
+                                            <th>@lang('Thời gian')</th>
+                                            <th>@lang('Loại thanh toán')</th>
                                             <th>@lang('Amount')</th>
                                         </tr>
                                     </thead>
@@ -336,7 +336,7 @@
                 <div class="accordion-item">
                     <h2 class="accordion-header" id="paymentReturned">
                         <button aria-controls="paymentsReturned" aria-expanded="false" class="accordion-button" data-bs-target="#paymentsReturned" data-bs-toggle="collapse" type="button">
-                            @lang('Payments Returned')
+                            @lang('Thanh toán được trả lại')
                         </button>
                     </h2>
                     <div aria-labelledby="paymentReturned" class="accordion-collapse collapse show" data-bs-parent="#s" id="paymentsReturned">
@@ -344,9 +344,9 @@
                             <table class="custom--table head--base table table-striped">
                                 <thead>
                                     <tr>
-                                        <th>@lang('Time')</th>
-                                        <th>@lang('Payment Type')</th>
-                                        <th>@lang('Amount')</th>
+                                        <th>@lang('Thời gian')</th>
+                                        <th>@lang('Phương thức thanh toán')</th>
+                                        <th>@lang('Tổng')</th>
                                     </tr>
                                 </thead>
 
@@ -378,7 +378,7 @@
                 <div class="accordion-item">
                     <h2 class="accordion-header" id="summaryHeading">
                         <button aria-controls="summaryBody" aria-expanded="false" class="accordion-button" data-bs-target="#summaryBody" data-bs-toggle="collapse" type="button">
-                            @lang('Payment Info')
+                            @lang('Thông tin thanh toán')
                         </button>
                     </h2>
                     <div aria-labelledby="summaryHeading" class="accordion-collapse collapse show" data-bs-parent="#s" id="summaryBody">
@@ -386,7 +386,7 @@
                             <ul class="list-group list-group-flush">
 
                                 <li class="d-flex justify-content-between list-group-item align-items-start">
-                                    <span>@lang('Total Fare')</span>
+                                    <span>@lang('Tổng giá vé')</span>
                                     <span> +{{ showAmount($totalFare) }}</span>
                                 </li>
                                 <li class="d-flex justify-content-between list-group-item align-items-start">
@@ -395,46 +395,46 @@
                                 </li>
 
                                 <li class="d-flex justify-content-between list-group-item align-items-start">
-                                    <span>@lang('Canceled Tax')</span>
+                                    <span>@lang('Thuế đã hủy')</span>
                                     <span> -{{ showAmount($canceledFare) }}</span>
                                 </li>
 
                                 <li class="d-flex justify-content-between list-group-item align-items-start">
-                                    <span>@lang('Canceled') {{ __(gs()->tax_name) }} @lang('Charge')</span>
+                                    <span>@lang('Đã hủy') {{ __(gs()->tax_name) }} @lang('Charge')</span>
                                     <span> -{{ showAmount($canceledTaxCharge) }}</span>
                                 </li>
 
                                 <li class="d-flex justify-content-between list-group-item align-items-start">
-                                    <span>@lang('Extra Service Charge')</span>
+                                    <span>@lang('Phí dịch vụ bổ sung')</span>
                                     <span> +{{ showAmount($booking->service_cost) }}</span>
                                 </li>
 
                                 @if ($booking->extraCharge() > 0)
                                     <li class="d-flex justify-content-between list-group-item align-items-start">
-                                        <span>@lang('Other Charges')</span>
+                                        <span>@lang('Các khoản phí khác')</span>
                                         <span> +{{ showAmount($booking->extraCharge()) }}</span>
                                     </li>
                                 @endif
 
                                 @if ($booking->cancellation_fee > 0)
                                     <li class="d-flex justify-content-between list-group-item align-items-start">
-                                        <span>@lang('Cancellation Fee')</span>
+                                        <span>@lang('Phí hủy bỏ')</span>
                                         <span> +{{ showAmount($booking->cancellation_fee) }}</span>
                                     </li>
                                 @endif
 
                                 <li class="d-flex justify-content-between list-group-item align-items-start">
-                                    <span class="fw-bold">@lang('Total Amount')</span>
+                                    <span class="fw-bold">@lang('Tổng số tiền')</span>
                                     <span class="fw-bold"> = {{ showAmount($booking->total_amount) }}</span>
                                 </li>
 
                                 <li class="d-flex justify-content-between list-group-item align-items-start">
-                                    <span>@lang('Payment Received')</span>
+                                    <span>@lang('Thanh toán đã nhận')</span>
                                     <span>{{ showAmount($receivedPyaments->sum('amount')) }}</span>
                                 </li>
 
                                 <li class="d-flex justify-content-between list-group-item align-items-start">
-                                    <span>@lang('Refunded')</span>
+                                    <span>@lang('Đã hoàn lại')</span>
                                     <span>{{ showAmount($returnedPyaments->sum('amount')) }}</span>
                                 </li>
 
@@ -442,10 +442,10 @@
 
                                 <li class="d-flex justify-content-between list-group-item align-items-start">
                                     @if ($due < 0)
-                                        <span class="text--warning fw-bold">@lang('Refundable') </span>
+                                        <span class="text--warning fw-bold">@lang('Có thể hoàn trả') </span>
                                         <span class="text--warning fw-bold">{{ showAmount(abs($due)) }}</span>
                                     @else
-                                        <span class="@if ($due > 0) text--danger @else text--success @endif fw-bold">@lang('Receivable from User')</span>
+                                        <span class="@if ($due > 0) text--danger @else text--success @endif fw-bold">@lang('Phải thu từ người dùng')</span>
                                         <span class="@if ($due > 0) text--danger @else text--success @endif fw-bold"> {{ showAmount(abs($due)) }}</span>
                                     @endif
                                 </li>
@@ -463,7 +463,7 @@
         @push('breadcrumb-plugins')
             @can('admin.booking.all')
                 <a class="btn btn-sm btn--primary" href="{{ route('admin.booking.all') }}">
-                    <i class="la la-list"></i>@lang('All Bookings')
+                    <i class="la la-list"></i>@lang('Tất cả các đặt phòng')
                 </a>
             @endcan
 
@@ -474,19 +474,19 @@
             <div class="dropdown-menu">
                 @can('admin.booking.booked.rooms')
                     <a class="dropdown-item" href="{{ route('admin.booking.booked.rooms', $booking->id) }}">
-                        <i class="las la-desktop"></i> @lang('Booked Rooms')
+                        <i class="las la-desktop"></i> @lang('Phòng đã đặt')
                     </a>
                 @endcan
 
                 @can('admin.booking.service.details')
                     <a class="dropdown-item" href="{{ route('admin.booking.service.details', $booking->id) }}">
-                        <i class="las la-server"></i> @lang('Premium Services')
+                        <i class="las la-server"></i> @lang('Dịch vụ cao cấp')
                     </a>
                 @endcan
 
                 @can('admin.booking.payment')
                     <a class="dropdown-item" href="{{ route('admin.booking.payment', $booking->id) }}">
-                        <i class="la la-money-bill"></i> @lang('Payment')
+                        <i class="la la-money-bill"></i> @lang('Thanh toán')
                     </a>
                 @endcan
 

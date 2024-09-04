@@ -5,7 +5,7 @@
             <div class="d-flex justify-content-center">
                 <div class="verification-code-wrapper">
                     <div class="verification-area">
-                        <h5 class="mb-2 text-center">@lang('Verify Email Address')</h5>
+                        <h5 class="mb-2 text-center">@lang('Xác minh địa chỉ email')</h5>
                         <form action="{{ route('user.verify.email') }}" method="POST" class="submit-form">
                             @csrf
                             <p class="verification-text mb-2 text-center">@lang('A 6 digit verification code sent to your email address'): {{ showEmailAddress(auth()->user()->email) }}</p>
@@ -13,12 +13,12 @@
                             @include($activeTemplate . 'partials.verification_code')
 
                             <div class="mb-3">
-                                <button type="submit" class="btn btn--base w-100">@lang('Submit')</button>
+                                <button type="submit" class="btn btn--base w-100">@lang('Xác nhận')</button>
                             </div>
 
                             <div class="mb-3">
                                 <p>
-                                    @lang('If you don\'t get any code'), <span class="countdown-wrapper">@lang('try again after') <span id="countdown" class="fw-bold">--</span> @lang('seconds.')</span> <a href="{{ route('user.send.verify.code', 'email') }}" class="try-again-link d-none"> @lang('Try again.')</a>
+                                    @lang('Nếu bạn không nhận được bất kỳ mã nào'), <span class="countdown-wrapper">@lang('thử lại sau') <span id="countdown" class="fw-bold">--</span> @lang('vài giây.')</span> <a href="{{ route('user.send.verify.code', 'email') }}" class="try-again-link d-none"> @lang('Thử lại.')</a>
                                 </p>
                             </div>
                         </form>

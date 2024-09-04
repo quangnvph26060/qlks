@@ -5252,7 +5252,7 @@ th.w-85 {
 }
 
 .sidebar__menu .sidebar-dropdown > a {
-  padding-right: 40px;
+  padding-right: 4px;
   position: relative;
 }
 
@@ -5299,7 +5299,7 @@ th.w-85 {
 }
 
 .sidebar__menu .sidebar-submenu .sidebar-menu-item a {
-  padding: 10px 20px 10px 35px;
+  padding: 10px 0px 10px 35px;
   transition: all 0.3s;
 }
 

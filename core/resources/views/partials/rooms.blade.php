@@ -349,28 +349,28 @@
                 if (!alertBox.hasClass('alert-warning')) {
                     alertBox.removeClass('alert-info').removeClass('alert-danger').addClass('alert-warning');
                 }
-                alertBox.html('@lang("Date wise selected room don\'t matched.")');
+                alertBox.html('@lang("Phòng được chọn theo ngày không khớp.")');
             }
 
             if (limitCross) {
                 if (!alertBox.hasClass('alert-danger')) {
                     alertBox.removeClass('alert-info').addClass('alert-danger');
                 }
-                alertBox.html('@lang("Selected room can\'t be greater than ")' + numberOfRooms + " in each date.");
+                alertBox.html('@lang("Số phòng được chọn không được lớn hơn ")' + numberOfRooms + " trong mỗi ngày.");
             }
             if (lowFromLimit) {
                 if (!alertBox.hasClass('alert-danger')) {
                     alertBox.removeClass('alert-info').addClass('alert-danger');
                 }
                 alertBox.removeClass('alert-info').addClass('alert-danger');
-                alertBox.html('@lang("Selected room can\'t be less than ")' + numberOfRooms + " in each date.");
+                alertBox.html('@lang("Phòng được chọn không thể nhỏ hơn ")' + numberOfRooms + " trong mỗi ngày.");
             }
 
             if (!needChanged && !limitCross && !lowFromLimit) {
                 if (!alertBox.hasClass('alert-info')) {
                     alertBox.removeClass('alert-danger').addClass('alert-info');
                 }
-                alertBox.html("@lang('Every room can be select or deselect by a single click without booked room. Make sure that selected rooms in each date is equal to the number of rooms you have searched.')");
+                alertBox.html("@lang('Mỗi phòng có thể được chọn hoặc bỏ chọn bằng một cú nhấp chuột mà không cần đặt phòng. Đảm bảo rằng số phòng được chọn trong mỗi ngày bằng với số phòng bạn đã tìm kiếm.')");
             }
         }
     })(jQuery);

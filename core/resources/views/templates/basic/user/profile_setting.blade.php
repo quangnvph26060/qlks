@@ -30,56 +30,56 @@
                         </div>
                     </div>
                     <div class="col-lg-6">
-                        <label>@lang('Email Address')</label>
+                        <label>@lang('Địa chỉ email')</label>
                         <div class="custom-icon-field">
                             <input class="form--control" value="{{ $user->email }}" readonly>
                             <i class="fas fa-envelope"></i>
                         </div>
                     </div>
                     <div class="col-lg-6">
-                        <label>@lang('Mobile Number')</label>
+                        <label>@lang('Số điện thoại')</label>
                         <div class="custom-icon-field">
                             <input class="form--control" value="{{ $user->mobile }}" readonly>
                             <i class="fas fa-phone-alt"></i>
                         </div>
                     </div>
                     <div class="col-lg-6">
-                        <label>@lang('Address')</label>
+                        <label>@lang('Địa chỉ')</label>
                         <div class="custom-icon-field">
-                            <input type="text" class="form--control" name="address" value="{{ $user->address }}" placeholder="@lang('Your Address')">
+                            <input type="text" class="form--control" name="address" value="{{ $user->address }}" placeholder="@lang('Địa chỉ')">
                             <i class="fas fa-map-marked"></i>
                         </div>
                     </div>
                     <div class="col-lg-6">
-                        <label>@lang('State')</label>
+                        <label>@lang('Tình trạng')</label>
                         <div class="custom-icon-field">
-                            <input type="text" class="form--control" name="state" value="{{ $user->state }}" placeholder="@lang('State')">
+                            <input type="text" class="form--control" name="state" value="{{ $user->state }}" placeholder="@lang('Tình trạng')">
                             <i class="fas fa-map-marker-alt"></i>
                         </div>
                     </div>
                     <div class="col-lg-6">
-                        <label>@lang('Zip Code')</label>
+                        <label>@lang('Mã bưu điện')</label>
                         <div class="custom-icon-field">
-                            <input type="text" class="form--control" name="zip" value="{{ $user->zip }}" placeholder="@lang('Zip Code')">
+                            <input type="text" class="form--control" name="zip" value="{{ $user->zip }}" placeholder="@lang('Mã bưu điện')">
                             <i class="fas fa-search-location"></i>
                         </div>
                     </div>
                     <div class="col-lg-6">
-                        <label>@lang('City')</label>
+                        <label>@lang('Thành phố')</label>
                         <div class="custom-icon-field">
-                            <input type="text" class="form--control" name="city" value="{{ $user->city }}" placeholder="@lang('City')">
+                            <input type="text" class="form--control" name="city" value="{{ $user->city }}" placeholder="@lang('Thành phố')">
                             <i class="fas fa-city"></i>
                         </div>
                     </div>
                     <div class="col-lg-6">
-                        <label>@lang('Country')</label>
+                        <label>@lang('Quốc gia')</label>
                         <div class="custom-icon-field">
                             <input type="text" class="form--control" value="{{ $user->country_name }}" readonly>
                             <i class="fas fa-globe"></i>
                         </div>
                     </div>
                     <div class="col-lg-12">
-                        <button type="submit" class="btn btn--base w-100">@lang('Submit Changes')</button>
+                        <button type="submit" class="btn btn--base w-100">@lang('Xác nhận')</button>
                     </div>
                 </div>
             </form>

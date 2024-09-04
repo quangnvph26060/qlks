@@ -116,7 +116,7 @@ class ManageBookingController extends Controller
         $canceledTaxCharge = $booking->bookedRooms->where('status', Status::ROOM_CANCELED)->sum('tax_charge');
         $returnedPayments  = $booking->payments->where('type', 'RETURNED');
         $receivedPayments  = $booking->payments->where('type', 'RECEIVED');
-        $pageTitle         = "Bill Payment";
+        $pageTitle         = "Thanh toán hóa đơn";
         return view('admin.booking.payment', compact('pageTitle', 'booking', 'totalFare', 'totalTaxCharge', 'canceledFare', 'canceledTaxCharge', 'returnedPayments', 'receivedPayments'));
     }
 
@@ -130,7 +130,7 @@ class ManageBookingController extends Controller
         $due     = $booking->total_amount - $booking->paid_amount;
 
         if ($request->amount > abs($due)) {
-            $message = $due <= 0 ? 'Amount can\'t be greater than receivable amount' : 'Amount can\'t be greater than payable amount';
+            $message = $due <= 0 ? 'Số tiền không thể lớn hơn số tiền phải thu' : 'Số tiền không được lớn hơn số tiền phải trả';
             $notify[] = ['error', $message];
             return back()->withNotify($notify);
         }
@@ -153,7 +153,7 @@ class ManageBookingController extends Controller
 
         $booking->createActionHistory('extra_charge_added', $reason);
 
-        $notify[] = ['success', 'Extra charge added successfully'];
+        $notify[] = ['success', 'Đã thêm phí phụ thu thành công'];
         return back()->withNotify($notify);
     }
 
@@ -164,7 +164,7 @@ class ManageBookingController extends Controller
         $booking = Booking::findOrFail($id);
 
         if ($request->amount + $booking->extra_charge_subtracted > $booking->extra_charge) {
-            $notify[] = ['error', 'Subtracted amount should be less than or equal to booking extra charge'];
+            $notify[] = ['error', 'Số tiền trừ phải nhỏ hơn hoặc bằng số tiền phụ thu khi đặt phòng'];
             return back()->withNotify($notify);
         }
 
@@ -175,7 +175,7 @@ class ManageBookingController extends Controller
 
         $booking->createActionHistory('extra_charge_subtracted', $reason);
 
-        $notify[] = ['success', 'Extra charge subtracted successfully'];
+        $notify[] = ['success', 'Đã trừ phí phụ thu thành công'];
         return back()->withNotify($notify);
     }
 
@@ -196,7 +196,7 @@ class ManageBookingController extends Controller
         $canceledTaxCharge = $booking->bookedRooms->where('status', Status::ROOM_CANCELED)->sum('tax_charge');
         $returnedPayments  = $booking->payments->where('type', 'RETURNED');
         $receivedPayments  = $booking->payments->where('type', 'RECEIVED');
-        $pageTitle = "Check Out Booking";
+        $pageTitle = "Kiểm tra Đặt phòng";
         return view('admin.booking.check_out', compact('pageTitle', 'booking', 'totalFare', 'totalTaxCharge', 'canceledFare', 'canceledTaxCharge', 'returnedPayments', 'receivedPayments'));
     }
 
@@ -205,19 +205,19 @@ class ManageBookingController extends Controller
         $booking = Booking::active()->with('payments')->withSum('usedPremiumService', 'total_amount')->findOrFail($id);
 
         if ($booking->check_out > now()->toDateString()) {
-            $notify[] = ['error', 'Checkout date for this booking is greater than now'];
+            $notify[] = ['error', 'Ngày thanh toán cho đặt phòng này lớn hơn hiện tại'];
             return back()->withNotify($notify);
         }
 
         $due = getAmount($booking->total_amount - $booking->paid_amount);
 
         if ($due > 0) {
-            $notify[] = ['error', 'The guest should pay the payable amount first'];
+            $notify[] = ['error', 'Khách hàng phải thanh toán số tiền phải trả trước'];
             return back()->withNotify($notify);
         }
 
         if ($due < 0) {
-            $notify[] = ['error', 'Refund the refundable amount to the guest first'];
+            $notify[] = ['error', 'Hoàn trả số tiền được hoàn lại cho khách trước'];
             return back()->withNotify($notify);
         }
 
@@ -229,7 +229,7 @@ class ManageBookingController extends Controller
 
         $booking->save();
 
-        $notify[] = ['success', 'Booking checked out successfully'];
+        $notify[] = ['success', 'Đặt phòng đã được thanh toán thành công'];
         return redirect()->route('admin.booking.all')->withNotify($notify);
     }
 
@@ -269,7 +269,7 @@ class ManageBookingController extends Controller
         $booking->paid_amount += $receivingAmount;
         $booking->save();
 
-        $notify[] = ['success', 'Payment received successfully'];
+        $notify[] = ['success', 'Đã nhận thanh toán thành công'];
         return back()->withNotify($notify);
     }
 
@@ -281,7 +281,7 @@ class ManageBookingController extends Controller
         $booking->paid_amount -= $receivingAmount;
         $booking->save();
 
-        $notify[] = ['success', 'Payment completed successfully'];
+        $notify[] = ['success', 'Thanh toán đã hoàn tất thành công'];
         return back()->withNotify($notify);
     }
 
@@ -293,12 +293,12 @@ class ManageBookingController extends Controller
         $data->admin_id = auth('admin')->id();
         $data->amount = $payableAmount;
         $data->charge = 0;
-        $data->final_amo = $payableAmount;
-        $data->btc_amo = 0;
+        $data->final_amount = $payableAmount;
+        $data->btc_amount = 0;
         $data->trx = getTrx();
         $data->btc_wallet = "";
         $data->payment_try = 0;
-        $data->status = Status::PAYMENT_SUCCESS;
+        $data->status = Status::PAYMENT_SUCCESS; // 1
         $data->save();
     }
 }

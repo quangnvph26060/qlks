@@ -96,7 +96,7 @@ $(document).on('input','input[name=search_table]',function(){
   }).sort();
   var table_content = $('.custom-data-table tbody');
   if (match.length == 0) {
-    table_content.html('<tr><td colspan="100%" class="text-center">Data Not Found</td></tr>');
+    table_content.html('<tr><td colspan="100%" class="text-center">Không tìm thấy dữ liệu</td></tr>');
   }else{
     table_content.html(match);
   }
