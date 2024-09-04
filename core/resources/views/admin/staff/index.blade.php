@@ -8,14 +8,14 @@
                         <table class="table--light style--two table">
                             <thead>
                                 <tr>
-                                    <th>@lang('S.N.')</th>
-                                    <th>@lang('Username')</th>
-                                    <th>@lang('Name')</th>
+                                    <th>@lang('#ID')</th>
+                                    <th>@lang('Tên người dùng')</th>
+                                    <th>@lang('Tên')</th>
                                     <th>@lang('Email')</th>
-                                    <th>@lang('Role')</th>
-                                    <th>@lang('Status')</th>
+                                    <th>@lang('Vai trò')</th>
+                                    <th>@lang('Trạng thái')</th>
                                     @can(['admin.staff.*'])
-                                        <th>@lang('Action')</th>
+                                        <th>@lang('Hành động')</th>
                                     @endcan
                                 </tr>
                             </thead>
@@ -61,7 +61,7 @@
                                                         @endcan
                                                         @can('admin.staff.login')
                                                             <a class="btn btn-sm btn-outline--dark" href="{{ route('admin.staff.login', $staff->id) }}" target="_blank">
-                                                                <i class="las la-sign-in-alt"></i>@lang('Login')
+                                                                <i class="las la-sign-in-alt"></i>@lang('Đăng nhập')
                                                             </a>
                                                         @endcan
                                                     @endif
