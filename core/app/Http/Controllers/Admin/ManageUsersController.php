@@ -74,7 +74,7 @@ class ManageUsersController extends Controller
         } else {
             $users = User::query();
         }
-        return $users->searchable(['username', 'email'])->orderBy('id', 'desc')->paginate(getPaginate());
+        return $users->searchable(['username', 'email', 'mobile', 'country_name','city'])->orderBy('id', 'desc')->paginate(getPaginate());
     }
 
 
