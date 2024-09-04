@@ -4,7 +4,7 @@
         <div class="col-md-12 mb-30">
             <div class="card bl--5 border--warning">
                 <div class="card-body">
-                    <p class="text--warning">@lang('The SEO setting is optional for this page. If you don\'t configure SEO here, the global SEO contents will work for this page, which you can configure from') <a href="{{ route('admin.seo') }}">@lang('System Setting > SEO Configuration').</a></p>
+                    <p class="text--warning">@lang('The SEO setting is optional for this page. If you don\'t configure SEO here, the global SEO contents will work for this page, which you can configure from') <a href="{{ route('admin.seo') }}">@lang('Thiết lập hệ thống > Cấu hình SEO').</a></p>
                 </div>
             </div>
         </div>
