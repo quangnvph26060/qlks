@@ -5,7 +5,6 @@ use Illuminate\Foundation\Configuration\Exceptions;
 use Illuminate\Foundation\Configuration\Middleware;
 use Illuminate\Support\Facades\Route;
 use Symfony\Component\HttpFoundation\Response;
-use Wuang\Qutility\Wuang;
 
 // Tạo ứng dụng Laravel
 return Application::configure(basePath: dirname(__DIR__))
@@ -13,7 +12,7 @@ return Application::configure(basePath: dirname(__DIR__))
         commands: __DIR__.'/../routes/console.php',
         health: '/up',
         using: function () {
-            Route::namespace('App\Http\Controllers')->middleware([Wuang::mdNm()])->group(function () {
+            Route::namespace('App\Http\Controllers')->middleware([])->group(function () {
                 // Định nghĩa các route với middleware
                 Route::prefix('api')
                     ->middleware(['api', 'maintenance'])

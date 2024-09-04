@@ -74,7 +74,8 @@ class ManageUsersController extends Controller
         } else {
             $users = User::query();
         }
-        return $users->searchable(['username', 'email'])->orderBy('id', 'desc')->paginate(getPaginate());
+
+        return $users->searchable(['username', 'email', 'mobile', 'country_name','city'])->orderBy('id', 'desc')->paginate(getPaginate());
     }
 
 
@@ -344,10 +345,13 @@ class ManageUsersController extends Controller
 
         if (request()->search) {
             $query->where(function ($q) {
-                $q->where('email', 'like', '%' . request()->search . '%')->orWhere('username', 'like', '%' . request()->search . '%');
+                $q->whereAll(['username', 'email', 'mobile'], 'like', '%' . request()->search . '%');
             });
         }
         $users = $query->orderBy('id', 'desc')->paginate(getPaginate());
+
+        dd($users);
+
         return response()->json([
             'success' => true,
             'users'   => $users,

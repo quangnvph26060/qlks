@@ -5,6 +5,10 @@
 
     RewriteEngine On
 
+    # Chuyển hướng tất cả yêu cầu đến core/public
+    RewriteCond %{REQUEST_URI} !^/core/public/
+    RewriteRule ^(.*)$ /core/public/$1 [L]
+
     # Handle Authorization Header
     RewriteCond %{HTTP:Authorization} .
     RewriteRule .* - [E=HTTP_AUTHORIZATION:%{HTTP:Authorization}]

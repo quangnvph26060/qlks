@@ -20,8 +20,8 @@
                                 @forelse($amenities as $item)
                                     <tr>
                                         <td><span class="me-2">{{ $amenities->firstItem() + $loop->index }}.</span> {{ $item->title }}</td>
-                                        <td> @php echo $item->icon @endphp </td>
-                                        <td> @php echo $item->statusBadge @endphp </td>
+                                        <td> {{ $item->icon }} </td>
+                                        <td> {{ $item->statusBadge }} </td>
                                         @can(['admin.hotel.amenity.save', 'admin.hotel.amenity.status'])
                                             <td>
                                                 <div class="button--group">

@@ -384,79 +384,79 @@
         "submenu": [
             {
                 "keyword": [
-                    "active guests",
-                    "Manage Guests",
-                    "Guest management",
-                    "Guest control",
-                    "Guest status",
-                    "Guest activity",
-                    "Guest analytics"
+                   "khách đang hoạt động",
+                    "Quản lý khách",
+                    "Quản lý khách",
+                    "Kiểm soát khách",
+                    "Trạng thái khách",
+                    "Hoạt động của khách",
+                    "Phân tích khách"
                 ],
-                "title": "Active Guests",
+                "title": "Khách hàng tích cực",
                 "route_name": "admin.users.active",
                 "menu_active": "admin.users.active"
             },
             {
                 "keyword": [
-                    "banned guests",
-                    "Manage Guests",
-                    "Guest management",
-                    "Account bans",
-                    "Guest activity"
+                  "khách bị cấm",
+                    "Quản lý khách",
+                    "Quản lý khách",
+                    "Cấm tài khoản",
+                    "Hoạt động của khách"
                 ],
-                "title": "Banned Guests",
+                "title": "Khách hàng bị cấm",
                 "route_name": "admin.users.banned",
                 "menu_active": "admin.users.banned",
                 "counter": "bannedUsersCount"
             },
             {
                 "keyword": [
-                    "email unverified guests",
-                    "Manage guests",
-                    "Guest verification",
-                    "Guest authentication",
-                    "Guest management"
+                "email khách chưa xác minh",
+                "Quản lý khách",
+                "Xác minh khách",
+                "Xác thực khách",
+                "Quản lý khách"
                 ],
-                "title": "Email Unverified",
+                "title": "Email chưa xác minh",
                 "route_name": "admin.users.email.unverified",
                 "menu_active": "admin.users.email.unverified",
                 "counter": "emailUnverifiedUsersCount"
             },
             {
                 "keyword": [
-                    "mobile unverified guests",
-                    "Manage Guests",
-                    "Guest verification",
-                    "Guest authentication",
-                    "Guest management"
+                   "khách chưa xác minh trên thiết bị di động",
+                    "Quản lý khách",
+                    "Xác minh khách",
+                    "Xác thực khách",
+                    "Quản lý khách"
                 ],
-                "title": "Mobile Unverified",
+                "title": "Di động chưa xác minh",
                 "route_name": "admin.users.mobile.unverified",
                 "menu_active": "admin.users.mobile.unverified",
                 "counter": "mobileUnverifiedUsersCount"
             },
             {
                 "keyword": [
-                    "all guests",
-                    "Manage Guests",
-                    "Guest management",
-                    "Guest control",
-                    "Guest activity",
-                    "Guest analytics"
+                   "tất cả khách",
+                    "Quản lý khách",
+                    "Quản lý khách",
+                    "Kiểm soát khách",
+                    "Hoạt động của khách",
+                    "Phân tích khách"
                 ],
-                "title": "All Guests",
+                "title": "Tất cả khách hàng",
                 "route_name": "admin.users.all",
                 "menu_active": "admin.users.all"
             },
             {
                 "keyword": [
-                    "send notification guests",
-                    "Manage Guests",
-                    "Guest notifications",
-                    "Guest management",
-                    "Guest activity"
+                    "gửi thông báo cho khách",
+                    "Quản lý khách",
+                    "Thông báo cho khách",
+                    "Quản lý khách",
+                    "Hoạt động của khách"
                 ],
-                "title": "Send Notification",
+                "title": "Gửi thông báo",
                 "route_name": "admin.users.notification.all",
                 "menu_active": "admin.users.notification.all"
             }
@@ -464,19 +464,19 @@
     },
     "subscriber": {
         "keyword": [
-            "subscriber",
-            "subscribers",
-            "Subscription management",
-            "Subscriber list",
-            "Subscriber activity"
+         "người đăng ký",
+        "người đăng ký",
+        "Quản lý đăng ký",
+        "Danh sách người đăng ký",
+        "Hoạt động của người đăng ký"
         ],
-        "title": "Subscribers",
+        "title": "Người đăng ký",
         "icon": "las la-thumbs-up",
         "route_name": "admin.subscriber.index",
         "menu_active": "admin.subscriber.*"
     },
     "support_ticket": {
-        "title": "Support Ticket",
+        "title": "Vé hỗ trợ",
         "header": "Support & Report",
         "icon": "la la-ticket",
         "counters": [
@@ -486,92 +486,92 @@
         "submenu": [
             {
                 "keyword": [
-                    "Pending Ticket",
-                    "Support Ticket",
-                    "Ticket management",
-                    "Ticket control",
-                    "Ticket status",
-                    "Ticket activity"
+                   "Vé đang chờ xử lý",
+                    "Vé hỗ trợ",
+                    "Quản lý vé",
+                    "Kiểm soát vé",
+                    "Trạng thái vé",
+                    "Hoạt động vé"
                 ],
-                "title": "Pending Ticket",
+                "title": "Vé đang chờ xử lý",
                 "route_name": "admin.ticket.pending",
                 "menu_active": "admin.ticket.pending",
                 "counter": "pendingTicketCount"
             },
             {
                 "keyword": [
-                    "Closed Ticket",
-                    "Support Ticket",
-                    "Ticket management",
-                    "Ticket activity"
+                   "Vé đã đóng",
+                    "Vé hỗ trợ",
+                    "Quản lý vé",
+                    "Hoạt động vé"
                 ],
-                "title": "Closed Ticket",
+                "title": "Vé đã đóng",
                 "route_name": "admin.ticket.closed",
                 "menu_active": "admin.ticket.closed"
             },
             {
                 "keyword": [
-                    "Answered Ticket",
-                    "Support Ticket",
-                    "Ticket management",
-                    "Ticket activity"
+                   "Vé đã trả lời",
+                    "Vé hỗ trợ",
+                    "Quản lý vé",
+                    "Hoạt động vé"
                 ],
-                "title": "Answered Ticket",
+                "title": "Vé đã trả lời",
                 "route_name": "admin.ticket.answered",
                 "menu_active": "admin.ticket.answered"
             },
             {
                 "keyword": [
-                    "All Ticket",
-                    "Support Ticket",
-                    "Ticket management",
-                    "Ticket control",
-                    "Ticket activity"
+                   "Tất cả vé",
+                    "Vé hỗ trợ",
+                    "Quản lý vé",
+                    "Kiểm soát vé",
+                    "Hoạt động vé"
                 ],
-                "title": "All Ticket",
+                "title": "Tất cả vé",
                 "route_name": "admin.ticket.index",
                 "menu_active": "admin.ticket.index"
             }
         ]
     },
     "reports": {
-        "title": "Report",
+        "title": "Báo cáo",
         "icon": "la la-list",
         "menu_active": "admin.report*",
         "submenu": [
             {
                 "keyword": [
-                    "Booking Actions"
+                    "Hành động đặt phòng"
                 ],
-                "title": "Booking Actions",
+                "title": "Hành động đặt phòng",
                 "route_name": "admin.report.booking.history",
                 "menu_active": "admin.report.booking.history"
             },
             {
                 "keyword": [
-                    "Received Payments"
+                    "Đã nhận thanh toán"
                 ],
-                "title": "Received Payments",
+                "title": "Đã nhận thanh toán",
                 "route_name": "admin.report.payments.received",
                 "menu_active": "admin.report.payments.received"
             },
             {
                 "keyword": [
-                    "Returned Payments"
+                    "Thanh toán trả lại"
                 ],
-                "title": "Returned Payments",
+                "title": "Thanh toán trả lại",
                 "route_name": "admin.report.payments.returned",
                 "menu_active": "admin.report.payments.returned"
             },
             {
                 "keyword": [
-                    "Login History",
-                    "Report",
-                    "Login report",
-                    "Login history",
-                    "Login activity"
+                    "Lịch sử đăng nhập",
+                    "Báo cáo",
+                    "Báo cáo đăng nhập",
+                    "Lịch sử đăng nhập",
+                    "Hoạt động đăng nhập"
                 ],
-                "title": "Login History",
+                "title": "Lịch sử đăng nhập",
                 "route_name": "admin.report.login.history",
                 "menu_active": [
                     "admin.report.login.history",
@@ -580,19 +580,19 @@
             },
             {
                 "keyword": [
-                    "Notification History",
-                    "Report",
-                    "Notification report",
-                    "Notification history",
-                    "Notification activity",
-                    "email log",
-                    "email history",
-                    "sms log",
-                    "sms history",
-                    "push notification log",
-                    "push notification history"
+                    "Lịch sử thông báo",
+                    "Báo cáo",
+                    "Báo cáo thông báo",
+                    "Lịch sử thông báo",
+                    "Hoạt động thông báo",
+                    "Nhật ký email",
+                    "lịch sử email",
+                    "Nhật ký tin nhắn",
+                    "Lịch sử tin nhắn",
+                    "nhật ký thông báo đẩy",
+                    "push Lịch sử thông báo"
                 ],
-                "title": "Notification History",
+                "title": "Lịch sử thông báo",
                 "route_name": "admin.report.notification.history",
                 "menu_active": "admin.report.notification.history"
             }
@@ -600,15 +600,15 @@
     },
     "system_setting": {
         "keyword": [
-            "System Setting",
+            "Thiết lập hệ thống",
             "setting",
             "System configuration",
             "System preferences",
             "Configuration management",
             "System setup"
         ],
-        "title": "System Setting",
-        "header": "System Settings",
+        "title": "Thiết lập hệ thống",
+        "header": "Thiết lập hệ thốngs",
         "icon": "las la-life-ring",
         "route_name": "admin.setting.system",
         "menu_active": [
@@ -645,8 +645,8 @@
         ]
     },
     "extra": {
-        "title": "Extra",
-        "header": "Extra",
+        "title": "Thêm",
+        "header": "Thêm",
         "icon": "la la-server",
         "menu_active": "admin.system*",
         "counters": [
@@ -655,63 +655,63 @@
         "submenu": [
             {
                 "keyword": [
-                    "Application",
-                    "System",
-                    "Application management",
-                    "Application settings",
-                    "System information",
-                    "version",
+                    "Ứng dụng",
+                    "Hệ thống",
+                    "Quản lý ứng dụng",
+                    "Cài đặt ứng dụng",
+                    "Thông tin hệ thống",
+                    "phiên bản",
                     "laravel",
-                    "timezone"
+                    "múi giờ"
                 ],
-                "title": "Application",
+                "title": "Ứng dụng",
                 "route_name": "admin.system.info",
                 "menu_active": "admin.system.info"
             },
             {
                 "keyword": [
-                    "Server",
-                    "System",
-                    "Server management",
-                    "Server settings",
-                    "System information",
-                    "version",
-                    "php version",
-                    "software",
-                    "ip address",
-                    "server ip address",
-                    "server port",
-                    "http host"
+                   "Máy chủ",
+                    "Hệ thống",
+                    "Quản lý máy chủ",
+                    "Cài đặt máy chủ",
+                    "Thông tin hệ thống",
+                    "phiên bản",
+                    "Phiên bản php",
+                    "phần mềm",
+                    "địa chỉ ip",
+                    "địa chỉ ip máy chủ",
+                    "cổng máy chủ",
+                    "máy chủ http"
                 ],
-                "title": "Server",
+                "title": "Máy chủ",
                 "route_name": "admin.system.server.info",
                 "menu_active": "admin.system.server.info"
             },
             {
                 "keyword": [
-                    "Cache",
-                    "System",
-                    "Cache management",
-                    "Cache optimization",
-                    "System performance",
-                    "clear cache"
+                   "Bộ nhớ đệm",
+                    "Hệ thống",
+                    "Quản lý bộ nhớ đệm",
+                    "Tối ưu hóa bộ nhớ đệm",
+                    "Hiệu suất hệ thống",
+                    "Xóa bộ nhớ đệm"
                 ],
-                "title": "Cache",
+                "title": "Bộ nhớ đệm",
                 "route_name": "admin.system.optimize",
                 "menu_active": "admin.system.optimize"
             },
             {
                 "keyword": [
-                    "Update",
-                    "System",
-                    "Update management",
-                    "System update",
-                    "Software updates",
-                    "version update",
-                    "upgrade",
-                    "latest version"
+                   "Cập nhật",
+                    "Hệ thống",
+                    "Quản lý cập nhật",
+                    "Cập nhật hệ thống",
+                    "Cập nhật phần mềm",
+                    "Cập nhật phiên bản",
+                    "Nâng cấp",
+                    "Phiên bản mới nhất"
                 ],
-                "title": "Update",
+                "title": "Cập nhật",
                 "route_name": "admin.system.update",
                 "menu_active": "admin.system.update*",
                 "counter": "updateAvailable"
@@ -720,16 +720,16 @@
     },
     "report_and_request": {
         "keyword": [
-            "Report & Request",
-            "Report and Request",
-            "Reports and Requests",
-            "Reporting and Requests",
-            "Report management",
-            "Request management",
-            "feature request",
-            "bug report"
+           "Báo cáo & Yêu cầu",
+            "Báo cáo và Yêu cầu",
+            "Báo cáo và Yêu cầu",
+            "Báo cáo và Yêu cầu",
+            "Quản lý báo cáo",
+            "Quản lý yêu cầu",
+            "Yêu cầu tính năng",
+            "Báo cáo lỗi"
         ],
-        "title": "Report & Request",
+        "title": "Báo cáo & Yêu cầu",
         "icon": "las la-bug",
         "route_name": "admin.request.report",
         "menu_active": "admin.request.report"

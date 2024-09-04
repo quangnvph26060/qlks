@@ -22,38 +22,52 @@ class AdminController extends Controller
 
     public function dashboard()
     {
-        $pageTitle                          = 'Thống kê';
-        $todaysBookedRoomIds                = BookedRoom::active()->where('booked_for', todaysDate())->pluck('room_id')->toArray();
+        $pageTitle = 'Thống kê';
 
-        $widget['today_booked']             = count($todaysBookedRoomIds);
-        $widget['today_available']          = Room::active()->whereNotIn('id', $todaysBookedRoomIds)->count();
-        $widget['total']                    = Booking::count();
-        $widget['active']                   = Booking::active()->count();
-        $widget['pending_checkin']          = Booking::active()->KeyNotGiven()->whereDate('check_in', '<=', now())->count();
-        $widget['delayed_checkout']         = Booking::delayedCheckout()->count();
-        $widget['upcoming_checkin']         = Booking::active()->whereDate('check_in', '>', now())->whereDate('check_in', '<=', now()->addDays(gs('upcoming_checkin_days')))->count();
-        $widget['upcoming_checkout']        = Booking::active()->whereDate('check_out', '>', now())->whereDate('check_out', '<=', now()->addDays(gs('upcoming_checkout_days')))->count();
+        // Fetch today's booked room IDs
+        $todaysBookedRoomIds = BookedRoom::active()
+            ->where('booked_for', todaysDate())
+            ->pluck('room_id')
+            ->toArray();
 
-        $widget['total_users']              = User::count();
-        $widget['verified_users']           = User::active()->count();
-        $widget['email_unverified_users']   = User::emailUnverified()->count();
-        $widget['mobile_unverified_users']  = User::mobileUnverified()->count();
+        // Prepare widget data
+        $widget = [
+            'today_booked'            => count($todaysBookedRoomIds),
+            'today_available'         => Room::active()->whereNotIn('id', $todaysBookedRoomIds)->count(),
+            'total'                   => Booking::count(),
+            'active'                  => Booking::active()->count(),
+            'pending_checkin'         => Booking::active()
+                ->keyNotGiven()
+                ->whereDate('check_in', '<=', now())
+                ->count(),
+            'delayed_checkout'        => Booking::delayedCheckout()->count(),
+            'upcoming_checkin'        => Booking::active()
+                ->whereDate('check_in', '>', now())
+                ->whereDate('check_in', '<=', now()->addDays(gs('upcoming_checkin_days')))
+                ->count(),
+            'upcoming_checkout'       => Booking::active()
+                ->whereDate('check_out', '>', now())
+                ->whereDate('check_out', '<=', now()->addDays(gs('upcoming_checkout_days')))
+                ->count(),
+            'total_users'             => User::count(),
+            'verified_users'          => User::active()->count(),
+            'email_unverified_users'  => User::emailUnverified()->count(),
+            'mobile_unverified_users' => User::mobileUnverified()->count(),
+        ];
 
-        $userLoginData                     = UserLogin::where('created_at', '>=', now()->subDays(30))->get(['browser', 'os', 'country']);
-        $chart['user_browser_counter']     = $userLoginData->groupBy('browser')->map(function ($item, $key) {
-            return collect($item)->count();
-        });
-        $chart['user_os_counter']          = $userLoginData->groupBy('os')->map(function ($item, $key) {
-            return collect($item)->count();
-        });
-        $chart['user_country_counter']     = $userLoginData->groupBy('country')->map(function ($item, $key) {
-            return collect($item)->count();
-        })->sort()->reverse()->take(5);
+        // Fetch user login data
+        $userLoginData = UserLogin::where('created_at', '>=', now()->subDays(30))->get(['browser', 'os', 'country']);
 
+        // Prepare chart data
+        $chart = [
+            'user_browser_counter' => $userLoginData->groupBy('browser')->map->count(),
+            'user_os_counter'      => $userLoginData->groupBy('os')->map->count(),
+            'user_country_counter' => $userLoginData->groupBy('country')->map->count()->sort()->reverse()->take(5),
+        ];
+
+        // Return view with data
         return view('admin.dashboard', compact('pageTitle', 'widget', 'chart'));
     }
-
-
 
 
     public function bookingReport(Request $request)

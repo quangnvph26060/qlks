@@ -26,8 +26,8 @@ class AmenitiesController extends Controller {
             $amenities          = new Amenity();
             $notification       = 'Amenity added successfully';
         }
-        $amenities->title   = $request->title;
-        $amenities->icon    = $request->icon;
+        $amenities->title       = $request->title;
+        $amenities->icon        = $request->icon;
         $amenities->save();
 
         $notify[] = ['success', $notification];

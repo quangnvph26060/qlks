@@ -293,7 +293,7 @@ function diffForHumans($date) {
     return Carbon::parse($date)->diffForHumans();
 }
 
-function showDateTime($date, $format = 'Y-m-d h:i A') {
+function showDateTime($date, $format = 'd-m-Y h:i A') {
     if (!$date) {
         return '-';
     }

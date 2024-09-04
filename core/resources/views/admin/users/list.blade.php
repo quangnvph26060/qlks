@@ -1,4 +1,5 @@
 @extends('admin.layouts.app')
+
 @section('panel')
     <div class="row">
         <div class="col-lg-12">
@@ -25,7 +26,8 @@
                                             @can('admin.users.detail')
                                                 <br>
                                                 <span class="small">
-                                                    <a href="{{ route('admin.users.detail', $user->id) }}"><span>@</span>{{ $user->username }}</a>
+                                                    <a
+                                                        href="{{ route('admin.users.detail', $user->id) }}"><span>@</span>{{ $user->username }}</a>
                                                 </span>
                                             @endcan
                                         </td>
@@ -33,14 +35,17 @@
                                             {{ $user->email }}<br>{{ $user->mobileNumber }}
                                         </td>
                                         <td>
-                                            <span class="fw-bold" title="{{ @$user->country_name }}">{{ $user->country_code }}</span>
+                                            <span class="fw-bold"
+                                                title="{{ @$user->country_name }}">{{ $user->country_code }}</span>
                                         </td>
                                         <td>
-                                            {{ showDateTime($user->created_at) }} <br> {{ diffForHumans($user->created_at) }}
+                                            {{ showDateTime($user->created_at) }} <br>
+                                            {{ diffForHumans($user->created_at) }}
                                         </td>
                                         @can('admin.users.detail')
                                             <td>
-                                                <a class="btn btn-sm btn-outline--primary" href="{{ route('admin.users.detail', $user->id) }}">
+                                                <a class="btn btn-sm btn-outline--primary"
+                                                    href="{{ route('admin.users.detail', $user->id) }}">
                                                     <i class="las la-desktop"></i> @lang('Details')
                                                 </a>
                                             </td>
@@ -66,6 +71,47 @@
 
     </div>
 @endsection
+
+@push('style')
+    <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/flatpickr/dist/flatpickr.min.css">
+    <style>
+        .date-picker button {
+            top: 50%;
+            transform: translateY(-50%);
+            right: 5px;
+            background: none;
+            font-weight: bold;
+        }
+    </style>
+@endpush
+
+@push('script')
+    <script src="https://cdn.jsdelivr.net/npm/flatpickr"></script>
+    <script>
+        flatpickr("#dateInput", {
+            dateFormat: "Y-m-d", // Định dạng ngày
+            allowInput: true
+        });
+
+        $("#dateInput").on("change", function(e) {
+            if ($(this).val() != "") {
+                $(".date-picker button").removeClass("d-none");
+            }
+        })
+
+        if($("#dateInput").val() != "") {
+            $(".date-picker button").removeClass("d-none");
+        }
+
+        $(".date-picker button").on("click", function() {
+            $("#dateInput").val("");
+
+            if($("#dateInput").val() == "") {
+            $(".date-picker button").addClass("d-none");
+        }
+        })
+    </script>
+@endpush
 
 @push('breadcrumb-plugins')
     <x-search-form placeholder="Username / Email" />

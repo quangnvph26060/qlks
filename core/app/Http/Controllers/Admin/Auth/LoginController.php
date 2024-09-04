@@ -1,9 +1,11 @@
 <?php
 namespace App\Http\Controllers\Admin\Auth;
 
-use App\Http\Controllers\Controller;
-use Illuminate\Foundation\Auth\AuthenticatesUsers;
+use App\Models\User;
 use Illuminate\Http\Request;
+use App\Http\Controllers\Controller;
+use Illuminate\Support\Facades\Hash;
+use Illuminate\Foundation\Auth\AuthenticatesUsers;
 
 
 class LoginController extends Controller
@@ -35,6 +37,11 @@ class LoginController extends Controller
      */
     public function showLoginForm()
     {
+        // $user = new User();
+        // $user->username = 'datgin';
+        // $user->email = 'admin@gmail.com';
+        // $user->password = Hash::make('123456');
+        // $user->save();
         $pageTitle = "Admin Login";
         return view('admin.auth.login', compact('pageTitle'));
     }

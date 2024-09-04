@@ -8386,48 +8386,6 @@
                 "source": "https://github.com/webmozarts/assert/tree/1.11.0"
             },
             "time": "2022-06-03T18:03:27+00:00"
-        },
-        {
-            "name": "wuangdz/qutility",
-            "version": "dev-main",
-            "source": {
-                "type": "git",
-                "url": "https://github.com/quangnvph26060/qutility.git",
-                "reference": "174a933c360cad102e2cd1598a7357d2a7384e3e"
-            },
-            "dist": {
-                "type": "zip",
-                "url": "https://api.github.com/repos/quangnvph26060/qutility/zipball/174a933c360cad102e2cd1598a7357d2a7384e3e",
-                "reference": "174a933c360cad102e2cd1598a7357d2a7384e3e",
-                "shasum": ""
-            },
-            "require": {
-                "php": ">=8.3"
-            },
-            "default-branch": true,
-            "type": "library",
-            "extra": {
-                "laravel": {
-                    "providers": [
-                        "Wuang\\Qutility\\QutilityServiceProvider"
-                    ]
-                }
-            },
-            "autoload": {
-                "psr-4": {
-                    "Wuang\\Qutility\\": "src/"
-                }
-            },
-            "notification-url": "https://packagist.org/downloads/",
-            "license": [
-                "MIT"
-            ],
-            "description": "A Qutility package for Laravel.",
-            "support": {
-                "issues": "https://github.com/quangnvph26060/qutility/issues",
-                "source": "https://github.com/quangnvph26060/qutility/tree/main"
-            },
-            "time": "2024-08-27T03:02:45+00:00"
         }
     ],
     "packages-dev": [
@@ -11106,5 +11064,5 @@
         "php": "^8.3"
     },
     "platform-dev": [],
-    "plugin-api-version": "2.6.0"
+    "plugin-api-version": "2.3.0"
 }
