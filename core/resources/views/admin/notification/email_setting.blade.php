@@ -10,17 +10,17 @@
                     @csrf
                     <div class="card-body">
                         <div class="form-group">
-                            <label>@lang('Email Send Method')</label>
+                            <label>@lang('Phương pháp gửi email')</label>
                             <select name="email_method" class="select2 form-control" data-minimum-results-for-search="-1">
-                                <option value="php" @if (gs('mail_config')->name == 'php') selected @endif>@lang('PHP Mail')</option>
+                                {{-- <option value="php" @if (gs('mail_config')->name == 'php') selected @endif>@lang('PHP Mail')</option> --}}
                                 <option value="smtp" @if (gs('mail_config')->name == 'smtp') selected @endif>@lang('SMTP')</option>
-                                <option value="sendgrid" @if (gs('mail_config')->name == 'sendgrid') selected @endif>@lang('SendGrid API')</option>
-                                <option value="mailjet" @if (gs('mail_config')->name == 'mailjet') selected @endif>@lang('Mailjet API')</option>
+                                {{-- <option value="sendgrid" @if (gs('mail_config')->name == 'sendgrid') selected @endif>@lang('SendGrid API')</option> --}}
+                                {{-- <option value="mailjet" @if (gs('mail_config')->name == 'mailjet') selected @endif>@lang('Mailjet API')</option> --}}
                             </select>
                         </div>
                         <div class="row mt-4 d-none configForm" id="smtp">
                             <div class="col-md-12">
-                                <h6 class="mb-2">@lang('SMTP Configuration')</h6>
+                                <h6 class="mb-2">@lang('Cấu hình SMTP')</h6>
                             </div>
                             <div class="col-md-4">
                                 <div class="form-group">
@@ -31,12 +31,12 @@
                             <div class="col-md-4">
                                 <div class="form-group">
                                     <label>@lang('Port') </label>
-                                    <input type="text" class="form-control" placeholder="@lang('Available port')" name="port" value="{{ gs('mail_config')->port ?? '' }}">
+                                    <input type="text" class="form-control" placeholder="@lang('Cổng có sẵn')" name="port" value="{{ gs('mail_config')->port ?? '' }}">
                                 </div>
                             </div>
                             <div class="col-md-4">
                                 <div class="form-group">
-                                    <label>@lang('Encryption')</label>
+                                    <label>@lang('Mã hóa')</label>
                                     <select class="form-control select2" data-minimum-results-for-search="-1" name="enc">
                                         <option value="ssl" @selected(@gs('mail_config')->enc == 'ssl')>@lang('SSL')</option>
                                         <option value="tls" @selected(@gs('mail_config')->enc == 'tls')>@lang('TLS')</option>
@@ -45,13 +45,13 @@
                             </div>
                             <div class="col-md-6">
                                 <div class="form-group">
-                                    <label>@lang('Username') </label>
+                                    <label>@lang('Email') </label>
                                     <input type="text" class="form-control" placeholder="@lang('Normally your email') address" name="username" value="{{ gs('mail_config')->username ?? '' }}">
                                 </div>
                             </div>
                             <div class="col-md-6">
                                 <div class="form-group">
-                                    <label>@lang('Password') </label>
+                                    <label>@lang('Mật khẩu ứng dụng') </label>
                                     <input type="text" class="form-control" placeholder="@lang('Normally your email password')" name="password" value="{{ gs('mail_config')->password ?? '' }}">
                                 </div>
                             </div>
@@ -83,7 +83,7 @@
                             </div>
                         </div>
                         @can('admin.setting.notification.email.update')
-                            <button type="submit" class="btn btn--primary w-100 h-45">@lang('Submit')</button>
+                            <button type="submit" class="btn btn--primary w-100 h-45">@lang('Lưu')</button>
                         @endcan
                     </div>
                 </form>
