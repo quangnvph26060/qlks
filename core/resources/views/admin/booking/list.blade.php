@@ -114,7 +114,7 @@
                                                 <div class="d-flex justify-content-end flex-wrap gap-1">
                                                     @can('admin.booking.details')
                                                         <a class="btn btn-sm btn-outline--primary" href="{{ route('admin.booking.details', $booking->id) }}">
-                                                            <i class="las la-desktop"></i>@lang('Details')
+                                                            <i class="las la-desktop"></i>@lang('Chi tiết')
                                                         </a>
                                                     @endcan
 
@@ -125,19 +125,19 @@
                                                     <div class="dropdown-menu">
                                                         @can('admin.booking.booked.rooms')
                                                             <a class="dropdown-item" href="{{ route('admin.booking.booked.rooms', $booking->id) }}">
-                                                                <i class="las la-desktop"></i> @lang('Booked Rooms')
+                                                                <i class="las la-desktop"></i> @lang('Phòng đã đặt')
                                                             </a>
                                                         @endcan
 
                                                         @can('admin.booking.service.details')
                                                             <a class="dropdown-item" href="{{ route('admin.booking.service.details', $booking->id) }}">
-                                                                <i class="las la-server"></i> @lang('Premium Services')
+                                                                <i class="las la-server"></i> @lang('Dịch vụ cao cấp')
                                                             </a>
                                                         @endcan
 
                                                         @can('admin.booking.payment')
                                                             <a class="dropdown-item" href="{{ route('admin.booking.payment', $booking->id) }}">
-                                                                <i class="la la-money-bill"></i> @lang('Payment')
+                                                                <i class="la la-money-bill"></i> @lang('Thanh toán')
                                                             </a>
                                                         @endcan
 
@@ -145,7 +145,7 @@
                                                             @can('admin.booking.key.handover')
                                                                 @if (now()->format('Y-m-d') >= $booking->check_in && now()->format('Y-m-d') < $booking->check_out && $booking->key_status == Status::DISABLE)
                                                                     <a class="dropdown-item handoverKeyBtn" data-booked_rooms="{{ $booking->activeBookedRooms->unique('room_id') }}" data-id="{{ $booking->id }}" href="javascript:void(0)">
-                                                                        <i class="las la-key"></i> @lang('Handover Keys')
+                                                                        <i class="las la-key"></i> @lang('Bàn giao chìa khóa')
                                                                     </a>
                                                                 @endif
                                                             @endcan

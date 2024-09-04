@@ -7,7 +7,7 @@
                     <div class="login-area">
                         <div class="login-wrapper">
                             <div class="login-wrapper__top">
-                                <h3 class="title text-white">@lang('Recover Account')</h3>
+                                <h3 class="title text-white">@lang('Khôi phục tài khoản')</h3>
                             </div>
                             <div class="login-wrapper__body">
                                 <form action="{{ route('admin.password.change') }}" method="POST" class="login-form">
@@ -15,16 +15,16 @@
                                     <input type="hidden" name="email" value="{{ $email }}">
                                     <input type="hidden" name="token" value="{{ $token }}">
                                     <div class="form-group">
-                                        <label>@lang('New Password')</label>
+                                        <label>@lang('Mật khẩu mới ')</label>
                                         <input type="password" name="password" class="form-control" required>
                                     </div>
                                     <div class="form-group">
-                                        <label>@lang('Re-type New Password')</label>
+                                        <label>@lang('Nhập lại mật khẩu mới')</label>
                                         <input type="password" name="password_confirmation" class="form-control" id="password_confirmation" required>
                                     </div>
-                                    <button type="submit" class="btn cmn-btn w-100">@lang('Submit')</button>
+                                    <button type="submit" class="btn cmn-btn w-100">@lang('Xác nhận')</button>
                                     <div class="text-center mt-3">
-                                        <a href="{{ route('admin.login') }}" class="text-white"><i class="las la-sign-in-alt" aria-hidden="true"></i>@lang('Back to Login')</a>
+                                        <a href="{{ route('admin.login') }}" class="text-white"><i class="las la-sign-in-alt" aria-hidden="true"></i>@lang('Quay lại đăng nhập')</a>
                                     </div>
                                 </form>
                             </div>

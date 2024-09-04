@@ -8,27 +8,27 @@
                 <div class="login-area">
                     <div class="login-wrapper">
                         <div class="login-wrapper__top">
-                            <h3 class="title text-white">@lang('Welcome to') <strong>{{ __(gs('site_name')) }}</strong></h3>
+                            <h3 class="title text-white">@lang('Chào mừng đến với') <strong>{{ __(gs('site_name')) }}</strong></h3>
                             <p class="text-white">{{ __($pageTitle) }} @lang('to') {{ __(gs('site_name')) }}
-                                @lang('Dashboard')</p>
+                                @lang('Thống kê')</p>
                         </div>
                         <div class="login-wrapper__body">
                             <form action="{{ route('admin.login') }}" method="POST"
                                 class="cmn-form mt-30 verify-gcaptcha login-form">
                                 @csrf
                                 <div class="form-group">
-                                    <label>@lang('Username')</label>
+                                    <label>@lang('Tài khoản')</label>
                                     <input type="text" class="form-control" value="{{ old('username') }}" name="username" required>
                                 </div>
                                 <div class="form-group">
                                     <div class="d-flex justify-content-between">
-                                        <label>@lang('Password')</label>
-                                        <a href="{{ route('admin.password.reset') }}" class="forget-text">@lang('Forgot Password?')</a>
+                                        <label>@lang('Mật khẩu')</label>
+                                        <a href="{{ route('admin.password.reset') }}" class="forget-text">@lang('Quên mật khẩu?')</a>
                                     </div>
                                     <input type="password" class="form-control" name="password" required>
                                 </div>
                                 <x-captcha />
-                                <button type="submit" class="btn cmn-btn w-100">@lang('LOGIN')</button>
+                                <button type="submit" class="btn cmn-btn w-100">@lang('Đăng nhập')</button>
                             </form>
                         </div>
                     </div>

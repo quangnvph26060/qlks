@@ -162,7 +162,7 @@
 
                                 <div class="room-booking-widget__body">
                                     <ul class="room-booking-widget-list"></ul>
-                                    <button class="btn btn--base w-100 confirmationBtn booking" data-action="{{ route('request.booking') }}" data-question="@lang('Are your sure, you want to book this room?')" type="button">@lang('SEND BOOKING REQUEST')</button>
+                                    <button class="btn btn--base w-100 confirmationBtn booking" data-action="{{ route('request.booking') }}" data-question="@lang('Bạn có chắc chắn muốn đặt phòng này không?')" type="button">@lang('GỬI YÊU CẦU ĐẶT CHỖ')</button>
                                 </div>
 
                             </div><!-- room-booking-widget end -->
@@ -252,7 +252,7 @@
                         let messageBox = $('.bookingLimitationMsg');
                         if (response.success) {
                             maxRoomBookingLimit = response.success;
-                            messageBox.text(`@lang('You can book maximum ${response.success} rooms')`);
+                            messageBox.text(`@lang('Bạn có thể đặt tối đa ${response.success} phòng')`);
                             btnRequest.removeAttr('disabled');
                         } else {
                             notify('error', response.error);

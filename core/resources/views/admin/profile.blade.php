@@ -45,13 +45,13 @@
                         <div class="row">
                             <div class="col-xxl-4 col-lg-6">
                                 <div class="form-group">
-                                    <label>@lang('Image')</label>
+                                    <label>@lang('Hình ảnh')</label>
                                     <x-image-uploader image="{{ $admin->image }}" class="w-100" type="adminProfile" :required=false />
                                 </div>
                             </div>
                             <div class="col-xxl-8 col-lg-6">
                                 <div class="form-group ">
-                                    <label>@lang('Name')</label>
+                                    <label>@lang('Tên')</label>
                                     <input class="form-control" type="text" name="name" value="{{ $admin->name }}" required>
                                 </div>
                                 <div class="form-group">
@@ -60,7 +60,7 @@
                                 </div>
                             </div>
                         </div>
-                        <button type="submit" class="btn btn--primary h-45 w-100">@lang('Submit')</button>
+                        <button type="submit" class="btn btn--primary h-45 w-100">@lang('Xác nhận')</button>
                     </form>
                 </div>
             </div>
@@ -69,7 +69,7 @@
 @endsection
 
 @push('breadcrumb-plugins')
-    <a href="{{route('admin.password')}}" class="btn btn-sm btn-outline--primary"><i class="las la-key"></i>@lang('Password Setting')</a>
+    <a href="{{route('admin.password')}}" class="btn btn-sm btn-outline--primary"><i class="las la-key"></i>@lang('Thiết lập mật khẩu')</a>
 @endpush
 @push('style')
     <style>

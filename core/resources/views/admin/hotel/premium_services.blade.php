@@ -10,11 +10,11 @@
                         <table class="table--light table">
                             <thead>
                                 <tr>
-                                    <th>@lang('Name')</th>
-                                    <th>@lang('Cost')</th>
-                                    <th>@lang('Status')</th>
+                                    <th>@lang('Tên dịch vụ')</th>
+                                    <th>@lang('Giá')</th>
+                                    <th>@lang('Trạng thái')</th>
                                     @can(['admin.hotel.premium.service.save', 'admin.hotel.premium.service.status'])
-                                        <th>@lang('Action')</th>
+                                        <th>@lang('Hành động')</th>
                                     @endcan
                                 </tr>
                             </thead>
@@ -88,11 +88,11 @@
                         @csrf
                         <div class="modal-body">
                             <div class="form-group">
-                                <label> @lang('Service Name')</label>
+                                <label> @lang('Tên dịch vụ')</label>
                                 <input class="form-control" name="name" required type="text" value="{{ old('name') }}">
                             </div>
                             <div class="form-group">
-                                <label> @lang('Cost')</label>
+                                <label> @lang('Giá')</label>
                                 <div class="input-group">
                                     <input class="form-control" name="cost" required step="0.01" type="number" value="{{ old('cost') }}">
                                     <span class="input-group-text"> {{ gs()->cur_text }}</span>
@@ -101,7 +101,7 @@
                         </div>
 
                         <div class="modal-footer">
-                            <button class="btn btn--primary w-100 h-45" type="submit">@lang('Submit')</button>
+                            <button class="btn btn--primary w-100 h-45" type="submit">@lang('Lưu')</button>
                         </div>
                     </form>
                 </div>

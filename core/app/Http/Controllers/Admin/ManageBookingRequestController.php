@@ -26,7 +26,7 @@ class ManageBookingRequestController extends Controller
 
     public function canceledBookings()
     {
-        $pageTitle       = 'Canceled Booking Request';
+        $pageTitle       = 'Yêu cầu đặt phòng đã hủy';
         $bookingRequests = $this->bookingRequestData('canceled');
         return view('admin.booking.canceled_requests', compact('pageTitle', 'bookingRequests'));
     }
@@ -44,7 +44,7 @@ class ManageBookingRequestController extends Controller
             'check_out'       => showDateTime($bookingRequest->check_out, 'd M, Y')
         ]);
 
-        $notify[] = ['success', 'Booking request canceled successfully'];
+        $notify[] = ['success', 'Yêu cầu đặt phòng đã hủy thành công'];
         return back()->with($notify);
     }
 
@@ -52,10 +52,10 @@ class ManageBookingRequestController extends Controller
     {
         $bookingRequest = BookingRequest::with('user', 'roomType:id,name')->findOrFail($id);
         if ($bookingRequest->status) {
-            $notify[] = ['error', 'This booking request already approved'];
+            $notify[] = ['error', 'Yêu cầu đặt phòng này đã được chấp thuận'];
             return to_route('admin.request.booking.all')->withNotify($notify);
         }
-        $pageTitle = "Assign Room";
+        $pageTitle = "Chỉ định phòng";
 
         $request->merge([
             'room_type'     => $bookingRequest->room_type_id,

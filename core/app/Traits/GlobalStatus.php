@@ -35,9 +35,9 @@ trait GlobalStatus
     {
         $html = '';
         if ($this->status == Status::ENABLE) {
-            $html = '<span class="badge badge--success">' . trans('Enabled') . '</span>';
+            $html = '<span class="badge badge--success">' . trans('Hoạt động') . '</span>'; // Enabled
         } else {
-            $html = '<span class="badge badge--warning">' . trans('Disabled') . '</span>';
+            $html = '<span class="badge badge--warning">' . trans('Ngừng hoạt động') . '</span>';
         }
         return $html;
     }

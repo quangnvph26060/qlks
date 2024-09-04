@@ -6,7 +6,7 @@
                 <div class="card">
                     <div class="card-header">
                         <h5 class="card-title mb-0">
-                            @lang('General Information')
+                            @lang('Thông tin chung')
                         </h5>
                     </div>
                     <div class="card-body">
@@ -21,14 +21,14 @@
 
                             <div class="col-xl-4 col-lg-6 col-md-4">
                                 <div class="form-group">
-                                    <label>@lang('Total Adult')</label>
+                                    <label>@lang('Tổng số người lớn')</label>
                                     <input class="form-control" min="1" name="total_adult" required type="number" value="{{ old('total_adult', @$roomType->total_adult) }}">
                                 </div>
                             </div>
 
                             <div class="col-xl-4 col-lg-6 col-md-4">
                                 <div class="form-group">
-                                    <label>@lang('Total Child')</label>
+                                    <label>@lang('Tổng số trẻ em')</label>
                                     <input class="form-control" min="0" name="total_child" required type="number" value="{{ old('total_child', @$roomType->total_child) }}">
                                 </div>
                             </div>
@@ -45,7 +45,7 @@
 
                             <div class="col-xl-4 col-lg-6 col-md-4">
                                 <div class="form-group">
-                                    <label>@lang('Cancellation Fee') /@lang('Night')</label>
+                                    <label>@lang('Cancellation Fee') /@lang('Đêm')</label>
                                     <div class="input-group">
                                         <input class="form-control cancellationFee" min="0" name="cancellation_fee" required step="any" type="number" value="{{ @$roomType->cancellation_fee }}">
                                         <span class="input-group-text">{{ __($general->cur_text) }}</span>
@@ -55,7 +55,7 @@
 
                             <div class="col-xl-4 col-lg-6 col-md-4">
                                 <div class="form-group position-relative">
-                                    <label> @lang('Amenities')</label>
+                                    <label> @lang('Tiện nghi')</label>
                                     <select class="select2-multi-select" multiple="multiple" name="amenities[]">
                                         @foreach ($amenities as $item)
                                             <option value="{{ $item->id }}">{{ $item->title }}</option>
@@ -66,7 +66,7 @@
 
                             <div class="col-xl-4 col-lg-6 col-md-4">
                                 <div class="form-group position-relative">
-                                    <label> @lang('Facilities')</label>
+                                    <label> @lang('Cơ sở')</label>
                                     <select class="select2-multi-select" multiple="multiple" name="facilities[]">
                                         @foreach ($facilities as $item)
                                             <option value="{{ $item->id }}">{{ $item->title }}</option>
@@ -77,10 +77,10 @@
 
                             <div class="col-xl-4 col-lg-6 col-md-4">
                                 <div class="form-group position-relative">
-                                    <label>@lang('Keywords')</label>
+                                    <label>@lang('Từ khóa')</label>
                                     <select class="form-control select2-auto-tokenize" multiple="multiple" name="keywords[]"></select>
-                                    <small class="ml-2 mt-2">@lang('Separate multiple keywords by') <code>,</code>(@lang('comma'))
-                                        @lang('or') <code>@lang('enter')</code> @lang('key')</small>
+                                    <small class="ml-2 mt-2">@lang('Phân tách nhiều từ khóa bằng') <code>,</code>(@lang('dấu phẩy'))
+                                        @lang('hoặc') <code>@lang('enter')</code> @lang('key')</small>
                                 </div>
                             </div>
 

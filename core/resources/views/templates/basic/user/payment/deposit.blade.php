@@ -10,6 +10,7 @@
                         <div class="row justify-content-center gy-sm-4 gy-3">
                             <div class="col-lg-6">
                                 <div class="payment-system-list is-scrollable gateway-option-list">
+                                    {{$gatewayCurrency}}
                                     @foreach ($gatewayCurrency as $data)
                                         <label for="{{ titleToKey($data->name) }}" class="payment-item @if ($loop->index > 4) d-none @endif gateway-option">
                                             <div class="payment-item__info">
@@ -19,7 +20,10 @@
                                             <div class="payment-item__thumb">
                                                 <img class="payment-item__thumb-img" src="{{ getImage(getFilePath('gateway') . '/' . $data->method->image) }}" alt="@lang('payment-thumb')">
                                             </div>
-                                            <input class="payment-item__radio gateway-input" id="{{ titleToKey($data->name) }}" hidden data-gateway='@json($data)' type="radio" name="gateway" value="{{ $data->method_code }}" @if (old('gateway')) @checked(old('gateway') == $data->method_code) @else @checked($loop->first) @endif data-min-amount="{{ showAmount($data->min_amount) }}" data-max-amount="{{ showAmount($data->max_amount) }}">
+                                            <input class="payment-item__radio gateway-input" id="{{ titleToKey($data->name) }}" hidden data-gateway='@json($data)' type="radio" 
+                                            name="gateway" value="{{ $data->method_code }}"
+                                            @if (old('gateway')) @checked(old('gateway') == $data->method_code) 
+                                            @else @checked($loop->first) @endif data-min-amount="{{ showAmount($data->min_amount) }}" data-max-amount="{{ showAmount($data->max_amount) }}">
                                         </label>
                                     @endforeach
                                     @if ($gatewayCurrency->count() > 4)
@@ -34,7 +38,7 @@
                                 <div class="payment-system-list p-3">
                                     <div class="deposit-info">
                                         <div class="deposit-info__title">
-                                            <p class="text mb-0">@lang('Amount')</p>
+                                            <p class="text mb-0">@lang('Tổng')</p>
                                         </div>
                                         <div class="deposit-info__input">
                                             <div class="deposit-info__input-group input-group">
@@ -46,7 +50,7 @@
                                     <hr>
                                     <div class="deposit-info">
                                         <div class="deposit-info__title">
-                                            <p class="text has-icon"> @lang('Limit')
+                                            <p class="text has-icon"> @lang('Giới hạn')
                                                 <span></span>
                                             </p>
                                         </div>
@@ -57,7 +61,7 @@
                                     </div>
                                     <div class="deposit-info">
                                         <div class="deposit-info__title">
-                                            <p class="text has-icon">@lang('Processing Charge')
+                                            <p class="text has-icon">@lang('Phí xử lý')
                                                 <span data-bs-toggle="tooltip" title="@lang('Processing charge for payment gateways')" class="proccessing-fee-info"><i class="las la-info-circle"></i> </span>
                                             </p>
                                         </div>
@@ -70,7 +74,7 @@
 
                                     <div class="deposit-info total-amount pt-3">
                                         <div class="deposit-info__title">
-                                            <p class="text">@lang('Total')</p>
+                                            <p class="text">@lang('Tổng tiền')</p>
                                         </div>
                                         <div class="deposit-info__input">
                                             <p class="text"><span class="final-amount">@lang('0.00')</span>
@@ -80,7 +84,7 @@
 
                                     <div class="deposit-info gateway-conversion d-none total-amount pt-2">
                                         <div class="deposit-info__title">
-                                            <p class="text">@lang('Conversion')
+                                            <p class="text">@lang('Chuyển đổi')
                                             </p>
                                         </div>
                                         <div class="deposit-info__input">
@@ -101,13 +105,13 @@
                                         </div>
                                     </div>
                                     <div class="d-none crypto-message mb-3">
-                                        @lang('Conversion with') <span class="gateway-currency"></span> @lang('and final value will Show on next step')
+                                        @lang('Chuyển đổi với') <span class="gateway-currency"></span> @lang('và giá trị cuối cùng sẽ hiển thị ở bước tiếp theo')
                                     </div>
                                     <button type="submit" class="btn btn--base w-100" disabled>
-                                        @lang('Confirm Payment')
+                                        @lang('Xác nhận thanh toán')
                                     </button>
                                     <div class="info-text pt-3">
-                                        <p class="text">@lang('Ensuring your funds grow safely through our secure deposit process with world-class payment options.')</p>
+                                        <p class="text">@lang('Đảm bảo tiền của bạn tăng trưởng an toàn thông qua quy trình gửi tiền an toàn với các tùy chọn thanh toán đẳng cấp thế giới.')</p>
                                     </div>
                                 </div>
                             </div>
@@ -147,7 +151,8 @@
                 gateway = gatewayElement.data('gateway');
                 minAmount = gatewayElement.data('min-amount');
                 maxAmount = gatewayElement.data('max-amount');
-
+             
+                
                 let processingFeeInfo =
                     `${parseFloat(gateway.percent_charge).toFixed(2)}% with ${parseFloat(gateway.fixed_charge).toFixed(2)} {{ __(gs('cur_text')) }} charge for payment gateway processing fees`
                 $(".proccessing-fee-info").attr("data-bs-original-title", processingFeeInfo);

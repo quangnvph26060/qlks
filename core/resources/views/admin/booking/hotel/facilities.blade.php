@@ -32,11 +32,11 @@
                                                     @endcan
                                                     @can('admin.hotel.facility.status')
                                                         @if ($item->status == Status::DISABLE)
-                                                            <button class="btn btn-sm btn-outline--success me-1 confirmationBtn" data-action="{{ route('admin.hotel.facility.status', $item->id) }}" data-question="@lang('Are you sure to enable this facilities?')" type="button">
+                                                            <button class="btn btn-sm btn-outline--success me-1 confirmationBtn" data-action="{{ route('admin.hotel.facility.status', $item->id) }}" data-question="@lang('Bạn có chắc chắn bật tiện ích này không?')" type="button">
                                                                 <i class="la la-eye"></i> @lang('Enable')
                                                             </button>
                                                         @else
-                                                            <button class="btn btn-sm btn-outline--danger confirmationBtn" data-action="{{ route('admin.hotel.facility.status', $item->id) }}" data-question="@lang('Are you sure to disable this facilities?')" type="button">
+                                                            <button class="btn btn-sm btn-outline--danger confirmationBtn" data-action="{{ route('admin.hotel.facility.status', $item->id) }}" data-question="@lang('Bạn có chắc chắn tắt tiện ích này không?')" type="button">
                                                                 <i class="la la-eye-slash"></i> @lang('Disable')
                                                             </button>
                                                         @endif
@@ -78,11 +78,11 @@
                         @csrf
                         <div class="modal-body">
                             <div class="form-group">
-                                <label> @lang('facilities Title')</label>
+                                <label> @lang('Cở sở vật chất')</label>
                                 <input class="form-control" name="title" required type="text" value="{{ old('title') }}">
                             </div>
                             <div class="form-group">
-                                <label> @lang('Icon')</label>
+                                <label> @lang('Biểu tượng')</label>
                                 <div class="input-group">
                                     <input autocomplete="off" class="form-control iconPicker icon" name="icon" required type="text">
                                     <span class="input-group-text input-group-addon" data-icon="las la-home" role="iconpicker"></span>

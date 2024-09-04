@@ -4,7 +4,7 @@
         <div class="col-lg-12">
             <div class="card">
                 <div class="card-header d-flex flex-wrap justify-content-between">
-                    <h5 class="card-title">@lang('Booked Rooms') </h5>
+                    <h5 class="card-title">@lang('Phòng đã đặt') </h5>
                     <span class="fw-bold">#{{ $booking->booking_number }}</span>
                 </div>
                 <div class="card-body">
@@ -13,11 +13,11 @@
                             <thead>
                                 <tr>
                                     <th class="text-center">@lang('SL')</th>
-                                    <th>@lang('Room Number')</th>
-                                    <th>@lang('Room Type')</th>
-                                    <th>@lang('Fare')</th>
-                                    <th>@lang('Cancellation Fee')</th>
-                                    <th>@lang('Refundable')</th>
+                                    <th>@lang('Số phòng')</th>
+                                    <th>@lang('Loại phòng')</th>
+                                    <th>@lang('Giá')</th>
+                                    <th>@lang('Phí hủy bỏ')</th>
+                                    <th>@lang('Có thể hoàn trả')</th>
                                 </tr>
                             </thead>
                             <tbody>
@@ -36,7 +36,7 @@
 
                             <tfoot>
                                 <tr>
-                                    <th class="text-end" colspan="4">@lang('Total')</th>
+                                    <th class="text-end" colspan="4">@lang('Tổng cộng')</th>
                                     <th>{{ showAmount($booking->activeBookedRooms->sum('cancellation_fee')) }}</th>
                                     <th>{{ showAmount($booking->activeBookedRooms->sum('fare') - $booking->activeBookedRooms->sum('cancellation_fee')) }}</th>
                                 </tr>

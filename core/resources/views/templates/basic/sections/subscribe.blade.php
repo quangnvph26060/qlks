@@ -8,7 +8,7 @@
                 <h2 class="section-title text-center text-white">{{ __(@$subscribeContent->data_values->heading) }}</h2>
                 <form action="" class="subscribe-form" id="subscribe">
                     @csrf
-                    <input type="email" name="email" class="form--control" placeholder="@lang('Enter email address')">
+                    <input type="email" name="email" class="form--control" placeholder="@lang('Nhập địa chỉ email')">
                     <button type="submit" class="btn btn--dark"><i class="fa fa-paper-plane" aria-hidden="true"></i> &nbsp; {{ __(@$subscribeContent->data_values->button_title) }}</button>
                 </form>
             </div>

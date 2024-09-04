@@ -40,7 +40,7 @@ class ManageUsersController extends Controller
 
     public function emailUnverifiedUsers()
     {
-        $pageTitle = 'Email Unverified Guests';
+        $pageTitle = 'Email Khách chưa được xác minh';
         $users = $this->userData('emailUnverified');
         return view('admin.users.list', compact('pageTitle', 'users'));
     }

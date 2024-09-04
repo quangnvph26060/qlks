@@ -139,7 +139,7 @@ class NotificationController extends Controller
 
     public function emailSetting()
     {
-        $pageTitle = 'Email Notification Settings';
+        $pageTitle = 'Cài đặt thông báo email';
         return view('admin.notification.email_setting', compact('pageTitle'));
     }
 
@@ -165,22 +165,29 @@ class NotificationController extends Controller
             'public_key.required_if' => 'The :attribute is required for Mailjet configuration',
             'secret_key.required_if' => 'The :attribute is required for Mailjet configuration',
         ]);
-        if ($request->email_method == 'php') {
-            $data['name'] = 'php';
-        } else if ($request->email_method == 'smtp') {
-            $request->merge(['name' => 'smtp']);
-            $data = $request->only('name', 'host', 'port', 'enc', 'username', 'password', 'driver');
-        } else if ($request->email_method == 'sendgrid') {
-            $request->merge(['name' => 'sendgrid']);
-            $data = $request->only('name', 'appkey');
-        } else if ($request->email_method == 'mailjet') {
-            $request->merge(['name' => 'mailjet']);
-            $data = $request->only('name', 'public_key', 'secret_key');
-        }
+        // if ($request->email_method == 'php') {
+        //     $data['name'] = 'php';
+        // } else if ($request->email_method == 'smtp') {
+        //     $request->merge(['name' => 'smtp']);
+        //     $data = $request->only('name', 'host', 'port', 'enc', 'username', 'password', 'driver');
+        // } else if ($request->email_method == 'sendgrid') {
+        //     $request->merge(['name' => 'sendgrid']);
+        //     $data = $request->only('name', 'appkey');
+        // } else if ($request->email_method == 'mailjet') {
+        //     $request->merge(['name' => 'mailjet']);
+        //     $data = $request->only('name', 'public_key', 'secret_key');
+        // }
+
+        $request->merge(['name' => 'smtp']);
+        $data = $request->only('name', 'host', 'port', 'enc', 'username', 'password', 'driver');
+
         $general = gs();
         $general->mail_config = $data;
         $general->save();
-        $notify[] = ['success', 'Email settings updated successfully'];
+
+        updateMail($data); 
+
+        $notify[] = ['success', 'Cài đặt email đã được cập nhật thành công'];
         return back()->withNotify($notify);
     }
 
@@ -192,8 +199,8 @@ class NotificationController extends Controller
 
         $config = gs('mail_config');
         $receiverName = explode('@', $request->email)[0];
-        $subject = strtoupper($config->name) . ' Configuration Success';
-        $message = 'Your email notification setting is configured successfully for ' . gs('site_name');
+        $subject = strtoupper($config->name) . ' Cấu hình thành công';
+        $message = 'Cài đặt thông báo email của bạn đã được cấu hình thành công cho ' . gs('site_name');
 
         if (gs('en')) {
             $user = [
@@ -214,7 +221,7 @@ class NotificationController extends Controller
         if (session('mail_error')) {
             $notify[] = ['error', session('mail_error')];
         } else {
-            $notify[] = ['success', 'Email sent to ' . $request->email . ' successfully'];
+            $notify[] = ['success', 'Email đã được gửi đến ' . $request->email . ' thành công'];
         }
 
         return back()->withNotify($notify);

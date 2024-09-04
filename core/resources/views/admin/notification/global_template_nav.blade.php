@@ -12,7 +12,7 @@
                     </a>
                 </div>
             @endcan
-            @can('admin.setting.notification.global.sms')
+            {{-- @can('admin.setting.notification.global.sms')
                 <div class="col-xxl-3 col-xl-4 col-md-4 col-sm-6">
                     <a href="{{ route('admin.setting.notification.global.sms') }}" class="notification-via {{ menuActive('admin.setting.notification.global.sms') }} d-block mb-4">
                         <span class="active-badge"> <i class="las la-check"></i> </span>
@@ -22,8 +22,8 @@
                         </div>
                     </a>
                 </div>
-            @endcan
-            @can('admin.setting.notification.global.push')
+            @endcan --}}
+            {{-- @can('admin.setting.notification.global.push')
                 <div class="col-xxl-3 col-xl-4 col-md-4 col-sm-12">
                     <a href="{{ route('admin.setting.notification.global.push') }}" class="notification-via {{ menuActive('admin.setting.notification.global.push') }} d-block mb-4">
                         <span class="active-badge"> <i class="las la-check"></i> </span>
@@ -33,7 +33,7 @@
                         </div>
                     </a>
                 </div>
-            @endcan
+            @endcan --}}
         </div>
     </div>
 @endcan

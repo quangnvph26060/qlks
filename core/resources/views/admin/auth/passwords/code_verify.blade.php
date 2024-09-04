@@ -4,8 +4,8 @@
         <div class="container custom-container d-flex justify-content-center">
             <div class="login-area">
                 <div class="text-center mb-3">
-                    <h2 class="text-white mb-2">@lang('Verify Code')</h2>
-                    <p class="text-white mb-2">@lang('Please check your email and enter the verification code you got in your email.')</p>
+                    <h2 class="text-white mb-2">@lang('Mã xác minh')</h2>
+                    <p class="text-white mb-2">@lang('Vui lòng kiểm tra email của bạn và nhập mã xác minh bạn nhận được trong email.')</p>
                 </div>
                 <form action="{{ route('admin.password.verify.code') }}" method="POST" class="login-form w-100">
                     @csrf
@@ -26,10 +26,10 @@
                             </div>
                         </div>
                     </div>
-                    <button type="submit" class="btn cmn-btn w-100">@lang('Submit')</button>
+                    <button type="submit" class="btn cmn-btn w-100">@lang('Xác nhận')</button>
                     <div class="d-flex flex-wrap justify-content-between mt-3">
-                        <a href="{{ route('admin.password.reset') }}" class="forget-text">@lang('Try to send again')</a>
-                        <a href="{{ route('admin.login') }}" class="text-white"><i class="las la-sign-in-alt"></i>@lang('Back to Login')</a>
+                        <a href="{{ route('admin.password.reset') }}" class="forget-text">@lang('Gửi lại')</a>
+                        <a href="{{ route('admin.login') }}" class="text-white"><i class="las la-sign-in-alt"></i>@lang('Quay lại Đăng nhập')</a>
                     </div>
                 </form>
             </div>

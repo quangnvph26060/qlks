@@ -10,9 +10,9 @@
                                 <tr>
                                     <th>@lang('S.N.')</th>
                                     <th>@lang('Date')</th>
-                                    <th>@lang('Room Number')</th>
-                                    <th>@lang('Service')</th>
-                                    <th>@lang('Quantity')</th>
+                                    <th>@lang('Số phòng')</th>
+                                    <th>@lang('Dịch vụ')</th>
+                                    <th>@lang('Số lượng')</th>
                                     <th>@lang('Cost')</th>
                                     <th>@lang('Total')</th>
                                     <th>@lang('Added By')</th>

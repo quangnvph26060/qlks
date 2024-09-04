@@ -37,12 +37,10 @@ class LoginController extends Controller
      */
     public function showLoginForm()
     {
-        // $user = new User();
-        // $user->username = 'datgin';
-        // $user->email = 'admin@gmail.com';
-        // $user->password = Hash::make('123456');
-        // $user->save();
-        $pageTitle = "Admin Login";
+
+
+        $pageTitle = "Admin đăng nhập";
+
         return view('admin.auth.login', compact('pageTitle'));
     }
 

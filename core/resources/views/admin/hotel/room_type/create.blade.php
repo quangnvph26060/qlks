@@ -6,7 +6,7 @@
                 <div class="card">
                     <div class="card-header">
                         <h5 class="card-title mb-0">
-                            @lang('General Information')
+                            @lang('Thông tin chung')
                         </h5>
                     </div>
                     <div class="card-body">
@@ -34,7 +34,7 @@
 
                             <div class="col-xl-4 col-md-4 col-sm-12">
                                 <div class="form-group">
-                                    <label class="required" for="fare">@lang('Fare') /@lang('Night')</label>
+                                    <label class="required" for="fare">@lang('Giá') /@lang('Đêm')</label>
                                     <div class="input-group">
                                         <input class="form-control" id="fare" name="fare" required type="number" value="{{ old('fare', @$roomType->fare ? getAmount(@$roomType->fare) : '') }}">
                                         <span class="input-group-text">{{ __(gs('cur_text')) }}</span>
@@ -44,7 +44,7 @@
 
                             <div class="col-xl-4 col-md-4 col-sm-12">
                                 <div class="form-group">
-                                    <label>@lang('Cancellation Fee') /@lang('Night')</label>
+                                    <label>@lang('Phí hủy bỏ') /@lang('Đêm')</label>
                                     <div class="input-group">
                                         <input class="form-control cancellationFee" min="0" name="cancellation_fee" required step="any" type="number" value="{{ old('cancellation_fee', getAmount(@$roomType->cancellation_fee)) }}">
                                         <span class="input-group-text">{{ __(gs('cur_text')) }}</span>
@@ -54,21 +54,21 @@
 
                             <div class="col-xl-4 col-md-4 col-sm-12">
                                 <div class="form-group">
-                                    <label>@lang('Total Adult')</label>
+                                    <label>@lang('Tổng số người')</label>
                                     <input class="form-control" min="1" name="total_adult" required type="number" value="{{ old('total_adult', @$roomType->total_adult) }}">
                                 </div>
                             </div>
 
                             <div class="col-xl-4 col-md-4 col-sm-12">
                                 <div class="form-group">
-                                    <label>@lang('Total Child')</label>
+                                    <label>@lang('Tống số trẻ em')</label>
                                     <input class="form-control" min="0" name="total_child" required type="number" value="{{ old('total_child', @$roomType->total_child) }}">
                                 </div>
                             </div>
 
                             <div class="col-xl-6 col-md-12">
                                 <div class="form-group position-relative">
-                                    <label> @lang('Amenities')</label>
+                                    <label> @lang('Tiện nghi')</label>
                                     <select class="select2-multi-select" multiple="multiple" name="amenities[]">
                                         @foreach ($amenities as $item)
                                             <option value="{{ $item->id }}">{{ $item->title }}</option>
@@ -79,7 +79,7 @@
 
                             <div class="col-xl-6 col-md-12">
                                 <div class="form-group position-relative">
-                                    <label> @lang('Facilities')</label>
+                                    <label> @lang('Cở sở')</label>
                                     <select class="select2-multi-select" multiple="multiple" name="facilities[]">
                                         @foreach ($facilities as $item)
                                             <option value="{{ $item->id }}">{{ $item->title }}</option>
@@ -90,18 +90,18 @@
 
                             <div class="col-xl-6 col-md-12">
                                 <div class="form-group position-relative">
-                                    <label>@lang('Keywords')</label>
+                                    <label>@lang('Từ khóa')</label>
                                     <select class="form-control select2-auto-tokenize" multiple="multiple" name="keywords[]"></select>
-                                    <small class="ml-2 mt-2">@lang('Separate multiple keywords by') <code>,</code>(@lang('comma'))
-                                        @lang('or') <code>@lang('enter')</code> @lang('key')</small>
+                                    <small class="ml-2 mt-2">@lang('Phân tách nhiều từ khóa bằng') <code>,</code>(@lang('dấu phẩy'))
+                                        @lang('hoặc') <code>@lang('enter')</code> @lang('key')</small>
                                 </div>
                             </div>
 
                             <div class="col-xl-6 col-md-12">
                                 <div class="form-group">
-                                    <label> @lang('Featured') </label>
-                                    <input @if (@$roomType->is_featured) checked @endif data-bs-toggle="toggle" data-height="50" data-off="@lang('Unfeatured')" data-offstyle="-danger" data-on="@lang('Featured')" data-onstyle="-success" data-size="large" data-width="100%" name="is_featured" type="checkbox">
-                                    <small class="ml-2 mt-2"><code><i class="las la-info-circle"></i> @lang('Featured rooms will be displayed in featured rooms section.')</code></small>
+                                    <label> @lang('Nổi bật') </label>
+                                    <input @if (@$roomType->is_featured) checked @endif data-bs-toggle="toggle" data-height="50" data-off="@lang('Không có đặc điểm')" data-offstyle="-danger" data-on="@lang('Featured')" data-onstyle="-success" data-size="large" data-width="100%" name="is_featured" type="checkbox">
+                                    <small class="ml-2 mt-2"><code><i class="las la-info-circle"></i> @lang('Các phòng nổi bật sẽ được hiển thị trong phần phòng nổi bật.')</code></small>
                                 </div>
                             </div>
                         </div>
@@ -111,14 +111,14 @@
                 <div class="card mt-3">
                     <div class="card-header">
                         <h5 class="card-title mb-0">
-                            @lang('Bed Per Room')
+                            @lang('Giường Mỗi Phòng')
                         </h5>
                     </div>
                     <div class="card-body">
                         <div class="row d-flex justify-content-center mb-3">
                             <div class="col-sm-4">
                                 <div class="form-group">
-                                    <h4 class="mb-1">@lang('Total Bed')</h4>
+                                    <h4 class="mb-1">@lang('Tổng số giường')</h4>
                                     <input @isset($roomType) readonly @endisset class="form-control" min="1" name="total_bed" required type="number" value="{{ @$roomType ? count(@$roomType->beds) : '' }}">
                                 </div>
                             </div>
@@ -156,7 +156,7 @@
                         <div class="card">
                             <div class="card-header">
                                 <h5 class="card-title mb-0">
-                                    @lang('Main Image')
+                                    @lang('Hình ảnh chính')
                                 </h5>
                             </div>
                             <div class="card-body">
@@ -168,7 +168,7 @@
                         <div class="card">
                             <div class="card-header">
                                 <h5 class="card-title mb-0">
-                                    @lang('Description')
+                                    @lang('Mô tả')
                                 </h5>
                             </div>
                             <div class="card-body">
@@ -182,10 +182,10 @@
                 <div class="card mt-3">
                     <div class="card-header">
                         <h5 class="card-title mb-0">
-                            @lang('Images')
+                            @lang('Hình ảnh')
                         </h5>
 
-                        <small class="text--info text--small"><i class="las la-info-circle"></i> @lang('Each image will be resized into') {{ getFileSize('roomTypeImage') }}@lang('px')</small>
+                        <small class="text--info text--small"><i class="las la-info-circle"></i> @lang('Mỗi hình ảnh sẽ được thay đổi kích thước thành') {{ getFileSize('roomTypeImage') }}@lang('px')</small>
                     </div>
                     <div class="card-body">
                         <div class="input-images pb-3"></div>
@@ -195,7 +195,7 @@
                 <div class="card mt-3">
                     <div class="card-header">
                         <h5 class="card-title mb-0">
-                            @lang('Cancellation Policy')
+                            @lang('Chính sách hủy bỏ')
                         </h5>
                     </div>
                     <div class="card-body">
@@ -216,7 +216,7 @@
                             <div class="row">
                                 <div class="col-md-12">
                                     <div class="form-group mb-0">
-                                        <button class="btn btn--primary w-100 h-45" type="submit">@lang('Submit')
+                                        <button class="btn btn--primary w-100 h-45" type="submit">@lang('Xác nhận')
                                         </button>
                                     </div>
                                 </div>

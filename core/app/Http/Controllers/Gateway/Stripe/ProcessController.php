@@ -84,7 +84,7 @@ class ProcessController extends Controller
 
                 if ($charge['status'] == 'succeeded') {
                     PaymentController::userDataUpdate($deposit);
-                    $notify[] = ['success', 'Payment captured successfully'];
+                    $notify[] = ['success', 'Thanh toán đã được ghi nhận thành công'];
                     return redirect($deposit->success_url)->withNotify($notify);
                 }
             } catch (\Exception $e) {

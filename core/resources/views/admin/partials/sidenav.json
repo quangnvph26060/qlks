@@ -21,7 +21,7 @@
             "Command dashboard",
             "Main control panel"
         ],
-        "title": "Dashboard",
+        "title": "Thống kê",
         "icon": "las la-home",
         "route_name": "admin.dashboard",
         "menu_active": "admin.dashboard"
@@ -109,9 +109,9 @@
     },
     "upcoming_check_ins": {
         "keyword": [
-            "Các lần kiểm tra sắp tới"
+            "Lần kiểm tra sắp tới"
         ],
-        "title": "Các lần kiểm tra sắp tới",
+        "title": "Lần kiểm tra sắp tới",
         "icon": "la la-sign-in",
         "route_name": "admin.upcoming.booking.checkin",
         "menu_active": "admin.upcoming.booking.checkin"
@@ -159,7 +159,7 @@
                     "Kiểm tra hôm nay",
                     "Checkin"
                 ],
-                "title": "Todays Check-In",
+                "title": "Check-in hôm nay",
                 "route_name": "admin.booking.todays.checkin",
                 "menu_active": "admin.booking.todays.checkin"
             },
@@ -277,12 +277,12 @@
             },
             {
                 "keyword": [
-                    "Thanh toán đã được chấp thuận",
+                    "Thanh toán được chấp thuận",
                     "Thanh toán",
                     "Quản lý thanh toán",
                     "Hoạt động thanh toán"
                 ],
-                "title": "Thanh toán đã được chấp thuận",
+                "title": "Thanh toán được chấp thuận",
                 "route_name": "admin.deposit.approved",
                 "menu_active": "admin.deposit.approved"
             },
@@ -293,7 +293,7 @@
                     "Quản lý thanh toán",
                     "Hoạt động thanh toán"
                 ],
-                "title": "SThanh toán thành công",
+                "title": "Thanh toán thành công",
                 "route_name": "admin.deposit.successful",
                 "menu_active": "admin.deposit.successful",
                 "params": {
@@ -384,6 +384,7 @@
         "submenu": [
             {
                 "keyword": [
+
                    "khách đang hoạt động",
                     "Quản lý khách",
                     "Quản lý khách",
@@ -391,6 +392,7 @@
                     "Trạng thái khách",
                     "Hoạt động của khách",
                     "Phân tích khách"
+
                 ],
                 "title": "Khách hàng tích cực",
                 "route_name": "admin.users.active",
@@ -417,7 +419,9 @@
                 "Xác thực khách",
                 "Quản lý khách"
                 ],
-                "title": "Email chưa xác minh",
+
+                "title": "Email chưa được xác minh",
+
                 "route_name": "admin.users.email.unverified",
                 "menu_active": "admin.users.email.unverified",
                 "counter": "emailUnverifiedUsersCount"
@@ -430,7 +434,9 @@
                     "Xác thực khách",
                     "Quản lý khách"
                 ],
-                "title": "Di động chưa xác minh",
+
+                "title": "Di động chưa được xác minh",
+
                 "route_name": "admin.users.mobile.unverified",
                 "menu_active": "admin.users.mobile.unverified",
                 "counter": "mobileUnverifiedUsersCount"
@@ -444,7 +450,9 @@
                     "Hoạt động của khách",
                     "Phân tích khách"
                 ],
+
                 "title": "Tất cả khách hàng",
+
                 "route_name": "admin.users.all",
                 "menu_active": "admin.users.all"
             },
@@ -476,7 +484,9 @@
         "menu_active": "admin.subscriber.*"
     },
     "support_ticket": {
+
         "title": "Vé hỗ trợ",
+
         "header": "Support & Report",
         "icon": "la la-ticket",
         "counters": [
@@ -608,7 +618,9 @@
             "System setup"
         ],
         "title": "Thiết lập hệ thống",
-        "header": "Thiết lập hệ thốngs",
+
+        "header": "Thiết lập hệ thống",
+
         "icon": "las la-life-ring",
         "route_name": "admin.setting.system",
         "menu_active": [

@@ -12,7 +12,7 @@ class RoomController extends Controller
 {
     public function index()
     {
-        $pageTitle = 'All Rooms';
+        $pageTitle = 'Tất cả các phòng';
         $roomTypes = RoomType::get();
         $rooms     = Room::searchable(['room_number', 'roomType:name'])->filter(['room_type_id'])->orderBy('room_number');
 

@@ -21,7 +21,7 @@
                             </div>
                             <div class="col-md-6">
                                 <div class="form-group">
-                                    <label>@lang('Email Sent From - Email') </label>
+                                    <label>@lang('Email được gửi từ - Email') </label>
                                     <input type="text" class="form-control " placeholder="@lang('Email address')" name="email_from" value="{{ gs('email_from') }}" required>
                                 </div>
                             </div>

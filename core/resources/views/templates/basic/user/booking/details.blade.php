@@ -6,15 +6,15 @@
         $canceledFare = $booking->bookedRooms->where('status', Status::ROOM_CANCELED)->sum('fare');
         $canceledTaxCharge = $booking->bookedRooms->where('status', Status::ROOM_CANCELED)->sum('tax_charge');
     @endphp
-    <h5 class="text--secondary mb-3 text-center">@lang('Booked Rooms')</h5>
+    <h5 class="text--secondary mb-3 text-center">@lang('Phồng đã đặt')</h5>
     <div class="table-responsive--md">
         <table class="custom--table table">
             <thead>
                 <tr>
-                    <th>@lang('Booked For')</th>
-                    <th>@lang('Room Type')</th>
-                    <th>@lang('Room No.')</th>
-                    <th>@lang('Fare') / @lang('Night')</th>
+                    <th>@lang('Đã đặt trước')</th>
+                    <th>@lang('Loại phòng')</th>
+                    <th>@lang('Số phòng')</th>
+                    <th>@lang('Giá') / @lang('Đêm')</th>
                 </tr>
             </thead>
             <tbody>
@@ -22,24 +22,24 @@
                     @foreach ($bookedRoom as $booked)
                         <tr>
                             @if ($loop->first)
-                                <td class="bg--date text-center" data-label="@lang('Booked For')" rowspan="{{ count($bookedRoom) }}">
+                                <td class="bg--date text-center" data-label="@lang(' Đã đặt chỗ cho')" rowspan="{{ count($bookedRoom) }}">
                                     {{ showDateTime($booked->booked_for, 'd M, Y') }}
                                 </td>
                             @endif
-                            <td class="text-center" data-label="@lang('Room Type')">{{ __($booked->room->roomType->name) }}</td>
-                            <td data-label="@lang('Room No.')">{{ __($booked->room->room_number) }}
+                            <td class="text-center" data-label="@lang('Loại phòng')">{{ __($booked->room->roomType->name) }}</td>
+                            <td data-label="@lang('Phòng số')">{{ __($booked->room->room_number) }}
                                 @if ($booked->status == Status::ROOM_CANCELED)
-                                    <span class="text--danger text-sm">(@lang('Canceled'))</span>
+                                    <span class="text--danger text-sm">(@lang('Đã hủy'))</span>
                                 @endif
                             </td>
-                            <td data-label="@lang('Fare') / @lang('Night')">{{ showAmount($booked->fare) }}</td>
+                            <td data-label="@lang('Giá') / @lang('Đêm')">{{ showAmount($booked->fare) }}</td>
                         </tr>
                     @endforeach
                 @endforeach
 
                 <tr>
                     <td class="text-end" colspan="3">
-                        <span class="fw-bold">@lang('Total Fare')</span>
+                        <span class="fw-bold">@lang('Tổng giá')</span>
                     </td>
                     <td class="fw-bold">
                         {{ showAmount($totalFare) }}
@@ -50,15 +50,15 @@
     </div>
 
     @if ($booking->usedPremiumService->count())
-        <h5 class="text--secondary mt-4 mb-3 text-center">@lang('Services')</h5>
+        <h5 class="text--secondary mt-4 mb-3 text-center">@lang('Dịch  vụ')</h5>
         <div class="table-responsive--md">
             <table class="custom--table head--base table">
                 <thead>
                     <tr>
-                        <th>@lang('Date')</th>
-                        <th>@lang('Room No.')</th>
-                        <th>@lang('Service')</th>
-                        <th>@lang('Total')</th>
+                        <th>@lang('Ngày ')</th>
+                        <th>@lang('Số phòng')</th>
+                        <th>@lang('Dịch vụ')</th>
+                        <th>@lang('Tổng ')</th>
                     </tr>
                 </thead>
                 <tbody>
@@ -66,12 +66,12 @@
                         @foreach ($services as $service)
                             <tr>
                                 @if ($loop->first)
-                                    <td class="bg--date text-center" data-label="@lang('Date')" rowspan="{{ count($services) }}">
+                                    <td class="bg--date text-center" data-label="@lang('Ngày')" rowspan="{{ count($services) }}">
                                         {{ showDateTime($service->service_date, 'd M, Y') }}
                                     </td>
                                 @endif
 
-                                <td data-label="@lang('Room No.')">
+                                <td data-label="@lang('Số phòng')">
                                     <span class="fw-bold">{{ __($service->room->room_number) }}</span>
                                 </td>
                                 <td data-label="@lang('Service')">
@@ -110,14 +110,14 @@
     @endphp
 
     @if ($receivedPyaments->count())
-        <h5 class="text--secondary mt-4 mb-3 text-center">@lang('Payments Recevied')</h5>
+        <h5 class="text--secondary mt-4 mb-3 text-center">@lang('Thanh toán đã nhận')</h5>
         <div class="table-responsive--md">
             <table class="custom--table head--base table">
                 <thead>
                     <tr>
-                        <th>@lang('Time')</th>
-                        <th>@lang('Payment Type')</th>
-                        <th>@lang('Amount')</th>
+                        <th>@lang('Thời gian')</th>
+                        <th>@lang('Phương thức thanh toán')</th>
+                        <th>@lang('Tổng tiền')</th>
                     </tr>
                 </thead>
 
@@ -127,9 +127,9 @@
                             <td class="text-start">{{ __(showDateTime($payment->created_at, 'd M, Y')) }}</td>
                             <td>
                                 @if ($payment->admin_id == 0)
-                                    @lang('Online Payment')
+                                    @lang('Thanh toán Online')
                                 @else
-                                    @lang('Cash Payment')
+                                    @lang('Thanh toán tiền mặt')
                                 @endif
 
                             </td>
@@ -147,14 +147,14 @@
     @endif
 
     @if ($returnedPyaments->count())
-        <h5 class="text--secondary mt-4 mb-3 text-center">@lang('Payments Returned')</h5>
+        <h5 class="text--secondary mt-4 mb-3 text-center">@lang('Thanh toán được trả lại')</h5>
         <div class="table-responsive--md">
             <table class="custom--table head--base table">
                 <thead>
                     <tr>
-                        <th>@lang('Time')</th>
-                        <th>@lang('Payment Type')</th>
-                        <th>@lang('Amount')</th>
+                        <th>@lang('Thời gian')</th>
+                        <th>@lang('Phương thức thanh toán')</th>
+                        <th>@lang('Tổng tiền')</th>
                     </tr>
                 </thead>
 
@@ -162,14 +162,14 @@
                     @foreach ($returnedPyaments as $payment)
                         <tr>
                             <td class="text-start">{{ __(showDateTime($payment->created_at, 'd M, Y')) }}</td>
-                            <td>@lang('Cash Payment')</td>
+                            <td>@lang('Thanh toán tiền mặt')</td>
                             <td>{{ showAmount($payment->amount) }}</td>
                         </tr>
                     @endforeach
 
                     <tr>
                         <td class="text-end" colspan="2">
-                            <span class="fw-bold">@lang('Total')</span>
+                            <span class="fw-bold">@lang('Tổng')</span>
                         </td>
                         <td class="fw-bold">{{ showAmount($returnedPyaments->sum('amount')) }}</td>
                     </tr>
@@ -182,13 +182,13 @@
         $due = $booking->total_amount - $booking->paid_amount;
     @endphp
 
-    <h5 class="text--secondary mt-4 mb-3 text-center">@lang('Payment Info')</h5>
+    <h5 class="text--secondary mt-4 mb-3 text-center">@lang('Thông tin thanh toán')</h5>
     <div class="card shadow">
         <div class="card-body">
             <ul class="list-group list-group-flush">
 
                 <li class="d-flex justify-content-between list-group-item align-items-start">
-                    <span>@lang('Total Fare')</span>
+                    <span>@lang('Tổng giá')</span>
                     <span> +{{ showAmount($totalFare) }}</span>
                 </li>
                 <li class="d-flex justify-content-between list-group-item align-items-start">
@@ -198,7 +198,7 @@
 
                 @if ($canceledFare > 0)
                     <li class="d-flex justify-content-between list-group-item align-items-start">
-                        <span>@lang('Canceled Tax')</span>
+                        <span>@lang('Thuế đã hủy')</span>
                         <span> -{{ showAmount($canceledFare) }}</span>
                     </li>
                 @endif
@@ -212,32 +212,33 @@
 
                 @if ($booking->service_cost > 0)
                     <li class="d-flex justify-content-between list-group-item align-items-start">
-                        <span>@lang('Extra Service Charge')</span>
+                        <span>@lang('Phí dịch vụ bổ sung')</span>
                         <span> +{{ showAmount($booking->service_cost) }}</span>
                     </li>
                 @endif
 
                 @if ($booking->extraCharge() > 0)
                     <li class="d-flex justify-content-between list-group-item align-items-start">
-                        <span>@lang('Other Charges')</span>
+                        <span>@lang('Các khoản phí khác')</span>
                         <span> +{{ showAmount($booking->extraCharge()) }}</span>
                     </li>
                 @endif
 
                 @if ($booking->cancellation_fee > 0)
                     <li class="d-flex justify-content-between list-group-item align-items-start">
-                        <span>@lang('Cancellation Fee')</span>
+                        <span>@lang('Phí hủy bỏ')</span>  
+                        {{-- Cancellation Fee --}}
                         <span> +{{ showAmount($booking->cancellation_fee) }}</span>
                     </li>
                 @endif
 
                 <li class="d-flex justify-content-between list-group-item align-items-start">
-                    <span class="fw-bold">@lang('Total Payable')</span>
+                    <span class="fw-bold">@lang('Tổng số tiền phải trả')</span>
                     <span class="fw-bold"> = {{ showAmount($booking->total_amount) }}</span>
                 </li>
 
                 <li class="d-flex justify-content-between list-group-item align-items-start">
-                    <span>@lang('Total Paid')</span>
+                    <span>@lang('Tổng số tiền đã thanh toán')</span>
                     <span>{{ showAmount($receivedPyaments->sum('amount')) }}</span>
                 </li>
 
@@ -247,21 +248,21 @@
 
                 @if ($refundedAmount > 0)
                     <li class="d-flex justify-content-between list-group-item align-items-start">
-                        <span class="fw-bold">@lang('Refunded')</span>
+                        <span class="fw-bold">@lang('Đã hoàn lại')</span>
                         <span class="fw-bold">{{ showAmount($refundedAmount) }}</span>
                     </li>
                 @endif
 
                 @if ($due >= 0)
                     <li class="d-flex justify-content-between list-group-item align-items-start">
-                        <span class="fw-bold">@lang('Due')</span>
+                        <span class="fw-bold">@lang('Quá hạn')</span>
                         <span class="fw-bold @if ($due > 0) text--danger @else text--success @endif">{{ showAmount($due) }}</span>
                     </li>
                 @endif
 
                 @if ($due < 0)
                     <li class="d-flex justify-content-between list-group-item align-items-start">
-                        <span class="fw-bold">@lang('Refundable')</span>
+                        <span class="fw-bold">@lang('Có thể hoàn trả')</span>
                         <span class="fw-bold text--danger">{{ showAmount(abs($due)) }}</span>
                     </li>
                 @endif
@@ -272,7 +273,7 @@
     @if ($due > 0 && $booking->status == Status::BOOKING_ACTIVE)
         <div class="text-end mt-4">
             <a class="btn btn-sm btn--base px-5" href="{{ route('user.booking.payment', $booking->id) }}">
-                <i class="las la-money-bill-alt"></i> @lang('Pay Now')
+                <i class="las la-money-bill-alt"></i> @lang('Thanh toán ngay')
             </a>
         </div>
     @endif

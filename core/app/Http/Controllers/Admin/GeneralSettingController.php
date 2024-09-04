@@ -29,7 +29,7 @@ class GeneralSettingController extends Controller
         $request->validate([
             'site_name'                => 'required|string|max:40',
             'cur_text'                 => 'required|string|max:40',
-            'cur_sym'                  => 'required|string|max:40',
+            // 'cur_sym'                  => 'required|string|max:40',
             'base_color'               => 'nullable|regex:/^[a-f0-9]{6}$/i',
             'timezone'                 => 'required|integer',
             'currency_format'          => 'required|in:1,2,3',

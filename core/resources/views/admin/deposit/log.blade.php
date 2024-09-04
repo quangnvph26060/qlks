@@ -14,13 +14,13 @@
                         <table class="table table--light style--two">
                             <thead>
                                 <tr>
-                                    <th>@lang('Gateway | Transaction')</th>
-                                    <th>@lang('Initiated')</th>
-                                    <th>@lang('User')</th>
-                                    <th>@lang('Amount')</th>
-                                    <th>@lang('Conversion')</th>
-                                    <th>@lang('Status')</th>
-                                    <th>@lang('Action')</th>
+                                    <th>@lang('Cổng | Giao dịch')</th>
+                                    <th>@lang('Thời gian')</th>
+                                    <th>@lang('Khách hàng')</th>
+                                    <th>@lang('Tổng')</th>
+                                    <th>@lang('Chuyển đổi')</th>
+                                    <th>@lang('Trạng thái')</th>
+                                    <th>@lang('Hành động')</th>
                                 </tr>
                             </thead>
                             <tbody>

@@ -9,9 +9,9 @@
                             <thead>
                                 <tr>
                                     <th>@lang('S.N.')</th>
-                                    <th>@lang('Bed Type')</th>
+                                    <th>@lang('Loại giường')</th>
                                     @can(['admin.hotel.bed.save', 'admin.hotel.bed.delete'])
-                                        <th>@lang('Action')</th>
+                                        <th>@lang('Hành động')</th>
                                     @endcan
                                 </tr>
                             </thead>
@@ -23,13 +23,12 @@
                                         @can(['admin.hotel.bed.save', 'admin.hotel.bed.delete'])
                                             <td>
                                                 @can('admin.hotel.bed.save')
-                                                    <button class="btn btn-sm btn-outline--primary cuModalBtn" data-modal_title="@lang('Update Bed Type')" data-resource="{{ $item }}" type="button">
-                                                        <i class="la la-pencil"></i>@lang('Edit')
+                                                        <i class="la la-pencil"></i>@lang('Sửa')
                                                     </button>
                                                 @endcan
                                                 @can('admin.hotel.bed.delete')
                                                     <button class="btn btn-sm btn-outline--danger confirmationBtn" data-action="{{ route('admin.hotel.bed.delete', $item->id) }}" data-question="@lang('Are you sure, you want to delete this bed type?')" type="button">
-                                                        <i class="la la-trash"></i>@lang('Delete')
+                                                        <i class="la la-trash"></i>@lang('Xóa')
                                                     </button>
                                                 @endcan
                                             </td>
@@ -69,7 +68,7 @@
                         @csrf
                         <div class="modal-body">
                             <div class="form-group">
-                                <label> @lang('Bed Type')</label>
+                                <label> @lang('Loại giường')</label>
                                 <input class="form-control" name="name" required type="text" value="{{ old('type_name') }}">
                             </div>
                             <div class="status"></div>

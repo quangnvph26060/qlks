@@ -8,6 +8,7 @@
     @if (!$availableOnly)
         <div class="row gy-4">
             @forelse($rooms as $room)
+                   
                 <div class="col-xxl-3 col-xl-4 col-lg-6 col-md-6">
                     <div class="widget-two box--shadow2 b-radius--5 bg--white">
                         <div class="widget-two__icon b-radius--5 bg--dark">
@@ -36,16 +37,16 @@
                                     @endcan
                                 </p>
 
-                                <p class="text--muted text--small">@lang('Room Type'): {{ __($room->room->roomType->name) }}
+                                <p class="text--muted text--small">@lang('Loại phòng'): {{ __($room->room->roomType->name) }}
                                 </p>
                             </div>
 
                             <div class="d-flex flex-wrap gap-2">
                                 @can('admin.premium.service.add')
-                                    <a class="btn btn--xs btn-outline--dark" data-services="{{ $room->premiumServices }}" href="{{ route('admin.premium.service.add') }}?room={{ $room->room->room_number }}"> <i class="la la-plus""></i>@lang('Add Service')</a>
+                                    <a class="btn btn--xs btn-outline--dark" data-services="{{ $room->premiumServices }}" href="{{ route('admin.premium.service.add') }}?room={{ $room->room->room_number }}"> <i class="la la-plus"></i>@lang('Add Service')</a>
                                 @endcan
-
-                                <button class="btn btn--xs btn-outline--info btn-view" data-services="{{ $room->premiumServices }}" type="button"> <i class="la la-eye""></i>@lang('View Services')</button>
+                                {{-- 123 --}}
+                                <button class="btn btn--xs btn-outline--info btn-view" data-services="{{ $room->usedPremiumService }}" type="button"> <i class="la la-eye"></i>@lang('View Services')</button>
                             </div>
                         </div>
                     </div>
@@ -100,7 +101,7 @@
         <div class="modal-dialog" role="document">
             <div class="modal-content">
                 <div class="modal-header">
-                    <h5 class="modal-title">@lang('Premium Services')</h5>
+                    <h5 class="modal-title">@lang('Dịch vụ cao cấp')</h5>
                     <button aria-label="Close" class="btn-close" data-bs-dismiss="modal" type="button"></button>
                 </div>
                 <div class="modal-body">
@@ -133,7 +134,6 @@
                 let modal = $('#premiumServices');
                 let services = $(this).data('services');
 
-                console.log(services);
 
                 let content = ``;
                 if (services.length) {
@@ -148,7 +148,7 @@
 
                     services.forEach((element, i) => {
                         content += `<li class="list-group-item d-flex justify-content-between">
-                            <span class="w-25">${i+1}. ${element.extra_service.name}</span>
+                            <span class="w-25">${i+1}. ${element.premium_service.name}</span>
                             <span class="w-25 text-center">${element.qty}</span>
                             <span class="w-25 text-center">{{ gs()->cur_sym }}${parseFloat(element.unit_price)}</span>
                             <span class="w-25 text-end">{{ gs()->cur_sym }}${parseFloat(element.total_amount)}</span>
@@ -157,7 +157,7 @@
 
                     content += `</ul>`;
                 } else {
-                    content = `<h4 class="text-center">@lang('No service used yet!')</h4>`;
+                    content = `<h4 class="text-center">@lang('Chưa sử dụng dịch vụ nào')</h4>`;
                 }
                 modal.find('.modal-body').html(content);
 

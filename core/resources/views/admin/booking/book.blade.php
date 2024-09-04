@@ -8,7 +8,7 @@
                         <form action="{{ route('admin.room.search') }}" class="formRoomSearch" method="get">
                             <div class="d-flex justify-content-between align-items-end flex-wrap gap-2">
                                 <div class="form-group flex-fill">
-                                    <label>@lang('Room Type')</label>
+                                    <label>@lang('Loại phòng')</label>
                                     <select class="form-control" name="room_type" required>
                                         <option value="">@lang('Select One')</option>
                                         @foreach ($roomTypes as $type)
@@ -18,17 +18,17 @@
                                 </div>
 
                                 <div class="form-group flex-fill">
-                                    <label>@lang('Check In - Check Out Date')</label>
-                                    <input autocomplete="off" class="bookingDatePicker form-control bg--white" name="date" placeholder="@lang('Select Date')" required type="text">
+                                    <label>@lang('Ngày nhận phòng - Ngày trả phòng')</label>
+                                    <input autocomplete="off" class="bookingDatePicker form-control bg--white" name="date" placeholder="@lang('Chọn ngày')" required type="text">
                                 </div>
                                 <div class="form-group flex-fill">
-                                    <label>@lang('Room')</label>
-                                    <input class="form-control" name="rooms" placeholder="@lang('How many room?')" required type="text">
+                                    <label>@lang('Phòng')</label>
+                                    <input class="form-control" name="rooms" placeholder="@lang('Có bao nhiêu phòng?')" required type="text">
                                 </div>
 
                                 <div class="form-group flex-fill">
                                     <button class="btn btn--primary w-100 h-45 search" type="submit">
-                                        <i class="la la-search"></i>@lang('Search')
+                                        <i class="la la-search"></i>@lang('Tìm kiếm')
                                     </button>
                                 </div>
                             </div>
@@ -44,7 +44,7 @@
             <div class="card">
                 <div class="card-header">
                     <div class="card-title d-flex justify-content-between booking-info-title mb-0">
-                        <h5>@lang('Booking Information')</h5>
+                        <h5>@lang('Thông tin đặt phòng')</h5>
                     </div>
                 </div>
                 <div class="card-body">
@@ -68,7 +68,7 @@
             <div class="card">
                 <div class="card-header">
                     <div class="card-title mb-0">
-                        <h5>@lang('Book Room')</h5>
+                        <h5>@lang('Đặt phòng')</h5>
                     </div>
                 </div>
                 <div class="card-body">
@@ -102,13 +102,13 @@
 
                             <div class="col-12 guestInputDiv">
                                 <div class="form-group">
-                                    <label>@lang('Phone Number')</label>
+                                    <label>@lang('Số điện thoại')</label>
                                     <input class="form-control forGuest" name="mobile" required type="number">
                                 </div>
                             </div>
                             <div class="col-12 guestInputDiv">
                                 <div class="form-group">
-                                    <label>@lang('Address')</label>
+                                    <label>@lang('Địa chỉ')</label>
                                     <input class="form-control forGuest" name="address" required type="text">
                                 </div>
                             </div>
@@ -116,18 +116,18 @@
                             <div class="orderList d-none">
                                 <ul class="list-group list-group-flush orderItem">
                                     <li class="list-group-item d-flex justify-content-between align-items-center">
-                                        <h6>@lang('Room')</h6>
-                                        <h6>@lang('Days')</h6>
+                                        <h6>@lang('Phòng')</h6>
+                                        <h6>@lang('Ngày')</h6>
                                         <span>
-                                            <h6>@lang('Fare')</h6>
+                                            <h6>@lang('Giá')</h6>
                                         </span>
                                         <span>
-                                            <h6>@lang('Subtotal')</h6>
+                                            <h6>@lang('Tổng cộng')</h6>
                                         </span>
                                     </li>
                                 </ul>
                                 <div class="d-flex justify-content-between align-items-center border-top p-2">
-                                    <span>@lang('Subtotal')</span>
+                                    <span>@lang('Tổng cộng')</span>
                                     <span class="totalFare" data-amount="0"></span>
                                 </div>
 
@@ -138,7 +138,7 @@
                                 </div>
 
                                 <div class="d-flex justify-content-between align-items-center border-top p-2">
-                                    <span>@lang('Total Fare')</span>
+                                    <span>@lang('Tổng tiền')</span>
                                     <span class="grandTotalFare"></span>
                                     <input hidden name="total_amount" type="text">
                                 </div>
@@ -146,13 +146,13 @@
 
                             <div class="col-12">
                                 <div class="form-group">
-                                    <label>@lang('Paying Amount')</label>
-                                    <input class="form-control" min="0" name="paid_amount" placeholder="@lang('Paying Amount')" step="any" type="number">
+                                    <label>@lang('Nhập tiền thanh toán')</label>
+                                    <input class="form-control" min="0" name="paid_amount" placeholder="@lang('Tổng cộng')" step="any" type="number">
                                 </div>
                             </div>
                             @can('admin.room.book')
                                 <div class="form-group mb-0">
-                                    <button class="btn btn--primary h-45 w-100 btn-book confirmBookingBtn" type="button">@lang('Book Now')</button>
+                                    <button class="btn btn--primary h-45 w-100 btn-book confirmBookingBtn" type="button">@lang('Đặt ngay')</button>
                                 </div>
                             @endcan
                         </div>
@@ -165,17 +165,17 @@
         <div class="modal-dialog" role="document">
             <div class="modal-content">
                 <div class="modal-header">
-                    <h5 class="modal-title">@lang('Confirmation Alert!')</h5>
+                    <h5 class="modal-title">@lang('Thông báo xác nhận!')</h5>
                     <button aria-label="Close" class="close" data-bs-dismiss="modal" type="button">
                         <i class="las la-times"></i>
                     </button>
                 </div>
                 <div class="modal-body">
-                    <p>@lang('Are you sure to book this rooms?')</p>
+                    <p>@lang('Bạn có chắc chắn đặt phòng này không?')</p>
                 </div>
                 <div class="modal-footer">
-                    <button class="btn btn--dark" data-bs-dismiss="modal" type="button">@lang('No')</button>
-                    <button class="btn btn--primary btn-confirm" type="button">@lang('Yes')</button>
+                    <button class="btn btn--dark" data-bs-dismiss="modal" type="button">@lang('Không')</button>
+                    <button class="btn btn--primary btn-confirm" type="button">@lang('Có')</button>
                 </div>
             </div>
         </div>
@@ -185,7 +185,7 @@
 @can('admin.booking.all')
     @push('breadcrumb-plugins')
         <a class="btn btn-sm btn--primary" href="{{ route('admin.booking.all') }}">
-            <i class="la la-list"></i>@lang('All Bookings')
+            <i class="la la-list"></i>@lang('Tất cả các đặt phòng')
         </a>
     @endpush
 @endcan

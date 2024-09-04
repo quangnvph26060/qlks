@@ -211,7 +211,7 @@ function notify($user, $templateName, $shortCodes = null, $sendVia = null, $crea
     $notify->user         = $user;
     $notify->createLog    = $createLog;
     $notify->pushImage    = $pushImage;
-    $notify->userColumn   = isset($user->id) ? $user->getForeignKey() : 'user_id';
+    $notify->userColumn   = isset($user->id) ? $user : 'user_id';
     $notify->send();
 }
 
@@ -493,4 +493,28 @@ function getLanguages($local = false) {
     }
 
     return $language->where('is_default', Status::YES)->first();
+}
+function updateMail ($data) {
+
+    $envFilePath = base_path('.env');
+    $envContent = file_get_contents($envFilePath);
+
+    $mail = gs('mail_config');
+    $data_mail = json_encode($mail);
+    $mail_array = json_decode($data_mail, true);
+    $newMailMailer = $data['name'] ?? $mail_array['smtp'];
+    $newMailHost = $data['host'] ?? $mail_array['name'];
+    $newMailPort = $data['port'] ?? $mail_array['port'];
+    $newMailUsername = $data['username'] ?? $mail_array['username'];
+    $newMailPassword = $data['password'] ?? $mail_array['password'];
+    $newMailEncryption = $data['enc'] ?? $mail_array['enc'];
+
+    $envContent = preg_replace('/(MAIL_MAILER=)(.*)/', 'MAIL_MAILER=' . $newMailMailer, $envContent);
+    $envContent = preg_replace('/(MAIL_HOST=)(.*)/', 'MAIL_HOST=' . $newMailHost, $envContent);
+    $envContent = preg_replace('/(MAIL_PORT=)(.*)/', 'MAIL_PORT=' . $newMailPort, $envContent);
+    $envContent = preg_replace('/(MAIL_USERNAME=)(.*)/', 'MAIL_USERNAME=' . $newMailUsername, $envContent);
+    $envContent = preg_replace('/(MAIL_PASSWORD=)(.*)/', 'MAIL_PASSWORD=' . $newMailPassword, $envContent);
+    $envContent = preg_replace('/(MAIL_ENCRYPTION=)(.*)/', 'MAIL_ENCRYPTION=' . $newMailEncryption, $envContent);
+
+    file_put_contents($envFilePath, $envContent);
 }

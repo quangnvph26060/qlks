@@ -1,13 +1,41 @@
 <?php
 
 use Illuminate\Support\Facades\Route;
+use Illuminate\Support\Facades\Mail;
+//test
+Route::get('/send-test-email', function () {
+    Mail::raw('Test email', function ($message) {
+        $message->to('quang3011003@gmail.com')
+                ->subject('Test Email');
+    });
 
+    return 'Email sent successfully!';
+});
+Route::get('/test-notify', function () {
+    $user = (object)[
+        'id' => 1,
+        'email' => 'quang3011003@gmail.com',
+        'fullname' => 'văn quang',
+        'username' => 'văn quang',
+    ];
+    
+    $subject = 'Test Notify Email';
+    $message = 'This is a test email using the notify function.';
+    
+    notify($user, 'DEFAULT', [
+        'subject' => $subject,
+        'message' => $message,
+    ], ['email'], false);
+
+    return 'Notify email sent!';
+});
+// end test
 Route::get('/clear', function () {
     \Illuminate\Support\Facades\Artisan::call('optimize:clear');
 });
 
 
-Route::get('cron', 'CronController@cron')->name('cron');
+// Route::get('cron', 'CronController@cron')->name('cron');
 
 // User Support Ticket
 Route::controller('TicketController')->prefix('ticket')->name('ticket.')->group(function () {

@@ -11,33 +11,33 @@
         @can('admin.setting.notification.email')
             <li class="nav-item {{ menuActive('admin.setting.notification.email') }}" role="presentation">
                 <a href="{{ route('admin.setting.notification.email') }}" class="nav-link text-dark" type="button">
-                    <i class="las la-envelope"></i> @lang('Email Setting')
+                    <i class="las la-envelope"></i> @lang('Thiết lập email')
                 </a>
             </li>
         @endcan
 
-        @can('admin.setting.notification.sms')
+        {{-- @can('admin.setting.notification.sms')
             <li class="nav-item {{ menuActive('admin.setting.notification.sms') }}" role="presentation">
                 <a href="{{ route('admin.setting.notification.sms') }}" class="nav-link text-dark" type="button">
                     <i class="las la-sms"></i> @lang('SMS Setting')
                 </a>
             </li>
-        @endcan
+        @endcan --}}
 
-        @can('admin.setting.notification.push')
+        {{-- @can('admin.setting.notification.push')
             <li class="nav-item {{ menuActive('admin.setting.notification.push') }}" role="presentation">
                 <a href="{{ route('admin.setting.notification.push') }}" class="nav-link text-dark" type="button">
                     <i class="las la-bell"></i> @lang('Push Notification Setting')
                 </a>
             </li>
-        @endcan
+        @endcan --}}
 
-        @can('admin.setting.notification.templates')
+        {{-- @can('admin.setting.notification.templates')
             <li class="nav-item {{ menuActive(['admin.setting.notification.templates', 'admin.setting.notification.template.edit']) }}" role="presentation">
                 <a href="{{ route('admin.setting.notification.templates') }}" class="nav-link text-dark" type="button">
                     <i class="las la-list"></i> @lang('Notification Templates')
                 </a>
             </li>
-        @endcan
+        @endcan --}}
     </ul>
 @endcan

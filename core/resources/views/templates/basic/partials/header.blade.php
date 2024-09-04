@@ -22,7 +22,7 @@
                 <div class="col-lg-7">
                     <div class="header-top-right justify-content-lg-end justify-content-center">
                         <div class="header-top-action-wrapper">
-                            @if (gs('multi_language'))
+                            {{-- @if (gs('multi_language'))
                                 @php
                                     $language = getLanguages();
                                     $default = getLanguages(true);
@@ -52,19 +52,19 @@
                                         </ul>
                                     </div>
                                 </div>
-                            @endif
+                            @endif --}}
                             @guest
-                                <a class="header-user-btn" href="{{ route('user.login') }}"><i class="las la-sign-in-alt"></i> @lang('Login')</a>
+                                <a class="header-user-btn" href="{{ route('user.login') }}"><i class="las la-sign-in-alt"></i> @lang('Đăng nhập')</a>
                                 @if (gs('registration'))
                                     <a class="header-user-btn ms-2" href="{{ route('user.register') }}">
-                                        <i class="las la-user"></i> @lang('Register')
+                                        <i class="las la-user"></i> @lang('Đăng ký')
                                     </a>
                                 @endif
                             @endguest
 
                             @auth
-                                <a class="header-user-btn" href="{{ route('user.home') }}"><i class="la la-dashboard"></i> @lang('Dashboard')</a>
-                                <a class="header-user-btn ms-2" href="{{ route('user.logout') }}"><i class="las la-sign-out-alt"></i> @lang('Logout')</a>
+                                <a class="header-user-btn" href="{{ route('user.home') }}"><i class="la la-dashboard"></i> @lang('Thống kê')</a>
+                                <a class="header-user-btn ms-2" href="{{ route('user.logout') }}"><i class="las la-sign-out-alt"></i> @lang('Đăng xuất')</a>
                             @endauth
                         </div>
                     </div>
@@ -85,7 +85,7 @@
                 </button>
                 <div class="collapse navbar-collapse mt-lg-0 mt-3" id="navbarSupportedContent">
                     <ul class="navbar-nav main-menu ms-auto">
-                        <li><a class="{{ menuActive('home') }}" href="{{ route('home') }}">@lang('HOME')</a></li>
+                        <li><a class="{{ menuActive('home') }}" href="{{ route('home') }}">@lang('Trang chủ')</a></li>
                         @if (@$pages)
                             @foreach ($pages as $data)
                                 <li>
@@ -94,15 +94,15 @@
                             @endforeach
                         @endif
                         <li>
-                            <a class="{{ menuActive('blog') }}" href="{{ route('blog') }}">@lang('UPDATES')</a>
+                            <a class="{{ menuActive('blog') }}" href="{{ route('blog') }}">@lang('Cập nhật')</a>
                         </li>
 
                         <li>
-                            <a class="{{ menuActive('contact') }}" href="{{ route('contact') }}">@lang('CONTACT')</a>
+                            <a class="{{ menuActive('contact') }}" href="{{ route('contact') }}">@lang('Liên hệ')</a>
                         </li>
                     </ul>
                     <div class="nav-right justify-content-xl-end ps-0 ps-xl-5">
-                        <a class="btn btn-sm btn--base" href="{{ route('room.types') }}"><i class="las la-hand-point-right"></i> __('BOOK ROOM')</a>
+                        <a class="btn btn-sm btn--base" href="{{ route('room.types') }}"><i class="las la-hand-point-right"></i> ĐẶT PHÒNG</a>
                     </div>
                 </div>
             </nav>

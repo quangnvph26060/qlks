@@ -78,12 +78,12 @@
                     </div>
                 </div>
                 <div class="body">
-                    <h5 class="title">@lang('Room\'s Details')</h5>
+                    <h5 class="title">@lang('Chi tiết phòng')</h5>
                     <table class="table-bordered custom-table table">
                         <thead>
                             <tr>
-                                <th>@lang('Room No.')</th>
-                                <th>@lang('Room Type')</th>
+                                <th>@lang('Số phòng')</th>
+                                <th>@lang('Loại phòng')</th>
                                 <th>@lang('Fare')</th>
                             </tr>
                         </thead>
@@ -109,7 +109,7 @@
                             @endforeach
 
                             <tr class="custom-table__subhead">
-                                <td class="text-end" colspan="2">@lang('Total Fare')</td>
+                                <td class="text-end" colspan="2">@lang('Tổng')</td>
                                 <td>{{ showAmount($totalFare) }}</td>
                             </tr>
 
@@ -144,7 +144,7 @@
                                     </tr>
                                 @elseif($due < 0)
                                     <tr class="custom-table__subhead">
-                                        <td class="text-end" colspan="2">@lang('Refundable')</td>
+                                        <td class="text-end" colspan="2">@lang('Có thể hoàn trả')</td>
                                         <td>{{ showAmount(abs($due)) }}</td>
                                     </tr>
                                 @endif
@@ -158,16 +158,16 @@
                         @endphp
                         <div class="extra-service">
                             <div class="mt-10">
-                                <h5 class="title">@lang('Service Details')</h5>
+                                <h5 class="title">@lang('Chi tiết dịch vụ')</h5>
                             </div>
                             <table class="table-bordered custom-table table">
                                 <thead>
                                     <tr>
-                                        <th>@lang('Room No.')</th>
-                                        <th>@lang('Service')</th>
-                                        <th>@lang('Quantity')</th>
-                                        <th>@lang('Unit Price')</th>
-                                        <th>@lang('Amount')</th>
+                                        <th>@lang('Số phòng')</th>
+                                        <th>@lang('Dịch vụ')</th>
+                                        <th>@lang('Số lượng')</th>
+                                        <th>@lang('Đơn giá')</th>
+                                        <th>@lang('Tổng')</th>
                                     </tr>
                                 </thead>
 
@@ -187,7 +187,7 @@
                                         @endforeach
                                     @endforeach
                                     <tr class="custom-table__subhead">
-                                        <td class="text-end" colspan="4">@lang('Total Charge')</td>
+                                        <td class="text-end" colspan="4">@lang('Tổng phí')</td>
                                         <td>{{ showAmount($booking->service_cost) }}</td>
                                     </tr>
                                 </tbody>
@@ -196,17 +196,17 @@
 
                         <div class="summary avoid_page_break">
                             <div class="mt-10">
-                                <h5 class="title">@lang('Billing Details')</h5>
+                                <h5 class="title">@lang('Chi tiết thanh toán')</h5>
                             </div>
                             <table class="table-bordered custom-table table">
                                 <tbody>
                                     <tr>
-                                        <td class="text-end">@lang('Total Fare')</td>
+                                        <td class="text-end">@lang('Tổng giá vé')</td>
                                         <td>{{ showAmount($totalFare) }}</td>
                                     </tr>
                                     @if ($booking->cancellation_fee > 0)
                                         <tr>
-                                            <td class="text-end">@lang('Cancellation Fee')</td>
+                                            <td class="text-end">@lang('Phí hủy bỏ')</td>
                                             <td>{{ showAmount($booking->cancellation_fee) }}</td>
                                         </tr>
                                     @endif
@@ -215,28 +215,28 @@
                                         <td>{{ showAmount($booking->tax_charge) }}</td>
                                     </tr>
                                     <tr>
-                                        <td class="text-end">@lang('Service Charge')</td>
+                                        <td class="text-end">@lang('Phí dịch vụ')</td>
                                         <td>{{ showAmount($booking->service_cost) }}</td>
                                     </tr>
                                     @if ($booking->extraCharge() > 0)
                                         <tr>
-                                            <td class="text-end">@lang('Other Charges')</td>
+                                            <td class="text-end">@lang('Các khoản phí khác')</td>
                                             <td>{{ showAmount($booking->extraCharge()) }}</td>
                                         </tr>
                                     @endif
                                     <tr>
-                                        <td class="text-end">@lang('Total')</td>
+                                        <td class="text-end">@lang('Tổng ')</td>
                                         <td>{{ showAmount($booking->total_amount) }}</td>
                                     </tr>
 
                                     @if ($due > 0)
                                         <tr class="text-end">
-                                            <td class="text-end">@lang('Due')</td>
+                                            <td class="text-end">@lang('Quá hạn')</td>
                                             <td>{{ showAmount($due) }}</td>
                                         </tr>
                                     @elseif($due < 0)
                                         <tr class="text-end">
-                                            <td class="text-end">@lang('Refundable')</td>
+                                            <td class="text-end">@lang('Có thể hoàn trả')</td>
                                             <td>{{ showAmount(abs($due)) }}</td>
                                         </tr>
                                     @endif

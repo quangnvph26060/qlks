@@ -19,7 +19,7 @@ class UserController extends Controller
 {
     public function home()
     {
-        $pageTitle = 'Dashboard';
+        $pageTitle = 'Thống kê';
         $user = auth()->user();
 
         $bookings  = Booking::where('user_id', $user->id)->with(

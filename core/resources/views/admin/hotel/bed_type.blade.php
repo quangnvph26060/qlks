@@ -9,7 +9,7 @@
                             <thead>
                                 <tr>
                                     <th>@lang('S.N.')</th>
-                                    <th>@lang('Bed Type')</th>
+                                    <th>@lang('Loại giường')</th>
                                     @can(['admin.hotel.bed.save', 'admin.hotel.bed.delete'])
                                         <th>@lang('Action')</th>
                                     @endcan
@@ -24,12 +24,12 @@
                                             <td>
                                                 <div class="button--group">
                                                     @can('admin.hotel.bed.save')
-                                                        <button class="btn btn-sm btn-outline--primary cuModalBtn" data-modal_title="@lang('Update Bed Type')" data-resource="{{ $item }}" type="button">
+                                                        <button class="btn btn-sm btn-outline--primary cuModalBtn" data-modal_title="@lang('Cập nhật loại giường')" data-resource="{{ $item }}" type="button">
                                                             <i class="la la-pencil"></i>@lang('Edit')
                                                         </button>
                                                     @endcan
                                                     @can('admin.hotel.bed.delete')
-                                                        <button class="btn btn-sm btn-outline--danger confirmationBtn" data-action="{{ route('admin.hotel.bed.delete', $item->id) }}" data-question="@lang('Are you sure, you want to delete this bed type?')" type="button">
+                                                        <button class="btn btn-sm btn-outline--danger confirmationBtn" data-action="{{ route('admin.hotel.bed.delete', $item->id) }}" data-question="@lang('Bạn có chắc chắn muốn xóa loại giường này không?')" type="button">
                                                             <i class="la la-trash"></i>@lang('Delete')
                                                         </button>
                                                     @endcan
@@ -71,14 +71,14 @@
                         @csrf
                         <div class="modal-body">
                             <div class="form-group">
-                                <label> @lang('Bed Type')</label>
+                                <label> @lang('Loại giường')</label>
                                 <input class="form-control" name="name" required type="text" value="{{ old('type_name') }}">
                             </div>
                             <div class="status"></div>
                         </div>
 
                         <div class="modal-footer">
-                            <button class="btn btn--primary w-100 h-45" type="submit">@lang('Submit')</button>
+                            <button class="btn btn--primary w-100 h-45" type="submit">@lang('Xác nhận')</button>
                         </div>
                     </form>
                 </div>

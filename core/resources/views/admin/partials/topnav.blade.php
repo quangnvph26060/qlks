@@ -77,20 +77,20 @@
                         @empty
                             <div class="empty-notification text-center">
                                 <img src="{{ getImage('assets/images/empty_list.png') }}" alt="empty">
-                                <p class="mt-3">@lang('No unread notification found')</p>
+                                <p class="mt-3">@lang('Không tìm thấy thông báo chưa đọc')</p>
                             </div>
                         @endforelse
                     </div>
                     @can('admin.notifications')
                         <div class="dropdown-menu__footer">
-                            <a href="{{ route('admin.notifications') }}" class="view-all-message">@lang('View all notifications')</a>
+                            <a href="{{ route('admin.notifications') }}" class="view-all-message">@lang('Xem tất cả thông báo')</a>
                         </div>
                     @endcan
                 </div>
             </li>
             @can('admin.setting.system')
                 <li>
-                    <button type="button" class="primary--layer" data-bs-toggle="tooltip" data-bs-placement="bottom" title="@lang('System Setting')">
+                    <button type="button" class="primary--layer" data-bs-toggle="tooltip" data-bs-placement="bottom" title="@lang('Thiết lập hệ thống')">
                         <a href="{{ route('admin.setting.system') }}"><i class="las la-wrench"></i></a>
                     </button>
                 </li>
@@ -108,17 +108,17 @@
                 <div class="dropdown-menu dropdown-menu--sm p-0 border-0 box--shadow1 dropdown-menu-right">
                     <a href="{{ route('admin.profile') }}" class="dropdown-menu__item d-flex align-items-center px-3 py-2">
                         <i class="dropdown-menu__icon las la-user-circle"></i>
-                        <span class="dropdown-menu__caption">@lang('Profile')</span>
+                        <span class="dropdown-menu__caption">@lang('Hồ sơ')</span>
                     </a>
 
                     <a href="{{ route('admin.password') }}" class="dropdown-menu__item d-flex align-items-center px-3 py-2">
                         <i class="dropdown-menu__icon las la-key"></i>
-                        <span class="dropdown-menu__caption">@lang('Password')</span>
+                        <span class="dropdown-menu__caption">@lang('Mật khẩu')</span>
                     </a>
 
                     <a href="{{ route('admin.logout') }}" class="dropdown-menu__item d-flex align-items-center px-3 py-2">
                         <i class="dropdown-menu__icon las la-sign-out-alt"></i>
-                        <span class="dropdown-menu__caption">@lang('Logout')</span>
+                        <span class="dropdown-menu__caption">@lang('Đăng xuất')</span>
                     </a>
                 </div>
                 <button type="button" class="breadcrumb-nav-open ms-2 d-none">
@@ -148,7 +148,7 @@
             return `<li class="text-muted">
                 <div class="empty-search text-center">
                     <img src="{{ getImage('assets/images/empty_list.png') }}" alt="empty">
-                    <p class="text-muted">No search result found</p>
+                    <p class="text-muted">Không tìm thấy kết quả tìm kiếm</p>
                 </div>
             </li>`
         }

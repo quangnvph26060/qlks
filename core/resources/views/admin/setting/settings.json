@@ -18,8 +18,8 @@
             "secondary color",
             "paginate"
         ],
-        "title": "General Setting",
-        "subtitle": "Configure the fundamental information of the site.",
+        "title": "Thiết lập chung",
+        "subtitle": "Cấu hình thông tin cơ bản của trang web.",
         "icon": "las la-cog",
         "route_name": "admin.setting.general"
     },
@@ -36,7 +36,7 @@
             "website logo"
         ],
         "title": "Logo and Favicon",
-        "subtitle": "Upload your logo and favicon here.",
+        "subtitle": "Tải logo và favicon của bạn lên đây.",
         "icon": "las la-images",
         "route_name": "admin.setting.logo.icon"
     },
@@ -59,8 +59,8 @@
             "email verification",
             "in app payment"
         ],
-        "title": "System Configuration",
-        "subtitle": "Control all of the basic modules of the system.",
+        "title": "Cấu hình hệ thống",
+        "subtitle": "Kiểm soát tất cả các mô-đun cơ bản của hệ thống.",
         "icon": "las la-cogs",
         "route_name": "admin.setting.system.configuration"
     },
@@ -98,8 +98,8 @@
             "global template",
             "global notification"
         ],
-        "title": "Notification Setting",
-        "subtitle": "Control and configure overall notification elements of the system.",
+        "title": "Cài đặt thông báo",
+        "subtitle": "Kiểm soát và cấu hình các thành phần thông báo tổng thể của hệ thống.",
         "icon": "las la-bell",
         "route_name": "admin.setting.notification.global.email"
     },
@@ -142,8 +142,8 @@
             "two checkout",
             "2checkout"
         ],
-        "title": "Payment Gateways",
-        "subtitle": "Configure automatic or manual payment gateways to accept payment from users.",
+        "title": "Cổng thanh toán",
+        "subtitle": "Cấu hình cổng thanh toán tự động hoặc thủ công để chấp nhận thanh toán từ người dùng.",
         "icon": "las la-credit-card",
         "route_name": "admin.gateway.automatic.index"
     },
@@ -157,8 +157,8 @@
             "meta tags",
             "SEO configuration"
         ],
-        "title": "SEO Configuration",
-        "subtitle": "Configure proper meta title, meta description, meta keywords, etc to make the system SEO-friendly.",
+        "title": "Cấu hình SEO",
+        "subtitle": "Cấu hình tiêu đề meta, mô tả meta, từ khóa meta, v.v. phù hợp để làm cho hệ thống thân thiện với SEO.",
         "icon": "las la-globe",
         "route_name": "admin.seo"
     },
@@ -177,8 +177,8 @@
             "section settings",
             "subscribe"
         ],
-        "title": "Manage Frontend",
-        "subtitle": "Control all of the frontend contents of the system.",
+        "title": "Quản lý Frontend",
+        "subtitle": "Kiểm soát tất cả nội dung giao diện của hệ thống.",
         "icon": "la la-html5",
         "route_name": "admin.frontend.index"
     },
@@ -190,8 +190,8 @@
             "contact page",
             "blog page"
         ],
-        "title": "Manage Pages",
-        "subtitle": "Control dynamic and static pages of the system.",
+        "title": "Quản lý trang",
+        "subtitle": "Kiểm soát các trang động và tĩnh của hệ thống.",
         "icon": "las la-list",
         "route_name": "admin.frontend.manage.pages"
     },
@@ -206,8 +206,8 @@
             "google login",
             "linkedin login"
         ],
-        "title": "Social Login Setting",
-        "subtitle": "Provide the required information here to use the login system by social media.",
+        "title": "Cài đặt đăng nhập xã hội",
+        "subtitle": "Cung cấp thông tin cần thiết ở đây để sử dụng hệ thống đăng nhập bằng phương tiện truyền thông xã hội.",
         "icon": "las la-user-circle",
         "route_name": "admin.setting.socialite.credentials"
     },

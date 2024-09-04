@@ -23,7 +23,7 @@
         </div>
 
         <div class="col-xxl-3 col-sm-6">
-            <x-widget color="info" icon="la la-hospital-alt" icon_style="false" link="admin.booking.todays.booked" query_string="type=not_booked" style="2" cover_cursor="1" overlay_icon="0" title="Today's Available Rooms" value="{{ $widget['today_available'] }}" />
+            <x-widget color="info" icon="la la-hospital-alt" icon_style="false" link="admin.booking.todays.booked" query_string="type=not_booked" style="2" cover_cursor="1" overlay_icon="0" title="Phòng trống hôm nay" value="{{ $widget['today_available'] }}" />
         </div>
 
         <div class="col-xxl-3 col-sm-6">

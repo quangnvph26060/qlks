@@ -129,16 +129,16 @@ class Booking extends Model
             function () {
                 if (now() >= $this->check_in && $this->status == Status::BOOKING_ACTIVE) {
                     $class = "badge--success";
-                    $text = 'Running';
+                    $text = 'Đang hoạt động'; // Running
                 } elseif (now() < $this->check_in && $this->status == Status::BOOKING_ACTIVE) {
                     $class = "badge--warning";
-                    $text = 'Upcoming';
+                    $text = 'Sắp tới'; // Upcoming 
                 } elseif ($this->status == Status::BOOKING_CANCELED) {
                     $class = "badge--danger";
-                    $text = 'Canceled';
+                    $text = 'Đã hủy'; // Canceled 
                 } else {
                     $class = "badge--dark";
-                    $text = 'Checked Out';
+                    $text = 'Trả phòng'; // Checked Out
                 }
 
                 $html = "<small class='badge $class'>" . trans($text) . "</small>";
