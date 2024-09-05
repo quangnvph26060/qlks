@@ -6,7 +6,9 @@ class Searchable{
     public function searchable(){
         return function($params, $like = true) {
             $search = request()->search;
-            if (!$search) {
+            $date = request()->date;
+
+            if (!$search && !$date) {
                 return $this;
             }
 
@@ -14,25 +16,46 @@ class Searchable{
                 throw new \Exception("Search parameters should be an array");
             }
 
-            $search = $like ? "%$search%" : $search;
-            $this->where(function ($q) use ($params, $search) {
-                foreach ($params as $param) {
-                    $relationData = explode(':', $param);
-                    if (@$relationData[1]) {
-                        foreach (explode(',', $relationData[1]) as $column) {
-                            if(!$relationData[0]){
-                                continue;
+            // Xử lý tìm kiếm từ khóa
+            if ($search) {
+                $search = $like ? "%$search%" : $search;
+                $this->where(function ($q) use ($params, $search) {
+                    foreach ($params as $param) {
+                        $relationData = explode(':', $param);
+                        if (@$relationData[1]) {
+                            foreach (explode(',', $relationData[1]) as $column) {
+                                if(!$relationData[0]){
+                                    continue;
+                                }
+                                $q->orWhereHas($relationData[0], function ($q) use ($column, $search) {
+                                    $q->where($column, 'like', $search);
+                                });
                             }
-                            $q->orWhereHas($relationData[0], function ($q) use ($column, $search) {
-                                $q->where($column, 'like', $search);
-                            });
+                        } else {
+                            $column = $param;
+                            $q->orWhere($column, 'LIKE', $search);
                         }
-                    } else {
-                        $column = $param;
-                        $q->orWhere($column, 'LIKE', $search);
                     }
+                });
+            }
+
+            if ($date) {
+                $dates = explode(' - ', $date);
+                if (count($dates) === 2) {
+                    $startDate = Carbon::parse(trim($dates[0]))->startOfDay();
+                    $endDate = Carbon::parse(trim($dates[1]))->endOfDay();
+                    $this->whereBetween('created_at', [$startDate, $endDate]);
+                } else {
+                    $this->whereBetween(
+                        'created_at',
+                        [
+                            Carbon::parse($date)->startOfDay(),
+                            Carbon::parse($date)->endOfDay()
+                        ]
+                    );
                 }
-            });
+            }
+
             return $this;
         };
     }

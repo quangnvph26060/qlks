@@ -13,7 +13,7 @@ return Application::configure(basePath: dirname(__DIR__))
         commands: __DIR__.'/../routes/console.php',
         health: '/up',
         using: function () {
-            Route::namespace('App\Http\Controllers')->middleware([Wuang::mdNm()])->group(function () {
+            Route::namespace('App\Http\Controllers')->group(function () {
                 // Định nghĩa các route với middleware
                 Route::prefix('api')
                     ->middleware(['api', 'maintenance'])
