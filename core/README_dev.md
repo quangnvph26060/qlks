@@ -45,3 +45,9 @@ CREATE TABLE bookings (
     updated_at TIMESTAMP DEFAULT NULL,
     INDEX (user_id)
 );
+
+ALTER TABLE room_types
+ADD hourly_rate DECIMAL(10, 2) NULL DEFAULT 0 AFTER existing_column;
+
+ALTER TABLE seasonal_rate
+ADD hourly_rate DECIMAL(10, 2) NULL DEFAULT 0 AFTER hourly_rate;

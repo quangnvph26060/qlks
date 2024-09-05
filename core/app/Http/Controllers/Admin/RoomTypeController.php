@@ -16,7 +16,7 @@ class RoomTypeController extends Controller
 {
     public function index()
     {
-        $pageTitle   = 'Tất cả các loại phòng';
+        $pageTitle   = 'Danh sách hạng phòng';
         $typeList    = RoomType::with('amenities', 'facilities')->withCount('rooms')->latest()->paginate(getPaginate());
         return view('admin.hotel.room_type.list', compact('pageTitle', 'typeList'));
     }
@@ -76,6 +76,8 @@ class RoomTypeController extends Controller
         $roomType->total_adult         = $request->total_adult;
         $roomType->total_child         = $request->total_child;
         $roomType->fare                = $request->fare;
+        $roomType->hourly_rate         = $request->hourly_rate;
+        $roomType->seasonal_rate         = $request->seasonal_rate;
         $roomType->keywords            = $request->keywords ?? [];
         $roomType->description         = htmlspecialchars_decode($purifier->purify($request->description));
         $roomType->beds                = $bedArray;
@@ -87,6 +89,7 @@ class RoomTypeController extends Controller
         if ($request->hasFile('main_image')) {
             $roomType->main_image = fileUploader($request->main_image, getFilePath('roomTypeImage'), getFileSize('roomTypeImage'), @$roomType->main_image, getThumbSize('roomTypeImage'));
         }
+
 
         $roomType->save();
 
