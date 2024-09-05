@@ -11,7 +11,7 @@ class ProfileController extends Controller
 {
     public function profile()
     {
-        $pageTitle = "Profile Setting";
+        $pageTitle = "Thiết lập hồ sơ";
         $user = auth()->user();
         return view('Template::user.profile_setting', compact('pageTitle','user'));
     }
@@ -37,7 +37,7 @@ class ProfileController extends Controller
         $user->zip = $request->zip;
 
         $user->save();
-        $notify[] = ['success', 'Profile updated successfully'];
+        $notify[] = ['success', 'Hồ sơ đã được cập nhật thành công'];
         return back()->withNotify($notify);
     }
 
@@ -65,10 +65,10 @@ class ProfileController extends Controller
             $password = Hash::make($request->password);
             $user->password = $password;
             $user->save();
-            $notify[] = ['success', 'Password changed successfully'];
+            $notify[] = ['success', 'Mật khẩu đã được thay đổi thành công'];
             return back()->withNotify($notify);
         } else {
-            $notify[] = ['error', 'The password doesn\'t match!'];
+            $notify[] = ['error', 'Mật khẩu không khớp!'];
             return back()->withNotify($notify);
         }
     }

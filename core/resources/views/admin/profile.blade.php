@@ -38,7 +38,7 @@
         <div class="col-xl-9 col-lg-8 mb-30">
             <div class="card">
                 <div class="card-body">
-                    <h5 class="card-title mb-4 border-bottom pb-2">@lang('Profile Information')</h5>
+                    <h5 class="card-title mb-4 border-bottom pb-2">@lang('Thông tin hồ sơ')</h5>
 
                     <form action="{{ route('admin.profile.update') }}" method="POST" enctype="multipart/form-data">
                         @csrf

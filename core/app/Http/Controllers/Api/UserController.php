@@ -165,7 +165,7 @@ class UserController extends Controller
 
         $user->save();
 
-        $notify[] = 'Profile updated successfully';
+        $notify[] = 'Hồ sơ đã được cập nhật thành công';
         return response()->json([
             'remark' => 'profile_updated',
             'status' => 'success',
@@ -198,14 +198,14 @@ class UserController extends Controller
             $password = Hash::make($request->password);
             $user->password = $password;
             $user->save();
-            $notify[] = 'Password changed successfully';
+            $notify[] = 'Thay đổi mật khẩu thành công';
             return response()->json([
                 'remark' => 'password_changed',
                 'status' => 'success',
                 'message' => ['success' => $notify],
             ]);
         } else {
-            $notify[] = 'The password doesn\'t match!';
+            $notify[] = 'Mật khẩu không khớp!';
             return response()->json([
                 'remark' => 'validation_error',
                 'status' => 'error',
