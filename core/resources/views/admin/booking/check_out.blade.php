@@ -59,7 +59,7 @@
                                     @endcan
 
                                     @can('admin.booking.checkout')
-                                        <button class="btn btn-lg btn--dark flex-grow-1 confirmationBtn" data-action="{{ route('admin.booking.checkout', $booking->id) }}" data-question="@lang('Are you sure, you want to check out this booking?')"><i class="las la-sign-out-alt"></i>@lang('Check Out')</button>
+                                        <button class="btn btn-lg btn--dark flex-grow-1 confirmationBtn" data-action="{{ route('admin.booking.checkout', $booking->id) }}" data-question="@lang('Bạn có chắc chắn muốn checkout phòng này không?')"><i class="las la-sign-out-alt"></i>@lang('Check Out')</button>
                                     @endcan
                                 </div>
                             @endcan

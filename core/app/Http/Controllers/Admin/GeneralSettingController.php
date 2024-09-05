@@ -110,9 +110,10 @@ class GeneralSettingController extends Controller
         $path = getFilePath('logoIcon');
         if ($request->hasFile('logo')) {
             try {
-                fileUploader($request->logo, $path, filename: 'logo.png');
+             fileUploader($request->logo, $path, filename: 'logo.png');
             } catch (\Exception $exp) {
-                $notify[] = ['error', 'Couldn\'t upload the logo'];
+                \Log::info('Không thể tải logo lên'. $exp);
+                $notify[] = ['error', 'Không thể tải logo lên'];
                 return back()->withNotify($notify);
             }
         }
@@ -121,7 +122,7 @@ class GeneralSettingController extends Controller
             try {
                 fileUploader($request->logo_dark, $path, filename: 'logo_dark.png');
             } catch (\Exception $exp) {
-                $notify[] = ['error', 'Couldn\'t upload the logo'];
+                $notify[] = ['error', 'Không thể tải logo lên'];
                 return back()->withNotify($notify);
             }
         }
