@@ -172,4 +172,8 @@ class BookingController extends Controller {
             ->orderBy('check_in', 'asc')
             ->paginate(getPaginate());
     }
+    
+    public function Receptionist(){
+
+    }
 }

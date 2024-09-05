@@ -27,24 +27,24 @@
         "menu_active": "admin.dashboard"
     },
     "manage_hotels": {
-        "title": "Quản lý khách sạn",
+        "title": "Quản lý hệ thống phòng",
         "icon": "las la-city",
         "menu_active": "admin.hotel*",
         "submenu": [
             {
                 "keyword": [
-                    "Tiện nghi",
+                    "Tiện nghi phòng",
                     "Amenity"
                 ],
-                "title": "Tiện nghi",
+                "title": "Tiện nghi phòng",
                 "route_name": "admin.hotel.amenity.all",
                 "menu_active": "admin.hotel.amenity.all"
             },
             {
                 "keyword": [
-                    "Cơ sở"
+                    "Cơ sở vật chất"
                 ],
-                "title": "Cơ sở",
+                "title": "Cơ sở vật chất",
                 "route_name": "admin.hotel.facility.all",
                 "menu_active": "admin.hotel.facility.all"
             },
@@ -58,9 +58,9 @@
             },
             {
                 "keyword": [
-                    "Loại phòng"
+                    "Hạng phòng"
                 ],
-                "title": "Loại phòng",
+                "title": "Hạng phòng",
                 "route_name": "admin.hotel.room.type.all",
                 "menu_active": [
                     "admin.hotel.room.type.all",
@@ -733,5 +733,14 @@
         "icon": "las la-bug",
         "route_name": "admin.request.report",
         "menu_active": "admin.request.report"
+    },
+    "receptionist": {
+        "keyword": [
+            "Receptionist"
+        ],
+        "title": "Lễ Tân",
+        "icon": "las la-bug",
+        "route_name": "admin.receptionist.booking.receptionist",
+        "menu_active": "admin.receptionist.booking.receptionist"
     }
 }

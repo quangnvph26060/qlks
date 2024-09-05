@@ -10,7 +10,7 @@ class FacilityController extends Controller
 {
     public function index()
     {
-        $pageTitle = 'Tất cả các tiện nghi';
+        $pageTitle = 'Danh sách tiện nghi';
         $facilities = Facility::orderBy('title')->Paginate(getPaginate());
         return view('admin.hotel.facilities', compact('pageTitle', 'facilities'));
     }
