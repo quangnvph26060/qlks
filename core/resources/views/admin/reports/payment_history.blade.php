@@ -9,11 +9,11 @@
                         <table class="table--light style--two table">
                             <thead>
                                 <tr>
-                                    <th>@lang('Booking No.')</th>
-                                    <th>@lang('User')</th>
-                                    <th>@lang('Amount')</th>
-                                    <th>@lang('Issued By')</th>
-                                    <th>@lang('Date')</th>
+                                    <th>@lang('Số đặt chỗ')</th>
+                                    <th>@lang('Người dùng')</th>
+                                    <th>@lang('Số lượng')</th>
+                                    <th>@lang('Phát hành bởi')</th>
+                                    <th>@lang('Ngày')</th>
                                 </tr>
                             </thead>
 

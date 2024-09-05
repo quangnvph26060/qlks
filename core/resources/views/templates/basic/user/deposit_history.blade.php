@@ -56,7 +56,7 @@
                         <td>
                             <button @if ($deposit->method_code >= 1000) data-info="{{ $details }}" @endif @if ($deposit->status == Status::PAYMENT_REJECT) data-admin_feedback="{{ $deposit->admin_feedback }}" @endif class="btn btn-sm btn-outline--base ms-1 @if ($deposit->method_code >= 1000) detailBtn @else disabled @endif" title="@lang('Detail')" type="button">
                                 <i class="la la-desktop"></i>
-                                </butto>
+                                </button>
                         </td>
                     </tr>
                 @empty

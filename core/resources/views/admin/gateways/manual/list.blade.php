@@ -35,18 +35,18 @@
                                                 <div class="button--group">
                                                     @can('admin.gateway.manual.edit')
                                                         <a href="{{ route('admin.gateway.manual.edit', $gateway->alias) }}" class="btn btn-sm btn-outline--primary editGatewayBtn">
-                                                            <i class="la la-pencil"></i>@lang('Edit')
+                                                            <i class="la la-pencil"></i>@lang('Sửa')
                                                         </a>
                                                     @endcan
 
                                                     @can('admin.gateway.manual.status')
                                                         @if ($gateway->status == Status::DISABLE)
                                                             <button class="btn btn-sm btn-outline--success confirmationBtn" data-question="@lang('Are you sure to enable this gateway?')" data-action="{{ route('admin.gateway.manual.status', $gateway->id) }}">
-                                                                <i class="la la-eye"></i>@lang('Enable')
+                                                                <i class="la la-eye"></i> @lang('Cho phép')
                                                             </button>
                                                         @else
                                                             <button class="btn btn-sm btn-outline--danger confirmationBtn" data-question="@lang('Are you sure to disable this gateway?')" data-action="{{ route('admin.gateway.manual.status', $gateway->id) }}">
-                                                                <i class="la la-eye-slash"></i>@lang('Disable')
+                                                                <i class="la la-eye-slash"></i> @lang('Vô hiệu hóa')
                                                             </button>
                                                         @endif
                                                     @endcan

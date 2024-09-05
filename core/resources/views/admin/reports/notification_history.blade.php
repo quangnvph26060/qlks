@@ -8,12 +8,12 @@
                         <table class="table table--light style--two">
                             <thead>
                                 <tr>
-                                    <th>@lang('User')</th>
-                                    <th>@lang('Sent')</th>
-                                    <th>@lang('Sender')</th>
-                                    <th>@lang('Subject')</th>
+                                    <th>@lang('Người dùng')</th>
+                                    <th>@lang('Đã gửi')</th>
+                                    <th>@lang('Người gửi')</th>
+                                    <th>@lang('Chủ thể')</th>
                                     @can('admin.report.email.details')
-                                        <th>@lang('Action')</th>
+                                        <th>@lang('Hành động')</th>
                                     @endcan
                                 </tr>
                             </thead>

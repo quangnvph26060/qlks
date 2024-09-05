@@ -45,7 +45,7 @@
                                     <th>@lang('Tổng số tiền đã trả')</th>
                                     <th>@lang('Quá hạn')</th>
                                     @if (request()->routeIs('admin.booking.all') || request()->routeIs('admin.booking.active'))
-                                        <th>@lang('Status')</th>
+                                        <th>@lang('Trạng thái')</th>
                                     @endif
 
                                     @can(['admin.booking.details', 'admin.booking.booked.rooms', 'admin.booking.service.details', 'admin.booking.payment', 'admin.booking.key.handover', 'admin.booking.merge', 'admin.booking.cancel', 'admin.booking.extra.charge', 'admin.booking.checkout', 'admin.booking.invoice'])
@@ -203,7 +203,7 @@
 @can('admin.book.room')
     @push('breadcrumb-plugins')
         <a class="btn btn-sm btn--primary" href="{{ route('admin.book.room') }}">
-            <i class="la la-hand-o-right"></i>@lang('Book New')
+            <i class="la la-hand-o-right"></i>@lang('Thêm phòng mới')
         </a>
     @endpush
 @endcan

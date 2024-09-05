@@ -51,11 +51,11 @@
                                                     @can('admin.gateway.automatic.status')
                                                         @if ($gateway->status == Status::DISABLE)
                                                             <button class="btn btn-sm btn-outline--success ms-1 confirmationBtn" data-question="@lang('Are you sure to enable this gateway?')" data-action="{{ route('admin.gateway.automatic.status', $gateway->id) }}">
-                                                                <i class="la la-eye"></i>@lang('Enable')
+                                                                <i class="la la-eye"></i> @lang('Cho phép')
                                                             </button>
                                                         @else
                                                             <button class="btn btn-sm btn-outline--danger ms-1 confirmationBtn" data-question="@lang('Are you sure to disable this gateway?')" data-action="{{ route('admin.gateway.automatic.status', $gateway->id) }}">
-                                                                <i class="la la-eye-slash"></i>@lang('Disable')
+                                                                <i class="la la-eye-slash"></i> @lang('Vô hiệu hóa')
                                                             </button>
                                                         @endif
                                                     @endcan

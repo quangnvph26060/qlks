@@ -11,9 +11,9 @@
                             <thead>
                                 <tr>
                                     <th>@lang('Email')</th>
-                                    <th>@lang('Subscribe At')</th>
+                                    <th>@lang('Đăng ký tại')</th>
                                     @can('admin.subscriber.remove')
-                                        <th>@lang('Action')</th>
+                                        <th>@lang('Hành động')</th>
                                     @endcan
                                 </tr>
                             </thead>

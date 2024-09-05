@@ -46,17 +46,17 @@
                                             <td>
                                                 <div class="button--group">
                                                     @can('admin.hotel.room.type.edit')
-                                                        <a class="btn btn-sm btn-outline--primary" href="{{ route('admin.hotel.room.type.edit', $type->id) }}"> <i class="la la-pencil"></i>@lang('Edit')
+                                                        <a class="btn btn-sm btn-outline--primary" href="{{ route('admin.hotel.room.type.edit', $type->id) }}">  <i class="la la-pencil"></i>@lang('Sửa')
                                                         </a>
                                                     @endcan
                                                     @can('admin.hotel.room.type.status')
                                                         @if ($type->status == 0)
                                                             <button class="btn btn-sm btn-outline--success ms-1 confirmationBtn" data-action="{{ route('admin.hotel.room.type.status', $type->id) }}" data-question="@lang('Bạn có chắc chắn muốn bật loại phòng này không?')">
-                                                                <i class="la la-eye"></i>@lang('Enable')
+                                                                <i class="la la-eye"></i> @lang('Cho phép')
                                                             </button>
                                                         @else
                                                             <button class="btn btn-sm btn-outline--danger ms-1 confirmationBtn" data-action="{{ route('admin.hotel.room.type.status', $type->id) }}" data-question="@lang('Bạn có chắc chắn muốn vô hiệu hóa loại phòng này không?')">
-                                                                <i class="la la-eye-slash"></i>@lang('Disable')
+                                                                <i class="la la-eye-slash"></i> @lang('Vô hiệu hóa')
                                                             </button>
                                                         @endif
                                                     @endcan

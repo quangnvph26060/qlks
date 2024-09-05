@@ -1,5 +1,5 @@
 @props([
-    'placeholder' => 'Search...',
+    'placeholder' => 'Tìm kiếm...',
     'btn' => 'btn--primary',
     'dateSearch' => 'yes',
     'keySearch' => 'yes',

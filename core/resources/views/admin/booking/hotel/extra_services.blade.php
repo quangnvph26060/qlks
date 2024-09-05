@@ -10,11 +10,11 @@
                         <table class="table--light table">
                             <thead>
                                 <tr>
-                                    <th>@lang('Name')</th>
-                                    <th>@lang('Cost')</th>
-                                    <th>@lang('Status')</th>
+                                    <th>@lang('Tên dịch vụ')</th>
+                                    <th>@lang('Trị giá')</th>
+                                    <th>@lang('Trạng thái')</th>
                                     @can(['admin.hotel.extra_services.save', 'admin.hotel.extra_services.status'])
-                                        <th>@lang('Action')</th>
+                                        <th>@lang('Hành động')</th>
                                     @endcan
                                 </tr>
                             </thead>
@@ -35,18 +35,18 @@
                                                 <div class="button--group">
                                                     @can('admin.hotel.extra_services.save')
                                                         <button class="btn btn-sm btn-outline--primary cuModalBtn" data-has_status="1" data-modal_title="@lang('Update Extra Service')" data-resource="{{ $premiumService }}" type="button">
-                                                            <i class="la la-pencil"></i>@lang('Edit')
+                                                            <i class="la la-pencil"></i>@lang('Sửa')
                                                         </button>
                                                     @endcan
 
                                                     @can('admin.hotel.extra_services.status')
                                                         @if ($premiumService->status == Status::DISABLE)
                                                             <button class="btn btn-sm btn-outline--success me-1 confirmationBtn" data-action="{{ route('admin.hotel.extra_services.status', $premiumService->id) }}" data-question="@lang('Are you sure to enable this extra service?')" type="button">
-                                                                <i class="la la-eye"></i> @lang('Enable')
+                                                                <i class="la la-eye"></i> @lang('Cho phép')
                                                             </button>
                                                         @else
                                                             <button class="btn btn-sm btn-outline--danger confirmationBtn" data-action="{{ route('admin.hotel.extra_services.status', $premiumService->id) }}" data-question="@lang('Are you sure to disable this extra service?')" type="button">
-                                                                <i class="la la-eye-slash"></i> @lang('Disable')
+                                                                <i class="la la-eye-slash"></i> @lang('Vô hiệu hóa')
                                                             </button>
                                                         @endif
                                                     @endcan

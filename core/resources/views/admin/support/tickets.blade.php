@@ -9,13 +9,13 @@
                         <table class="table table--light">
                             <thead>
                                 <tr>
-                                    <th>@lang('Subject')</th>
-                                    <th>@lang('Submitted By')</th>
-                                    <th>@lang('Status')</th>
-                                    <th>@lang('Priority')</th>
-                                    <th>@lang('Last Reply')</th>
+                                    <th>@lang('Chủ thể')</th>
+                                    <th>@lang('Gửi bởi')</th>
+                                    <th>@lang('Trạng thái')</th>
+                                    <th>@lang('Ưu tiên')</th>
+                                    <th>@lang('Trả lời lần cuối')</th>
                                     @can('admin.ticket.view')
-                                        <th>@lang('Action')</th>
+                                        <th>@lang('Hành động')</th>
                                     @endcan
                                 </tr>
                             </thead>

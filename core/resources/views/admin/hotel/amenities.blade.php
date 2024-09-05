@@ -8,11 +8,11 @@
                         <table class="table--light style--two table">
                             <thead>
                                 <tr>
-                                    <th>@lang('Title')</th>
-                                    <th>@lang('Icon')</th>
-                                    <th>@lang('Status')</th>
+                                    <th>@lang('Nội dung')</th>
+                                    <th>@lang('Biểu tượng')</th>
+                                    <th>@lang('Trạng thái')</th>
                                     @can(['admin.hotel.amenity.save', 'admin.hotel.amenity.status'])
-                                        <th>@lang('Action')</th>
+                                        <th>@lang('Hành động')</th>
                                     @endcan
                                 </tr>
                             </thead>
@@ -27,17 +27,17 @@
                                                 <div class="button--group">
                                                     @can('admin.hotel.amenity.save')
                                                         <button class="btn btn-sm btn-outline--primary cuModalBtn" data-has_status="1" data-modal_title="@lang('Update Amenity')" data-resource="{{ $item }}" type="button">
-                                                            <i class="la la-pencil"></i>@lang('Edit')
+                                                            <i class="la la-pencil"></i>@lang('Sửa')
                                                         </button>
                                                     @endcan
                                                     @can('admin.hotel.amenity.status')
                                                         @if ($item->status == Status::DISABLE)
                                                             <button class="btn btn-sm btn-outline--success me-1 confirmationBtn" data-action="{{ route('admin.hotel.amenity.status', $item->id) }}" data-question="@lang('Bạn có chắc chắn bật tiện ích này không?')" type="button">
-                                                                <i class="la la-eye"></i> @lang('Enable')
+                                                                <i class="la la-eye"></i> @lang('Cho phép')
                                                             </button>
                                                         @else
                                                             <button class="btn btn-sm btn-outline--danger confirmationBtn" data-action="{{ route('admin.hotel.amenity.status', $item->id) }}" data-question="@lang('Bạn có chắc chắn muốn vô hiệu hóa tiện ích này không?')" type="button">
-                                                                <i class="la la-eye-slash"></i> @lang('Disable')
+                                                                <i class="la la-eye-slash"></i> @lang('Vô hiệu hóa')
                                                             </button>
                                                         @endif
                                                     @endcan

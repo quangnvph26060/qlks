@@ -90,9 +90,9 @@
     },
     "delayed_checkout": {
         "keyword": [
-            "Thanh toán chậm trễ"
+            "Thanh toán chậm"
         ],
-        "title": "Thanh toán chậm trễ",
+        "title": "Thanh toán chậm",
         "header": "Booking",
         "icon": "las la-calendar-day",
         "route_name": "admin.delayed.booking.checkout",
@@ -207,9 +207,9 @@
             },
             {
                 "keyword": [
-                    "Thanh toán chậm trễ"
+                    "Thanh toán chậm"
                 ],
-                "title": "Thanh toán chậm trễ",
+                "title": "Thanh toán chậm",
                 "route_name": "admin.booking.checkout.delayed",
                 "menu_active": "admin.booking.checkout.delayed",
                 "counter": "delayedCheckoutCount"

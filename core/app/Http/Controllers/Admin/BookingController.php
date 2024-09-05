@@ -92,7 +92,7 @@ class BookingController extends Controller {
     public function delayedCheckouts() {
         $pageTitle    = 'Thanh toán bị trì hoãn';
         $bookings     = Booking::delayedCheckout()->get();
-        $emptyMessage = 'Không tìm thấy thanh toán chậm trễ';
+        $emptyMessage = 'Không tìm thấy thanh toán chậm';
         $alertText = 'Thời hạn trả phòng cho những đặt phòng này đã qua nhưng khách vẫn chưa trả phòng.';
         return view('admin.booking.pending_checkin_checkout', compact('pageTitle', 'bookings', 'emptyMessage', 'alertText'));
     }

@@ -8,10 +8,10 @@
                         <table class="table table--light style--two">
                             <thead>
                                 <tr>
-                                    <th>@lang('S.N.')</th>
+                                    <th>@lang('STT')</th>
                                     <th>@lang('Loại giường')</th>
                                     @can(['admin.hotel.bed.save', 'admin.hotel.bed.delete'])
-                                        <th>@lang('Action')</th>
+                                        <th>@lang('Hành động')</th>
                                     @endcan
                                 </tr>
                             </thead>
@@ -25,7 +25,7 @@
                                                 <div class="button--group">
                                                     @can('admin.hotel.bed.save')
                                                         <button class="btn btn-sm btn-outline--primary cuModalBtn" data-modal_title="@lang('Cập nhật loại giường')" data-resource="{{ $item }}" type="button">
-                                                            <i class="la la-pencil"></i>@lang('Edit')
+                                                            <i class="la la-pencil"></i>@lang('Sửa')
                                                         </button>
                                                     @endcan
                                                     @can('admin.hotel.bed.delete')
