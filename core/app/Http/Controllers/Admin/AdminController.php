@@ -195,7 +195,7 @@ class AdminController extends Controller
 
     public function profile()
     {
-        $pageTitle = 'Profile';
+        $pageTitle = 'Hồ sơ';
         $admin = auth('admin')->user();
         return view('admin.profile', compact('pageTitle', 'admin'));
     }
@@ -322,14 +322,14 @@ class AdminController extends Controller
         AdminNotification::where('is_read', Status::NO)->update([
             'is_read' => Status::YES
         ]);
-        $notify[] = ['success', 'Notifications read successfully'];
+        $notify[] = ['success', 'Thông báo đã được đọc thành công'];
         return back()->withNotify($notify);
     }
 
     public function deleteAllNotification()
     {
         AdminNotification::truncate();
-        $notify[] = ['success', 'Notifications deleted successfully'];
+        $notify[] = ['success', 'Thông báo đã được xóa thành công'];
         return back()->withNotify($notify);
     }
 

@@ -35,7 +35,7 @@ class LoginController extends Controller
      */
     public function showLoginForm()
     {
-        $pageTitle = "Admin đăng nhập";
+        $pageTitle = "Phần mềm quản lý khách sạn chuyên nghiệp";
         return view('admin.auth.login', compact('pageTitle'));
     }
 

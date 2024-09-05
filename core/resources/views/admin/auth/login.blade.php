@@ -8,9 +8,10 @@
                 <div class="login-area">
                     <div class="login-wrapper">
                         <div class="login-wrapper__top">
-                            <h3 class="title text-white">@lang('Chào mừng đến với') <strong>{{ __(gs('site_name')) }}</strong></h3>
-                            <p class="text-white">{{ __($pageTitle) }} @lang('to') {{ __(gs('site_name')) }}
-                                @lang('Thống kê')</p>
+                            <h3 class="title text-white font-size-login">@lang('Chào mừng đến với') <strong>{{ __(gs('site_name')) }}</strong></h3>
+                            <p class="text-white">
+                                {{$pageTitle}}
+                                </p>
                         </div>
                         <div class="login-wrapper__body">
                             <form action="{{ route('admin.login') }}" method="POST"
@@ -37,4 +38,9 @@
         </div>
     </div>
 </div>
+<style scoped>
+    .font-size-login{
+        font-size: 28px !important;
+    }
+</style>
 @endsection
