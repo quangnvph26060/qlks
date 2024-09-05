@@ -267,7 +267,7 @@
                 $('.confirmationBtn').attr('disabled', false);
                 if ($(this).val() > maxRoomBookingLimit) {
                     btnRequest.attr('disabled', true);
-                    notify('error', "Number of rooms can't be greater than maximum allowed room");
+                    notify('error', "Số lượng phòng không được vượt quá số phòng tối đa được phép"); //Number of rooms can't be greater than maximum allowed room
                 }
             });
 
