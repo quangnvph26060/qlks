@@ -6,8 +6,8 @@
         @if ($due > 0)
             <div class="col-md-12">
                 <div class="custom-badge custom-badge--danger">
-                    @lang('The guest didn\'t pay the due payment for this booking yet. The checkout process can\'t be completed until the payment is settled. Please receive the due amount.')
-
+                    @lang('Khách chưa thanh toán khoản thanh toán đến hạn cho đặt phòng này. Quá trình thanh toán không thể hoàn tất cho đến khi thanh toán được giải quyết. Vui lòng nhận số tiền đến hạn.')
+                    {{-- The guest didn\'t pay the due payment for this booking yet. The checkout process can\'t be completed until the payment is settled. Please receive the due amount. --}}
                 </div>
             </div>
         @endif
@@ -15,7 +15,8 @@
         @if ($due < 0)
             <div class="col-md-12">
                 <div class="custom-badge custom-badge--danger">
-                    @lang('The guest didn\'t receive the refundable amount for this booking yet. The checkout process can\'t be completed until the payment is settled. Please refund the amount.')
+                    @lang('Khách chưa nhận được số tiền hoàn lại cho lần đặt phòng này. Quá trình thanh toán không thể hoàn tất cho đến khi thanh toán được thực hiện. Vui lòng hoàn lại số tiền.')
+                    {{-- The guest didn\'t receive the refundable amount for this booking yet. The checkout process can\'t be completed until the payment is settled. Please refund the amount."" --}}
                 </div>
             </div>
         @endif

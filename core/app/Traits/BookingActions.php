@@ -23,7 +23,7 @@ trait BookingActions {
             ->get();
 
         if (count($rooms) < $request->rooms) {
-            return ['error' => ['The requested number of rooms is not available for the selected date']];
+            return ['error' => ['Số phòng yêu cầu không có sẵn cho ngày đã chọn']]; //The requested number of rooms is not available for the selected date
         }
 
         $numberOfRooms = $request->rooms;
