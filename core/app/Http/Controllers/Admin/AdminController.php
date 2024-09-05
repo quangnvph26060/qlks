@@ -214,7 +214,7 @@ class AdminController extends Controller
                 $old = $user->image;
                 $user->image = fileUploader($request->image, getFilePath('adminProfile'), getFileSize('adminProfile'), $old);
             } catch (\Exception $exp) {
-                $notify[] = ['error', 'Couldn\'t upload your image'];
+                $notify[] = ['error', 'Không thể tải hình ảnh của bạn lên'];
                 return back()->withNotify($notify);
             }
         }
@@ -222,7 +222,7 @@ class AdminController extends Controller
         $user->name = $request->name;
         $user->email = $request->email;
         $user->save();
-        $notify[] = ['success', 'Profile updated successfully'];
+        $notify[] = ['success', 'Hồ sơ đã được cập nhật thành công'];
         return to_route('admin.profile')->withNotify($notify);
     }
 
@@ -242,12 +242,12 @@ class AdminController extends Controller
 
         $user = auth('admin')->user();
         if (!Hash::check($request->old_password, $user->password)) {
-            $notify[] = ['error', 'Password doesn\'t match!!'];
+            $notify[] = ['error', 'Mật khẩu không khớp!!'];
             return back()->withNotify($notify);
         }
         $user->password = Hash::make($request->password);
         $user->save();
-        $notify[] = ['success', 'Password changed successfully.'];
+        $notify[] = ['success', 'Thay đổi mật khẩu thành công.'];
         return to_route('admin.password')->withNotify($notify);
     }
 
