@@ -8,7 +8,7 @@
     @if (!$availableOnly)
         <div class="row gy-4">
             @forelse($rooms as $room)
-                   
+
                 <div class="col-xxl-3 col-xl-4 col-lg-6 col-md-6">
                     <div class="widget-two box--shadow2 b-radius--5 bg--white">
                         <div class="widget-two__icon b-radius--5 bg--dark">
@@ -29,7 +29,7 @@
                                 <h3 class="f-size--18 text--dark">{{ @$room->booking->guest_details->name }}</h3>
                             @endif
                             <div class="d-flex flex-column fw-bold w-100">
-                                <p class="text--muted text--small">@lang('Booking No.'):
+                                <p class="text--muted text--small">@lang('Số đặt chỗ'):
                                     @can('admin.booking.all')
                                         <a class="text--small fw-bold" href="{{ route('admin.booking.details', $room->booking->id) }}">{{ $room->booking->booking_number }}</a>
                                     @else
@@ -46,7 +46,7 @@
                                     <a class="btn btn--xs btn-outline--dark" data-services="{{ $room->premiumServices }}" href="{{ route('admin.premium.service.add') }}?room={{ $room->room->room_number }}"> <i class="la la-plus"></i>@lang('Add Service')</a>
                                 @endcan
                                 {{-- 123 --}}
-                                <button class="btn btn--xs btn-outline--info btn-view" data-services="{{ $room->usedPremiumService }}" type="button"> <i class="la la-eye"></i>@lang('View Services')</button>
+                                <button class="btn btn--xs btn-outline--info btn-view" data-services="{{ $room->usedPremiumService }}" type="button"> <i class="la la-eye"></i>@lang('Xem dịch vụ')</button>
                             </div>
                         </div>
                     </div>

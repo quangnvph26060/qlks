@@ -7,7 +7,7 @@
                     <div class="login-area">
                         <div class="login-wrapper">
                             <div class="login-wrapper__top">
-                                <h3 class="title text-white">@lang('Recover Account')</h3>
+                                <h3 class="title text-white">@lang('Lấy lại mật khẩu')</h3>
                             </div>
                             <div class="login-wrapper__body">
                                 <form action="{{ route('admin.password.reset') }}" method="POST" class="login-form verify-gcaptcha">

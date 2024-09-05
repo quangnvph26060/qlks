@@ -10,10 +10,10 @@
                         <table class="table--light style--two table">
                             <thead>
                                 <tr>
-                                    <th>@lang('Booking No.')</th>
-                                    <th>@lang('Details')</th>
-                                    <th>@lang('Action By')</th>
-                                    <th>@lang('Date')</th>
+                                    <th>@lang('Số đặt chỗ')</th>
+                                    <th>@lang('Chi tiết')</th>
+                                    <th>@lang('Hành động bởi')</th>
+                                    <th>@lang('Ngày')</th>
                                 </tr>
                             </thead>
                             <tbody>

@@ -35,18 +35,18 @@
                                                 <div class="button--group">
                                                     @can('admin.hotel.premium.service.save')
                                                         <button class="btn btn-sm btn-outline--primary cuModalBtn" data-has_status="1" data-modal_title="@lang('Update Premium Service')" data-resource="{{ $premiumService }}" type="button">
-                                                            <i class="la la-pencil"></i>@lang('Edit')
+                                                            <i class="la la-pencil"></i>@lang('Sửa')
                                                         </button>
                                                     @endcan
 
                                                     @can('admin.hotel.premium.service.status')
                                                         @if ($premiumService->status == Status::DISABLE)
                                                             <button class="btn btn-sm btn-outline--success me-1 confirmationBtn" data-action="{{ route('admin.hotel.premium.service.status', $premiumService->id) }}" data-question="@lang('Are you sure to enable this premium service?')" type="button">
-                                                                <i class="la la-eye"></i> @lang('Enable')
+                                                                <i class="la la-eye"></i> @lang('Cho phép')
                                                             </button>
                                                         @else
                                                             <button class="btn btn-sm btn-outline--danger confirmationBtn" data-action="{{ route('admin.hotel.premium.service.status', $premiumService->id) }}" data-question="@lang('Are you sure to disable this premium service?')" type="button">
-                                                                <i class="la la-eye-slash"></i> @lang('Disable')
+                                                                <i class="la la-eye-slash"></i> @lang('Vô hiệu hóa')
                                                             </button>
                                                         @endif
                                                     @endcan

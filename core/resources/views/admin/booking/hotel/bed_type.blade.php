@@ -8,7 +8,7 @@
                         <table class="table table--light style--two">
                             <thead>
                                 <tr>
-                                    <th>@lang('S.N.')</th>
+                                    <th>@lang('STT')</th>
                                     <th>@lang('Loại giường')</th>
                                     @can(['admin.hotel.bed.save', 'admin.hotel.bed.delete'])
                                         <th>@lang('Hành động')</th>

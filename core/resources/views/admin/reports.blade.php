@@ -8,9 +8,9 @@
           <table class="table table--light style--two">
             <thead>
               <tr>
-                <th>@lang('Type')</th>
-                <th>@lang('Message')</th>
-                <th>@lang('Status')</th>
+                <th>@lang('Kiểu')</th>
+                <th>@lang('Lời nhắn')</th>
+                <th>@lang('Tráng thái')</th>
               </tr>
             </thead>
             <tbody>

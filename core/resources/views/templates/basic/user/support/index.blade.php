@@ -5,12 +5,12 @@
             <table class="custom--table table">
                 <thead>
                     <tr>
-                        <th>@lang('S.N.')</th>
-                        <th>@lang('Subject')</th>
-                        <th>@lang('Status')</th>
-                        <th>@lang('Priority')</th>
-                        <th>@lang('Last Reply')</th>
-                        <th>@lang('Action')</th>
+                        <th>@lang('STT')</th>
+                        <th>@lang('Chủ thể')</th>
+                        <th>@lang('Trạng thái')</th>
+                        <th>@lang('Ưu tiên')</th>
+                        <th>@lang('Trả lời lần cuối')</th>
+                        <th>@lang('Hành động')</th>
                     </tr>
                 </thead>
                 <tbody>

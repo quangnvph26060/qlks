@@ -8,16 +8,16 @@
                         <table class="table--light style--two table">
                             <thead>
                                 <tr>
-                                    <th>@lang('S.N.')</th>
-                                    <th>@lang('Date')</th>
+                                    <th>@lang('STT')</th>
+                                    <th>@lang('Ngày')</th>
                                     <th>@lang('Số phòng')</th>
                                     <th>@lang('Dịch vụ')</th>
                                     <th>@lang('Số lượng')</th>
-                                    <th>@lang('Cost')</th>
-                                    <th>@lang('Total')</th>
-                                    <th>@lang('Added By')</th>
+                                    <th>@lang('Giá trị')</th>
+                                    <th>@lang('Tổng cộng')</th>
+                                    <th>@lang('Thêm bởi')</th>
                                     @can('admin.premium.service.delete')
-                                        <th>@lang('Action')</th>
+                                        <th>@lang('Hành động')</th>
                                     @endcan
                                 </tr>
                             </thead>

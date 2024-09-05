@@ -11,10 +11,10 @@
                         <table class="table table--light style--two">
                             <thead>
                                 <tr>
-                                    <th>@lang('User')</th>
-                                    <th>@lang('Login at')</th>
+                                    <th>@lang('Người dùng')</th>
+                                    <th>@lang('Đăng nhập tại')</th>
                                     <th>@lang('IP')</th>
-                                    <th>@lang('Location')</th>
+                                    <th>@lang('Ví trí')</th>
                                     <th>@lang('Browser | OS')</th>
                                 </tr>
                             </thead>

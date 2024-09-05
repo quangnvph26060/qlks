@@ -8,12 +8,12 @@
                         <table class="table table--light style--two">
                             <thead>
                                 <tr>
-                                    <th>@lang('User')</th>
-                                    <th>@lang('Email-Mobile')</th>
-                                    <th>@lang('Country')</th>
-                                    <th>@lang('Joined At')</th>
+                                    <th>@lang('Tên')</th>
+                                    <th>@lang('Email - Số điện thoại')</th>
+                                    <th>@lang('Quốc gia')</th>
+                                    <th>@lang('Ngày tạo')</th>
                                     @can('admin.users.detail')
-                                        <th>@lang('Action')</th>
+                                        <th>@lang('Hành động')</th>
                                     @endcan
                                 </tr>
                             </thead>

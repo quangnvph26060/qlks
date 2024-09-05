@@ -70,7 +70,7 @@
                                         </td>
                                         <td>
                                             <a href="@if (can('admin.deposit.details')) {{ route('admin.deposit.details', $deposit->id) }} @else javascript:void(0) @endif" class="btn btn-sm btn-outline--primary ms-1 @if (!can('admin.deposit.details')) disabled @endif">
-                                                <i class="la la-desktop"></i> @lang('Details')
+                                                <i class="la la-desktop"></i> @lang('Chi tiết')
                                             </a>
                                         </td>
                                     </tr>

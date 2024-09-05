@@ -27,17 +27,17 @@
                                                 <div class="button--group">
                                                     @can('admin.hotel.facility.save')
                                                         <button class="btn btn-sm btn-outline--primary cuModalBtn" data-has_status="1" data-modal_title="@lang('Update Facility')" data-resource="{{ $item }}" type="button">
-                                                            <i class="la la-pencil"></i>@lang('Edit')
+                                                            <i class="la la-pencil"></i>@lang('Sửa')
                                                         </button>
                                                     @endcan
                                                     @can('admin.hotel.facility.status')
                                                         @if ($item->status == Status::DISABLE)
                                                             <button class="btn btn-sm btn-outline--success me-1 confirmationBtn" data-action="{{ route('admin.hotel.facility.status', $item->id) }}" data-question="@lang('Bạn có chắc chắn bật tiện ích này không?')" type="button">
-                                                                <i class="la la-eye"></i> @lang('Enable')
+                                                                <i class="la la-eye"></i> @lang('Cho phép')
                                                             </button>
                                                         @else
                                                             <button class="btn btn-sm btn-outline--danger confirmationBtn" data-action="{{ route('admin.hotel.facility.status', $item->id) }}" data-question="@lang('Bạn có chắc chắn tắt tiện ích này không?')" type="button">
-                                                                <i class="la la-eye-slash"></i> @lang('Disable')
+                                                                <i class="la la-eye-slash"></i> @lang('Vô hiệu hóa')
                                                             </button>
                                                         @endif
                                                     @endcan
