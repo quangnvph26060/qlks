@@ -66,7 +66,7 @@
 
                             <div class="col-xl-4 col-lg-6 col-md-4">
                                 <div class="form-group position-relative">
-                                    <label> @lang('Cơ sở')</label>
+                                    <label> @lang('Cơ sở vật chất')</label>
                                     <select class="select2-multi-select" multiple="multiple" name="facilities[]">
                                         @foreach ($facilities as $item)
                                             <option value="{{ $item->id }}">{{ $item->title }}</option>

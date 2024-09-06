@@ -22,7 +22,7 @@
                                     <input autocomplete="off" class="bookingDatePicker form-control bg--white" name="date" placeholder="@lang('Chọn ngày')" required type="text">
                                 </div>
                                 <div class="form-group flex-fill">
-                                    <label>@lang('Phòng')</label>
+                                    <label>@lang('Danh sách phòng')</label>
                                     <input class="form-control" name="rooms" placeholder="@lang('Có bao nhiêu phòng?')" required type="text">
                                 </div>
 
@@ -116,7 +116,7 @@
                             <div class="orderList d-none">
                                 <ul class="list-group list-group-flush orderItem">
                                     <li class="list-group-item d-flex justify-content-between align-items-center">
-                                        <h6>@lang('Phòng')</h6>
+                                        <h6>@lang('Danh sách phòng')</h6>
                                         <h6>@lang('Ngày')</h6>
                                         <span>
                                             <h6>@lang('Giá')</h6>

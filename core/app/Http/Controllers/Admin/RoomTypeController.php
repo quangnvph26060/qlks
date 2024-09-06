@@ -2,15 +2,16 @@
 
 namespace App\Http\Controllers\Admin;
 
-use App\Http\Controllers\Controller;
-use Illuminate\Http\Request;
-use App\Models\RoomType;
+use Illuminate\Support\Str;
+use App\Models\Room;
 use App\Models\Amenity;
 use App\Models\BedType;
 use App\Models\Facility;
+use App\Models\RoomType;
+use Illuminate\Http\Request;
 use App\Models\RoomTypeImage;
-use App\Models\Room;
 use App\Rules\FileTypeValidate;
+use App\Http\Controllers\Controller;
 
 class RoomTypeController extends Controller
 {
@@ -72,7 +73,7 @@ class RoomTypeController extends Controller
         }
 
         $roomType->name                = $request->name;
-        $roomType->slug                = $request->slug;
+        $roomType->slug                = Str::slug($request->name);
         $roomType->total_adult         = $request->total_adult;
         $roomType->total_child         = $request->total_child;
         $roomType->fare                = $request->fare;

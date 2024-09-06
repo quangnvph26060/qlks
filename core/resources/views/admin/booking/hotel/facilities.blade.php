@@ -37,7 +37,7 @@
                                                             </button>
                                                         @else
                                                             <button class="btn btn-sm btn-outline--danger confirmationBtn" data-action="{{ route('admin.hotel.facility.status', $item->id) }}" data-question="@lang('Bạn có chắc chắn tắt tiện ích này không?')" type="button">
-                                                                <i class="la la-eye-slash"></i> @lang('Vô hiệu hóa')
+                                                                <i class="la la-eye-slash"></i> @lang('Ngưng hoạt động')
                                                             </button>
                                                         @endif
                                                     @endcan

@@ -46,7 +46,7 @@
                                                             </button>
                                                         @else
                                                             <button class="btn btn-sm btn-outline--danger confirmationBtn" data-question="@lang('Are you sure to disable this gateway?')" data-action="{{ route('admin.gateway.manual.status', $gateway->id) }}">
-                                                                <i class="la la-eye-slash"></i> @lang('Vô hiệu hóa')
+                                                                <i class="la la-eye-slash"></i> @lang('Ngưng hoạt động')
                                                             </button>
                                                         @endif
                                                     @endcan
