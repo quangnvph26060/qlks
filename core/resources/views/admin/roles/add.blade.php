@@ -7,7 +7,7 @@
                 <div class="card">
                     <div class="card-body">
                         <div class="form-group">
-                            <label for="name">@lang('Name')</label>
+                            <label for="name">@lang('Tên vai trò')</label>
                             <input class="form-control" name="name" type="text" value="{{ old('name', @$role->name) }}">
                         </div>
 

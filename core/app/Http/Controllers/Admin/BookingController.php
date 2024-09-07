@@ -7,11 +7,13 @@ use App\Models\Booking;
 use App\Models\BookedRoom;
 use App\Models\RoomType;
 use App\Models\Room;
+use Illuminate\Http\Request;
+use Symfony\Component\HttpKernel\Log\Logger;
 
 class BookingController extends Controller {
     public function todaysBooked() {
         $pageTitle = request()->type == 'not_booked' ? 'Phòng có sẵn để đặt hôm nay' : 'Phòng đã đặt hôm nay';
-
+       
         $rooms = BookedRoom::active()
             ->with([
                 'room:id,room_number,room_type_id',
@@ -20,7 +22,7 @@ class BookingController extends Controller {
                 'booking.user:id,firstname,lastname',
                 'usedPremiumService.premiumService:id,name'
             ])
-            ->where('booked_for', now()->toDateString())
+            ->where('booked_for', now()->toDateString())     // check hôm nay có phòng nào chưa đặt không
             ->get();
 
         $disabledRoomTypeIDs = RoomType::where('status', 0)->pluck('id')->toArray();
@@ -166,14 +168,31 @@ class BookingController extends Controller {
         if ($request->check_out) {
             $query = $query->whereDate('check_out', $request->check_out);
         }
-        return $query->with('bookedRooms.room', 'user', 'activeBookedRooms', 'activeBookedRooms.room:id,room_number')
+        return $query->with('bookedRooms.room','bookedRooms.roomType', 'user', 'activeBookedRooms', 'activeBookedRooms.room:id,room_number')
             ->withSum('usedPremiumService', 'total_amount')
             ->latest()
             ->orderBy('check_in', 'asc')
             ->paginate(getPaginate());
     }
     
-    public function Receptionist(){
-
+    public function Receptionist($scope = 'ALL'){
+        $emptyMessage    = 'MESSAGE';
+        $rooms = BookedRoom::active()
+        ->with([
+            'room:id,room_number,room_type_id',
+            'room.roomType:id,name',
+            'booking:id,user_id,booking_number',
+            'booking.user:id,firstname,lastname',
+            'usedPremiumService.premiumService:id,name'
+        ])
+        ->where('booked_for', now()->toDateString())
+        ->get();
+        $disabledRoomTypeIDs = RoomType::where('status', 0)->pluck('id')->toArray();
+        $bookedRooms         = $rooms->pluck('room_id')->toArray();
+        $emptyRooms          = Room::active()->whereNotIn('id', $bookedRooms)->whereNotIn('room_type_id', $disabledRoomTypeIDs)->with('roomType')->select('id', 'room_type_id', 'room_number')->get();
+        \Log::info($emptyRooms);
+        $bookings = $this->bookingData('ALL');
+            \Log::info($bookings);
+        return view('admin.booking.receptionist.list', compact('emptyRooms','bookings','emptyMessage'));
     }
 }

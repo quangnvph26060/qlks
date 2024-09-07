@@ -102,7 +102,7 @@ class Booking extends Model
     {
         return $query->whereDate('check_in', now());
     }
-
+    // thanh toán hôm nay 
     public function scopeTodayCheckout($query)
     {
         return $query->whereDate('check_out', now());
@@ -122,18 +122,18 @@ class Booking extends Model
     {
         return $query->where('key_status', Status::KEY_NOT_GIVEN);
     }
-
+    // trạng thái các phòng
     public function statusBadge(): Attribute
     {
         return new Attribute(
             function () {
-                if (now() >= $this->check_in && $this->status == Status::BOOKING_ACTIVE) {
+                if (now() >= $this->check_in && $this->status == Status::BOOKING_ACTIVE) { // BOOKING_ACTIVE =  1
                     $class = "badge--success";
                     $text = 'Đang hoạt động'; // Running
-                } elseif (now() < $this->check_in && $this->status == Status::BOOKING_ACTIVE) {
+                } elseif (now() < $this->check_in && $this->status == Status::BOOKING_ACTIVE) { 
                     $class = "badge--warning";
                     $text = 'Sắp tới'; // Upcoming 
-                } elseif ($this->status == Status::BOOKING_CANCELED) {
+                } elseif ($this->status == Status::BOOKING_CANCELED) { // BOOKING_CANCELED = 3 
                     $class = "badge--danger";
                     $text = 'Đã hủy'; // Canceled 
                 } else {
