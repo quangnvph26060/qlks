@@ -46,7 +46,7 @@
                                                         </button>
                                                     @else
                                                         <button type="button" class="btn btn-sm btn-outline--danger mb-2 confirmationBtn" data-action="{{ route('admin.extensions.status', $extension->id) }}" data-question="@lang('Are you sure to disable this extension?')">
-                                                            <i class="la la-eye-slash"></i> @lang('Vô hiệu hóa')
+                                                            <i class="la la-eye-slash"></i> @lang('Ngưng hoạt động')
                                                         </button>
                                                     @endif
                                                 @endcan

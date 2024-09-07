@@ -46,7 +46,7 @@
                                                             </button>
                                                         @else
                                                             <button class="btn btn-sm btn-outline--danger confirmationBtn" data-action="{{ route('admin.hotel.premium.service.status', $premiumService->id) }}" data-question="@lang('Are you sure to disable this premium service?')" type="button">
-                                                                <i class="la la-eye-slash"></i> @lang('Vô hiệu hóa')
+                                                                <i class="la la-eye-slash"></i> @lang('Ngưng hoạt động')
                                                             </button>
                                                         @endif
                                                     @endcan

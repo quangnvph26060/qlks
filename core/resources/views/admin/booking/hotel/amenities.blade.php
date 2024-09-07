@@ -8,7 +8,7 @@
                         <table class="table--light style--two table">
                             <thead>
                                 <tr>
-                                    <th>@lang('Nội dụng')</th>
+                                    <th>@lang('Tên tiện nghi')</th>
                                     <th>@lang('Biểu tượng')</th>
                                     <th>@lang('Trạng thái')</th>
                                     @can(['admin.hotel.amenity.save', 'admin.hotel.amenity.status'])
@@ -26,9 +26,10 @@
                                             <td>
                                                 <div class="button--group">
                                                     @can('admin.hotel.amenity.save')
-                                                        <button class="btn btn-sm btn-outline--primary cuModalBtn" data-has_status="1" data-modal_title="@lang('Cập nhật tiện ích')" data-resource="{{ $item }}" type="button">
+                                                        <button class="btn btn-sm btn-outline--primary cuModalBtn" data-bs-toggle="modal" data-bs-target="#btn-show" data-modal_title="@lang('Cập nhật tiện ích')" data-resource="{{ $item }}" type="button">
                                                             <i class="la la-pencil"></i>@lang('Sửa')
                                                         </button>
+
                                                     @endcan
                                                     @can('admin.hotel.amenity.status')
                                                         @if ($item->status == Status::DISABLE)
@@ -37,7 +38,7 @@
                                                             </button>
                                                         @else
                                                             <button class="btn btn-sm btn-outline--danger confirmationBtn" data-action="{{ route('admin.hotel.amenity.status', $item->id) }}" data-question="@lang('Bạn có chắc chắn muốn tắt tiện ích này không?')" type="button">
-                                                                <i class="la la-eye-slash"></i> @lang('Vô hiệu hóa')
+                                                                <i class="la la-eye-slash"></i> @lang('Ngưng hoạt động')
                                                             </button>
                                                         @endif
                                                     @endcan

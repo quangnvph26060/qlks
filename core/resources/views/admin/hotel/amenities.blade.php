@@ -8,7 +8,7 @@
                         <table class="table--light style--two table">
                             <thead>
                                 <tr>
-                                    <th>@lang('Nội dung')</th>
+                                    <th>@lang('Tên tiện nghi')</th>
                                     <th>@lang('Biểu tượng')</th>
                                     <th>@lang('Trạng thái')</th>
                                     @can(['admin.hotel.amenity.save', 'admin.hotel.amenity.status'])
@@ -37,7 +37,7 @@
                                                             </button>
                                                         @else
                                                             <button class="btn btn-sm btn-outline--danger confirmationBtn" data-action="{{ route('admin.hotel.amenity.status', $item->id) }}" data-question="@lang('Bạn có chắc chắn muốn vô hiệu hóa tiện ích này không?')" type="button">
-                                                                <i class="la la-eye-slash"></i> @lang('Vô hiệu hóa')
+                                                                <i class="la la-eye-slash"></i> @lang('Ngưng hoạt động')
                                                             </button>
                                                         @endif
                                                     @endcan

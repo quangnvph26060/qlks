@@ -56,7 +56,7 @@
                                             {{ $bookingRequest->bookFor() }} @lang('Night')
                                             <br>
                                             <span>
-                                                {{ $bookingRequest->number_of_rooms }} @lang('Phòng')
+                                                {{ $bookingRequest->number_of_rooms }} @lang('Danh sách phòng')
                                             </span>
                                         </td>
                                         <td>

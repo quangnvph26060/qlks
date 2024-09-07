@@ -10,7 +10,7 @@
                                 <tr>
                                     <th>@lang('Tên phòng')</th>
                                     <th>@lang('Giá')</th>
-                                    <th>@lang('Phòng')</th>
+                                    <th>@lang('Danh sách phòng')</th>
                                     <th>@lang('Người lớn')</th>
                                     <th>@lang('Trẻ con')</th>
                                     <th>@lang('Trạng thái tính năng')</th>
@@ -55,7 +55,7 @@
                                                         </button>
                                                     @else
                                                         <button class="btn btn-sm btn-outline--danger ms-1 confirmationBtn" data-action="{{ route('admin.hotel.room.type.status', $type->id) }}" data-question="@lang('Are you sure to disable this room type?')">
-                                                            <i class="la la-eye-slash"></i> @lang('Vô hiệu hóa')
+                                                            <i class="la la-eye-slash"></i> @lang('Ngưng hoạt động')
                                                         </button>
                                                     @endif
                                                 @endcan

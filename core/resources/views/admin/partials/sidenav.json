@@ -90,9 +90,9 @@
     },
     "delayed_checkout": {
         "keyword": [
-            "Thanh toán chậm"
+            "Khách trả phòng muộn"
         ],
-        "title": "Thanh toán chậm",
+        "title": "Khách trả phòng muộn",
         "header": "Booking",
         "icon": "las la-calendar-day",
         "route_name": "admin.delayed.booking.checkout",
@@ -100,9 +100,9 @@
     },
     "pending_check_ins": {
         "keyword": [
-            "Đang chờ kiểm tra"
+            "Khách nhận phòng muộn"
         ],
-        "title": "Đang chờ kiểm tra",
+        "title": "Khách nhận phòng muộn",
         "icon": "la la-spinner",
         "route_name": "admin.pending.booking.checkin",
         "menu_active": "admin.pending.booking.checkin"
@@ -207,9 +207,9 @@
             },
             {
                 "keyword": [
-                    "Thanh toán chậm"
+                    "Khách trả phòng muộn"
                 ],
-                "title": "Thanh toán chậm",
+                "title": "Khách trả phòng muộn",
                 "route_name": "admin.booking.checkout.delayed",
                 "menu_active": "admin.booking.checkout.delayed",
                 "counter": "delayedCheckoutCount"
@@ -371,6 +371,22 @@
                 "menu_active": "admin.roles.index"
             }
         ]
+    },
+    "manage_goods":{
+        "title": "Quản lý hàng hóa",
+        "icon": "las la-cart-arrow-down",
+        "menu_active": "admin.goods.*",
+        "submenu": [
+            {
+                "keyword": [
+                    "Tất cả hóa"
+                ],
+                "title": "Tất cả hóa",
+                "route_name": "admin.category.index",
+                "menu_active": "admin.category.index"
+            }
+        ]
+
     },
     "manage_users": {
         "title": "Quản lý khách hàng",

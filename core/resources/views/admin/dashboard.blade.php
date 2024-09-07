@@ -3,11 +3,11 @@
 @section('panel')
     <div class="row gy-4">
         <div class="col-xxl-3 col-sm-6">
-            <x-widget color="danger" icon="la la-sign-out transform-rotate-180" link="admin.delayed.booking.checkout" style="2" cover_cursor="1" overlay_icon="0" title="Thanh toán chậm" value="{{ $widget['delayed_checkout'] }}" />
+            <x-widget color="danger" icon="la la-sign-out transform-rotate-180" link="admin.delayed.booking.checkout" style="2" cover_cursor="1" overlay_icon="0" title="Khách trả phòng muộn" value="{{ $widget['delayed_checkout'] }}" />
         </div>
 
         <div class="col-xxl-3 col-sm-6">
-            <x-widget color="warning" icon="la la-sign-in" link="admin.pending.booking.checkin" style="2" cover_cursor="1" overlay_icon="0" title="Đang chờ kiểm tra" value="{{ $widget['pending_checkin'] }}" />
+            <x-widget color="warning" icon="la la-sign-in" link="admin.pending.booking.checkin" style="2" cover_cursor="1" overlay_icon="0" title="Khách nhận phòng muộn" value="{{ $widget['pending_checkin'] }}" />
         </div>
 
         <div class="col-xxl-3 col-sm-6">

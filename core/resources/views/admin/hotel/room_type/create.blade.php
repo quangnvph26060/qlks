@@ -21,19 +21,6 @@
 
                             <div class="col-xl-4 col-md-4 col-sm-12">
                                 <div class="form-group">
-                                    <div class="d-flex justify-content-between align-items-center flex-wrap gap-1">
-                                        <label>@lang('Slug')</label>
-                                        <div>
-                                            <span class="text--small me-1 slug-verification d-none"></span>
-                                            <span class="text--small cursor-pointer fst-italic text--info buildSlug"> <i class="las la-link"></i> @lang('Make Slug')</span>
-                                        </div>
-                                    </div>
-                                    <input class="form-control" name="slug" required type="text" value="{{ old('name', @$roomType->slug) }}">
-                                </div>
-                            </div>
-
-                            <div class="col-xl-4 col-md-4 col-sm-12">
-                                <div class="form-group">
                                     <label class="required" for="fare">@lang('Giá') /@lang('Đêm')</label>
                                     <div class="input-group">
                                         <input class="form-control" id="fare" name="fare" required type="number" value="{{ old('fare', @$roomType->fare ? getAmount(@$roomType->fare) : '') }}">
@@ -86,7 +73,7 @@
                                 </div>
                             </div>
 
-                            <div class="col-xl-6 col-md-12">
+                            <div class="col-xl-8 col-md-12">
                                 <div class="form-group position-relative">
                                     <label> @lang('Tiện nghi')</label>
                                     <select class="select2-multi-select" multiple="multiple" name="amenities[]">
@@ -119,9 +106,11 @@
 
                             <div class="col-xl-6 col-md-12">
                                 <div class="form-group">
-                                    <label> @lang('Nổi bật') </label>
-                                    <input @if (@$roomType->is_featured) checked @endif data-bs-toggle="toggle" data-height="50" data-off="@lang('Không có đặc điểm')" data-offstyle="-danger" data-on="@lang('Featured')" data-onstyle="-success" data-size="large" data-width="100%" name="is_featured" type="checkbox">
-                                    <small class="ml-2 mt-2"><code><i class="las la-info-circle"></i> @lang('Các phòng nổi bật sẽ được hiển thị trong phần phòng nổi bật.')</code></small>
+                                    <label class="me-2"> @lang('Nổi bật') </label>
+                                    {{-- <input @if (@$roomType->is_featured) checked @endif data-bs-toggle="toggle" data-height="50" data-off="@lang('Không có đặc điểm')" data-offstyle="-danger" data-on="@lang('Featured')" data-onstyle="-success" data-size="large" data-width="100%" name="is_featured" type="checkbox"> --}}
+                                    <input type="radio" name="is_featured" class="form-check-input" id="is_featured" value="1"> <label class="form-check-label me-2" for="is_featured" >@lang('Yes')</label>
+                                    <input type="radio" name="is_featured" class="form-check-input" id="is_featured-2" value="0" checked> <label class="form-check-label me-2" for="is_featured-2">@lang('No')</label>
+                                    <p class="ml-2 mt-2"><code><i class="las la-info-circle"></i> @lang('Các phòng nổi bật sẽ được hiển thị trong phần phòng nổi bật.')</code></p>
                                 </div>
                             </div>
                         </div>
