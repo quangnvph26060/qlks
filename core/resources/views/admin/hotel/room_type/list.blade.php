@@ -10,7 +10,9 @@
                                 <tr>
                                     <th>@lang('Tên phòng')</th>
                                     <th>@lang('Giá')</th>
-                                    <th>@lang('Danh sách phòng')</th>
+
+                                    {{-- <th>@lang('Phòng')</th> --}}
+
                                     <th>@lang('Người lớn')</th>
                                     <th>@lang('Trẻ em')</th>
                                     <th>@lang('Trạng thái tính năng')</th>
@@ -33,7 +35,7 @@
                                             </span>
                                         </td>
 
-                                        <td>{{ $type->rooms_count }}</td>
+                                        {{-- <td>{{ $type->rooms_count }}</td> --}}
 
                                         <td>{{ $type->total_adult }}</td>
 

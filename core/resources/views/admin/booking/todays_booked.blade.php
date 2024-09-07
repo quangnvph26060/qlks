@@ -43,7 +43,7 @@
 
                             <div class="d-flex flex-wrap gap-2">
                                 @can('admin.premium.service.add')
-                                    <a class="btn btn--xs btn-outline--dark" data-services="{{ $room->premiumServices }}" href="{{ route('admin.premium.service.add') }}?room={{ $room->room->room_number }}"> <i class="la la-plus"></i>@lang('Add Service')</a>
+                                    <a class="btn btn--xs btn-outline--dark" data-services="{{ $room->premiumServices }}" href="{{ route('admin.premium.service.add') }}?room={{ $room->room->room_number }}"> <i class="la la-plus"></i>@lang('Thêm dịch vụ')</a>
                                 @endcan
                                 {{-- 123 --}}
                                 <button class="btn btn--xs btn-outline--info btn-view" data-services="{{ $room->usedPremiumService }}" type="button"> <i class="la la-eye"></i>@lang('Xem dịch vụ')</button>
