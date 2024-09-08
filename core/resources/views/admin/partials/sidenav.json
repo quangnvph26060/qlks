@@ -379,9 +379,9 @@
         "submenu": [
             {
                 "keyword": [
-                    "Tất cả hóa"
+                    "Tất cả hàng danh mục"
                 ],
-                "title": "Tất cả hóa",
+                "title": "Tất cả hàng danh mục",
                 "route_name": "admin.category.index",
                 "menu_active": "admin.category.index"
             }
