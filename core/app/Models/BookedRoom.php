@@ -16,7 +16,9 @@ class BookedRoom extends Model {
     public function room() {
         return $this->belongsTo(Room::class);
     }
-
+    public function roomType() {
+        return $this->belongsTo(RoomType::class);
+    }
     public function usedPremiumService() {
         return $this->hasMany(UsedPremiumService::class);
     }
