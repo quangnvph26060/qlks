@@ -106,7 +106,6 @@
             "use strict";
             $(document).ready(function() {
                 let lastId = null;
-
                 // Đặt Swal thông báo chung
                 const showSwalMessage = (icon, title, timer = 1500) => {
                     Swal.fire({
@@ -148,23 +147,33 @@
                                 <button class="btn btn-sm btn-outline--primary btn-edit" data-id="${data.id}" data-modal_title="@lang('Cập nhật danh mục')" type="button">
                                     <i class="fas fa-edit"></i>@lang('Sửa')
                                 </button>
-                                <a href="#" class="btn btn-sm btn-outline--success" data-toggle="tooltip" data-placement="top">
-                                    <i class="la la-eye"></i>@lang('Chi tiết')
-                                </a>
+                                <button class="btn btn-sm btn-outline--danger btn-delete"
+                                    data-id="${data.id}" data-modal_title="@lang('Xóa danh mục')"
+                                    type="button" data-pro="{{ $category->products->count() }}">
+                                    <i class="fas fa-trash"></i>@lang('Xóa')
+                                </button>
                             </div>
                         </td>
                     </tr>`;
                 };
 
+                // khóa nút xóa của record
+                function disabledDeleteBtn(id) {
+                    $(".btn-delete").prop('disabled', false);
+                }
+
                 // Xử lý sự kiện khi click vào nút edit
                 $(document).on('click', '.btn-edit', function() {
                     const id = $(this).data('id');
+                    disabledDeleteBtn(id);
+                    $(".btn-delete[data-id='" + id + "']").prop('disabled', true);
+
                     if (lastId === id) return;
 
                     lastId = id;
                     resetFormAndErrors();
                     $(".col-md-4 h3").html("@lang('Cập nhật Danh Mục')");
-                    $(".table .form-check-input").prop('disabled', true); // Disable tất cả checkbox
+                    $(".table .form-check-input").prop('disabled', true); // Disable all checkboxes
 
                     $.ajax({
                         url: "{{ route('admin.category.edit', ':id') }}".replace(':id', id),
@@ -174,7 +183,8 @@
                                 $("#name").val(response.data.name);
                                 $("#description").val(response.data.description);
                                 $("#status").prop('checked', response.data.status);
-                                $("form").attr('data-id', response.data.id);
+                                $("form").attr('data-id', response.data
+                                    .id); // Set data-id on the form
                             } else {
                                 showSwalMessage('error', '@lang('404 Not Found')');
                             }
@@ -224,7 +234,8 @@
                 // Xử lý sự kiện submit form
                 $("#categoryForm").on('submit', function(e) {
                     e.preventDefault();
-                    const id = $("#categoryForm").data("id");
+                    const id = e.target.getAttribute('data-id');
+
                     const url = id ? "{{ route('admin.category.update', ':id') }}".replace(':id', id) :
                         "{{ route('admin.category.store') }}";
                     const method = id ? "PUT" : "POST";
@@ -236,7 +247,7 @@
                         success: function(response) {
                             if (response.status) {
                                 lastId = null;
-
+                                disabledDeleteBtn(id);
                                 if (id) {
                                     htmlStringSuccessUpdate(response);
                                 } else {
@@ -244,13 +255,9 @@
                                     updateTableIndexes();
                                 }
 
-                                // Sau khi cập nhật xong, mở lại tất cả checkbox và chuyển về trạng thái thêm mới
-                                $(".table .form-check-input").prop('disabled',
-                                    false); // Mở lại tất cả checkbox
-                                $(".col-md-4 h3").html(
-                                    "@lang('Thêm mới Danh Mục')"
-                                ); // Đổi tiêu đề form thành "Thêm mới"
-                                resetFormAndErrors(); // Reset form
+                                $(".table .form-check-input").prop('disabled', false);
+                                $(".col-md-4 h3").html("@lang('Thêm mới Danh Mục')");
+                                resetFormAndErrors();
                                 showSwalMessage('success', response.message);
                             } else {
                                 $('small').removeClass('invalid-feedback').html('');
@@ -285,8 +292,7 @@
                                     showConfirmButton: false,
                                     timer: 1500
                                 }).then(() => {
-                                    // Xóa thành công, cập nhật danh sách
-                                    location.reload();
+                                    $('tr[data-id="' + id + '"]').remove();
                                 });
                             } else {
                                 showSwalMessage('error', response.message);
@@ -300,12 +306,10 @@
                 }
 
                 // Sử lý sự kiện xóa
-                $(document).on('click', '.btn-delete', function() {
+                $(document).on('click', '.btn-delete', function(e) {
+                    e.preventDefault();
                     const id = $(this).data('id');
                     const productCount = $(this).data('pro'); // Số lượng sản phẩm
-
-                    console.log(productCount);
-
 
                     // Xử lý xác nhận xóa
                     if (productCount > 0) {

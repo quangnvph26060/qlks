@@ -40,6 +40,7 @@ class CategoryController extends Controller
                 $request->all(),
                 [
                     'name' => 'required|unique:categories',
+                    'description' => 'nullable',
                 ],
                 [
                     'name.required' => 'Vui lòng nhập tên danh mục!',
