@@ -120,6 +120,15 @@ Route::middleware('admin', 'adminPermission')->group(function () {
         Route::delete('destroy/{id}', 'destroy')->name('destroy');
     });
 
+    // manage representative
+    Route::controller('RepresentativeController')->prefix('representative')->name('representative.')->group(function () {
+        Route::post('create', 'store')->name('store');
+        // Route::get('edit/{id}', 'edit')->name('edit');
+        // Route::put('update/{id}', 'update')->name('update');
+        // Route::put('update-status', 'updateStatus')->name('update.status');
+        Route::delete('destroy/{id}', 'destroy')->name('destroy');
+    });
+
     Route::name('hotel.')->prefix('hotel')->group(function () {
         Route::controller('AmenitiesController')->name('amenity.')->prefix('amenities')->group(function () {
             Route::get('', 'index')->name('all');

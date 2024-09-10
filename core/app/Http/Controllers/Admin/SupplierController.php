@@ -6,6 +6,7 @@ use App\Models\Bank;
 use App\Models\Supplier;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\DB;
+use Illuminate\Support\Facades\Log;
 use App\Http\Controllers\Controller;
 use App\Repositories\BaseRepository;
 use App\Http\Requests\StoreSupplierRequest;
@@ -29,9 +30,10 @@ class SupplierController extends Controller
         $search = request()->get('search');
         $perPage = request()->get('perPage', 10);
         $orderBy = request()->get('orderBy', 'id');
-        $columns = ['id', 'name', 'is_active'];
-        $relations = ['products'];
-        $searchColumns = ['name'];
+        $columns = ['id', 'name', 'email', 'phone', 'address'];
+        $relations = ['supplier_representatives'];
+        $searchColumns = ['name', 'email', 'phone', 'address'];
+        $relationSearchColumns = ['supplier_representatives' => ['email', 'name']];
 
         $response = $this->repository
             ->customPaginate(
@@ -41,13 +43,13 @@ class SupplierController extends Controller
                 $orderBy,
                 $search,
                 $searchColumns,
-                []
+                $relationSearchColumns
             );
 
 
         if (request()->ajax()) {
             return response()->json([
-                'results' => view('admin.table.brand', compact('response'))->render(),
+                'results' => view('admin.table.supplier', compact('response'))->render(),
                 'pagination' => view('vendor.pagination.custom', compact('response'))->render(),
             ]);
         }
@@ -84,14 +86,19 @@ class SupplierController extends Controller
 
                 DB::commit();
 
+                session()->flash('success', 'Thêm nhà cung cấp thành công.');
+
                 return response()->json([
                     'status'    => true,
                 ]);
             } catch (\Exception $exception) {
                 DB::rollBack();
+
+                $this->repository->logError($exception);
+
                 return response()->json([
                     'status'    => false,
-                    'message'   => $exception->getMessage()
+                    'message'   => 'Đã có lỗi xay ra, vui lòng thử lại sau!',
                 ]);
             }
         }

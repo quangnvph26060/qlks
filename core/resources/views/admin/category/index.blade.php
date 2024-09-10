@@ -81,103 +81,15 @@
 @endpush
 
 @push('script')
+    <script src="{{ asset('assets/admin/js/dataTable.js') }}"></script>
     <script>
         (function($) {
             "use strict";
             $(document).ready(function() {
 
-                let debounceTimer;
-                let currentPage = 1;
+                const apiUrl = '{{ route('admin.category.index') }}'; // Thay đổi URL phù hợp
+                initDataFetch(apiUrl, true);
 
-                function fetchData(page = 1) {
-                    currentPage = page; // Cập nhật trang hiện tại
-                    const search = $('.searchInput').val();
-                    const perPage = $('.perPage').val();
-                    $.ajax({
-                        url: '{{ route('admin.category.index') }}',
-                        method: 'GET',
-                        data: {
-                            search,
-                            page,
-                            perPage
-                        },
-                        success: function(data) {
-                            $('#data-table tbody').html(data.results);
-                            $('#pagination').html(data.pagination);
-                            updateTableIndexes
-                                (); // Cập nhật lại chỉ mục sau khi dữ liệu đã được load
-                            notData();
-
-                        }
-                    });
-                }
-
-                function checkNotData() {
-                    if ($("#no-data-row").length <= 0) {
-                        fetchData();
-                    }
-                }
-
-                // Tìm kiếm
-                $('.searchInput').on('input', function() {
-                    clearTimeout(debounceTimer);
-                    const searchValue = $(this).val();
-                    if (searchValue === "") {
-                        // Khi giá trị tìm kiếm rỗng, lấy lại các bản ghi ban đầu
-                        checkNotData();
-                    }
-                    debounceTimer = setTimeout(() => {
-                        checkNotData();
-                    }, 500);
-                });
-
-                // Thay đổi số bản ghi trên trang
-                $('.perPage').on('change', function() {
-                    checkNotData();
-                });
-
-                // Phân trang
-                $(document).on('click', '.pagination a', function(e) {
-                    e.preventDefault();
-                    let page = $(this).attr('href').split('page=')[1];
-
-                    fetchData(page);
-                });
-
-                // Tải dữ liệu ban đầu
-                fetchData();
-
-                function notData() {
-
-                    if ($(".table tbody tr").length == 0) {
-                        $('.table tbody').append(
-                            '<tr id="no-data-row"><td colspan="6" class="text-center">@lang('Không tìm thấy dữ liệu')</td></tr>'
-                        );
-                    } else {
-                        $('#no-data-row').remove(); // Xóa hàng thông báo nếu có bản ghi
-                    }
-                }
-
-                let lastId = null;
-                // Đặt Swal thông báo chung
-                const showSwalMessage = (icon, title, timer = 2000) => {
-
-                    const Toast = Swal.mixin({
-                        toast: true,
-                        position: "top-end",
-                        showConfirmButton: false,
-                        timer: timer,
-                        timerProgressBar: true,
-                        didOpen: (toast) => {
-                            toast.onmouseenter = Swal.stopTimer;
-                            toast.onmouseleave = Swal.resumeTimer;
-                        }
-                    });
-                    Toast.fire({
-                        icon: icon,
-                        title: `<p>${title}</p>`
-                    });
-                };
 
                 // Reset form và remove các lớp lỗi
                 const resetFormAndErrors = () => {
@@ -304,7 +216,8 @@
                     console.log(id);
 
 
-                    const url = id ? "{{ route('admin.category.update', ':id') }}".replace(':id', id) :
+                    const url = id ? "{{ route('admin.category.update', ':id') }}".replace(':id',
+                            id) :
                         "{{ route('admin.category.store') }}";
                     const method = id ? "PUT" : "POST";
 
@@ -319,7 +232,8 @@
                                 if (id) {
                                     htmlStringSuccessUpdate(response);
                                 } else {
-                                    $("table tbody").prepend(createNewRow(response.data));
+                                    $("table tbody").prepend(createNewRow(response
+                                        .data));
                                     updateTableIndexes();
                                     4
                                     notData();
@@ -333,8 +247,10 @@
                                 $('small').removeClass('invalid-feedback').html('');
                                 $("input").removeClass('is-invalid');
                                 $.each(response.errors, function(index, message) {
-                                    $(`#${index}`).addClass('is-invalid').siblings(
-                                            'small').addClass('invalid-feedback')
+                                    $(`#${index}`).addClass('is-invalid')
+                                        .siblings(
+                                            'small').addClass(
+                                            'invalid-feedback')
                                         .html(message);
                                 });
                             }
@@ -372,7 +288,8 @@
                                 // Xóa hàng tương ứng
                                 $('tr[data-id="' + id + '"]').remove();
                                 updateTableIndexes();
-                                notData(); // Kiểm tra và hiển thị thông báo nếu không có bản ghi
+                                notData
+                                    (); // Kiểm tra và hiển thị thông báo nếu không có bản ghi
 
                                 Toast.fire({
                                     icon: 'success',

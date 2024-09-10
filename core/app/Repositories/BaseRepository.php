@@ -2,8 +2,9 @@
 
 namespace App\Repositories;
 
-use Illuminate\Database\Eloquent\Builder;
+use Illuminate\Support\Facades\Log;
 use Illuminate\Database\Eloquent\Model;
+use Illuminate\Database\Eloquent\Builder;
 
 class BaseRepository
 {
@@ -43,5 +44,19 @@ class BaseRepository
 
         // Phân trang
         return $query->paginate($perPage, $columns);
+    }
+
+    public function logError($exception)
+    {
+        // Lấy tên controller và tên hàm gọi
+        $controller = class_basename(get_class($exception->getTrace()[0]['object']));
+        $function = $exception->getTrace()[0]['function'];
+
+        // Ghi log lỗi
+        Log::error("$controller::$function", [
+            'message' => $exception->getMessage(),
+            'line'    => $exception->getLine(),
+            'code'    => $exception->getCode(),
+        ]);
     }
 }
