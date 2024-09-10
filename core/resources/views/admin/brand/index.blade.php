@@ -5,12 +5,12 @@
         <div class="row">
             <!-- Khối bên trái: Form thêm mới -->
             <div class="col-md-4">
-                <h3>@lang('Thêm Mới Danh Mục')</h3>
-                <form action="" method="POST" id="categoryForm">
+                <h3>@lang('Thêm Mới Thương Hiệu')</h3>
+                <form action="" method="POST" id="brandForm">
                     <div class="form-group mb-3">
-                        <label for="name">Tên Danh Mục *</label>
+                        <label for="name">Tên Thương Hiệu *</label>
                         <input type="text" class="form-control" id="name" name="name"
-                            placeholder="Nhập tên danh mục">
+                            placeholder="Nhập tên thương hiệu">
                         <small></small>
                     </div>
                     <div class="form-group mb-3">
@@ -19,8 +19,8 @@
                     </div>
                     <div class="form-group mb-3">
                         <div class="form-check form-switch">
-                            <input class="form-check-input" type="checkbox" name="status" id="status" checked>
-                            <label class="form-check-label" for="status">@lang('Hoạt động')</label>
+                            <input class="form-check-input" type="checkbox" name="is_active" id="is_active" checked>
+                            <label class="form-check-label" for="is_active">@lang('Hoạt động')</label>
                         </div>
                         <small></small>
                     </div>
@@ -32,7 +32,7 @@
 
             <!-- Khối bên phải: Danh sách danh mục -->
             <div class="col-md-8">
-                <h3 class="mb-3">Danh Sách Danh Mục</h3>
+                <h3 class="mb-3">Danh Sách Thương Hiệu</h3>
                 <div class="scrollable-table border p-2">
                     <div class="d-flex justify-content-between mb-3">
                         <div class="dt-length">
@@ -56,7 +56,7 @@
                             <tr>
                                 <th>@lang('STT')</th>
                                 <th>@lang('Tên danh mục')</th>
-                                <th class="w-25">@lang('Sản phẩm (số lượng)')</th>
+                                <th>@lang('Sản phẩm (số lượng)')</th>
                                 <th>@lang('Trạng thái')</th>
                                 @can([])
                                     <th>@lang('Hành động')</th>
@@ -81,82 +81,87 @@
 @endpush
 
 @push('script')
+    <script src="{{ asset('assets/admin/js/dataTable.js') }}"></script>
     <script>
         (function($) {
             "use strict";
             $(document).ready(function() {
+                const apiUrl = '{{ route('admin.brand.index') }}'; // Thay đổi URL phù hợp
+                initDataFetch(apiUrl);
+                // let debounceTimer;
+                // let currentPage = 1;
 
-                let debounceTimer;
-                let currentPage = 1;
+                // function checkNotData() {
+                //     if ($("#no-data-row").length <= 0) {
+                //         fetchData();
+                //     }
+                // }
 
-                function fetchData(page = 1) {
-                    currentPage = page; // Cập nhật trang hiện tại
-                    const search = $('.searchInput').val();
-                    const perPage = $('.perPage').val();
-                    $.ajax({
-                        url: '{{ route('admin.category.index') }}',
-                        method: 'GET',
-                        data: {
-                            search,
-                            page,
-                            perPage
-                        },
-                        success: function(data) {
-                            $('#data-table tbody').html(data.results);
-                            $('#pagination').html(data.pagination);
-                            updateTableIndexes
-                                (); // Cập nhật lại chỉ mục sau khi dữ liệu đã được load
-                            notData();
+                // function fetchData(page = 1) {
 
-                        }
-                    });
-                }
+                //     currentPage = page; // Cập nhật trang hiện tại
+                //     const search = $('.searchInput').val();
+                //     const perPage = $('.perPage').val();
 
-                function checkNotData() {
-                    if ($("#no-data-row").length <= 0) {
-                        fetchData();
-                    }
-                }
+                //     $.ajax({
+                //         url: '{{ route('admin.brand.index') }}',
+                //         method: 'GET',
+                //         data: {
+                //             search,
+                //             page,
+                //             perPage
+                //         },
+                //         success: function(data) {
+                //             $('#data-table tbody').html(data.results);
+                //             $('#pagination').html(data.pagination);
+                //             updateTableIndexes
+                //                 (); // Cập nhật lại chỉ mục sau khi dữ liệu đã được load
+                //             notData();
 
-                // Tìm kiếm
-                $('.searchInput').on('input', function() {
-                    clearTimeout(debounceTimer);
-                    const searchValue = $(this).val();
-                    if (searchValue === "") {
-                        // Khi giá trị tìm kiếm rỗng, lấy lại các bản ghi ban đầu
-                        checkNotData();
-                    }
-                    debounceTimer = setTimeout(() => {
-                        checkNotData();
-                    }, 500);
-                });
+                //         }
+                //     });
 
-                // Thay đổi số bản ghi trên trang
-                $('.perPage').on('change', function() {
-                    checkNotData();
-                });
+                // }
 
-                // Phân trang
-                $(document).on('click', '.pagination a', function(e) {
-                    e.preventDefault();
-                    let page = $(this).attr('href').split('page=')[1];
+                // // Tìm kiếm
+                // $('.searchInput').on('input', function() {
+                //     clearTimeout(debounceTimer);
+                //     const searchValue = $(this).val();
+                //     if (searchValue === "") {
+                //         // Khi giá trị tìm kiếm rỗng, lấy lại các bản ghi ban đầu
+                //         checkNotData();
+                //     }
+                //     debounceTimer = setTimeout(() => {
+                //         checkNotData();
+                //     }, 500);
+                // });
 
-                    fetchData(page);
-                });
+                // // Thay đổi số bản ghi trên trang
+                // $('.perPage').on('change', function() {
+                //     checkNotData();
+                // });
 
-                // Tải dữ liệu ban đầu
-                fetchData();
+                // // Phân trang
+                // $(document).on('click', '.pagination a', function(e) {
+                //     e.preventDefault();
+                //     let page = $(this).attr('href').split('page=')[1];
 
-                function notData() {
+                //     fetchData(page);
+                // });
 
-                    if ($(".table tbody tr").length == 0) {
-                        $('.table tbody').append(
-                            '<tr id="no-data-row"><td colspan="6" class="text-center">@lang('Không tìm thấy dữ liệu')</td></tr>'
-                        );
-                    } else {
-                        $('#no-data-row').remove(); // Xóa hàng thông báo nếu có bản ghi
-                    }
-                }
+                // // Tải dữ liệu ban đầu
+                // fetchData();
+
+                // function notData() {
+
+                //     if ($(".table tbody tr").length == 0) {
+                //         $('.table tbody').append(
+                //             '<tr id="no-data-row"><td colspan="6" class="text-center">@lang('Không tìm thấy dữ liệu')</td></tr>'
+                //         );
+                //     } else {
+                //         $('#no-data-row').remove(); // Xóa hàng thông báo nếu có bản ghi
+                //     }
+                // }
 
                 let lastId = null;
                 // Đặt Swal thông báo chung
@@ -181,19 +186,11 @@
 
                 // Reset form và remove các lớp lỗi
                 const resetFormAndErrors = () => {
-                    $("#categoryForm")[0].reset();
+                    $("#brandForm")[0].reset();
                     $('small').removeClass('invalid-feedback').html('');
                     $("input").removeClass('is-invalid');
                 };
 
-                // Cập nhật lại số thứ tự cho các hàng
-                const updateTableIndexes = () => {
-                    const perPage = parseInt($('.perPage').val());
-                    $("table tbody tr").each(function(index) {
-                        const rowIndex = (currentPage - 1) * perPage + index + 1;
-                        $(this).find("td:first").text(rowIndex);
-                    });
-                };
 
                 // Tạo một hàng mới trong bảng
                 const createNewRow = (data) => {
@@ -204,7 +201,7 @@
                         <td>${data.products_count || 0}</td>
                         <td>
                             <div class="form-check form-switch" style="padding-left: 4.5em">
-                                <input class="form-check-input" data-id="${data.id}" type="checkbox" id="update-status" ${data.status ? 'checked' : ''}>
+                                <input class="form-check-input" data-id="${data.id}" type="checkbox" id="update-status" ${data.is_active ? 'checked' : ''}>
                             </div>
                         </td>
                         <td>
@@ -241,13 +238,13 @@
                     $(".table .form-check-input").prop('disabled', true); // Disable all checkboxes
 
                     $.ajax({
-                        url: "{{ route('admin.category.edit', ':id') }}".replace(':id', id),
+                        url: "{{ route('admin.brand.edit', ':id') }}".replace(':id', id),
                         method: "GET",
                         success: function(response) {
                             if (response.status) {
                                 $("#name").val(response.data.name);
                                 $("#description").val(response.data.description);
-                                $("#status").prop('checked', response.data.status);
+                                $("#is_active").prop('checked', response.data.is_active);
                                 $("form").attr('data-id', response.data
                                     .id); // Set data-id on the form
                             } else {
@@ -277,7 +274,7 @@
                     }).then((result) => {
                         if (result.isConfirmed) {
                             $.ajax({
-                                url: "{{ route('admin.category.update.status') }}",
+                                url: "{{ route('admin.brand.update.status') }}",
                                 method: "PUT",
                                 data: {
                                     id
@@ -297,15 +294,12 @@
                 });
 
                 // Xử lý sự kiện submit form
-                $("#categoryForm").on('submit', function(e) {
+                $("#brandForm").on('submit', function(e) {
                     e.preventDefault();
                     const id = e.target.getAttribute('data-id');
 
-                    console.log(id);
-
-
-                    const url = id ? "{{ route('admin.category.update', ':id') }}".replace(':id', id) :
-                        "{{ route('admin.category.store') }}";
+                    const url = id ? "{{ route('admin.brand.update', ':id') }}".replace(':id', id) :
+                        "{{ route('admin.brand.store') }}";
                     const method = id ? "PUT" : "POST";
 
                     $.ajax({
@@ -326,7 +320,7 @@
                                 }
 
                                 $(".table .form-check-input").prop('disabled', false);
-                                $(".col-md-4 h3").html("@lang('Thêm mới Danh Mục')");
+                                $(".col-md-4 h3").html("@lang('Thêm mới Thương Hiệu')");
                                 resetFormAndErrors();
                                 showSwalMessage('success', response.message);
                             } else {
@@ -347,13 +341,13 @@
                     const $row = $("tr[data-id=" + response.data.id + "]");
                     $row.find("td:nth-child(2)").text(response.data.name);
                     $row.find("td:nth-child(3)").text(response.data.products_count || 0);
-                    $row.find("td:nth-child(4) input").prop('checked', response.data.status);
-                    $("#categoryForm").removeAttr('data-id');
+                    $row.find("td:nth-child(4) input").prop('checked', response.data.is_active);
+                    $("#brandForm").removeAttr('data-id');
                 }
 
                 function deleteCategory(id) {
                     $.ajax({
-                        url: "{{ route('admin.category.destroy', ':id') }}".replace(':id', id),
+                        url: "{{ route('admin.brand.destroy', ':id') }}".replace(':id', id),
                         method: "DELETE",
                         success: function(response) {
                             if (response.status) {
