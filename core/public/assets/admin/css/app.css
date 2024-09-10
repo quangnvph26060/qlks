@@ -3171,6 +3171,9 @@ input[type='range'],
 input[type='checkbox'] {
   padding: 0;
 }
+input[type='search']::placeholder {
+font-size: 12px;
+}
 
 input.form-control,
 select.form-control {
@@ -3434,9 +3437,9 @@ table th:first-child {
   font-weight: 600;
 }
 
-table td:last-child {
+/* table td:last-child {
   text-align: right;
-}
+} */
 
 table td:first-child {
   text-align: left;

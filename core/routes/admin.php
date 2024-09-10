@@ -89,6 +89,7 @@ Route::middleware('admin', 'adminPermission')->group(function () {
         Route::get('notification-log/{id}', 'notificationLog')->name('notification.log');
     });
 
+    // manage category
     Route::controller('CategoryController')->prefix('categories')->name('category.')->group(function () {
         Route::get('/', 'index')->name('index');
         Route::post('create', 'store')->name('store');
@@ -96,7 +97,27 @@ Route::middleware('admin', 'adminPermission')->group(function () {
         Route::put('update/{id}', 'update')->name('update');
         Route::put('update-status', 'updateStatus')->name('update.status');
         Route::delete('destroy/{id}', 'destroy')->name('destroy');
+    });
 
+    // manage brand
+    Route::controller('BrandController')->prefix('brand')->name('brand.')->group(function () {
+        Route::get('/', 'index')->name('index');
+        Route::post('create', 'store')->name('store');
+        Route::get('edit/{id}', 'edit')->name('edit');
+        Route::put('update/{id}', 'update')->name('update');
+        Route::put('update-status', 'updateStatus')->name('update.status');
+        Route::delete('destroy/{id}', 'destroy')->name('destroy');
+    });
+
+    // manage supplier
+    Route::controller('SupplierController')->prefix('supplier')->name('supplier.')->group(function () {
+        Route::get('/', 'index')->name('index');
+        Route::get('create', 'create')->name('create');
+        Route::post('create', 'store')->name('store');
+        Route::get('edit/{id}', 'edit')->name('edit');
+        Route::put('update/{id}', 'update')->name('update');
+        Route::put('update-status', 'updateStatus')->name('update.status');
+        Route::delete('destroy/{id}', 'destroy')->name('destroy');
     });
 
     Route::name('hotel.')->prefix('hotel')->group(function () {

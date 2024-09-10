@@ -53,81 +53,120 @@ ALTER TABLE room_types
 ADD seasonal_rate DECIMAL(10, 2) NULL DEFAULT 0 AFTER hourly_rate;
 
 CREATE TABLE categories (
-    id INT AUTO_INCREMENT PRIMARY KEY,
-    name VARCHAR(255) NOT NULL,
-    description TEXT,
-    created_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
-    updated_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP ON UPDATE CURRENT_TIMESTAMP
+    id BIGINT UNSIGNED AUTO_INCREMENT PRIMARY KEY,
+    name VARCHAR(255) NOT NULL, -- Tên danh mục hàng hóa
+    description TEXT NULL, -- Mô tả danh mục
+    status BOOLEAN DEFAULT 1 NOT NULL,
+    created_at TIMESTAMP NULL,
+    updated_at TIMESTAMP NULL
 );
 
+
 CREATE TABLE brands (
-    id INT AUTO_INCREMENT PRIMARY KEY,
+    id BIGINT UNSIGNED AUTO_INCREMENT PRIMARY KEY,
     name VARCHAR(255) NOT NULL,
-    created_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
-    updated_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP ON UPDATE CURRENT_TIMESTAMP
+    description TEXT NULL,
+    is_active BOOLEAN DEFAULT 1 NOT NULL,
+    created_at TIMESTAMP NULL,
+    updated_at TIMESTAMP NULL
 );
 
 
 CREATE TABLE suppliers (
-    id INT AUTO_INCREMENT PRIMARY KEY,
+    id BIGINT UNSIGNED AUTO_INCREMENT PRIMARY KEY,
     name VARCHAR(255) NOT NULL,
-    contact_info TEXT NOT NULL,
-    created_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
-    updated_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP ON UPDATE CURRENT_TIMESTAMP
+    contact_info TEXT NULL,
+    address VARCHAR(255) NULL,
+    created_at TIMESTAMP NULL,
+    updated_at TIMESTAMP NULL
 );
+
+ALTER TABLE `suppliers` ADD `is_active` BOOLEAN NOT NULL DEFAULT TRUE AFTER `address`;
+
+CREATE TABLE supplier_representatives (
+    id BIGINT UNSIGNED AUTO_INCREMENT PRIMARY KEY,
+    supplier_id BIGINT UNSIGNED NOT NULL, -- Tham chiếu tới nhà cung cấp
+    name VARCHAR(255) NOT NULL, -- Tên người đại diện
+    phone VARCHAR(20) NULL, -- Số điện thoại người đại diện
+    email VARCHAR(255) NULL, -- Email của người đại diện
+    position VARCHAR(255) NULL, -- Chức vụ của người đại diện
+    created_at TIMESTAMP NULL,
+    updated_at TIMESTAMP NULL,
+    FOREIGN KEY (supplier_id) REFERENCES suppliers(id) ON DELETE CASCADE
+);
+
 
 CREATE TABLE products (
-    id INT AUTO_INCREMENT PRIMARY KEY,
-    category_id INT NOT NULL,
-    brand_id INT NOT NULL,
-    name VARCHAR(255) NOT NULL,
-    description TEXT,
-    price DECIMAL(10, 2) NOT NULL,
-    sku VARCHAR(100) NOT NULL,
-    is_published BOOLEAN DEFAULT TRUE NOT NULL,
-    created_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
-    updated_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP ON UPDATE CURRENT_TIMESTAMP
+    id BIGINT UNSIGNED AUTO_INCREMENT PRIMARY KEY,
+    category_id BIGINT UNSIGNED NULL, -- Tham chiếu đến danh mục
+    brand_id BIGINT UNSIGNED NULL, -- Tham chiếu đến thương hiệu
+    name VARCHAR(255) NOT NULL, -- Tên sản phẩm
+    description TEXT NULL, -- Mô tả sản phẩm
+    price DECIMAL(10, 2) NOT NULL, -- Giá bán sản phẩm
+    stock INT DEFAULT 0, -- Số lượng tồn kho
+    is_published BOOLEAN DEFAULT 0,
+    created_at TIMESTAMP NULL,
+    updated_at TIMESTAMP NULL,
+    FOREIGN KEY (category_id) REFERENCES categories(id) ON DELETE SET NULL,
+    FOREIGN KEY (brand_id) REFERENCES brands(id) ON DELETE SET NULL
 );
 
-CREATE TABLE delivery_persons (
-    id INT AUTO_INCREMENT PRIMARY KEY,
-    name VARCHAR(255) NOT NULL,
-    phone VARCHAR(11) NOT NULL,
-    email VARCHAR(150) NULL,
-    created_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
-    updated_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP ON UPDATE CURRENT_TIMESTAMP
+
+CREATE TABLE product_supplier (
+    id BIGINT UNSIGNED AUTO_INCREMENT PRIMARY KEY,
+    product_id BIGINT UNSIGNED NOT NULL, -- Tham chiếu đến sản phẩm
+    supplier_id BIGINT UNSIGNED NOT NULL, -- Tham chiếu đến nhà cung cấp
+    created_at TIMESTAMP NULL,
+    updated_at TIMESTAMP NULL,
+    FOREIGN KEY (product_id) REFERENCES products(id) ON DELETE CASCADE,
+    FOREIGN KEY (supplier_id) REFERENCES suppliers(id) ON DELETE CASCADE
 );
 
 CREATE TABLE warehouse_entries (
-    id INT AUTO_INCREMENT PRIMARY KEY,
-    entry_date TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
-    supplier_id INT NOT NULL,
-    delivery_person_id INT,
-    user_id INT,
-    created_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
-    updated_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP ON UPDATE CURRENT_TIMESTAMP
+    id BIGINT UNSIGNED AUTO_INCREMENT PRIMARY KEY,
+    supplier_id BIGINT UNSIGNED NOT NULL, -- Tham chiếu đến nhà cung cấp của đơn nhập kho
+    reference_code VARCHAR(255) NOT NULL UNIQUE, 
+    total DECIMAL(10, 2) DEFAULT 0.00, -- Tổng giá trị đơn nhập
+    created_at TIMESTAMP NULL,
+    updated_at TIMESTAMP NULL,
+    FOREIGN KEY (supplier_id) REFERENCES suppliers(id) ON DELETE CASCADE
 );
 
 
 CREATE TABLE warehouse_entry_items (
-    id INT AUTO_INCREMENT PRIMARY KEY,
-    warehouse_entry_id INT NOT NULL,
-    product_id INT NOT NULL,
-    quantity INT NOT NULL,
-    cost DECIMAL(10, 2) NOT NULL,
-    created_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
-    updated_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP ON UPDATE CURRENT_TIMESTAMP
+    id BIGINT UNSIGNED AUTO_INCREMENT PRIMARY KEY,
+    warehouse_entry_id BIGINT UNSIGNED NOT NULL, -- Tham chiếu đến đơn nhập kho
+    product_id BIGINT UNSIGNED NOT NULL, -- Tham chiếu đến sản phẩm trong đơn nhập kho
+    quantity INT NOT NULL, -- Số lượng sản phẩm nhập
+    cost DECIMAL(10, 2) NOT NULL, -- Giá nhập của sản phẩm
+    created_at TIMESTAMP NULL,
+    updated_at TIMESTAMP NULL,
+    FOREIGN KEY (warehouse_entry_id) REFERENCES warehouse_entries(id) ON DELETE CASCADE,
+    FOREIGN KEY (product_id) REFERENCES products(id) ON DELETE CASCADE
 );
 
-CREATE TABLE stock_movements (
-    id INT AUTO_INCREMENT PRIMARY KEY,
-    product_id INT NOT NULL,
-    quantity INT NOT NULL,
-    movement_type ENUM('in', 'out', 'return') NOT NULL,
-    reason TEXT NULL,
-    created_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
-    updated_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP ON UPDATE CURRENT_TIMESTAMP,
+CREATE TABLE returns (
+    id BIGINT UNSIGNED AUTO_INCREMENT PRIMARY KEY,
+    product_id BIGINT UNSIGNED NOT NULL, -- Tham chiếu đến sản phẩm bị trả
+    quantity INT NOT NULL, -- Số lượng bị trả
+    return_date DATE NOT NULL, -- Ngày trả hàng
+    reason TEXT NULL, -- Lý do trả hàng
+    created_at TIMESTAMP NULL,
+    updated_at TIMESTAMP NULL,
+    FOREIGN KEY (product_id) REFERENCES products(id) ON DELETE CASCADE
 );
+
+
+
+CREATE TABLE banks (
+    id INT PRIMARY KEY AUTO_INCREMENT,
+    name VARCHAR(255) NOT NULL,
+    code VARCHAR(10) NOT NULL,
+    bin VARCHAR(20) NOT NULL,
+    sort_name VARCHAR(255) NOT NULL
+);
+
+ALTER TABLE `room_types` ADD `is_clean` BOOLEAN NOT NULL DEFAULT TRUE COMMENT '1: đã dọn phòng\r\n0: chưa dọn phòng' AFTER `is_featured`;
 
 
 
