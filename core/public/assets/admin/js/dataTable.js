@@ -1,17 +1,13 @@
 let debounceTimer;
 let currentPage = 1;
 let apiUrl = "";
+let is_column_id = "";
 
 // Hàm khởi tạo
-function initDataFetch(url) {
+function initDataFetch(url, columnId) {
     apiUrl = url; // Lưu URL vào biến toàn cục
+    is_column_id = columnId;
     fetchData(); // Tải dữ liệu ban đầu
-}
-
-function checkNotData() {
-    if ($("#no-data-row").length <= 0) {
-        fetchData();
-    }
 }
 
 function fetchData(page = 1) {
@@ -30,7 +26,7 @@ function fetchData(page = 1) {
         success: function (data) {
             $("#data-table tbody").html(data.results);
             $("#pagination").html(data.pagination);
-            updateTableIndexes();
+            is_column_id ? updateTableIndexes() : null;
             notData();
         },
     });
@@ -40,17 +36,28 @@ function fetchData(page = 1) {
 $(".searchInput").on("input", function () {
     clearTimeout(debounceTimer);
     const searchValue = $(this).val();
+
     if (searchValue === "") {
-        checkNotData();
+        // Khi ô tìm kiếm trống, gọi fetchData để lấy dữ liệu ban đầu
+        fetchData(1);
     }
     debounceTimer = setTimeout(() => {
-        checkNotData();
+        fetchData(1); // Gọi fetchData nếu có giá trị tìm kiếm
     }, 500);
 });
 
 // Thay đổi số bản ghi trên trang
 $(".perPage").on("change", function () {
-    checkNotData();
+    const perPage = parseInt($(this).val(), 10);
+    const currentRecordCount = $(".total-records").html() ?? 0; // Sử dụng .length để đếm số hàng
+    console.log(currentRecordCount + " records in total " + perPage);
+
+    if (currentRecordCount < perPage) {
+        // Nếu số hàng hiện có nhỏ hơn số bản ghi được yêu cầu, không gọi API
+        return;
+    }
+
+    fetchData(1); // Gọi fetchData với trang 1 khi thay đổi số bản ghi
 });
 
 // Phân trang
@@ -64,7 +71,7 @@ $(document).on("click", ".pagination a", function (e) {
 function notData() {
     if ($(".table tbody tr").length == 0) {
         $(".table tbody").append(
-            '<tr id="no-data-row"><td colspan="6" class="text-center">@lang("Không tìm thấy dữ liệu")</td></tr>'
+            '<tr id="no-data-row"><td colspan="6" class="text-center">Không tìm thấy dữ liệu</td></tr>'
         );
     } else {
         $("#no-data-row").remove();

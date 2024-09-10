@@ -2,7 +2,8 @@
     <!-- Amount -->
     <div class="d-flex justify-content-between align-items-center">
         <span class="main__response-pages" style="font-size: 12px">
-            Showing {{ $response->firstItem() }} to {{ $response->lastItem() }} of {{ $response->total() }} results
+            Showing {{ $response->firstItem() }} to {{ $response->lastItem() }} of <span
+                class="total-records">{{ $response->total() }}</span> results
         </span>
 
         <ul class="pagination">
@@ -37,7 +38,8 @@
 
             {{-- Display 2 pages before and after current page --}}
             @for ($i = max(3, $currentPage - 1); $i <= min($lastPage - 2, $currentPage + 1); $i++)
-                @if ($i > 2 && $i < $lastPage - 1) {{-- Only show middle pages --}}
+                @if ($i > 2 && $i < $lastPage - 1)
+                    {{-- Only show middle pages --}}
                     <li class="page-item {{ $i == $currentPage ? 'active' : '' }}">
                         <a href="{{ $response->url($i) }}" class="page-link">{{ $i }}</a>
                     </li>
@@ -50,7 +52,8 @@
 
             {{-- Always show the last 2 pages --}}
             @for ($i = $lastPage - 1; $i <= $lastPage; $i++)
-                @if ($i > 2) {{-- Only show last pages if necessary --}}
+                @if ($i > 2)
+                    {{-- Only show last pages if necessary --}}
                     <li class="page-item {{ $i == $currentPage ? 'active' : '' }}">
                         <a href="{{ $response->url($i) }}" class="page-link">{{ $i }}</a>
                     </li>

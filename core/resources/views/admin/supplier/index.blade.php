@@ -1,19 +1,38 @@
 @extends('admin.layouts.app')
 
 @section('panel')
+    @include('admin.messages')
     <div class="row">
         <div class="col-lg-12">
             <div class="card b-radius--10">
                 <div class="card-body p-0">
-                    <div class="table-responsive--md table-responsive">
-                        <table class="table--light style--two table table-striped table-hover" id="data-table">
+                    <div class="table-responsive--md table-responsive p-2">
+                        <div class="d-flex justify-content-between mb-3">
+                            <div class="dt-length">
+                                <select name="example_length" style=" padding: 1px 3px; margin-right: 8px;"
+                                    aria-controls="example" class="perPage">
+                                    <option value="10">10
+                                    <option>
+                                    <option value="25">25</option>
+                                    <option value="50">50</option>
+                                    <option value="100">100</option>
+                                </select><label for="perPage"> entries per page</label>
+                            </div>
+                            <div class="search">
+                                <label for="searchInput">Search:</label>
+                                <input class="searchInput"
+                                    style="padding: 1px 3px; border: 1px solid rgb(121, 117, 117, 0.5); margin-left: 8px;"
+                                    type="search" placeholder="Tìm kiếm...">
+                            </div>
+                        </div>
+                        <table class="table--light style--two table table-hover" id="data-table">
                             <thead>
                                 <tr>
                                     <th></th>
                                     <th>Tên Nhà Cung Cấp</th>
-                                    <th>Thông Tin Liên Hệ</th>
+                                    <th>Email</th>
+                                    <th>Số điện thoại</th>
                                     <th>Địa Chỉ</th>
-                                    <th>Trạng Thái</th>
                                     <th>Hành Động</th>
                                 </tr>
                             </thead>
@@ -26,6 +45,54 @@
             </div>
         </div>
     </div>
+
+    <div class="modal fade" id="addRepresentatives" tabindex="-1" role="dialog" aria-labelledby="modalLabel"
+        aria-hidden="true">
+        <div class="modal-dialog" role="document">
+            <div class="modal-content">
+                <div class="modal-header">
+                    <h5 class="modal-title" id="modalLabel">Thêm người đại diện</h5>
+                    <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+                        <span aria-hidden="true">&times;</span>
+                    </button>
+                </div>
+                <div class="modal-body">
+                    <form action="" method="post" id="representativeForm">
+                        <div class="form-group mb-3">
+                            <label for="name" class="control-label required">@lang('Tên người đại diện')</label>
+                            <input type="text" name="name" id="name" class="form-control"
+                                placeholder="Nhập tên">
+                            <small id="error"></small>
+                        </div>
+                        <div class="form-group mb-3">
+                            <label for="email" class="control-label required">@lang('Email')</label>
+                            <input type="text" name="email" id="email" class="form-control"
+                                placeholder="Nhập tên">
+                            <small id="error"></small>
+                        </div>
+                        <div class="form-group mb-3">
+                            <label for="phone" class="control-label">@lang('Số điện thoại')</label>
+                            <input type="text" name="phone" id="phone" class="form-control"
+                                placeholder="Nhập tên">
+                            <small></small>
+                        </div>
+                        <div class="form-group mb-3">
+                            <label for="position" class="control-label">@lang('Chức vụ')</label>
+                            <input type="text" name="position" id="position" class="form-control"
+                                placeholder="Nhập tên">
+                            <small></small>
+                        </div>
+                        <div class="modal-footer">
+                            <a href="javascript:void(0)" class="btn btn-secondary" id="btn-close"
+                                data-dismiss="modal">Đóng</a>
+                            <button type="submit" class="btn btn-primary">Lưu</button>
+                        </div>
+                    </form>
+                </div>
+
+            </div>
+        </div>
+    </div>
 @endsection
 
 @can('')
@@ -35,116 +102,163 @@
     @endpush
 @endcan
 
+
 @push('script')
+    <script src="{{ asset('assets/global/js/bootstrap.min.js') }}"></script>
+    <script src="{{ asset('assets/admin/js/dataTable.js') }}"></script>
     <script>
-        function toggleRepresentatives(id, button) {
-            const row = document.getElementById(id);
-            row.classList.toggle('show');
-            button.classList.toggle('collapsed');
-        }
         (function($) {
             "use strict";
+
+            window.toggleRepresentatives = function(id, button) {
+                const row = document.getElementById('rep-' + id);
+                row.classList.toggle('show');
+                button.classList.toggle('collapsed');
+            };
+
             $(document).ready(function() {
+                const apiUrl = '{{ route('admin.supplier.index') }}';
+                initDataFetch(apiUrl);
 
-                let debounceTimer;
-                let currentPage = 1;
 
-                function checkNotData() {
-                    if ($("#no-data-row").length <= 0) {
-                        fetchData();
-                    }
+                $("#btn-close").on("click", function() {
+                    reset()
+                })
+
+                function reset() {
+                    $("#representativeForm").trigger("reset");
+                    $('small#error').removeClass('invalid-feedback').html('');
+                    $('input').removeClass('is-invalid');
                 }
 
-                function fetchData(page = 1) {
+                $('#addRepresentatives').on('show.bs.modal', function(event) {
+                    var button = $(event.relatedTarget); // Nút đã được nhấn
+                    var dataId = button.data('id'); // Lấy data-id
+                    $(this).data('id', dataId); // Lưu data-id vào modal
+                });
 
-                    currentPage = page; // Cập nhật trang hiện tại
-                    const search = $('.searchInput').val();
-                    const perPage = $('.perPage').val();
+                $("#representativeForm").on("submit", function(e) {
+                    e.preventDefault();
+                    var modal = $('#addRepresentatives');
+                    var dataId = modal.data('id');
+
+                    var formData = $(this).serializeArray();
+                    formData.push({
+                        name: 'supplier_id',
+                        value: dataId
+                    });
 
                     $.ajax({
-                        url: '{{ route('admin.supplier.index') }}',
-                        method: 'GET',
-                        data: {
-                            search,
-                            page,
-                            perPage
-                        },
-                        success: function(data) {
-                            $('#data-table tbody').html(data.results);
-                            $('#pagination').html(data.pagination);
-                            notData();
+                        url: "{{ route('admin.representative.store') }}",
+                        type: "POST",
+                        data: formData,
+                        success: function(response) {
+                            if (response.status) {
+                                reset()
+                                showSwalMessage('success', response.message);
 
+                                var newRepresentative = `
+                                   <span class="badge bg-info me-2 position-relative">
+                                        ${response.data.name}
+                                        <small class="bg-danger rounded-circle p-1 position-absolute delete-representative"
+                                            data-id="${response.data.id}"
+                                            style="cursor: pointer; top: -7px !important; right: -5px !important;">x
+                                        </small>
+                                    </span>
+                                `;
+
+                                // Chèn đại diện mới vào danh sách trong <span class="representatives-list">
+                                $(`#rep-${dataId} .representatives-list .badge.bg-primary`)
+                                    .before(newRepresentative);
+
+                                // Tắt modal
+                                modal.modal('hide');
+                            } else {
+                                response.message && showSwalMessage('error', response
+                                    .message);
+                                reset()
+
+                                $.each(response.errors, function(index, message) {
+                                    $(`#${index}`)
+                                        .addClass('is-invalid')
+                                        .siblings('small')
+                                        .addClass('invalid-feedback').html(message);
+                                });
+
+                            }
                         }
-                    });
+                    })
 
-                }
 
-                // Tìm kiếm
-                $('.searchInput').on('input', function() {
-                    clearTimeout(debounceTimer);
-                    const searchValue = $(this).val();
-                    if (searchValue === "") {
-                        // Khi giá trị tìm kiếm rỗng, lấy lại các bản ghi ban đầu
-                        checkNotData();
-                    }
-                    debounceTimer = setTimeout(() => {
-                        checkNotData();
-                    }, 500);
-                });
+                })
 
-                // Thay đổi số bản ghi trên trang
-                $('.perPage').on('change', function() {
-                    checkNotData();
-                });
+                $(document).on('click', '.delete-representative', function() {
+                    var $this = $(this);
+                    var representativeId = $this.data('id');
+                    var $badge = $this.closest('.badge');
 
-                // Phân trang
-                $(document).on('click', '.pagination a', function(e) {
-                    e.preventDefault();
-                    let page = $(this).attr('href').split('page=')[1];
 
-                    fetchData(page);
-                });
-
-                // Tải dữ liệu ban đầu
-                fetchData();
-
-                function notData() {
-
-                    if ($(".table tbody tr").length == 0) {
-                        $('.table tbody').append(
-                            '<tr id="no-data-row"><td colspan="6" class="text-center">@lang('Không tìm thấy dữ liệu')</td></tr>'
-                        );
-                    } else {
-                        $('#no-data-row').remove(); // Xóa hàng thông báo nếu có bản ghi
-                    }
-                }
-
-                let lastId = null;
-                // Đặt Swal thông báo chung
-                const showSwalMessage = (icon, title, timer = 2000) => {
-
-                    const Toast = Swal.mixin({
-                        toast: true,
-                        position: "top-end",
-                        showConfirmButton: false,
-                        timer: timer,
-                        timerProgressBar: true,
-                        didOpen: (toast) => {
-                            toast.onmouseenter = Swal.stopTimer;
-                            toast.onmouseleave = Swal.resumeTimer;
+                    Swal.fire({
+                        title: "@lang('Xóa người đại diện')",
+                        text: "@lang('Bạn chắc chắn có muốn xóa không')?",
+                        icon: 'warning',
+                        showCancelButton: true,
+                        confirmButtonColor: '#3085d6',
+                        cancelButtonColor: '#d33',
+                        confirmButtonText: "@lang('Đồng ý')",
+                        cancelButtonText: "@lang('Huỷ')",
+                    }).then((result) => {
+                        if (result.isConfirmed) {
+                            $.ajax({
+                                url: "{{ route('admin.representative.destroy', ':id') }}"
+                                    .replace(':id',
+                                        representativeId),
+                                type: 'DELETE',
+                                success: function(response) {
+                                    if (response.status) {
+                                        $badge.remove();
+                                        showSwalMessage('success', response.message,
+                                            2000);
+                                    } else {
+                                        showSwalMessage('error', response.message);
+                                    }
+                                },
+                                error: function(xhr, status, error) {
+                                    console.log(xhr.responseText);
+                                }
+                            });
                         }
-                    });
-                    Toast.fire({
-                        icon: icon,
-                        title: `<p>${title}</p>`
-                    });
-                };
+                    })
+                });
+
+
+                $(document).on('click', '.btn-delete', function() {
+                    const id = $(this).attr('data-id');
+
+                    Swal.fire({
+                        title: "@lang('Xóa nhà cung cấp')?",
+                        text: "@lang('Bạn chắc chán muốn xóa nhà cung cấp này không')?",
+                        icon: 'warning',
+                        showCancelButton: true,
+                        confirmButtonColor: '#3085d6',
+                        cancelButtonColor: '#d33',
+                        confirmButtonText: "@lang('Đồng ý')",
+                        cancelButtonText: "@lang('Huỷ')",
+                    }).then((result) => {
+                        if (result.isConfirmed) {
+                            window.livewire.emit('delete', id);
+                        }
+                    })
+
+                })
             });
         })(jQuery);
     </script>
 @endpush
 
 @push('style')
+    <script src="{{ asset('assets/admin/js/vendor/sweetalert2@11.js') }}"></script>
+
     <style>
         .btn-toggle {
             border: 1px solid #007bff;
@@ -152,14 +266,12 @@
             color: #fff;
             font-size: 1rem;
             padding: 1px 4px;
-            /* Đã điều chỉnh padding để đảm bảo độ lớn của nút không thay đổi */
             cursor: pointer;
             transition: background-color 0.3s, color 0.3s;
             text-align: center;
             line-height: 1;
             border-radius: 50%;
             font-family: 'Courier New', Courier, monospace;
-            /* Font monospace giúp các ký tự có kích thước đồng nhất */
         }
 
         .btn-toggle:hover {
