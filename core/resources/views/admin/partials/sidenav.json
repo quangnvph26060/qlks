@@ -379,11 +379,27 @@
         "submenu": [
             {
                 "keyword": [
-                    "Tất cả hàng danh mục"
+                    "Quản lý danh mục"
                 ],
-                "title": "Tất cả hàng danh mục",
+                "title": "Tất cả danh mục",
                 "route_name": "admin.category.index",
                 "menu_active": "admin.category.index"
+            },
+            {
+                "keyword": [
+                    "Quản lý thương hiệu"
+                ],
+                "title": "Quản lý thương hiệu",
+                "route_name": "admin.brand.index",
+                "menu_active": "admin.brand.index"
+            },
+            {
+                "keyword": [
+                    "Quản lý đối tác"
+                ],
+                "title": "Quản lý đối tác",
+                "route_name": "admin.supplier.index",
+                "menu_active": "admin.supplier.index"
             }
         ]
 
