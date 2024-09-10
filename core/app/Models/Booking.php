@@ -18,7 +18,15 @@ class Booking extends Model
     {
         return $this->belongsTo(User::class);
     }
+    public function checkGuest()
+    {
+        $user = $this->user;
+        if (!$user) {
+            return '<p class="text-boder">Khách lẻ</p>';
+        }
+        return '<p class="text-boder">' . $user->username . '</p> <p class="text-boder">' . $user->mobile . '</p>';
 
+    }
     public function bookingRequest()
     {
         return $this->hasOne(BookingRequest::class);
@@ -130,7 +138,7 @@ class Booking extends Model
                 if (now() >= $this->check_in && $this->status == Status::BOOKING_ACTIVE) { // BOOKING_ACTIVE =  1
                     $class = "badge--success";
                     $text = 'Đang hoạt động'; // Running
-                } elseif (now() < $this->check_in && $this->status == Status::BOOKING_ACTIVE) { 
+                } elseif (now() < $this->check_in && $this->status == Status::BOOKING_ACTIVE) {
                     $class = "badge--warning";
                     $text = 'Sắp tới'; // Upcoming 
                 } elseif ($this->status == Status::BOOKING_CANCELED) { // BOOKING_CANCELED = 3 

@@ -25,8 +25,8 @@ class BookingController extends Controller {
             ->where('booked_for', now()->toDateString())     // check hôm nay có phòng nào chưa đặt không
             ->get();
 
-        $disabledRoomTypeIDs = RoomType::where('status', 0)->pluck('id')->toArray();
-        $bookedRooms         = $rooms->pluck('room_id')->toArray();
+        $disabledRoomTypeIDs = RoomType::where('status', 0)->pluck('id')->toArray(); // Lấy danh sách các ID của loại phòng bị vô hiệu hóa
+        $bookedRooms         = $rooms->pluck('room_id')->toArray(); // Lấy danh sách các ID của phòng đã được đặt hôm nay.
         $emptyRooms          = Room::active()->whereNotIn('id', $bookedRooms)->whereNotIn('room_type_id', $disabledRoomTypeIDs)->with('roomType:id,name')->select('id', 'room_type_id', 'room_number')->get();
 
         return view('admin.booking.todays_booked', compact('pageTitle', 'rooms', 'emptyRooms'));
@@ -139,8 +139,13 @@ class BookingController extends Controller {
         return view('admin.booking.booked_rooms', compact('pageTitle', 'bookedRooms', 'booking'));
     }
 
-    protected function bookingData($scope) {
-        $query = Booking::query();
+    protected function bookingData($scope, $is_method = null) {
+        if($is_method == 'Receptionist'){
+            $query = Booking::active();
+        }else{
+            $query = Booking::query();
+        }
+       
 
         if ($scope != "ALL") {
             $query = $query->$scope();
@@ -175,12 +180,17 @@ class BookingController extends Controller {
             ->paginate(getPaginate());
     }
     
-    public function Receptionist($scope = 'ALL'){
-        $emptyMessage    = 'MESSAGE';
+    public function Receptionist(){
+
+        $emptyMessage   = 'MESSAGE';
+        $pageTitle      =  'Lễ tân';
+        $Title          =  'Tất cả các phòng';
+       
+        
         $rooms = BookedRoom::active()
         ->with([
-            'room:id,room_number,room_type_id',
-            'room.roomType:id,name',
+            'room',
+            'room.roomType',
             'booking:id,user_id,booking_number',
             'booking.user:id,firstname,lastname',
             'usedPremiumService.premiumService:id,name'
@@ -189,10 +199,20 @@ class BookingController extends Controller {
         ->get();
         $disabledRoomTypeIDs = RoomType::where('status', 0)->pluck('id')->toArray();
         $bookedRooms         = $rooms->pluck('room_id')->toArray();
-        $emptyRooms          = Room::active()->whereNotIn('id', $bookedRooms)->whereNotIn('room_type_id', $disabledRoomTypeIDs)->with('roomType')->select('id', 'room_type_id', 'room_number')->get();
-        \Log::info($emptyRooms);
-        $bookings = $this->bookingData('ALL');
+        $emptyRooms          = Room::active()
+             ->whereNotIn('id', $bookedRooms)
+            ->whereNotIn('room_type_id', $disabledRoomTypeIDs) // loại trừ nhũng phòng ngưng hoạt động hoạt vô hiệu hóa 
+            ->with('roomType')
+            ->select('id', 'room_type_id', 'room_number')
+            ->get();
+        
+       //  \Log::info($emptyRooms);
+        $scope = 'ALL';
+        $is_method = 'Receptionist';
+        $bookings = $this->bookingData($scope,$is_method);
             \Log::info($bookings);
-        return view('admin.booking.receptionist.list', compact('emptyRooms','bookings','emptyMessage'));
+
+
+        return view('admin.booking.receptionist.list', compact('pageTitle','Title','emptyRooms','bookings','emptyMessage'));
     }
 }
