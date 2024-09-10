@@ -74,7 +74,10 @@
                         </div>
                     </div>
                     <div class="content-booking mt-2 room-booking-{{ $class }}"
-                        data-hours="{{ $rooms->roomType->hourly_rate }}" data-name = "{{ $rooms->roomType->name }}"
+                        data-hours="{{ $rooms->roomType->hourly_rate }}"
+                           data-day="{{ $rooms->roomType->fare }}"
+                        data-night="{{ $rooms->roomType->fare }}"
+                         data-name = "{{ $rooms->roomType->name }}"
                         data-roomNumber="{{ $rooms->room_number }}">
                         <h5>{{ $rooms->room_number }}</h5>
                         <p class="single-line">{{ $rooms->roomType->name }}</p>
@@ -130,6 +133,8 @@
 
                     <div class="content-booking mt-2 room-booking-{{ $class }}"
                         data-hours="{{ $booking->bookedRooms[0]->roomType->hourly_rate }}"
+                        data-day="{{ $booking->bookedRooms[0]->roomType->fare }}"
+                        data-night="{{ $booking->bookedRooms[0]->roomType->fare }}"
                         data-name = "{{ $booking->bookedRooms[0]->roomType->name }} "
                         data-roomNumber="{{ $rooms->room_number }}">
 
@@ -196,51 +201,40 @@
                     <div class="modal-body">
                         <form id="bookingForm">
                             <!-- Row: Labels -->
-                            <div class="row mb-2 text-center fw-bold main-booking-modal">
-                                <div class="col-md-2">Hạng phòng</div>
-                                <div class="col-md-2">Phòng</div>
-                                <div class="col-md-2">Hình thức</div>
-                                <div class="col-md-2">Nhận</div>
-                                <div class="col-md-2">Trả phòng</div>
-                                <div class="col-md-2 d-flex justify-content-between align-items-center">Dự kiến <span>Thành
-                                        tiền</span></div>
-                            </div>
-
-
-                            <div class="row mb-3">
-                                <!-- Hạng phòng -->
-                                <div class="col-md-2">
-                                    <p id="book_name"></p>
-                                </div>
-
-
-                                <div class="col-md-2">
-                                    <input type="text" class="form-control" id="roomNumber" disabled>
-                                </div>
-
-                                <div class="col-md-2">
-                                    <select id="bookingType" class="form-select">
-                                        <option value="gio">Giờ</option>
-                                        <option value="ngay">Ngày</option>
-                                        <option value="dem">Đêm</option>
-                                    </select>
-                                </div>
-
-                                <div class="col-md-2">
-                                    <input type="datetime-local" class="form-control" id="checkInTime">
-                                </div>
-
-                                <div class="col-md-2">
-                                    <input type="datetime-local" class="form-control" id="checkOutTime">
-                                </div>
-
-                                <div class="col-md-2">
-                                    <p class="d-flex justify-content-between align-items-center">
-                                        <span class="inputTime">00:00</span>
-                                        <input type="text" class="custom-input " id="input-price-booking">
-                                    </p>
-                                </div>
-
+                            <div class="table-responsive">
+                                <table class="table mobi-table">
+                                    <thead>
+                                        <tr class="text-center fw-bold main-booking-modal">
+                                            <th>Hạng phòng</th>
+                                            <th>Phòng</th>
+                                            <th>Hình thức</th>
+                                            <th>Nhận</th>
+                                            <th>Trả phòng</th>
+                                            <th class="d-flex justify-content-between align-items-center">Dự kiến <span>Thành tiền</span></th>
+                                        </tr>
+                                    </thead>
+                                    <tbody>
+                                        <tr>
+                                            <td><p id="book_name"></p></td>
+                                            <td><input type="text" class="form-control" id="roomNumber" disabled></td>
+                                            <td>
+                                                <select id="bookingType" class="form-select">
+                                                    <option value="gio">Giờ</option>
+                                                    <option value="ngay">Ngày</option>
+                                                    <option value="dem">Đêm</option>
+                                                </select>
+                                            </td>
+                                            <td><input type="datetime-local" class="form-control" id="checkInTime"></td>
+                                            <td><input type="datetime-local" class="form-control" id="checkOutTime"></td>
+                                            <td>
+                                                <p class="d-flex justify-content-between align-items-center">
+                                                    <span class="inputTime">00:00</span>
+                                                    <input type="text" class="custom-input " id="input-price-booking">
+                                                </p>
+                                            </td>
+                                        </tr>
+                                    </tbody>
+                                </table>
                             </div>
 
                             {{-- <div class="row mb-3">
@@ -532,6 +526,12 @@
                 window.savedDataHours = this.getAttribute('data-hours');
                 window.savedDataHours = window.savedDataHours.replace(',', '');
 
+                window.savedDataDay = this.getAttribute('data-day');
+                window.savedDataDay = window.savedDataDay.replace(',', '');
+
+                window.savedDataNight = this.getAttribute('data-night');
+                window.savedDataNight = window.savedDataNight.replace(',', '');
+
                 document.getElementById('customer-price-booking').value = integerValue;
                 document.getElementById('input-price-booking').value = integerValue;
                 document.getElementById('book_name').innerText = dataName;
@@ -565,8 +565,9 @@
         var checkInTime = document.getElementById('checkInTime');
         checkInTime.value = currentDateTime;
 
+        let bookingType;
         $('#bookingType').on('change', function() {
-            var bookingType = $(this).val();
+            bookingType = $(this).val();
             var now = new Date();
 
             var checkOutTime;
@@ -592,6 +593,7 @@
         });
 
         function calculateDuration(event) {
+           
             var checkInTime = $('#checkInTime').val();
             var checkOutTime = $('#checkOutTime').val();
             if (!checkInTime || !checkOutTime) {
@@ -616,10 +618,22 @@
 
             var formattedHours = durationHours.toString().padStart(2, '0'); // giờ 
             var formattedMinutes = durationMinutes.toString().padStart(2, '0'); // phút
-
-            const hourlyRate = parseFloat(window.savedDataHours.replace(',', '')) || 0;
-
-            var updatedPrice = hourlyRate * formattedHours;
+      
+            let priceTime = 0;
+            if(bookingType === 'gio'){
+                priceTime = parseFloat(window.savedDataHours.replace(',', '')) || 0;
+            }else if (bookingType === 'ngay') {
+                priceTime = parseFloat(window.savedDataDay.replace(',', '')) || 0;
+                updatedPrice = priceTime;
+            } else if (bookingType === 'dem') {
+                priceTime = parseFloat(window.savedDataNight.replace(',', '')) || 0;
+                updatedPrice = priceTime;
+            }
+          
+            
+            if (bookingType !== 'dem' && bookingType !== 'ngay') {
+                var updatedPrice = priceTime * formattedHours;
+            }
 
 
             $('#input-price-booking').val(updatedPrice.toLocaleString());
