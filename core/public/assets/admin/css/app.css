@@ -8460,12 +8460,13 @@ label.required:after {
 }
 
 @media (max-width: 768px) {
-    .d-flex {
+    .d--block {
         display: block;
     }
 
     .text--center {
         text-align: center;
+        display: block;
     }
 
     .form-check .form-check-input {
@@ -8490,4 +8491,13 @@ label.required:after {
 .scrollable-table table {
     width: 100%;
     border-collapse: collapse;
+}
+
+.custom-toast {
+    width: auto !important;
+    /* Cho phép chiều rộng tự động */
+    max-width: 500px;
+    /* Bạn có thể điều chỉnh giá trị này theo nhu cầu */
+    white-space: nowrap;
+    /* Ngăn việc xuống dòng */
 }

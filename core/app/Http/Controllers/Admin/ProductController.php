@@ -229,4 +229,33 @@ class ProductController extends Controller
             'message' => $message
         ]);
     }
+
+    public function filter(Request $request)
+    {
+        $search = request()->get('search');
+        $perPage = request()->get('perPage', 10);
+        $orderBy = request()->get('orderBy', 'id');
+
+        // Lấy các tiêu chí lọc khác
+        $filters = [
+            'category_id' => request()->get('category_id', []),
+        ];
+
+        $response = $this->repository->customPaginate(
+            ['id', 'image_path', 'name', 'import_price', 'category_id', 'stock', 'is_published'],
+            ['category'], // Thêm quan hệ nếu cần
+            $perPage,
+            $orderBy,
+            $search,
+            ['name'],
+            [],
+            $filters // Truyền mảng filters vào
+        );
+
+        if (request()->ajax()) {
+            return response()->json([
+                'results' => view('admin.table.warehouse-product', compact('response'))->render(),
+            ]);
+        }
+    }
 }

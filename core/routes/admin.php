@@ -137,6 +137,23 @@ Route::middleware('admin', 'adminPermission')->group(function () {
         Route::put('update/{id}', 'update')->name('update');
         Route::delete('{id}/destroy', 'destroy')->name('destroy');
         Route::put('{id}/status', 'updateStatus')->name('status');
+        Route::get('filter', 'filter')->name('filter');
+    });
+
+    // manage warehouse
+    Route::controller('WarehouseController')->prefix('warehouse')->name('warehouse.')->group(function () {
+        Route::get('/', 'index')->name('index');
+        Route::get('create', 'create')->name('create');
+        Route::post('create', 'store')->name('store');
+        Route::get('{id}/show', 'show')->name('show');
+    });
+
+    // manage return
+    Route::controller('ReturnController')->prefix('return')->name('return.')->group(function () {
+        Route::get('/', 'index')->name('index');
+        Route::get('create', 'create')->name('create');
+        // Route::post('create', 'store')->name('store');
+        // Route::get('{id}/show', 'show')->name('show');
     });
 
     Route::name('hotel.')->prefix('hotel')->group(function () {

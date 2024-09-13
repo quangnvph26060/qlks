@@ -18,10 +18,9 @@ class BaseRepository
         $this->model = $model;
     }
 
-    public function customPaginate($columns = ['*'], $relations = [], $perPage = 10, $orderBy = null, $search = null, $searchColumns = [], $relationSearchColumns = [])
+    public function customPaginate($columns = ['*'], $relations = [], $perPage = 10, $orderBy = null, $search = null, $searchColumns = [], $relationSearchColumns = [], $filters = [])
     {
         $query = $this->model->query()->with($relations);
-
 
         // Tìm kiếm trong các cột chính
         if ($search && !empty($searchColumns)) {
@@ -39,6 +38,15 @@ class BaseRepository
             });
         }
 
+        // Áp dụng các điều kiện lọc từ mảng filters
+        if (!empty($filters)) {
+            foreach ($filters as $key => $value) {
+                if ($value) { // Kiểm tra xem giá trị có hợp lệ không
+                    $query->where($key, $value);
+                }
+            }
+        }
+
         // Sắp xếp
         if ($orderBy) {
             $query->orderBy($orderBy, 'desc');
@@ -50,15 +58,12 @@ class BaseRepository
 
     public function logError($exception)
     {
-        // Lấy tên controller và tên hàm gọi
-        $controller = class_basename(get_class($exception->getTrace()[0]['object']));
-        $function = $exception->getTrace()[0]['function'];
-
         // Ghi log lỗi
-        Log::error("$controller::$function", [
+        Log::error('', [
             'message' => $exception->getMessage(),
             'line'    => $exception->getLine(),
             'code'    => $exception->getCode(),
+            'function' => $exception->getFile(),
         ]);
     }
 
@@ -86,5 +91,17 @@ class BaseRepository
         }
 
         return null;
+    }
+
+    function generateRandomString()
+    {
+        $characters = 'ABCDEFGHIJKLMNOPQRSTUVWXYZ0123456789';
+        $randomString = '';
+
+        for ($i = 0; $i < 8; $i++) {
+            $randomString .= $characters[random_int(0, strlen($characters) - 1)];
+        }
+
+        return $randomString;
     }
 }

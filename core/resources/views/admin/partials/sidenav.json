@@ -408,6 +408,22 @@
                 "title": "Quản lý đối tác",
                 "route_name": "admin.supplier.index",
                 "menu_active": "admin.supplier.index"
+            },
+            {
+                "keyword": [
+                    "Quản lý nhập kho"
+                ],
+                "title": "Quản lý nhập kho",
+                "route_name": "admin.warehouse.index",
+                "menu_active": "admin.warehouse.index"
+            },
+            {
+                "keyword": [
+                    "Quản lý trả hàng"
+                ],
+                "title": "Quản lý trả hàng",
+                "route_name": "admin.return.index",
+                "menu_active": "admin.return.index"
             }
         ]
 

@@ -1,6 +1,7 @@
 @extends('admin.layouts.app')
 @section('panel')
-    <form action="" method="post" enctype="multipart/form-data" id="productForm">
+    <form action="" method="POST" enctype="multipart/form-data" id="productForm">
+
         <div class="row">
             <div class="col-lg-8 col-md-12">
                 <div class="card">
@@ -12,25 +13,25 @@
                         <div class="row">
                             <div class="form-group mb-3 col-lg-6">
                                 <label for="name" class="form-label">Tên sản phẩm</label>
-                                <input type="text" name="name" id="name" class="form-control"
-                                    placeholder="Nhập tên sản phẩm">
+                                <input type="text" name="name" id="name" value="{{ $product->name }}"
+                                    class="form-control" placeholder="Nhập tên sản phẩm">
                                 <small></small>
                             </div>
                             <div class="form-group mb-3 col-lg-3">
                                 <label for="import_price" class="form-label">Giá nhập</label>
-                                <input type="text" name="import_price" id="import_price" class="form-control"
-                                    placeholder="Giá nhập">
+                                <input type="text" name="import_price" value="{{ $product->import_price }}"
+                                    id="import_price" class="form-control" placeholder="Giá nhập">
                                 <small></small>
                             </div>
                             <div class="form-group mb-3 col-lg-3">
                                 <label for="selling_price" class="form-label">Giá bán</label>
-                                <input type="text" name="selling_price" id="selling_price" class="form-control"
-                                    placeholder="Giá bán">
+                                <input type="text" name="selling_price" value="{{ $product->selling_price }}"
+                                    id="selling_price" class="form-control" placeholder="Giá bán">
                                 <small></small>
                             </div>
                             <div class="form-group mb-3 col-lg-12">
                                 <label for="description" class="form-label">Mô tả</label>
-                                <textarea name="description" id="description" cols="30" rows="10" placeholder="Mô tả"></textarea>
+                                <textarea name="description" id="description" cols="30" rows="10" placeholder="Mô tả">{{ $product->description }}</textarea>
                             </div>
                         </div>
 
@@ -44,19 +45,19 @@
                         <div class="row">
                             <div class="form-group mb-3 col-lg-6">
                                 <label for="stock" class="form-label">Tồn kho</label>
-                                <input type="text" name="stock" id="stock" class="form-control"
-                                    placeholder="Tồn kho">
+                                <input type="text" value="{{ $product->stock }}" name="stock" id="stock"
+                                    class="form-control" placeholder="Tồn kho">
                             </div>
                             <div class="form-group mb-3 col-lg-6">
                                 <label for="sku" class="form-label">SKU</label>
-                                <input type="text" name="sku" id="sku" class="form-control"
-                                    placeholder="Mã sản phẩm">
+                                <input value="{{ $product->sku }}" type="text" name="sku" id="sku"
+                                    class="form-control" placeholder="Mã sản phẩm">
                                 <small></small>
                             </div>
                             <div class="form-group mb-3 col-lg-6">
                                 <div class="form-check form-switch">
                                     <input class="form-check-input" name="is_published" type="checkbox" id="is_published"
-                                        checked>
+                                        @checked($product->is_published)>
                                     <label class="form-check-label" for="is_published">Xuất bản</label>
                                 </div>
                             </div>
@@ -75,7 +76,8 @@
                             <select name="category_id" id="category_id" class="form-select">
                                 <option disabled selected>--- Chọn danh mục ---</option>
                                 @foreach ($categories as $id => $category)
-                                    <option value="{{ $id }}">{{ $category }}</option>
+                                    <option value="{{ $id }}" @selected($id == $product->category_id)>{{ $category }}
+                                    </option>
                                 @endforeach
                             </select>
                             <small></small>
@@ -92,7 +94,8 @@
                             <select name="brand_id" id="brand_id" class="form-select">
                                 <option disabled selected>--- Chọn thương hiệu ---</option>
                                 @foreach ($brands as $id => $brand)
-                                    <option value="{{ $id }}">{{ $brand }}</option>
+                                    <option value="{{ $id }}" @selected($id == $product->brand_id)>{{ $brand }}
+                                    </option>
                                 @endforeach
                             </select>
                             <small></small>
@@ -108,11 +111,14 @@
                             <div class="upload-box" id="image_path">
                                 <input type="file" id="image" name="image_path" accept="image/*">
                                 <label for="image" class="upload-label">
-                                    <i class="fas fa-cloud-upload-alt"></i>
-                                    <span>Upload Image</span>
+                                    <i class="fas fa-cloud-upload-alt"
+                                        style="display: {{ $product->image_path ? 'none' : 'block' }};"></i>
+                                    <span style="display: {{ $product->image_path ? 'none' : 'block' }};">Upload
+                                        Image</span>
                                 </label>
-                                <img id="preview" class="preview-image" src="" alt="Preview Image"
-                                    style="display: none;">
+                                <img id="preview" class="preview-image"
+                                    src="{{ \Storage::url($product->image_path) }}" alt="Preview Image"
+                                    style="display: {{ $product->image_path ? 'block' : 'none' }};">
                             </div>
                             <small></small>
                         </div>
@@ -144,70 +150,80 @@
                     });
 
                 $('#image').on('change', function(event) {
-                    const input = event.target;
-                    const preview = document.getElementById('preview');
-                    const labelIcon = document.querySelector('.upload-label i'); // Icon tải lên
-                    const labelText = document.querySelector('.upload-label span'); // Text tải lên
+                    var input = event.target;
+                    var preview = $('#preview'); // Sử dụng jQuery để lấy thẻ img preview
+                    var labelIcon = $('.upload-label i'); // Sử dụng jQuery để lấy icon
+                    var labelText = $('.upload-label span'); // Sử dụng jQuery để lấy text
 
                     if (input.files && input.files[0]) {
-                        const reader = new FileReader();
+                        var reader = new FileReader();
+
+                        // Xóa src của ảnh trước đó để tránh hiển thị ảnh cũ
+                        preview.attr('src', '');
 
                         reader.onload = function(e) {
-                            preview.src = e.target.result;
-                            preview.style.display = 'block';
-                            labelIcon.style.display = 'none'; // Ẩn icon
-                            labelText.style.display = 'none'; // Ẩn văn bản
+                            // Cập nhật ảnh mới
+                            preview.attr('src', e.target.result).show();
+                            labelIcon.hide(); // Ẩn icon
+                            labelText.hide(); // Ẩn text
                         };
-                        reader.readAsDataURL(input.files[0]); // Đọc file dưới dạng URL base64
+
+                        // Đọc file dưới dạng URL base64
+                        reader.readAsDataURL(input.files[0]);
+                    } else {
+                        // Nếu không có file nào được chọn, hiển thị lại icon và văn bản
+                        labelIcon.show();
+                        labelText.show();
+                        preview.hide(); // Ẩn ảnh xem trước
                     }
                 });
 
-                $('#btn-reset').on('click', function() {
-                    resetForm();
-                });
-
-                function resetForm(is_error = false) {
-                    !is_error && $("#productForm").trigger("reset");
-                    $('input, select').removeClass('is-invalid');
-                    $('small').removeClass('invalid-feedback').html('');
-                }
-
-                $("#productForm").on('submit', function(e) {
-                    e.preventDefault();
-
-                    const formData = new FormData(this);
-
-                    $.ajax({
-                        type: 'POST',
-                        url: '{{ route('admin.product.store') }}',
-                        data: formData,
-                        processData: false,
-                        contentType: false,
-                        success: function(response) {
-                            if (response.status) {
-                                window.location.href = "{{ route('admin.product.index') }}";
-                            } else {
-                                resetForm(true);
-                                $.each(response.errors, function(index, message) {
-                                    $(`#${index}`)
-                                        .addClass('is-invalid')
-                                        .siblings('small')
-                                        .addClass('invalid-feedback').html(message);
-                                });
-                            }
-                        }
-                    })
-                })
-
             });
+
+            $('#btn-reset').on('click', function() {
+                resetForm();
+            });
+
+            function resetForm(is_error = false) {
+                !is_error && $("#productForm").trigger("reset");
+                $('input, select').removeClass('is-invalid');
+                $('small').removeClass('invalid-feedback').html('');
+            }
+
+            $("#productForm").on('submit', function(e) {
+                e.preventDefault();
+
+                const formData = new FormData(this);
+                formData.append('_method', 'PUT');
+
+                $.ajax({
+                    type: 'POST',
+                    url: '{{ route('admin.product.update', $product->id) }}',
+                    data: formData,
+                    processData: false,
+                    contentType: false,
+                    success: function(response) {
+                        if (response.status) {
+                            window.location.href = "{{ route('admin.product.index') }}";
+                        } else {
+                            resetForm(true);
+                            $.each(response.errors, function(index, message) {
+                                $(`#${index}`)
+                                    .addClass('is-invalid')
+                                    .siblings('small')
+                                    .addClass('invalid-feedback').html(message);
+                            });
+                        }
+                    }
+                });
+            });
+
         })(jQuery);
     </script>
 @endpush
 
 @push('style')
     <style>
-       
-
         .ck-editor__editable {
             min-height: 155px;
 
