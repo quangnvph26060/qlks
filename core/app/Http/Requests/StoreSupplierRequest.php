@@ -32,7 +32,7 @@ class StoreSupplierRequest extends FormRequest
             'suppliers.bank_id'                          => 'required|integer',
             'representatives.name'                       => 'required',
             'representatives.email'                      => 'required|email',
-            'representatives.phone'                      => 'nullable|regex:/^([0-9\s\-\+\(\)]*)$/|min:10|max:10',
+            'representatives.phone'                      => 'required|regex:/^([0-9\s\-\+\(\)]*)$/|min:10|max:10',
             'representatives.position'                   => 'nullable|string',
         ];
     }
@@ -59,6 +59,7 @@ class StoreSupplierRequest extends FormRequest
             'representatives.email.required'             => 'Vui lòng nhập :attribute!',
             'representatives.email.email'                => ':attribute không đúng định dạng!',
             'representatives.phone.regex'                => ':attribute không đúng định dạng!',
+            'representatives.phone.required'             => 'Vui lòng nhập :attribute!',
             'representatives.phone.max'                  => ':attribute không đúng định dạng!',
             'representatives.phone.min'                  => ':attribute không đúng định dạng!',
             'representatives.position.string'            => ':attribute không đúng định dạng!',

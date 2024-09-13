@@ -24,16 +24,16 @@
         @endcan
     </tr>
     <tr class="collapse" id="rep-{{ $item->id }}">
-        <td colspan="6">
+        <td colspan="6" class="p-sm-0">
             <div class="representatives-container">
                 <span class="representatives-label">Người đại diện:</span>
                 <span class="representatives-list">
                     @foreach ($item->supplier_representatives as $rep)
-                        <span class="badge bg-info me-2 position-relative">
-                            {{ $rep->name }}
-                            <small class="bg-danger rounded-circle p-1 position-absolute delete-representative"
-                                data-id="{{ $rep->id }}"
-                                style="cursor: pointer; top: -7px !important; right: -5px !important;">x</small>
+                        <span class="badge bg-info me-2 position-relative edit-representative cursor-pointer"
+                            data-id="{{ $rep->id }}">
+                            <small class="representative-name"> {{ $rep->name }}</small>
+                            <small class="bg-danger rounded-circle position-absolute delete-representative"
+                                style="cursor: pointer; top: -7px !important; right: -5px !important; padding: 1px 4px !important">x</small>
                         </span>
                     @endforeach
                     <span class="badge bg-primary cursor-pointer" data-toggle="modal" data-id="{{ $item->id }}"

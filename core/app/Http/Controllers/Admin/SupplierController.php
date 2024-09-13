@@ -133,6 +133,20 @@ class SupplierController extends Controller
      */
     public function destroy(string $id)
     {
-        //
+        $supplier = Supplier::query()->find($id);
+
+        if (!$supplier) {
+            return response()->json([
+                'status' => false,
+                'message' => "Dữ liệu không tồn tại trên hệ thống!"
+            ]);
+        }
+
+        $supplier->delete();
+
+        return response()->json([
+            'status' => true,
+            'message' => "Xóa thành công."
+        ]);
     }
 }

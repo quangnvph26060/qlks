@@ -1,12 +1,12 @@
 @if ($response->hasPages())
     <!-- Amount -->
-    <div class="d-flex justify-content-between align-items-center">
-        <span class="main__response-pages" style="font-size: 12px">
+    <div class="row">
+        <span class="main__response-pages col-sm-6 text--center" style="font-size: 12px">
             Showing {{ $response->firstItem() }} to {{ $response->lastItem() }} of <span
                 class="total-records">{{ $response->total() }}</span> results
         </span>
 
-        <ul class="pagination">
+        <ul class="pagination col-sm-6">
             {{-- Previous Page Link --}}
             @if ($response->onFirstPage())
                 <li class="page-item disabled" aria-disabled="true">

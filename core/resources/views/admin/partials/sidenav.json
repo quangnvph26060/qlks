@@ -381,9 +381,17 @@
                 "keyword": [
                     "Quản lý danh mục"
                 ],
-                "title": "Tất cả danh mục",
+                "title": "Quản lý danh mục",
                 "route_name": "admin.category.index",
                 "menu_active": "admin.category.index"
+            },
+            {
+                "keyword": [
+                    "Quản lý sản phẩm"
+                ],
+                "title": "Quản lý sản phẩm",
+                "route_name": "admin.product.index",
+                "menu_active": "admin.product.index"
             },
             {
                 "keyword": [

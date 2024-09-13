@@ -1,76 +1,79 @@
 @extends('admin.layouts.app')
 
 @section('panel')
-    <div class="container mt-5">
-        <div class="row">
-            <!-- Khối bên trái: Form thêm mới -->
-            <div class="col-md-4">
-                <h3>@lang('Thêm Mới Danh Mục')</h3>
-                <form action="" method="POST" id="categoryForm">
-                    <div class="form-group mb-3">
-                        <label for="name">Tên Danh Mục *</label>
-                        <input type="text" class="form-control" id="name" name="name"
-                            placeholder="Nhập tên danh mục">
-                        <small></small>
+    <div class="row">
+        <!-- Khối bên trái: Form thêm mới -->
+        <div class="col-md-4">
+            <h3>@lang('Thêm Mới Danh Mục')</h3>
+            <form action="" method="POST" id="categoryForm">
+                <div class="form-group mb-3">
+                    <label for="name">Tên Danh Mục *</label>
+                    <input type="text" class="form-control" id="name" name="name" placeholder="Nhập tên danh mục">
+                    <small></small>
+                </div>
+                <div class="form-group mb-3">
+                    <label for="description">Mô tả</label>
+                    <textarea name="description" id="description" cols="30" rows="5" placeholder="Mô tả"></textarea>
+                </div>
+                <div class="form-group mb-3">
+                    <div class="form-check form-switch">
+                        <input class="form-check-input" type="checkbox" name="status" id="status" checked>
+                        <label class="form-check-label" for="status">@lang('Hoạt động')</label>
                     </div>
-                    <div class="form-group mb-3">
-                        <label for="description">Mô tả</label>
-                        <textarea name="description" id="description" cols="30" rows="5" placeholder="Mô tả"></textarea>
+                    <small></small>
+                </div>
+                <button type="submit" class="btn btn-primary">Submit</button>
+                <button class="btn btn-secondary" type="button" onclick="location.reload()"><i
+                        class="las la-arrow-left"></i> Quay lại</button>
+            </form>
+        </div>
+
+        <!-- Khối bên phải: Danh sách danh mục -->
+        <div class="col-md-8">
+            <h3 class="my-3">Danh Sách Danh Mục</h3>
+            <div class="scrollable-table border p-2">
+                <div class="d-flex justify-content-between mb-3">
+                    <div class="dt-length">
+                        <select name="example_length" id="perPage" style=" padding: 1px 3px; margin-right: 8px;"
+                            aria-controls="example" class="perPage">
+                            <option value="10">10</option>
+                            <option value="25">25</option>
+                            <option value="50">50</option>
+                            <option value="100">100</option>
+                        </select><label for="perPage"> entries per page</label>
                     </div>
-                    <div class="form-group mb-3">
-                        <div class="form-check form-switch">
-                            <input class="form-check-input" type="checkbox" name="status" id="status" checked>
-                            <label class="form-check-label" for="status">@lang('Hoạt động')</label>
+                    <div class="search">
+                        <label for="searchInput">Search:</label>
+                        <input class="searchInput"
+                            style="padding: 1px 3px; border: 1px solid rgb(121, 117, 117, 0.5); margin-left: 8px;"
+                            type="search" placeholder="Tìm kiếm...">
+                    </div>
+                </div>
+                <div class="card b-radius--10">
+                    <div class="card-body p-0">
+                        <div class="table-responsive--sm table-responsive">
+                            <table class="table--light style--two table" id="data-table">
+                                <thead>
+                                    <tr>
+                                        <th>@lang('STT')</th>
+                                        <th>@lang('Tên danh mục')</th>
+                                        <th class="w-25">@lang('Sản phẩm (số lượng)')</th>
+                                        <th>@lang('Trạng thái')</th>
+                                        @can([])
+                                            <th>@lang('Hành động')</th>
+                                        @endcan
+                                    </tr>
+                                </thead>
+                                <tbody>
+
+                                </tbody>
+                            </table>
                         </div>
-                        <small></small>
                     </div>
-                    <button type="submit" class="btn btn-primary">Submit</button>
-                    <button class="btn btn-secondary" type="button" onclick="location.reload()"><i
-                            class="las la-arrow-left"></i> Quay lại</button>
-                </form>
+                </div>
             </div>
-
-            <!-- Khối bên phải: Danh sách danh mục -->
-            <div class="col-md-8">
-                <h3 class="mb-3">Danh Sách Danh Mục</h3>
-                <div class="scrollable-table border p-2">
-                    <div class="d-flex justify-content-between mb-3">
-                        <div class="dt-length">
-                            <select name="example_length" style=" padding: 1px 3px; margin-right: 8px;"
-                                aria-controls="example" class="perPage">
-                                <option value="10">10</option>
-                                <option value="25">25</option>
-                                <option value="50">50</option>
-                                <option value="100">100</option>
-                            </select><label for="perPage"> entries per page</label>
-                        </div>
-                        <div class="search">
-                            <label for="searchInput">Search:</label>
-                            <input class="searchInput"
-                                style="padding: 1px 3px; border: 1px solid rgb(121, 117, 117, 0.5); margin-left: 8px;"
-                                type="search" placeholder="Tìm kiếm...">
-                        </div>
-                    </div>
-                    <table class="table table-striped table-hover  table-bordered" id="data-table">
-                        <thead class="thead-light">
-                            <tr>
-                                <th>@lang('STT')</th>
-                                <th>@lang('Tên danh mục')</th>
-                                <th class="w-25">@lang('Sản phẩm (số lượng)')</th>
-                                <th>@lang('Trạng thái')</th>
-                                @can([])
-                                    <th>@lang('Hành động')</th>
-                                @endcan
-                            </tr>
-                        </thead>
-                        <tbody>
-
-                        </tbody>
-                    </table>
-                </div>
-                <div id="pagination" class="mt-3">
-                    {{-- {{ $categories->links('vendor.pagination.custom') }} --}}
-                </div>
+            <div id="pagination" class="mt-3">
+                {{-- {{ $categories->links('vendor.pagination.custom') }} --}}
             </div>
         </div>
     </div>
@@ -87,6 +90,7 @@
             "use strict";
             $(document).ready(function() {
 
+                let lastId = null;
                 const apiUrl = '{{ route('admin.category.index') }}'; // Thay đổi URL phù hợp
                 initDataFetch(apiUrl, true);
 
@@ -116,7 +120,7 @@
                         <td>${data.products_count || 0}</td>
                         <td>
                             <div class="form-check form-switch" style="padding-left: 4.5em">
-                                <input class="form-check-input" data-id="${data.id}" type="checkbox" id="update-status" ${data.status ? 'checked' : ''}>
+                                <input class="form-check-input update-status" data-id="${data.id}" type="checkbox" ${data.status ? 'checked' : ''}>
                             </div>
                         </td>
                         <td>
@@ -173,7 +177,7 @@
                 });
 
                 // Xử lý sự kiện thay đổi trạng thái checkbox
-                $(document).on('change', '#update-status', function() {
+                $(document).on('change', '.update-status', function() {
                     const isChecked = this.checked;
                     const id = $(this).data('id');
                     const $checkbox = $(this);
@@ -350,16 +354,3 @@
     </script>
 @endpush
 
-@push('style')
-    <style>
-        .scrollable-table {
-            max-height: 400px;
-            overflow-y: auto;
-        }
-
-        .scrollable-table table {
-            width: 100%;
-            border-collapse: collapse;
-        }
-    </style>
-@endpush
