@@ -20,7 +20,7 @@
                 </div>
                 <div class="status-button status-checkout-line">
                     <span class="status-dot"></span>
-                    Sắp trả (2)
+                    Nhận phòng muộn (2)
                 </div>
                 <div class="status-button status-overdue-line">
                     <span class="status-dot"></span>
@@ -74,12 +74,14 @@
                         </div>
                     </div>
                     <div class="content-booking mt-2 room-booking-{{ $class }}"
-                        data-hours="{{ $rooms->roomType->hourly_rate }}" data-name = "{{ $rooms->roomType->name }}"
-                        data-roomNumber="{{ $rooms->room_number }}">
-                        <h5>{{ $rooms->room_number }}</h5>
+                        data-hours="{{ $rooms->roomType->hourly_rate }}" data-day="{{ $rooms->roomType->fare }}"
+                        data-night="{{ $rooms->roomType->fare }}" data-name = "{{ $rooms->roomType->name }}"
+                        data-roomNumber="{{ $rooms->room_number }}" data-room-type="{{ $rooms->room_type_id }}">
+                        <h5>{{ $rooms->room_number }} </h5>
                         <p class="single-line">{{ $rooms->roomType->name }}</p>
                         <div class="room-info">
-                            <p><i class="fas fa-clock icon"></i><span>{{ showAmount($rooms->roomType->hourly_rate) }}</span>
+                            <p><i
+                                    class="fas fa-clock icon"></i><span>{{ showAmount($rooms->roomType->hourly_rate) }}</span>
                             </p>
                             <p><i class="fas fa-sun icon"></i>{{ showAmount($rooms->roomType->fare) }}</p>
                             <p><i class="fas fa-moon icon"></i>{{ showAmount($rooms->roomType->fare) }}</p>
@@ -93,11 +95,23 @@
         @forelse($bookings as $booking)
             @php
                 $class = 'status-dirty';
-                if (now() >= $booking->check_in && $booking->status == 1) {
+                if (now() > $booking->check_in && now() <= $booking->check_out  
+                    && $booking->status == 1 && $booking->key_status == 1 ) {
                     $class = 'status-occupied'; // đang hoạt động;
-                } elseif (now() < $booking->check_in && $booking->status == 1) {
-                    $class = 'status-incoming'; // sắp tới
+                } 
+                elseif (now() < $booking->check_in && $booking->status == 1) {
+                    $class = 'status-incoming'; // sắp nhận
+                } 
+                else if ($booking->check_out < now() && $booking->key_status == 1 ) {
+                    $class = 'status-check-out'; // trả phòng muộn
                 }
+                else if(now() >= $booking->check_in && $booking->status == 1 && $booking->key_status == 0 ){
+                    $class = 'status-late-checkin'; // nhận phòng muộn
+                }
+              
+
+              
+
             @endphp
             <div class="col-md-2">
                 <div class="room-card {{ $class }}">
@@ -110,14 +124,14 @@
                                     <path d="M8 40h32V22H8v18Z" />
                                     <path stroke-linecap="round" d="M16 39.898v-5.984m8 5.984v-6m8 6v-5.984M12 40h24" />
                                 </g>
-                            </svg>Chưa dọn
+                            </svg>Chưa dọn 
                         </div>
 
                         <div>
                             <svg style="color: #161515" xmlns="http://www.w3.org/2000/svg" width="20" height="20"
-                                viewBox="0 0 21 21" class="room-icon" data-room="{{ $rooms->room_number }}"
+                                viewBox="0 0 21 21" class="room-icon" data-room="{{ $booking->room_number }}"
                                 style="cursor:pointer;" data-clean="1">
-                                style="cursor:pointer;">
+                              >
                                 <g fill="currentColor" fill-rule="evenodd">
                                     <circle cx="10.5" cy="10.5" r="1" />
                                     <circle cx="10.5" cy="5.5" r="1" />
@@ -130,9 +144,12 @@
 
                     <div class="content-booking mt-2 room-booking-{{ $class }}"
                         data-hours="{{ $booking->bookedRooms[0]->roomType->hourly_rate }}"
+                        data-day="{{ $booking->bookedRooms[0]->roomType->fare }}"
+                        data-night="{{ $booking->bookedRooms[0]->roomType->fare }}"
                         data-name = "{{ $booking->bookedRooms[0]->roomType->name }} "
-                        data-roomNumber="{{ $rooms->room_number }}">
-
+                        data-roomNumber="{{ $booking->room_number }}"
+                        data-room-type="{{ $booking->bookedRooms[0]->room_type_id }}">
+                        <p> {{$booking->check_in}} - {{$booking->check_out}}</p>
                         <h3>{{ $booking->bookedRooms[0]->room->room_number }}</h3>
                         {!! $booking->checkGuest() !!}
                         @php
@@ -194,53 +211,130 @@
                         <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
                     </div>
                     <div class="modal-body">
-                        <form id="bookingForm">
-                            <!-- Row: Labels -->
-                            <div class="row mb-2 text-center fw-bold main-booking-modal">
-                                <div class="col-md-2">Hạng phòng</div>
-                                <div class="col-md-2">Phòng</div>
-                                <div class="col-md-2">Hình thức</div>
-                                <div class="col-md-2">Nhận</div>
-                                <div class="col-md-2">Trả phòng</div>
-                                <div class="col-md-2 d-flex justify-content-between align-items-center">Dự kiến <span>Thành
-                                        tiền</span></div>
+                        <form>
+                            <div class="d-flex ">
+                                <div class="customer-input-container">
+                                    <input id="customer-name" list="customer-names" type="text"
+                                        class="customer-form-control" placeholder="Email khách hàng">
+                                    <svg xmlns="http://www.w3.org/2000/svg" class="customer-svg-icon" width="20"
+                                        height="20" viewBox="0 0 24 24">
+                                        <g fill="none" stroke="currentColor" stroke-width="2">
+                                            <path stroke-linecap="round" d="M12 8v4m0 0v4m0-4h4m-4 0H8" />
+                                            <circle cx="12" cy="12" r="10" />
+                                        </g>
+                                    </svg>
+
+                                </div>
+                                <div class="user-info-customer">
+                                    <p class="email-user"></p>
+                                    <p class="ms-2 me-2"> | </p>
+                                    <p class="username-user"></p>
+                                </div>
                             </div>
+                            <datalist id="customer-names">
+                                @forelse ($userList as $user)
+                                    <option value="{{ $user->email }}" data-user="{{ $user->username }}"
+                                        data-mobi="{{ $user->mobile }}" data-address="{{ $user->address }}">
+                                    @empty
+                                        <p>No items found.</p>
+                                @endforelse
+                            </datalist>
+                            <p id="error-message" style="color: red; display: none;">Không tìm thấy email khách hàng phù hợp
+                            </p>
+                        </form>
 
+                        <!-- add customer  -->
+                        <div id="customer-popup" class="customer-popup">
+                            <div class="modal-header">
+                                <h3>Thông tin khách hàng</h3>
+                                <svg class="close-customer" id="customer-close" xmlns="http://www.w3.org/2000/svg"
+                                    width="20" height="20" viewBox="0 0 24 24">
+                                    <path fill="none" stroke="currentColor" stroke-linecap="round" stroke-width="2"
+                                        d="M20 20L4 4m16 0L4 20" />
+                                </svg>
+                            </div>
+                            <form>
+                                {{-- <label for="name">Loại khách hàng</label>
+                                <select class="form-control" name="guest_type" id="guest_type">
+                                    <option selected value="0">@lang('Khách lưu trú')</option>
+                                    <option value="1">@lang('Khách đã đăng ký')</option>
+                                </select> --}}
 
-                            <div class="row mb-3">
-                                <!-- Hạng phòng -->
-                                <div class="col-md-2">
-                                    <p id="book_name"></p>
+                                <label for="name">Tên khách hàng</label>
+                                <input type="text" id="name" class="customer-input"
+                                    placeholder="Nhập tên của bạn">
+
+                                <label for="email">Email</label>
+                                <input type="email" id="email" class="customer-input"
+                                    placeholder="Nhập email của bạn">
+
+                                <label for="phone">Số điện thoại</label>
+                                <input type="text" id="phone" class="customer-input"
+                                    placeholder="Nhập số điện thoại">
+
+                                <label for="address">Địa chỉ</label>
+                                <input type="text" id="address" class="customer-input"
+                                    placeholder="Nhập địa chỉ của bạn">
+
+                                <div class="btn-customer">
+                                    <button type="button" id="customer-closePopup">Bỏ qua</button>
+                                    <button type="button" class="btn btn-primary btn-user-info">Lưu</button>
                                 </div>
+                            </form>
+                        </div>
 
 
-                                <div class="col-md-2">
-                                    <input type="text" class="form-control" id="roomNumber" disabled>
-                                </div>
+                        <form id="bookingForm" action="{{ route('admin.room.book') }}" class="booking-form"
+                            method="POST">
 
-                                <div class="col-md-2">
-                                    <select id="bookingType" class="form-select">
-                                        <option value="gio">Giờ</option>
-                                        <option value="ngay">Ngày</option>
-                                        <option value="dem">Đêm</option>
-                                    </select>
-                                </div>
-
-                                <div class="col-md-2">
-                                    <input type="datetime-local" class="form-control" id="checkInTime">
-                                </div>
-
-                                <div class="col-md-2">
-                                    <input type="datetime-local" class="form-control" id="checkOutTime">
-                                </div>
-
-                                <div class="col-md-2">
-                                    <p class="d-flex justify-content-between align-items-center">
-                                        <span class="inputTime">00:00</span>
-                                        <input type="text" class="custom-input " id="input-price-booking">
-                                    </p>
-                                </div>
-
+                            @csrf
+                            <!-- Row: Labels -->
+                            <div class="table-responsive">
+                                <table class="table mobi-table">
+                                    <thead>
+                                        <tr class="text-center fw-bold main-booking-modal">
+                                            <th>Hạng phòng</th>
+                                            <th>Phòng</th>
+                                            <th>Hình thức</th>
+                                            <th>Nhận</th>
+                                            <th>Trả phòng</th>
+                                            <th class="d-flex justify-content-between align-items-center">Dự kiến
+                                                <span>Thành tiền</span>
+                                            </th>
+                                        </tr>
+                                    </thead>
+                                    <tbody>
+                                        <input name="room_type_id" class="room_type_id" type="text" hidden>
+                                        <input type="text" class="username-user1" name="guest_name" hidden>
+                                        <input type="text" class="email-user1" name="email" hidden>
+                                        <input type="text" class="mobile-user" name="mobile" hidden>
+                                        <input type="text" class="address-user" name="address" hidden>
+                                        <input type="text" class="guest_type" name="guest_type" hidden>
+                                        <tr>
+                                            <td>
+                                                <p id="book_name"></p>
+                                            </td>
+                                            <td><input type="text" class="form-control" id="roomNumber" disabled></td>
+                                            <td>
+                                                <select id="bookingType" class="form-select">
+                                                    <option value="gio">Giờ</option>
+                                                    <option value="ngay">Ngày</option>
+                                                    <option value="dem">Đêm</option>
+                                                </select>
+                                            </td>
+                                            <td><input type="datetime-local" class="form-control" name="checkInTime"
+                                                    id="checkInTime"></td>
+                                            <td><input type="datetime-local" class="form-control" name="checkOutTime"
+                                                    id="checkOutTime"></td>
+                                            <td>
+                                                <p class="d-flex justify-content-between align-items-center">
+                                                    <span class="inputTime">00:00</span>
+                                                    <input type="text" class="custom-input " id="input-price-booking">
+                                                </p>
+                                            </td>
+                                        </tr>
+                                    </tbody>
+                                </table>
                             </div>
 
                             {{-- <div class="row mb-3">
@@ -261,22 +355,22 @@
 
                                         </div>
                                         <div class="col-md-3 text-end" style="padding: 0px">
-                                            <div class="form-group " style="background: #ddd;border-radius:8px ">
-                                                <div class="col-12  mt-2 d-flex justify-content-around">
+                                            <div class="form-group custom-box-price">
+                                                <div class="col-12  mt-2 d-flex ">
 
                                                     <label class="fw-bold">Khách cần trả</label>
-                                                    <input type="number" value="2000" class="custom-input"
+                                                    <input type="number" name="total_amount" class="custom-input"
                                                         id="customer-price-booking"
-                                                        style="border-bottom: 1px solid #a89191 ">
+                                                        style="border-bottom: 1px solid #a89191 ; margin-left: 70px;">
                                                 </div>
 
-                                                <div class="col-12 mt-2 mb-2 d-flex justify-content-around">
-                                                    <label class="fw-bold">Khách thanh toán</label>
-                                                    <input type="number" class="custom-input"
-                                                        style="border-bottom: 1px solid #a89191 ">
+                                                <div class="col-12 mt-2 mb-2 d-flex ">
+                                                    <label class="fw-bold payment-main">Khách thanh toán</label>
+                                                    <input type="number" name="paid_amount" class="custom-input"
+                                                        style="border-bottom: 1px solid #a89191 ; margin-left: 38px;">
                                                 </div>
                                             </div>
-                                            <button type="button" class="btn btn-primary">Đặt phòng</button>
+                                            <button type="button" class="btn btn-primary btn-confirm">Đặt phòng</button>
                                         </div>
 
                                     </div>
@@ -389,8 +483,8 @@
                                 <div class="room-header-checkout">
                                     <h4>Phòng 01 giường đơn</h4>
                                     <span class="status-label-checkout">Đã đặt trước</span>
-                                    
-                                   
+
+
                                 </div>
 
                                 <div class="room-details-checkout">
@@ -531,6 +625,12 @@
                 const integerValue = parseInt(dataHours, 10);
                 window.savedDataHours = this.getAttribute('data-hours');
                 window.savedDataHours = window.savedDataHours.replace(',', '');
+                $('[name=room_type_id]').val(this.getAttribute('data-room-type'));
+                window.savedDataDay = this.getAttribute('data-day');
+                window.savedDataDay = window.savedDataDay.replace(',', '');
+
+                window.savedDataNight = this.getAttribute('data-night');
+                window.savedDataNight = window.savedDataNight.replace(',', '');
 
                 document.getElementById('customer-price-booking').value = integerValue;
                 document.getElementById('input-price-booking').value = integerValue;
@@ -565,8 +665,9 @@
         var checkInTime = document.getElementById('checkInTime');
         checkInTime.value = currentDateTime;
 
+        let bookingType;
         $('#bookingType').on('change', function() {
-            var bookingType = $(this).val();
+            bookingType = $(this).val();
             var now = new Date();
 
             var checkOutTime;
@@ -592,6 +693,7 @@
         });
 
         function calculateDuration(event) {
+
             var checkInTime = $('#checkInTime').val();
             var checkOutTime = $('#checkOutTime').val();
             if (!checkInTime || !checkOutTime) {
@@ -601,6 +703,15 @@
 
             var checkInDate = new Date(checkInTime);
             var checkOutDate = new Date(checkOutTime);
+            console.log(checkInDate.toLocaleDateString() + " - " + checkOutDate.toLocaleDateString());
+                console.log($('.room_type_id').val());
+                
+            
+            // array (
+            //     'room_type' => '2',
+            //     'date' => '09/11/2024 - 09/25/2024',
+            //     'rooms' => '3',
+            //     ) 
 
             var durationMs = checkOutDate - checkInDate;
 
@@ -617,9 +728,21 @@
             var formattedHours = durationHours.toString().padStart(2, '0'); // giờ 
             var formattedMinutes = durationMinutes.toString().padStart(2, '0'); // phút
 
-            const hourlyRate = parseFloat(window.savedDataHours.replace(',', '')) || 0;
+            let priceTime = 0;
+            if (bookingType === 'gio') {
+                priceTime = parseFloat(window.savedDataHours.replace(',', '')) || 0;
+            } else if (bookingType === 'ngay') {
+                priceTime = parseFloat(window.savedDataDay.replace(',', '')) || 0;
+                updatedPrice = priceTime;
+            } else if (bookingType === 'dem') {
+                priceTime = parseFloat(window.savedDataNight.replace(',', '')) || 0;
+                updatedPrice = priceTime;
+            }
 
-            var updatedPrice = hourlyRate * formattedHours;
+
+            if (bookingType !== 'dem' && bookingType !== 'ngay') {
+                var updatedPrice = priceTime * formattedHours;
+            }
 
 
             $('#input-price-booking').val(updatedPrice.toLocaleString());
@@ -630,5 +753,207 @@
 
         $('#checkInTime, #checkOutTime').on('change', calculateDuration);
 
+
+        $('.customer-svg-icon').on('click', function() {
+            $('#customer-popup').addClass('active');
+        });
+
+        $('#customer-closePopup, #customer-close').on('click', function() {
+            $('#customer-popup').removeClass('active');
+        });
+
+        // loại khách hàng
+        // $('#guest_type').on('change', function() {
+        //     var selectedValue = $(this).val();
+
+        //     if (selectedValue == '1') { // Khách đã đăng ký
+
+        //         $('#name, #phone, #address').closest('label, input').hide();
+
+        //         $('#email').closest('label, input').show();
+        //     } else {
+
+        //         $('#name, #email, #phone, #address').closest('label, input').show();
+        //     }
+        // });
+
+        // validate nếu nhập không có tên khách hàng 
+        $('#customer-name').on('input', function() {
+            const inputValue = $(this).val().toLowerCase();
+            const options = $('#customer-names option');
+            let isValid = false;
+
+
+            options.each(function() {
+                if ($(this).val().toLowerCase() === inputValue) {
+                    isValid = true;
+
+                    return false; // Break the loop
+                }
+            });
+
+            if (isValid) {
+                $('#error-message').hide();
+
+
+            } else {
+                $('#error-message').show();
+            }
+        });
+        // thông tin khách hàng
+        $('#customer-name').on('input', function() {
+
+            var inputValue = $(this).val().toLowerCase();
+            var isValid = false;
+            var matchedOption = null;
+
+            $('#customer-names option').each(function() {
+                if ($(this).val().toLowerCase() === inputValue) {
+                    matchedOption = $(this);
+                    isValid = true;
+                    return false; // Break the loop
+                }
+            });
+
+            if (isValid && matchedOption) {
+                // Update the user info with the data-* attributes
+                $('.username-user').text(matchedOption.val());
+                $('.email-user').text(matchedOption.data('user'));
+              
+                
+                $('.email-user1').val(matchedOption.val());
+                $('.username-user1').val(matchedOption.data('user'));
+                $('.mobile-user').val(matchedOption.data('mobi'));
+                $('.address-user').val(matchedOption.data('address'));
+            } else {
+                // Clear the user info if no match
+                $('.username-user').text('');
+                $('.email-user').text('');
+            }
+        });
+        // btn booking
+        $('.btn-confirm').on('click', function() {
+
+            $('.booking-form').submit();
+        });
+
+        function getDatesBetween(startDate, endDate, roomType) {
+            let dates = [];
+            let currentDate = new Date(startDate);
+            endDate = new Date(endDate);
+
+            while (currentDate <= endDate) {
+
+                let formattedDate =
+                    `${currentDate.getMonth() + 1}/${String(currentDate.getDate()).padStart(2, '0')}/${currentDate.getFullYear()}`;
+                dates.push(`${roomType}-${formattedDate}`);
+
+
+                currentDate.setDate(currentDate.getDate() + 1);
+            }
+
+            return dates;
+        }
+        $('.booking-form').on('submit', function(e) {
+            e.preventDefault();
+            // Thu thập dữ liệu từ biểu mẫu
+            let formData = $(this).serializeArray();
+
+            // Chuyển đổi dữ liệu biểu mẫu thành đối tượng JavaScript
+            let formObject = {};
+            formData.forEach(function(field) {
+                formObject[field.name] = field.value;
+            });
+            // Chuyển đổi đối tượng thành chuỗi truy vấn URL
+            let queryString = $.param(formObject);
+
+           
+
+            const params = new URLSearchParams(queryString);
+
+
+            const checkInTime = params.get('checkInTime');
+            const checkOutTime = params.get('checkOutTime');
+         
+
+            if (!checkInTime || !checkOutTime) {
+                let missingField = !checkInTime ? 'nhận phòng' : 'trả phòng';
+                notify('error', `Vui lòng chọn thời gian ${missingField}`);
+                return false;
+            }
+
+
+            const startDate = new Date(checkInTime);
+            const endDate = new Date(checkOutTime);
+            const roomDates = getDatesBetween(startDate, endDate, params.get('room_type_id'));
+            console.log(roomDates);
+
+            roomDates.forEach(function(date, index) {
+                formData.push({
+                    name: 'room[]',
+                    value: date
+                }); // Thêm từng phần tử với tên trường room[]
+            });
+            const guest_type = $('.guest_type').val();
+          
+            if(guest_type === ""){
+                formData.push({
+                    name: 'guest_type',
+                    value: 1
+                })
+            }else{
+                formData.push({
+                    name: 'guest_type',
+                    value: 0
+                })
+            }
+           
+
+            let url = $(this).attr('action');
+            $.ajax({
+                type: "POST",
+                url: url,
+                data: formData,
+                success: function(response) {
+                    if (response.success) {
+                        notify('success', response.success);
+                        $('.bookingInfo').html('');
+                        $('.booking-wrapper').addClass('d-none');
+                        $(document).find('.orderListItem').remove();
+                        $('.orderList').addClass('d-none');
+                        $('.formRoomSearch').trigger('reset');
+                    } else {
+                        notify('error', response.error);
+                    }
+                },
+            });
+        });
+
+        //
+        $('.btn-user-info').on('click', function() {
+            // Lấy giá trị của guest_type
+        //    let guestType = $('#guest_type').val();
+
+          
+
+                let name = $('#name').val();
+                let email = $('#email').val();
+                let phone = $('#phone').val();
+                let address = $('#address').val();
+
+
+                $('.email-user').text(email);
+
+                $('.username-user').text(name);
+                $('.guest_type').val(0);
+                
+                $('.username-user1').val(name);
+                $('.email-user1').val(email);
+                $('.mobile-user').val(phone);
+                $('.address-user').val(address);
+                $('#customer-popup').removeClass('active');
+
+            
+        });
     });
 </script>

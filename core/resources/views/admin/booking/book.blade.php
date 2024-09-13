@@ -50,11 +50,11 @@
                 <div class="card-body">
                     <div class="pb-3">
                         <span class="fas fa-circle text--danger" disabled></span>
-                        <span class="mr-5">@lang('Booked')</span>
+                        <span class="mr-5">@lang('Đã đặt chỗ')</span>
                         <span class="fas fa-circle text--success"></span>
-                        <span class="mr-5">@lang('Selected')</span>
+                        <span class="mr-5">@lang('Đã chọn')</span>
                         <span class="fas fa-circle text--primary"></span>
-                        <span>@lang('Available')</span>
+                        <span>@lang('Có sẵn')</span>
                     </div>
                     <div class="alert alert-info room-assign-alert p-3" role="alert">
                     </div>
@@ -80,8 +80,8 @@
                                 <div class="form-group">
                                     <label>@lang('Loại khách hàng')</label>
                                     <select class="form-control" name="guest_type">
-                                        <option selected value="0">@lang('Walk-In Guest')</option>
-                                        <option value="1">@lang('Existing Guest')</option>
+                                        <option selected value="0">@lang('Khách lưu trú')</option>
+                                        <option value="1">@lang('Khách đã đăng ký')</option>
                                     </select>
                                 </div>
                             </div>
@@ -264,7 +264,7 @@
 
             let searchDate = $('[name=date]').val();
             if (searchDate.split(" - ").length < 2) {
-                notify('error', `@lang('Check-In date and checkout date should be given for booking.')`);
+                notify('error', `@lang('Ngày nhận phòng và ngày trả phòng phải được cung cấp khi đặt phòng.')`);
                 return false;
             }
 
@@ -287,6 +287,8 @@
                         $('.bookingInfo').html(response.html);
                         let roomTypeId = $('[name=room_type]').val();
                         $('[name=room_type_id]').val(roomTypeId);
+                       
+                        
                         $('.booking-wrapper').removeClass('d-none');
                     }
                 },

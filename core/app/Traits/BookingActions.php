@@ -10,6 +10,7 @@ trait BookingActions {
     private function getRooms(Request $request) {
         $checkIn = Carbon::parse($request->checkin_date);
         $checkOut = $request->checkout_date ? Carbon::parse($request->checkout_date) : $checkIn;
+        // kiểm tra rooms cb đặt đã được đặt trong khoảng thời gian đó chưa 
         $rooms = Room::active()
             ->where('room_type_id', $request->room_type)
             ->with([

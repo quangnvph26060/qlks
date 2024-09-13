@@ -43,13 +43,13 @@ class BookingPremiumServiceController extends Controller
         if ($validator->fails()) {
             return response()->json(['error' => $validator->errors()->all()]);
         }
-
+        // thêm dịch vụ cao cấp
         $serviceRoom = BookedRoom::whereHas('room', function ($q) use ($request) {
             $q->where('room_number', $request->room_number);
         })->whereDate('booked_for', $request->service_date)->where('status', Status::ROOM_ACTIVE)->first();
 
         if (!$serviceRoom) {
-            return response()->json(['error' => [$request->room_number . ' no. room isn\'t booked for ' . showDateTime($request->service_date, 'd M, Y')]]);
+            return response()->json(['error' => [ 'Phòng ' . $request->room_number . ' số phòng chưa được đặt cho ' . showDateTime($request->service_date, 'd M, Y')]]);
         }
 
         $booking = Booking::find($serviceRoom->booking_id);
@@ -84,7 +84,7 @@ class BookingPremiumServiceController extends Controller
         $action->admin_id   = authAdmin()->id;
         $action->save();
 
-        return response()->json(['success' => 'Premium service added successfully']);
+        return response()->json(['success' => 'Dịch vụ cao cấp được thêm thành công']);
     }
 
     public function delete($id)

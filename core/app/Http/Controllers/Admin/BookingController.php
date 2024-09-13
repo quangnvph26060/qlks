@@ -7,6 +7,7 @@ use App\Models\Booking;
 use App\Models\BookedRoom;
 use App\Models\RoomType;
 use App\Models\Room;
+use App\Models\User;
 use Illuminate\Http\Request;
 use Symfony\Component\HttpKernel\Log\Logger;
 
@@ -180,9 +181,11 @@ class BookingController extends Controller {
             ->paginate(getPaginate());
     }
     
+
+
     public function Receptionist(){
 
-        $emptyMessage   = 'MESSAGE';
+        $emptyMessage   = '';
         $pageTitle      =  'Lễ tân';
         $Title          =  'Tất cả các phòng';
        
@@ -210,9 +213,11 @@ class BookingController extends Controller {
         $scope = 'ALL';
         $is_method = 'Receptionist';
         $bookings = $this->bookingData($scope,$is_method);
-            \Log::info($bookings);
+        //    \Log::info($bookings);
 
 
-        return view('admin.booking.receptionist.list', compact('pageTitle','Title','emptyRooms','bookings','emptyMessage'));
+        $userList = User::select('username', 'email', 'mobile', 'address')->get();
+
+        return view('admin.booking.receptionist.list', compact('pageTitle','Title','emptyRooms','bookings','emptyMessage','userList'));
     }
 }
