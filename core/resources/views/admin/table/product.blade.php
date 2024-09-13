@@ -8,8 +8,8 @@
         <td data-label="@lang('Ảnh')"><img class="img-fluid" width="80px"
                 src="{{ \Storage::url($product->image_path) }}" alt=""></td>
         <td data-label="@lang('Tên sản phẩm')">{{ $product->name }}</td>
-        <td data-label="@lang('Giá bán')">{{ showAmount($product->import_price) }}</td>
-        <td data-label="@lang('Giá mua')">{{ showAmount($product->selling_price) }}</td>
+        <td data-label="@lang('Giá bán')">{{ showAmount($product->selling_price) }}</td>
+        <td data-label="@lang('Giá nhập')">{{ showAmount($product->import_price) }}</td>
         <td data-label="@lang('Tồn kho')">{{ $product->stock ?? 0 }}</td>
         @can([])
             <td>

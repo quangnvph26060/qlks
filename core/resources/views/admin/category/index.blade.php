@@ -73,7 +73,7 @@
                 </div>
             </div>
             <div id="pagination" class="mt-3">
-                {{-- {{ $categories->links('vendor.pagination.custom') }} --}}
+
             </div>
         </div>
     </div>
@@ -82,6 +82,7 @@
 @push('script-lib')
     <script src="{{ asset('assets/admin/js/vendor/sweetalert2@11.js') }}"></script>
 @endpush
+
 
 @push('script')
     <script src="{{ asset('assets/admin/js/dataTable.js') }}"></script>
@@ -353,4 +354,3 @@
         })(jQuery);
     </script>
 @endpush
-

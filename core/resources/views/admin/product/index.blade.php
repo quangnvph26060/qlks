@@ -49,7 +49,7 @@
                 </div>
             </div>
             <div id="pagination" class="mt-3">
-                {{-- {{ $categories->links('vendor.pagination.custom') }} --}}
+                
             </div>
         </div>
     </div>
@@ -64,7 +64,6 @@
 
 
 @push('script')
-    <script src="{{ asset('assets/global/js/bootstrap.min.js') }}"></script>
     <script src="{{ asset('assets/admin/js/dataTable.js') }}"></script>
     <script>
         (function($) {

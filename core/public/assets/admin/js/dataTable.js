@@ -69,7 +69,6 @@ $(document).on("click", ".pagination a", function (e) {
 
 // Hàm kiểm tra dữ liệu
 function notData() {
-
     // Check if there are no rows in the tbody
     if ($(".table tbody tr").length === 0) {
         console.log("no data");
@@ -99,6 +98,9 @@ const showSwalMessage = (icon, title, timer = 2000) => {
         didOpen: (toast) => {
             toast.onmouseenter = Swal.stopTimer;
             toast.onmouseleave = Swal.resumeTimer;
+        },
+        customClass: {
+            container: "custom-toast", // Áp dụng lớp CSS tùy chỉnh
         },
     });
     Toast.fire({
