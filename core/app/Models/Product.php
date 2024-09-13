@@ -10,14 +10,16 @@ class Product extends Model
     use HasFactory;
 
     protected $fillable = [
-        'category_id' ,
-        'brand_id' ,
-        'image_path' ,
+        'category_id',
+        'brand_id',
+        'image_path',
         'name',
         'description',
-        'price',
+        'import_price',
+        'selling_price',
+        'stock',
         'sku',
-        'is_published',
+        'is_published'
     ];
 
     public function category()
@@ -34,5 +36,4 @@ class Product extends Model
     protected $cats = [
         'is_published' => 'boolean',
     ];
-
 }

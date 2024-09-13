@@ -69,11 +69,22 @@ $(document).on("click", ".pagination a", function (e) {
 
 // Hàm kiểm tra dữ liệu
 function notData() {
-    if ($(".table tbody tr").length == 0) {
+
+    // Check if there are no rows in the tbody
+    if ($(".table tbody tr").length === 0) {
+        console.log("no data");
+
+        // Calculate the number of columns
+        var colspan = $(".table thead th").length;
+
+        // Append the "No data" row
         $(".table tbody").append(
-            '<tr id="no-data-row"><td colspan="6" class="text-center">Không tìm thấy dữ liệu</td></tr>'
+            `<tr id="no-data-row"><td colspan="${colspan}" class="text-center">Không tìm thấy dữ liệu</td></tr>`
         );
     } else {
+        console.log("has data");
+
+        // Remove the "No data" row if it exists
         $("#no-data-row").remove();
     }
 }

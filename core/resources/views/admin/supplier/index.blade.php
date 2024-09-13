@@ -74,7 +74,7 @@
                             <label for="phone" class="control-label">@lang('Số điện thoại')</label>
                             <input type="text" name="phone" id="phone" class="form-control"
                                 placeholder="Nhập tên">
-                            <small></small>
+                            <small id="error"></small>
                         </div>
                         <div class="form-group mb-3">
                             <label for="position" class="control-label">@lang('Chức vụ')</label>
@@ -129,6 +129,9 @@
                     $("#representativeForm").trigger("reset");
                     $('small#error').removeClass('invalid-feedback').html('');
                     $('input').removeClass('is-invalid');
+                    $("#addRepresentatives").modal('hide');
+                    $("#modalLabel").html('Thêm người đại diện')
+                    $("#representativeForm").attr('action', '');
                 }
 
                 $('#addRepresentatives').on('show.bs.modal', function(event) {
@@ -141,6 +144,7 @@
                     e.preventDefault();
                     var modal = $('#addRepresentatives');
                     var dataId = modal.data('id');
+                    var action = $(this).attr('action') ?? '';
 
                     var formData = $(this).serializeArray();
                     formData.push({
@@ -149,8 +153,8 @@
                     });
 
                     $.ajax({
-                        url: "{{ route('admin.representative.store') }}",
-                        type: "POST",
+                        url: action ? action : "{{ route('admin.representative.store') }}",
+                        type: action ? "PUT" : "POST",
                         data: formData,
                         success: function(response) {
                             if (response.status) {
@@ -158,26 +162,29 @@
                                 showSwalMessage('success', response.message);
 
                                 var newRepresentative = `
-                                   <span class="badge bg-info me-2 position-relative">
-                                        ${response.data.name}
-                                        <small class="bg-danger rounded-circle p-1 position-absolute delete-representative"
-                                            data-id="${response.data.id}"
-                                            style="cursor: pointer; top: -7px !important; right: -5px !important;">x
+                                   <span class="badge bg-info me-2 position-relative edit-representative cursor-pointer" data-id="${response.data.id}">
+                                       <small class="representative-name">${response.data.name}</small>
+                                        <small class="bg-danger rounded-circle position-absolute delete-representative"
+                                            style="cursor: pointer; top: -7px !important; right: -5px !important; padding: 1px 4px !important;">x
                                         </small>
                                     </span>
                                 `;
 
-                                // Chèn đại diện mới vào danh sách trong <span class="representatives-list">
-                                $(`#rep-${dataId} .representatives-list .badge.bg-primary`)
+                                action ? $(
+                                        `#rep-${response.data.supplier_id} .representatives-list .badge.bg-info`
+                                    ).replaceWith(newRepresentative) :
+                                    $(
+                                        `#rep-${dataId} .representatives-list .badge.bg-primary`
+                                    )
                                     .before(newRepresentative);
 
-                                // Tắt modal
                                 modal.modal('hide');
                             } else {
                                 response.message && showSwalMessage('error', response
                                     .message);
-                                reset()
-
+                                $('#error').removeClass('invalid-feedback')
+                                    .html('');
+                                $('input').removeClass('is-invalid');
                                 $.each(response.errors, function(index, message) {
                                     $(`#${index}`)
                                         .addClass('is-invalid')
@@ -188,15 +195,43 @@
                             }
                         }
                     })
-
-
                 })
 
-                $(document).on('click', '.delete-representative', function() {
-                    var $this = $(this);
-                    var representativeId = $this.data('id');
-                    var $badge = $this.closest('.badge');
+                $(document).on('click', '.edit-representative', function() {
 
+                    var representativeId = $(this).data('id');
+
+                    $("#modalLabel").html('Cập nhật người đại diện')
+
+                    $.ajax({
+                        url: "{{ route('admin.representative.edit', ':id') }}".replace(':id',
+                            representativeId),
+                        type: 'GET',
+                        success: function(response) {
+                            if (response.status) {
+
+                                $("#name").val(response.data.name);
+                                $("#email").val(response.data.email);
+                                $("#phone").val(response.data.phone);
+                                $("#position").val(response.data.position);
+
+                                $("#representativeForm").attr('action',
+                                    "{{ route('admin.representative.update', ':id') }}"
+                                    .replace(':id', representativeId));
+
+                                $("#addRepresentatives").modal('show');
+
+                            }
+                        }
+                    })
+                })
+
+                $(document).on('click', '.delete-representative', function(e) {
+                    e.stopPropagation();
+                    var $this = $(this);
+                    // Get the representative ID from the closest .badge element
+                    var representativeId = $this.closest('.badge').data('id');
+                    var $badge = $this.closest('.badge');
 
                     Swal.fire({
                         title: "@lang('Xóa người đại diện')",
@@ -211,8 +246,7 @@
                         if (result.isConfirmed) {
                             $.ajax({
                                 url: "{{ route('admin.representative.destroy', ':id') }}"
-                                    .replace(':id',
-                                        representativeId),
+                                    .replace(':id', representativeId),
                                 type: 'DELETE',
                                 success: function(response) {
                                     if (response.status) {
@@ -228,16 +262,16 @@
                                 }
                             });
                         }
-                    })
+                    });
                 });
-
 
                 $(document).on('click', '.btn-delete', function() {
                     const id = $(this).attr('data-id');
+                    const row = $(this).closest('tr'); // Get the closest table row
 
                     Swal.fire({
                         title: "@lang('Xóa nhà cung cấp')?",
-                        text: "@lang('Bạn chắc chán muốn xóa nhà cung cấp này không')?",
+                        text: "@lang('Bạn chắc chắn muốn xóa nhà cung cấp này không')?",
                         icon: 'warning',
                         showCancelButton: true,
                         confirmButtonColor: '#3085d6',
@@ -246,11 +280,26 @@
                         cancelButtonText: "@lang('Huỷ')",
                     }).then((result) => {
                         if (result.isConfirmed) {
-                            window.livewire.emit('delete', id);
+                            $.ajax({
+                                url: "{{ route('admin.supplier.destroy', ':id') }}"
+                                    .replace(':id', id),
+                                method: 'DELETE',
+                                success: function(response) {
+                                    if (response.status) {
+                                        row.remove(); // Remove the row from the DOM
+                                        showSwalMessage('success', response
+                                            .message);
+                                    } else {
+                                        showSwalMessage('error', response.message);
+                                    }
+                                },
+                                error: function(xhr) {
+                                    console.log(xhr);
+                                }
+                            });
                         }
-                    })
-
-                })
+                    });
+                });
             });
         })(jQuery);
     </script>

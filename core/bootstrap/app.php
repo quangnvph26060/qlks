@@ -5,7 +5,7 @@ use Illuminate\Foundation\Configuration\Exceptions;
 use Illuminate\Foundation\Configuration\Middleware;
 use Illuminate\Support\Facades\Route;
 use Symfony\Component\HttpFoundation\Response;
-use Wuang\Qutility\Wuang;
+
 
 // Tạo ứng dụng Laravel
 return Application::configure(basePath: dirname(__DIR__))

@@ -136,7 +136,7 @@ return [
     */
 
     'aliases' => Facade::defaultAliases()->merge([
-        'Status'=>App\Constants\Status::class
+        'Status'=>App\Constants\Status::class,
     ])->toArray(),
 
 ];
