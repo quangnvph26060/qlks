@@ -66,10 +66,17 @@
 
     .fw-bold {
         font-weight: bold;
+       
     }
-
-
-
+    .payment-main{
+        display: flex;align-items: end;
+    }
+    .status-late-checkin{
+        background-color: #6c757d;
+    }
+    .status-check-out{
+        background-color: #20c997 !important;
+    }
 
     .modal-dialog {
         display: flex;
@@ -161,11 +168,14 @@
         border-radius: 30px !important;
     }
 
-    /* sắp trả */
+   /* đang hoạt động  */
     .status-occupied {
-        background-color: #006769;
+        background-color: #28a745;
     }
-
+     /* sắp trả */
+    .status-check-out{
+        background-color: #6c757d;
+    }
     /* Dark */
     .status-incoming {
         background-color: #ffc107;
@@ -193,7 +203,9 @@
 
     .status-occupied *:not(svg),
     .status-available *:not(svg),
-    .status-incoming *:not(svg) {
+    .status-incoming *:not(svg) , 
+    .status-late-checkin *:not(svg),
+    .status-check-out  *:not(svg){
         color: #fff;
     }
 
@@ -337,8 +349,95 @@
         border-radius: 5px;
         font-size: 12px;
     }
-    @media (max-width:768px) {
-        .mobi-table td{
-            padding: 10px !important;
-        }
+   
+
+    /* Style for input container */
+.customer-input-container {
+    position: relative;
+    width: 100%;
+    max-width: 300px;
+}
+
+.customer-form-control {
+    width: 100%;
+    border: 1px solid #ccc;
+   
+}
+
+.customer-svg-icon {
+    position: absolute;
+    right: 10px;
+    top: 50%;
+    transform: translateY(-50%);
+    cursor: pointer;
+}
+.user-info-customer {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+   
+}
+
+.user-info-customer p {
+    margin: 0; font-size: 24px;
+}
+#customer-name {
+    padding: 10px;
+    border: 2px solid #007BFF;
+    border-radius: 5px;
+    font-size: 16px;
+}
+
+#customer-name:focus {
+    outline: none;
+    border-color: #28A745;
+    box-shadow: 0 0 5px rgba(40, 167, 69, 0.5);
+}
+.custom-box-price{
+    background: #ddd;border-radius:8px; padding: 0px 10px 0px 20px;
+}
+/* Popup styles */
+.customer-popup {
+    display: none;
+    position: fixed;
+    top: 50%;
+    left: 50%;
+    transform: translate(-50%, -50%);
+    background-color: white;
+    border: 1px solid #ccc;
+    padding: 20px;
+    z-index: 1000;
+    box-shadow: 0px 4px 10px rgba(0, 0, 0, 0.1);
+}
+
+.customer-popup.active {
+    display: block;
+}
+
+
+.customer-input {
+    width: 100%;
+    margin-bottom: 10px;
+    padding: 8px;
+    border: 1px solid #ccc;
+    border-radius: 4px;
+}   
+.btn-customer{
+    display: flex;
+    gap: 10px;
+    justify-content: end;
+}
+.close-customer{
+    cursor: pointer;
+}
+@media (max-width:768px) {
+    .mobi-table td{
+        padding: 10px !important;
     }
+    .customer-input-container{
+        max-width: none !important ;
+    }
+    .customer-popup{
+        width: 100%;
+    }
+}
