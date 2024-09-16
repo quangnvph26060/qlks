@@ -2,15 +2,18 @@
 
 namespace App\Http\Controllers\Admin;
 
-use Illuminate\Support\Str;
+use Log;
 use App\Models\Room;
 use App\Models\Amenity;
 use App\Models\BedType;
+use App\Models\Product;
 use App\Models\Facility;
 use App\Models\RoomType;
+use Illuminate\Support\Str;
 use Illuminate\Http\Request;
 use App\Models\RoomTypeImage;
 use App\Rules\FileTypeValidate;
+use Illuminate\Support\Facades\DB;
 use App\Http\Controllers\Controller;
 
 class RoomTypeController extends Controller
@@ -33,7 +36,7 @@ class RoomTypeController extends Controller
 
     public function edit($id)
     {
-        $roomType    = RoomType::with('amenities', 'facilities', 'rooms', 'images')->findOrFail($id);
+        $roomType    = RoomType::with('amenities', 'facilities', 'rooms', 'images', 'products')->findOrFail($id);
         $pageTitle   = 'Update Room Type -' . $roomType->name;
         $amenities   = Amenity::active()->get();
         $facilities  = Facility::active()->get();
@@ -46,61 +49,97 @@ class RoomTypeController extends Controller
             $images[]   = $img;
         }
 
+        // dd($roomType);
+
         return view('admin.hotel.room_type.create', compact('pageTitle', 'roomType', 'amenities', 'facilities', 'bedTypes', 'images'));
     }
 
     public function save(Request $request, $id = 0)
     {
+        // dd($request->all());
         $this->validation($request, $id);
 
-        if ($request->room) {
-            $roomNumbers = Room::pluck('room_number')->toArray();
-            $exists = array_intersect($request->room, $roomNumbers);
-            if (!empty($exists)) {
-                $notify[] = ['error', implode(', ', $exists) . ' room number already exists'];
-                return back()->withNotify($notify);
+        DB::beginTransaction();
+        try {
+            if ($request->room) {
+                $roomNumbers = Room::pluck('room_number')->toArray();
+                $exists = array_intersect($request->room, $roomNumbers);
+                if (!empty($exists)) {
+                    $notify[] = ['error', implode(', ', $exists) . ' room number already exists'];
+                    return back()->withNotify($notify);
+                }
             }
+            $bedArray         = array_values($request->bed ?? []);
+            $purifier         = new \HTMLPurifier();
+
+            if ($id) {
+                $roomType         = RoomType::findOrFail($id);
+                $notification     = 'Đã cập nhật loại phòng thành công';
+            } else {
+                $roomType         = new RoomType();
+                $notification     = 'Đã thêm loại phòng thành công';
+            }
+
+            $roomType->name                = $request->name;
+            $roomType->slug                = Str::slug($request->name);
+            $roomType->total_adult         = $request->total_adult;
+            $roomType->total_child         = $request->total_child;
+            $roomType->fare                = $request->fare;
+            $roomType->hourly_rate         = $request->hourly_rate;
+            $roomType->seasonal_rate         = $request->seasonal_rate;
+            $roomType->keywords            = $request->keywords ?? [];
+            $roomType->description         = htmlspecialchars_decode($purifier->purify($request->description));
+            $roomType->beds                = $bedArray;
+            $roomType->is_featured         = $request->is_featured ? 1 : 0;
+            $roomType->cancellation_fee    = $request->cancellation_fee ?? 0;
+            $roomType->cancellation_policy = htmlspecialchars_decode($purifier->purify($request->cancellation_policy));
+
+
+            if ($request->hasFile('main_image')) {
+                $roomType->main_image = fileUploader($request->main_image, getFilePath('roomTypeImage'), getFileSize('roomTypeImage'), @$roomType->main_image, getThumbSize('roomTypeImage'));
+            }
+
+
+            $roomType->save();
+
+            $roomType->amenities()->sync($request->amenities);
+            $roomType->facilities()->sync($request->facilities);
+
+            $this->insertImages($request, $roomType);
+
+            $this->insertProducts($request, $roomType);
+
+            DB::commit();
+            $notify[] = ['success', $notification];
+            return back()->withNotify($notify);
+        } catch (\Exception $e) {
+            dd($e->getMessage());
+            DB::rollBack();
+            $notify[] = ['error', 'Loại phần đã biểu đồng'];
+            return back()->withNotify($notify);
         }
-        $bedArray         = array_values($request->bed ?? []);
-        $purifier         = new \HTMLPurifier();
+    }
 
-        if ($id) {
-            $roomType         = RoomType::findOrFail($id);
-            $notification     = 'Đã cập nhật loại phòng thành công';
-        } else {
-            $roomType         = new RoomType();
-            $notification     = 'Đã thêm loại phòng thành công';
+    private function insertProducts($request, $roomType)
+    {
+
+        if ($request->products) {
+            $data = [];
+
+            $currentProducts = $roomType->products()->pluck('quantity', 'product_id')->toArray();
+
+            foreach ($currentProducts as $productId => $quantity) {
+                Product::find($productId)->increment('stock', $quantity);
+            }
+
+            foreach ($request->products as $productId => $quantity) {
+                $data[$productId] = ['quantity' => $quantity];
+
+                Product::find($productId)->decrement('stock', $quantity);
+            }
+
+            $roomType->products()->sync($data);
         }
-
-        $roomType->name                = $request->name;
-        $roomType->slug                = Str::slug($request->name);
-        $roomType->total_adult         = $request->total_adult;
-        $roomType->total_child         = $request->total_child;
-        $roomType->fare                = $request->fare;
-        $roomType->hourly_rate         = $request->hourly_rate;
-        $roomType->seasonal_rate         = $request->seasonal_rate;
-        $roomType->keywords            = $request->keywords ?? [];
-        $roomType->description         = htmlspecialchars_decode($purifier->purify($request->description));
-        $roomType->beds                = $bedArray;
-        $roomType->is_featured         = $request->is_featured ? 1 : 0;
-        $roomType->cancellation_fee    = $request->cancellation_fee ?? 0;
-        $roomType->cancellation_policy = htmlspecialchars_decode($purifier->purify($request->cancellation_policy));
-
-
-        if ($request->hasFile('main_image')) {
-            $roomType->main_image = fileUploader($request->main_image, getFilePath('roomTypeImage'), getFileSize('roomTypeImage'), @$roomType->main_image, getThumbSize('roomTypeImage'));
-        }
-
-
-        $roomType->save();
-
-        $roomType->amenities()->sync($request->amenities);
-        $roomType->facilities()->sync($request->facilities);
-
-        $this->insertImages($request, $roomType);
-
-        $notify[] = ['success', $notification];
-        return back()->withNotify($notify);
     }
 
 
@@ -129,7 +168,8 @@ class RoomTypeController extends Controller
             'bed.*'               => 'exists:bed_types,name',
             'cancellation_policy' => 'nullable|string',
             'cancellation_fee'    => 'nullable|numeric|gte:0|lt:fare',
-            'slug'                => 'required|unique:room_types,slug,' . $id
+            'products'            => 'nullable|array',
+            // 'slug'                => 'required|unique:room_types,slug,' . $id
         ]);
     }
 

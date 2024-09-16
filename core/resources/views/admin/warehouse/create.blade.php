@@ -1,7 +1,7 @@
 @extends('admin.layouts.app')
 @section('panel')
     <div class="row">
-        <div class="col-lg-8 col-md-12">
+        <div class="col-xl-8 col-lg-12">
             <div class="card">
                 <div class="card-header d-flex gap-2 align-items-center position-relative">
                     <input type="search" name="searchInput" class="form-control searchInput" placeholder="Tìm kiếm sản phẩm..."
@@ -24,7 +24,7 @@
             </div>
         </div>
 
-        <div class="col-lg-4 col-md-12 md-mt-5">
+        <div class="col-xl-4 col-lg-12 md-mt-5">
             <form action="" method="post" id="warehouseForm">
                 <div class="card">
                     <div class="card-header">
@@ -357,7 +357,7 @@
     <script src="{{ asset('assets/admin/js/vendor/sweetalert2@11.js') }}"></script>
 
     <style>
-        @media (max-width: 992px) {
+        @media (max-width: 1200px) {
             .md-mt-5 {
                 margin-top: 2.5rem !important;
             }

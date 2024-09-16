@@ -2,7 +2,8 @@
 @section('panel')
     <div class="row">
         <div class="col-lg-12">
-            <form action="{{ route('admin.hotel.room.type.save', @$roomType ? $roomType->id : 0) }}" enctype="multipart/form-data" method="POST">
+            <form action="{{ route('admin.hotel.room.type.save', @$roomType ? $roomType->id : 0) }}"
+                enctype="multipart/form-data" method="POST">
                 <div class="card">
                     <div class="card-header">
                         <h5 class="card-title mb-0">
@@ -15,7 +16,8 @@
                             <div class="col-xl-4 col-md-4 col-sm-12">
                                 <div class="form-group">
                                     <label>@lang('Tên phòng')</label>
-                                    <input class="form-control" name="name" required type="text" value="{{ old('name', @$roomType->name) }}">
+                                    <input class="form-control" name="name" required type="text"
+                                        value="{{ old('name', @$roomType->name) }}">
                                 </div>
                             </div>
 
@@ -23,7 +25,8 @@
                                 <div class="form-group">
                                     <label class="required" for="fare">@lang('Giá') /@lang('Đêm')</label>
                                     <div class="input-group">
-                                        <input class="form-control" id="fare" name="fare" required type="number" value="{{ old('fare', @$roomType->fare ? getAmount(@$roomType->fare) : '') }}">
+                                        <input class="form-control" id="fare" name="fare" required type="number"
+                                            value="{{ old('fare', @$roomType->fare ? getAmount(@$roomType->fare) : '') }}">
                                         <span class="input-group-text">{{ __(gs('cur_text')) }}</span>
                                     </div>
                                 </div>
@@ -33,7 +36,8 @@
                                 <div class="form-group">
                                     <label class="required" for="hourly_rate">@lang('Giá') /@lang('Giờ')</label>
                                     <div class="input-group">
-                                        <input class="form-control" id="hourly_rate" name="hourly_rate" type="number" value="{{ old('hourly_rate', @$roomType->hourly_rate ? getAmount(@$roomType->hourly_rate) : '0') }}">
+                                        <input class="form-control" id="hourly_rate" name="hourly_rate" type="number"
+                                            value="{{ old('hourly_rate', @$roomType->hourly_rate ? getAmount(@$roomType->hourly_rate) : '0') }}">
                                         <span class="input-group-text">{{ __(gs('cur_text')) }}</span>
                                     </div>
                                 </div>
@@ -41,9 +45,11 @@
 
                             <div class="col-xl-4 col-md-4 col-sm-12">
                                 <div class="form-group">
-                                    <label class="required" for="seasonal_rate">@lang('Giá') /@lang('mùa')</label>
+                                    <label class="required" for="seasonal_rate">@lang('Giá')
+                                        /@lang('mùa')</label>
                                     <div class="input-group">
-                                        <input class="form-control" id="seasonal_rate" name="seasonal_rate" type="number" value="{{ old('seasonal_rate', @$roomType->seasonal_rate ? getAmount(@$roomType->seasonal_rate) : '0') }}">
+                                        <input class="form-control" id="seasonal_rate" name="seasonal_rate" type="number"
+                                            value="{{ old('seasonal_rate', @$roomType->seasonal_rate ? getAmount(@$roomType->seasonal_rate) : '0') }}">
                                         <span class="input-group-text">{{ __(gs('cur_text')) }}</span>
                                     </div>
                                 </div>
@@ -53,7 +59,9 @@
                                 <div class="form-group">
                                     <label>@lang('Phí hủy bỏ') /@lang('Đêm')</label>
                                     <div class="input-group">
-                                        <input class="form-control cancellationFee" min="0" name="cancellation_fee" required step="any" type="number" value="{{ old('cancellation_fee', getAmount(@$roomType->cancellation_fee)) }}">
+                                        <input class="form-control cancellationFee" min="0" name="cancellation_fee"
+                                            required step="any" type="number"
+                                            value="{{ old('cancellation_fee', getAmount(@$roomType->cancellation_fee)) }}">
                                         <span class="input-group-text">{{ __(gs('cur_text')) }}</span>
                                     </div>
                                 </div>
@@ -62,14 +70,16 @@
                             <div class="col-xl-4 col-md-4 col-sm-12">
                                 <div class="form-group">
                                     <label>@lang('Tổng số người')</label>
-                                    <input class="form-control" min="1" name="total_adult" required type="number" value="{{ old('total_adult', @$roomType->total_adult) }}">
+                                    <input class="form-control" min="1" name="total_adult" required type="number"
+                                        value="{{ old('total_adult', @$roomType->total_adult) }}">
                                 </div>
                             </div>
 
                             <div class="col-xl-4 col-md-4 col-sm-12">
                                 <div class="form-group">
                                     <label>@lang('Tống số trẻ em')</label>
-                                    <input class="form-control" min="0" name="total_child" required type="number" value="{{ old('total_child', @$roomType->total_child) }}">
+                                    <input class="form-control" min="0" name="total_child" required type="number"
+                                        value="{{ old('total_child', @$roomType->total_child) }}">
                                 </div>
                             </div>
 
@@ -98,7 +108,8 @@
                             <div class="col-xl-6 col-md-12">
                                 <div class="form-group position-relative">
                                     <label>@lang('Từ khóa')</label>
-                                    <select class="form-control select2-auto-tokenize" multiple="multiple" name="keywords[]"></select>
+                                    <select class="form-control select2-auto-tokenize" multiple="multiple"
+                                        name="keywords[]"></select>
                                     <small class="ml-2 mt-2">@lang('Phân tách nhiều từ khóa bằng') <code>,</code>(@lang('dấu phẩy'))
                                         @lang('hoặc') <code>@lang('enter')</code> @lang('key')</small>
                                 </div>
@@ -108,15 +119,60 @@
                                 <div class="form-group">
                                     <label class="me-2"> @lang('Nổi bật') </label>
                                     {{-- <input @if (@$roomType->is_featured) checked @endif data-bs-toggle="toggle" data-height="50" data-off="@lang('Không có đặc điểm')" data-offstyle="-danger" data-on="@lang('Featured')" data-onstyle="-success" data-size="large" data-width="100%" name="is_featured" type="checkbox"> --}}
-                                    <input type="radio" name="is_featured" class="form-check-input" id="is_featured" value="1"> <label class="form-check-label me-2" for="is_featured" >@lang('Yes')</label>
-                                    <input type="radio" name="is_featured" class="form-check-input" id="is_featured-2" value="0" checked> <label class="form-check-label me-2" for="is_featured-2">@lang('No')</label>
-                                    <p class="ml-2 mt-2"><code><i class="las la-info-circle"></i> @lang('Các phòng nổi bật sẽ được hiển thị trong phần phòng nổi bật.')</code></p>
+                                    <input type="radio" name="is_featured" class="form-check-input" id="is_featured"
+                                        value="1"> <label class="form-check-label me-2"
+                                        for="is_featured">@lang('Yes')</label>
+                                    <input type="radio" name="is_featured" class="form-check-input" id="is_featured-2"
+                                        value="0" checked> <label class="form-check-label me-2"
+                                        for="is_featured-2">@lang('No')</label>
+                                    <p class="ml-2 mt-2"><code><i class="las la-info-circle"></i>
+                                            @lang('Các phòng nổi bật sẽ được hiển thị trong phần phòng nổi bật.')</code></p>
                                 </div>
                             </div>
                         </div>
                     </div>
                 </div>
 
+                <div class="card mt-3">
+                    <div class="card-header d-flex justify-content-between align-items-center">
+                        <h5 class="card-title mb-0">@lang('Thêm Sản Phẩm')</h5>
+                        <button type="button" class="btn btn-outline-primary" data-bs-toggle="modal"
+                            data-bs-target="#exampleModal">
+                            Thực hiện
+                        </button>
+                    </div>
+                    <div class="card-body results">
+                        <div class="row">
+                            @if ($roomType->products->isNotEmpty())
+                                @foreach ($roomType->products as $product)
+                                    <div class="col-md-4 pb-3 result-item" data-id="{{ $product->id }}}">
+                                        <div class="d-flex align-items-center border position-relative p-1" data-id="{{ $product->id }}">
+                                            <div class="img-container">
+                                                <img src="{{\Storage::url($product->image_path)}}" width="100"
+                                                    alt="" class="img-fluid">
+                                            </div>
+                                            <div class="info">
+                                                <div class="name ellipsis">
+                                                    <a href="#" class="text-decoration-none">{{$product->name}}</a>
+                                                </div>
+                                                <div class="price">
+                                                    <span class="current-price">Tồn kho: {{$product->stock}}</span>
+                                                </div>
+                                                <div class="quantity d-flex align-items-center">
+                                                    <span class="current-stock me-2">Số lượng</span>
+                                                    <input type="number" name="products[{{$product->id}}]"
+                                                        class="form-control" min="1" value="{{$product->pivot->quantity}}">
+                                                </div>
+                                            </div>
+                                            <button class="btn-close position-absolute end-0 top-0 bg-danger"
+                                                style="border-radius: 0%"></button>
+                                        </div>
+                                    </div>
+                                @endforeach
+                            @endif
+                        </div>
+                    </div>
+                </div>
                 <div class="card mt-3">
                     <div class="card-header">
                         <h5 class="card-title mb-0">
@@ -128,7 +184,9 @@
                             <div class="col-sm-4">
                                 <div class="form-group">
                                     <h4 class="mb-1">@lang('Tổng số giường')</h4>
-                                    <input @isset($roomType) readonly @endisset class="form-control" min="1" name="total_bed" required type="number" value="{{ @$roomType ? count(@$roomType->beds) : '' }}">
+                                    <input @isset($roomType) readonly @endisset class="form-control"
+                                        min="1" name="total_bed" required type="number"
+                                        value="{{ @$roomType ? count(@$roomType->beds) : '' }}">
                                 </div>
                             </div>
                         </div>
@@ -138,23 +196,27 @@
                                     @foreach ($roomType->beds as $bed)
                                         <div class="col-md-3 number-field-wrapper bed-content">
                                             <div class="form-group">
-                                                <label class="required" for="bed">@lang('Bed') - <span class="serialNumber">{{ $loop->iteration }}</span></label>
+                                                <label class="required" for="bed">@lang('Bed') - <span
+                                                        class="serialNumber">{{ $loop->iteration }}</span></label>
                                                 <div class="input-group">
                                                     <select class="form-control bedType" name="bed[{{ $loop->iteration }}]">
                                                         <option value="">@lang('Select One')</option>
                                                         @foreach ($bedTypes as $bedType)
-                                                            <option @if ($bedType->name == $bed) selected @endif value="{{ $bedType->name }}">
+                                                            <option @if ($bedType->name == $bed) selected @endif
+                                                                value="{{ $bedType->name }}">
                                                                 {{ $bedType->name }}
                                                             </option>
                                                         @endforeach
                                                     </select>
-                                                    <button class="input-group-text bg-danger btnRemove border-0" data-name="bed" type="button"><i class="las la-times"></i></button>
+                                                    <button class="input-group-text bg-danger btnRemove border-0"
+                                                        data-name="bed" type="button"><i class="las la-times"></i></button>
                                                 </div>
                                             </div>
                                         </div>
                                     @endforeach
                                 </div>
-                                <button class="btn btn--success addMore" type="button"> <i class="la la-plus"></i>@lang('Add More')</button>
+                                <button class="btn btn--success addMore" type="button"> <i
+                                        class="la la-plus"></i>@lang('Add More')</button>
                             @endisset
                         </div>
                     </div>
@@ -169,7 +231,8 @@
                                 </h5>
                             </div>
                             <div class="card-body">
-                                <x-image-uploader name="main_image" class="w-100" type="roomTypeImage" :image="@$roomType->main_image" :required="@$roomType ? false : true" />
+                                <x-image-uploader name="main_image" class="w-100" type="roomTypeImage" :image="@$roomType->main_image"
+                                    :required="@$roomType ? false : true" />
                             </div>
                         </div>
                     </div>
@@ -194,7 +257,8 @@
                             @lang('Hình ảnh')
                         </h5>
 
-                        <small class="text--info text--small"><i class="las la-info-circle"></i> @lang('Mỗi hình ảnh sẽ được thay đổi kích thước thành') {{ getFileSize('roomTypeImage') }}@lang('px')</small>
+                        <small class="text--info text--small"><i class="las la-info-circle"></i> @lang('Mỗi hình ảnh sẽ được thay đổi kích thước thành')
+                            {{ getFileSize('roomTypeImage') }}@lang('px')</small>
                     </div>
                     <div class="card-body">
                         <div class="input-images pb-3"></div>
@@ -236,11 +300,33 @@
             </form>
         </div>
     </div>
+
+    <div class="modal fade" id="exampleModal" tabindex="-1" aria-labelledby="exampleModalLabel" aria-hidden="true">
+        <div class="modal-dialog">
+            <div class="modal-content">
+                <div class="modal-header d-block">
+                    <div class="search-container d-flex align-items-center">
+                        <input type="search" name="searchInput" class="form-control searchInput"
+                            placeholder="Tìm kiếm sản phẩm..." autocomplete="off">
+                    </div>
+                </div>
+                <div class="modal-body">
+                    <div class="search-results">
+
+                    </div>
+                </div>
+                <div class="modal-footer">
+                    <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Close</button>
+                </div>
+            </div>
+        </div>
+    </div>
 @endsection
 
 @push('breadcrumb-plugins')
     @if (@$roomType)
-        <a href="{{ route('room.type.details', $roomType->slug) }}" class="btn btn-sm btn-outline--dark" target="_blank"><i class="las la-eye"></i>@lang('Quick View')</a>
+        <a href="{{ route('room.type.details', $roomType->slug) }}" class="btn btn-sm btn-outline--dark"
+            target="_blank"><i class="las la-eye"></i>@lang('Quick View')</a>
     @endif
     @can('admin.hotel.room.type.all')
         <x-back route="{{ route('admin.hotel.room.type.all') }}" />
@@ -257,9 +343,43 @@
 
 @push('style')
     <style>
+        .info {
+            margin-left: 5px;
+        }
+
+
         .cursor-pointer {
             cursor: pointer;
             user-select: none;
+        }
+
+        .searchInput {
+            height: 30px;
+            border: 1px solid #ddd;
+        }
+
+        /* Ẩn nút tăng giảm */
+        input[type="number"]::-webkit-inner-spin-button,
+        input[type="number"]::-webkit-outer-spin-button {
+            -webkit-appearance: none;
+            margin: 0;
+        }
+
+        .quantity input {
+            text-align: center;
+            width: 50px;
+            height: 30px;
+            padding: 0;
+        }
+
+        .ellipsis {
+            width: 250px;
+            /* Chiều rộng tối đa của phần tử */
+            white-space: nowrap;
+            /* Không cho văn bản xuống dòng */
+            overflow: hidden;
+            /* Ẩn phần văn bản bị tràn */
+            text-overflow: ellipsis;/
         }
     </style>
 @endpush
@@ -269,7 +389,93 @@
         (function($) {
             "use strict";
             let bedTypes = @json($bedTypes);
+            let debounceTimer;
+            let path_url = "http://qlks.test/storage/";
 
+            $('.search-results').on('click', '.result-item', function() {
+                var resource = $(this).data('resource'); // Lấy dữ liệu từ data-resource
+
+                // Kiểm tra xem sản phẩm đã được chọn chưa
+                if ($('.results .row').find(`[data-id="${resource.id}"]`).length > 0) {
+                    alert('Sản phẩm này đã được chọn.');
+                    return; // Dừng hàm nếu sản phẩm đã được chọn
+                }
+
+                var productHtml = `
+                <div class="col-md-4 pb-3 result-item" data-id="${resource.id}">
+                    <div class="d-flex align-items-center border position-relative p-1">
+                        <div class="img-container">
+                            <img src="${path_url}${resource.image_path}" width="100"  alt="" class="img-fluid">
+                        </div>
+                        <div class="info">
+                            <div class="name ellipsis">
+                                <a href="#" class="text-decoration-none">${resource.name}</a>
+                            </div>
+                            <div class="price">
+                                <span class="current-price">Tồn kho: ${resource.stock}</span>
+                            </div>
+                            <div class="quantity d-flex align-items-center">
+                                <span class="current-stock me-2">Số lượng</span>
+                                <input type="number" name="products[${resource.id}]" class="form-control" min="1" value="1">
+                            </div>
+                        </div>
+                        <button class="btn-close position-absolute end-0 top-0 bg-danger" style="border-radius: 0%"></button>
+                    </div>
+                </div>`;
+                $('.results .row').append(productHtml); // Thêm sản phẩm vào card-body
+            });
+
+            $('.results .row').on('click', '.btn-close', function() {
+                $(this).closest('.col-md-4').remove(); // Xóa phần tử cha
+            });
+
+            function fetchData() {
+                const search = $(".searchInput").val();
+
+                $.ajax({
+                    url: "{{ route('admin.product.filter') }}",
+                    method: "GET",
+                    data: {
+                        search,
+                    },
+                    success: function(data) {
+                        $(".search-results").html(data.results);
+                        notData();
+                    },
+                });
+            }
+
+            $(".searchInput").on("input", function() {
+                clearTimeout(debounceTimer);
+                const searchValue = $(this).val();
+
+                if (searchValue === "") {
+                    $(".search-results").html('');
+                } else {
+                    debounceTimer = setTimeout(() => {
+                        fetchData(); // Gọi fetchData nếu có giá trị tìm kiếm
+                    }, 1000);
+                }
+
+            });
+
+            function notData() {
+
+                // Check if there are no rows in the tbody
+                if ($(".result-item").length === 0) {
+                    console.log("no data");
+
+                    // Append the "No data" row
+                    $(".search-results").append(
+                        `<p id="no-data-row" class="text-center">Không tìm thấy dữ liệu!</p>`
+                    );
+                } else {
+                    console.log("has data");
+
+                    // Remove the "No data" row if it exists
+                    $("#no-data-row").remove();
+                }
+            }
 
             @if (isset($images))
                 let preloaded = @json($images);
