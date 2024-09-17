@@ -30,7 +30,7 @@
                 </div>
             </div>
         </div>
-        <div class="col-lg-6 mt-md-3 col-md-12">
+        <div class="col-lg-6 mt-xl-0 mt-3 col-md-12">
             <div class="card">
                 <div class="card-header">
                     <h5 class="card-title">Thông tin đơn hàng</h5>
@@ -47,7 +47,7 @@
                                 <td>{{ showAmount($warehouse->total) }}</td>
                             </tr>
                             <tr>
-                                <th><i class="fas fa-calendar-alt me-2"></i> Ngày giao dịch</th>
+                                <th><i class="fas fa-calendar-alt me-2"></i> Ngày tạo</th>
                                 <td>{{ \Carbon\Carbon::parse($warehouse->date)->format('d/m/Y') }}</td>
                             </tr>
                             <tr>
@@ -62,44 +62,66 @@
 
         <div class="col-md-12 mt-3">
             <div class="card">
-                <div class="card-header">
-                    <h5 class="card-title">Chi tiết sản phẩm</h5>
-                </div>
-                <div class="card-body">
-                    <div class="table-responsive--sm table-responsive">
-                        <table class="table--light style--two table" id="data-table">
-                            <thead>
-                                <tr>
-                                    <th> Mã sản phẩm</th>
-                                    <th> Ảnh</th>
-                                    <th> Tên sản phẩm</th>
-                                    <th> Số lượng nhập</th>
-                                    <th> Giá nhập</th>
-                                    <th> Giá bán</th>
-                                    <th> Tổng tiền</th>
-                                </tr>
-                            </thead>
-                            <tbody>
-                                @foreach ($warehouse->entries as $entryItem)
-                                    <tr>
-                                        <td data-label="Mã sản phẩm">{{ $entryItem->product->sku }}</td>
-                                        <td data-label="Ảnh">
-                                            <img src="{{ \Storage::url($entryItem->product->image_path) }}"
-                                                alt="{{ $entryItem->product->name }}" width="50px">
-                                        </td>
-                                        <td data-label="Tên sản phẩm">{{ $entryItem->product->name }}</td>
-                                        <td data-label="Số lượng nhập">{{ $entryItem->quantity }}</td>
-                                        <td data-label="Giá nhập">{{ showAmount($entryItem->product->import_price) }}</td>
-                                        <td data-label="Giá bán">{{ showAmount($entryItem->product->selling_price) }}</td>
-                                        <td data-label="Tổng tiền">
-                                            {{ showAmount($entryItem->quantity * $entryItem->product->selling_price) }}
-                                        </td>
-                                    </tr>
-                                @endforeach
-                            </tbody>
-                        </table>
+                <form action="#" method="post" class="form-horizontal">
+                    @csrf
+                    <div class="card-header d-flex justify-content-between">
+                        <h5 class="card-title">Chi tiết sản phẩm</h5>
+                        <div id="result-btn">
+                            @if ($warehouse->status)
+                                <button type="submit" class="btn btn-sm btn-outline--primary btn-return" disabled>Trả
+                                    hàng</button>
+                            @else
+                                <a id="complete" href="javascript:void(0)"
+                                    class="btn btn-sm btn-outline--primary btn-return">Đã nhận được
+                                    hàng</a>
+                            @endif
+                        </div>
                     </div>
-                </div>
+                    <div class="card-body">
+                        <div class="table-responsive--sm table-responsive">
+                            <table class="table--light style--two table" id="data-table">
+                                <thead>
+                                    <tr>
+                                        <th></th>
+                                        <th> Mã sản phẩm</th>
+                                        <th> Ảnh</th>
+                                        <th> Tên sản phẩm</th>
+                                        <th> Số lượng nhập</th>
+                                        <th> Giá nhập</th>
+                                        <th> Giá bán</th>
+                                        <th> Tổng tiền</th>
+                                    </tr>
+                                </thead>
+                                <tbody>
+                                    @foreach ($warehouse->entries as $entryItem)
+                                        <tr>
+                                            <td>
+                                                <div class="form-group">
+                                                    <input type="checkbox" name="entry[]" class="form-check-input entry"
+                                                        value="{{ $entryItem->id }}">
+                                                </div>
+                                            </td>
+                                            <td data-label="Mã sản phẩm">{{ $entryItem->product->sku }}</td>
+                                            <td data-label="Ảnh">
+                                                <img src="{{ \Storage::url($entryItem->product->image_path) }}"
+                                                    alt="{{ $entryItem->product->name }}" width="50px">
+                                            </td>
+                                            <td data-label="Tên sản phẩm">{{ $entryItem->product->name }}</td>
+                                            <td data-label="Số lượng nhập">{{ $entryItem->quantity }}</td>
+                                            <td data-label="Giá nhập">{{ showAmount($entryItem->product->import_price) }}
+                                            </td>
+                                            <td data-label="Giá bán">{{ showAmount($entryItem->product->selling_price) }}
+                                            </td>
+                                            <td data-label="Tổng tiền">
+                                                {{ showAmount($entryItem->quantity * $entryItem->product->selling_price) }}
+                                            </td>
+                                        </tr>
+                                    @endforeach
+                                </tbody>
+                            </table>
+                        </div>
+                    </div>
+                </form>
             </div>
         </div>
     </div>
@@ -110,12 +132,53 @@
 @endsection
 
 @push('script')
-    <script src="{{ asset('assets/admin/js/ckeditor.js') }}"></script>
     <script>
         (function($) {
             "use strict";
             $(document).ready(function() {
 
+                $("#complete").on("click", function() {
+                    $.ajax({
+                        url: "{{ route('admin.warehouse.update', $warehouse->id) }}",
+                        type: "PUT",
+                        success: function(response) {
+                            $("#result-btn").empty().append(`
+                             <button type="submit" class="btn btn-sm btn-outline--primary btn-return" disabled>Trả
+                                hàng</button>
+                            `);
+                            const Toast = Swal.mixin({
+                                toast: true,
+                                position: "top-end",
+                                showConfirmButton: false,
+                                timer: 2000,
+                                timerProgressBar: true,
+                                didOpen: (toast) => {
+                                    toast.onmouseenter = Swal.stopTimer;
+                                    toast.onmouseleave = Swal.resumeTimer;
+                                },
+                                customClass: {
+                                    container: 'custom-toast' // Áp dụng lớp CSS tùy chỉnh
+                                }
+                            });
+                            Toast.fire({
+                                icon: "success",
+                                title: `<p>${response.message}</p>`,
+                            });
+                        }
+                    })
+                })
+
+                $('.entry').on('change', function() {
+                    if ($('.entry:checked').length > 0) {
+                        $('.form-horizontal').attr('action',
+                            '{{ route('admin.return.create', $warehouse->id) }}');
+                        $('.btn-return').prop('disabled', false);
+                    } else {
+                        $('.form-horizontal').attr('action', '#');
+                        $('.btn-return').prop('disabled', true);
+                    }
+
+                });
             });
 
         })(jQuery);
@@ -123,6 +186,8 @@
 @endpush
 
 @push('style')
+    <script src="{{ asset('assets/admin/js/vendor/sweetalert2@11.js') }}"></script>
+
     <style>
         @media (max-width: 992px) {
             .mt-md-3 {

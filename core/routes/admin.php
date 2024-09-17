@@ -146,13 +146,14 @@ Route::middleware('admin', 'adminPermission')->group(function () {
         Route::get('create', 'create')->name('create');
         Route::post('create', 'store')->name('store');
         Route::get('{id}/show', 'show')->name('show');
+        Route::put('{id}/update', 'update')->name('update');
     });
 
     // manage return
     Route::controller('ReturnController')->prefix('return')->name('return.')->group(function () {
         Route::get('/', 'index')->name('index');
-        Route::get('create', 'create')->name('create');
-        // Route::post('create', 'store')->name('store');
+        Route::post('{id}/create', 'create')->name('create');
+        Route::post('{id}/store', 'store')->name('store');
         // Route::get('{id}/show', 'show')->name('show');
     });
 

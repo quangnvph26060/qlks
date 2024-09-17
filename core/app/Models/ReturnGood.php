@@ -12,21 +12,19 @@ class ReturnGood extends Model
     protected $table = 'returns';
 
     protected $fillable = [
-        'supplier_id',
-        'product_id',
+        'warehouse_entry_id',
         'reference_code',
-        'quantity',
-        'reason',
+        'total',
     ];
 
-    public function supplier()
+
+    public function warehouse_entry()
     {
-        return $this->belongsTo(Supplier::class, 'supplier_id', 'id');
+        return $this->belongsTo(WarehouseEntry::class, 'warehouse_entry_id', 'id');
     }
 
-    public function product()
+    public function return_items()
     {
-        return $this->belongsTo(Product::class, 'product_id', 'id');
+        return $this->belongsToMany(Product::class, 'return_entries', 'return_id', 'product_id')->withPivot('quantity', 'reason');
     }
-
 }

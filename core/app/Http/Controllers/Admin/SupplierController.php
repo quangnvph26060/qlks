@@ -42,6 +42,7 @@ class SupplierController extends Controller
                 $perPage,
                 $orderBy,
                 $search,
+                [],
                 $searchColumns,
                 $relationSearchColumns
             );

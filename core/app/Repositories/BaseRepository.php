@@ -2,12 +2,14 @@
 
 namespace App\Repositories;
 
-use Illuminate\Support\Facades\Log;
-use Illuminate\Database\Eloquent\Model;
-use Illuminate\Database\Eloquent\Builder;
-
 use Illuminate\Http\Request;
+use Illuminate\Support\Facades\Log;
+use Intervention\Image\Drivers\Gd\Driver;
+use Intervention\Image\ImageManager;
+
+use Illuminate\Database\Eloquent\Model;
 use Illuminate\Support\Facades\Storage;
+use Illuminate\Database\Eloquent\Builder;
 
 class BaseRepository
 {
@@ -18,7 +20,7 @@ class BaseRepository
         $this->model = $model;
     }
 
-    public function customPaginate($columns = ['*'], $relations = [], $perPage = 10, $orderBy = null, $search = null, $searchColumns = [], $relationSearchColumns = [], $filters = [])
+    public function customPaginate($columns = ['*'], $relations = [], $perPage = 10, $orderBy = null, $search = null, $customWhere = [], $searchColumns = [], $relationSearchColumns = [], $filters = [], $all = false)
     {
         $query = $this->model->query()->with($relations);
 
@@ -38,6 +40,15 @@ class BaseRepository
             });
         }
 
+        // Tìm kiếm trong các cấu trúc tìm kiếm
+        if (!empty($customWhere)) {
+            $query->where(function (Builder $query) use ($customWhere) {
+                foreach ($customWhere as $key => $value) {
+                    $query->where($key, $value);
+                }
+            });
+        }
+
         // Áp dụng các điều kiện lọc từ mảng filters
         if (!empty($filters)) {
             foreach ($filters as $key => $value) {
@@ -53,7 +64,7 @@ class BaseRepository
         }
 
         // Phân trang
-        return $query->paginate($perPage, $columns);
+        return $all ? $query->get() : $query->paginate($perPage, $columns);
     }
 
     public function logError($exception)
@@ -80,18 +91,27 @@ class BaseRepository
             // Lấy file hình ảnh
             $image = $request->file($inputName);
 
+            $manager = new ImageManager(new Driver());
+
+            // Đọc hình ảnh từ đường dẫn thực
+            $img = $manager->read($image->getRealPath());
+
+            // Thay đổi kích thước
+            $img->resize(653, 731);
+
             // Tạo tên file duy nhất
             $filename = time() . '.' . $image->getClientOriginalExtension();
 
-            // Lưu hình ảnh vào storage và lấy đường dẫn
-            $path = $image->storeAs($directory, $filename, 'public');
+            // Lưu hình ảnh đã được thay đổi kích thước vào storage
+            Storage::put($directory . '/' . $filename, $img->encode());
 
-            // Trả về đường dẫn của ảnh đã lưu
-            return $path;
+            // Lấy đường dẫn công khai
+            return $directory . '/' . $filename;
         }
 
         return null;
     }
+
 
     function generateRandomString()
     {

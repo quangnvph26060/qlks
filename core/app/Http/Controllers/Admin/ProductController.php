@@ -242,14 +242,16 @@ class ProductController extends Controller
         ];
 
         $response = $this->repository->customPaginate(
-            ['id', 'image_path', 'name', 'import_price', 'category_id', 'stock', 'is_published'],
-            ['category'], // Thêm quan hệ nếu cần
+            ['id', 'image_path', 'name', 'import_price', 'selling_price', 'category_id', 'stock', 'is_published'],
+            [], // Thêm quan hệ nếu cần
             $perPage,
             $orderBy,
             $search,
+            ['is_published' => true],
             ['name'],
             [],
-            $filters // Truyền mảng filters vào
+            $filters,
+            true
         );
 
         if (request()->ajax()) {
