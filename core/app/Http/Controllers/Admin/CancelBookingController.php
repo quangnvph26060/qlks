@@ -50,14 +50,14 @@ class CancelBookingController extends Controller {
     public function cancelBookingByDate(Request $request, $id) {
 
         if ($request->booked_for < now()->toDateString()) {
-            $notify[] = ['error', 'Past date\'s bookings can\'t be canceled'];
+            $notify[] = ['error', 'Không thể hủy các đặt phòng của ngày trước'];
             return back()->withNotify($notify);
         }
 
         $booking  = Booking::active()->find($id);
 
         if (!$booking) {
-            $notify[] = ['error', 'This booking can\'t be canceled'];
+            $notify[] = ['error', 'Đặt phòng này không thể hủy được'];
             return back()->withNotify($notify);
         }
 
@@ -90,7 +90,7 @@ class CancelBookingController extends Controller {
 
         $booking->createActionHistory('cancel_booking');
 
-        $notify[] = ['success', 'Booking canceled successfully'];
+        $notify[] = ['success', 'Đã hủy đặt phòng thành công'];
         return back()->withNotify($notify);
     }
 
@@ -98,11 +98,11 @@ class CancelBookingController extends Controller {
         $bookedRoom = BookedRoom::with('booking', 'room')->findOrFail($id);
 
         if ($bookedRoom->status != Status::ROOM_ACTIVE) {
-            $notify[] = ['error', 'This room can\'t be canceled'];
+            $notify[] = ['error', 'Phòng này không thể hủy được'];
         }
 
         if ($bookedRoom->booked_for < now()->toDateString()) {
-            $notify[] = ['error', 'Previous days booking can\'t be canceled'];
+            $notify[] = ['error', 'Không thể hủy đặt phòng của những ngày trước'];
             return back()->withNotify($notify);
         }
 
@@ -114,7 +114,7 @@ class CancelBookingController extends Controller {
         $booking->tax_charge -= $bookedRoom->tax_charge;
 
         if (!$anotherBookedRooms) {
-            $booking->status = Status::BOOKING_CANCELED;
+            $booking->status = Status::BOOKING_CANCELED; // 3
         }
 
         $booking->save();
@@ -130,7 +130,7 @@ class CancelBookingController extends Controller {
             'room_number'    => @$bookedRoom->room->room_number
         ]);
 
-        $notify[] = ['success', 'Room canceled successfully'];
+        $notify[] = ['success', 'Phòng đã hủy thành công'];
         return back()->withNotify($notify);
     }
 

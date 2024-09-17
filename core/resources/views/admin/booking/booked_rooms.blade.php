@@ -14,21 +14,21 @@
                     @endphp
                     @if ($bookedBy)
                         <span>
-                            <span>@lang('Booked By')</span>:
+                            <span>@lang('Đã đặt bởi')</span>:
                             <span class="text--info">{{ actionTakenBy($booking->bookedBy) }}</span>
                         </span>
                     @endif
 
                     @if ($approvedBy)
                         <span>
-                            <span>@lang('Approved By')</span>:
+                            <span>@lang('Được chấp thuận bởi')</span>:
                             <span class="text--info">{{ actionTakenBy($booking->approvedBy) }}</span>
                         </span>
                     @endif
 
                     @if ($checkedOutBy)
                         <span>
-                            <span>@lang('Checked Out By')</span>:
+                            <span>@lang('Đã kiểm tra bởi')</span>:
                             <span class="text--info">{{ actionTakenBy($booking->checkedOutBy) }}</span>
                         </span>
                     @endif
@@ -37,7 +37,7 @@
                 <div class="d-flex justify-content-end me-3 flex-wrap gap-3 p-2">
                     <div class="d-flex align-items-center gap-1">
                         <span class="custom--label bg--danger"></span>
-                        <span>@lang('Canceled')</span>
+                        <span>@lang('Đã hủy')</span>
                     </div>
                     <div class="d-flex align-items-center gap-1">
                         <span class="custom--label bg--dark"></span>
@@ -45,7 +45,7 @@
                     </div>
                     <div class="d-flex align-items-center gap-1">
                         <span class="custom--label bg--18"></span>
-                        <span>@lang('Booked')</span>
+                        <span>@lang('Đã đặt chỗ')</span>
                     </div>
 
                 </div>
@@ -59,9 +59,9 @@
                         <table class="table--light style--two table">
                             <thead>
                                 <tr>
-                                    <th>@lang('Action')</th>
-                                    <th>@lang('Booked For')</th>
-                                    <th>@lang('Room Numbers')</th>
+                                    <th>@lang('Hành động')</th>
+                                    <th>@lang('Đã đặt chỗ ')</th>
+                                    <th>@lang('Số phòng')</th>
                                 </tr>
                             </thead>
                             <tbody>
@@ -76,7 +76,8 @@
                                         @endphp
 
                                         <td>
-                                            <button @if (!$activeBooking || $key < now()->format('Y-m-d') || !can('admin.booking.booked.day.cancel')) disabled @endif class="btn btn--danger cancelBookingBtn" data-booked_for="{{ $key }}" data-fare="{{ showAmount($totalFare) }}" data-should_refund="{{ showAmount($shouldRefund) }}" type="button">@lang('Cancel Booking')</button>
+                                            <button
+                                             @if (!$activeBooking || $key < now()->format('Y-m-d') || !can('admin.booking.booked.day.cancel')) disabled @endif class="btn btn--danger cancelBookingBtn" data-booked_for="{{ $key }}" data-fare="{{ showAmount($totalFare) }}" data-should_refund="{{ showAmount($shouldRefund) }}" type="button">@lang('Hủy đặt phòng')</button>
                                         </td>
 
                                         <td>
@@ -156,7 +157,7 @@
                             <div class="row justify-content-center">
                                 <div class="col-10 bg--danger p-3 rounded">
                                     <div class="d-flex flex-wrap justify-content-between gap-2">
-                                        <h6 class="text-white">@lang('Fare')</h6>
+                                        <h6 class="text-white">@lang('Giá')</h6>
                                         <span class="text-white totalFare"></span>
                                     </div>
 
@@ -170,7 +171,7 @@
 
                         </div>
                         <div class="modal-footer">
-                            <h6 class="w-100">@lang('Are you sure to cancel this booking?')</h6>
+                            <h6 class="w-100">@lang('Bạn có chắc chắn hủy đặt phòng này không?')</h6>
                             <button aria-label="Close" class="btn btn--dark" data-bs-dismiss="modal" type="button">@lang('Không')</button>
                             <button class="btn btn--primary" type="submit">@lang('Có ')</button>
                         </div>
@@ -206,7 +207,7 @@
                     action = `{{ route('admin.booking.booked.room.cancel', '') }}/${data.id}`;
                 }
 
-                modal.find('.modal-title').text(`@lang('Cancel Booking')`);
+                modal.find('.modal-title').text(`@lang('Hủy đặt phòng')`);
                 modal.find('form').attr('action', action);
                 modal.find('.totalFare').text(data.fare);
                 modal.find('.refundableAmount').text(data.should_refund);

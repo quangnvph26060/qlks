@@ -117,7 +117,10 @@ class BookingController extends Controller {
         return view('admin.booking.upcoming_checkin_checkout', compact('pageTitle', 'bookings', 'emptyMessage'));
     }
 
-    public function bookingDetails($id) {
+    public function bookingDetails(Request $request,  $id) {
+        \Log::info($id);
+        \Log::info($request->all());
+        
         $booking = Booking::with([
             'bookedRooms',
             'activeBookedRooms:id,booking_id,room_id',
@@ -129,6 +132,9 @@ class BookingController extends Controller {
             'payments'
         ])->findOrFail($id);
 
+        if($request->is_method === 'receptionist'){
+            return response()->json(['status'=>'success','data'=>$booking]);
+        }
         $pageTitle = 'Chi tiết đặt chỗ';
         return view('admin.booking.details', compact('pageTitle', 'booking'));
     }
@@ -213,8 +219,9 @@ class BookingController extends Controller {
         $scope = 'ALL';
         $is_method = 'Receptionist';
         $bookings = $this->bookingData($scope,$is_method);
-        //    \Log::info($bookings);
-
+        //\Log::info($bookings);
+        $bookings = BookedRoom::active()->with('booking', 'roomType', 'room', 'usedPremiumService')->get();
+             // \Log::info($roomsBooking);
 
         $userList = User::select('username', 'email', 'mobile', 'address')->get();
 

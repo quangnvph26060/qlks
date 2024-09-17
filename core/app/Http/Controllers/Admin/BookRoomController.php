@@ -54,8 +54,9 @@ class BookRoomController extends Controller
         if ($validator->fails()) {
             return response()->json(['error' => $validator->errors()->all()]);
         }
-
+         \Log::info($request);
         $view = $this->getRooms($request);
+       
         return response()->json(['html' => $view]);
     }
 
@@ -74,7 +75,7 @@ class BookRoomController extends Controller
                 'room'            => 'required|array',
                 'paid_amount'     => 'nullable|numeric|gte:0' // tiền mà khách đã thanh toán trước
             ]);
-
+            \Log::info($request->all());
             if ($validator->fails()) {
                 return response()->json(['error' => $validator->errors()->all()]);
             }
@@ -96,7 +97,7 @@ class BookRoomController extends Controller
             $bookedRoomData = [];
             $totalFare      = 0;
             $tax            = gs('tax');
-
+            // \Log::info($request->room);
             foreach ($request->room as $room) {
                 $data      = [];
                 $roomId    = explode('-', $room)[0];
@@ -109,10 +110,11 @@ class BookRoomController extends Controller
                 }
 
                 $room = Room::with('roomType')->find($roomId);
-
+                //  \Log::info( 'demo: '.  @$room->roomType->id);
+                // \Log::info($request->room_type_id);
                 if ($request->room_type_id != @$room->roomType->id) {
                     DB::rollBack();
-                    return response()->json(['error' => 'Loại phòng không hợp lệ đã chọn']);
+                    return response()->json(['error' => 'Loại phòng đã chọn không hợp lệ ']);
                 }
 
                 $data['booking_id']       = 0;
@@ -136,7 +138,7 @@ class BookRoomController extends Controller
 
             if ($request->paid_amount && $request->paid_amount > $totalFare + $taxCharge) {
                 DB::rollBack();
-                return response()->json(['error' => 'Paying amount can\'t be greater than total amount']);
+                return response()->json(['error' => 'Số tiền thanh toán không được lớn hơn tổng số tiền']);
             }
 
             $booking                 = new Booking();
@@ -174,7 +176,7 @@ class BookRoomController extends Controller
         } catch (\Exception $e) {
            \Log::info('Error booking : '. $e->getMessage());
             DB::rollBack();
-            return response()->json(['error' => 'Đã xảy ra lỗi, không đăht phòng thành  công ']);
+            return response()->json(['error' => 'Đã xảy ra lỗi, không đặt phòng thành công ']);
         }
     }
 }

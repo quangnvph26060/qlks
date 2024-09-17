@@ -19,7 +19,7 @@
                             @if ($booking->user_id)
                                 <span class="d-bock">@lang('Khách hàng đã đăng ký')</span>
                             @else
-                                <span class="d-bock">@lang('Khách đi bộ')</span>
+                                <span class="d-bock">@lang('Khách lưu trú')</span>
                             @endif
                         </div>
 
@@ -190,7 +190,7 @@
                                                         @endif
                                                     </td>
                                                     <td class="text-end" data-label="@lang('Giá')">
-                                                        {{ showAmount($booked->fare) }}
+                                                        {{ showDateTime ($booked->fare) }}
                                                     </td>
 
                                                 </tr>

@@ -78,9 +78,15 @@ class ManageUsersController extends Controller
     }
 
 
-    public function detail($id)
+    public function detail(Request $request, $id)
     {
+       
         $user = User::findOrFail($id);
+
+        if($request->is_method === 'receptionist'){
+            return response()->json(['status'=>'success','data'=>$user]);
+        }
+        
         $pageTitle = 'Guest Detail - ' . $user->username;
 
         $widget['total_bookings']    = Booking::where('user_id', $id)->count();

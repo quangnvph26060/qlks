@@ -166,7 +166,9 @@ CREATE TABLE banks (
     sort_name VARCHAR(255) NOT NULL
 );
 
-ALTER TABLE `room_types` ADD `is_clean` BOOLEAN NOT NULL DEFAULT TRUE COMMENT '1: đã dọn phòng\r\n0: chưa dọn phòng' AFTER `is_featured`;
+-- 13/9/2024 / devquang
+ALTER TABLE rooms
+ADD COLUMN is_clean BOOLEAN NOT NULL DEFAULT TRUE;
 
 
 

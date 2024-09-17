@@ -248,7 +248,10 @@
         border: 1px solid;
         background-color: #e2e6ea;
     }
-
+    .status-button.active {
+        border-color: #007bff; /* Màu viền khi active */
+        background-color: #e7f3ff; /* Màu nền khi active */
+    }
     .status-dot {
         width: 10px;
         height: 10px;
