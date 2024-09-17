@@ -433,6 +433,34 @@
 .close-customer{
     cursor: pointer;
 }
+.list .list-item {
+    border: 1px solid #f1f1f1;
+    border-bottom: 0;
+    display: flex;
+    justify-content: space-between;
+    padding: 0.6rem;
+}
+
+.list .list-item span:first-child {
+    font-weight: 500;
+    border-radius: 7px 7px 0 0;
+}
+
+.list .list-item:first-child {
+    border-radius: 7px 7px 0 0;
+}
+
+.list .list-item:last-child {
+    border-bottom: 1px solid #f1f1f1;
+    border-radius: 0 0 7px 7px;
+}
+#extraChargeModal{
+    z-index: 99999;
+    background-color: rgb(61 58 58 / 42%);
+}
+.css_extraChargeModal{
+    width: 500px;
+}
 @media (max-width:768px) {
     .mobi-table td{
         padding: 10px !important;
@@ -442,5 +470,8 @@
     }
     .customer-popup{
         width: 100%;
+    }
+    #myModal-late-checkin{
+        padding-right: 0px !important;
     }
 }

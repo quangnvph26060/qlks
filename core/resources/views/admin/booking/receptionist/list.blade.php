@@ -41,6 +41,9 @@
         <!-- Room P.201 -->
         @forelse($emptyRooms as $rooms)
             @php
+                $classClean = $rooms->getCleanStatusClass();
+                $classSvg = $rooms->getCleanStatusSvg();
+                $cleanText = $rooms->getCleanStatusText();
                 $class = 'status-dirty';
                 if ($rooms->status == 1) {
                     $class = 'status-occupied'; // đang hoạt động; sắp tới
@@ -49,30 +52,9 @@
 
             <div class="col-md-2 main-room-card  card-{{ $class }} ">
                 <div class="room-card  {{ $class }}">
-                    <div class="d-flex  justify-content-between align-items-center">
-                        <div id="badgeChuaDon" class="badge badge-danger">
-                            <svg style="margin-right: 10px" xmlns="http://www.w3.org/2000/svg" width="15" height="15"
-                                viewBox="0 0 48 48">
-                                <g fill="none" stroke="currentColor" stroke-linejoin="round" stroke-width="4">
-                                    <path stroke-linecap="round" d="M20 5.914h8v8h15v8H5v-8h15v-8Z" clip-rule="evenodd" />
-                                    <path d="M8 40h32V22H8v18Z" />
-                                    <path stroke-linecap="round" d="M16 39.898v-5.984m8 5.984v-6m8 6v-5.984M12 40h24" />
-                                </g>
-                            </svg>Chưa dọn
-                        </div>
 
-                        <div>
-                            <svg style="color: #161515" xmlns="http://www.w3.org/2000/svg" width="20" height="20"
-                                viewBox="0 0 21 21" class="room-icon" data-room="{{ $rooms->room_number }}"
-                                style="cursor:pointer;" data-clean="1">
-                                <g fill="currentColor" fill-rule="evenodd">
-                                    <circle cx="10.5" cy="10.5" r="1" />
-                                    <circle cx="10.5" cy="5.5" r="1" />
-                                    <circle cx="10.5" cy="15.5" r="1" />
-                                </g>
-                            </svg>
-                        </div>
-                    </div>
+                    <x-room-badge isClean="{{ $rooms->is_clean }}" classClean="{{ $classClean }}" classSvg="{{ $classSvg }}" cleanText="{{ $cleanText }}" roomNumber="{{ $rooms->room_number }}" />
+
                     <div class="content-booking mt-2 room-booking-{{ $class }}"
                         data-hours="{{ $rooms->roomType->hourly_rate }}" data-day="{{ $rooms->roomType->fare }}"
                         data-night="{{ $rooms->roomType->fare }}" data-name = "{{ $rooms->roomType->name }}"
@@ -95,7 +77,6 @@
         @forelse($bookings as $booking)
             @php
                 $class = 'status-dirty';
-
                 $room = $booking->room;
                 $classClean = $room->getCleanStatusClass();
                 $classSvg = $room->getCleanStatusSvg();
@@ -119,32 +100,12 @@
                 ) {
                     $class = 'status-late-checkin'; // nhận phòng muộn
                 }
+
             @endphp
             <div class="col-md-2 main-room-card card-{{ $class }}">
                 <div class="room-card {{ $class }}">
-                    <div class="d-flex  justify-content-between align-items-center">
-                        <div id="badgeChuaDon" class="badge {{ $classClean }}">
-
-                            <img src="{{ asset('assets/svg/' . $classSvg . '.svg') }}" alt="Logo" />
-
-                            <link rel="stylesheet" href="{{ asset('assets/svg/no_clean.svg') }}">
-                            {{ $cleanText }}
-                        </div>
-
-                        <div>
-                            <svg style="color: #161515" xmlns="http://www.w3.org/2000/svg" width="20" height="20"
-                                viewBox="0 0 21 21" class="room-icon" data-room="{{ $booking->room_number }}"
-                                style="cursor:pointer;" data-clean="1">
-                                >
-                                <g fill="currentColor" fill-rule="evenodd">
-                                    <circle cx="10.5" cy="10.5" r="1" />
-                                    <circle cx="10.5" cy="5.5" r="1" />
-                                    <circle cx="10.5" cy="15.5" r="1" />
-                                </g>
-                            </svg>
-
-                        </div>
-                    </div>
+                   
+                    <x-room-badge isClean="{{ $booking->room->is_clean }}" classClean="{{ $classClean }}" classSvg="{{ $classSvg }}" cleanText="{{ $cleanText }}" roomNumber="{{ $booking->room->room_number }}" />
 
                     <div class="content-booking mt-2 room-booking-{{ $class }}"
                         data-id="{{ $booking->booking_id }}" data-hours="{{ $booking->roomType->hourly_rate }}"
@@ -455,7 +416,7 @@
 
                                                 <div class="col-12 mt-2 mb-2 d-flex justify-content-around">
                                                     <label class="fw-bold">Khách đã trả</label>
-                                                    <p>0</p>
+                                                    <p class="total_received"></p>
                                                 </div>
                                             </div>
                                             <button type="button" class="btn btn-primary">Trả phòng</button>
@@ -540,7 +501,7 @@
 
                                                 <div class="col-12 mt-2 mb-2 d-flex justify-content-around">
                                                     <label class="fw-bold">Khách đã trả</label>
-                                                    <p>0</p>
+                                                    <p class="total_received"></p>
                                                 </div>
                                             </div>
                                             <button type="button" class="btn btn-primary">Trả phòng</button>
@@ -555,6 +516,7 @@
                 </div>
             </div>
         </div>
+        @include('admin.booking.partials.modal_extraChargeModal')
         {{-- NHẬN PHÒNG MUỘN  --}}
         <div class="modal fade" id="myModal-late-checkin" tabindex="-1" role="dialog"
             aria-labelledby="myModalLabel-booking" aria-hidden="true">
@@ -601,10 +563,10 @@
                                             <strong>Trả phòng</strong>
                                             <p class="check_out"></p>
                                         </div>
-                                        <div class="detail-item-checkout">
+                                        {{-- <div class="detail-item-checkout">
                                             <strong>Tổng phí</strong>
                                             <p class="booking_price"></p>
-                                        </div>
+                                        </div> --}}
                                     </div>
                                 </div>
 
@@ -652,28 +614,26 @@
                                     <div aria-labelledby="premiumServiceHeading" class="accordion-collapse collapse show"
                                         data-bs-parent="#s" id="premiumService">
                                         <div class="accordion-body p-0">
-                                            @if ($booking->usedPremiumService->count())
-                                                <div class="table-responsive--sm">
-                                                    <table class="custom--table head--base table table-striped">
-                                                        <thead>
-                                                            <tr>
-                                                                <th>@lang('Ngày')</th>
-                                                                <th>@lang('Phòng số')</th>
-                                                                <th>@lang('Dịch vụ')</th>
-                                                                <th>@lang('Tổng')</th>
-                                                            </tr>
-                                                        </thead>
 
-                                                        <tbody id="user_services">
-                                                           
-                                                        </tbody>
-                                                    </table>
-                                                </div>
-                                            @else
-                                                <div class="text-center">
-                                                    <h6 class="p-3">@lang('Không sử dụng dịch vụ bổ sung')</h6>
-                                                </div>
-                                            @endif
+                                            <div class="table-responsive--sm">
+                                                <table class="custom--table head--base table table-striped">
+                                                    <thead>
+                                                        <tr>
+                                                            <th>@lang('Ngày')</th>
+                                                            <th>@lang('Phòng số')</th>
+                                                            <th>@lang('Dịch vụ')</th>
+                                                            <th>@lang('Số lượng')</th>
+                                                            <th>@lang('Giá trị')</th>
+                                                            <th>@lang('Tổng')</th>
+                                                        </tr>
+                                                    </thead>
+
+                                                    <tbody id="user_services">
+
+                                                    </tbody>
+                                                </table>
+                                            </div>
+
                                         </div>
                                     </div>
                                 </div>
@@ -683,22 +643,69 @@
                                 <div class="card-body">
                                     <div class="row mb-3 justify-content-between">
                                         <div class="col-md-9">
+
+
+
                                         </div>
-                                        <div class="col-md-3 text-end" style="padding: 0px">
-                                            <div class="form-group " style="background: #ddd;border-radius:8px ">
-                                                <div class="col-12  mt-2 d-flex justify-content-around">
 
-                                                    <label class="fw-bold"> P.303 </label>
-
-                                                    <p>150,000</p>
+                                        <div class="card">
+                                            <div class="card-body">
+                                                <div class="d-flex justify-content-between mt-3 mb-3">
+                                                    <h5 class="card-title">@lang('Tóm tắt thanh toán')</h5>
+                                                    <div>
+                                                        {{-- data-id="{{ $booking->id }}" --}}
+                                                        <button class="btn btn--success extraChargeBtn" data-type="add">
+                                                            <i class="las la-plus-circle"></i>@lang('Thêm phí bổ sung')
+                                                        </button>
+                                                        {{-- data-id="{{ $booking->id }}" --}}
+                                                        <button class="btn btn--danger extraChargeBtn"
+                                                            data-type="subtract"><i
+                                                                class="las la-minus-circle"></i>@lang('Trừ Phí Thêm')</button>
+                                                    </div>
                                                 </div>
+                                                <div class="list">
+                                                    <div class="list-item">
+                                                        <span>@lang('Thanh toán')</span>
+                                                        <span class="total_fare"></span>
+                                                    </div>
 
-                                                <div class="col-12 mt-2 mb-2 d-flex justify-content-around">
-                                                    <label class="fw-bold">Khách đã trả</label>
-                                                    <p>0</p>
+                                                    <div class="list-item">
+                                                        <span>@lang('Đã nhận được thanh toán')</span>
+                                                        <span class="total_received"> </span>
+                                                    </div>
+
+                                                    <div class="list-item">
+                                                        <span>@lang('Đã hoàn tiền')</span>
+                                                        <span class="total_refunded"></span>
+                                                    </div>
+
+                                                    <div class="list-item fw-bold">
+                                                        <span id="dueMessage">@lang('Phải thu từ người dùng')</span>
+                                                        <span id="customer_payment"></span>
+                                                    </div>
                                                 </div>
                                             </div>
-                                            <button type="button" class="btn btn-primary">Trả phòng</button>
+
+                                        </div>
+                                        <div class="col-12">
+                                            <div class="card">
+                                                <div class="card-body">
+                                                    <h5 class="card-title" id="dueMessage1"></h5>
+                                                    <div id="color_payment">
+                                                        <span id="number_fare"></span> <span
+                                                            id="customer_payment1"></span>
+                                                    </div>
+                                                    <div class="form-group">
+                                                        <label>@lang('Nhập số tiền')</label>
+                                                        <div class="input-group">
+                                                            <input class="form-control input_fare_booking" min="0"
+                                                                name="amount" required step="any" type="number">
+                                                            <span class="input-group-text">{{ __(gs()->cur_text) }}</span>
+                                                        </div>
+                                                    </div>
+                                                    <button type="button" class="btn btn-primary">Trả phòng</button>
+                                                </div>
+                                            </div>
                                         </div>
 
                                     </div>
@@ -711,25 +718,7 @@
             </div>
         </div>
         <!-- Modal clean -->
-        <div class="modal fade" id="dynamicModal" tabindex="-1" aria-labelledby="dynamicModalLabel"
-            aria-hidden="true">
-            <div class="modal-dialog modal-dialog-centered modal-dialog1 ">
-                <div class="modal-content">
-                    <div class="modal-header">
-                        <h5 class="modal-title" id="dynamicModalLabel"></h5>
-                        <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
-                    </div>
-                    <div class="modal-body">
-                        <!-- Nội dung modal sẽ được cập nhật bằng JS -->
-                        <p id="modalRoomInfo">Đang tải dữ liệu...</p>
-                    </div>
-                    <div class="modal-footer">
-                        <button type="button" class="btn btn-primary" data-dismiss="modal">Đồng ý 213</button>
-                    </div>
-                </div>
-            </div>
-        </div>
-
+        @include('admin.booking.partials.clean_modal')
     </div>
     </div>
 @endsection
@@ -738,11 +727,14 @@
     <link rel="stylesheet" href="{{ asset('assets/global/css/receptionist.css') }}">
 @endpush
 
-
 <script src="https://code.jquery.com/jquery-3.5.1.slim.min.js"></script>
 <script src="https://cdn.jsdelivr.net/npm/@popperjs/core@2.5.3/dist/umd/popper.min.js"></script>
-<script src="https://stackpath.bootstrapcdn.com/bootstrap/4.5.2/js/bootstrap.min.js"></script>
+@push('script-lib')
+    <script src="{{ asset('assets/admin/js/vendor/sweetalert2@11.js') }}"></script>
+@endpush
+
 <script>
+
     $(document).ready(function() {
         // choose option  rooms
         $('.status-button').click(function() {
@@ -772,31 +764,35 @@
         });
 
 
+        
+        $('.room-icon').on('click', function() {
+            let roomData = $(this).attr('data-room');
+            let roomClean = $(this).attr('data-clean');
+            let textClean = '';
 
-        const svgIcons = document.querySelectorAll('.room-icon');
-        svgIcons.forEach(function(svg) {
-            svg.addEventListener('click', function() {
+            if (roomClean == 1) {
+                textClean = '<strong style="color: red;">Chưa dọn</strong>';
+            } else {
+                textClean = '<strong style="color: #28a745;">Sạch</strong>';
+            }
 
-                const roomData = this.getAttribute('data-room');
-                const roomClean = this.getAttribute('data-clean');
-                let textClean = '';
+            $('#dynamicModalLabel').html('Chuyển trạng thái buồng phòng ' + roomData + ' thành ' +
+                textClean);
+            $('#modalRoomInfo').html('Chuyển trạng thái buồng phòng ' + roomData + ' thành ' +
+                textClean);
 
-                if (roomClean == 1) {
-                    textClean = '<strong style="color: #28a745;">Sạch</strong>';
-                } else {
-                    textClean = '<strong style="color: red;">Chưa dọn</strong>';
-                }
-
-                document.getElementById('dynamicModalLabel').innerHTML =
-                    'Chuyển trạng thái buồng phòng ' + roomData + ' thành ' + textClean;
-
-                document.getElementById('modalRoomInfo').innerHTML =
-                    'Chuyển trạng thái buồng phòng ' + roomData + ' thành ' + textClean;
-
-                var modal = new bootstrap.Modal(document.getElementById('dynamicModal'));
-                modal.show();
+            var modal = new bootstrap.Modal($('#dynamicModal'));
+            $('.btn-clean').click(function(){
+                console.log(123);
+                
+                console.log(roomData);
+                console.log(roomClean);
             });
+            modal.show();
         });
+
+       
+
         // đặt phòng
         const roomBooking = document.querySelectorAll('.room-booking-status-dirty');
         roomBooking.forEach(function(booking) {
@@ -889,9 +885,11 @@
                                 },
                                 error: function(xhr, status, error) {
 
-                                    $('.user_info').text('N/A');
+                                    $('.user_info').text(
+                                        `${response.data.guest_details.name} - ${response.data.guest_details.email}`
+                                    );
 
-                                    console.error('Error:', error);
+                                    // console.error('Error:', error);
 
                                 }
                             });
@@ -899,52 +897,69 @@
 
                         $('#bookings-table-body').empty();
                         let rowsHtml = '';
+                        let totalFare = 0;
                         response.data.booked_rooms.forEach(function(booked, index) {
-                            if (booked.id === booking_id) {
-                                $('.booking-no').text(booked.room.room_number);
-                                rowsHtml += `
-                                        <tr>
-                                            ${index === 0 ? `<td class="bg--date text-center" rowspan="${response.data.booked_rooms.length}">
-                                                ${booked.booked_for}
-                                            </td>` : ''}
-                                            <td class="text-center" data-label="@lang('Loại phòng')">
-                                                ${booked.room.room_type.name}
-                                            </td>
-                                            <td data-label="@lang('Room No.')">
-                                                ${booked.room.room_number}
-                                                ${booked.status === 'canceled' ? `<span class="text--danger text-sm">(@lang('Đã hủy'))</span>` : ''}
-                                            </td>
-                                            <td class="text-end" data-label="@lang('Giá')">
-                                                ${booked.fare}
-                                            </td>
-                                        </tr>
-                                    `;
-                            }
+                            $('.booking-no').text(booked.room.room_number);
+                            rowsHtml += `
+                                    <tr>
+                                        <td class="bg--date text-center" data-label="@lang('Đã đặt chỗ')">
+                                            ${booked.booked_for}
+                                        </td>
+                                        <td class="text-center" data-label="@lang('Loại phòng')">
+                                            ${booked.room.room_type.name}
+                                        </td>
+                                        <td data-label="@lang('Số phòng.')">
+                                            ${booked.room.room_number}
+                                            ${booked.status === 'canceled' ? `<span class="text--danger text-sm">(@lang('Đã hủy'))</span>` : ''}
+                                        </td>
+                                        <td class="text-end" data-label="@lang('Giá')">
+                                            ${formatCurrency(booked.fare)}
+                                        </td>
+                                    </tr>
+                                `;
+                            totalFare += parseFloat(booked.fare);
 
                         });
+                        rowsHtml += `
+                            <tr>
+                                <td class="text-end" colspan="3">
+                                    <span class="fw-bold">@lang('Tổng giá')</span>
+                                </td>
+
+                                <td class="fw-bold text-end">
+                                    ${ formatCurrency(totalFare) } 
+                                </td>
+                            </tr>`;
+
                         $('#user_services').empty();
                         let rowsHtml1 = '';
                         response.data.used_premium_service.forEach(function(booked, index) {
-                           
+
                             //    $('.booking-no').text(booked.room.room_number);
-                                rowsHtml1 += `
+                            rowsHtml1 += `
                                         <tr>
-                                            ${index === 0 ? `<td class="bg--date text-center" rowspan="${response.data.used_premium_service.length}">
+                                            <td class="bg--date text-center" data-label="@lang('Ngày')">
                                                 ${booked.service_date}
-                                            </td>` : ''}
-                                            <td class="text-center" data-label="@lang('Loại phòng')">
-                                                ${booked.room.room_type.name}
                                             </td>
-                                            <td data-label="@lang('Room No.')">
-                                                ${booked.room.room_number}
-                                                ${booked.status === 'canceled' ? `<span class="text--danger text-sm">(@lang('Đã hủy'))</span>` : ''}
+                                             <td data-label="@lang('Phòng số')">
+                                                 ${booked.room.room_number}
                                             </td>
+                                            <td class="text-center" data-label="@lang('Dịch vụ')">
+                                                ${booked.premium_service.name}
+                                            </td>
+                                              <td class="text-center" data-label="@lang('Số lượng')">
+                                                ${booked.qty}
+                                            </td>
+                                           
                                             <td class="text-end" data-label="@lang('Giá')">
-                                                ${booked.fare}
+                                                ${formatCurrency(booked.premium_service.cost)}
+                                            </td>
+                                            <td class="text-end" data-label="@lang('Tổng giá')">
+                                                  ${formatCurrency( booked.qty * booked.premium_service.cost)}
                                             </td>
                                         </tr>
                                     `;
-                            
+
 
                         });
                         // Chèn nội dung mới vào tbody
@@ -956,6 +971,40 @@
                         $('.check_out').text(response.data.check_out);
                         $('.booking_price').text(response.data.booked_rooms.fare);
 
+                        const paid_amount = formatCurrency(response.data.paid_amount);
+                        $('.total_received').text("-" + paid_amount);
+                        $('.total_refunded').text(response.returnedPayments);
+                        const total_amount = formatCurrency(response.total_amount)
+                        $('.total_fare').text("+" + total_amount);
+                        if (response.due > 0) {
+                            $('#number_fare').text('Số tiền phải thu: ');
+
+                            $('#color_payment').addClass('text--success');
+                            $('#dueMessage1').text("@lang('Nhận thanh toán')");
+                            $('#dueMessage').text("@lang('Phải thu từ người dùng')");
+
+                            const due = formatCurrency(response.due);
+                            $('#customer_payment, #customer_payment1').text(due);
+                        } else {
+                            $('#number_fare').text('Số tiền hoàn lại: ');
+
+                            $('#dueMessage1').text("@lang('Số tiền hoàn lại')");
+                            $('#dueMessage').text("Có thể hoàn trả");
+
+                            const due = formatCurrency(response.due);
+                            $('#customer_payment1').text(due);
+                        }
+                        $('.btn-primary').on('click', function() {
+                            let inputFareBooking = $('.input_fare_booking').val();
+                            if (inputFareBooking === "") {
+                                showSwalMessage('error', 'Vui lòng nhập số tiền');
+                                return;
+                            }
+                        });
+
+
+
+
                         $('#myModal-late-checkin').modal('show');
 
                     }
@@ -965,6 +1014,7 @@
 
                 }
             });
+
         });
         var now = new Date();
         var year = now.getFullYear();
@@ -1270,5 +1320,55 @@
 
 
         });
+        $('.extraChargeBtn').on('click', function() {
+
+
+            let data = $(this).data();
+            let modal = $('#extraChargeModal');
+            modal.find('.modal-title').text($(this).text());
+            if (data.type == 'add') {
+                modal.find('form').attr('action',
+                    `{{ route('admin.booking.extra.charge.add', '') }}/${data.id}`);
+                modal.find('[name=type]').val('add');
+            } else {
+                modal.find('form').attr('action',
+                    `{{ route('admin.booking.extra.charge.subtract', '') }}/${data.id}`);
+                modal.find('[name=type]').val('subtract');
+            }
+            modal.modal('show');
+        });
+
     });
+
+
+
+    function formatCurrency(amount) {
+        const parts = amount.toString().split('.');
+        const integerPart = parts[0];
+        const formattedInteger = integerPart.replace(/\B(?=(\d{3})+(?!\d))/g, '.');
+
+        return formattedInteger + ' ' + 'VND';
+    }
+    const showSwalMessage = (icon, title, timer = 2000) => {
+        const Toast = Swal.mixin({
+            toast: true,
+            position: "top-end",
+            showConfirmButton: false,
+            timer: timer,
+            timerProgressBar: true,
+            didOpen: (toast) => {
+                toast.onmouseenter = Swal.stopTimer;
+                toast.onmouseleave = Swal.resumeTimer;
+            }
+        });
+        Toast.fire({
+            icon: icon,
+            title: `<p>${title}</p>`
+        });
+    };
 </script>
+<style scoped>
+    .text--success span {
+        color: #28c76f !important;
+    }
+</style>

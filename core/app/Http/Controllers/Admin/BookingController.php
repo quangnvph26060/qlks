@@ -118,9 +118,6 @@ class BookingController extends Controller {
     }
 
     public function bookingDetails(Request $request,  $id) {
-        \Log::info($id);
-        \Log::info($request->all());
-        
         $booking = Booking::with([
             'bookedRooms',
             'activeBookedRooms:id,booking_id,room_id',
@@ -131,9 +128,13 @@ class BookingController extends Controller {
             'usedPremiumService.premiumService',
             'payments'
         ])->findOrFail($id);
-
+       
         if($request->is_method === 'receptionist'){
-            return response()->json(['status'=>'success','data'=>$booking]);
+            $returnedPayments  = $booking->payments->where('type', 'RETURNED');
+            $receivedPayments  = $booking->payments->where('type', 'RECEIVED');
+            $total_amount      = $booking->total_amount;
+            $due               = $booking->due();
+            return response()->json(['status' => 'success','data' => $booking, 'returnedPayments' => $returnedPayments, 'receivedPayments' => $receivedPayments, 'total_amount' => $total_amount, 'due' => $due]);
         }
         $pageTitle = 'Chi tiết đặt chỗ';
         return view('admin.booking.details', compact('pageTitle', 'booking'));
@@ -218,10 +219,10 @@ class BookingController extends Controller {
        //  \Log::info($emptyRooms);
         $scope = 'ALL';
         $is_method = 'Receptionist';
-        $bookings = $this->bookingData($scope,$is_method);
+      //  $bookings = $this->bookingData($scope,$is_method);
         //\Log::info($bookings);
         $bookings = BookedRoom::active()->with('booking', 'roomType', 'room', 'usedPremiumService')->get();
-             // \Log::info($roomsBooking);
+               \Log::info($bookings);
 
         $userList = User::select('username', 'email', 'mobile', 'address')->get();
 
