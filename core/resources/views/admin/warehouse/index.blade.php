@@ -29,9 +29,9 @@
                                     <th>Mã phiếu</th>
                                     <th>Nhà Cung Cấp</th>
                                     <th>Số điện thoại</th>
-                                    <th>Địa Chỉ</th>
-                                    <th>Email</th>
-                                    <th>Tổng</th>
+                                    <th>Ngày tạo</th>
+                                    <th>Trạng thái</th>
+                                    <th>Tổng tiền</th>
                                 </tr>
                             </thead>
                             <tbody>
@@ -62,46 +62,6 @@
             $(document).ready(function() {
                 const apiUrl = '{{ route('admin.warehouse.index') }}';
                 initDataFetch(apiUrl);
-
-
-
-                // $(document).on('click', '.btn-delete', function() {
-
-                //     var row = $(this).closest('tr');
-
-                //     var productId = row.data('id');
-
-                //     Swal.fire({
-                //         title: 'Xóa sản phẩm',
-                //         text: 'Bạn muốn xóa sản phẩm này ?',
-                //         icon: 'warning',
-                //         showCancelButton: true,
-                //         confirmButtonColor: '#3085d6',
-                //         cancelButtonColor: '#d33',
-                //         confirmButtonText: 'Đồng ý',
-                //         cancelButtonText: 'Huỷ'
-
-                //     }).then((result) => {
-                //         if (result.isConfirmed) {
-                //             $.ajax({
-                //                 type: 'DELETE',
-                //                 url: '{{ route('admin.product.destroy', ':id') }}'
-                //                     .replace(':id', productId),
-                //                 success: function(response) {
-                //                     row.remove();
-                //                     $(`#rep-${productId}`).remove();
-                //                     notData();
-                //                     showSwalMessage('success', response.message);
-                //                 },
-                //                 error: function(xhr) {
-                //                     showSwalMessage('error', xhr.responseJSON
-                //                         .message);
-                //                 }
-                //             })
-                //         }
-                //     })
-
-                // });
 
                 // $(document).on('change', '.update-status', function() {
                 //     const isChecked = this.checked;
@@ -154,6 +114,26 @@
     <script src="{{ asset('assets/admin/js/vendor/sweetalert2@11.js') }}"></script>
 
     <style>
+        @media (min-width: 768px) {
+            .form-switch .form-check-input {
+                float: right
+            }
+        }
+
+        @media (min-width: 992px) {
+            .form-switch .form-check-input {
+                margin-left: 50%;
+                transform: translateX(-50%);
+                float: none;
+            }
+        }
+
+
+
+
+
+
+
         .btn-toggle {
             border: 1px solid #007bff;
             background-color: #007bff;

@@ -143,8 +143,8 @@
                     </div>
                     <div class="card-body results">
                         <div class="row">
-                            @if ($roomType->products->isNotEmpty())
-                                @foreach ($roomType->products as $product)
+
+                                @foreach ($roomType->products ?? [] as $product)
                                     <div class="col-md-4 pb-3 result-item" data-id="{{ $product->id }}}">
                                         <div class="d-flex align-items-center border position-relative p-1" data-id="{{ $product->id }}">
                                             <div class="img-container">
@@ -156,7 +156,7 @@
                                                     <a href="#" class="text-decoration-none">{{$product->name}}</a>
                                                 </div>
                                                 <div class="price">
-                                                    <span class="current-price">Tồn kho: {{$product->stock}}</span>
+                                                    <span class="current-price">Tồn kho: {{$product->stock ?? 0}}</span>
                                                 </div>
                                                 <div class="quantity d-flex align-items-center">
                                                     <span class="current-stock me-2">Số lượng</span>
@@ -169,7 +169,6 @@
                                         </div>
                                     </div>
                                 @endforeach
-                            @endif
                         </div>
                     </div>
                 </div>
@@ -412,7 +411,7 @@
                                 <a href="#" class="text-decoration-none">${resource.name}</a>
                             </div>
                             <div class="price">
-                                <span class="current-price">Tồn kho: ${resource.stock}</span>
+                                <span class="current-price">Tồn kho: ${resource.stock ?? 0}</span>
                             </div>
                             <div class="quantity d-flex align-items-center">
                                 <span class="current-stock me-2">Số lượng</span>
@@ -450,7 +449,7 @@
                 const searchValue = $(this).val();
 
                 if (searchValue === "") {
-                    $(".search-results").html('');
+                    $(".search-results").empty();
                 } else {
                     debounceTimer = setTimeout(() => {
                         fetchData(); // Gọi fetchData nếu có giá trị tìm kiếm

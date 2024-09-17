@@ -31,9 +31,9 @@ class WarehouseController extends Controller
         $search = request()->get('search');
         $perPage = request()->get('perPage', 10);
         $orderBy = request()->get('orderBy', 'id');
-        $columns = ['id', 'supplier_id', 'reference_code', 'total'];
+        $columns = ['id', 'supplier_id', 'reference_code', 'total', 'status', 'created_at'];
         $relations = ['supplier'];
-        $searchColumns = ['name', 'email', 'phone', 'address'];
+        $searchColumns = ['reference_code'];
 
         $response = $this->repository
             ->customPaginate(
@@ -42,6 +42,7 @@ class WarehouseController extends Controller
                 $perPage,
                 $orderBy,
                 $search,
+                [],
                 $searchColumns
             );
 
@@ -171,7 +172,23 @@ class WarehouseController extends Controller
      */
     public function update(Request $request, string $id)
     {
-        //
+        $warehouse = WarehouseEntry::query()->find($id);
+
+        if (!$warehouse) {
+            return response()->json([
+                'status' => false,
+                'message' => 'Không tìm thấy đơn hàng!'
+            ]);
+        }
+
+        $warehouse->update([
+            'status' => 1
+        ]);
+
+        return response()->json([
+            'status' => true,
+            'message' => 'Cập nhật trạng thái đơn hàng thành công.'
+        ]);
     }
 
     /**

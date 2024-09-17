@@ -20,7 +20,7 @@ class BaseRepository
         $this->model = $model;
     }
 
-    public function customPaginate($columns = ['*'], $relations = [], $perPage = 10, $orderBy = null, $search = null, $customWhere = [], $searchColumns = [], $relationSearchColumns = [], $filters = [])
+    public function customPaginate($columns = ['*'], $relations = [], $perPage = 10, $orderBy = null, $search = null, $customWhere = [], $searchColumns = [], $relationSearchColumns = [], $filters = [], $all = false)
     {
         $query = $this->model->query()->with($relations);
 
@@ -64,7 +64,7 @@ class BaseRepository
         }
 
         // Phân trang
-        return $query->paginate($perPage, $columns);
+        return $all ? $query->get() : $query->paginate($perPage, $columns);
     }
 
     public function logError($exception)

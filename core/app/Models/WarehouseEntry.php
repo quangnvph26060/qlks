@@ -13,6 +13,7 @@ class WarehouseEntry extends Model
         'supplier_id',
         'reference_code',
         'total',
+        'status'
     ];
 
     public function supplier()

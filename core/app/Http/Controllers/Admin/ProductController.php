@@ -250,7 +250,8 @@ class ProductController extends Controller
             ['is_published' => true],
             ['name'],
             [],
-            $filters // Truyền mảng filters vào
+            $filters,
+            true
         );
 
         if (request()->ajax()) {

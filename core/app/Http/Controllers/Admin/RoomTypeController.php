@@ -9,6 +9,7 @@ use App\Models\BedType;
 use App\Models\Product;
 use App\Models\Facility;
 use App\Models\RoomType;
+use App\Rules\StockCheck;
 use Illuminate\Support\Str;
 use Illuminate\Http\Request;
 use App\Models\RoomTypeImage;
@@ -113,34 +114,48 @@ class RoomTypeController extends Controller
             $notify[] = ['success', $notification];
             return back()->withNotify($notify);
         } catch (\Exception $e) {
-            dd($e->getMessage());
             DB::rollBack();
-            $notify[] = ['error', 'Loại phần đã biểu đồng'];
+            $notify[] = ['error', $e->getMessage()];
             return back()->withNotify($notify);
         }
     }
 
     private function insertProducts($request, $roomType)
     {
-
         if ($request->products) {
             $data = [];
 
+            // Lấy các sản phẩm hiện tại đã được liên kết với roomType để tăng lại tồn kho
             $currentProducts = $roomType->products()->pluck('quantity', 'product_id')->toArray();
 
+            // Tăng lại số lượng sản phẩm vào kho cho các sản phẩm hiện tại
             foreach ($currentProducts as $productId => $quantity) {
                 Product::find($productId)->increment('stock', $quantity);
             }
 
+            // Tạo mảng rules cho việc validate số lượng sản phẩm
+            $rules = [];
+
+            // Validate và trừ đi số lượng sản phẩm mới
             foreach ($request->products as $productId => $quantity) {
+                // Kiểm tra tồn kho bằng custom validation rule (StockCheck)
+                $rules["products.$productId"] = ['required', 'integer', 'min:1', new StockCheck($productId)];
+
+                // Kiểm tra nếu tồn kho hợp lệ thì trừ số lượng sản phẩm từ stock
                 $data[$productId] = ['quantity' => $quantity];
 
+                // Trừ số lượng sản phẩm từ kho
                 Product::find($productId)->decrement('stock', $quantity);
             }
 
+            // Thực hiện validate toàn bộ sản phẩm và số lượng
+            $validated = $request->validate($rules);
+
+            // Liên kết sản phẩm mới với roomType
             $roomType->products()->sync($data);
         }
     }
+
 
 
     protected function validation($request, $id)
