@@ -17,5 +17,20 @@ class Room extends Model {
     public function booked() {
         return $this->hasMany(BookedRoom::class, 'room_id');
     }
+    public function isRoomClean(){
+        return $this->is_clean === 1;
+    }
+    public function getCleanStatusClass()
+    {
+        return $this->isRoomClean() ? 'badge-info' : 'badge-danger';
+    }
 
+    public function getCleanStatusSvg()
+    {
+        return $this->isRoomClean() ? 'is_clean' : 'no_clean';
+    }
+    public function getCleanStatusText()
+    {
+        return $this->isRoomClean() ? 'Đã dọn' : 'Chưa dọn';
+    }
 }

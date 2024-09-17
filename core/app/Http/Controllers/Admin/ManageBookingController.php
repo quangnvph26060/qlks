@@ -128,7 +128,7 @@ class ManageBookingController extends Controller
 
         $booking = Booking::findOrFail($id);
         $due     = $booking->total_amount - $booking->paid_amount;
-
+        \Log::info(   $booking->total_amount  );
         if ($request->amount > abs($due)) {
             $message = $due <= 0 ? 'Số tiền không thể lớn hơn số tiền phải thu' : 'Số tiền không được lớn hơn số tiền phải trả';
             $notify[] = ['error', $message];

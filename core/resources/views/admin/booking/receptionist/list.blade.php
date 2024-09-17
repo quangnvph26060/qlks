@@ -6,23 +6,23 @@
     <div class="row">
         <div class="col">
             <div class="status-buttons">
-                <div class="status-button status-available-line">
+                <div class="status-button status-available-line" data-status="dirty">
                     <span class="status-dot"></span>
                     Đang trống (8)
                 </div>
-                <div class="status-button status-incoming-line">
+                <div class="status-button status-incoming-line" data-status="incoming">
                     <span class="status-dot"></span>
                     Sắp nhận (2)
                 </div>
-                <div class="status-button status-occupied-line">
+                <div class="status-button status-occupied-line" data-status="occupied">
                     <span class="status-dot"></span>
                     Đang sử dụng (4)
                 </div>
-                <div class="status-button status-checkout-line">
+                <div class="status-button status-checkout-line" data-status="late-checkin">
                     <span class="status-dot"></span>
                     Nhận phòng muộn (2)
                 </div>
-                <div class="status-button status-overdue-line">
+                <div class="status-button status-overdue-line" data-status="check-out">
                     <span class="status-dot"></span>
                     Quá giờ trả (1)
                 </div>
@@ -47,7 +47,7 @@
                 }
             @endphp
 
-            <div class="col-md-2">
+            <div class="col-md-2 main-room-card  card-{{ $class }} ">
                 <div class="room-card  {{ $class }}">
                     <div class="d-flex  justify-content-between align-items-center">
                         <div id="badgeChuaDon" class="badge badge-danger">
@@ -95,43 +95,47 @@
         @forelse($bookings as $booking)
             @php
                 $class = 'status-dirty';
-                if (now() > $booking->check_in && now() <= $booking->check_out  
-                    && $booking->status == 1 && $booking->key_status == 1 ) {
+
+                $room = $booking->room;
+                $classClean = $room->getCleanStatusClass();
+                $classSvg = $room->getCleanStatusSvg();
+                $cleanText = $room->getCleanStatusText();
+
+                if (
+                    now() > $booking->booking->check_in &&
+                    now() <= $booking->booking->check_out &&
+                    $booking->booking->status == 1 &&
+                    $booking->booking->key_status == 1
+                ) {
                     $class = 'status-occupied'; // đang hoạt động;
-                } 
-                elseif (now() < $booking->check_in && $booking->status == 1) {
+                } elseif (now() < $booking->booking->check_in && $booking->booking->status == 1) {
                     $class = 'status-incoming'; // sắp nhận
-                } 
-                else if ($booking->check_out < now() && $booking->key_status == 1 ) {
+                } elseif ($booking->booking->check_out < now() && $booking->booking->key_status == 1) {
                     $class = 'status-check-out'; // trả phòng muộn
-                }
-                else if(now() >= $booking->check_in && $booking->status == 1 && $booking->key_status == 0 ){
+                } elseif (
+                    now() >= $booking->booking->check_in &&
+                    $booking->booking->status == 1 &&
+                    $booking->booking->key_status == 0
+                ) {
                     $class = 'status-late-checkin'; // nhận phòng muộn
                 }
-              
-
-              
-
             @endphp
-            <div class="col-md-2">
+            <div class="col-md-2 main-room-card card-{{ $class }}">
                 <div class="room-card {{ $class }}">
                     <div class="d-flex  justify-content-between align-items-center">
-                        <div id="badgeChuaDon" class="badge badge-danger">
-                            <svg style="margin-right: 10px" xmlns="http://www.w3.org/2000/svg" width="15" height="15"
-                                viewBox="0 0 48 48">
-                                <g fill="none" stroke="currentColor" stroke-linejoin="round" stroke-width="4">
-                                    <path stroke-linecap="round" d="M20 5.914h8v8h15v8H5v-8h15v-8Z" clip-rule="evenodd" />
-                                    <path d="M8 40h32V22H8v18Z" />
-                                    <path stroke-linecap="round" d="M16 39.898v-5.984m8 5.984v-6m8 6v-5.984M12 40h24" />
-                                </g>
-                            </svg>Chưa dọn 
+                        <div id="badgeChuaDon" class="badge {{ $classClean }}">
+
+                            <img src="{{ asset('assets/svg/' . $classSvg . '.svg') }}" alt="Logo" />
+
+                            <link rel="stylesheet" href="{{ asset('assets/svg/no_clean.svg') }}">
+                            {{ $cleanText }}
                         </div>
 
                         <div>
                             <svg style="color: #161515" xmlns="http://www.w3.org/2000/svg" width="20" height="20"
                                 viewBox="0 0 21 21" class="room-icon" data-room="{{ $booking->room_number }}"
                                 style="cursor:pointer;" data-clean="1">
-                              >
+                                >
                                 <g fill="currentColor" fill-rule="evenodd">
                                     <circle cx="10.5" cy="10.5" r="1" />
                                     <circle cx="10.5" cy="5.5" r="1" />
@@ -143,19 +147,20 @@
                     </div>
 
                     <div class="content-booking mt-2 room-booking-{{ $class }}"
-                        data-hours="{{ $booking->bookedRooms[0]->roomType->hourly_rate }}"
-                        data-day="{{ $booking->bookedRooms[0]->roomType->fare }}"
-                        data-night="{{ $booking->bookedRooms[0]->roomType->fare }}"
-                        data-name = "{{ $booking->bookedRooms[0]->roomType->name }} "
-                        data-roomNumber="{{ $booking->room_number }}"
-                        data-room-type="{{ $booking->bookedRooms[0]->room_type_id }}">
-                        <p> {{$booking->check_in}} - {{$booking->check_out}}</p>
-                        <h3>{{ $booking->bookedRooms[0]->room->room_number }}</h3>
-                        {!! $booking->checkGuest() !!}
+                        data-id="{{ $booking->booking_id }}" data-hours="{{ $booking->roomType->hourly_rate }}"
+                        data-day="{{ $booking->roomType->fare }}" data-night="{{ $booking->roomType->fare }}"
+                        data-name = "{{ $booking->roomType->name }} " data-roomNumber="{{ $booking->room_number }}"
+                        data-room-type="{{ $booking->room_type_id }}" data-booking="{{ $booking->id }}">
+                        <p> {{ $booking->booking->booking_number }}</p>
+                        <p> {{ $booking->roomType->name }}</p>
+                        <p> {{ $booking->booking->check_in }} - {{ $booking->booking->check_out }}</p>
+                        <h3>{{ $booking->room->room_number }}</h3>
+                        {!! $booking->booking->checkGuest() !!}
+
                         @php
 
                             $currentTime = now();
-                            $checkInTime = $booking->check_in;
+                            $checkInTime = $booking->booking->check_in;
                             $flag = true;
                             // So sánh thời gian hiện tại và thời gian check-in
                             if ($currentTime < $checkInTime) {
@@ -176,16 +181,13 @@
                         @endphp
 
                         @if ($flag)
-                            <p class="single-line">{{ $booking->bookedRooms[0]->roomType->name }}</p>
+                            <p class="single-line">{{ $booking->roomType->name }}</p>
                             <div class="room-info">
-                                <p> <i
-                                        class="fas fa-clock icon"></i>{{ showAmount($booking->bookedRooms[0]->roomType->hourly_rate) }}
+                                <p> <i class="fas fa-clock icon"></i>{{ showAmount($booking->roomType->hourly_rate) }}
                                 </p>
-                                <p> <i
-                                        class="fas fa-sun icon"></i>{{ showAmount($booking->bookedRooms[0]->roomType->fare) }}
+                                <p> <i class="fas fa-sun icon"></i>{{ showAmount($booking->roomType->fare) }}
                                 </p>
-                                <p> <i
-                                        class="fas fa-moon icon"></i>{{ showAmount($booking->bookedRooms[0]->roomType->fare) }}
+                                <p> <i class="fas fa-moon icon"></i>{{ showAmount($booking->roomType->fare) }}
                                 </p>
                             </div>
                         @else
@@ -239,7 +241,8 @@
                                         <p>No items found.</p>
                                 @endforelse
                             </datalist>
-                            <p id="error-message" style="color: red; display: none;">Không tìm thấy email khách hàng phù hợp
+                            <p id="error-message" style="color: red; display: none;">Không tìm thấy email khách hàng phù
+                                hợp
                             </p>
                         </form>
 
@@ -552,6 +555,161 @@
                 </div>
             </div>
         </div>
+        {{-- NHẬN PHÒNG MUỘN  --}}
+        <div class="modal fade" id="myModal-late-checkin" tabindex="-1" role="dialog"
+            aria-labelledby="myModalLabel-booking" aria-hidden="true">
+            <div class="modal-dialog modal-dialog-centered" role="document" style="max-width: 1200px;">
+                <div class="modal-content">
+                    <div class="modal-header">
+                        <h5 class="modal-title" id="myModalLabel-booking">Chi tiết phòng <span class="booking-no"></span>
+                        </h5>
+                        <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+                    </div>
+                    <div class="modal-body">
+                        <form id="bookingForm">
+                            <!-- Row: Labels -->
+                            <div class="room-card-checkout">
+                                {{-- <div class="room-header-checkout">
+                                    <h4>Phòng 01 giường đơn</h4>
+                                    <span class="status-label-checkout">Đã đặt trước</span>
+
+
+                                </div> --}}
+
+                                <div class="room-details-checkout">
+                                    <div class="detail-row-checkout">
+                                        <div class="detail-item-checkout">
+                                            <strong>Khách hàng</strong>
+                                            <p class="user_info"></p>
+                                        </div>
+                                        <div class="detail-item-checkout">
+                                            <strong>Loại khách hàng</strong>
+                                            <p class="customer_type"></p>
+                                        </div>
+                                        <div class="detail-item-checkout">
+                                            <strong>Mã đặt phòng</strong>
+                                            <p class="booking_number"></p>
+                                        </div>
+                                    </div>
+
+                                    <div class="detail-row-checkout">
+                                        <div class="detail-item-checkout">
+                                            <strong>Nhận phòng</strong>
+                                            <p class="check_in"></p>
+                                        </div>
+                                        <div class="detail-item-checkout">
+                                            <strong>Trả phòng</strong>
+                                            <p class="check_out"></p>
+                                        </div>
+                                        <div class="detail-item-checkout">
+                                            <strong>Tổng phí</strong>
+                                            <p class="booking_price"></p>
+                                        </div>
+                                    </div>
+                                </div>
+
+                            </div>
+                            <div class="row">
+                                <div class="accordion-item">
+                                    <h2 class="accordion-header" id="bookedRoomsHeading">
+                                        <button aria-controls="bookedRooms" aria-expanded="true" class="accordion-button"
+                                            data-bs-target="#bookedRooms" data-bs-toggle="collapse" type="button">
+                                            @lang('Phòng đã đặt')
+                                        </button>
+                                    </h2>
+                                    <div aria-labelledby="bookedRoomsHeading" class="accordion-collapse collapse show"
+                                        data-bs-parent="#s" id="bookedRooms">
+                                        <div class="accordion-body p-0">
+                                            <div class="table-responsive--sm">
+                                                <table class="custom--table table table-striped">
+                                                    <thead>
+                                                        <tr>
+                                                            <th class="text-center">@lang('Đã đặt chỗ')</th>
+                                                            <th>@lang('Loại phòng')</th>
+                                                            <th>@lang('Phòng số')</th>
+                                                            <th class="text-end">@lang('Giá') / @lang('Đêm')</th>
+                                                        </tr>
+                                                    </thead>
+
+                                                    <tbody id="bookings-table-body">
+
+                                                    </tbody>
+                                                </table>
+                                            </div>
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
+                            <div class="row">
+                                <div class="accordion-item">
+                                    <h2 class="accordion-header" id="premiumServiceHeading">
+                                        <button aria-controls="premiumService" aria-expanded="false"
+                                            class="accordion-button" data-bs-target="#premiumService"
+                                            data-bs-toggle="collapse" type="button">
+                                            @lang('Dịch vụ cao cấp')
+                                        </button>
+                                    </h2>
+                                    <div aria-labelledby="premiumServiceHeading" class="accordion-collapse collapse show"
+                                        data-bs-parent="#s" id="premiumService">
+                                        <div class="accordion-body p-0">
+                                            @if ($booking->usedPremiumService->count())
+                                                <div class="table-responsive--sm">
+                                                    <table class="custom--table head--base table table-striped">
+                                                        <thead>
+                                                            <tr>
+                                                                <th>@lang('Ngày')</th>
+                                                                <th>@lang('Phòng số')</th>
+                                                                <th>@lang('Dịch vụ')</th>
+                                                                <th>@lang('Tổng')</th>
+                                                            </tr>
+                                                        </thead>
+
+                                                        <tbody id="user_services">
+                                                           
+                                                        </tbody>
+                                                    </table>
+                                                </div>
+                                            @else
+                                                <div class="text-center">
+                                                    <h6 class="p-3">@lang('Không sử dụng dịch vụ bổ sung')</h6>
+                                                </div>
+                                            @endif
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
+                            <hr>
+                            <div class="card mb-3">
+                                <div class="card-body">
+                                    <div class="row mb-3 justify-content-between">
+                                        <div class="col-md-9">
+                                        </div>
+                                        <div class="col-md-3 text-end" style="padding: 0px">
+                                            <div class="form-group " style="background: #ddd;border-radius:8px ">
+                                                <div class="col-12  mt-2 d-flex justify-content-around">
+
+                                                    <label class="fw-bold"> P.303 </label>
+
+                                                    <p>150,000</p>
+                                                </div>
+
+                                                <div class="col-12 mt-2 mb-2 d-flex justify-content-around">
+                                                    <label class="fw-bold">Khách đã trả</label>
+                                                    <p>0</p>
+                                                </div>
+                                            </div>
+                                            <button type="button" class="btn btn-primary">Trả phòng</button>
+                                        </div>
+
+                                    </div>
+                                </div>
+                            </div>
+
+                        </form>
+                    </div>
+                </div>
+            </div>
+        </div>
         <!-- Modal clean -->
         <div class="modal fade" id="dynamicModal" tabindex="-1" aria-labelledby="dynamicModalLabel"
             aria-hidden="true">
@@ -566,7 +724,7 @@
                         <p id="modalRoomInfo">Đang tải dữ liệu...</p>
                     </div>
                     <div class="modal-footer">
-                        <button type="button" class="btn btn-primary" data-dismiss="modal">Đồng ý</button>
+                        <button type="button" class="btn btn-primary" data-dismiss="modal">Đồng ý 213</button>
                     </div>
                 </div>
             </div>
@@ -586,6 +744,34 @@
 <script src="https://stackpath.bootstrapcdn.com/bootstrap/4.5.2/js/bootstrap.min.js"></script>
 <script>
     $(document).ready(function() {
+        // choose option  rooms
+        $('.status-button').click(function() {
+            $(this).toggleClass('active');
+
+            var selectedStatuses = [];
+
+            $('.status-button.active').each(function() {
+                selectedStatuses.push($(this).data('status'));
+            });
+
+            if (selectedStatuses.length === 0) {
+                $('.room-card').show();
+                $('.main-room-card').show();
+            } else {
+                $('.room-card').hide();
+                selectedStatuses.forEach(function(status) {
+                    $('.room-card').filter('.status-' + status).show();
+                });
+
+                $('.main-room-card').hide();
+                selectedStatuses.forEach(function(status) {
+                    $('.main-room-card').filter('.card-status-' + status).show();
+                });
+            }
+
+        });
+
+
 
         const svgIcons = document.querySelectorAll('.room-icon');
         svgIcons.forEach(function(svg) {
@@ -601,8 +787,8 @@
                     textClean = '<strong style="color: red;">Chưa dọn</strong>';
                 }
 
-                document.getElementById('dynamicModalLabel').innerText =
-                    'Chuyển trạng thái buồng phòng';
+                document.getElementById('dynamicModalLabel').innerHTML =
+                    'Chuyển trạng thái buồng phòng ' + roomData + ' thành ' + textClean;
 
                 document.getElementById('modalRoomInfo').innerHTML =
                     'Chuyển trạng thái buồng phòng ' + roomData + ' thành ' + textClean;
@@ -626,10 +812,11 @@
                 window.savedDataHours = this.getAttribute('data-hours');
                 window.savedDataHours = window.savedDataHours.replace(',', '');
                 $('[name=room_type_id]').val(this.getAttribute('data-room-type'));
-                window.savedDataDay = this.getAttribute('data-day');
+
+                window.savedDataDay = this.getAttribute('data-day'); // giá ngày
                 window.savedDataDay = window.savedDataDay.replace(',', '');
 
-                window.savedDataNight = this.getAttribute('data-night');
+                window.savedDataNight = this.getAttribute('data-night'); // giá đêm
                 window.savedDataNight = window.savedDataNight.replace(',', '');
 
                 document.getElementById('customer-price-booking').value = integerValue;
@@ -647,11 +834,136 @@
             });
         });
         // sắp tới 
+
         const roomUpcoming = document.querySelectorAll('.room-booking-status-incoming');
         roomUpcoming.forEach(function(booking) {
             booking.addEventListener('click', function() {
+
                 var modal = new bootstrap.Modal(document.getElementById('myModal-upcoming'));
                 modal.show();
+                const id = this.getAttribute('data-id');
+            });
+        });
+        // nhận phòng muộn
+        $('.room-booking-status-late-checkin').on('click', function() {
+
+            var id = $(this).data('id');
+            var booking_id = $(this).data('booking');
+            var url = `{{ route('admin.booking.details', ['id' => ':id']) }}`.replace(':id', id);
+
+            var dataToSend = {
+                is_method: 'receptionist'
+            };
+            $.ajax({
+                url: url,
+                data: dataToSend,
+                type: 'GET',
+                success: function(response) {
+                    console.log(
+                        response.data
+                    );
+
+
+                    if (response.status === 'success') {
+                        // booking_number
+                        var customer_type = response.data.user_id ?
+                            "Khách hàng đã đăng ký" : " Khách hàng lưu trú"
+
+                        if (customer_type) {
+                            var url_user_info =
+                                `{{ can('admin.users.detail') ? route('admin.users.detail', ['id' => ':id']) : 'javascript:void(0)' }}`
+                                .replace(':id', response.data.user_id);
+
+                            $.ajax({
+                                url: url_user_info,
+                                data: dataToSend,
+                                type: 'GET',
+                                success: function(response) {
+                                    if (response.status === 'success') {
+
+                                        $('.user_info').text(
+                                            `${response.data.username} - ${response.data.email}`
+                                        );
+                                    }
+
+                                },
+                                error: function(xhr, status, error) {
+
+                                    $('.user_info').text('N/A');
+
+                                    console.error('Error:', error);
+
+                                }
+                            });
+                        }
+
+                        $('#bookings-table-body').empty();
+                        let rowsHtml = '';
+                        response.data.booked_rooms.forEach(function(booked, index) {
+                            if (booked.id === booking_id) {
+                                $('.booking-no').text(booked.room.room_number);
+                                rowsHtml += `
+                                        <tr>
+                                            ${index === 0 ? `<td class="bg--date text-center" rowspan="${response.data.booked_rooms.length}">
+                                                ${booked.booked_for}
+                                            </td>` : ''}
+                                            <td class="text-center" data-label="@lang('Loại phòng')">
+                                                ${booked.room.room_type.name}
+                                            </td>
+                                            <td data-label="@lang('Room No.')">
+                                                ${booked.room.room_number}
+                                                ${booked.status === 'canceled' ? `<span class="text--danger text-sm">(@lang('Đã hủy'))</span>` : ''}
+                                            </td>
+                                            <td class="text-end" data-label="@lang('Giá')">
+                                                ${booked.fare}
+                                            </td>
+                                        </tr>
+                                    `;
+                            }
+
+                        });
+                        $('#user_services').empty();
+                        let rowsHtml1 = '';
+                        response.data.used_premium_service.forEach(function(booked, index) {
+                           
+                            //    $('.booking-no').text(booked.room.room_number);
+                                rowsHtml1 += `
+                                        <tr>
+                                            ${index === 0 ? `<td class="bg--date text-center" rowspan="${response.data.used_premium_service.length}">
+                                                ${booked.service_date}
+                                            </td>` : ''}
+                                            <td class="text-center" data-label="@lang('Loại phòng')">
+                                                ${booked.room.room_type.name}
+                                            </td>
+                                            <td data-label="@lang('Room No.')">
+                                                ${booked.room.room_number}
+                                                ${booked.status === 'canceled' ? `<span class="text--danger text-sm">(@lang('Đã hủy'))</span>` : ''}
+                                            </td>
+                                            <td class="text-end" data-label="@lang('Giá')">
+                                                ${booked.fare}
+                                            </td>
+                                        </tr>
+                                    `;
+                            
+
+                        });
+                        // Chèn nội dung mới vào tbody
+                        $('#user_services').append(rowsHtml1);
+                        $('#bookings-table-body').append(rowsHtml);
+                        $('.customer_type').text(customer_type);
+                        $('.booking_number').text(response.data.booking_number);
+                        $('.check_in').text(response.data.check_in);
+                        $('.check_out').text(response.data.check_out);
+                        $('.booking_price').text(response.data.booked_rooms.fare);
+
+                        $('#myModal-late-checkin').modal('show');
+
+                    }
+                },
+                error: function(xhr, status, error) {
+                    console.error('Error:', error);
+
+                }
             });
         });
         var now = new Date();
@@ -674,9 +986,11 @@
             if (bookingType === 'gio') {
                 checkOutTime = new Date(now.getTime() + (1 * 60 * 60 * 1000)); // Cộng 1 giờ
             } else if (bookingType === 'ngay') {
-                checkOutTime = new Date(now.getTime() + (1 * 24 * 60 * 60 * 1000)); // Cộng 1 ngày
+                checkOutTime = new Date(now.getTime() + (1 * 24 * 60 * 60 *
+                    1000)); // Cộng 1 ngày
             } else if (bookingType === 'dem') {
-                checkOutTime = new Date(now.getTime() + (12 * 60 * 60 * 1000)); // Cộng 12 giờ
+                checkOutTime = new Date(now.getTime() + (12 * 60 * 60 *
+                    1000)); // Cộng 12 giờ
             }
 
             var checkOutYear = checkOutTime.getFullYear();
@@ -703,10 +1017,11 @@
 
             var checkInDate = new Date(checkInTime);
             var checkOutDate = new Date(checkOutTime);
-            console.log(checkInDate.toLocaleDateString() + " - " + checkOutDate.toLocaleDateString());
-                console.log($('.room_type_id').val());
-                
-            
+            console.log(checkInDate.toLocaleDateString() + " - " + checkOutDate
+                .toLocaleDateString());
+            console.log($('.room_type_id').val());
+
+
             // array (
             //     'room_type' => '2',
             //     'date' => '09/11/2024 - 09/25/2024',
@@ -819,8 +1134,8 @@
                 // Update the user info with the data-* attributes
                 $('.username-user').text(matchedOption.val());
                 $('.email-user').text(matchedOption.data('user'));
-              
-                
+
+
                 $('.email-user1').val(matchedOption.val());
                 $('.username-user1').val(matchedOption.data('user'));
                 $('.mobile-user').val(matchedOption.data('mobi'));
@@ -867,14 +1182,14 @@
             // Chuyển đổi đối tượng thành chuỗi truy vấn URL
             let queryString = $.param(formObject);
 
-           
+
 
             const params = new URLSearchParams(queryString);
 
 
             const checkInTime = params.get('checkInTime');
             const checkOutTime = params.get('checkOutTime');
-         
+
 
             if (!checkInTime || !checkOutTime) {
                 let missingField = !checkInTime ? 'nhận phòng' : 'trả phòng';
@@ -885,29 +1200,29 @@
 
             const startDate = new Date(checkInTime);
             const endDate = new Date(checkOutTime);
-            const roomDates = getDatesBetween(startDate, endDate, params.get('room_type_id'));
+            const roomDates = getDatesBetween(startDate, endDate, params.get(
+                'room_type_id'));
             console.log(roomDates);
 
             roomDates.forEach(function(date, index) {
                 formData.push({
                     name: 'room[]',
                     value: date
-                }); // Thêm từng phần tử với tên trường room[]
+                });
             });
             const guest_type = $('.guest_type').val();
-          
-            if(guest_type === ""){
+
+            if (guest_type === "") {
                 formData.push({
                     name: 'guest_type',
                     value: 1
                 })
-            }else{
+            } else {
                 formData.push({
                     name: 'guest_type',
                     value: 0
                 })
             }
-           
 
             let url = $(this).attr('action');
             $.ajax({
@@ -932,28 +1247,28 @@
         //
         $('.btn-user-info').on('click', function() {
             // Lấy giá trị của guest_type
-        //    let guestType = $('#guest_type').val();
-
-          
-
-                let name = $('#name').val();
-                let email = $('#email').val();
-                let phone = $('#phone').val();
-                let address = $('#address').val();
+            //    let guestType = $('#guest_type').val();
 
 
-                $('.email-user').text(email);
 
-                $('.username-user').text(name);
-                $('.guest_type').val(0);
-                
-                $('.username-user1').val(name);
-                $('.email-user1').val(email);
-                $('.mobile-user').val(phone);
-                $('.address-user').val(address);
-                $('#customer-popup').removeClass('active');
+            let name = $('#name').val();
+            let email = $('#email').val();
+            let phone = $('#phone').val();
+            let address = $('#address').val();
 
-            
+
+            $('.email-user').text(email);
+
+            $('.username-user').text(name);
+            $('.guest_type').val(0);
+
+            $('.username-user1').val(name);
+            $('.email-user1').val(email);
+            $('.mobile-user').val(phone);
+            $('.address-user').val(address);
+            $('#customer-popup').removeClass('active');
+
+
         });
     });
 </script>
