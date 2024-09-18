@@ -10,7 +10,8 @@
                 <p id="modalRoomInfo">Đang tải dữ liệu...</p>
             </div>
             <div class="modal-footer">
-                <button type="button" class="btn btn-primary btn-clean" data-dismiss="modal">Đồng ý</button>
+                <a   href="javascript:void(0)"  class="btn btn-primary btn-clean" >Đồng ý</a>
+                {{-- <button type="button" class="btn btn-primary btn-clean" data-dismiss="modal">Đồng ý</button> --}}
             </div>
         </div>
     </div>

@@ -5,28 +5,7 @@
     </div>
     <div class="row">
         <div class="col">
-            <div class="status-buttons">
-                <div class="status-button status-available-line" data-status="dirty">
-                    <span class="status-dot"></span>
-                    Đang trống (8)
-                </div>
-                <div class="status-button status-incoming-line" data-status="incoming">
-                    <span class="status-dot"></span>
-                    Sắp nhận (2)
-                </div>
-                <div class="status-button status-occupied-line" data-status="occupied">
-                    <span class="status-dot"></span>
-                    Đang sử dụng (4)
-                </div>
-                <div class="status-button status-checkout-line" data-status="late-checkin">
-                    <span class="status-dot"></span>
-                    Nhận phòng muộn (2)
-                </div>
-                <div class="status-button status-overdue-line" data-status="check-out">
-                    <span class="status-dot"></span>
-                    Quá giờ trả (1)
-                </div>
-            </div>
+            @include('admin.booking.partials.system-1')
         </div>
     </div>
     <div class="row">
@@ -53,12 +32,16 @@
             <div class="col-md-2 main-room-card  card-{{ $class }} ">
                 <div class="room-card  {{ $class }}">
 
-                    <x-room-badge isClean="{{ $rooms->is_clean }}" classClean="{{ $classClean }}" classSvg="{{ $classSvg }}" cleanText="{{ $cleanText }}" roomNumber="{{ $rooms->room_number }}" />
+                    <x-room-badge isClean="{{ $rooms->is_clean }}" classClean="{{ $classClean }}"
+                        classSvg="{{ $classSvg }}" cleanText="{{ $cleanText }}"
+                        roomNumber="{{ $rooms->room_number }}" />
+
+
 
                     <div class="content-booking mt-2 room-booking-{{ $class }}"
                         data-hours="{{ $rooms->roomType->hourly_rate }}" data-day="{{ $rooms->roomType->fare }}"
                         data-night="{{ $rooms->roomType->fare }}" data-name = "{{ $rooms->roomType->name }}"
-                        data-roomNumber="{{ $rooms->room_number }}" data-room-type="{{ $rooms->room_type_id }}">
+                        data-roomNumber="{{ $rooms->room_number }}" data-room-type="{{ $rooms->room_type_id }}" data-room="{{ $rooms->id }}">
                         <h5>{{ $rooms->room_number }} </h5>
                         <p class="single-line">{{ $rooms->roomType->name }}</p>
                         <div class="room-info">
@@ -104,8 +87,10 @@
             @endphp
             <div class="col-md-2 main-room-card card-{{ $class }}">
                 <div class="room-card {{ $class }}">
-                   
-                    <x-room-badge isClean="{{ $booking->room->is_clean }}" classClean="{{ $classClean }}" classSvg="{{ $classSvg }}" cleanText="{{ $cleanText }}" roomNumber="{{ $booking->room->room_number }}" />
+
+                    <x-room-badge isClean="{{ $booking->room->is_clean }}" classClean="{{ $classClean }}"
+                        classSvg="{{ $classSvg }}" cleanText="{{ $cleanText }}"
+                        roomNumber="{{ $booking->room->room_number }}" />
 
                     <div class="content-booking mt-2 room-booking-{{ $class }}"
                         data-id="{{ $booking->booking_id }}" data-hours="{{ $booking->roomType->hourly_rate }}"
@@ -165,8 +150,8 @@
         @endforelse
 
         <!-- modal dặt hàng  -->
-        <div class="modal fade" id="myModal-booking" tabindex="-1" role="dialog"
-            aria-labelledby="myModalLabel-booking" aria-hidden="true">
+        <div class="modal fade" id="myModal-booking" tabindex="-1" role="dialog" aria-labelledby="myModalLabel-booking"
+            aria-hidden="true">
             <div class="modal-dialog modal-dialog-centered" role="document" style="max-width: 1200px;">
                 <div class="modal-content">
                     <div class="modal-header">
@@ -268,12 +253,13 @@
                                         </tr>
                                     </thead>
                                     <tbody>
-                                        <input name="room_type_id" class="room_type_id" type="text" hidden>
+                                        <input type="text" class="room_type_id"   name="room_type_id"hidden>
+                                        <input type="text" class="room_type"      name="room_type"hidden>
                                         <input type="text" class="username-user1" name="guest_name" hidden>
-                                        <input type="text" class="email-user1" name="email" hidden>
-                                        <input type="text" class="mobile-user" name="mobile" hidden>
-                                        <input type="text" class="address-user" name="address" hidden>
-                                        <input type="text" class="guest_type" name="guest_type" hidden>
+                                        <input type="text" class="email-user1"    name="email" hidden>
+                                        <input type="text" class="mobile-user"    name="mobile" hidden>
+                                        <input type="text" class="address-user"   name="address" hidden>
+                                        <input type="text" class="guest_type"     name="guest_type" hidden>
                                         <tr>
                                             <td>
                                                 <p id="book_name"></p>
@@ -528,191 +514,188 @@
                         <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
                     </div>
                     <div class="modal-body">
-                        <form id="bookingForm">
-                            <!-- Row: Labels -->
-                            <div class="room-card-checkout">
-                                {{-- <div class="room-header-checkout">
+
+                        <!-- Row: Labels -->
+                        <div class="room-card-checkout">
+                            {{-- <div class="room-header-checkout">
                                     <h4>Phòng 01 giường đơn</h4>
                                     <span class="status-label-checkout">Đã đặt trước</span>
 
 
                                 </div> --}}
 
-                                <div class="room-details-checkout">
-                                    <div class="detail-row-checkout">
-                                        <div class="detail-item-checkout">
-                                            <strong>Khách hàng</strong>
-                                            <p class="user_info"></p>
-                                        </div>
-                                        <div class="detail-item-checkout">
-                                            <strong>Loại khách hàng</strong>
-                                            <p class="customer_type"></p>
-                                        </div>
-                                        <div class="detail-item-checkout">
-                                            <strong>Mã đặt phòng</strong>
-                                            <p class="booking_number"></p>
-                                        </div>
+                            <div class="room-details-checkout">
+                                <div class="detail-row-checkout">
+                                    <div class="detail-item-checkout">
+                                        <strong>Khách hàng</strong>
+                                        <p class="user_info"></p>
                                     </div>
+                                    <div class="detail-item-checkout">
+                                        <strong>Loại khách hàng</strong>
+                                        <p class="customer_type"></p>
+                                    </div>
+                                    <div class="detail-item-checkout">
+                                        <strong>Mã đặt phòng</strong>
+                                        <p class="booking_number"></p>
+                                    </div>
+                                </div>
 
-                                    <div class="detail-row-checkout">
-                                        <div class="detail-item-checkout">
-                                            <strong>Nhận phòng</strong>
-                                            <p class="check_in"></p>
-                                        </div>
-                                        <div class="detail-item-checkout">
-                                            <strong>Trả phòng</strong>
-                                            <p class="check_out"></p>
-                                        </div>
-                                        {{-- <div class="detail-item-checkout">
+                                <div class="detail-row-checkout">
+                                    <div class="detail-item-checkout">
+                                        <strong>Nhận phòng</strong>
+                                        <p class="check_in"></p>
+                                    </div>
+                                    <div class="detail-item-checkout">
+                                        <strong>Trả phòng</strong>
+                                        <p class="check_out"></p>
+                                    </div>
+                                    {{-- <div class="detail-item-checkout">
                                             <strong>Tổng phí</strong>
                                             <p class="booking_price"></p>
                                         </div> --}}
+                                </div>
+                            </div>
+
+                        </div>
+                        <div class="row">
+                            <div class="accordion-item">
+                                <h2 class="accordion-header" id="bookedRoomsHeading">
+                                    <button aria-controls="bookedRooms" aria-expanded="true" class="accordion-button"
+                                        data-bs-target="#bookedRooms" data-bs-toggle="collapse" type="button">
+                                        @lang('Phòng đã đặt')
+                                    </button>
+                                </h2>
+                                <div aria-labelledby="bookedRoomsHeading" class="accordion-collapse collapse show"
+                                    data-bs-parent="#s" id="bookedRooms">
+                                    <div class="accordion-body p-0">
+                                        <div class="table-responsive--sm">
+                                            <table class="custom--table table table-striped">
+                                                <thead>
+                                                    <tr>
+                                                        <th class="text-center">@lang('Đã đặt chỗ')</th>
+                                                        <th>@lang('Loại phòng')</th>
+                                                        <th>@lang('Phòng số')</th>
+                                                        <th class="text-end">@lang('Giá') / @lang('Đêm')</th>
+                                                    </tr>
+                                                </thead>
+
+                                                <tbody id="bookings-table-body">
+
+                                                </tbody>
+                                            </table>
+                                        </div>
                                     </div>
                                 </div>
-
                             </div>
-                            <div class="row">
-                                <div class="accordion-item">
-                                    <h2 class="accordion-header" id="bookedRoomsHeading">
-                                        <button aria-controls="bookedRooms" aria-expanded="true" class="accordion-button"
-                                            data-bs-target="#bookedRooms" data-bs-toggle="collapse" type="button">
-                                            @lang('Phòng đã đặt')
-                                        </button>
-                                    </h2>
-                                    <div aria-labelledby="bookedRoomsHeading" class="accordion-collapse collapse show"
-                                        data-bs-parent="#s" id="bookedRooms">
-                                        <div class="accordion-body p-0">
-                                            <div class="table-responsive--sm">
-                                                <table class="custom--table table table-striped">
-                                                    <thead>
-                                                        <tr>
-                                                            <th class="text-center">@lang('Đã đặt chỗ')</th>
-                                                            <th>@lang('Loại phòng')</th>
-                                                            <th>@lang('Phòng số')</th>
-                                                            <th class="text-end">@lang('Giá') / @lang('Đêm')</th>
-                                                        </tr>
-                                                    </thead>
+                        </div>
+                        <div class="row">
+                            <div class="accordion-item">
+                                <h2 class="accordion-header" id="premiumServiceHeading">
+                                    <button aria-controls="premiumService" aria-expanded="false" class="accordion-button"
+                                        data-bs-target="#premiumService" data-bs-toggle="collapse" type="button">
+                                        @lang('Dịch vụ cao cấp')
+                                    </button>
+                                </h2>
+                                <div aria-labelledby="premiumServiceHeading" class="accordion-collapse collapse show"
+                                    data-bs-parent="#s" id="premiumService">
+                                    <div class="accordion-body p-0">
 
-                                                    <tbody id="bookings-table-body">
+                                        <div class="table-responsive--sm">
+                                            <table class="custom--table head--base table table-striped">
+                                                <thead>
+                                                    <tr>
+                                                        <th>@lang('Ngày')</th>
+                                                        <th>@lang('Phòng số')</th>
+                                                        <th>@lang('Dịch vụ')</th>
+                                                        <th>@lang('Số lượng')</th>
+                                                        <th>@lang('Giá trị')</th>
+                                                        <th>@lang('Tổng')</th>
+                                                    </tr>
+                                                </thead>
 
-                                                    </tbody>
-                                                </table>
+                                                <tbody id="user_services">
+
+                                                </tbody>
+                                            </table>
+                                        </div>
+
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                        <hr>
+                        <div class="card mb-3">
+                            <div class="card-body">
+                                <div class="row mb-3 justify-content-between">
+                                    <div class="col-md-9">
+
+
+
+                                    </div>
+
+                                    <div class="card">
+                                        <div class="card-body">
+                                            <div class="d-flex justify-content-between mt-3 mb-3">
+                                                <h5 class="card-title">@lang('Tóm tắt thanh toán')</h5>
+                                                <div>
+                                                    {{-- data-id="{{ $booking->id }}" --}}
+                                                    <button class="btn btn--success extraChargeBtn" data-type="add">
+                                                        <i class="las la-plus-circle"></i>@lang('Thêm phí bổ sung')
+                                                    </button>
+                                                    {{-- data-id="{{ $booking->id }}" --}}
+                                                    <button class="btn btn--danger extraChargeBtn" data-type="subtract"><i
+                                                            class="las la-minus-circle"></i>@lang('Trừ Phí Thêm')</button>
+                                                </div>
+                                            </div>
+                                            <div class="list">
+                                                <div class="list-item">
+                                                    <span>@lang('Thanh toán')</span>
+                                                    <span class="total_fare"></span>
+                                                </div>
+
+                                                <div class="list-item">
+                                                    <span>@lang('Đã nhận được thanh toán')</span>
+                                                    <span class="total_received"> </span>
+                                                </div>
+
+                                                <div class="list-item">
+                                                    <span>@lang('Đã hoàn tiền')</span>
+                                                    <span class="total_refunded"></span>
+                                                </div>
+
+                                                <div class="list-item fw-bold">
+                                                    <span id="dueMessage">@lang('Phải thu từ người dùng')</span>
+                                                    <span id="customer_payment"></span>
+                                                </div>
                                             </div>
                                         </div>
+
                                     </div>
-                                </div>
-                            </div>
-                            <div class="row">
-                                <div class="accordion-item">
-                                    <h2 class="accordion-header" id="premiumServiceHeading">
-                                        <button aria-controls="premiumService" aria-expanded="false"
-                                            class="accordion-button" data-bs-target="#premiumService"
-                                            data-bs-toggle="collapse" type="button">
-                                            @lang('Dịch vụ cao cấp')
-                                        </button>
-                                    </h2>
-                                    <div aria-labelledby="premiumServiceHeading" class="accordion-collapse collapse show"
-                                        data-bs-parent="#s" id="premiumService">
-                                        <div class="accordion-body p-0">
-
-                                            <div class="table-responsive--sm">
-                                                <table class="custom--table head--base table table-striped">
-                                                    <thead>
-                                                        <tr>
-                                                            <th>@lang('Ngày')</th>
-                                                            <th>@lang('Phòng số')</th>
-                                                            <th>@lang('Dịch vụ')</th>
-                                                            <th>@lang('Số lượng')</th>
-                                                            <th>@lang('Giá trị')</th>
-                                                            <th>@lang('Tổng')</th>
-                                                        </tr>
-                                                    </thead>
-
-                                                    <tbody id="user_services">
-
-                                                    </tbody>
-                                                </table>
-                                            </div>
-
-                                        </div>
-                                    </div>
-                                </div>
-                            </div>
-                            <hr>
-                            <div class="card mb-3">
-                                <div class="card-body">
-                                    <div class="row mb-3 justify-content-between">
-                                        <div class="col-md-9">
-
-
-
-                                        </div>
-
+                                    <div class="col-12">
                                         <div class="card">
                                             <div class="card-body">
-                                                <div class="d-flex justify-content-between mt-3 mb-3">
-                                                    <h5 class="card-title">@lang('Tóm tắt thanh toán')</h5>
-                                                    <div>
-                                                        {{-- data-id="{{ $booking->id }}" --}}
-                                                        <button class="btn btn--success extraChargeBtn" data-type="add">
-                                                            <i class="las la-plus-circle"></i>@lang('Thêm phí bổ sung')
-                                                        </button>
-                                                        {{-- data-id="{{ $booking->id }}" --}}
-                                                        <button class="btn btn--danger extraChargeBtn"
-                                                            data-type="subtract"><i
-                                                                class="las la-minus-circle"></i>@lang('Trừ Phí Thêm')</button>
+                                                <h5 class="card-title" id="dueMessage1"></h5>
+                                                <div id="color_payment">
+                                                    <span id="number_fare"></span> <span id="customer_payment1"></span>
+                                                </div>
+                                                <div class="form-group">
+                                                    <label>@lang('Nhập số tiền')</label>
+                                                    <div class="input-group">
+                                                        <input class="form-control input_fare_booking" min="0"
+                                                            name="amount" required step="any" type="number">
+                                                        <span class="input-group-text">{{ __(gs()->cur_text) }}</span>
                                                     </div>
                                                 </div>
-                                                <div class="list">
-                                                    <div class="list-item">
-                                                        <span>@lang('Thanh toán')</span>
-                                                        <span class="total_fare"></span>
-                                                    </div>
-
-                                                    <div class="list-item">
-                                                        <span>@lang('Đã nhận được thanh toán')</span>
-                                                        <span class="total_received"> </span>
-                                                    </div>
-
-                                                    <div class="list-item">
-                                                        <span>@lang('Đã hoàn tiền')</span>
-                                                        <span class="total_refunded"></span>
-                                                    </div>
-
-                                                    <div class="list-item fw-bold">
-                                                        <span id="dueMessage">@lang('Phải thu từ người dùng')</span>
-                                                        <span id="customer_payment"></span>
-                                                    </div>
-                                                </div>
-                                            </div>
-
-                                        </div>
-                                        <div class="col-12">
-                                            <div class="card">
-                                                <div class="card-body">
-                                                    <h5 class="card-title" id="dueMessage1"></h5>
-                                                    <div id="color_payment">
-                                                        <span id="number_fare"></span> <span
-                                                            id="customer_payment1"></span>
-                                                    </div>
-                                                    <div class="form-group">
-                                                        <label>@lang('Nhập số tiền')</label>
-                                                        <div class="input-group">
-                                                            <input class="form-control input_fare_booking" min="0"
-                                                                name="amount" required step="any" type="number">
-                                                            <span class="input-group-text">{{ __(gs()->cur_text) }}</span>
-                                                        </div>
-                                                    </div>
-                                                    <button type="button" class="btn btn-primary">Trả phòng</button>
-                                                </div>
+                                                <button type="button" class="btn btn-primary">Trả phòng</button>
                                             </div>
                                         </div>
-
                                     </div>
+
                                 </div>
                             </div>
+                        </div>
 
-                        </form>
+
                     </div>
                 </div>
             </div>
@@ -734,7 +717,6 @@
 @endpush
 
 <script>
-
     $(document).ready(function() {
         // choose option  rooms
         $('.status-button').click(function() {
@@ -764,7 +746,7 @@
         });
 
 
-        
+
         $('.room-icon').on('click', function() {
             let roomData = $(this).attr('data-room');
             let roomClean = $(this).attr('data-clean');
@@ -776,22 +758,43 @@
                 textClean = '<strong style="color: #28a745;">Sạch</strong>';
             }
 
-            $('#dynamicModalLabel').html('Chuyển trạng thái buồng phòng ' + roomData + ' thành ' +
+            $('#dynamicModalLabel').html('Chuyển trạng thái buồng phòng ' + roomData +
+                ' thành ' +
                 textClean);
-            $('#modalRoomInfo').html('Chuyển trạng thái buồng phòng ' + roomData + ' thành ' +
+            $('#modalRoomInfo').html('Chuyển trạng thái buồng phòng ' + roomData +
+                ' thành ' +
                 textClean);
 
             var modal = new bootstrap.Modal($('#dynamicModal'));
-            $('.btn-clean').click(function(){
-                console.log(123);
-                
-                console.log(roomData);
-                console.log(roomClean);
+            $('.btn-clean').off('click').on('click', function(event) {
+                event.stopPropagation();
+                var url = `{{ route('admin.roomclean.booking.roomclean') }}`;
+                $.ajax({
+                    url: url,
+                    type: 'POST',
+                    data: {
+                        roomData: roomData,
+                        roomClean: roomClean
+                    },
+                    success: function(response) {
+                        if (response.status === 'success') {
+                            modal.hide();
+                        }
+                        console.log('Thành công:', response);
+
+                    },
+                    error: function(xhr, status, error) {
+
+                        console.error('Lỗi:', error);
+                    }
+                });
             });
             modal.show();
         });
 
-       
+
+
+
 
         // đặt phòng
         const roomBooking = document.querySelectorAll('.room-booking-status-dirty');
@@ -808,7 +811,7 @@
                 window.savedDataHours = this.getAttribute('data-hours');
                 window.savedDataHours = window.savedDataHours.replace(',', '');
                 $('[name=room_type_id]').val(this.getAttribute('data-room-type'));
-
+                $('[name=room_type]').val(this.getAttribute('data-room'));
                 window.savedDataDay = this.getAttribute('data-day'); // giá ngày
                 window.savedDataDay = window.savedDataDay.replace(',', '');
 
@@ -842,11 +845,9 @@
         });
         // nhận phòng muộn
         $('.room-booking-status-late-checkin').on('click', function() {
-
             var id = $(this).data('id');
             var booking_id = $(this).data('booking');
             var url = `{{ route('admin.booking.details', ['id' => ':id']) }}`.replace(':id', id);
-
             var dataToSend = {
                 is_method: 'receptionist'
             };
@@ -858,7 +859,6 @@
                     console.log(
                         response.data
                     );
-
 
                     if (response.status === 'success') {
                         // booking_number
@@ -1250,8 +1250,8 @@
 
             const startDate = new Date(checkInTime);
             const endDate = new Date(checkOutTime);
-            const roomDates = getDatesBetween(startDate, endDate, params.get(
-                'room_type_id'));
+            const roomDates = getDatesBetween(startDate, endDate, params.get('room_type'));
+               
             console.log(roomDates);
 
             roomDates.forEach(function(date, index) {
@@ -1367,8 +1367,3 @@
         });
     };
 </script>
-<style scoped>
-    .text--success span {
-        color: #28c76f !important;
-    }
-</style>

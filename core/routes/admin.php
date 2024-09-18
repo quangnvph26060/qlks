@@ -274,6 +274,7 @@ Route::middleware('admin', 'adminPermission')->group(function () {
         Route::get('pending/check-in', 'pendingCheckIn')->name('pending.booking.checkin');
         Route::get('delayed/checkout', 'delayedCheckouts')->name('delayed.booking.checkout');
         Route::get('receptionist', 'Receptionist')->name('receptionist.booking.receptionist');
+        Route::post('room-clean', 'changeCleanRoom')->name('roomclean.booking.roomclean');
     });
 
     // Manage booking premium services

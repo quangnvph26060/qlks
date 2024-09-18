@@ -461,6 +461,9 @@
 .css_extraChargeModal{
     width: 500px;
 }
+.text--success span {
+    color: #28c76f !important;
+}
 @media (max-width:768px) {
     .mobi-table td{
         padding: 10px !important;

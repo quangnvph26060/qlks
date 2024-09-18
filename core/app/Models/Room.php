@@ -8,7 +8,7 @@ use Illuminate\Database\Eloquent\Model;
 class Room extends Model {
     use GlobalStatus;
 
-    protected $fillable = ['id'];
+    protected $fillable = ['id','is_clean'];
 
     public function roomType() {
         return $this->belongsTo(RoomType::class);
