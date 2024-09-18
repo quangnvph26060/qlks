@@ -13,14 +13,22 @@ class RoomBadge extends Component
     public $cleanText;
     public $roomNumber;
     public $isClean;
+    public $styleClass;
+    public $keyStatus;
+    public $key;
+    public $bookingId;
 
-    public function __construct($classClean, $classSvg, $cleanText, $roomNumber, $isClean)
+    public function __construct($classClean, $classSvg, $cleanText, $roomNumber, $isClean, $styleClass, $keyStatus=false, $key="", $bookingId="")
     {
         $this->classClean = $classClean;
-        $this->classSvg = $classSvg;
-        $this->cleanText = $cleanText;
+        $this->classSvg   = $classSvg;
+        $this->cleanText  = $cleanText;
         $this->roomNumber = $roomNumber;
-        $this->isClean = $isClean;
+        $this->isClean    = $isClean;
+        $this->styleClass = $styleClass;
+        $this->keyStatus  = $keyStatus;
+        $this->key        = $key; 
+        $this->bookingId  = $bookingId;
     }
 
 

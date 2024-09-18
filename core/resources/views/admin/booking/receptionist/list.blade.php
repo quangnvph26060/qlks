@@ -32,9 +32,13 @@
             <div class="col-md-2 main-room-card  card-{{ $class }} ">
                 <div class="room-card  {{ $class }}">
 
-                    <x-room-badge isClean="{{ $rooms->is_clean }}" classClean="{{ $classClean }}"
-                        classSvg="{{ $classSvg }}" cleanText="{{ $cleanText }}"
-                        roomNumber="{{ $rooms->room_number }}" />
+                    <x-room-badge styleClass=""
+                        isClean="{{ $rooms->is_clean }}" 
+                        classClean="{{ $classClean }}"
+                        classSvg="{{ $classSvg }}"
+                        cleanText="{{ $cleanText }}"
+                        roomNumber="{{ $rooms->room_number }}" 
+                        />
 
 
 
@@ -64,7 +68,7 @@
                 $classClean = $room->getCleanStatusClass();
                 $classSvg = $room->getCleanStatusSvg();
                 $cleanText = $room->getCleanStatusText();
-
+               
                 if (
                     now() > $booking->booking->check_in &&
                     now() <= $booking->booking->check_out &&
@@ -83,14 +87,24 @@
                 ) {
                     $class = 'status-late-checkin'; // nhận phòng muộn
                 }
-
+                    $key_status = false;
+                if( now()->format('Y-m-d') >= $booking->booking->check_in && now()->format('Y-m-d') < $booking->booking->check_out && $booking->booking->key_status == Status::DISABLE){
+                    $key_status = true;
+                }
             @endphp
             <div class="col-md-2 main-room-card card-{{ $class }}">
                 <div class="room-card {{ $class }}">
 
-                    <x-room-badge isClean="{{ $booking->room->is_clean }}" classClean="{{ $classClean }}"
-                        classSvg="{{ $classSvg }}" cleanText="{{ $cleanText }}"
-                        roomNumber="{{ $booking->room->room_number }}" />
+                    <x-room-badge  styleClass="dropdown" 
+                        isClean="{{ $booking->room->is_clean }}" 
+                        classClean="{{ $classClean }}"
+                        classSvg="{{ $classSvg }}" 
+                        cleanText="{{ $cleanText }}"
+                        roomNumber="{{ $booking->room->room_number }}" 
+                        keyStatus="{{$key_status}}"
+                        key="{{$booking->booking->key_status}}"
+                        bookingId="{{$booking->booking_id}}"
+                        />
 
                     <div class="content-booking mt-2 room-booking-{{ $class }}"
                         data-id="{{ $booking->booking_id }}" data-hours="{{ $booking->roomType->hourly_rate }}"
@@ -193,45 +207,7 @@
                         </form>
 
                         <!-- add customer  -->
-                        <div id="customer-popup" class="customer-popup">
-                            <div class="modal-header">
-                                <h3>Thông tin khách hàng</h3>
-                                <svg class="close-customer" id="customer-close" xmlns="http://www.w3.org/2000/svg"
-                                    width="20" height="20" viewBox="0 0 24 24">
-                                    <path fill="none" stroke="currentColor" stroke-linecap="round" stroke-width="2"
-                                        d="M20 20L4 4m16 0L4 20" />
-                                </svg>
-                            </div>
-                            <form>
-                                {{-- <label for="name">Loại khách hàng</label>
-                                <select class="form-control" name="guest_type" id="guest_type">
-                                    <option selected value="0">@lang('Khách lưu trú')</option>
-                                    <option value="1">@lang('Khách đã đăng ký')</option>
-                                </select> --}}
-
-                                <label for="name">Tên khách hàng</label>
-                                <input type="text" id="name" class="customer-input"
-                                    placeholder="Nhập tên của bạn">
-
-                                <label for="email">Email</label>
-                                <input type="email" id="email" class="customer-input"
-                                    placeholder="Nhập email của bạn">
-
-                                <label for="phone">Số điện thoại</label>
-                                <input type="text" id="phone" class="customer-input"
-                                    placeholder="Nhập số điện thoại">
-
-                                <label for="address">Địa chỉ</label>
-                                <input type="text" id="address" class="customer-input"
-                                    placeholder="Nhập địa chỉ của bạn">
-
-                                <div class="btn-customer">
-                                    <button type="button" id="customer-closePopup">Bỏ qua</button>
-                                    <button type="button" class="btn btn-primary btn-user-info">Lưu</button>
-                                </div>
-                            </form>
-                        </div>
-
+                        @include('admin.booking.partials.add_customer_booking')
 
                         <form id="bookingForm" action="{{ route('admin.room.book') }}" class="booking-form"
                             method="POST">
@@ -590,12 +566,17 @@
                         </div>
                         <div class="row">
                             <div class="accordion-item">
-                                <h2 class="accordion-header" id="premiumServiceHeading">
-                                    <button aria-controls="premiumService" aria-expanded="false" class="accordion-button"
-                                        data-bs-target="#premiumService" data-bs-toggle="collapse" type="button">
-                                        @lang('Dịch vụ cao cấp')
-                                    </button>
-                                </h2>
+                               <div class="d-flex justify-content-between mt-2 mb-2">
+                                    <h2 class="accordion-header" id="premiumServiceHeading">
+                                        <button aria-controls="premiumService" aria-expanded="false" class="accordion-button"
+                                            data-bs-target="#premiumService" data-bs-toggle="collapse" type="button">
+                                            @lang('Dịch vụ cao cấp ')
+                                        </button>
+                                    </h2>
+                                    <div>
+                                        <a href="javascript:void(0)" class="btn btn-primary premium_service"> <i class="las la-plus-circle"></i> Thêm dịch vụ cao cấp</a>
+                                    </div>
+                               </div>
                                 <div aria-labelledby="premiumServiceHeading" class="accordion-collapse collapse show"
                                     data-bs-parent="#s" id="premiumService">
                                     <div class="accordion-body p-0">
@@ -745,8 +726,32 @@
 
         });
 
+        $('.more_select').on('click', function() {
+            
+        });
+        
+        // bàn giao chìa khóa 
+        $('.handoverKeyBtn').on('click',function(event){
+            let data = $(this).data();
 
-
+            event.stopPropagation();
+            var url = `{{ route('admin.booking.key.handover', ['id' => ':id']) }}`.replace(':id', data.id);
+            $.ajax({
+                url: url,
+                type: 'POST',
+                data:{
+                    is_method:"receptionist"
+                },
+                success: function(response) {
+                    if(response.status === 'success'){
+                        window.location.reload(); 
+                    }
+                },
+                error: function(xhr, status, error) {
+                    console.error('Lỗi:', error);
+                }
+            });
+        });
         $('.room-icon').on('click', function() {
             let roomData = $(this).attr('data-room');
             let roomClean = $(this).attr('data-clean');
@@ -758,12 +763,8 @@
                 textClean = '<strong style="color: #28a745;">Sạch</strong>';
             }
 
-            $('#dynamicModalLabel').html('Chuyển trạng thái buồng phòng ' + roomData +
-                ' thành ' +
-                textClean);
-            $('#modalRoomInfo').html('Chuyển trạng thái buồng phòng ' + roomData +
-                ' thành ' +
-                textClean);
+            $('#dynamicModalLabel').html('Chuyển trạng thái buồng phòng ' + roomData + ' thành ' +  textClean);
+            $('#modalRoomInfo').html('Chuyển trạng thái buồng phòng ' + roomData + ' thành ' + textClean);
 
             var modal = new bootstrap.Modal($('#dynamicModal'));
             $('.btn-clean').off('click').on('click', function(event) {
@@ -828,6 +829,7 @@
         const roomCheckOut = document.querySelectorAll('.room-booking-status-occupied');
         roomCheckOut.forEach(function(booking) {
             booking.addEventListener('click', function() {
+                // 123
                 var modal = new bootstrap.Modal(document.getElementById('myModal-checkout'));
                 modal.show();
             });
@@ -843,7 +845,7 @@
                 const id = this.getAttribute('data-id');
             });
         });
-        // nhận phòng muộn
+        // nhận phòng muộn 123
         $('.room-booking-status-late-checkin').on('click', function() {
             var id = $(this).data('id');
             var booking_id = $(this).data('booking');
@@ -1003,7 +1005,7 @@
                         });
 
 
-
+                        // 123
 
                         $('#myModal-late-checkin').modal('show');
 
@@ -1295,10 +1297,10 @@
         });
 
         //
-        $('.btn-user-info').on('click', function() {
+        $('.btn-user-info').on('click', function(event) {
             // Lấy giá trị của guest_type
             //    let guestType = $('#guest_type').val();
-
+            event.stopPropagation();
 
 
             let name = $('#name').val();

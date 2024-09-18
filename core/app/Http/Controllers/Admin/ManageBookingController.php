@@ -13,13 +13,15 @@ use App\Models\UsedPremiumService;
 use App\Traits\BookingActions;
 use Illuminate\Support\Carbon;
 use PDF;
+use App\Http\Responses\ApiResponse;
 
 class ManageBookingController extends Controller
 {
     use BookingActions;
 
-    public function handoverKey($id)
+    public function handoverKey(Request $request,  $id)
     {
+       
         $booking = Booking::active()->findOrFail($id);
 
         if ($booking->key_status == Status::ENABLE) {
@@ -42,7 +44,9 @@ class ManageBookingController extends Controller
         $booking->save();
 
         $booking->createActionHistory('key_handover');
-
+        if($request->is_method === "receptionist"){
+            return ApiResponse::success("","",200);
+        }
         $notify[] = ['success', 'Bàn giao chìa khóa thành công'];
         return back()->withNotify($notify);
     }
