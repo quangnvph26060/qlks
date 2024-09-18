@@ -54,7 +54,7 @@ class BookRoomController extends Controller
         if ($validator->fails()) {
             return response()->json(['error' => $validator->errors()->all()]);
         }
-         \Log::info($request);
+        
         $view = $this->getRooms($request);
        
         return response()->json(['html' => $view]);
@@ -75,7 +75,7 @@ class BookRoomController extends Controller
                 'room'            => 'required|array',
                 'paid_amount'     => 'nullable|numeric|gte:0' // tiền mà khách đã thanh toán trước
             ]);
-            \Log::info($request->all());
+         //   \Log::info($request->all());
             if ($validator->fails()) {
                 return response()->json(['error' => $validator->errors()->all()]);
             }
@@ -110,8 +110,8 @@ class BookRoomController extends Controller
                 }
 
                 $room = Room::with('roomType')->find($roomId);
-                //  \Log::info( 'demo: '.  @$room->roomType->id);
-                // \Log::info($request->room_type_id);
+                //  \Log::info( '$room->roomType->id: '.  @$room->roomType->id);
+                //  \Log::info('$request->room_type_id: '. $request->room_type_id);
                 if ($request->room_type_id != @$room->roomType->id) {
                     DB::rollBack();
                     return response()->json(['error' => 'Loại phòng đã chọn không hợp lệ ']);

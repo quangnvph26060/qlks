@@ -23,7 +23,7 @@
                     <span class="text-danger"> = {{ showAmount(abs($due)) }}</span>
                 @else
                     <span>@lang('Phải thu từ người dùng')</span>
-                    <span> = {{ showAmount(abs($due)) }}</span>
+                    <span> = {{ showAmount(abs($due)) }} </span>
                 @endif
             </div>
         </div>

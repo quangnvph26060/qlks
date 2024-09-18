@@ -9,6 +9,8 @@ use App\Models\RoomType;
 use App\Models\Room;
 use App\Models\User;
 use Illuminate\Http\Request;
+use App\Constants\Status;
+use App\Http\Responses\ApiResponse;
 use Symfony\Component\HttpKernel\Log\Logger;
 
 class BookingController extends Controller {
@@ -118,9 +120,6 @@ class BookingController extends Controller {
     }
 
     public function bookingDetails(Request $request,  $id) {
-        \Log::info($id);
-        \Log::info($request->all());
-        
         $booking = Booking::with([
             'bookedRooms',
             'activeBookedRooms:id,booking_id,room_id',
@@ -131,9 +130,13 @@ class BookingController extends Controller {
             'usedPremiumService.premiumService',
             'payments'
         ])->findOrFail($id);
-
+       
         if($request->is_method === 'receptionist'){
-            return response()->json(['status'=>'success','data'=>$booking]);
+            $returnedPayments  = $booking->payments->where('type', 'RETURNED');
+            $receivedPayments  = $booking->payments->where('type', 'RECEIVED');
+            $total_amount      = $booking->total_amount;
+            $due               = $booking->due();
+            return response()->json(['status' => 'success','data' => $booking, 'returnedPayments' => $returnedPayments, 'receivedPayments' => $receivedPayments, 'total_amount' => $total_amount, 'due' => $due]);
         }
         $pageTitle = 'Chi tiết đặt chỗ';
         return view('admin.booking.details', compact('pageTitle', 'booking'));
@@ -212,19 +215,41 @@ class BookingController extends Controller {
              ->whereNotIn('id', $bookedRooms)
             ->whereNotIn('room_type_id', $disabledRoomTypeIDs) // loại trừ nhũng phòng ngưng hoạt động hoạt vô hiệu hóa 
             ->with('roomType')
-            ->select('id', 'room_type_id', 'room_number')
+            ->select('id', 'room_type_id', 'room_number','is_clean')
             ->get();
         
        //  \Log::info($emptyRooms);
         $scope = 'ALL';
         $is_method = 'Receptionist';
-        $bookings = $this->bookingData($scope,$is_method);
+      //  $bookings = $this->bookingData($scope,$is_method);
         //\Log::info($bookings);
         $bookings = BookedRoom::active()->with('booking', 'roomType', 'room', 'usedPremiumService')->get();
-             // \Log::info($roomsBooking);
+             //  \Log::info($bookings);
 
         $userList = User::select('username', 'email', 'mobile', 'address')->get();
 
         return view('admin.booking.receptionist.list', compact('pageTitle','Title','emptyRooms','bookings','emptyMessage','userList'));
     }
+    public function changeCleanRoom(Request $request)
+    {
+        try {
+           
+            $room = Room::where('room_number', $request->roomData)->firstOrFail();
+           
+            $newStatus = ($room->is_clean == Status::ROOM_CLEAN_ACTIVE) ? 0 : 1;
+            $room->update(['is_clean' => $newStatus]);
+
+            return ApiResponse::success('', 'success', 200);
+    
+        } catch (\Illuminate\Database\Eloquent\ModelNotFoundException $e) {
+            
+           return ApiResponse::error('error', 404);
+           
+        } catch (\Exception $e) {
+
+            return ApiResponse::error($e->getMessage(), 404);
+            
+        }
+    }
+    
 }

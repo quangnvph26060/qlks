@@ -58,4 +58,7 @@ class Status
 
     const KEY_NOT_GIVEN = 0;
     const KEY_GIVEN = 1;
+
+    const ROOM_CLEAN_ACTIVE = 1;
+    const ROOM_CLEAN_INACTIVE = 0;
 }
