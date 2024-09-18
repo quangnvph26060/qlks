@@ -63,46 +63,6 @@
                 const apiUrl = '{{ route('admin.warehouse.index') }}';
                 initDataFetch(apiUrl);
 
-                // $(document).on('change', '.update-status', function() {
-                //     const isChecked = this.checked;
-
-                //     var row = $(this).closest('tr');
-
-                //     var rowId = row.attr('id');
-
-                //     var productId = rowId.split('-')[1];
-
-                //     const $checkbox = $(this);
-
-                //     Swal.fire({
-                //         title: "@lang('Cập nhật trạng thái')",
-                //         text: "@lang('Bạn có chắc chắn muốn cập nhật không?')",
-                //         icon: 'warning',
-                //         showCancelButton: true,
-                //         confirmButtonColor: '#3085d6',
-                //         cancelButtonColor: '#d33',
-                //         confirmButtonText: "@lang('Xác nhận')"
-                //     }).then((result) => {
-                //         if (result.isConfirmed) {
-                //             $.ajax({
-                //                 url: '{{ route('admin.product.status', ':id') }}'
-                //                     .replace(':id',
-                //                         productId),
-                //                 method: "PUT",
-                //                 success: function(response) {
-                //                     if (response.status) {
-                //                         showSwalMessage('success', response
-                //                             .message);
-                //                         console.log(productId);
-                //                     }
-                //                 }
-                //             });
-                //         } else {
-                //             $checkbox.prop('checked', !
-                //                 isChecked);
-                //         }
-                //     });
-                // });
             });
 
 
@@ -128,10 +88,35 @@
             }
         }
 
+        .tooltip1 {
+            position: relative;
+            display: inline-block;
+        }
 
+        .tooltip1 .tooltiptext {
+            font-size: 8px;
+            visibility: hidden;
+            width: 150px;
+            background-color: black;
+            color: #fff;
+            text-align: center;
+            border-radius: 5px;
+            padding: 5px;
+            position: absolute;
+            z-index: 100;
+            bottom: 125%;
+            /* Vị trí tooltip */
+            left: 50%;
+            /* margin-left: -75px; */
+            /* Để căn giữa */
+            opacity: 0;
+            transition: opacity 0.3s;
+        }
 
-
-
+        .tooltip1:hover .tooltiptext {
+            visibility: visible;
+            opacity: 1;
+        }
 
 
         .btn-toggle {

@@ -152,9 +152,9 @@ Route::middleware('admin', 'adminPermission')->group(function () {
     // manage return
     Route::controller('ReturnController')->prefix('return')->name('return.')->group(function () {
         Route::get('/', 'index')->name('index');
-        Route::post('{id}/create', 'create')->name('create');
+        Route::post('{id?}/create', 'create')->name('create');
         Route::post('{id}/store', 'store')->name('store');
-        // Route::get('{id}/show', 'show')->name('show');
+        Route::get('{id}/show', 'show')->name('show');
     });
 
     Route::name('hotel.')->prefix('hotel')->group(function () {

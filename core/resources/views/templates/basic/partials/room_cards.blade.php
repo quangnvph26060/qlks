@@ -1,48 +1,23 @@
+{{-- @dd($roomType) --}}
 @foreach ($roomType as $type)
-    <div class="{{ $class }}">
-        <div class="room-card">
-            <div class="room-card__thumb">
-                <img alt="image" src="{{ getImage(getFilePath('roomTypeImage') . '/thumb_' . @$type->main_image, getFileSize('roomTypeImage')) }}">
-                <ul class="room-card__utilities">
-                    @foreach ($type->amenities->take(4) as $amenity)
-                        <li data-bs-placement="right" data-bs-toggle="tooltip" title="{{ $amenity->title }}">
-                            @php echo $amenity->icon  @endphp
-                        </li>
-                    @endforeach
-                </ul>
+    <div class="item p-3" style="{{ $loop->iteration % 2 == 0 ? 'flex-direction: row-reverse;' : '' }}">
+        <img alt="image" class="rounded"
+            src="{{ getImage(getFilePath('roomTypeImage') . '/thumb_' . @$type->main_image, getFileSize('roomTypeImage')) }}">
+        <div class="info">
+            <h2>{{ $type->name }}</h2>
+            <p class="price">Giá: {{ number_format($type->fare, 0, '', '.') }} VNĐ/ngày</p>
+            <p>Số lượng người: {{ $type->total_adult + $type->total_child }} ({{ $type->total_adult }} người lớn +
+                {{ $type->total_child }} trẻ em)</p>
+            <p>Mô tả: Phòng rộng rãi, đầy đủ tiện nghi, view đẹp.</p>
+            <p>Cơ sở: Khách sạn XYZ, 123 Đường ABC, Hà Nội.</p>
+            <div class="mt-3">
+                <a class="btn btn-sm btn--base" href="{{ route('room.type.details', $type->slug) }}">
+                    <i class="la la-desktop me-2"></i>@lang('Đặt ngay')
+                </a>
             </div>
-            <div class="room-card__content">
-                <h3 class="title mb-2"><a href="{{ route('room.type.details', $type->slug) }}">{{ __($type->name) }}</a>
-                </h3>
-                <div class="room-card__bottom justify-content-between align-items-center mt-2 gap-3">
-                    <div>
-                        <h6 class="price text--base">
-                            {{ showAmount($type->fare) }} / @lang('Đêm')
-                        </h6>
 
-                        @isset($type->available_rooms)
-                            <small class="text--muted ">
-                                @lang('Phòng trống'): {{ $type->available_rooms }}
-                            </small>
-                        @endisset
-
-                        <div class="room-capacity text--base d-flex align-items-center justify-content-center flex-wrap gap-3 mt-3">
-                            <span class="custom--badge">
-                                @lang('Người lớn') &nbsp; {{ $type->total_adult }}
-                            </span>
-                            <span class="custom--badge">
-                                @lang('Trẻ em') &nbsp; {{ $type->total_child }}
-                            </span>
-
-                            <a class="btn btn-sm btn--base" href="{{ route('room.type.details', $type->slug) }}">
-                                <i class="la la-desktop me-2"></i>@lang('Đặt ngay')
-                            </a>
-                        </div>
-
-                    </div>
-
-                </div>
-            </div>
         </div>
+
+
     </div>
 @endforeach

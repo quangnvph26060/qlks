@@ -39,8 +39,8 @@ class BrandController extends Controller
                 $perPage,
                 $orderBy,
                 $search,
+                [],
                 $searchColumns,
-                []
             );
 
 

@@ -21,6 +21,10 @@ class WarehouseEntry extends Model
         return $this->belongsTo(Supplier::class);
     }
 
+    public function return(){
+        return $this->hasOne(ReturnGood::class);
+    }
+
     public function entries()
     {
         return $this->hasMany(WarehouseEntryItem::class);
