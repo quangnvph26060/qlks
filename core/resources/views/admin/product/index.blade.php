@@ -49,7 +49,7 @@
                 </div>
             </div>
             <div id="pagination" class="mt-3">
-                
+
             </div>
         </div>
     </div>
@@ -104,15 +104,18 @@
                                 url: '{{ route('admin.product.destroy', ':id') }}'
                                     .replace(':id', productId),
                                 success: function(response) {
-                                    row.remove();
-                                    $(`#rep-${productId}`).remove();
-                                    notData();
-                                    showSwalMessage('success', response.message);
-                                },
-                                error: function(xhr) {
-                                    showSwalMessage('error', xhr.responseJSON
+
+                                    if (response.status) {
+                                        row.remove();
+                                        $(`#rep-${productId}`).remove();
+                                        notData();
+                                        showSwalMessage('success', response
                                         .message);
-                                }
+                                    } else {
+                                        showSwalMessage('error', response.message);
+                                    }
+                                },
+                                
                             })
                         }
                     })
@@ -149,7 +152,7 @@
                                 if (response.status) {
                                     showSwalMessage('success', response
                                         .message);
-                                        console.log(productId);
+                                    console.log(productId);
                                 }
                             }
                         });

@@ -22,6 +22,7 @@ class BaseRepository
 
     public function customPaginate($columns = ['*'], $relations = [], $perPage = 10, $orderBy = null, $search = null, $customWhere = [], $searchColumns = [], $relationSearchColumns = [], $filters = [], $all = false)
     {
+        // dd($relationSearchColumns);
         $query = $this->model->query()->with($relations);
 
         // Tìm kiếm trong các cột chính

@@ -19,7 +19,7 @@
                         @foreach ($products as $item)
                             <tr>
                                 <td>{{ $item->product->name }}</td>
-                                <td>{{ $item->product->import_price }}</td>
+                                <td>{{ showAmount($item->product->selling_price) }}</td>
                                 <td><input id="products.{{ $item->product->id }}.quantity" value="{{ $item->quantity }}"
                                         type="number" name="products[{{ $item->product->id }}][quantity]"
                                         class="form-control p-0" value="{{ $item->quantity }}"></td>
@@ -35,7 +35,8 @@
                 </table>
 
                 <div class="text-right mt-3">
-                    <button type="submit" class="btn btn-primary">Xác nhận hủy</button>
+                    <button type="submit" class="btn btn-primary">Xác nhận hoàn trả</button>
+                    <a href="" class="btn btn-secondary " id="btn-close">Quay lại</a>
                 </div>
             </form>
         </div>
@@ -70,15 +71,20 @@
                     });
                 });
 
+                var url = window.location.href;
+
+                // Tách URL thành mảng
+                var parts = url.split('/');
+
+                // Lấy phần thứ tư (số 16)
+                var id = parts[5]; // Chỉ số 5 vì chỉ số bắt đầu từ 0
+
+                var url = "{{ route('admin.warehouse.show', ':id') }}".replace(':id', id);
+                $("#btn-close").attr('href', url);
+
                 $('#cancellation-form').on('submit', function(e) {
                     e.preventDefault();
-                    var url = window.location.href;
 
-                    // Tách URL thành mảng
-                    var parts = url.split('/');
-
-                    // Lấy phần thứ tư (số 16)
-                    var id = parts[5]; // Chỉ số 5 vì chỉ số bắt đầu từ 0
 
                     $.ajax({
                         url: "{{ route('admin.return.store', ':id') }}".replace(':id', id),
@@ -86,17 +92,21 @@
                         data: $(this).serializeArray(),
                         success: function(response) {
                             if (response.status) {
+                                window.location.href = '{{ route('admin.return.index') }}';
 
                             } else {
-                                console.log(response);
+                                const firstKey = Object.keys(response.errors ?? {})[0];
 
-                                const firstKey = Object.keys(response.errors)[0];
 
-                                const firstError = response.errors[firstKey];
+                                const firstError = firstKey == undefined ?
+                                    response.message : response.errors[firstKey];
 
-                                var escapedKey = firstKey.replace(/\./g, '\\.');
+                                var escapedKey = firstKey == undefined ? firstKey : firstKey
+                                    .replace(/\./g, '\\.');
 
                                 $("input").css('border', '1px solid #ddd');
+
+
 
                                 $(`#${escapedKey}`).css('border', '1px solid red');
 
@@ -120,7 +130,6 @@
                                 });
                             }
 
-                            // window.location.href = '{{ route('admin.return.index') }}';
                         }
                     })
                 })

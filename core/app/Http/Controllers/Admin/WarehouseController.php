@@ -32,7 +32,7 @@ class WarehouseController extends Controller
         $perPage = request()->get('perPage', 10);
         $orderBy = request()->get('orderBy', 'id');
         $columns = ['id', 'supplier_id', 'reference_code', 'total', 'status', 'created_at'];
-        $relations = ['supplier'];
+        $relations = ['supplier', 'return'];
         $searchColumns = ['reference_code'];
 
         $response = $this->repository
@@ -45,7 +45,6 @@ class WarehouseController extends Controller
                 [],
                 $searchColumns
             );
-
 
         if (request()->ajax()) {
             return response()->json([
@@ -114,9 +113,9 @@ class WarehouseController extends Controller
                         'quantity' => $value
                     ]);
 
-                    $product->update([
-                        'stock' => $product->stock + $value
-                    ]);
+                    // $product->update([
+                    //     'stock' => $product->stock + $value
+                    // ]);
                 }
             }
 
@@ -134,7 +133,7 @@ class WarehouseController extends Controller
 
             return response()->json([
                 'status' => true,
-                'message' => 'Động những thếm với một đơn hàng',
+                'message' => 'Tạo đơn hàng thành công.',
             ]);
         } catch (\Exception $exception) {
 
@@ -155,7 +154,7 @@ class WarehouseController extends Controller
     public function show(string $id)
     {
         $pageTitle = "Chi tiết đơn hàng";
-        $warehouse = WarehouseEntry::query()->with('supplier', 'entries.product', 'payments.payment_method')->find($id);
+        $warehouse = WarehouseEntry::query()->with('supplier', 'entries.product', 'payments.payment_method', 'return')->find($id);
         return view('admin.warehouse.show', compact('pageTitle', 'warehouse'));
     }
 
@@ -178,6 +177,17 @@ class WarehouseController extends Controller
             return response()->json([
                 'status' => false,
                 'message' => 'Không tìm thấy đơn hàng!'
+            ]);
+        }
+
+        $productEntries = $warehouse->entries()->pluck('quantity', 'product_id')->toArray();
+
+        foreach ($productEntries as $productId => $quantity) {
+
+            $product = Product::query()->find($productId);
+
+            $product->update([
+                'stock' => $product->stock + $quantity
             ]);
         }
 

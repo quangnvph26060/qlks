@@ -31,7 +31,7 @@ class ReturnController extends Controller
         $perPage = request()->get('perPage', 10);
         $orderBy = request()->get('orderBy', 'id');
         $columns = ['id', 'reference_code', 'total', 'created_at'];
-        $relations = ['warehouse_entry'];
+        $relations = ['warehouse_entry', 'return_items'];
         $searchColumns = ['reference_code'];
 
         $response = $this->repository
@@ -43,11 +43,12 @@ class ReturnController extends Controller
                 $search,
                 [],
                 $searchColumns,
-                [],
+                ['warehouse_entry' => ['reference_code']],
                 [],
                 true
-            );
 
+
+            );
 
         if (request()->ajax()) {
             return response()->json([
@@ -72,22 +73,40 @@ class ReturnController extends Controller
      */
     public function store(StoreReturnRequest $request, $id)
     {
-
+        // dd($request->products);
         DB::beginTransaction();
 
         try {
+            $returnExist = ReturnGood::where('warehouse_entry_id', $id)->first();
+            if ($returnExist) {
+                return response()->json(['status' => false, 'message' => 'Đơn hàng đã được trả']);
+            }
+
             $return = ReturnGood::create([
                 'warehouse_entry_id' => $id,
-                'reference_code' => $this->repository->generateRandomString()
+                'reference_code' => $this->repository->generateRandomString(),
+                'total' => 0
             ]);
 
-            // $total = 0;
-
-            // array_map(function ($item) use (&$total) {
-
-            // })
 
             $return->return_items()->attach($request->products);
+
+            $total = 0;
+
+            $products = $return->return_items;
+
+            foreach ($products as $product) {
+                $total += $product->pivot->quantity * $product->import_price;
+                // $return->warehouse_entry->entries->where('product_id', $product->id)->first()->decrement('quantity', $product->pivot->quantity);
+                $product->update([
+                    'stock' => $product->stock - $product->pivot->quantity
+                ]);
+            }
+
+            $return->update([
+                'total' => $total
+            ]);
+
 
             DB::commit();
             return response()->json(['status' => true]);

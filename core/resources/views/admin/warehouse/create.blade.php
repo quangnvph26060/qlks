@@ -139,6 +139,7 @@
                     const product = $(this).data('resource'); // Lấy thông tin sản phẩm từ data-resource
                     const productId = product.id; // Lấy ID của sản phẩm
 
+
                     // Kiểm tra xem sản phẩm đã được chọn chưa
                     if ($('#selected-product').find(`[data-id="${productId}"]`).length > 0) {
                         alert('Sản phẩm này đã được chọn.');
@@ -153,7 +154,7 @@
                             </div>
                             <div class="info flex-grow-1">
                                 <div class="name fw-bold ellipsis">${product.name}</div>
-                                <div class="price text-success">Giá: ${product.import_price}</div>
+                                <div class="price text-success">Giá: ${Math.floor(product.selling_price).toString()}</div>
                                 <div class="quantity d-flex align-items-center">
                                     <button type="button" class="btn btn-outline-secondary btn-sm decrease">-</button>
                                     <input type="number" class="form-control mx-2 handled-focus" name="products[${productId}]" value="1" min="1" style="width: 70px; text-align: center; height: 30px;">
@@ -170,6 +171,17 @@
                     // Cập nhật tổng tiền
                     updateTotal();
                 });
+
+                function formattedNumber(number) {
+                    return (number * 1.08).toLocaleString('en-US', {
+                        minimumFractionDigits: 0,
+                        maximumFractionDigits: 0
+                    }) + ' VND';
+                }
+
+                console.log(formattedNumber(25000000.00));
+
+
 
                 // Cập nhật tổng tiền khi người dùng nhập số trực tiếp
                 $(document).on("blur", ".handled-focus", function() {

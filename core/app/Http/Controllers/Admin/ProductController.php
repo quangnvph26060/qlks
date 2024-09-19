@@ -60,6 +60,7 @@ class ProductController extends Controller
                 $perPage,
                 $orderBy,
                 $search,
+                [],
                 $searchColumns,
                 $relationSearchColumns
             );
@@ -190,25 +191,32 @@ class ProductController extends Controller
      */
     public function destroy(string $id)
     {
-        $product = Product::query()->find($id);
+        try {
+            $product = Product::query()->find($id);
 
-        if (!$product) {
+            if (!$product) {
+                return response()->json([
+                    'status' => false,
+                    'message' => 'Không tìm thấy sản phẩm!'
+                ]);
+            }
+
+            $product->delete();
+
+            if (Storage::disk('public')->exists($product->image_path)) {
+                Storage::disk('public')->delete($product->image_path);
+            }
+
+            return response()->json([
+                'status' => true,
+                'message' => 'Xoá sản phẩm thành công!'
+            ]);
+        } catch (\Exception $e) {
             return response()->json([
                 'status' => false,
-                'message' => 'Không tìm thấy sản phẩm!'
+                'message' => 'Sản phẩm đã được sử dụng!'
             ]);
         }
-
-        $product->delete();
-
-        if (Storage::disk('public')->exists($product->image_path)) {
-            Storage::disk('public')->delete($product->image_path);
-        }
-
-        return response()->json([
-            'status' => true,
-            'message' => 'Xoá sản phẩm thành công!'
-        ]);
     }
 
     public function updateStatus($id)
