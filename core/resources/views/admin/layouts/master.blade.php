@@ -29,6 +29,7 @@
     @yield('content')
 
     <script src="{{ asset('assets/global/js/jquery-3.7.1.min.js') }}"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/bootstrap-notify/0.2.0/js/bootstrap-notify.min.js"></script>
     <script src="{{ asset('assets/global/js/bootstrap.bundle.min.js') }}"></script>
     <script src="{{ asset('assets/admin/js/vendor/bootstrap-toggle.min.js') }}"></script>
 

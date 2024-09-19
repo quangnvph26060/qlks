@@ -1,23 +1,18 @@
 @foreach ($response as $return)
     <tr data-id="{{ $return->id }}">
-        {{-- <td>{{ $loop->iteration }}</td>
-        <td>{{ $return->order->reference_code }}</td>
-        <td>{{ $return->order->customer->name }}</td>
-        <td>{{ $return->order->customer->phone }}</td>
-        <td>{{ $return->order->customer->email }}</td>
-        <td>{{ $return->order->customer->address }}</td>
-        <td>{{ $return->created_at }}</td>
+        <td><a href="{{ route('admin.return.show', $return->id) }}">{{ $return->reference_code }}</a></td>
+        <td><a
+                href="{{ route('admin.warehouse.show', $return->warehouse_entry_id) }}">{{ $return->warehouse_entry->reference_code }}</a>
+        </td>
+        <td>{{ $return->return_items->count() }} sản phẩm</td>
         <td>
-            <div class="dropdown">
-                <button class="btn btn-sm btn--primary btn--icon btn-action" data-bs-toggle="dropdown">
-                    <i class="la la-ellipsis-v"></i>
-                </button>
-                <div class="dropdown-menu">
-                    <a class="dropdown-item" href="{{ route('admin.table.return.details', $return->id) }}">
-                        <i class="la la-desktop"></i> @lang('Chi tiết')
-                    </a>
-                </div>
-            </div>
-        </td> --}}
+            @php($sum = 0)
+            @foreach ($return->return_items as $item)
+                @php($sum += $item->pivot->quantity)
+            @endforeach
+            {{ $sum }}
+        </td>
+        <td>{{ showAmount($return->total) }} </td>
+        <td>{{ \Carbon\Carbon::parse($return->created_at)->diffForHumans() }}</td>
     </tr>
 @endforeach

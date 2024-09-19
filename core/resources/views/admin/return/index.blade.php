@@ -28,16 +28,12 @@
                             <table class="table--light style--two table" id="data-table">
                                 <thead>
                                     <tr>
-                                        <th></th>
                                         <th>@lang('Phiếu trả hàng')</th>
-                                        <th>@lang('Ảnh')</th>
-                                        <th>@lang('Tên sản phẩm')</th>
-                                        <th>@lang('Giá bán')</th>
-                                        <th>@lang('Giá nhập')</th>
-                                        <th>@lang('Tồn kho')</th>
-                                        @can([])
-                                            <th>@lang('Hành động')</th>
-                                        @endcan
+                                        <th>@lang('Mã đơn hàng')</th>
+                                        <th>@lang('Số sản phẩm bị hoàn trả')</th>
+                                        <th>@lang('Tổng số lượng hoàn trả')</th>
+                                        <th>@lang('Tổng tiền')</th>
+                                        <th>@lang('Thời gian thực hiện')</th>
                                     </tr>
                                 </thead>
                                 <tbody>

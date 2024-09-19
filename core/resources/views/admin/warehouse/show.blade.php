@@ -67,13 +67,13 @@
                     <div class="card-header d-flex justify-content-between">
                         <h5 class="card-title">Chi tiết sản phẩm</h5>
                         <div id="result-btn">
-                            @if ($warehouse->status)
+                            @if ($warehouse->return && $warehouse->return->warehouse_entry_id == $warehouse->id)
+                            @elseif($warehouse->status)
                                 <button type="submit" class="btn btn-sm btn-outline--primary btn-return" disabled>Trả
                                     hàng</button>
                             @else
                                 <a id="complete" href="javascript:void(0)"
-                                    class="btn btn-sm btn-outline--primary btn-return">Đã nhận được
-                                    hàng</a>
+                                    class="btn btn-sm btn-outline--primary btn-return">Xác nhận đã nhận hàng</a>
                             @endif
                         </div>
                     </div>
@@ -82,7 +82,9 @@
                             <table class="table--light style--two table" id="data-table">
                                 <thead>
                                     <tr>
+                                        @if (!$warehouse->return)
                                         <th></th>
+                                        @endif
                                         <th> Mã sản phẩm</th>
                                         <th> Ảnh</th>
                                         <th> Tên sản phẩm</th>
@@ -95,12 +97,15 @@
                                 <tbody>
                                     @foreach ($warehouse->entries as $entryItem)
                                         <tr>
-                                            <td>
-                                                <div class="form-group">
-                                                    <input type="checkbox" name="entry[]" class="form-check-input entry"
-                                                        value="{{ $entryItem->id }}">
-                                                </div>
-                                            </td>
+                                            @if (!$warehouse->return )
+                                                <td>
+                                                    <div class="form-group">
+                                                        <input type="checkbox" name="entry[]" class="form-check-input entry"
+                                                            value="{{ $entryItem->id }}">
+                                                    </div>
+                                                </td>
+                                            @endif
+
                                             <td data-label="Mã sản phẩm">{{ $entryItem->product->sku }}</td>
                                             <td data-label="Ảnh">
                                                 <img src="{{ \Storage::url($entryItem->product->image_path) }}"

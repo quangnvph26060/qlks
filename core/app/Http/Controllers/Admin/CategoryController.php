@@ -43,6 +43,7 @@ class CategoryController extends Controller
                 $perPage,
                 $orderBy,
                 $search,
+                [],
                 $searchColumns,
                 []
             );

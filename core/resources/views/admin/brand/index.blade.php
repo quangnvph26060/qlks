@@ -87,8 +87,8 @@
             "use strict";
             $(document).ready(function() {
                 const apiUrl = '{{ route('admin.brand.index') }}'; // Thay đổi URL phù hợp
-                initDataFetch(apiUrl);
-               
+                initDataFetch(apiUrl, true);
+
 
                 let lastId = null;
                 // Đặt Swal thông báo chung
