@@ -75,7 +75,7 @@ class BookRoomController extends Controller
                 'room'            => 'required|array',
                 'paid_amount'     => 'nullable|numeric|gte:0' // tiền mà khách đã thanh toán trước
             ]);
-         //   \Log::info($request->all());
+            //   \Log::info($request->all());
             if ($validator->fails()) {
                 return response()->json(['error' => $validator->errors()->all()]);
             }
@@ -110,6 +110,10 @@ class BookRoomController extends Controller
                 }
 
                 $room = Room::with('roomType')->find($roomId);
+                if(!$room->is_clean){
+                    return response()->json(['error' => 'Phòng chưa dọn dẹp']);
+                }
+                //  \Log::info( '$room->is_clean: '.  @$room->is_clean);
                 //  \Log::info( '$room->roomType->id: '.  @$room->roomType->id);
                 //  \Log::info('$request->room_type_id: '. $request->room_type_id);
                 if ($request->room_type_id != @$room->roomType->id) {

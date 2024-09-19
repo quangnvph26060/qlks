@@ -79,16 +79,31 @@
     }
 
     .modal-dialog {
+        justify-content: center;
         display: flex;
         align-items: center;
         min-height: calc(100% - 1rem);
-        /* Để căn giữa theo chiều dọc */
     }
-
+    #serviceModal{
+        background: #3e454552;
+    }
     .room-info p {
         color: gainsboro !important;
     }
-
+    .removeServiceBtn {
+        position: absolute;
+        height: 25px;
+        width: 25px;
+        border-radius: 50%;
+        text-align: center;
+        line-height: 13px;
+        font-size: 12px;
+        right: 13px;
+        top: -8px;
+    }
+    .h-40{
+        height: 40px !important;
+    }
     .content-booking {
         cursor: pointer;
         display: flex;
@@ -464,6 +479,27 @@
 .text--success span {
     color: #28c76f !important;
 }
+#more_select{
+    transform: translate(50px, 38px) !important;
+   
+}
+#more_select a,
+#more_select i{
+    color: #161515;
+}
+.btn-primary-service,
+.btn-primary-1,
+.btn-primary-2
+{
+    padding: 8px 12px;
+    color: #fff;
+    background-color: #337ab7;
+    border-color: #2e6da4;
+    border-radius: 5px;
+}
+.serviceModal{
+
+}
 @media (max-width:768px) {
     .mobi-table td{
         padding: 10px !important;
@@ -476,5 +512,8 @@
     }
     #myModal-late-checkin{
         padding-right: 0px !important;
+    }
+    #more_select {
+        transform: translate(-3px, 38px) !important;
     }
 }

@@ -11,6 +11,7 @@ use App\Models\User;
 use Illuminate\Http\Request;
 use App\Constants\Status;
 use App\Http\Responses\ApiResponse;
+use App\Models\PremiumService;
 use Symfony\Component\HttpKernel\Log\Logger;
 
 class BookingController extends Controller {
@@ -250,6 +251,12 @@ class BookingController extends Controller {
             return ApiResponse::error($e->getMessage(), 404);
             
         }
+    }
+    public function getPremiumServices()
+    {
+        $pageTitle     = 'Thêm dịch vụ cao cấp';
+        $premiumServices = PremiumService::active()->get();
+        return ApiResponse::success($premiumServices, 'success', 200);
     }
     
 }

@@ -32,7 +32,7 @@
             <div class="col-md-2 main-room-card  card-{{ $class }} ">
                 <div class="room-card  {{ $class }}">
 
-                    <x-room-badge isClean="{{ $rooms->is_clean }}" classClean="{{ $classClean }}"
+                    <x-room-badge styleClass="" isClean="{{ $rooms->is_clean }}" classClean="{{ $classClean }}"
                         classSvg="{{ $classSvg }}" cleanText="{{ $cleanText }}"
                         roomNumber="{{ $rooms->room_number }}" />
 
@@ -41,7 +41,8 @@
                     <div class="content-booking mt-2 room-booking-{{ $class }}"
                         data-hours="{{ $rooms->roomType->hourly_rate }}" data-day="{{ $rooms->roomType->fare }}"
                         data-night="{{ $rooms->roomType->fare }}" data-name = "{{ $rooms->roomType->name }}"
-                        data-roomNumber="{{ $rooms->room_number }}" data-room-type="{{ $rooms->room_type_id }}" data-room="{{ $rooms->id }}">
+                        data-roomNumber="{{ $rooms->room_number }}" data-room-type="{{ $rooms->room_type_id }}"
+                        data-room="{{ $rooms->id }}">
                         <h5>{{ $rooms->room_number }} </h5>
                         <p class="single-line">{{ $rooms->roomType->name }}</p>
                         <div class="room-info">
@@ -83,19 +84,27 @@
                 ) {
                     $class = 'status-late-checkin'; // nhận phòng muộn
                 }
-
+                $key_status = false;
+                if (
+                    now()->format('Y-m-d') >= $booking->booking->check_in &&
+                    now()->format('Y-m-d') < $booking->booking->check_out &&
+                    $booking->booking->key_status == Status::DISABLE
+                ) {
+                    $key_status = true;
+                }
             @endphp
             <div class="col-md-2 main-room-card card-{{ $class }}">
                 <div class="room-card {{ $class }}">
 
-                    <x-room-badge isClean="{{ $booking->room->is_clean }}" classClean="{{ $classClean }}"
-                        classSvg="{{ $classSvg }}" cleanText="{{ $cleanText }}"
-                        roomNumber="{{ $booking->room->room_number }}" />
+                    <x-room-badge styleClass="dropdown" isClean="{{ $booking->room->is_clean }}"
+                        classClean="{{ $classClean }}" classSvg="{{ $classSvg }}" cleanText="{{ $cleanText }}"
+                        roomNumber="{{ $booking->room->room_number }}" keyStatus="{{ $key_status }}"
+                        key="{{ $booking->booking->key_status }}" bookingId="{{ $booking->booking_id }}" />
 
                     <div class="content-booking mt-2 room-booking-{{ $class }}"
                         data-id="{{ $booking->booking_id }}" data-hours="{{ $booking->roomType->hourly_rate }}"
                         data-day="{{ $booking->roomType->fare }}" data-night="{{ $booking->roomType->fare }}"
-                        data-name = "{{ $booking->roomType->name }} " data-roomNumber="{{ $booking->room_number }}"
+                        data-name = "{{ $booking->roomType->name }} " data-roomNumber="{{ $booking->room->room_number }}"
                         data-room-type="{{ $booking->room_type_id }}" data-booking="{{ $booking->id }}">
                         <p> {{ $booking->booking->booking_number }}</p>
                         <p> {{ $booking->roomType->name }}</p>
@@ -193,45 +202,7 @@
                         </form>
 
                         <!-- add customer  -->
-                        <div id="customer-popup" class="customer-popup">
-                            <div class="modal-header">
-                                <h3>Thông tin khách hàng</h3>
-                                <svg class="close-customer" id="customer-close" xmlns="http://www.w3.org/2000/svg"
-                                    width="20" height="20" viewBox="0 0 24 24">
-                                    <path fill="none" stroke="currentColor" stroke-linecap="round" stroke-width="2"
-                                        d="M20 20L4 4m16 0L4 20" />
-                                </svg>
-                            </div>
-                            <form>
-                                {{-- <label for="name">Loại khách hàng</label>
-                                <select class="form-control" name="guest_type" id="guest_type">
-                                    <option selected value="0">@lang('Khách lưu trú')</option>
-                                    <option value="1">@lang('Khách đã đăng ký')</option>
-                                </select> --}}
-
-                                <label for="name">Tên khách hàng</label>
-                                <input type="text" id="name" class="customer-input"
-                                    placeholder="Nhập tên của bạn">
-
-                                <label for="email">Email</label>
-                                <input type="email" id="email" class="customer-input"
-                                    placeholder="Nhập email của bạn">
-
-                                <label for="phone">Số điện thoại</label>
-                                <input type="text" id="phone" class="customer-input"
-                                    placeholder="Nhập số điện thoại">
-
-                                <label for="address">Địa chỉ</label>
-                                <input type="text" id="address" class="customer-input"
-                                    placeholder="Nhập địa chỉ của bạn">
-
-                                <div class="btn-customer">
-                                    <button type="button" id="customer-closePopup">Bỏ qua</button>
-                                    <button type="button" class="btn btn-primary btn-user-info">Lưu</button>
-                                </div>
-                            </form>
-                        </div>
-
+                        @include('admin.booking.partials.add_customer_booking')
 
                         <form id="bookingForm" action="{{ route('admin.room.book') }}" class="booking-form"
                             method="POST">
@@ -253,13 +224,13 @@
                                         </tr>
                                     </thead>
                                     <tbody>
-                                        <input type="text" class="room_type_id"   name="room_type_id"hidden>
-                                        <input type="text" class="room_type"      name="room_type"hidden>
+                                        <input type="text" class="room_type_id" name="room_type_id"hidden>
+                                        <input type="text" class="room_type" name="room_type"hidden>
                                         <input type="text" class="username-user1" name="guest_name" hidden>
-                                        <input type="text" class="email-user1"    name="email" hidden>
-                                        <input type="text" class="mobile-user"    name="mobile" hidden>
-                                        <input type="text" class="address-user"   name="address" hidden>
-                                        <input type="text" class="guest_type"     name="guest_type" hidden>
+                                        <input type="text" class="email-user1" name="email" hidden>
+                                        <input type="text" class="mobile-user" name="mobile" hidden>
+                                        <input type="text" class="address-user" name="address" hidden>
+                                        <input type="text" class="guest_type" name="guest_type" hidden>
                                         <tr>
                                             <td>
                                                 <p id="book_name"></p>
@@ -320,7 +291,7 @@
                                                         style="border-bottom: 1px solid #a89191 ; margin-left: 38px;">
                                                 </div>
                                             </div>
-                                            <button type="button" class="btn btn-primary btn-confirm">Đặt phòng</button>
+                                            <button type="button" class=" btn-primary-2 btn-confirm">Đặt phòng</button>
                                         </div>
 
                                     </div>
@@ -334,7 +305,7 @@
         </div>
 
         {{-- trả phòng  --}}
-        <div class="modal fade" id="myModal-checkout" tabindex="-1" role="dialog"
+        {{-- <div class="modal fade" id="myModal-checkout" tabindex="-1" role="dialog"
             aria-labelledby="myModalLabel-booking" aria-hidden="true">
             <div class="modal-dialog modal-dialog-centered" role="document" style="max-width: 1200px;">
                 <div class="modal-content">
@@ -416,9 +387,9 @@
                     </div>
                 </div>
             </div>
-        </div>
+        </div> --}}
         {{-- sắp tới  --}}
-        <div class="modal fade" id="myModal-upcoming" tabindex="-1" role="dialog"
+        {{-- <div class="modal fade" id="myModal-booking" tabindex="-1" role="dialog"
             aria-labelledby="myModalLabel-booking" aria-hidden="true">
             <div class="modal-dialog modal-dialog-centered" role="document" style="max-width: 1200px;">
                 <div class="modal-content">
@@ -501,10 +472,10 @@
                     </div>
                 </div>
             </div>
-        </div>
+        </div> --}}
         @include('admin.booking.partials.modal_extraChargeModal')
         {{-- NHẬN PHÒNG MUỘN  --}}
-        <div class="modal fade" id="myModal-late-checkin" tabindex="-1" role="dialog"
+        <div class="modal fade" id="myModal-booking-status" tabindex="-1" role="dialog"
             aria-labelledby="myModalLabel-booking" aria-hidden="true">
             <div class="modal-dialog modal-dialog-centered" role="document" style="max-width: 1200px;">
                 <div class="modal-content">
@@ -590,12 +561,19 @@
                         </div>
                         <div class="row">
                             <div class="accordion-item">
-                                <h2 class="accordion-header" id="premiumServiceHeading">
-                                    <button aria-controls="premiumService" aria-expanded="false" class="accordion-button"
-                                        data-bs-target="#premiumService" data-bs-toggle="collapse" type="button">
-                                        @lang('Dịch vụ cao cấp')
-                                    </button>
-                                </h2>
+                                <div class="d-flex justify-content-between mt-2 mb-2">
+                                    <h2 class="accordion-header" id="premiumServiceHeading">
+                                        <button aria-controls="premiumService" aria-expanded="false"
+                                            class="accordion-button" data-bs-target="#premiumService"
+                                            data-bs-toggle="collapse" type="button">
+                                            @lang('Dịch vụ cao cấp ')
+                                        </button>
+                                    </h2>
+                                    <div>
+                                        <a href="javascript:void(0)" class=" btn-primary-service add_premium_service"> <i
+                                                class="las la-plus-circle"></i> Thêm dịch vụ cao cấp</a>
+                                    </div>
+                                </div>
                                 <div aria-labelledby="premiumServiceHeading" class="accordion-collapse collapse show"
                                     data-bs-parent="#s" id="premiumService">
                                     <div class="accordion-body p-0">
@@ -700,6 +678,8 @@
                 </div>
             </div>
         </div>
+        {{-- thêm dịch vụ  --}}
+        @include('admin.booking.partials.system-2')
         <!-- Modal clean -->
         @include('admin.booking.partials.clean_modal')
     </div>
@@ -745,7 +725,85 @@
 
         });
 
+        // $('.more_select').on('click', function() {
 
+        // });
+        // add_premium_service
+        $('.add_premium_service').on('click', function(event) {
+            event.stopPropagation();
+            $('#serviceModal').modal('show');
+        });
+
+
+        $('.addServiceBtn').on('click', function() {
+            const content = `
+            <div class="d-flex service-item position-relative mb-3 flex-wrap">
+                <div class="row w-100">
+                    <div class="col-md-6">
+                        <select class="custom-select no-right-radius w-100" name="services[]" required>
+                           
+                        </select>
+                    </div>
+                    <div class="col-md-6">
+                        <input class="form-control no-left-radius w-100 h-40" name="qty[]" placeholder="@lang('Số lượng')" required type="text">
+                        <button class="btn--danger removeServiceBtn border-0" type="button">
+                            <i class="las la-times text--white"></i>
+                        </button>
+                    </div>
+
+                   
+                </div>
+            </div>`;
+
+            $('.service-wrapper').append(content);
+            const select = $('.service-wrapper').find('select[name="services[]"]')
+                .last();
+
+
+            $.ajax({
+                url: '{{ route('admin.services.booking.services') }}',
+                type: 'GET',
+                success: function(data) {
+                    select.empty();
+
+                    data.data.forEach(function(service) {
+                        var option =
+                            `<option value="${service.id}">${service.name} - ${formatCurrency(service.cost)}</option>`;
+                        select.append(option);
+                    });
+                },
+                error: function(error) {
+                    console.log('Error:', error);
+                }
+            });
+        });
+
+        $('.service-wrapper').on('click', '.removeServiceBtn', function() {
+            $(this).closest('.service-item').remove();
+        });
+        // bàn giao chìa khóa 
+        $('.handoverKeyBtn').on('click', function(event) {
+            let data = $(this).data();
+
+            event.stopPropagation();
+            var url = `{{ route('admin.booking.key.handover', ['id' => ':id']) }}`.replace(':id', data
+                .id);
+            $.ajax({
+                url: url,
+                type: 'POST',
+                data: {
+                    is_method: "receptionist"
+                },
+                success: function(response) {
+                    if (response.status === 'success') {
+                        window.location.reload();
+                    }
+                },
+                error: function(xhr, status, error) {
+                    console.error('Lỗi:', error);
+                }
+            });
+        });
 
         $('.room-icon').on('click', function() {
             let roomData = $(this).attr('data-room');
@@ -758,11 +816,9 @@
                 textClean = '<strong style="color: #28a745;">Sạch</strong>';
             }
 
-            $('#dynamicModalLabel').html('Chuyển trạng thái buồng phòng ' + roomData +
-                ' thành ' +
+            $('#dynamicModalLabel').html('Chuyển trạng thái buồng phòng ' + roomData + ' thành ' +
                 textClean);
-            $('#modalRoomInfo').html('Chuyển trạng thái buồng phòng ' + roomData +
-                ' thành ' +
+            $('#modalRoomInfo').html('Chuyển trạng thái buồng phòng ' + roomData + ' thành ' +
                 textClean);
 
             var modal = new bootstrap.Modal($('#dynamicModal'));
@@ -792,78 +848,64 @@
             modal.show();
         });
 
+        $('.room-booking-status-dirty').on('click', function() {
+            const modal = new bootstrap.Modal($('#myModal-booking')[0]);
+            modal.show();
 
+            const dataHours = $(this).data('hours').replace(',', '');
+            const dataName = $(this).data('name');
+            const dataRoomType = $(this).data('room-type');
+            const dataRoom = $(this).data('room');
+            const dataRoomNumber = $(this).data('roomnumber');
+            console.log(dataRoomNumber);
+            
+            const dataDay = $(this).data('day').replace(',', '');
+            const dataNight = $(this).data('night').replace(',', '');
 
+            $('[name=room_type_id]').val(dataRoomType);
+            $('[name=room_type]').val(dataRoom);
+            $('#customer-price-booking, #input-price-booking').val(parseInt(dataHours, 10));
+            $('#book_name').text(dataName);
+            $('#roomNumber').val(dataRoomNumber);
 
-
-        // đặt phòng
-        const roomBooking = document.querySelectorAll('.room-booking-status-dirty');
-        roomBooking.forEach(function(booking) {
-            booking.addEventListener('click', function() {
-                // Hiển thị modal với ID mới
-                var modal = new bootstrap.Modal(document.getElementById('myModal-booking'));
-                modal.show();
-
-                const dataHours = this.getAttribute('data-hours');
-                const dataName = this.getAttribute('data-name');
-                const dataroomNumber = this.getAttribute('data-roomNumber');
-                const integerValue = parseInt(dataHours, 10);
-                window.savedDataHours = this.getAttribute('data-hours');
-                window.savedDataHours = window.savedDataHours.replace(',', '');
-                $('[name=room_type_id]').val(this.getAttribute('data-room-type'));
-                $('[name=room_type]').val(this.getAttribute('data-room'));
-                window.savedDataDay = this.getAttribute('data-day'); // giá ngày
-                window.savedDataDay = window.savedDataDay.replace(',', '');
-
-                window.savedDataNight = this.getAttribute('data-night'); // giá đêm
-                window.savedDataNight = window.savedDataNight.replace(',', '');
-
-                document.getElementById('customer-price-booking').value = integerValue;
-                document.getElementById('input-price-booking').value = integerValue;
-                document.getElementById('book_name').innerText = dataName;
-                document.getElementById('roomNumber').value = dataroomNumber;
-            });
+            window.savedDataHours = dataHours;
+            window.savedDataDay = dataDay;
+            window.savedDataNight = dataNight;
         });
-        // trả phòng 
-        const roomCheckOut = document.querySelectorAll('.room-booking-status-occupied');
-        roomCheckOut.forEach(function(booking) {
-            booking.addEventListener('click', function() {
-                var modal = new bootstrap.Modal(document.getElementById('myModal-checkout'));
-                modal.show();
-            });
-        });
-        // sắp tới 
 
-        const roomUpcoming = document.querySelectorAll('.room-booking-status-incoming');
-        roomUpcoming.forEach(function(booking) {
-            booking.addEventListener('click', function() {
-
-                var modal = new bootstrap.Modal(document.getElementById('myModal-upcoming'));
-                modal.show();
-                const id = this.getAttribute('data-id');
-            });
+        $('.room-booking-status-occupied, .premium_service').on('click', function() {
+            handleLateCheckinClick($(this))
         });
-        // nhận phòng muộn
+
+        $('.room-booking-status-incoming').on('click', function() {
+            handleLateCheckinClick($(this))
+        });
+
         $('.room-booking-status-late-checkin').on('click', function() {
-            var id = $(this).data('id');
-            var booking_id = $(this).data('booking');
+            handleLateCheckinClick($(this))
+        });
+
+        function handleLateCheckinClick(element) {
+            var id = element.data('id');
+            var booking_id = element.data('booking');
             var url = `{{ route('admin.booking.details', ['id' => ':id']) }}`.replace(':id', id);
             var dataToSend = {
                 is_method: 'receptionist'
             };
+            fetchDataAndDisplayModal(url, dataToSend);
+        }
+
+        function fetchDataAndDisplayModal(url, dataToSend) {
             $.ajax({
                 url: url,
                 data: dataToSend,
                 type: 'GET',
                 success: function(response) {
-                    console.log(
-                        response.data
-                    );
-
                     if (response.status === 'success') {
-                        // booking_number
+                        
                         var customer_type = response.data.user_id ?
                             "Khách hàng đã đăng ký" : " Khách hàng lưu trú"
+
 
                         if (customer_type) {
                             var url_user_info =
@@ -890,7 +932,6 @@
                                     );
 
                                     // console.error('Error:', error);
-
                                 }
                             });
                         }
@@ -900,6 +941,7 @@
                         let totalFare = 0;
                         response.data.booked_rooms.forEach(function(booked, index) {
                             $('.booking-no').text(booked.room.room_number);
+                            $('.room_serive').val(booked.room.room_number);
                             rowsHtml += `
                                     <tr>
                                         <td class="bg--date text-center" data-label="@lang('Đã đặt chỗ')">
@@ -929,13 +971,14 @@
                                 <td class="fw-bold text-end">
                                     ${ formatCurrency(totalFare) } 
                                 </td>
-                            </tr>`;
+                            </tr>
+                        `;
+                        $('#bookings-table-body').append(rowsHtml);
 
                         $('#user_services').empty();
+
                         let rowsHtml1 = '';
                         response.data.used_premium_service.forEach(function(booked, index) {
-
-                            //    $('.booking-no').text(booked.room.room_number);
                             rowsHtml1 += `
                                         <tr>
                                             <td class="bg--date text-center" data-label="@lang('Ngày')">
@@ -962,9 +1005,8 @@
 
 
                         });
-                        // Chèn nội dung mới vào tbody
                         $('#user_services').append(rowsHtml1);
-                        $('#bookings-table-body').append(rowsHtml);
+
                         $('.customer_type').text(customer_type);
                         $('.booking_number').text(response.data.booking_number);
                         $('.check_in').text(response.data.check_in);
@@ -1003,9 +1045,9 @@
                         });
 
 
+                        // 123
 
-
-                        $('#myModal-late-checkin').modal('show');
+                        $('#myModal-booking-status').modal('show');
 
                     }
                 },
@@ -1014,8 +1056,7 @@
 
                 }
             });
-
-        });
+        }
         var now = new Date();
         var year = now.getFullYear();
         var month = (now.getMonth() + 1).toString().padStart(2, '0');
@@ -1221,25 +1262,19 @@
         }
         $('.booking-form').on('submit', function(e) {
             e.preventDefault();
-            // Thu thập dữ liệu từ biểu mẫu
+            
             let formData = $(this).serializeArray();
 
-            // Chuyển đổi dữ liệu biểu mẫu thành đối tượng JavaScript
             let formObject = {};
             formData.forEach(function(field) {
                 formObject[field.name] = field.value;
             });
-            // Chuyển đổi đối tượng thành chuỗi truy vấn URL
+
             let queryString = $.param(formObject);
 
-
-
             const params = new URLSearchParams(queryString);
-
-
             const checkInTime = params.get('checkInTime');
             const checkOutTime = params.get('checkOutTime');
-
 
             if (!checkInTime || !checkOutTime) {
                 let missingField = !checkInTime ? 'nhận phòng' : 'trả phòng';
@@ -1247,12 +1282,9 @@
                 return false;
             }
 
-
             const startDate = new Date(checkInTime);
             const endDate = new Date(checkOutTime);
             const roomDates = getDatesBetween(startDate, endDate, params.get('room_type'));
-               
-            console.log(roomDates);
 
             roomDates.forEach(function(date, index) {
                 formData.push({
@@ -1287,6 +1319,7 @@
                         $(document).find('.orderListItem').remove();
                         $('.orderList').addClass('d-none');
                         $('.formRoomSearch').trigger('reset');
+                        $('#myModal-booking').hide();
                     } else {
                         notify('error', response.error);
                     }
@@ -1295,10 +1328,10 @@
         });
 
         //
-        $('.btn-user-info').on('click', function() {
+        $('.btn-user-info').on('click', function(event) {
             // Lấy giá trị của guest_type
             //    let guestType = $('#guest_type').val();
-
+            event.stopPropagation();
 
 
             let name = $('#name').val();
@@ -1366,4 +1399,54 @@
             title: `<p>${title}</p>`
         });
     };
+    // tất cả các dịch vụ cao cấp 
+    $(document).ready(function() {
+        var langChoose = "{{ __('Chọn') }}";
+        $.ajax({
+            url: '{{ route('admin.services.booking.services') }}',
+            type: 'GET',
+            success: function(data) {
+                $('select[name="services[]"]').empty();
+                $('select[name="services[]"]').append('<option value="">' + langChoose +
+                    '</option>');
+
+                data.data.forEach(function(service) {
+                    var option =
+                        `<option value="${service.id}">${service.name} - ${formatCurrency(service.cost)}</option>`;
+                    $('select[name="services[]"]').append(option);
+                });
+            },
+            error: function(error) {
+                console.log('Error:', error);
+            }
+        });
+        let serviceForm = $('.add-service-form');
+
+        serviceForm.on('submit', function(e) {
+            e.preventDefault();
+
+            let formData = $(this).serialize();
+            let url = $(this).attr('action');
+
+            $.ajax({
+                type: "POST",
+                url: url,
+                data: formData,
+                success: function(response) {
+                    if (response.success) {
+                        notify('success', response.success);
+                        let firstItem = $('.first-service-wrapper .service-item');
+                        $(document).find('.service-wrapper').find('.service-item').not(
+                            firstItem).remove();
+                        serviceForm.trigger("reset");
+                        $('#serviceModal').hide();
+                    } else {
+                        $.each(response.error, function(key, value) {
+                            notify('error', value);
+                        });
+                    }
+                },
+            });
+        });
+    });
 </script>

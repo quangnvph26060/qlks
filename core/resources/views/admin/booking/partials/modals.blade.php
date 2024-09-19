@@ -18,7 +18,9 @@
                                   <div class="input-group row gx-0">
                                       <input class="form-control" name="booking_numbers[]" required type="text">
                                   </div>
-                                  <button class="btn btn--success input-group-text addMoreBookingBtn ms-4 flex-shrink-0 border-0" type="button">
+                                  <button
+                                      class="btn btn--success input-group-text addMoreBookingBtn ms-4 flex-shrink-0 border-0"
+                                      type="button">
                                       <i class="las la-plus"></i>
                                   </button>
                               </div>
