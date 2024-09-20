@@ -113,6 +113,15 @@
                                     </div>
                                 </div>
                             </div>
+                            <div class="col-md-4 col-sm-6">
+                                <div class="form-group">
+                                    <label>@lang('Đặt cọc') <i class="las la-info-circle" title="@lang('Phần trăm phải trả khi đặt cọc')"></i></label>
+                                    <div class="input-group">
+                                        <input class="form-control" name="deposit" min="1" type="numeric" value="{{ gs('deposit') }}">
+                                        <span class="input-group-text">@lang('%')</span>
+                                    </div>
+                                </div>
+                            </div>
                         </div>
 
                         @can('admin.setting.update')

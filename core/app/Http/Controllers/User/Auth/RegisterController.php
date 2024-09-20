@@ -14,6 +14,7 @@ use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Hash;
 use Illuminate\Support\Facades\Validator;
 use Illuminate\Validation\Rules\Password;
+use SebastianBergmann\Template\Template;
 
 class RegisterController extends Controller
 {
@@ -33,7 +34,6 @@ class RegisterController extends Controller
         if (!gs('registration')) {
             $notify[] = ['info', 'New account registration is currently disabled'];
         }
-
         return view('Template::user.auth.register', compact('pageTitle'));
     }
 
