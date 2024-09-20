@@ -135,7 +135,9 @@
                     });
                 });
 
-                $(document).on("click", ".result-item", function() {
+                $(document).on("click", ".result-item", function(e) {
+                    e.preventDefault(); // Ngăn chặn hành động mặc định
+                    e.stopPropagation(); // Ngăn chặn hành động mặc định
                     const product = $(this).data('resource'); // Lấy thông tin sản phẩm từ data-resource
                     const productId = product.id; // Lấy ID của sản phẩm
 
@@ -154,7 +156,7 @@
                             </div>
                             <div class="info flex-grow-1">
                                 <div class="name fw-bold ellipsis">${product.name}</div>
-                                <div class="price text-success">Giá: ${Math.floor(product.selling_price).toString()}</div>
+                                <div class="price text-success">Giá: ${Math.floor(product.import_price).toString()}</div>
                                 <div class="quantity d-flex align-items-center">
                                     <button type="button" class="btn btn-outline-secondary btn-sm decrease">-</button>
                                     <input type="number" class="form-control mx-2 handled-focus" name="products[${productId}]" value="1" min="1" style="width: 70px; text-align: center; height: 30px;">
@@ -178,9 +180,6 @@
                         maximumFractionDigits: 0
                     }) + ' VND';
                 }
-
-                console.log(formattedNumber(25000000.00));
-
 
 
                 // Cập nhật tổng tiền khi người dùng nhập số trực tiếp
@@ -402,7 +401,7 @@
         }
 
         .ellipsis {
-            width: 250px;
+            max-width: ;: 250px;
             /* Chiều rộng tối đa của phần tử */
             white-space: nowrap;
             /* Không cho văn bản xuống dòng */
@@ -437,6 +436,16 @@
         input[type="number"] {
             -moz-appearance: textfield;
             /* Ẩn nút cho Firefox */
+        }
+
+        #ellipsis {
+            max-width: 600px;
+            /* Chiều rộng tối đa của phần tử */
+            white-space: nowrap;
+            /* Không cho văn bản xuống dòng */
+            overflow: hidden;
+            /* Ẩn phần văn bản bị tràn */
+            text-overflow: ellipsis;/
         }
     </style>
 @endpush

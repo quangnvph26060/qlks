@@ -8,6 +8,7 @@ use App\Models\Supplier;
 use Illuminate\Http\Request;
 use App\Models\WarehouseEntry;
 use Illuminate\Support\Facades\DB;
+use Illuminate\Support\Facades\Log;
 use App\Http\Controllers\Controller;
 use App\Repositories\BaseRepository;
 use Illuminate\Support\Facades\Validator;
@@ -26,7 +27,7 @@ class WarehouseController extends Controller
      */
     public function index()
     {
-        $pageTitle = "Danh sách nhập kho";
+        $pageTitle = "Danh sách đơn hàng";
 
         $search = request()->get('search');
         $perPage = request()->get('perPage', 10);
@@ -106,6 +107,7 @@ class WarehouseController extends Controller
                 foreach ($request->input('products') as $key => $value) {
                     $product = Product::query()->find($key);
 
+
                     $total += $product->import_price * $value;
 
                     $warehouse->entries()->create([
@@ -113,17 +115,14 @@ class WarehouseController extends Controller
                         'quantity' => $value
                     ]);
 
-                    // $product->update([
-                    //     'stock' => $product->stock + $value
-                    // ]);
                 }
             }
 
-            $warehouse->payments()->create([
-                'payment_method_id' => $request->get('payment_method_id'),
-                'amount' => $total,
-                'transaction_date' => now(),
-            ]);
+            // $warehouse->payments()->create([
+            //     'payment_method_id' => $request->get('payment_method_id'),
+            //     'amount' => $total,
+            //     'transaction_date' => now(),
+            // ]);
 
             $warehouse->update([
                 'total' => $total
@@ -155,6 +154,9 @@ class WarehouseController extends Controller
     {
         $pageTitle = "Chi tiết đơn hàng";
         $warehouse = WarehouseEntry::query()->with('supplier', 'entries.product', 'payments.payment_method', 'return')->find($id);
+        if (!$warehouse) {
+            abort(404);
+        }
         return view('admin.warehouse.show', compact('pageTitle', 'warehouse'));
     }
 
@@ -171,34 +173,39 @@ class WarehouseController extends Controller
      */
     public function update(Request $request, string $id)
     {
-        $warehouse = WarehouseEntry::query()->find($id);
+        DB::beginTransaction();
 
-        if (!$warehouse) {
+        try {
+            $warehouse = WarehouseEntry::query()->with(['entries.product', 'stockEntries'])->find($id);
+
+            $data = [];
+
+            array_filter($warehouse->entries->toArray(), function ($value) use (&$data) {
+                $product = Product::query()->find($value['product_id']);
+                $product->increment('stock', $value['quantity'] - $value['number_of_cancellations']);
+
+                $data[$value['product_id']] = [
+                    'quantity' => $value['quantity'] - $value['number_of_cancellations'],
+                    'entry_date' => now()->format('Y-m-d H:i:s')
+                ];
+            });
+
+            $warehouse->stockEntries()->sync($data);
+
+            $warehouse->update([
+                'status' => 1,
+                'confirmation_date' => now()->format('Y-m-d H:i:s'),
+            ]);
+
+            DB::commit();
             return response()->json([
-                'status' => false,
-                'message' => 'Không tìm thấy đơn hàng!'
+                'status' => true,
+                'message' => 'Cập nhật trạng thái thành công.'
             ]);
+        } catch (\Exception $exception) {
+            Log::error($exception);
+            DB::rollBack();
         }
-
-        $productEntries = $warehouse->entries()->pluck('quantity', 'product_id')->toArray();
-
-        foreach ($productEntries as $productId => $quantity) {
-
-            $product = Product::query()->find($productId);
-
-            $product->update([
-                'stock' => $product->stock + $quantity
-            ]);
-        }
-
-        $warehouse->update([
-            'status' => 1
-        ]);
-
-        return response()->json([
-            'status' => true,
-            'message' => 'Cập nhật trạng thái đơn hàng thành công.'
-        ]);
     }
 
     /**

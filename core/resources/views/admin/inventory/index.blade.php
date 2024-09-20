@@ -1,10 +1,10 @@
 @extends('admin.layouts.app')
 @section('panel')
-    @include('admin.messages')
+    {{-- @include('admin.messages') --}}
     <div class="row">
         <!-- Khối bên phải: Danh sách danh mục -->
         <div class="col-md-12">
-            <div class="scrollable-table border p-2">
+            <div class="border p-2">
                 <div class="d-flex justify-content-between mb-3">
                     <div class="dt-length">
                         <select name="example_length" id="perPage" style=" padding: 1px 3px; margin-right: 8px;"
@@ -28,11 +28,11 @@
                             <table class="table--light style--two table" id="data-table">
                                 <thead>
                                     <tr>
-                                        <th>@lang('Phiếu trả hàng')</th>
                                         <th>@lang('Mã đơn hàng')</th>
-                                        <th>@lang('Số sản phẩm bị hoàn trả')</th>
-                                        <th>@lang('Tổng số lượng hoàn trả')</th>
-                                        <th>@lang('Thời gian thực hiện')</th>
+                                        <th>@lang('Mã sản phẩm')</th>
+                                        <th>@lang('Số lượng nhập')</th>
+                                        <th>@lang('Giá nhập')</th>
+                                        <th>@lang('Thời gian')</th>
                                     </tr>
                                 </thead>
                                 <tbody>
@@ -48,13 +48,6 @@
             </div>
         </div>
     </div>
-
-    {{-- @can('')
-        @push('breadcrumb-plugins')
-            <a class="btn btn-sm btn-outline--primary" href=""><i
-                    class="las la-plus"></i>@lang('Thao tác')</a>
-        @endpush
-    @endcan --}}
 @endsection
 
 
@@ -65,15 +58,10 @@
             "use strict"
 
             $(document).ready(function() {
-                const apiUrl = '{{ route('admin.return.index') }}';
+                const apiUrl = '{{ route('admin.inventory.index') }}';
                 initDataFetch(apiUrl);
 
-
-
-
             });
-
-
         })(jQuery);
     </script>
 @endpush
@@ -81,5 +69,7 @@
 @push('style')
     <script src="{{ asset('assets/admin/js/vendor/sweetalert2@11.js') }}"></script>
 
+    <style>
 
+    </style>
 @endpush

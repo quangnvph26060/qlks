@@ -12,7 +12,6 @@
             @endforeach
             {{ $sum }}
         </td>
-        <td>{{ showAmount($return->total) }} </td>
         <td>{{ \Carbon\Carbon::parse($return->created_at)->diffForHumans() }}</td>
     </tr>
 @endforeach
