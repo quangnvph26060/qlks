@@ -86,7 +86,7 @@
 
                             <div class="col-xl-4 col-lg-6 col-md-4">
                                 <div class="form-group">
-                                    <label> @lang('Featured') </label>
+                                    <label> @lang('Tính năng') </label>
                                     <input @if (@$roomType->is_featured) checked @endif data-bs-toggle="toggle" data-height="50" data-off="@lang('Unfeatured')" data-offstyle="-danger" data-on="@lang('Featured')" data-onstyle="-success" data-size="large" data-width="100%" name="is_featured" type="checkbox">
                                     <small class="ml-2 mt-2"><code><i class="las la-info-circle"></i> @lang('Featured rooms will be displayed in featured rooms section.')</code></small>
                                 </div>
