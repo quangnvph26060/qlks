@@ -76,7 +76,7 @@
                 } elseif (now() < $booking->booking->check_in && $booking->booking->status == 1) {
                     $class = 'status-incoming'; // sắp nhận
                 } elseif ($booking->booking->check_out < now() && $booking->booking->key_status == 1) {
-                    $class = 'status-check-out'; // trả phòng muộn
+                    $class = 'status-check-out'; // quá giờ trả
                 } elseif (
                     now() >= $booking->booking->check_in &&
                     $booking->booking->status == 1 &&
@@ -528,37 +528,7 @@
                             </div>
 
                         </div>
-                        <div class="row">
-                            <div class="accordion-item">
-                                <h2 class="accordion-header" id="bookedRoomsHeading">
-                                    <button aria-controls="bookedRooms" aria-expanded="true" class="accordion-button"
-                                        data-bs-target="#bookedRooms" data-bs-toggle="collapse" type="button">
-                                        @lang('Phòng đã đặt')
-                                    </button>
-                                </h2>
-                                <div aria-labelledby="bookedRoomsHeading" class="accordion-collapse collapse show"
-                                    data-bs-parent="#s" id="bookedRooms">
-                                    <div class="accordion-body p-0">
-                                        <div class="table-responsive--sm">
-                                            <table class="custom--table table table-striped">
-                                                <thead>
-                                                    <tr>
-                                                        <th class="text-center">@lang('Đã đặt chỗ')</th>
-                                                        <th>@lang('Loại phòng')</th>
-                                                        <th>@lang('Phòng số')</th>
-                                                        <th class="text-end">@lang('Giá') / @lang('Đêm')</th>
-                                                    </tr>
-                                                </thead>
-
-                                                <tbody id="bookings-table-body">
-
-                                                </tbody>
-                                            </table>
-                                        </div>
-                                    </div>
-                                </div>
-                            </div>
-                        </div>
+                        @include('admin.booking.partials.table-booking')
                         <div class="row">
                             <div class="accordion-item">
                                 <div class="d-flex justify-content-between mt-2 mb-2">
@@ -678,10 +648,15 @@
                 </div>
             </div>
         </div>
-        {{-- thêm dịch vụ  --}}
+       
         @include('admin.booking.partials.system-2')
-        <!-- Modal clean -->
+       
         @include('admin.booking.partials.clean_modal')
+       
+        @include('admin.booking.partials.table-service')
+
+        @include('admin.booking.partials.modal-cancel-booking')
+
     </div>
     </div>
 @endsection
@@ -781,13 +756,14 @@
         $('.service-wrapper').on('click', '.removeServiceBtn', function() {
             $(this).closest('.service-item').remove();
         });
-        // bàn giao chìa khóa 
+
         $('.handoverKeyBtn').on('click', function(event) {
             let data = $(this).data();
 
             event.stopPropagation();
             var url = `{{ route('admin.booking.key.handover', ['id' => ':id']) }}`.replace(':id', data
                 .id);
+
             $.ajax({
                 url: url,
                 type: 'POST',
@@ -805,6 +781,75 @@
             });
         });
 
+        $('.premium_service').on('click', function() {
+            let data = $(this).data();
+
+            var url = `{{ route('admin.booking.service.details', ['id' => ':id']) }}`.replace(':id',
+                data.id);
+
+            $.ajax({
+                url: url,
+                type: 'GET',
+                data: {
+                    is_method: "receptionist"
+                },
+                success: function(response) {
+                    if (response.status === "success") {
+                        $('#table_service').empty();
+                        if (response.services.data.length === 0) {
+
+                            $('#table_service').append(`
+                                            <tr>
+                                                <td colspan="9" class="text-center">Không có dịch vụ nào!</td>
+                                            </tr>
+                                        `);
+                        } else {
+                            console.log(response.services.data);
+
+                            $.each(response.services.data, function(index, service) {
+                                var url =
+                                    `{{ route('admin.premium.service.delete', ['id' => ':id']) }}`
+                                    .replace(':id', service.id);
+                                var html = `
+                                                        <tr>
+                                                            <td>${index + 1}</td>
+                                                            <td><span class="fw-bold">${ service.service_date } </span></td>
+                                                            <td><span class="fw-bold">${service.room.room_number}</span></td>
+                                                            <td>${service.premium_service.name}</td>
+                                                            <td>${service.qty}</td>
+                                                            <td>${formatCurrency(service.unit_price)}</td>
+                                                            <td>${formatCurrency(service.total_amount)}</td>
+                                                            <td><span class="fw-bold">${service.admin ? service.admin.name : ""}</span></td>
+                                                            <td>
+                                                                <form method = "post" action = "${url}">
+                                                                    @csrf
+                                                                    <button class="btn btn-sm btn-outline--danger confirmationBtn" 
+                                                                    data-question="@lang('Bạn có chắc chắn muốn xóa dịch vụ này không?')">
+                                                                        <i class="las la-trash-alt"></i>@lang('Delete')
+                                                                    </button>
+                                                                </form>
+                                                            </td>
+                                                        </tr>
+                                                    `;
+                                $('#table_service').append(html);
+                            });
+                        }
+
+                    }
+
+                    // Show the modal after loading data
+                    $('#premium_serviceModal').modal('show');
+                },
+                error: function(xhr, status, error) {
+                    console.error('Lỗi:', error);
+                }
+            });
+        });
+
+        function checkService(url, method, is_value) {
+
+        }
+
         $('.room-icon').on('click', function() {
             let roomData = $(this).attr('data-room');
             let roomClean = $(this).attr('data-clean');
@@ -816,9 +861,11 @@
                 textClean = '<strong style="color: #28a745;">Sạch</strong>';
             }
 
-            $('#dynamicModalLabel').html('Chuyển trạng thái buồng phòng ' + roomData + ' thành ' +
+            $('#dynamicModalLabel').html('Chuyển trạng thái buồng phòng ' + roomData +
+                ' thành ' +
                 textClean);
-            $('#modalRoomInfo').html('Chuyển trạng thái buồng phòng ' + roomData + ' thành ' +
+            $('#modalRoomInfo').html('Chuyển trạng thái buồng phòng ' + roomData +
+                ' thành ' +
                 textClean);
 
             var modal = new bootstrap.Modal($('#dynamicModal'));
@@ -858,7 +905,7 @@
             const dataRoom = $(this).data('room');
             const dataRoomNumber = $(this).data('roomnumber');
             console.log(dataRoomNumber);
-            
+
             const dataDay = $(this).data('day').replace(',', '');
             const dataNight = $(this).data('night').replace(',', '');
 
@@ -873,7 +920,7 @@
             window.savedDataNight = dataNight;
         });
 
-        $('.room-booking-status-occupied, .premium_service').on('click', function() {
+        $('.room-booking-status-occupied').on('click', function() {
             handleLateCheckinClick($(this))
         });
 
@@ -882,6 +929,10 @@
         });
 
         $('.room-booking-status-late-checkin').on('click', function() {
+            handleLateCheckinClick($(this))
+        });
+
+        $('.room-booking-status-check-out').on('click', function() {
             handleLateCheckinClick($(this))
         });
 
@@ -902,7 +953,7 @@
                 type: 'GET',
                 success: function(response) {
                     if (response.status === 'success') {
-                        
+
                         var customer_type = response.data.user_id ?
                             "Khách hàng đã đăng ký" : " Khách hàng lưu trú"
 
@@ -939,11 +990,34 @@
                         $('#bookings-table-body').empty();
                         let rowsHtml = '';
                         let totalFare = 0;
+                        let total_fare = 0;
+                        let cancellation_fee, shouldRefund = 0;
+                       
                         response.data.booked_rooms.forEach(function(booked, index) {
                             $('.booking-no').text(booked.room.room_number);
                             $('.room_serive').val(booked.room.room_number);
+                            let is_flag = false;
+                          
+                            if (booked.status === 1) {
+                                total_fare = booked.fare;
+                                cancellation_fee = booked.cancellation_fee;
+                            }else{
+                                is_flag = true;
+                            }
                             rowsHtml += `
                                     <tr>
+                                        <td  class="text-center " data-label="@lang('Hành động')">
+                                           <button
+                                                ${is_flag ? "disabled" : ""}
+                                                data-id="${booked.booking_id}"
+                                                data-booked_for="${booked.booked_for}" 
+                                                data-fare="${ formatCurrency(total_fare) }" 
+                                                data-should_refund="${ formatCurrency(total_fare  - cancellation_fee) }" 
+                                                class="btn btn--danger cancelBookingBtn" 
+                                                type="button">
+                                                @lang('Hủy đặt phòng')
+                                            </button>
+                                        </td>
                                         <td class="bg--date text-center" data-label="@lang('Đã đặt chỗ')">
                                             ${booked.booked_for}
                                         </td>
@@ -957,6 +1031,7 @@
                                         <td class="text-end" data-label="@lang('Giá')">
                                             ${formatCurrency(booked.fare)}
                                         </td>
+
                                     </tr>
                                 `;
                             totalFare += parseFloat(booked.fare);
@@ -978,7 +1053,8 @@
                         $('#user_services').empty();
 
                         let rowsHtml1 = '';
-                        response.data.used_premium_service.forEach(function(booked, index) {
+                        response.data.used_premium_service.forEach(function(booked,
+                            index) {
                             rowsHtml1 += `
                                         <tr>
                                             <td class="bg--date text-center" data-label="@lang('Ngày')">
@@ -1037,9 +1113,11 @@
                             $('#customer_payment1').text(due);
                         }
                         $('.btn-primary').on('click', function() {
-                            let inputFareBooking = $('.input_fare_booking').val();
+                            let inputFareBooking = $('.input_fare_booking')
+                                .val();
                             if (inputFareBooking === "") {
-                                showSwalMessage('error', 'Vui lòng nhập số tiền');
+                                showSwalMessage('error',
+                                    'Vui lòng nhập số tiền');
                                 return;
                             }
                         });
@@ -1243,6 +1321,7 @@
             $('.booking-form').submit();
         });
 
+     
         function getDatesBetween(startDate, endDate, roomType) {
             let dates = [];
             let currentDate = new Date(startDate);
@@ -1262,7 +1341,7 @@
         }
         $('.booking-form').on('submit', function(e) {
             e.preventDefault();
-            
+
             let formData = $(this).serializeArray();
 
             let formObject = {};
@@ -1365,7 +1444,8 @@
                 modal.find('[name=type]').val('add');
             } else {
                 modal.find('form').attr('action',
-                    `{{ route('admin.booking.extra.charge.subtract', '') }}/${data.id}`);
+                    `{{ route('admin.booking.extra.charge.subtract', '') }}/${data.id}`
+                );
                 modal.find('[name=type]').val('subtract');
             }
             modal.modal('show');
@@ -1435,8 +1515,10 @@
                 success: function(response) {
                     if (response.success) {
                         notify('success', response.success);
-                        let firstItem = $('.first-service-wrapper .service-item');
-                        $(document).find('.service-wrapper').find('.service-item').not(
+                        let firstItem = $(
+                            '.first-service-wrapper .service-item');
+                        $(document).find('.service-wrapper').find(
+                            '.service-item').not(
                             firstItem).remove();
                         serviceForm.trigger("reset");
                         $('#serviceModal').hide();
@@ -1449,4 +1531,25 @@
             });
         });
     });
+
+    $(document).on('click', '.cancelBookingBtn', function() {
+
+        let modal = $('#cancelBookingModal');
+        let data = $(this).data();
+        let action;
+
+        if (data.booked_for) {
+            action = `{{ route('admin.booking.booked.day.cancel', '') }}/${data.id}`;
+            modal.find('[name=booked_for]').val(data.booked_for);
+        } else {
+            action = `{{ route('admin.booking.booked.room.cancel', '') }}/${data.id}`;
+        }
+
+        modal.find('.modal-title').text(`@lang('Hủy đặt phòng')`);
+        modal.find('form').attr('action', action);
+        modal.find('.totalFare').text(data.fare);
+        modal.find('.refundableAmount').text(data.should_refund);
+        modal.modal('show');
+    });
+
 </script>

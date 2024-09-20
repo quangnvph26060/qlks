@@ -103,7 +103,7 @@ class BookingPremiumServiceController extends Controller
 
         $service->delete();
 
-        $notify[] = ['success', 'Premium service deleted successfully'];
+        $notify[] = ['success', 'Dịch vụ cao cấp đã xóa thành công'];
         return back()->withNotify($notify);
     }
 }

@@ -31,7 +31,7 @@
                 </a>
             @endif
             {{-- data-booked_rooms="{{ $booking->activeBookedRooms->unique('room_id') }}" data-id="{{ $booking->id }}" --}}
-            <a class="dropdown-item premium_service"  href="javascript:void(0)">
+            <a class="dropdown-item premium_service" data-id="{{ $bookingId }}"  href="javascript:void(0)">
                 <i class="las la-server"></i> @lang('Dịch vụ cao cấp')
             </a>
 

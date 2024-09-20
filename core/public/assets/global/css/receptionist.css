@@ -487,6 +487,16 @@
 #more_select i{
     color: #161515;
 }
+.cancel-booking{
+    width: 50%;
+}
+.btn--danger-service{
+    color: #fff;    
+    cursor: pointer;
+    background: #c81212;
+    padding: 8px 12px;
+    border-radius: 8px;
+}
 .btn-primary-service,
 .btn-primary-1,
 .btn-primary-2
