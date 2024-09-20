@@ -237,11 +237,14 @@ class ManageBookingController extends Controller
         return redirect()->route('admin.booking.all')->withNotify($notify);
     }
 
-    public function premiumServiceDetail($id)
+    public function premiumServiceDetail(Request $request, $id)
     {
         $booking = Booking::where('id', $id)->firstOrFail();
         $services = UsedPremiumService::where('booking_id', $id)->with('premiumService', 'room', 'admin')->paginate(getPaginate());
         $pageTitle = 'Service Details - ' . $booking->booking_number;
+        if($request->is_method === 'receptionist'){
+            return response()->json(['status'=>'success','services'=>$services]);
+        }
         return view('admin.booking.service_details', compact('pageTitle', 'services'));
     }
 

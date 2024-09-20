@@ -131,19 +131,21 @@ class BookingController extends Controller {
             'usedPremiumService.premiumService',
             'payments'
         ])->findOrFail($id);
+        // BookedRoom::where('booking_id', $id)->with('booking.user', 'room.roomType')->orderBy('booked_for')->get()->groupBy('booked_for');
        
         if($request->is_method === 'receptionist'){
             $returnedPayments  = $booking->payments->where('type', 'RETURNED');
             $receivedPayments  = $booking->payments->where('type', 'RECEIVED');
             $total_amount      = $booking->total_amount;
             $due               = $booking->due();
+
             return response()->json(['status' => 'success','data' => $booking, 'returnedPayments' => $returnedPayments, 'receivedPayments' => $receivedPayments, 'total_amount' => $total_amount, 'due' => $due]);
         }
         $pageTitle = 'Chi tiết đặt chỗ';
         return view('admin.booking.details', compact('pageTitle', 'booking'));
     }
 
-    public function bookedRooms($id) {
+    public function bookedRooms(Request $request, $id) {
         $booking = Booking::findOrFail($id);
         $pageTitle = 'Phòng đã đặt';
         $bookedRooms = BookedRoom::where('booking_id', $id)->with('booking.user', 'room.roomType')->orderBy('booked_for')->get()->groupBy('booked_for');
