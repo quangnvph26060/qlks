@@ -92,7 +92,7 @@ class ProductController extends Controller
     public function store(StoreProductRequest $request)
     {
 
-        $path = $this->repository->saveImage($request, 'image_path', 'products');
+        $path = saveImage($request, 'image_path', 'products', 653, 731);
 
         try {
             $data = $request->validated();
@@ -148,7 +148,7 @@ class ProductController extends Controller
      */
     public function update(UpdateProductRequest $request, string $id)
     {
-        $path = $this->repository->saveImage($request, 'image_path', 'products');
+        $path = saveImage($request, 'image_path', 'products', 653, 731);
         $product = Product::query()->find($id);
 
         if (!$product) {

@@ -411,9 +411,9 @@
             },
             {
                 "keyword": [
-                    "Quản lý nhập kho"
+                    "Quản lý đơn hàng"
                 ],
-                "title": "Quản lý nhập kho",
+                "title": "Quản lý đơn hàng",
                 "route_name": "admin.warehouse.index",
                 "menu_active": "admin.warehouse.index"
             },
@@ -424,6 +424,14 @@
                 "title": "Quản lý trả hàng",
                 "route_name": "admin.return.index",
                 "menu_active": "admin.return.index"
+            },
+            {
+                "keyword": [
+                    "Biến động tồn kho"
+                ],
+                "title": "Biến động tồn kho",
+                "route_name": "admin.inventory.index",
+                "menu_active": "admin.inventory.index"
             }
         ]
 

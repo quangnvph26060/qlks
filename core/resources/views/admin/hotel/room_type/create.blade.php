@@ -371,15 +371,7 @@
             padding: 0;
         }
 
-        .ellipsis {
-            width: 250px;
-            /* Chiều rộng tối đa của phần tử */
-            white-space: nowrap;
-            /* Không cho văn bản xuống dòng */
-            overflow: hidden;
-            /* Ẩn phần văn bản bị tràn */
-            text-overflow: ellipsis;/
-        }
+      
     </style>
 @endpush
 

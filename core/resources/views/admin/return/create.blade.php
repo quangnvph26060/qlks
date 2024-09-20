@@ -2,7 +2,7 @@
 @section('panel')
     <div class="card">
         <div class="card-header">
-            <h6 class="card-title">Danh sách sản phẩm bị hủy</h6>
+            <h6 class="card-title">Danh sách sản phẩm bị hoàn trả</h6>
         </div>
         <div class="card-body">
             <form id="cancellation-form" action="" method="POST">
@@ -10,26 +10,29 @@
                     <thead>
                         <tr>
                             <th>Sản phẩm</th>
-                            <th>Giá</th>
+                            <th>Giá nhập</th>
                             <th>Số lượng</th>
                             <th>Lý do hủy</th>
                         </tr>
                     </thead>
                     <tbody>
                         @foreach ($products as $item)
-                            <tr>
-                                <td>{{ $item->product->name }}</td>
-                                <td>{{ showAmount($item->product->selling_price) }}</td>
-                                <td><input id="products.{{ $item->product->id }}.quantity" value="{{ $item->quantity }}"
-                                        type="number" name="products[{{ $item->product->id }}][quantity]"
-                                        class="form-control p-0" value="{{ $item->quantity }}"></td>
-                                <td>
-                                    <input type="text" name="products[{{ $item->product->id }}][reason]"
-                                        class="form-control reason-input" id="products.{{ $item->product->id }}.reason"
-                                        placeholder="Nhập lý do hủy">
+                            @if ($item->number_of_cancellations !== $item->quantity)
+                                <tr>
+                                    <td ><p id="ellipsis">{{ $item->product->name }}</p></td>
+                                    <td>{{ showAmount($item->product->import_price) }}</td>
+                                    <td><input id="products.{{ $item->product->id }}.quantity"
+                                            value="{{ $item->quantity - $item->number_of_cancellations }}" type="number"
+                                            name="products[{{ $item->product->id }}][quantity]" class="form-control p-0"
+                                            value="{{ $item->quantity }}"></td>
+                                    <td>
+                                        <input type="text" name="products[{{ $item->product->id }}][reason]"
+                                            class="form-control reason-input" id="products.{{ $item->product->id }}.reason"
+                                            placeholder="Nhập lý do hủy">
 
-                                </td>
-                            </tr>
+                                    </td>
+                                </tr>
+                            @endif
                         @endforeach
                     </tbody>
                 </table>
@@ -169,6 +172,16 @@
             /* Cho phép kéo dãn textarea */
             width: 100%;
             /* Đảm bảo chiều rộng */
+        }
+
+        #ellipsis {
+            max-width: 300px;
+            /* Chiều rộng tối đa của phần tử */
+            white-space: nowrap;
+            /* Không cho văn bản xuống dòng */
+            overflow: hidden;
+            /* Ẩn phần văn bản bị tràn */
+            text-overflow: ellipsis;/
         }
     </style>
 @endpush

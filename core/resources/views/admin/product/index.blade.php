@@ -4,7 +4,7 @@
     <div class="row">
         <!-- Khối bên phải: Danh sách danh mục -->
         <div class="col-md-12">
-            <div class="scrollable-table border p-2">
+            <div class="border p-2">
                 <div class="d-flex justify-content-between mb-3">
                     <div class="dt-length">
                         <select name="example_length" id="perPage" style=" padding: 1px 3px; margin-right: 8px;"
@@ -110,12 +110,12 @@
                                         $(`#rep-${productId}`).remove();
                                         notData();
                                         showSwalMessage('success', response
-                                        .message);
+                                            .message);
                                     } else {
                                         showSwalMessage('error', response.message);
                                     }
                                 },
-                                
+
                             })
                         }
                     })
@@ -170,6 +170,16 @@
     <script src="{{ asset('assets/admin/js/vendor/sweetalert2@11.js') }}"></script>
 
     <style>
+        @media (max-width: 767px) {
+
+            .table-responsive--sm tr th,
+            .table-responsive--sm tr td {
+                display: block;
+                padding-left: 5% !important;
+                text-align: right !important;
+            }
+        }
+
         .btn-toggle {
             border: 1px solid #007bff;
             background-color: #007bff;
@@ -245,6 +255,16 @@
             /* Clear floats if needed */
             display: block;
             width: 100%;
+        }
+
+        #ellipsis {
+            max-width: 250px;
+            /* Chiều rộng tối đa của phần tử */
+            white-space: nowrap;
+            /* Không cho văn bản xuống dòng */
+            overflow: hidden;
+            /* Ẩn phần văn bản bị tràn */
+            text-overflow: ellipsis;/
         }
     </style>
 @endpush

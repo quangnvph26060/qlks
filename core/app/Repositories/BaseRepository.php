@@ -4,11 +4,9 @@ namespace App\Repositories;
 
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Log;
-use Intervention\Image\Drivers\Gd\Driver;
-use Intervention\Image\ImageManager;
+
 
 use Illuminate\Database\Eloquent\Model;
-use Illuminate\Support\Facades\Storage;
 use Illuminate\Database\Eloquent\Builder;
 
 class BaseRepository
@@ -77,40 +75,6 @@ class BaseRepository
             'code'    => $exception->getCode(),
             'function' => $exception->getFile(),
         ]);
-    }
-
-    /**
-     * Lưu hình ảnh và trả về đường dẫn.
-     *
-     * @param string $inputName
-     * @param string $directory
-     * @return string|null
-     */
-    public function saveImage($request, string $inputName, string $directory = 'images'): ?string
-    {
-        if ($request->hasFile($inputName)) {
-            // Lấy file hình ảnh
-            $image = $request->file($inputName);
-
-            $manager = new ImageManager(new Driver());
-
-            // Đọc hình ảnh từ đường dẫn thực
-            $img = $manager->read($image->getRealPath());
-
-            // Thay đổi kích thước
-            $img->resize(653, 731);
-
-            // Tạo tên file duy nhất
-            $filename = time() . '.' . $image->getClientOriginalExtension();
-
-            // Lưu hình ảnh đã được thay đổi kích thước vào storage
-            Storage::put($directory . '/' . $filename, $img->encode());
-
-            // Lấy đường dẫn công khai
-            return $directory . '/' . $filename;
-        }
-
-        return null;
     }
 
 

@@ -13,7 +13,8 @@ class WarehouseEntry extends Model
         'supplier_id',
         'reference_code',
         'total',
-        'status'
+        'status',
+        'confirmation_date'
     ];
 
     public function supplier()
@@ -21,7 +22,8 @@ class WarehouseEntry extends Model
         return $this->belongsTo(Supplier::class);
     }
 
-    public function return(){
+    public function return()
+    {
         return $this->hasOne(ReturnGood::class);
     }
 
@@ -35,4 +37,8 @@ class WarehouseEntry extends Model
         return $this->hasOne(Transaction::class);
     }
 
+    public function stockEntries()
+    {
+        return $this->belongsToMany(Product::class, 'stock_entries', 'warehouse_entry_id', 'product_id')->withPivot('quantity', 'entry_date')->withTimestamps();
+    }
 }

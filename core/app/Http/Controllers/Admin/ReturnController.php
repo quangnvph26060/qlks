@@ -25,7 +25,7 @@ class ReturnController extends Controller
      */
     public function index()
     {
-        $pageTitle = "Danh sách sản phẩm bị hoàn trả";
+        $pageTitle = "Danh sách đơn hàng bị hoàn trả";
 
         $search = request()->get('search');
         $perPage = request()->get('perPage', 10);
@@ -61,9 +61,9 @@ class ReturnController extends Controller
     /**
      * Show the form for creating a new resource.
      */
-    public function create(Request $request)
+    public function create($id)
     {
-        $products = WarehouseEntryItem::query()->with('product')->whereIn('id', $request->entry)->get();
+        $products = WarehouseEntryItem::query()->with('product')->where('warehouse_entry_id', $id)->get();
 
         return view('admin.return.create', compact('products'));
     }
@@ -77,17 +77,10 @@ class ReturnController extends Controller
         DB::beginTransaction();
 
         try {
-            $returnExist = ReturnGood::where('warehouse_entry_id', $id)->first();
-            if ($returnExist) {
-                return response()->json(['status' => false, 'message' => 'Đơn hàng đã được trả']);
-            }
-
             $return = ReturnGood::create([
                 'warehouse_entry_id' => $id,
                 'reference_code' => $this->repository->generateRandomString(),
-                'total' => 0
             ]);
-
 
             $return->return_items()->attach($request->products);
 
@@ -97,18 +90,13 @@ class ReturnController extends Controller
 
             foreach ($products as $product) {
                 $total += $product->pivot->quantity * $product->import_price;
-                // $return->warehouse_entry->entries->where('product_id', $product->id)->first()->decrement('quantity', $product->pivot->quantity);
-                $product->update([
-                    'stock' => $product->stock - $product->pivot->quantity
-                ]);
+                $return->warehouse_entry->entries->where('product_id', $product->id)->first()->increment('number_of_cancellations', $product->pivot->quantity);
             }
 
-            $return->update([
-                'total' => $total
-            ]);
-
-
             DB::commit();
+
+            session()->flash('success', 'Thao tác thành công!');
+
             return response()->json(['status' => true]);
         } catch (\Exception $e) {
             DB::rollBack();
@@ -122,7 +110,9 @@ class ReturnController extends Controller
      */
     public function show(string $id)
     {
-        //
+        $products = ReturnGood::query()->with('return_items', 'warehouse_entry')->where('id', $id)->first();
+
+        return view('admin.return.show', compact('products'));
     }
 
     /**
