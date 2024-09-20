@@ -3966,12 +3966,15 @@ table.table--light.style--two tbody td {
         border-top: none;
     }
 
+
     .table-responsive--sm tr th,
     .table-responsive--sm tr td {
         display: block;
         padding-left: 45% !important;
         text-align: right !important;
     }
+
+
 
     .table-responsive--sm .user-table-list,
     .table-responsive--sm .customer-details {
@@ -8500,4 +8503,14 @@ label.required:after {
     /* Bạn có thể điều chỉnh giá trị này theo nhu cầu */
     white-space: nowrap;
     /* Ngăn việc xuống dòng */
+}
+
+.ellipsis {
+    width: 250px;
+    /* Chiều rộng tối đa của phần tử */
+    white-space: nowrap;
+    /* Không cho văn bản xuống dòng */
+    overflow: hidden;
+    /* Ẩn phần văn bản bị tràn */
+    text-overflow: ellipsis;/
 }

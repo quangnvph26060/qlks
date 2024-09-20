@@ -14,7 +14,7 @@ class ReturnGood extends Model
     protected $fillable = [
         'warehouse_entry_id',
         'reference_code',
-        'total',
+        'status',
     ];
 
 
@@ -27,4 +27,8 @@ class ReturnGood extends Model
     {
         return $this->belongsToMany(Product::class, 'return_entries', 'return_id', 'product_id')->withPivot('quantity', 'reason');
     }
+
+    protected $cats = [
+        'status' => 'boolean',
+    ];
 }

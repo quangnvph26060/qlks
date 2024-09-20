@@ -75,7 +75,7 @@ class StoreReturnRequest extends FormRequest
     $warehouseEntryProducts = [];
 
     foreach ($warehouseEntry->entries as $entry) {
-        $warehouseEntryProducts[$entry->product_id] = $entry->quantity;
+        $warehouseEntryProducts[$entry->product_id] = $entry->quantity - $entry->number_of_cancellations;
     }
 
     return $warehouseEntryProducts;

@@ -45,7 +45,7 @@
                             <div class="form-group mb-3 col-lg-6">
                                 <label for="stock" class="form-label">Tồn kho</label>
                                 <input type="text" name="stock" id="stock" class="form-control"
-                                    placeholder="Tồn kho">
+                                    placeholder="Tồn kho" value="0">
                             </div>
                             <div class="form-group mb-3 col-lg-6">
                                 <label for="sku" class="form-label">SKU</label>
@@ -206,7 +206,7 @@
 
 @push('style')
     <style>
-       
+
 
         .ck-editor__editable {
             min-height: 155px;

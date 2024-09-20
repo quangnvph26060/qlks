@@ -5,8 +5,8 @@
                 alt="{{ \Storage::url($product->image_path) }}">
         </div>
         <div class="info">
-            <div class="name fw-bold">{{ $product->name }}</div>
-            <div class="price text-success">Giá: {{ showAmount($product->selling_price) }}</div>
+            <div class="name fw-bold " id="ellipsis">{{ $product->name }}</div>
+            <div class="price text-success">Giá: {{ showAmount($product->import_price) }}</div>
             <div class="stock text-muted">Tồn kho: {{ $product->stock ?? 0 }}</div>
         </div>
     </div>
