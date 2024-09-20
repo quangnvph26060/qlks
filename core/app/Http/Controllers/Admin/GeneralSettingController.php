@@ -39,7 +39,8 @@ class GeneralSettingController extends Controller
             'checkin_time'             => 'required|date_format:H:i',
             'checkout_time'            => 'required|date_format:H:i',
             'upcoming_checkin_days'    => 'required|numeric|min:1',
-            'upcoming_checkout_days'   => 'required|numeric|min:1'
+            'upcoming_checkout_days'   => 'required|numeric|min:1',
+            'deposit'                  => 'numeric|min:1|max:100|nullable',
         ]);
 
         $timezones = timezone_identifiers_list();
@@ -59,6 +60,7 @@ class GeneralSettingController extends Controller
         $general->checkout_time            = $request->checkout_time;
         $general->upcoming_checkin_days    = $request->upcoming_checkin_days;
         $general->upcoming_checkout_days   = $request->upcoming_checkout_days;
+        $general->deposit                  = $request->deposit;
         $general->save();
 
         $timezoneFile = config_path('timezone.php');
@@ -110,9 +112,9 @@ class GeneralSettingController extends Controller
         $path = getFilePath('logoIcon');
         if ($request->hasFile('logo')) {
             try {
-             fileUploader($request->logo, $path, filename: 'logo.png');
+                fileUploader($request->logo, $path, filename: 'logo.png');
             } catch (\Exception $exp) {
-                \Log::info('Không thể tải logo lên'. $exp);
+                \Log::info('Không thể tải logo lên' . $exp);
                 $notify[] = ['error', 'Không thể tải logo lên'];
                 return back()->withNotify($notify);
             }

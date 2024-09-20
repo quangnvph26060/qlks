@@ -170,7 +170,9 @@ CREATE TABLE banks (
 ALTER TABLE rooms
 ADD COLUMN is_clean BOOLEAN NOT NULL DEFAULT TRUE;
 
-
+-- 20/9/2024 / phong
+ALTER TABLE `general_settings`
+ADD COLUMN `deposit` INT NULL AFTER `available_version`;
 
 
 
