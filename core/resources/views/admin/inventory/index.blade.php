@@ -32,7 +32,9 @@
                                         <th>@lang('Mã sản phẩm')</th>
                                         <th>@lang('Số lượng nhập')</th>
                                         <th>@lang('Giá nhập')</th>
+                                        <th>@lang('Giá bán')</th>
                                         <th>@lang('Thời gian')</th>
+                                        <th>@lang('Trạng thái')</th>
                                     </tr>
                                 </thead>
                                 <tbody>
