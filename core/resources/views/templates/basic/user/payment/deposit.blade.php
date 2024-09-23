@@ -1,6 +1,109 @@
 @extends($activeTemplate . 'layouts.master')
 @section('content')
     <style>
+        .payment-system-list {
+            max-height: 400px;
+            /* Giới hạn chiều cao để tạo thanh cuộn nếu danh sách quá dài */
+            overflow-y: auto;
+            /* Tạo thanh cuộn dọc nếu chiều cao vượt quá giới hạn */
+            border: 1px solid #dee2e6;
+            /* Thêm đường viền xám nhẹ */
+            padding: 10px;
+            /* Thêm khoảng cách bên trong */
+            background-color: #ffffff;
+            /* Màu nền trắng */
+            border-radius: 5px;
+            /* Bo tròn các góc */
+        }
+
+        .gateway-option {
+            display: flex;
+            /* Hiển thị theo hàng ngang */
+            align-items: center;
+            /* Căn giữa theo chiều dọc */
+            padding: 10px;
+            /* Khoảng cách bên trong */
+            margin-bottom: 10px;
+            /* Khoảng cách bên dưới mỗi item */
+            border: 1px solid #dee2e6;
+            /* Đường viền bao quanh */
+            border-radius: 5px;
+            /* Bo tròn các góc */
+            cursor: pointer;
+            /* Đổi con trỏ chuột khi hover */
+            transition: background-color 0.3s ease;
+            /* Hiệu ứng khi hover */
+        }
+
+        .gateway-option:hover {
+            background-color: #f1f1f1;
+            /* Màu nền khi hover */
+        }
+
+        .gateway-option__info {
+            flex: 1;
+            /* Chiếm hết không gian còn lại */
+            display: flex;
+            /* Hiển thị theo hàng ngang */
+            align-items: center;
+            /* Căn giữa theo chiều dọc */
+        }
+
+        .gateway-option__name {
+            font-size: 16px;
+            /* Kích thước chữ */
+            font-weight: 600;
+            /* Độ đậm chữ */
+            color: #343a40;
+            /* Màu chữ */
+            margin-left: 10px;
+            /* Khoảng cách bên trái của tên */
+        }
+
+        .payment-item__thumb {
+            width: 50px;
+            /* Chiều rộng ảnh */
+            height: 50px;
+            /* Chiều cao ảnh */
+            overflow: hidden;
+            /* Ẩn phần thừa của ảnh */
+            border-radius: 5px;
+            /* Bo tròn góc ảnh */
+            margin-right: 15px;
+            /* Khoảng cách bên phải của ảnh */
+        }
+
+        .payment-item__thumb img {
+            width: 100%;
+            /* Chiều rộng đầy đủ */
+            height: auto;
+            /* Chiều cao tự động theo tỷ lệ */
+        }
+
+        .payment-item__btn {
+            width: 100%;
+            /* Chiều rộng đầy đủ */
+            text-align: center;
+            /* Căn giữa chữ */
+            padding: 10px;
+            /* Khoảng cách bên trong */
+            background-color: #f8f9fa;
+            /* Màu nền */
+            border: 1px solid #dee2e6;
+            /* Đường viền */
+            border-radius: 5px;
+            /* Bo tròn góc */
+            cursor: pointer;
+            /* Đổi con trỏ chuột khi hover */
+            transition: background-color 0.3s ease;
+            /* Hiệu ứng khi hover */
+        }
+
+        .payment-item__btn:hover {
+            background-color: #e9ecef;
+            /* Màu nền khi hover */
+        }
+
         .booked_infor {
             background-color: #f8f9fa;
             /* Màu nền nhạt */
@@ -117,23 +220,22 @@
                                             <p class="text mb-0">@lang('Tổng')</p>
                                         </div>
                                         <div class="deposit-info__input">
-                                            <div class="deposit-info__input-group input-group">
-                                                <span class="deposit-info__input-group-text">{{ gs('cur_sym') }}</span>
-                                                <input type="text" class="form-control form--control amount"
-                                                    name="amount" placeholder="@lang('00.00')"
-                                                    value="{{ old('amount') }}" autocomplete="off">
-                                            </div>
+                                            <p class="text">
+                                                <span>{{ number_format($booking->bookedRooms[0]->booking->booking_fare) }}</span>
+                                                {{ __(gs('cur_text')) }}
+                                            </p>
                                         </div>
                                     </div>
                                     <hr>
                                     <div class="deposit-info">
                                         <div class="deposit-info__title">
-                                            <p class="text has-icon"> @lang('Giới hạn')
+                                            <p class="text has-icon"> @lang('Thuế')
                                                 <span></span>
                                             </p>
                                         </div>
                                         <div class="deposit-info__input">
-                                            <p class="text"><span class="gateway-limit">@lang('0.00')</span>
+                                            <p class="text"><span
+                                                    class="gateway-limit">{{ number_format($booking->bookedRooms[0]->booking->tax_charge) }}</span>
                                             </p>
                                         </div>
                                     </div>
@@ -156,7 +258,8 @@
                                             <p class="text">@lang('Tổng tiền')</p>
                                         </div>
                                         <div class="deposit-info__input">
-                                            <p class="text"><span class="final-amount">@lang('0.00')</span>
+                                            <p class="text"><span
+                                                    class="final-amount">{{ number_format($booking->bookedRooms[0]->booking->booking_fare + $booking->bookedRooms[0]->booking->tax_charge) }}</span>
                                                 {{ __(gs('cur_text')) }}</p>
                                         </div>
                                     </div>
@@ -186,6 +289,30 @@
                                     <div class="d-none crypto-message mb-3">
                                         @lang('Chuyển đổi với') <span class="gateway-currency"></span> @lang('và giá trị cuối cùng sẽ hiển thị ở bước tiếp theo')
                                     </div>
+                                    <!-- Checkbox Đặt cọc -->
+                                    <div class="deposit-info deposit-option mb-3">
+                                        <div class="form-check">
+                                            <input type="checkbox" class="form-check-input deposit-checkbox"
+                                                id="deposit-checkbox" value="{{ $deposit }}">
+                                            <label class="form-check-label" for="deposit-checkbox">
+                                                Đặt cọc ({{ $deposit }}%):
+                                            </label>
+                                        </div>
+                                        <div class="deposit-info__input">
+                                            <p class="text">
+                                                @php
+                                                    $deposit_money =
+                                                        (($booking->bookedRooms[0]->booking->booking_fare +
+                                                            $booking->bookedRooms[0]->booking->tax_charge) *
+                                                            $deposit) /
+                                                        100;
+                                                @endphp
+                                                <span class="deposit-amount">{{ number_format($deposit_money) }}</span>
+                                                {{ __(gs('cur_text')) }}
+                                            </p>
+                                        </div>
+                                    </div>
+                                    <!-- Kết thúc phần Checkbox -->
                                     <button type="submit" class="btn btn--base w-100" disabled>
                                         @lang('Xác nhận thanh toán')
                                     </button>
