@@ -30,6 +30,7 @@ class InventoryController extends Controller
             'product_id',
             'quantity',
             'entry_date',
+            'status'
         ];
         $relations = ['warehouse', 'product'];
         $searchColumns = [];
