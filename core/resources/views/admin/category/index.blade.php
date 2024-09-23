@@ -3,7 +3,7 @@
 @section('panel')
     <div class="row">
         <!-- Khối bên trái: Form thêm mới -->
-        <div class="col-md-4">
+        <div class="col-xl-4 col-md-12">
             <h3>@lang('Thêm Mới Danh Mục')</h3>
             <form action="" method="POST" id="categoryForm">
                 <div class="form-group mb-3">
@@ -29,7 +29,7 @@
         </div>
 
         <!-- Khối bên phải: Danh sách danh mục -->
-        <div class="col-md-8">
+        <div class="col-xl-8 col-md-12">
             <h3 class="my-3">Danh Sách Danh Mục</h3>
             <div class="scrollable-table border p-2">
                 <div class="d-flex justify-content-between mb-3">

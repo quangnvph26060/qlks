@@ -259,7 +259,7 @@ class ProductController extends Controller
             ['name'],
             [],
             $filters,
-            true
+            true,
         );
 
         if (request()->ajax()) {
