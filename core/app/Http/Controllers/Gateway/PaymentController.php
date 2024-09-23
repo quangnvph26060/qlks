@@ -16,13 +16,16 @@ use Illuminate\Http\Request;
 
 class PaymentController extends Controller
 {
-    public function deposit()
+    public function deposit($id)
     {
-        $booking = session()->get('booking');
+
+     //    $booking = session()->get('booking');
         $gatewayCurrency = GatewayCurrency::whereHas('method', function ($gate) {
             $gate->where('status', Status::ENABLE);
         })->with('method')->orderby('name')->get();
         $pageTitle = 'Phương thức thanh toán';
+
+          $booking = Booking::with(['bookedRooms.roomType.images', 'bookedRooms.room', 'bookedRooms.booking.user' ])->findOrFail($id);
         $deposit = GeneralSetting::value('deposit');
         return view('Template::user.payment.deposit', compact('pageTitle', 'booking', 'gatewayCurrency', 'deposit'));
     }

@@ -53,6 +53,6 @@ class BookingController extends Controller
         $booking = Booking::with(['bookedRooms.roomType.images', 'bookedRooms.room', 'bookedRooms.booking.user' ])->findOrFail($id);
         session()->put('amount', getAmount($booking->total_amount - $booking->paid_amount));
         session()->put('booking_id', $booking->id);
-        return to_route('user.deposit.index')->with('booking', $booking);
+        return to_route('user.deposit.index',$id)->with('booking', $booking);
     }
 }
