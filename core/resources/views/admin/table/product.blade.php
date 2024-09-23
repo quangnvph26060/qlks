@@ -10,8 +10,8 @@
         <td data-label="@lang('Tên sản phẩm')">
             <p id="ellipsis">{{ $product->name }}</p>
         </td>
-        <td data-label="@lang('Giá bán')">{{ showAmount($product->selling_price) }}</td>
         <td data-label="@lang('Giá nhập')">{{ showAmount($product->import_price) }}</td>
+        <td data-label="@lang('Giá bán')">{{ showAmount($product->selling_price) }}</td>
         <td data-label="@lang('Tồn kho')">{{ $product->stock ?? 0 }}</td>
         @can([])
             <td>
