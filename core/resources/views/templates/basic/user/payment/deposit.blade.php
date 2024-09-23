@@ -1,5 +1,48 @@
 @extends($activeTemplate . 'layouts.master')
 @section('content')
+    <style>
+        .booked_infor {
+            background-color: #f8f9fa;
+            /* Màu nền nhạt */
+            border: 1px solid #dee2e6;
+            /* Đường viền xám nhạt */
+            padding: 15px;
+            /* Khoảng cách bên trong */
+            border-radius: 5px;
+            /* Góc bo tròn */
+            margin-bottom: 20px;
+            /* Khoảng cách bên dưới */
+        }
+
+        .booked_infor h4 {
+            font-size: 18px;
+            /* Kích thước chữ tiêu đề */
+            font-weight: 600;
+            /* Độ đậm chữ tiêu đề */
+            margin-bottom: 10px;
+            /* Khoảng cách bên dưới tiêu đề */
+            color: #343a40;
+            /* Màu chữ tiêu đề */
+        }
+
+        .booked_infor p {
+            margin-bottom: 8px;
+            /* Khoảng cách bên dưới các đoạn văn */
+            color: #495057;
+            /* Màu chữ */
+        }
+
+        .booked_infor img {
+            width: 100%;
+            /* Chiều rộng đầy đủ */
+            height: auto;
+            /* Chiều cao tự động theo tỷ lệ */
+            border-radius: 5px;
+            /* Bo tròn góc ảnh */
+            margin-bottom: 15px;
+            /* Khoảng cách bên dưới ảnh */
+        }
+    </style>
     <div class="container ">
         <div class="row">
             <div class="col-lg-12">
@@ -10,20 +53,53 @@
                         <div class="row justify-content-center gy-sm-4 gy-3">
                             <div class="col-lg-6">
                                 <div class="payment-system-list is-scrollable gateway-option-list">
-                                    {{$gatewayCurrency}}
+                                    {{-- {{$booking}} --}}
+                                    <div class="booked_infor">
+                                        <h4>Thông tin phòng</h4>
+                                        <img src="{{ asset($booking->bookedRooms[0]->roomType->main_image) }}"
+                                            alt="ảnh phòng">
+                                        <p>Mã đặt phòng: {{ $booking->bookedRooms[0]->booking->booking_number }}</p>
+                                        <p>Loại phòng: {{ $booking->bookedRooms[0]->roomType->name }}</p>
+                                        <p>Phòng số: {{ $booking->bookedRooms[0]->room->room_number }}</p>
+                                        <p>Ngày:
+                                            {{ Carbon\Carbon::parse($booking->bookedRooms[0]->booking->check_in)->format('d/m/Y') }}
+                                            -
+                                            {{ Carbon\Carbon::parse($booking->bookedRooms[0]->booking->check_out)->format('d/m/Y') }}
+                                        </p>
+                                        <h4>Thông tin người đặt</h4>
+                                        <p>Tên người đặt:
+                                            {{ $booking->bookedRooms[0]->booking->user->lastname }}
+                                            {{ $booking->bookedRooms[0]->booking->user->firstname }}
+                                        </p>
+                                        <p>Email: {{ $booking->bookedRooms[0]->booking->user->email }}</p>
+                                        <p>Số điện thoại: {{ $booking->bookedRooms[0]->booking->user->mobile }}</p>
+                                        <p>Địa chỉ: {{ $booking->bookedRooms[0]->booking->user->address }},
+                                            {{ $booking->bookedRooms[0]->booking->user->city }},
+                                            {{ $booking->bookedRooms[0]->booking->user->state }}</p>
+                                        <p>Quốc gia:
+                                            {{ $booking->bookedRooms[0]->booking->user->country_name }}({{ $booking->bookedRooms[0]->booking->user->country_code }})
+                                        </p>
+                                    </div>
                                     @foreach ($gatewayCurrency as $data)
-                                        <label for="{{ titleToKey($data->name) }}" class="payment-item @if ($loop->index > 4) d-none @endif gateway-option">
+                                        <label for="{{ titleToKey($data->name) }}"
+                                            class="payment-item @if ($loop->index > 4) d-none @endif gateway-option">
                                             <div class="payment-item__info">
                                                 <span class="payment-item__check"></span>
                                                 <span class="payment-item__name">{{ __($data->name) }}</span>
                                             </div>
                                             <div class="payment-item__thumb">
-                                                <img class="payment-item__thumb-img" src="{{ getImage(getFilePath('gateway') . '/' . $data->method->image) }}" alt="@lang('payment-thumb')">
+                                                <img class="payment-item__thumb-img"
+                                                    src="{{ getImage(getFilePath('gateway') . '/' . $data->method->image) }}"
+                                                    alt="@lang('payment-thumb')">
                                             </div>
-                                            <input class="payment-item__radio gateway-input" id="{{ titleToKey($data->name) }}" hidden data-gateway='@json($data)' type="radio" 
-                                            name="gateway" value="{{ $data->method_code }}"
-                                            @if (old('gateway')) @checked(old('gateway') == $data->method_code) 
-                                            @else @checked($loop->first) @endif data-min-amount="{{ showAmount($data->min_amount) }}" data-max-amount="{{ showAmount($data->max_amount) }}">
+                                            <input class="payment-item__radio gateway-input"
+                                                id="{{ titleToKey($data->name) }}" hidden
+                                                data-gateway='@json($data)' type="radio" name="gateway"
+                                                value="{{ $data->method_code }}"
+                                                @if (old('gateway')) @checked(old('gateway') == $data->method_code)
+                                            @else @checked($loop->first) @endif
+                                                data-min-amount="{{ showAmount($data->min_amount) }}"
+                                                data-max-amount="{{ showAmount($data->max_amount) }}">
                                         </label>
                                     @endforeach
                                     @if ($gatewayCurrency->count() > 4)
@@ -43,7 +119,9 @@
                                         <div class="deposit-info__input">
                                             <div class="deposit-info__input-group input-group">
                                                 <span class="deposit-info__input-group-text">{{ gs('cur_sym') }}</span>
-                                                <input type="text" class="form-control form--control amount" name="amount" placeholder="@lang('00.00')" value="{{ old('amount') }}" autocomplete="off">
+                                                <input type="text" class="form-control form--control amount"
+                                                    name="amount" placeholder="@lang('00.00')"
+                                                    value="{{ old('amount') }}" autocomplete="off">
                                             </div>
                                         </div>
                                     </div>
@@ -62,7 +140,8 @@
                                     <div class="deposit-info">
                                         <div class="deposit-info__title">
                                             <p class="text has-icon">@lang('Phí xử lý')
-                                                <span data-bs-toggle="tooltip" title="@lang('Processing charge for payment gateways')" class="proccessing-fee-info"><i class="las la-info-circle"></i> </span>
+                                                <span data-bs-toggle="tooltip" title="@lang('Processing charge for payment gateways')"
+                                                    class="proccessing-fee-info"><i class="las la-info-circle"></i> </span>
                                             </p>
                                         </div>
                                         <div class="deposit-info__input">
@@ -151,8 +230,8 @@
                 gateway = gatewayElement.data('gateway');
                 minAmount = gatewayElement.data('min-amount');
                 maxAmount = gatewayElement.data('max-amount');
-             
-                
+
+
                 let processingFeeInfo =
                     `${parseFloat(gateway.percent_charge).toFixed(2)}% with ${parseFloat(gateway.fixed_charge).toFixed(2)} {{ __(gs('cur_text')) }} charge for payment gateway processing fees`
                 $(".proccessing-fee-info").attr("data-bs-original-title", processingFeeInfo);
@@ -205,7 +284,8 @@
                     $(".gateway-conversion").find('.deposit-info__input .text').html(
                         `1 {{ __(gs('cur_text')) }} = <span class="rate">${parseFloat(gateway.rate).toFixed(2)}</span>  <span class="method_currency">${gateway.currency}</span>`
                     );
-                    $('.in-currency').text(parseFloat(totalAmount * gateway.rate).toFixed(gateway.method.crypto == 1 ? 8 : 2))
+                    $('.in-currency').text(parseFloat(totalAmount * gateway.rate).toFixed(gateway.method.crypto == 1 ?
+                        8 : 2))
                 } else {
                     $(".gateway-conversion, .conversion-currency").addClass('d-none');
                     $('.deposit-form').removeClass('adjust-height')

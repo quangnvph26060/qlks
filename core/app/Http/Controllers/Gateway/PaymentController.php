@@ -6,6 +6,7 @@ use App\Constants\Status;
 use App\Http\Controllers\Controller;
 use App\Lib\FormProcessor;
 use App\Models\AdminNotification;
+use App\Models\BookedRoom;
 use App\Models\Booking;
 use App\Models\Deposit;
 use App\Models\GatewayCurrency;
@@ -16,11 +17,12 @@ class PaymentController extends Controller
 {
     public function deposit()
     {
+        $booking = session()->get('booking');
         $gatewayCurrency = GatewayCurrency::whereHas('method', function ($gate) {
             $gate->where('status', Status::ENABLE);
         })->with('method')->orderby('name')->get();
         $pageTitle = 'Phương thức thanh toán';
-        return view('Template::user.payment.deposit', compact('gatewayCurrency', 'pageTitle'));
+        return view('Template::user.payment.deposit', compact('pageTitle', 'booking', 'gatewayCurrency'));
     }
 
     public function depositInsert(Request $request)
