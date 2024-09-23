@@ -312,6 +312,14 @@
                                             </p>
                                         </div>
                                     </div>
+                                    <div class="transaction-method mb-3"><select name="transaction" id="transaction" class="form-select">
+                                            <option value="">Phương thức thanh toán</option>
+                                            @foreach ($methods as $method)
+                                                <option value="{{ $method->id }}"
+                                                    {{ request('transaction') == $method->id ? 'selected' : '' }}>
+                                                    {{ $method->name }}</option>
+                                            @endforeach
+                                        </select></div>
                                     <!-- Kết thúc phần Checkbox -->
                                     <button type="submit" class="btn btn--base w-100" disabled>
                                         @lang('Xác nhận thanh toán')
