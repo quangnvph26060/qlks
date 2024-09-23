@@ -27,7 +27,8 @@
 
                     <td>
                         <div class="group-button">
-                            <a class="btn btn-sm btn-outline--info ms-1 @if ($due == 0) disabled @endif" href="{{ route('user.booking.payment', $booking->id) }}">
+                            <a class="btn btn-sm btn-outline--info ms-1 @if ($due == 0) disabled @endif" href="{{ route('user.deposit.index', $booking->id) }}">
+
                                 <i class="las la-wallet"></i> @lang('Thanh toán ngay')
                             </a>
 

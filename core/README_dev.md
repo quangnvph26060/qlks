@@ -162,6 +162,7 @@ ADD COLUMN is_clean BOOLEAN NOT NULL DEFAULT TRUE;
 ALTER TABLE `general_settings`
 ADD COLUMN `deposit` INT NULL AFTER `available_version`;
 
+
 -- 20-09
 CREATE TABLE `stock_entries` (
 `id` int NOT NULL,
@@ -190,3 +191,11 @@ ALTER TABLE `stock_entries`
 ADD CONSTRAINT `stock_entries_ibfk_1` FOREIGN KEY (`product_id`) REFERENCES `products` (`id`) ON UPDATE RESTRICT,
 ADD CONSTRAINT `stock_entries_ibfk_2` FOREIGN KEY (`warehouse_entry_id`) REFERENCES `warehouse_entries` (`id`) ON DELETE RESTRICT ON UPDATE RESTRICT;
 COMMIT;
+
+--23/9/2024
+CREATE TABLE transactions (
+id INT PRIMARY KEY AUTO_INCREMENT,
+name VARCHAR(255) NOT NULL,
+status INT NOT NULL
+);
+
