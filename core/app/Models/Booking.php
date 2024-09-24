@@ -14,6 +14,10 @@ class Booking extends Model
         'checked_out_at' => 'datetime'
     ];
 
+    public function getId()
+    {
+        return BookedRoom::where('booking_id', $this->id)->value('id'); 
+    }
     public function user()
     {
         return $this->belongsTo(User::class);

@@ -11,7 +11,10 @@
     .custom-input:focus {
         outline: none;
     }
-
+.d-error{
+    color: red;
+    font-size: 12px;
+}
     .d-flex {
         gap: 10px;
     }

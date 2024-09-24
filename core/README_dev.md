@@ -174,6 +174,13 @@ ADD COLUMN is_clean BOOLEAN NOT NULL DEFAULT TRUE;
 ALTER TABLE `general_settings`
 ADD COLUMN `deposit` INT NULL AFTER `available_version`;
 
+-- 21/09  dev_quang
+ALTER TABLE booked_rooms MODIFY COLUMN booked_for DATETIME;
+
+ALTER TABLE bookings MODIFY COLUMN check_in DATETIME;
+
+ALTER TABLE bookings MODIFY COLUMN check_out DATETIME;
+
 
 
 
