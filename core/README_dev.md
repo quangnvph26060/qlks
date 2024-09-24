@@ -163,6 +163,7 @@ ALTER TABLE `general_settings`
 ADD COLUMN `deposit` INT NULL AFTER `available_version`;
 
 
+
 -- 20-09
 CREATE TABLE `stock_entries` (
 `id` int NOT NULL,
@@ -191,6 +192,18 @@ ALTER TABLE `stock_entries`
 ADD CONSTRAINT `stock_entries_ibfk_1` FOREIGN KEY (`product_id`) REFERENCES `products` (`id`) ON UPDATE RESTRICT,
 ADD CONSTRAINT `stock_entries_ibfk_2` FOREIGN KEY (`warehouse_entry_id`) REFERENCES `warehouse_entries` (`id`) ON DELETE RESTRICT ON UPDATE RESTRICT;
 COMMIT;
+
+-- 21/09  dev_quang
+ALTER TABLE booked_rooms MODIFY COLUMN booked_for DATETIME;
+
+ALTER TABLE bookings MODIFY COLUMN check_in DATETIME;
+
+ALTER TABLE bookings MODIFY COLUMN check_out DATETIME;
+
+
+
+
+
 
 --23/9/2024
 CREATE TABLE transactions (

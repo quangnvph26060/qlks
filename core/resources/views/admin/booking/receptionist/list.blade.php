@@ -65,7 +65,7 @@
                 $classClean = $room->getCleanStatusClass();
                 $classSvg = $room->getCleanStatusSvg();
                 $cleanText = $room->getCleanStatusText();
-
+           
                 if (
                     now() > $booking->booking->check_in &&
                     now() <= $booking->booking->check_out &&
@@ -304,175 +304,6 @@
             </div>
         </div>
 
-        {{-- trả phòng  --}}
-        {{-- <div class="modal fade" id="myModal-checkout" tabindex="-1" role="dialog"
-            aria-labelledby="myModalLabel-booking" aria-hidden="true">
-            <div class="modal-dialog modal-dialog-centered" role="document" style="max-width: 1200px;">
-                <div class="modal-content">
-                    <div class="modal-header">
-                        <h5 class="modal-title" id="myModalLabel-booking">Chi tiết P.303</h5>
-                        <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
-                    </div>
-                    <div class="modal-body">
-                        <form id="bookingForm">
-                            <!-- Row: Labels -->
-                            <div class="room-card-checkout">
-                                <div class="room-header-checkout">
-                                    <h4>Phòng 01 giường đơn</h4>
-                                    <span class="status-label-checkout">Đang sử dụng</span>
-                                    <span class="icon-money-checkout">$</span>
-                                </div>
-
-                                <div class="room-details-checkout">
-                                    <div class="detail-row-checkout">
-                                        <div class="detail-item-checkout">
-                                            <strong>Khách hàng</strong>
-                                            <p>quang - 0382252561</p>
-                                        </div>
-                                        <div class="detail-item-checkout">
-                                            <strong>Khách lưu trú</strong>
-                                            <p>1 người lớn, 0 trẻ em, 0 giấy tờ</p>
-                                        </div>
-                                        <div class="detail-item-checkout">
-                                            <strong>Mã đặt phòng</strong>
-                                            <p>DP000020</p>
-                                        </div>
-                                    </div>
-
-                                    <div class="detail-row-checkout">
-                                        <div class="detail-item-checkout">
-                                            <strong>Nhận phòng</strong>
-                                            <p>09 thg 9, 16:20</p>
-                                        </div>
-                                        <div class="detail-item-checkout">
-                                            <strong>Trả phòng</strong>
-                                            <p>09 thg 9, 17:20</p>
-                                        </div>
-                                        <div class="detail-item-checkout">
-                                            <strong>Thời gian lưu trú</strong>
-                                            <p>1 giờ <span class="used-time-checkout">Đã sử dụng: 0 giờ</span></p>
-                                        </div>
-                                    </div>
-                                </div>
-                            </div>
-
-                            <hr>
-                            <div class="card mb-3">
-                                <div class="card-body">
-                                    <div class="row mb-3 justify-content-between">
-                                        <div class="col-md-9">
-                                        </div>
-                                        <div class="col-md-3 text-end" style="padding: 0px">
-                                            <div class="form-group " style="background: #ddd;border-radius:8px ">
-                                                <div class="col-12  mt-2 d-flex justify-content-around">
-
-                                                    <label class="fw-bold"> P.303 </label>
-
-                                                    <p>150,000</p>
-                                                </div>
-
-                                                <div class="col-12 mt-2 mb-2 d-flex justify-content-around">
-                                                    <label class="fw-bold">Khách đã trả</label>
-                                                    <p class="total_received"></p>
-                                                </div>
-                                            </div>
-                                            <button type="button" class="btn btn-primary">Trả phòng</button>
-                                        </div>
-
-                                    </div>
-                                </div>
-                            </div>
-
-                        </form>
-                    </div>
-                </div>
-            </div>
-        </div> --}}
-        {{-- sắp tới  --}}
-        {{-- <div class="modal fade" id="myModal-booking" tabindex="-1" role="dialog"
-            aria-labelledby="myModalLabel-booking" aria-hidden="true">
-            <div class="modal-dialog modal-dialog-centered" role="document" style="max-width: 1200px;">
-                <div class="modal-content">
-                    <div class="modal-header">
-                        <h5 class="modal-title" id="myModalLabel-booking">Chi tiết P.303</h5>
-                        <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
-                    </div>
-                    <div class="modal-body">
-                        <form id="bookingForm">
-                            <!-- Row: Labels -->
-                            <div class="room-card-checkout">
-                                <div class="room-header-checkout">
-                                    <h4>Phòng 01 giường đơn</h4>
-                                    <span class="status-label-checkout">Đã đặt trước</span>
-
-
-                                </div>
-
-                                <div class="room-details-checkout">
-                                    <div class="detail-row-checkout">
-                                        <div class="detail-item-checkout">
-                                            <strong>Khách hàng</strong>
-                                            <p>quang - 0382252561</p>
-                                        </div>
-                                        <div class="detail-item-checkout">
-                                            <strong>Khách lưu trú</strong>
-                                            <p>1 người lớn, 0 trẻ em, 0 giấy tờ</p>
-                                        </div>
-                                        <div class="detail-item-checkout">
-                                            <strong>Mã đặt phòng</strong>
-                                            <p>DP000020</p>
-                                        </div>
-                                    </div>
-
-                                    <div class="detail-row-checkout">
-                                        <div class="detail-item-checkout">
-                                            <strong>Nhận phòng</strong>
-                                            <p>09 thg 9, 16:20</p>
-                                        </div>
-                                        <div class="detail-item-checkout">
-                                            <strong>Trả phòng</strong>
-                                            <p>09 thg 9, 17:20</p>
-                                        </div>
-                                        <div class="detail-item-checkout">
-                                            <strong>Thời gian lưu trú</strong>
-                                            <p>1 giờ <span class="used-time-checkout">Đã sử dụng: 0 giờ</span></p>
-                                        </div>
-                                    </div>
-                                </div>
-                            </div>
-
-                            <hr>
-                            <div class="card mb-3">
-                                <div class="card-body">
-                                    <div class="row mb-3 justify-content-between">
-                                        <div class="col-md-9">
-                                        </div>
-                                        <div class="col-md-3 text-end" style="padding: 0px">
-                                            <div class="form-group " style="background: #ddd;border-radius:8px ">
-                                                <div class="col-12  mt-2 d-flex justify-content-around">
-
-                                                    <label class="fw-bold"> P.303 </label>
-
-                                                    <p>150,000</p>
-                                                </div>
-
-                                                <div class="col-12 mt-2 mb-2 d-flex justify-content-around">
-                                                    <label class="fw-bold">Khách đã trả</label>
-                                                    <p class="total_received"></p>
-                                                </div>
-                                            </div>
-                                            <button type="button" class="btn btn-primary">Trả phòng</button>
-                                        </div>
-
-                                    </div>
-                                </div>
-                            </div>
-
-                        </form>
-                    </div>
-                </div>
-            </div>
-        </div> --}}
         @include('admin.booking.partials.modal_extraChargeModal')
         {{-- NHẬN PHÒNG MUỘN  --}}
         <div class="modal fade" id="myModal-booking-status" tabindex="-1" role="dialog"
@@ -622,19 +453,31 @@
                                     <div class="col-12">
                                         <div class="card">
                                             <div class="card-body">
-                                                <h5 class="card-title" id="dueMessage1"></h5>
-                                                <div id="color_payment">
-                                                    <span id="number_fare"></span> <span id="customer_payment1"></span>
-                                                </div>
-                                                <div class="form-group">
-                                                    <label>@lang('Nhập số tiền')</label>
-                                                    <div class="input-group">
-                                                        <input class="form-control input_fare_booking" min="0"
-                                                            name="amount" required step="any" type="number">
-                                                        <span class="input-group-text">{{ __(gs()->cur_text) }}</span>
+                                                <form method="post">
+
+                                                    <h5 class="card-title" id="dueMessage1"></h5>
+                                                    <div id="color_payment">
+                                                        <span id="number_fare"></span> <span
+                                                            id="customer_payment1"></span>
                                                     </div>
-                                                </div>
-                                                <button type="button" class="btn btn-primary">Trả phòng</button>
+                                                    <div class="form-group">
+                                                        <label>@lang('Nhập số tiền')</label>
+                                                        <div class="input-group">
+
+                                                            <input class="form-control input_fare_booking" min="0"
+                                                                name="amount" id="amount_payment" required
+                                                                step="any" type="number">
+                                                            <span class="input-group-text">{{ __(gs()->cur_text) }}</span>
+                                                        </div>
+                                                        <div class="input-group">
+                                                            <span id="amount_payment_errors" class="d-error"></span>
+                                                        </div>
+                                                    </div>
+                                                    <input type="hidden" name="booking_id" id="booking_id">
+
+                                                    <button type="submit" class="btn btn-primary" id="submitBtn">Trả
+                                                        phòng</button>
+                                                </form>
                                             </div>
                                         </div>
                                     </div>
@@ -648,11 +491,11 @@
                 </div>
             </div>
         </div>
-       
+
         @include('admin.booking.partials.system-2')
-       
+
         @include('admin.booking.partials.clean_modal')
-       
+
         @include('admin.booking.partials.table-service')
 
         @include('admin.booking.partials.modal-cancel-booking')
@@ -804,7 +647,7 @@
                                             </tr>
                                         `);
                         } else {
-                            console.log(response.services.data);
+
 
                             $.each(response.services.data, function(index, service) {
                                 var url =
@@ -883,7 +726,7 @@
                         if (response.status === 'success') {
                             modal.hide();
                         }
-                        console.log('Thành công:', response);
+
 
                     },
                     error: function(xhr, status, error) {
@@ -904,7 +747,7 @@
             const dataRoomType = $(this).data('room-type');
             const dataRoom = $(this).data('room');
             const dataRoomNumber = $(this).data('roomnumber');
-            console.log(dataRoomNumber);
+
 
             const dataDay = $(this).data('day').replace(',', '');
             const dataNight = $(this).data('night').replace(',', '');
@@ -921,25 +764,33 @@
         });
 
         $('.room-booking-status-occupied').on('click', function() {
-            handleLateCheckinClick($(this))
+            var id = $(this).data('id'); 
+            var booking_id = $(this).data('booking');   
+            handleLateCheckinClick(id, booking_id); 
         });
 
         $('.room-booking-status-incoming').on('click', function() {
-            handleLateCheckinClick($(this))
+            var id = $(this).data('id'); 
+            var booking_id = $(this).data('booking');   
+            handleLateCheckinClick(id, booking_id); 
         });
 
         $('.room-booking-status-late-checkin').on('click', function() {
-            handleLateCheckinClick($(this))
+            var id = $(this).data('id'); 
+            var booking_id = $(this).data('booking');   
+            handleLateCheckinClick(id, booking_id); 
         });
 
         $('.room-booking-status-check-out').on('click', function() {
-            handleLateCheckinClick($(this))
+            var id = $(this).data('id'); 
+            var booking_id = $(this).data('booking');   
+            handleLateCheckinClick(id, booking_id); 
         });
 
-        function handleLateCheckinClick(element) {
-            var id = element.data('id');
-            var booking_id = element.data('booking');
+        function handleLateCheckinClick(id, booking_id) {
+           
             var url = `{{ route('admin.booking.details', ['id' => ':id']) }}`.replace(':id', id);
+            $('#booking_id').val(id);
             var dataToSend = {
                 is_method: 'receptionist'
             };
@@ -992,16 +843,19 @@
                         let totalFare = 0;
                         let total_fare = 0;
                         let cancellation_fee, shouldRefund = 0;
-                       
+
+                        var currentDate = '<?php echo now()->format('Y-m-d H:i:s'); ?>';
+
                         response.data.booked_rooms.forEach(function(booked, index) {
                             $('.booking-no').text(booked.room.room_number);
                             $('.room_serive').val(booked.room.room_number);
                             let is_flag = false;
-                          
-                            if (booked.status === 1) {
+
+
+                            if (booked.status === 1 && booked.booked_for >= currentDate) {
                                 total_fare = booked.fare;
                                 cancellation_fee = booked.cancellation_fee;
-                            }else{
+                            } else {
                                 is_flag = true;
                             }
                             rowsHtml += `
@@ -1122,11 +976,7 @@
                             }
                         });
 
-
-                        // 123
-
                         $('#myModal-booking-status').modal('show');
-
                     }
                 },
                 error: function(xhr, status, error) {
@@ -1186,9 +1036,7 @@
 
             var checkInDate = new Date(checkInTime);
             var checkOutDate = new Date(checkOutTime);
-            console.log(checkInDate.toLocaleDateString() + " - " + checkOutDate
-                .toLocaleDateString());
-            console.log($('.room_type_id').val());
+
 
 
             // array (
@@ -1321,7 +1169,7 @@
             $('.booking-form').submit();
         });
 
-     
+
         function getDatesBetween(startDate, endDate, roomType) {
             let dates = [];
             let currentDate = new Date(startDate);
@@ -1329,8 +1177,11 @@
 
             while (currentDate <= endDate) {
 
+
                 let formattedDate =
-                    `${currentDate.getMonth() + 1}/${String(currentDate.getDate()).padStart(2, '0')}/${currentDate.getFullYear()}`;
+                    `${currentDate.getMonth() + 1}/${String(currentDate.getDate()).padStart(2, '0')}/${currentDate.getFullYear()} ` +
+                    `${String(currentDate.getHours()).padStart(2, '0')}:${String(currentDate.getMinutes()).padStart(2, '0')}:${String(currentDate.getSeconds()).padStart(2, '0')}`;
+
                 dates.push(`${roomType}-${formattedDate}`);
 
 
@@ -1343,6 +1194,7 @@
             e.preventDefault();
 
             let formData = $(this).serializeArray();
+
 
             let formObject = {};
             formData.forEach(function(field) {
@@ -1363,6 +1215,7 @@
 
             const startDate = new Date(checkInTime);
             const endDate = new Date(checkOutTime);
+
             const roomDates = getDatesBetween(startDate, endDate, params.get('room_type'));
 
             roomDates.forEach(function(date, index) {
@@ -1399,6 +1252,7 @@
                         $('.orderList').addClass('d-none');
                         $('.formRoomSearch').trigger('reset');
                         $('#myModal-booking').hide();
+                        window.location.reload();
                     } else {
                         notify('error', response.error);
                     }
@@ -1406,7 +1260,7 @@
             });
         });
 
-        //
+      
         $('.btn-user-info').on('click', function(event) {
             // Lấy giá trị của guest_type
             //    let guestType = $('#guest_type').val();
@@ -1551,5 +1405,41 @@
         modal.find('.refundableAmount').text(data.should_refund);
         modal.modal('show');
     });
+    $(document).ready(function() {
+        $('#submitBtn').click(function(e) {
+            e.preventDefault();
 
+            var booking_id = $('#booking_id').val();
+            var amount = $('#amount_payment').val();
+
+            $('#amount_payment_errors').text('');
+            if (amount > 0) {
+                var url = `{{ route('admin.booking.payment', ['id' => ':id']) }}`.replace(':id', booking_id);
+
+                $.ajax({
+                    url: url,
+                    type: "POST",
+                    data: {
+                        _token: '{{ csrf_token() }}',
+                        amount: amount,
+                        is_method: "receptionist"
+                    },
+                    success: function(response) {
+                       if(response.status === 'success'){
+                       console.log("booking id " + response.booking_id); 
+                       console.log(" id " + response.id);
+                       handleLateCheckinClick(response.id , response.booking_id)
+                       }
+                    },
+                    error: function(xhr, status, error) {
+                        console.error(xhr.responseText);
+                        console.log(xhr.status);
+                        alert("Đã có lỗi xảy ra. Vui lòng thử lại.");
+                    }
+                });
+            } else {
+                $('#amount_payment_errors').text('Vui lòng nhập số tiền!');
+            }
+        });
+    });
 </script>
