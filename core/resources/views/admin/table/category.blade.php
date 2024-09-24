@@ -2,7 +2,7 @@
 @if ($response->isNotEmpty())
 @foreach ($response as $category)
     <tr data-id="{{ $category->id }}">
-        <td data-label="@lang('STT')">{{ $loop->iteration }}</td>
+        {{-- <td data-label="@lang('STT')">{{ $loop->iteration }}</td> --}}
         <td data-label="@lang('Tên danh mục')">{{ $category->name }}</td>
         <td data-label="@lang('Sản phẩm (số lượng)')">{{ $category->products->count() }}</td>
         <td data-label="@lang('Trạng thái')">
