@@ -40,6 +40,7 @@ $(".searchInput").on("input", function () {
     if (searchValue === "") {
         // Khi ô tìm kiếm trống, gọi fetchData để lấy dữ liệu ban đầu
         fetchData(1);
+        return;
     }
     debounceTimer = setTimeout(() => {
         fetchData(1); // Gọi fetchData nếu có giá trị tìm kiếm

@@ -16,6 +16,8 @@ use App\Models\RoomTypeImage;
 use App\Rules\FileTypeValidate;
 use Illuminate\Support\Facades\DB;
 use App\Http\Controllers\Controller;
+use Illuminate\Support\Facades\Storage;
+
 
 class RoomTypeController extends Controller
 {
@@ -95,11 +97,10 @@ class RoomTypeController extends Controller
             $roomType->cancellation_fee    = $request->cancellation_fee ?? 0;
             $roomType->cancellation_policy = htmlspecialchars_decode($purifier->purify($request->cancellation_policy));
 
-
             if ($request->hasFile('main_image')) {
-                $roomType->main_image = fileUploader($request->main_image, getFilePath('roomTypeImage'), getFileSize('roomTypeImage'), @$roomType->main_image, getThumbSize('roomTypeImage'));
+                $main_images = saveImages($request, 'main_image', 'roomTypeImage', 1280, 720);
+                $roomType->main_image = $main_images[0];
             }
-
 
             $roomType->save();
 
@@ -190,26 +191,24 @@ class RoomTypeController extends Controller
 
     protected function insertImages($request, $roomType)
     {
-        $path = getFilePath('roomTypeImage');
-        $this->removeImages($request, $roomType, $path);
+        try {
+            $thumbnails = saveImages($request, 'images', 'thumbnails', 400, 300);
 
-        if ($request->hasFile('images')) {
-            $size = getFileSize('roomTypeImage');
-            $images = [];
-
-            foreach ($request->file('images') as $file) {
-                try {
-                    $name = fileUploader($file, $path, $size);
-                    $roomTypeImage        = new RoomTypeImage();
-                    $roomTypeImage->image = $name;
-                    $images[] = $roomTypeImage;
-                } catch (\Exception $exp) {
-                    $notify[] = ['error', 'Couldn\'t upload the logo'];
-                    return back()->withNotify($notify);
-                }
+            $thumbnailsData = [];
+            foreach ($thumbnails as $thumbnail) {
+                $thumbnailsData[] = ['image' => $thumbnail];
             }
 
-            $roomType->images()->saveMany($images);
+            $roomType->images()->createMany($thumbnailsData);
+        } catch (\Exception $exception) {
+
+            if (!empty($thumbnails)) {
+                foreach ($thumbnails as $thumbnail) {
+                    if (Storage::disk('public')->exists($thumbnail)) {
+                        Storage::disk('public')->delete($thumbnail);
+                    }
+                }
+            }
         }
     }
 

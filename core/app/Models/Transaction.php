@@ -8,14 +8,16 @@ class Transaction extends Model
 {
 
     public $timestamps = false;
+    protected $table = 'transactions';
+    protected $fillable = [
+        'name',
+        'status'
+    ];
 
     public function user()
     {
         return $this->belongsTo(User::class);
     }
-
-    protected $fillable = ['warehouse_entry_id ', 'payment_method_id', 'amount', 'transaction_date'];
-
 
     public function warehouse_entry()
     {
@@ -27,5 +29,4 @@ class Transaction extends Model
     {
         return $this->belongsTo(PaymentMethod::class);
     }
-
 }

@@ -1,5 +1,151 @@
 @extends($activeTemplate . 'layouts.master')
 @section('content')
+    <style>
+        .payment-system-list {
+            max-height: 400px;
+            /* Giới hạn chiều cao để tạo thanh cuộn nếu danh sách quá dài */
+            overflow-y: auto;
+            /* Tạo thanh cuộn dọc nếu chiều cao vượt quá giới hạn */
+            border: 1px solid #dee2e6;
+            /* Thêm đường viền xám nhẹ */
+            padding: 10px;
+            /* Thêm khoảng cách bên trong */
+            background-color: #ffffff;
+            /* Màu nền trắng */
+            border-radius: 5px;
+            /* Bo tròn các góc */
+        }
+
+        .gateway-option {
+            display: flex;
+            /* Hiển thị theo hàng ngang */
+            align-items: center;
+            /* Căn giữa theo chiều dọc */
+            padding: 10px;
+            /* Khoảng cách bên trong */
+            margin-bottom: 10px;
+            /* Khoảng cách bên dưới mỗi item */
+            border: 1px solid #dee2e6;
+            /* Đường viền bao quanh */
+            border-radius: 5px;
+            /* Bo tròn các góc */
+            cursor: pointer;
+            /* Đổi con trỏ chuột khi hover */
+            transition: background-color 0.3s ease;
+            /* Hiệu ứng khi hover */
+        }
+
+        .gateway-option:hover {
+            background-color: #f1f1f1;
+            /* Màu nền khi hover */
+        }
+
+        .gateway-option__info {
+            flex: 1;
+            /* Chiếm hết không gian còn lại */
+            display: flex;
+            /* Hiển thị theo hàng ngang */
+            align-items: center;
+            /* Căn giữa theo chiều dọc */
+        }
+
+        .gateway-option__name {
+            font-size: 16px;
+            /* Kích thước chữ */
+            font-weight: 600;
+            /* Độ đậm chữ */
+            color: #343a40;
+            /* Màu chữ */
+            margin-left: 10px;
+            /* Khoảng cách bên trái của tên */
+        }
+
+        .payment-item__thumb {
+            width: 50px;
+            /* Chiều rộng ảnh */
+            height: 50px;
+            /* Chiều cao ảnh */
+            overflow: hidden;
+            /* Ẩn phần thừa của ảnh */
+            border-radius: 5px;
+            /* Bo tròn góc ảnh */
+            margin-right: 15px;
+            /* Khoảng cách bên phải của ảnh */
+        }
+
+        .payment-item__thumb img {
+            width: 100%;
+            /* Chiều rộng đầy đủ */
+            height: auto;
+            /* Chiều cao tự động theo tỷ lệ */
+        }
+
+        .payment-item__btn {
+            width: 100%;
+            /* Chiều rộng đầy đủ */
+            text-align: center;
+            /* Căn giữa chữ */
+            padding: 10px;
+            /* Khoảng cách bên trong */
+            background-color: #f8f9fa;
+            /* Màu nền */
+            border: 1px solid #dee2e6;
+            /* Đường viền */
+            border-radius: 5px;
+            /* Bo tròn góc */
+            cursor: pointer;
+            /* Đổi con trỏ chuột khi hover */
+            transition: background-color 0.3s ease;
+            /* Hiệu ứng khi hover */
+        }
+
+        .payment-item__btn:hover {
+            background-color: #e9ecef;
+            /* Màu nền khi hover */
+        }
+
+        .booked_infor {
+            background-color: #f8f9fa;
+            /* Màu nền nhạt */
+            border: 1px solid #dee2e6;
+            /* Đường viền xám nhạt */
+            padding: 15px;
+            /* Khoảng cách bên trong */
+            border-radius: 5px;
+            /* Góc bo tròn */
+            margin-bottom: 20px;
+            /* Khoảng cách bên dưới */
+        }
+
+        .booked_infor h4 {
+            font-size: 18px;
+            /* Kích thước chữ tiêu đề */
+            font-weight: 600;
+            /* Độ đậm chữ tiêu đề */
+            margin-bottom: 10px;
+            /* Khoảng cách bên dưới tiêu đề */
+            color: #343a40;
+            /* Màu chữ tiêu đề */
+        }
+
+        .booked_infor p {
+            margin-bottom: 8px;
+            /* Khoảng cách bên dưới các đoạn văn */
+            color: #495057;
+            /* Màu chữ */
+        }
+
+        .booked_infor img {
+            width: 100%;
+            /* Chiều rộng đầy đủ */
+            height: auto;
+            /* Chiều cao tự động theo tỷ lệ */
+            border-radius: 5px;
+            /* Bo tròn góc ảnh */
+            margin-bottom: 15px;
+            /* Khoảng cách bên dưới ảnh */
+        }
+    </style>
     <div class="container ">
         <div class="row">
             <div class="col-lg-12">
@@ -10,20 +156,53 @@
                         <div class="row justify-content-center gy-sm-4 gy-3">
                             <div class="col-lg-6">
                                 <div class="payment-system-list is-scrollable gateway-option-list">
-                                    {{$gatewayCurrency}}
+                                    {{-- {{$booking}} --}}
+                                    <div class="booked_infor">
+                                        <h4>Thông tin phòng</h4>
+                                        <img src="{{ asset($booking->bookedRooms[0]->roomType->main_image) }}"
+                                            alt="ảnh phòng">
+                                        <p>Mã đặt phòng: {{ $booking->bookedRooms[0]->booking->booking_number }}</p>
+                                        <p>Loại phòng: {{ $booking->bookedRooms[0]->roomType->name }}</p>
+                                        <p>Phòng số: {{ $booking->bookedRooms[0]->room->room_number }}</p>
+                                        <p>Ngày:
+                                            {{ Carbon\Carbon::parse($booking->bookedRooms[0]->booking->check_in)->format('d/m/Y') }}
+                                            -
+                                            {{ Carbon\Carbon::parse($booking->bookedRooms[0]->booking->check_out)->format('d/m/Y') }}
+                                        </p>
+                                        <h4>Thông tin người đặt</h4>
+                                        <p>Tên người đặt:
+                                            {{ $booking->bookedRooms[0]->booking->user->lastname }}
+                                            {{ $booking->bookedRooms[0]->booking->user->firstname }}
+                                        </p>
+                                        <p>Email: {{ $booking->bookedRooms[0]->booking->user->email }}</p>
+                                        <p>Số điện thoại: {{ $booking->bookedRooms[0]->booking->user->mobile }}</p>
+                                        <p>Địa chỉ: {{ $booking->bookedRooms[0]->booking->user->address }},
+                                            {{ $booking->bookedRooms[0]->booking->user->city }},
+                                            {{ $booking->bookedRooms[0]->booking->user->state }}</p>
+                                        <p>Quốc gia:
+                                            {{ $booking->bookedRooms[0]->booking->user->country_name }}({{ $booking->bookedRooms[0]->booking->user->country_code }})
+                                        </p>
+                                    </div>
                                     @foreach ($gatewayCurrency as $data)
-                                        <label for="{{ titleToKey($data->name) }}" class="payment-item @if ($loop->index > 4) d-none @endif gateway-option">
+                                        <label for="{{ titleToKey($data->name) }}"
+                                            class="payment-item @if ($loop->index > 4) d-none @endif gateway-option">
                                             <div class="payment-item__info">
                                                 <span class="payment-item__check"></span>
                                                 <span class="payment-item__name">{{ __($data->name) }}</span>
                                             </div>
                                             <div class="payment-item__thumb">
-                                                <img class="payment-item__thumb-img" src="{{ getImage(getFilePath('gateway') . '/' . $data->method->image) }}" alt="@lang('payment-thumb')">
+                                                <img class="payment-item__thumb-img"
+                                                    src="{{ getImage(getFilePath('gateway') . '/' . $data->method->image) }}"
+                                                    alt="@lang('payment-thumb')">
                                             </div>
-                                            <input class="payment-item__radio gateway-input" id="{{ titleToKey($data->name) }}" hidden data-gateway='@json($data)' type="radio" 
-                                            name="gateway" value="{{ $data->method_code }}"
-                                            @if (old('gateway')) @checked(old('gateway') == $data->method_code) 
-                                            @else @checked($loop->first) @endif data-min-amount="{{ showAmount($data->min_amount) }}" data-max-amount="{{ showAmount($data->max_amount) }}">
+                                            <input class="payment-item__radio gateway-input"
+                                                id="{{ titleToKey($data->name) }}" hidden
+                                                data-gateway='@json($data)' type="radio" name="gateway"
+                                                value="{{ $data->method_code }}"
+                                                @if (old('gateway')) @checked(old('gateway') == $data->method_code)
+                                            @else @checked($loop->first) @endif
+                                                data-min-amount="{{ showAmount($data->min_amount) }}"
+                                                data-max-amount="{{ showAmount($data->max_amount) }}">
                                         </label>
                                     @endforeach
                                     @if ($gatewayCurrency->count() > 4)
@@ -41,28 +220,30 @@
                                             <p class="text mb-0">@lang('Tổng')</p>
                                         </div>
                                         <div class="deposit-info__input">
-                                            <div class="deposit-info__input-group input-group">
-                                                <span class="deposit-info__input-group-text">{{ gs('cur_sym') }}</span>
-                                                <input type="text" class="form-control form--control amount" name="amount" placeholder="@lang('00.00')" value="{{ old('amount') }}" autocomplete="off">
-                                            </div>
+                                            <p class="text">
+                                                <span>{{ number_format($booking->bookedRooms[0]->booking->booking_fare) }}</span>
+                                                {{ __(gs('cur_text')) }}
+                                            </p>
                                         </div>
                                     </div>
                                     <hr>
                                     <div class="deposit-info">
                                         <div class="deposit-info__title">
-                                            <p class="text has-icon"> @lang('Giới hạn')
+                                            <p class="text has-icon"> @lang('Thuế')
                                                 <span></span>
                                             </p>
                                         </div>
                                         <div class="deposit-info__input">
-                                            <p class="text"><span class="gateway-limit">@lang('0.00')</span>
+                                            <p class="text"><span
+                                                    class="gateway-limit">{{ number_format($booking->bookedRooms[0]->booking->tax_charge) }}</span>
                                             </p>
                                         </div>
                                     </div>
                                     <div class="deposit-info">
                                         <div class="deposit-info__title">
                                             <p class="text has-icon">@lang('Phí xử lý')
-                                                <span data-bs-toggle="tooltip" title="@lang('Processing charge for payment gateways')" class="proccessing-fee-info"><i class="las la-info-circle"></i> </span>
+                                                <span data-bs-toggle="tooltip" title="@lang('Processing charge for payment gateways')"
+                                                    class="proccessing-fee-info"><i class="las la-info-circle"></i> </span>
                                             </p>
                                         </div>
                                         <div class="deposit-info__input">
@@ -77,7 +258,8 @@
                                             <p class="text">@lang('Tổng tiền')</p>
                                         </div>
                                         <div class="deposit-info__input">
-                                            <p class="text"><span class="final-amount">@lang('0.00')</span>
+                                            <p class="text"><span
+                                                    class="final-amount">{{ number_format($booking->bookedRooms[0]->booking->booking_fare + $booking->bookedRooms[0]->booking->tax_charge) }}</span>
                                                 {{ __(gs('cur_text')) }}</p>
                                         </div>
                                     </div>
@@ -107,6 +289,38 @@
                                     <div class="d-none crypto-message mb-3">
                                         @lang('Chuyển đổi với') <span class="gateway-currency"></span> @lang('và giá trị cuối cùng sẽ hiển thị ở bước tiếp theo')
                                     </div>
+                                    <!-- Checkbox Đặt cọc -->
+                                    <div class="deposit-info deposit-option mb-3">
+                                        <div class="form-check">
+                                            <input type="checkbox" class="form-check-input deposit-checkbox"
+                                                id="deposit-checkbox" value="{{ $deposit }}">
+                                            <label class="form-check-label" for="deposit-checkbox">
+                                                Đặt cọc ({{ $deposit }}%):
+                                            </label>
+                                        </div>
+                                        <div class="deposit-info__input">
+                                            <p class="text">
+                                                @php
+                                                    $deposit_money =
+                                                        (($booking->bookedRooms[0]->booking->booking_fare +
+                                                            $booking->bookedRooms[0]->booking->tax_charge) *
+                                                            $deposit) /
+                                                        100;
+                                                @endphp
+                                                <span class="deposit-amount">{{ number_format($deposit_money) }}</span>
+                                                {{ __(gs('cur_text')) }}
+                                            </p>
+                                        </div>
+                                    </div>
+                                    <div class="transaction-method mb-3"><select name="transaction" id="transaction" class="form-select">
+                                            <option value="">Phương thức thanh toán</option>
+                                            @foreach ($methods as $method)
+                                                <option value="{{ $method->id }}"
+                                                    {{ request('transaction') == $method->id ? 'selected' : '' }}>
+                                                    {{ $method->name }}</option>
+                                            @endforeach
+                                        </select></div>
+                                    <!-- Kết thúc phần Checkbox -->
                                     <button type="submit" class="btn btn--base w-100" disabled>
                                         @lang('Xác nhận thanh toán')
                                     </button>
@@ -151,8 +365,8 @@
                 gateway = gatewayElement.data('gateway');
                 minAmount = gatewayElement.data('min-amount');
                 maxAmount = gatewayElement.data('max-amount');
-             
-                
+
+
                 let processingFeeInfo =
                     `${parseFloat(gateway.percent_charge).toFixed(2)}% with ${parseFloat(gateway.fixed_charge).toFixed(2)} {{ __(gs('cur_text')) }} charge for payment gateway processing fees`
                 $(".proccessing-fee-info").attr("data-bs-original-title", processingFeeInfo);
@@ -205,7 +419,8 @@
                     $(".gateway-conversion").find('.deposit-info__input .text').html(
                         `1 {{ __(gs('cur_text')) }} = <span class="rate">${parseFloat(gateway.rate).toFixed(2)}</span>  <span class="method_currency">${gateway.currency}</span>`
                     );
-                    $('.in-currency').text(parseFloat(totalAmount * gateway.rate).toFixed(gateway.method.crypto == 1 ? 8 : 2))
+                    $('.in-currency').text(parseFloat(totalAmount * gateway.rate).toFixed(gateway.method.crypto == 1 ?
+                        8 : 2))
                 } else {
                     $(".gateway-conversion, .conversion-currency").addClass('d-none');
                     $('.deposit-form').removeClass('adjust-height')

@@ -6,21 +6,30 @@ use App\Constants\Status;
 use App\Http\Controllers\Controller;
 use App\Lib\FormProcessor;
 use App\Models\AdminNotification;
+use App\Models\BookedRoom;
 use App\Models\Booking;
 use App\Models\Deposit;
 use App\Models\GatewayCurrency;
+use App\Models\GeneralSetting;
+use App\Models\Transaction;
 use App\Models\User;
 use Illuminate\Http\Request;
 
 class PaymentController extends Controller
 {
-    public function deposit()
+    public function deposit($id)
     {
+
+     //    $booking = session()->get('booking');
         $gatewayCurrency = GatewayCurrency::whereHas('method', function ($gate) {
             $gate->where('status', Status::ENABLE);
         })->with('method')->orderby('name')->get();
         $pageTitle = 'Phương thức thanh toán';
-        return view('Template::user.payment.deposit', compact('gatewayCurrency', 'pageTitle'));
+        $methods = Transaction::get();
+
+          $booking = Booking::with(['bookedRooms.roomType.images', 'bookedRooms.room', 'bookedRooms.booking.user' ])->findOrFail($id);
+        $deposit = GeneralSetting::value('deposit');
+        return view('Template::user.payment.deposit', compact('pageTitle', 'booking', 'gatewayCurrency', 'deposit', 'methods'));
     }
 
     public function depositInsert(Request $request)
