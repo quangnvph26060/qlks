@@ -55,7 +55,6 @@
                             <table class="table--light style--two table" id="data-table">
                                 <thead>
                                     <tr>
-                                        <th>@lang('STT')</th>
                                         <th>@lang('Tên danh mục')</th>
                                         <th class="w-25">@lang('Sản phẩm (số lượng)')</th>
                                         <th>@lang('Trạng thái')</th>
@@ -93,7 +92,7 @@
 
                 let lastId = null;
                 const apiUrl = '{{ route('admin.category.index') }}'; // Thay đổi URL phù hợp
-                initDataFetch(apiUrl, true);
+                initDataFetch(apiUrl);
 
 
                 // Reset form và remove các lớp lỗi
@@ -291,8 +290,8 @@
                                 });
 
                                 // Xóa hàng tương ứng
-                                $('tr[data-id="' + id + '"]').remove();
-                                updateTableIndexes();
+                                // $('tr[data-id="' + id + '"]').remove();
+                                // updateTableIndexes();
                                 notData
                                     (); // Kiểm tra và hiển thị thông báo nếu không có bản ghi
 
@@ -300,6 +299,9 @@
                                     icon: 'success',
                                     title: `<p>${response.message}</p>`
                                 });
+
+                                initDataFetch(apiUrl);
+
                             } else {
                                 showSwalMessage('error', response.message);
                             }
