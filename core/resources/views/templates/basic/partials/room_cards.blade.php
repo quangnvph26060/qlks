@@ -1,8 +1,9 @@
 {{-- @dd($roomType) --}}
 @foreach ($roomType as $type)
+{{-- @dd($type) --}}
     <div class="item p-3" style="{{ $loop->iteration % 2 == 0 ? 'flex-direction: row-reverse;' : '' }}">
         <img alt="image" class="rounded"
-            src="{{ getImage(getFilePath('roomTypeImage') . '/thumb_' . @$type->main_image, getFileSize('roomTypeImage')) }}">
+            src="{{\Storage::url($type->main_image)}}">
         <div class="info">
             <h2>{{ $type->name }}</h2>
             <p class="price">Giá: {{ number_format($type->fare, 0, '', '.') }} VNĐ/ngày</p>

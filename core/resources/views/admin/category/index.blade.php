@@ -3,7 +3,7 @@
 @section('panel')
     <div class="row">
         <!-- Khối bên trái: Form thêm mới -->
-        <div class="col-md-4">
+        <div class="col-xl-4 col-md-12">
             <h3>@lang('Thêm Mới Danh Mục')</h3>
             <form action="" method="POST" id="categoryForm">
                 <div class="form-group mb-3">
@@ -29,7 +29,7 @@
         </div>
 
         <!-- Khối bên phải: Danh sách danh mục -->
-        <div class="col-md-8">
+        <div class="col-xl-8 col-md-12">
             <h3 class="my-3">Danh Sách Danh Mục</h3>
             <div class="scrollable-table border p-2">
                 <div class="d-flex justify-content-between mb-3">
@@ -55,7 +55,6 @@
                             <table class="table--light style--two table" id="data-table">
                                 <thead>
                                     <tr>
-                                        <th>@lang('STT')</th>
                                         <th>@lang('Tên danh mục')</th>
                                         <th class="w-25">@lang('Sản phẩm (số lượng)')</th>
                                         <th>@lang('Trạng thái')</th>
@@ -93,7 +92,7 @@
 
                 let lastId = null;
                 const apiUrl = '{{ route('admin.category.index') }}'; // Thay đổi URL phù hợp
-                initDataFetch(apiUrl, true);
+                initDataFetch(apiUrl);
 
 
                 // Reset form và remove các lớp lỗi
@@ -291,8 +290,8 @@
                                 });
 
                                 // Xóa hàng tương ứng
-                                $('tr[data-id="' + id + '"]').remove();
-                                updateTableIndexes();
+                                // $('tr[data-id="' + id + '"]').remove();
+                                // updateTableIndexes();
                                 notData
                                     (); // Kiểm tra và hiển thị thông báo nếu không có bản ghi
 
@@ -300,6 +299,9 @@
                                     icon: 'success',
                                     title: `<p>${response.message}</p>`
                                 });
+
+                                initDataFetch(apiUrl);
+
                             } else {
                                 showSwalMessage('error', response.message);
                             }

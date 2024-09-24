@@ -33,8 +33,8 @@ class InventoryController extends Controller
             'status'
         ];
         $relations = ['warehouse', 'product'];
-        $searchColumns = [];
-        $relationSearchColumns = [];
+        $searchColumns = ['entry_date'];
+        $relationSearchColumns = ['warehouse' => ['reference_code'], 'product' => ['sku']];
 
         $response = $this->repository
             ->customPaginate(
@@ -48,7 +48,7 @@ class InventoryController extends Controller
                 $relationSearchColumns
             );
 
-            // dd($response);
+        // dd($response);
 
         if (request()->ajax()) {
             return response()->json([

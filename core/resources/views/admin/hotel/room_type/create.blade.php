@@ -371,7 +371,7 @@
             padding: 0;
         }
 
-      
+
     </style>
 @endpush
 

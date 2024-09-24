@@ -162,9 +162,53 @@ ADD COLUMN is_clean BOOLEAN NOT NULL DEFAULT TRUE;
 ALTER TABLE `general_settings`
 ADD COLUMN `deposit` INT NULL AFTER `available_version`;
 
+
+
+-- 20-09
+CREATE TABLE `stock_entries` (
+`id` int NOT NULL,
+`warehouse_entry_id` int UNSIGNED NOT NULL,
+`product_id` bigint UNSIGNED NOT NULL,
+`quantity` int NOT NULL,
+`entry_date` datetime NOT NULL,
+`created_at` timestamp NULL DEFAULT NULL,
+`updated_at` timestamp NULL DEFAULT NULL
+) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_unicode_ci;
+
+ALTER TABLE `stock_entries`
+ADD PRIMARY KEY (`id`),
+ADD KEY `product_id` (`product_id`),
+ADD KEY `warehouses_id` (`warehouse_entry_id`);
+
+ALTER TABLE `stock_entries`
+MODIFY `id` int NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=21;
+
+ALTER TABLE `stock_entries`
+ADD CONSTRAINT `stock_entries_ibfk_1` FOREIGN KEY (`product_id`) REFERENCES `products` (`id`) ON UPDATE RESTRICT,
+ADD CONSTRAINT `stock_entries_ibfk_2` FOREIGN KEY (`warehouse_entry_id`) REFERENCES `warehouse_entries` (`id`) ON DELETE RESTRICT ON UPDATE RESTRICT;
+COMMIT;
+
+ALTER TABLE `stock_entries`
+ADD CONSTRAINT `stock_entries_ibfk_1` FOREIGN KEY (`product_id`) REFERENCES `products` (`id`) ON UPDATE RESTRICT,
+ADD CONSTRAINT `stock_entries_ibfk_2` FOREIGN KEY (`warehouse_entry_id`) REFERENCES `warehouse_entries` (`id`) ON DELETE RESTRICT ON UPDATE RESTRICT;
+COMMIT;
+
+-- 21/09  dev_quang
+ALTER TABLE booked_rooms MODIFY COLUMN booked_for DATETIME;
+
+ALTER TABLE bookings MODIFY COLUMN check_in DATETIME;
+
+ALTER TABLE bookings MODIFY COLUMN check_out DATETIME;
+
+
+
+
+
+
 --23/9/2024
 CREATE TABLE transactions (
 id INT PRIMARY KEY AUTO_INCREMENT,
 name VARCHAR(255) NOT NULL,
 status INT NOT NULL
 );
+

@@ -102,7 +102,7 @@ class BookRoomController extends Controller
                 $data      = [];
                 $roomId    = explode('-', $room)[0];
                 $bookedFor = explode('-', $room)[1];
-                $isBooked  = BookedRoom::where('room_id', $roomId)->where('booked_for', $bookedFor)->exists();
+                $isBooked  = BookedRoom::where('room_id', $roomId)->whereDate('booked_for', Carbon::parse($bookedFor))->exists();
 
                 if ($isBooked) {
                     DB::rollBack();
@@ -124,7 +124,7 @@ class BookRoomController extends Controller
                 $data['booking_id']       = 0;
                 $data['room_type_id']     = $room->room_type_id;
                 $data['room_id']          = $room->id;
-                $data['booked_for']       = Carbon::parse($bookedFor)->format('Y-m-d');
+                $data['booked_for']       = Carbon::parse($bookedFor)->format('Y-m-d H:i:s');
                 $data['fare']             = $room->roomType->fare;
                 $data['tax_charge']       = $room->roomType->fare * $tax / 100;
                 $data['cancellation_fee'] = $room->roomType->cancellation_fee;
@@ -166,12 +166,12 @@ class BookRoomController extends Controller
             }
 
             BookedRoom::insert($bookedRoomData);
-
             $checkIn  = BookedRoom::where('booking_id', $booking->id)->min('booked_for');
             $checkout = BookedRoom::where('booking_id', $booking->id)->max('booked_for');
-
+            \Log::info($checkout);
             $booking->check_in = $checkIn;
-            $booking->check_out = Carbon::parse($checkout)->addDay()->toDateString();
+            // $booking->check_out = Carbon::parse($checkout)->addDay()->toDateString();
+            $booking->check_out = Carbon::parse($request->checkOutTime)->format('Y-m-d H:i:s');
             $booking->save();
 
             DB::commit();
