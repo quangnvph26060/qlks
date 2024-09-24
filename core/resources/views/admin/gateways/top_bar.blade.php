@@ -15,4 +15,11 @@
             </a>
         </li>
     @endcan
+    @can('admin.transaction.index')
+        <li class="nav-item {{ menuActive(['admin.transaction.index', 'admin.transaction.add', 'admin.transaction.edit']) }}" role="presentation">
+            <a href="{{route('admin.transaction.index')}}" class="nav-link text-dark">
+                <i class="las la-dollar-sign"></i> @lang('Phương thức thanh toán')
+            </a>
+        </li>
+    @endcan
 </ul>
