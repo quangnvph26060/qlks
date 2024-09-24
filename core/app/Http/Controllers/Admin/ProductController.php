@@ -92,11 +92,11 @@ class ProductController extends Controller
     public function store(StoreProductRequest $request)
     {
 
-        $path = saveImage($request, 'image_path', 'products', 653, 731);
+        $path = saveImages($request, 'image_path', 'products', 300, 300);
 
         try {
             $data = $request->validated();
-            $data['image_path'] = $path;
+            $data['image_path'] = $path[0];
             $data['is_published'] = $request->has('is_published') ? 1 : 0;
 
             Product::create($data);
@@ -107,8 +107,8 @@ class ProductController extends Controller
                 'status' => true,
             ]);
         } catch (\Exception $e) {
-            if ($path && Storage::disk('public')->exists($path)) {
-                Storage::disk('public')->delete($path);
+            if ($path && Storage::disk('public')->exists($path[0])) {
+                Storage::disk('public')->delete($path[0]);
             }
 
             return response()->json([
@@ -148,7 +148,7 @@ class ProductController extends Controller
      */
     public function update(UpdateProductRequest $request, string $id)
     {
-        $path = saveImage($request, 'image_path', 'products', 653, 731);
+        $path = saveImages($request, 'image_path', 'products', 300, 300);
         $product = Product::query()->find($id);
 
         if (!$product) {
@@ -160,11 +160,11 @@ class ProductController extends Controller
 
         try {
             $data = $request->validated();
-            if ($path && $path != $product->image_path) {
+            if ($path[0] && $path[0] != $product->image_path) {
                 if (Storage::disk('public')->exists($product->image_path)) {
                     Storage::disk('public')->delete($product->image_path);
                 }
-                $data['image_path'] = $path;
+                $data['image_path'] = $path[0];
             }
             $data['is_published'] = $request->has('is_published') ? 1 : 0;
             $product->update($data);
@@ -175,8 +175,8 @@ class ProductController extends Controller
                 'status' => true,
             ]);
         } catch (\Exception $e) {
-            if ($path && Storage::disk('public')->exists($path)) {
-                Storage::disk('public')->delete($path);
+            if ($path[0] && Storage::disk('public')->exists($path[0])) {
+                Storage::disk('public')->delete($path[0]);
             }
 
             return response()->json([
@@ -259,7 +259,7 @@ class ProductController extends Controller
             ['name'],
             [],
             $filters,
-            true
+            true,
         );
 
         if (request()->ajax()) {
