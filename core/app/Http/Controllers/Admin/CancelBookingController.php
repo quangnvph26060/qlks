@@ -48,7 +48,7 @@ class CancelBookingController extends Controller {
     }
 
     public function cancelBookingByDate(Request $request, $id) {
-
+           
         if ($request->booked_for < now()->toDateString()) {
             $notify[] = ['error', 'Không thể hủy các đặt phòng của ngày trước'];
             return back()->withNotify($notify);
@@ -62,7 +62,9 @@ class CancelBookingController extends Controller {
         }
 
         $bookedRooms         = BookedRoom::active()->where('booking_id', $booking->id);
+     
         $bookedForOtherDates = (clone $bookedRooms)->where('booked_for', '!=', $request->booked_for)->count();
+
         $bookedRooms         = (clone $bookedRooms)->whereDate('booked_for', $request->booked_for);
 
         $booking->cancellation_fee += (clone $bookedRooms)->sum('cancellation_fee');
@@ -72,7 +74,7 @@ class CancelBookingController extends Controller {
         if (!$bookedForOtherDates) {
             $booking->status = Status::BOOKING_CANCELED;
         }
-
+        
         $booking->save();
 
         $dateWiseBooked = (clone $bookedRooms)->get()->pluck('room_id')->toArray();
