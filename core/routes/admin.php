@@ -1,5 +1,6 @@
 <?php
 
+use App\Http\Controllers\Admin\TransactionController;
 use Illuminate\Support\Facades\Route;
 
 Route::namespace('Auth')->group(function () {
@@ -328,6 +329,16 @@ Route::middleware('admin', 'adminPermission')->group(function () {
             Route::post('update/{id}', 'update')->name('update');
             Route::post('status/{id}', 'status')->name('status');
         });
+    });
+
+    Route::prefix('transaction')->name('transaction.')->group(function () {
+        Route::get('', [TransactionController::class, 'index'])->name('index');
+        Route::get('add', [TransactionController::class, 'add'])->name('add');
+        Route::post('store', [TransactionController::class, 'store'])->name('store');
+        Route::get('detail/{id}', [TransactionController::class, 'edit'])->name('edit');
+        Route::put('update/{id}', [TransactionController::class, 'update'])->name('update');
+        Route::get('delete/{id}', [TransactionController::class, 'delete'])->name('delete');
+        Route::post('change-status/{id}', [TransactionController::class, 'changeTransactionStatus'])->name('changeStatus');
     });
 
     // DEPOSIT SYSTEM
