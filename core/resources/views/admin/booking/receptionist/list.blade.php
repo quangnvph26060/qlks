@@ -1237,7 +1237,10 @@
                     value: 0
                 })
             }
-
+                formData.push({
+                    name: 'is_method',
+                    value: 'receptionist',
+                });  
             let url = $(this).attr('action');
             $.ajax({
                 type: "POST",

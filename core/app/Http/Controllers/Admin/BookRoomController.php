@@ -168,10 +168,16 @@ class BookRoomController extends Controller
             BookedRoom::insert($bookedRoomData);
             $checkIn  = BookedRoom::where('booking_id', $booking->id)->min('booked_for');
             $checkout = BookedRoom::where('booking_id', $booking->id)->max('booked_for');
-            \Log::info($checkout);
+            \Log::info($request->all());
             $booking->check_in = $checkIn;
-            // $booking->check_out = Carbon::parse($checkout)->addDay()->toDateString();
-            $booking->check_out = Carbon::parse($request->checkOutTime)->format('Y-m-d H:i:s');
+
+            if($request->is_method === "receptionist"){
+
+                $booking->check_out = Carbon::parse($request->checkOutTime)->format('Y-m-d H:i:s');
+            }else{
+
+                $booking->check_out = Carbon::parse($checkout)->addDay()->toDateString();
+            }
             $booking->save();
 
             DB::commit();
