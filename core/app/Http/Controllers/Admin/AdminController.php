@@ -23,7 +23,7 @@ class AdminController extends Controller
     public function dashboard()
     {
         $pageTitle                          = 'Thống kê';
-        $todaysBookedRoomIds                = BookedRoom::active()->where('booked_for', todaysDate())->pluck('room_id')->toArray();
+        $todaysBookedRoomIds                = BookedRoom::active()->whereDate('booked_for', todaysDate())->pluck('room_id')->toArray();
 
         $widget['today_booked']             = count($todaysBookedRoomIds);
         $widget['today_available']          = Room::active()->whereNotIn('id', $todaysBookedRoomIds)->count();

@@ -26,7 +26,7 @@ class BookingController extends Controller {
                 'booking.user:id,firstname,lastname',
                 'usedPremiumService.premiumService:id,name'
             ])
-            ->where('booked_for', now()->toDateString())     // check hôm nay có phòng nào chưa đặt không
+            ->whereDate('booked_for', now()->toDateString())    // check hôm nay có phòng nào chưa đặt không
             ->get();
 
         $disabledRoomTypeIDs = RoomType::where('status', 0)->pluck('id')->toArray(); // Lấy danh sách các ID của loại phòng bị vô hiệu hóa
@@ -210,8 +210,9 @@ class BookingController extends Controller {
             'booking.user:id,firstname,lastname',
             'usedPremiumService.premiumService:id,name'
         ])
-        ->where('booked_for', now()->toDateString())
+        ->whereDate('booked_for', now()->toDateString())
         ->get();
+       
         $disabledRoomTypeIDs = RoomType::where('status', 0)->pluck('id')->toArray();
         $bookedRooms         = $rooms->pluck('room_id')->toArray();
         $emptyRooms          = Room::active()
@@ -221,13 +222,9 @@ class BookingController extends Controller {
             ->select('id', 'room_type_id', 'room_number','is_clean')
             ->get();
         
-       //  \Log::info($emptyRooms);
         $scope = 'ALL';
         $is_method = 'Receptionist';
-      //  $bookings = $this->bookingData($scope,$is_method);
-        //\Log::info($bookings);
         $bookings = BookedRoom::active()->with('booking', 'roomType', 'room', 'usedPremiumService')->get();
-             //  \Log::info($bookings);
 
         $userList = User::select('username', 'email', 'mobile', 'address')->get();
 

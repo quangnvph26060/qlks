@@ -129,18 +129,16 @@ class ManageBookingController extends Controller
         $request->validate([
             'amount' => 'required|numeric|gt:0'
         ]);
-
         $booking = Booking::findOrFail($id);
         $due     = $booking->total_amount - $booking->paid_amount;
-        \Log::info(   $booking->total_amount  );
         if ($request->amount > abs($due)) {
             $message = $due <= 0 ? 'Số tiền không thể lớn hơn số tiền phải thu' : 'Số tiền không được lớn hơn số tiền phải trả';
             $notify[] = ['error', $message];
             return back()->withNotify($notify);
         }
-
+        $is_method = $request->input('is_method', '');
         if ($due > 0) {
-            return $this->receivePayment($booking, $request->amount);
+            return $this->receivePayment($booking, $request->amount, $is_method);
         }
 
         return $this->returnPayment($booking, $request->amount);
@@ -268,14 +266,17 @@ class ManageBookingController extends Controller
         return $pdf->stream($booking->booking_number . '.pdf');
     }
 
-    protected function receivePayment($booking, $receivingAmount)
+    protected function receivePayment($booking, $receivingAmount, $is_method)
     {
         $this->deposit($booking, $receivingAmount);
         $booking->createPaymentLog($receivingAmount, 'RECEIVED');
         $booking->createActionHistory('payment_received');
         $booking->paid_amount += $receivingAmount;
         $booking->save();
-
+        if($is_method === 'receptionist'){
+           
+            return response()->json(['status'=>'success','booking_id'=>$booking->getId(),'id'=>$booking->id]);
+        }
         $notify[] = ['success', 'Đã nhận thanh toán thành công'];
         return back()->withNotify($notify);
     }
