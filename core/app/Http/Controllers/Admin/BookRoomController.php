@@ -54,15 +54,15 @@ class BookRoomController extends Controller
         if ($validator->fails()) {
             return response()->json(['error' => $validator->errors()->all()]);
         }
-        
+
         $view = $this->getRooms($request);
-       
+
         return response()->json(['html' => $view]);
     }
 
     public function book(Request $request)
     {
-       
+    //    dd($request->all());
         DB::beginTransaction();
         try {
             $validator = Validator::make($request->all(), [
@@ -81,7 +81,7 @@ class BookRoomController extends Controller
             }
             $guest = [];
 
-            // check thông tin  user đã đăng ký tài khoản chưa 
+            // check thông tin  user đã đăng ký tài khoản chưa
             if ($request->guest_type == 1) {
                 $user = User::where('email', $request->email)->first();
                 if (!$user) {

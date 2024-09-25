@@ -278,6 +278,8 @@
                 }
             })
         })(jQuery);
+
+        route('')
     </script>
 @endpush
 

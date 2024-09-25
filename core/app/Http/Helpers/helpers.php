@@ -213,6 +213,7 @@ function getImage($image, $size = null)
     if (file_exists($image) && is_file($image)) {
         return asset($image) . $clean;
     }
+
     if ($size) {
         return route('placeholder.image', $size);
     }
@@ -623,4 +624,10 @@ function saveImages($request, string $inputName, string $directory = 'images', $
     }
 
     return null;
+}
+
+function getRandomColor()
+{
+    $colors = ['primary', 'secondary', 'success', 'danger', 'warning', 'info', 'light', 'dark'];
+    return 'bg-' . $colors[array_rand($colors)];
 }

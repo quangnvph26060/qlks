@@ -163,11 +163,11 @@
                                                             @endcan
 
                                                             @can('admin.booking.checkout')
-                                                                @if (now() >= $booking->check_out)
+                                                                {{-- @if (now() >= $booking->check_out) --}}
                                                                     <a class="dropdown-item" href="{{ route('admin.booking.checkout', $booking->id) }}">
                                                                         <i class="la la-sign-out"></i> @lang('Check Out')
                                                                     </a>
-                                                                @endif
+                                                                {{-- @endif --}}
                                                             @endcan
                                                         @endif
                                                         @can('admin.booking.invoice')

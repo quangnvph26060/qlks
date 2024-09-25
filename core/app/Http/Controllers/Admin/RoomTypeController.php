@@ -24,7 +24,7 @@ class RoomTypeController extends Controller
     public function index()
     {
         $pageTitle   = 'Danh sách hạng phòng';
-        $typeList    = RoomType::with('amenities', 'facilities')->withCount('rooms')->latest()->paginate(getPaginate());
+        $typeList    = RoomType::with('amenities', 'facilities', 'products')->withCount('rooms')->latest()->paginate(getPaginate());
         return view('admin.hotel.room_type.list', compact('pageTitle', 'typeList'));
     }
 
@@ -48,18 +48,15 @@ class RoomTypeController extends Controller
 
         foreach ($roomType->images as $key => $image) {
             $img['id']  = $image->id;
-            $img['src'] = getImage(getFilePath('roomTypeImage') . '/' . $image->image);
+            $img['src'] = Storage::url($image->image);
             $images[]   = $img;
         }
-
-        // dd($roomType);
 
         return view('admin.hotel.room_type.create', compact('pageTitle', 'roomType', 'amenities', 'facilities', 'bedTypes', 'images'));
     }
 
     public function save(Request $request, $id = 0)
     {
-        // dd($request->all());
         $this->validation($request, $id);
 
         DB::beginTransaction();
@@ -99,6 +96,9 @@ class RoomTypeController extends Controller
 
             if ($request->hasFile('main_image')) {
                 $main_images = saveImages($request, 'main_image', 'roomTypeImage', 1280, 720);
+                if ($roomType->main_image && Storage::disk('public')->exists($roomType->main_image)) {
+                    Storage::disk('public')->delete($roomType->main_image);
+                }
                 $roomType->main_image = $main_images[0];
             }
 
@@ -107,10 +107,11 @@ class RoomTypeController extends Controller
             $roomType->amenities()->sync($request->amenities);
             $roomType->facilities()->sync($request->facilities);
 
-            $this->insertImages($request, $roomType);
-
             $this->insertProducts($request, $roomType);
 
+            $this->removeImages($request, $roomType);
+
+            $this->insertImages($request, $roomType);
             DB::commit();
             $notify[] = ['success', $notification];
             return back()->withNotify($notify);
@@ -189,40 +190,52 @@ class RoomTypeController extends Controller
         ]);
     }
 
-    protected function insertImages($request, $roomType)
+    protected function insertImages(Request $request, $roomType)
     {
-        try {
+        // Kiểm tra nếu có file hình ảnh được upload
+        if ($request->hasFile('images')) {
+            // Lưu hình ảnh vào folder `thumbnails`
             $thumbnails = saveImages($request, 'images', 'thumbnails', 400, 300);
 
+            // Tạo mảng dữ liệu để thêm mới vào database
             $thumbnailsData = [];
-            foreach ($thumbnails as $thumbnail) {
+            foreach ((array) $thumbnails as $thumbnail) {
                 $thumbnailsData[] = ['image' => $thumbnail];
             }
 
-            $roomType->images()->createMany($thumbnailsData);
-        } catch (\Exception $exception) {
+            // dd($thumbnailsData);
 
-            if (!empty($thumbnails)) {
-                foreach ($thumbnails as $thumbnail) {
-                    if (Storage::disk('public')->exists($thumbnail)) {
-                        Storage::disk('public')->delete($thumbnail);
-                    }
+            // Thêm dữ liệu vào bảng roomType_images
+            $roomType->images()->createMany($thumbnailsData);
+        }
+    }
+
+
+    protected function removeImages(Request $request, $roomType)
+    {
+        // Lấy danh sách ID hình ảnh cũ từ request->old
+        $oldImages = $request->old ?? [];
+
+        // Lấy tất cả hình ảnh hiện tại trong cơ sở dữ liệu
+        $currentImages = $roomType->images->pluck('id')->toArray();
+
+        // Tìm những hình ảnh không còn trong mảng old
+        $imagesToRemove = array_diff($currentImages, $oldImages);
+
+        // Xóa các hình ảnh không có trong mảng old
+        foreach ($imagesToRemove as $imageId) {
+            $roomImage = RoomTypeImage::find($imageId);
+            if ($roomImage) {
+                // Xóa file hình ảnh trên hệ thống
+                if (Storage::disk('public')->exists($roomImage->image)) {
+                    Storage::disk('public')->delete($roomImage->image);
                 }
+                // Xóa record trong database
+                $roomImage->delete();
             }
         }
     }
 
-    protected function removeImages($request, $roomType, $path)
-    {
-        $previousImages = $roomType->images->pluck('id')->toArray();
-        $imageToRemove  = array_values(array_diff($previousImages, $request->old ?? []));
-
-        foreach ($imageToRemove as $item) {
-            $roomImage   = RoomTypeImage::find($item);
-            @unlink($path . '/' . $roomImage->image);
-            $roomImage->delete();
-        }
-    }
 
     public function status($id)
     {
