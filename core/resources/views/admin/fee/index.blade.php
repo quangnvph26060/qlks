@@ -11,7 +11,7 @@
                                 <div class="form-group ">
                                     <label> @lang('Theo giờ')</label>
                                     <input class="form-control" id="per_hour"
-                                        value="{{ number_format($fee->per_hour, 0, ',', '.') ?? 0 }}" type="text"
+                                        value="{{ isset($fee) ? number_format($fee->per_hour, 0, ',', '.') : 0 }}" type="text"
                                         name="per_hour">
                                 </div>
                             </div>
@@ -19,15 +19,18 @@
                                 <div class="form-group ">
                                     <label> @lang('Theo ngày')</label>
                                     <input class="form-control" id="per_day"
-                                        value="{{ number_format($fee->per_day, 0, ',', '.') ?? 0 }}" type="text"
-                                        name="per_day">
+                                        value="{{  isset($fee) ? number_format($fee->per_day, 0, ',', '.') : 0 }}" type="text" name="per_day">
+                                       
+                                      
+                                        
+                                       
                                 </div>
                             </div>
                             <div class="col-md-4 col-sm-6">
                                 <div class="form-group ">
                                     <label> @lang('Theo đêm')</label>
                                     <input class="form-control" id="per_night"
-                                        value="{{ number_format($fee->per_night, 0, ',', '.') ?? 0 }}" type="text"
+                                        value="{{  isset($fee) ? number_format($fee->per_night, 0, ',', '.') : 0 }}" type="text"
                                         name="per_night">
                                 </div>
                             </div>
@@ -35,7 +38,7 @@
                                 <div class="form-group ">
                                     <label> @lang('Theo mùa')</label>
                                     <input class="form-control" id="per_season"
-                                        value="{{ number_format($fee->per_season, 0, ',', '.') ?? 0 }}" type="text"
+                                        value="{{   isset($fee) ? number_format($fee->per_season, 0, ',', '.') : 0 }}" type="text"
                                         name="per_season">
                                 </div>
                             </div>
@@ -43,7 +46,7 @@
                                 <div class="form-group ">
                                     <label> @lang('Theo sự kiện')</label>
                                     <input class="form-control" id="per_event"
-                                        value="{{ number_format($fee->per_event, 0, ',', '.') ?? 0 }}" type="text"
+                                        value="{{   isset($fee) ? number_format($fee->per_event, 0, ',', '.') : 0 }}" type="text"
                                         name="per_event">
                                 </div>
                             </div>

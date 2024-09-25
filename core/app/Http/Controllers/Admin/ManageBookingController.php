@@ -147,7 +147,7 @@ class ManageBookingController extends Controller
     public function addExtraCharge(Request $request, $id)
     {
         $this->extraChargeValidation($request);
-
+       
         $booking = Booking::findOrFail($id);
         $booking->extra_charge += $request->amount;
         $booking->save();
@@ -162,7 +162,7 @@ class ManageBookingController extends Controller
     public function subtractExtraCharge(Request $request, $id)
     {
         $this->extraChargeValidation($request);
-
+       
         $booking = Booking::findOrFail($id);
 
         if ($request->amount + $booking->extra_charge_subtracted > $booking->extra_charge) {
@@ -202,14 +202,15 @@ class ManageBookingController extends Controller
         return view('admin.booking.check_out', compact('pageTitle', 'booking', 'totalFare', 'totalTaxCharge', 'canceledFare', 'canceledTaxCharge', 'returnedPayments', 'receivedPayments'));
     }
 
-    public function checkOut($id)
+    public function checkOut(Request $request, $id)
     {
         $booking = Booking::active()->with('payments')->withSum('usedPremiumService', 'total_amount')->findOrFail($id);
 
-        if ($booking->check_out > now()->toDateString()) {
-            $notify[] = ['error', 'Ngày thanh toán cho đặt phòng này lớn hơn hiện tại'];
-            return back()->withNotify($notify);
-        }
+        
+        // if ($booking->check_out > now()->toDateString()) {
+        //     $notify[] = ['error', 'Ngày thanh toán cho đặt phòng này lớn hơn hiện tại'];
+        //     return back()->withNotify($notify);
+        // }
 
         $due = getAmount($booking->total_amount - $booking->paid_amount);
 
@@ -231,6 +232,10 @@ class ManageBookingController extends Controller
 
         $booking->save();
 
+        if($request->is_method === 'receptionist')
+        {
+            return response()->json(['status'=>'success']);
+        }
         $notify[] = ['success', 'Đặt phòng đã được thanh toán thành công'];
         return redirect()->route('admin.booking.all')->withNotify($notify);
     }
