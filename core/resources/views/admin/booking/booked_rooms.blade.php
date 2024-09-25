@@ -77,13 +77,13 @@
 
                                         <td>
                                             <button
-                                                @if (!$activeBooking || $key < now()->format('Y-m-d') || !can('admin.booking.booked.day.cancel')) 
-                                                    disabled 
-                                                @endif 
-                                                class="btn btn--danger cancelBookingBtn" 
-                                                data-booked_for="{{ $key }}" 
-                                                data-fare="{{ showAmount($totalFare) }}" 
-                                                data-should_refund="{{ showAmount($shouldRefund) }}" 
+                                                @if (!$activeBooking || $key < now()->format('Y-m-d') || !can('admin.booking.booked.day.cancel'))
+                                                    disabled
+                                                @endif
+                                                class="btn btn--danger cancelBookingBtn"
+                                                data-booked_for="{{ $key }}"
+                                                data-fare="{{ showAmount($totalFare) }}"
+                                                data-should_refund="{{ showAmount($shouldRefund) }}"
                                                 type="button">
                                                 @lang('Hủy đặt phòng')
                                             </button>
