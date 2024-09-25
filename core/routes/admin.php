@@ -1,5 +1,6 @@
 <?php
 
+use App\Http\Controllers\Admin\FeeController;
 use App\Http\Controllers\Admin\TransactionController;
 use Illuminate\Support\Facades\Route;
 
@@ -27,6 +28,10 @@ Route::namespace('Auth')->group(function () {
 });
 
 Route::middleware('admin', 'adminPermission')->group(function () {
+    Route::prefix('fee')->name('fee.')->group(function () {
+        Route::get('', [FeeController::class, 'index'])->name('index');
+        Route::post('update', [FeeController::class, 'update'])->name('update');
+    });
     Route::controller('AdminController')->group(function () {
         Route::get('dashboard', 'dashboard')->name('dashboard');
         Route::get('chart/booking-report', 'bookingReport')->name('chart.booking');
