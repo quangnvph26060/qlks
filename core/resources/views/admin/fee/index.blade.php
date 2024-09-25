@@ -11,8 +11,10 @@
                                 <div class="form-group ">
                                     <label> @lang('Theo giờ')</label>
                                     <input class="form-control" id="per_hour"
+
                                         value="{{ isset($fee) ? number_format($fee->per_hour, 0, ',', '.') : 0 }}" type="text"
                                         name="per_hour">
+
                                 </div>
                             </div>
                             <div class="col-md-4 col-sm-6">
