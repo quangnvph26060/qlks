@@ -58,7 +58,7 @@
             </tr>
         @empty
             <tr>
-                <td class="text-muted text-center" colspan="100%">{{ __($emptyMessage) }}</td>
+                <td class="text-muted text-center" colspan="100%">Chưa có phương thức thanh toán nào</td>
             </tr>
         @endforelse
     </tbody>
