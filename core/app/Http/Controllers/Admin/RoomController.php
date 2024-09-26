@@ -51,11 +51,12 @@ class RoomController extends Controller
         if ($id) {
             $existsRoom = Room::where('room_number', $request->room_number)->where('id', '!=', $id)->exists();
         } else {
-            $existsRoom = Room::whereIn('room_number', $request->room_numbers)->count();
+          //  $existsRoom = Room::whereIn('room_number', $request->room_numbers)->count();
+            $existsRoom = Room::where('room_number', $request->room_numbers)->first();
         }
 
         if ($existsRoom) {
-            $notify[] = ['error', "The requested room number already exists"];
+            $notify[] = ['error', "Số phòng yêu cầu đã tồn tại"];
             return back()->withNotify($notify);
         }
 
@@ -65,17 +66,22 @@ class RoomController extends Controller
             $room->room_number  = $request->room_number;
             $room->room_id      = $request->room_id;
             $room->save();
-            $message = 'Room updated successfully';
+            $message = 'Phòng đã được cập nhật thành công';
         } else {
-            foreach ($request->room_numbers as $roomNumber) {
-                $room = new Room;
-                $room->room_type_id = $request->room_type_id;
-                $room->room_number = $roomNumber;
-                $room->room_id = $request->room_id;
-                $room->save();
-            }
-
-            $message = 'Room added successfully';
+            // foreach ($request->room_numbers as $roomNumber) {
+            //     $room = new Room;
+            //     $room->room_type_id = $request->room_type_id;
+            //     $room->room_number = $roomNumber;
+            //     $room->room_id = $request->room_id;
+            //     $room->save();
+            // }
+            $room = new Room;
+            $room->room_type_id = $request->room_type_id;
+            $room->room_number = $request->room_numbers;
+            $room->room_id = $request->room_id;
+            $room->save();
+            
+            $message = 'Phòng đã được thêm thành công';
         }
 
         // Đồng bộ hóa giá
@@ -83,12 +89,20 @@ class RoomController extends Controller
             $room->prices()->sync($request->input('prices'));
         } else {
             // Nếu bạn đã thêm nhiều phòng, có thể cần đồng bộ cho từng phòng
-            foreach ($request->room_numbers as $roomNumber) {
-                $room = Room::where('room_number', $roomNumber)->first();
+            // foreach ($request->room_numbers as $roomNumber) {
+            //     $room = Room::where('room_number', $roomNumber)->first();
+            //     if ($room) {
+
+            //          $room->prices()->sync($request->input('prices'));
+            //     }
+            // }
+           
+                $room = Room::where('room_number', $request->room_numbers)->first();
                 if ($room) {
-                    $room->prices()->sync($request->input('prices'));
+                   $room->prices($request->input('prices'));
+                  //  $room->prices()->sync($request->input('prices'));
                 }
-            }
+           
         }
 
         $notify[] = ['success', $message];
