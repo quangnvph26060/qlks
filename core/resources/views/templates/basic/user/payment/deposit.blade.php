@@ -104,18 +104,13 @@
             /* Màu nền khi hover */
         }
 
-        .booked_infor {
-            background-color: #f8f9fa;
-            /* Màu nền nhạt */
-            border: 1px solid #dee2e6;
-            /* Đường viền xám nhạt */
-            padding: 15px;
-            /* Khoảng cách bên trong */
-            border-radius: 5px;
-            /* Góc bo tròn */
-            margin-bottom: 20px;
-            /* Khoảng cách bên dưới */
-        }
+        /* .booked_infor {
+                                                            background-color: #f8f9fa;
+                                                            border: 1px solid #dee2e6;
+                                                            padding: 15px;
+                                                            border-radius: 5px;
+                                                            margin-bottom: 20px;
+                                                        } */
 
         .booked_infor h4 {
             font-size: 18px;
@@ -239,7 +234,7 @@
                                             </p>
                                         </div>
                                     </div>
-                                    <div class="deposit-info">
+                                    {{-- <div class="deposit-info">
                                         <div class="deposit-info__title">
                                             <p class="text has-icon">@lang('Phí xử lý')
                                                 <span data-bs-toggle="tooltip" title="@lang('Processing charge for payment gateways')"
@@ -251,7 +246,7 @@
                                                 {{ __(gs('cur_text')) }}
                                             </p>
                                         </div>
-                                    </div>
+                                    </div> --}}
 
                                     <div class="deposit-info total-amount pt-3">
                                         <div class="deposit-info__title">
@@ -312,7 +307,8 @@
                                             </p>
                                         </div>
                                     </div>
-                                    <div class="transaction-method mb-3"><select name="transaction" id="transaction" class="form-select">
+                                    <div class="transaction-method mb-3"><select name="transaction" id="transaction"
+                                            class="form-select">
                                             <option value="">Phương thức thanh toán</option>
                                             @foreach ($methods as $method)
                                                 <option value="{{ $method->id }}"
@@ -321,7 +317,7 @@
                                             @endforeach
                                         </select></div>
                                     <!-- Kết thúc phần Checkbox -->
-                                    <button type="submit" class="btn btn--base w-100" disabled>
+                                    <button id="confirm-payment-btn" class="btn btn--base w-100" disabled>
                                         @lang('Xác nhận thanh toán')
                                     </button>
                                     <div class="info-text pt-3">
@@ -335,9 +331,91 @@
             </div>
         </div>
     </div>
+    <div class="modal fade" id="paymentModal" tabindex="-1" aria-labelledby="paymentModalLabel" aria-hidden="true">
+        <div class="modal-dialog modal-dialog-centered" role="document">
+            <div class="modal-content">
+                <div class="modal-header">
+                    <h5 class="modal-title" id="paymentModalLabel">Thông tin thanh toán</h5>
+                    <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+                </div>
+                <div class="modal-body">
+                    <div class="qr-code-section text-center">
+                        <!-- QR code -->
+                        <img id="qrCodeImage"
+                            src="https://upload.wikimedia.org/wikipedia/commons/d/d0/QR_code_for_mobile_English_Wikipedia.svg"
+                            alt="Mã QR" class="img-fluid mb-3">
+                    </div>
+                    <div class="payment-info">
+                        <p><strong>Nội dung chuyển khoản: </strong>{{ $booking->bookedRooms[0]->booking->user->lastname }}
+                            +
+                            {{ $booking->bookedRooms[0]->booking->user->firstname }} đặt phòng<span
+                                id="paymentContent"></span></p>
+                    </div>
+                </div>
+                <div class="modal-footer">
+                    <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Đóng</button>
+                    <button type="button" class="btn btn-primary">Xác nhận</button>
+                </div>
+            </div>
+        </div>
+    </div>
 @endsection
 
 @push('script')
+    <script>
+        document.querySelector('#transaction').addEventListener('change', function() {
+            // Lấy phương thức thanh toán đã chọn
+            const paymentMethod = this.value;
+            const paymentMethodText = this.options[this.selectedIndex].text.toLowerCase();
+
+            // Điều kiện kiểm tra nếu phương thức thanh toán có chữ "tiền mặt" hoặc không chọn gì (value rỗng)
+            if (!paymentMethod || paymentMethodText.includes('tiền mặt')) {
+                // Nếu không chọn phương thức hoặc có từ "tiền mặt" thì disable nút
+                $('#confirm-payment-btn').attr('disabled', true);
+            } else {
+                // Kích hoạt nút khi chọn phương thức hợp lệ
+                $('#confirm-payment-btn').attr('disabled', false);
+            }
+        });
+
+        // Khi người dùng nhấn nút xác nhận thanh toán
+        document.querySelector('.btn--base').addEventListener('click', function(event) {
+            // Lấy phương thức thanh toán được chọn
+            const paymentMethod = document.querySelector('#transaction').value;
+            const paymentMethodText = document.querySelector('#transaction option:checked').text.toLowerCase();
+
+            // Kiểm tra ô checkbox Đặt cọc
+            const isDepositChecked = document.querySelector('#deposit-checkbox').checked;
+
+            // Lấy thông tin số tiền
+            const totalAmount = parseFloat(document.querySelector('.final-amount').innerText.replace(/,/g, ''));
+            const depositAmount = parseFloat(document.querySelector('.deposit-amount').innerText.replace(/,/g, ''));
+
+            // Nếu không có phương thức thanh toán nào được chọn (value rỗng) hoặc có chữ "tiền mặt"
+            if (!paymentMethod || paymentMethodText.includes('tiền mặt')) {
+                event.preventDefault(); // Ngăn việc submit form
+                return;
+            }
+
+            // Cập nhật nội dung modal
+            const paymentContent = document.querySelector('#paymentContent');
+            const paymentAmount = document.querySelector('#paymentAmount');
+
+            // Tính số tiền dựa trên checkbox Đặt cọc
+            const finalAmount = isDepositChecked ? depositAmount : totalAmount;
+
+            // Cập nhật số tiền và nội dung chuyển khoản
+            paymentContent.innerText =
+                `${document.querySelector('.deposit-info p.text').innerText} + thanh toán đặt phòng`;
+            paymentAmount.innerText = finalAmount.toLocaleString();
+
+            // Hiển thị modal
+            $('#paymentModal').modal('show');
+
+            // Ngăn submit form để chờ người dùng xác nhận trong modal
+            event.preventDefault();
+        });
+    </script>
     <script>
         "use strict";
         (function($) {

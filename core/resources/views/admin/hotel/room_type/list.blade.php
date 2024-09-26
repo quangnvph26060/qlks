@@ -9,6 +9,7 @@
                             <thead>
                                 <tr>
                                     <th></th>
+                                    <th>@lang('Mã loại phòng')</th>
                                     <th>@lang('Tên phòng')</th>
                                     <th>@lang('Giá')</th>
                                     <th>@lang('Trạng thái')</th>
@@ -23,6 +24,9 @@
                                         <td>
                                             <button class="btn btn-link btn-toggle" type="button"
                                                 onclick=" toggleRepresentatives('{{ $type->id }}', this)"></button>
+                                        </td>
+                                        <td>
+                                            {{ $type->room_type_id ?? 'Chưa có mã loại phòng' }}
                                         </td>
                                         <td>
                                             {{ $type->name }}
@@ -73,7 +77,8 @@
                                                     <span class="representatives-label">Sản phẩm:</span>
                                                     <span class="representatives-list">
                                                         @foreach ($type->products as $product)
-                                                            <span class="badge {{ getRandomColor() }} me-2 mb-1 cursor-pointer">
+                                                            <span
+                                                                class="badge {{ getRandomColor() }} me-2 mb-1 cursor-pointer">
                                                                 <small class="representative-name">
                                                                     {{ $product->name }}</small>
                                                             </span>

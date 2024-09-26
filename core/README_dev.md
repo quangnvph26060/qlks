@@ -205,6 +205,7 @@ name VARCHAR(255) NOT NULL,
 status INT NOT NULL
 );
 
+
 25/09/2004 (dat09)
 CREATE TABLE room_prices (
 id INT AUTO_INCREMENT PRIMARY KEY,
@@ -213,9 +214,25 @@ price DECIMAL(10, 2) NOT NULL, -- Giá trị của loại giá
 start_date DATETIME NOT NULL, -- Ngày bắt đầu áp dụng giá
 end_date DATETIME, -- Ngày kết thúc áp dụng giá (nếu có)
 status ENUM('active', 'inactive') DEFAULT 'active', -- Trạng thái của loại giá
+
+24/9/2024
+ALTER TABLE `transactions`
+ADD `created_at` TIMESTAMP NULL DEFAULT CURRENT_TIMESTAMP,
+ADD `updated_at` TIMESTAMP NULL DEFAULT CURRENT_TIMESTAMP ON UPDATE CURRENT_TIMESTAMP;
+
+24/9/2024 v2
+CREATE TABLE fees (
+id INT PRIMARY KEY AUTO_INCREMENT,
+per_hour BIGINT DEFAULT 0,
+per_day BIGINT DEFAULT 0,
+per_night BIGINT DEFAULT 0,
+per_season BIGINT DEFAULT 0,
+per_event BIGINT DEFAULT 0,
+
 created_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
 updated_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP ON UPDATE CURRENT_TIMESTAMP
 );
+
 
 -- Thêm cột code vào bảng room_prices
 ALTER TABLE room_prices
@@ -233,3 +250,31 @@ PRIMARY KEY (room_id, price_id), -- Khóa chính kép để ngăn trùng lặp
 FOREIGN KEY (room_id) REFERENCES rooms(id) ON DELETE CASCADE,
 FOREIGN KEY (price_id) REFERENCES room_prices(id) ON DELETE CASCADE
 );
+
+CREATE TABLE additional_fees (
+id INT PRIMARY KEY AUTO_INCREMENT,
+early_checkout BIGINT DEFAULT 0,
+late_checkout BIGINT DEFAULT 0,
+none_checkin BIGINT DEFAULT 0,
+cancellation BIGINT DEFAULT 0,
+extra_bed BIGINT DEFAULT 0,
+early_checkin BIGINT DEFAULT 0,
+created_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
+updated_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP ON UPDATE CURRENT_TIMESTAMP
+);
+
+ALTER TABLE rooms
+ADD room_id VARCHAR(255) NULL DEFAULT NULL;
+
+ALTER TABLE room_types
+ADD room_type_id VARCHAR(255) NULL DEFAULT NULL;
+
+ALTER TABLE amenities
+ADD amenity_id VARCHAR(255) NULL DEFAULT NULL;
+
+ALTER TABLE facilities
+ADD facility_id VARCHAR(255) NULL DEFAULT NULL;
+
+ALTER TABLE premium_services
+ADD service_id VARCHAR(255) NULL DEFAULT NULL;
+

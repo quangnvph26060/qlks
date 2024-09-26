@@ -40,7 +40,8 @@ class RoomController extends Controller
 
         $request->validate([
             'room_type_id' => 'required|exists:room_types,id',
-            "$roomFiled"   => 'required'
+            "$roomFiled"   => 'required',
+            'room_id'      => 'unique:rooms,room_id'
         ]);
 
         if ($id) {
@@ -58,6 +59,7 @@ class RoomController extends Controller
             $room = Room::findOrFail($id);
             $room->room_type_id = $request->room_type_id;
             $room->room_number  = $request->room_number;
+            $room->room_id      = $request->room_id;
             $room->save();
             $message = 'Room updated successfully';
         } else {
@@ -65,6 +67,7 @@ class RoomController extends Controller
                 $room = new Room;
                 $room->room_type_id = $request->room_type_id;
                 $room->room_number = $roomNumber;
+                $room->room_id = $request->room_id;
                 $room->save();
             }
 

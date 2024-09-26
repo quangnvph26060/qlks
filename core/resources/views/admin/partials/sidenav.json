@@ -85,6 +85,16 @@
                 "title": "Dịch vụ cao cấp",
                 "route_name": "admin.hotel.premium.service.all",
                 "menu_active": "admin.hotel.premium.service.all"
+            },
+            {
+                "keyword": [
+                    "Giá",
+                    "Giá",
+                    "Fees"
+                ],
+                "title": "Giá",
+                "route_name": "admin.fee.index",
+                "menu_active": "admin.fee.index"
             }
         ]
     },

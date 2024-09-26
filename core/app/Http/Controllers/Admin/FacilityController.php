@@ -18,8 +18,9 @@ class FacilityController extends Controller
     public function save(Request $request, $id = 0)
     {
         $request->validate([
-            'title' => 'required|string|unique:facilities,title,' . $id,
-            'icon'  => 'required'
+            'facility_id' => 'unique:facilities,facility_id',
+            'title'       => 'required|string|unique:facilities,title,' . $id,
+            'icon'        => 'required'
         ]);
 
         if ($id) {
@@ -29,6 +30,7 @@ class FacilityController extends Controller
             $facility           = new Facility();
             $notification       = 'Facility added successfully';
         }
+        $facility->facility_id  = $request->facility_id;
         $facility->title        = $request->title;
         $facility->icon         = $request->icon;
         $facility->save();

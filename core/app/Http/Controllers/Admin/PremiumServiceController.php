@@ -18,8 +18,9 @@ class PremiumServiceController extends Controller
     public function save(Request $request, $id = 0)
     {
         $request->validate([
-            'name' => 'required|string|max:255|unique:premium_services,name,' . $id,
-            'cost' => 'required|integer|gt:0'
+            'service_id' => 'unique:premium_services,service_id',
+            'name'       => 'required|string|max:255|unique:premium_services,name,' . $id,
+            'cost'       => 'required|integer|gt:0'
         ]);
 
         if ($id) {
@@ -30,6 +31,7 @@ class PremiumServiceController extends Controller
             $notification  = 'Dịch vụ đã được thêm thành công';
         }
 
+        $premiumService->service_id = $request->service_id;
         $premiumService->name = $request->name;
         $premiumService->cost = $request->cost;
 

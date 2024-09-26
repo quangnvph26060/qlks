@@ -65,7 +65,7 @@
                 $classClean = $room->getCleanStatusClass();
                 $classSvg = $room->getCleanStatusSvg();
                 $cleanText = $room->getCleanStatusText();
-           
+
                 if (
                     now() > $booking->booking->check_in &&
                     now() <= $booking->booking->check_out &&
@@ -422,8 +422,10 @@
                                                         <i class="las la-plus-circle"></i>@lang('Thêm phí bổ sung')
                                                     </button>
                                                     {{-- data-id="{{ $booking->id }}" --}}
-                                                    <button class="btn btn--danger extraChargeBtn" data-type="subtract"><i
-                                                            class="las la-minus-circle"></i>@lang('Trừ Phí Thêm')</button>
+                                                    <button class="btn btn--danger extraChargeBtn" data-type="subtract">
+                                                        <i class="las la-minus-circle"></i>@lang('Trừ Phí Thêm')
+                                                    </button>
+                                                    <input type="text" hidden class="booking_extra"> </input>
                                                 </div>
                                             </div>
                                             <div class="list">
@@ -475,8 +477,12 @@
                                                     </div>
                                                     <input type="hidden" name="booking_id" id="booking_id">
 
-                                                    <button type="submit" class="btn btn-primary" id="submitBtn">Trả
+                                                    <button type="submit" class="btn btn-primary" id="submitBtn">Thanh
+                                                        toán</button>
+
+                                                    <button type="submit" class="btn btn-dark"id="submitBtnCheckOut">Trả
                                                         phòng</button>
+
                                                 </form>
                                             </div>
                                         </div>
@@ -725,9 +731,8 @@
                     success: function(response) {
                         if (response.status === 'success') {
                             modal.hide();
+                            window.location.reload();
                         }
-
-
                     },
                     error: function(xhr, status, error) {
 
@@ -764,31 +769,32 @@
         });
 
         $('.room-booking-status-occupied').on('click', function() {
-            var id = $(this).data('id'); 
-            var booking_id = $(this).data('booking');   
-            handleLateCheckinClick(id, booking_id); 
+            var id = $(this).data('id');
+            var booking_id = $(this).data('booking');
+            handleLateCheckinClick(id, booking_id);
         });
 
         $('.room-booking-status-incoming').on('click', function() {
-            var id = $(this).data('id'); 
-            var booking_id = $(this).data('booking');   
-            handleLateCheckinClick(id, booking_id); 
+            var id = $(this).data('id');
+            var booking_id = $(this).data('booking');
+            handleLateCheckinClick(id, booking_id);
         });
 
         $('.room-booking-status-late-checkin').on('click', function() {
-            var id = $(this).data('id'); 
-            var booking_id = $(this).data('booking');   
-            handleLateCheckinClick(id, booking_id); 
+            var id = $(this).data('id');
+            var booking_id = $(this).data('booking');
+            handleLateCheckinClick(id, booking_id);
         });
 
         $('.room-booking-status-check-out').on('click', function() {
-            var id = $(this).data('id'); 
-            var booking_id = $(this).data('booking');   
-            handleLateCheckinClick(id, booking_id); 
+            var id = $(this).data('id');
+            var booking_id = $(this).data('booking');
+            handleLateCheckinClick(id, booking_id);
         });
 
+
         function handleLateCheckinClick(id, booking_id) {
-           
+
             var url = `{{ route('admin.booking.details', ['id' => ':id']) }}`.replace(':id', id);
             $('#booking_id').val(id);
             var dataToSend = {
@@ -936,6 +942,8 @@
 
                         });
                         $('#user_services').append(rowsHtml1);
+                        console.log(response);
+                        $('.booking_extra').val(response.data.id);
 
                         $('.customer_type').text(customer_type);
                         $('.booking_number').text(response.data.booking_number);
@@ -948,23 +956,22 @@
                         $('.total_refunded').text(response.returnedPayments);
                         const total_amount = formatCurrency(response.total_amount)
                         $('.total_fare').text("+" + total_amount);
+                        const due = formatCurrency(response.due);
                         if (response.due > 0) {
                             $('#number_fare').text('Số tiền phải thu: ');
-
                             $('#color_payment').addClass('text--success');
                             $('#dueMessage1').text("@lang('Nhận thanh toán')");
                             $('#dueMessage').text("@lang('Phải thu từ người dùng')");
+                            $('#submitBtnCheckOut').attr('disabled', true);
 
-                            const due = formatCurrency(response.due);
                             $('#customer_payment, #customer_payment1').text(due);
                         } else {
                             $('#number_fare').text('Số tiền hoàn lại: ');
-
                             $('#dueMessage1').text("@lang('Số tiền hoàn lại')");
                             $('#dueMessage').text("Có thể hoàn trả");
-
-                            const due = formatCurrency(response.due);
                             $('#customer_payment1').text(due);
+
+                            $('#submitBtnCheckOut').attr('disabled', false);
                         }
                         $('.btn-primary').on('click', function() {
                             let inputFareBooking = $('.input_fare_booking')
@@ -985,6 +992,68 @@
                 }
             });
         }
+        $('#submitBtn').click(function(e) {
+            e.preventDefault();
+
+            var booking_id = $('#booking_id').val();
+            var amount = $('#amount_payment').val();
+
+            $('#amount_payment_errors').text('');
+            if (amount > 0) {
+                var url = `{{ route('admin.booking.payment', ['id' => ':id']) }}`.replace(':id',
+                    booking_id);
+
+                $.ajax({
+                    url: url,
+                    type: "POST",
+                    data: {
+                        _token: '{{ csrf_token() }}',
+                        amount: amount,
+                        is_method: "receptionist"
+                    },
+                    success: function(response) {
+                        if (response.status === 'success') {
+                            handleLateCheckinClick(response.id, response.booking_id)
+                            notify('success', `Đã nhận thanh toán thành công`);
+                        }
+                    },
+                    error: function(xhr, status, error) {
+                        console.error(xhr.responseText);
+                        console.log(xhr.status);
+                        alert("Đã có lỗi xảy ra. Vui lòng thử lại.");
+                    }
+                });
+            } else {
+                $('#amount_payment_errors').text('Vui lòng nhập số tiền!');
+            }
+        });
+
+        $('#submitBtnCheckOut').click(function(e) {
+            var booking_id = $('#booking_id').val();
+            var url = `{{ route('admin.booking.checkout', ['id' => ':id']) }}`.replace(':id',
+                booking_id);
+
+            $.ajax({
+                url: url,
+                type: "POST",
+                data: {
+                    _token: '{{ csrf_token() }}',
+                    is_method: "receptionist"
+                },
+                success: function(response) {
+                    if (response.status === 'success') {
+                        handleLateCheckinClick(response.id, response.booking_id)
+                        notify('success', `Đặt phòng đã được thanh toán thành công`);
+                        window.location.reload();
+                    }
+                },
+                error: function(xhr, status, error) {
+                    console.error(xhr.responseText);
+                    console.log(xhr.status);
+                    alert("Đã có lỗi xảy ra. Vui lòng thử lại.");
+                }
+            });
+        })
         var now = new Date();
         var year = now.getFullYear();
         var month = (now.getMonth() + 1).toString().padStart(2, '0');
@@ -1237,10 +1306,10 @@
                     value: 0
                 })
             }
-                formData.push({
-                    name: 'is_method',
-                    value: 'receptionist',
-                });  
+            formData.push({
+                name: 'is_method',
+                value: 'receptionist',
+            });
             let url = $(this).attr('action');
             $.ajax({
                 type: "POST",
@@ -1263,7 +1332,7 @@
             });
         });
 
-      
+
         $('.btn-user-info').on('click', function(event) {
             // Lấy giá trị của guest_type
             //    let guestType = $('#guest_type').val();
@@ -1289,19 +1358,19 @@
 
 
         });
+
         $('.extraChargeBtn').on('click', function() {
-
-
             let data = $(this).data();
+            let id = $('.booking_extra').val();
             let modal = $('#extraChargeModal');
             modal.find('.modal-title').text($(this).text());
             if (data.type == 'add') {
                 modal.find('form').attr('action',
-                    `{{ route('admin.booking.extra.charge.add', '') }}/${data.id}`);
+                    `{{ route('admin.booking.extra.charge.add', '') }}/${id}`);
                 modal.find('[name=type]').val('add');
             } else {
                 modal.find('form').attr('action',
-                    `{{ route('admin.booking.extra.charge.subtract', '') }}/${data.id}`
+                    `{{ route('admin.booking.extra.charge.subtract', '') }}/${id}`
                 );
                 modal.find('[name=type]').val('subtract');
             }
@@ -1407,42 +1476,5 @@
         modal.find('.totalFare').text(data.fare);
         modal.find('.refundableAmount').text(data.should_refund);
         modal.modal('show');
-    });
-    $(document).ready(function() {
-        $('#submitBtn').click(function(e) {
-            e.preventDefault();
-
-            var booking_id = $('#booking_id').val();
-            var amount = $('#amount_payment').val();
-
-            $('#amount_payment_errors').text('');
-            if (amount > 0) {
-                var url = `{{ route('admin.booking.payment', ['id' => ':id']) }}`.replace(':id', booking_id);
-
-                $.ajax({
-                    url: url,
-                    type: "POST",
-                    data: {
-                        _token: '{{ csrf_token() }}',
-                        amount: amount,
-                        is_method: "receptionist"
-                    },
-                    success: function(response) {
-                       if(response.status === 'success'){
-                       console.log("booking id " + response.booking_id); 
-                       console.log(" id " + response.id);
-                       handleLateCheckinClick(response.id , response.booking_id)
-                       }
-                    },
-                    error: function(xhr, status, error) {
-                        console.error(xhr.responseText);
-                        console.log(xhr.status);
-                        alert("Đã có lỗi xảy ra. Vui lòng thử lại.");
-                    }
-                });
-            } else {
-                $('#amount_payment_errors').text('Vui lòng nhập số tiền!');
-            }
-        });
     });
 </script>
