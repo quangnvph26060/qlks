@@ -8,6 +8,7 @@
                         <table class="table--light style--two table">
                             <thead>
                                 <tr>
+                                    <th>@lang('Mã tiện nghi')</th>
                                     <th>@lang('Tên tiện nghi')</th>
                                     <th>@lang('Biểu tượng')</th>
                                     <th>@lang('Trạng thái')</th>
@@ -19,24 +20,32 @@
                             <tbody>
                                 @forelse($amenities as $item)
                                     <tr>
-                                        <td><span class="me-2">{{ $amenities->firstItem() + $loop->index }}.</span> {{ $item->title }}</td>
+                                        <td>{{ $item->amenity_id ?? 'Chưa có mã tiện nghi' }}</td>
+                                        <td><span class="me-2">{{ $amenities->firstItem() + $loop->index }}.</span>
+                                            {{ $item->title }}</td>
                                         <td> @php echo $item->icon @endphp </td>
                                         <td> @php echo $item->statusBadge @endphp </td>
                                         @can(['admin.hotel.amenity.save', 'admin.hotel.amenity.status'])
                                             <td>
                                                 <div class="button--group">
                                                     @can('admin.hotel.amenity.save')
-                                                        <button class="btn btn-sm btn-outline--primary cuModalBtn" data-has_status="1" data-modal_title="@lang('Update Amenity')" data-resource="{{ $item }}" type="button">
+                                                        <button class="btn btn-sm btn-outline--primary cuModalBtn" data-has_status="1"
+                                                            data-modal_title="@lang('Update Amenity')" data-resource="{{ $item }}"
+                                                            type="button">
                                                             <i class="la la-pencil"></i>@lang('Sửa')
                                                         </button>
                                                     @endcan
                                                     @can('admin.hotel.amenity.status')
                                                         @if ($item->status == Status::DISABLE)
-                                                            <button class="btn btn-sm btn-outline--success me-1 confirmationBtn" data-action="{{ route('admin.hotel.amenity.status', $item->id) }}" data-question="@lang('Bạn có chắc chắn bật tiện ích này không?')" type="button">
+                                                            <button class="btn btn-sm btn-outline--success me-1 confirmationBtn"
+                                                                data-action="{{ route('admin.hotel.amenity.status', $item->id) }}"
+                                                                data-question="@lang('Bạn có chắc chắn bật tiện ích này không?')" type="button">
                                                                 <i class="la la-eye"></i> @lang('Cho phép')
                                                             </button>
                                                         @else
-                                                            <button class="btn btn-sm btn-outline--danger confirmationBtn" data-action="{{ route('admin.hotel.amenity.status', $item->id) }}" data-question="@lang('Bạn có chắc chắn muốn vô hiệu hóa tiện ích này không?')" type="button">
+                                                            <button class="btn btn-sm btn-outline--danger confirmationBtn"
+                                                                data-action="{{ route('admin.hotel.amenity.status', $item->id) }}"
+                                                                data-question="@lang('Bạn có chắc chắn muốn vô hiệu hóa tiện ích này không?')" type="button">
                                                                 <i class="la la-eye-slash"></i> @lang('Ngưng hoạt động')
                                                             </button>
                                                         @endif
@@ -78,14 +87,20 @@
                         @csrf
                         <div class="modal-body">
                             <div class="form-group">
+                                <label> @lang('Mã tiện ích')</label>
+                                <input class="form-control" name="amenity_id" type="text" value="{{ old('amenity_id') }}">
+                            </div>
+                            <div class="form-group">
                                 <label> @lang('Tiện ích')</label>
                                 <input class="form-control" name="title" required type="text" value="{{ old('title') }}">
                             </div>
                             <div class="form-group">
                                 <label> @lang('Biểu tượng')</label>
                                 <div class="input-group">
-                                    <input autocomplete="off" class="form-control iconPicker icon" name="icon" required type="text">
-                                    <span class="input-group-text input-group-addon" data-icon="las la-home" role="iconpicker"></span>
+                                    <input autocomplete="off" class="form-control iconPicker icon" name="icon" required
+                                        type="text">
+                                    <span class="input-group-text input-group-addon" data-icon="las la-home"
+                                        role="iconpicker"></span>
                                 </div>
                             </div>
                         </div>

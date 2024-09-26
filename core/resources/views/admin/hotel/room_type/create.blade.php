@@ -15,7 +15,14 @@
                         <div class="row">
                             <div class="col-xl-4 col-md-4 col-sm-12">
                                 <div class="form-group">
-                                    <label>@lang('Tên phòng')</label>
+                                    <label>@lang('Mã loại phòng')</label>
+                                    <input class="form-control" name="room_type_id" type="text"
+                                        value="{{ old('room_type_id', @$roomType->room_type_id) }}">
+                                </div>
+                            </div>
+                            <div class="col-xl-4 col-md-4 col-sm-12">
+                                <div class="form-group">
+                                    <label>@lang('Tên loại phòng')</label>
                                     <input class="form-control" name="name" required type="text"
                                         value="{{ old('name', @$roomType->name) }}">
                                 </div>
@@ -67,7 +74,7 @@
                                 </div>
                             </div>
 
-                            <div class="col-xl-4 col-md-4 col-sm-12">
+                            <div class="col-xl-6 col-md-4 col-sm-12">
                                 <div class="form-group">
                                     <label>@lang('Tổng số người')</label>
                                     <input class="form-control" min="1" name="total_adult" required type="number"
@@ -75,7 +82,7 @@
                                 </div>
                             </div>
 
-                            <div class="col-xl-4 col-md-4 col-sm-12">
+                            <div class="col-xl-6 col-md-4 col-sm-12">
                                 <div class="form-group">
                                     <label>@lang('Tống số trẻ em')</label>
                                     <input class="form-control" min="0" name="total_child" required type="number"
@@ -83,7 +90,7 @@
                                 </div>
                             </div>
 
-                            <div class="col-xl-8 col-md-12">
+                            <div class="col-xl-12 col-md-12">
                                 <div class="form-group position-relative">
                                     <label> @lang('Tiện nghi')</label>
                                     <select class="select2-multi-select" multiple="multiple" name="amenities[]">

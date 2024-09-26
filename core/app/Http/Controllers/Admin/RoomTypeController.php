@@ -80,6 +80,7 @@ class RoomTypeController extends Controller
                 $notification     = 'Đã thêm loại phòng thành công';
             }
 
+            $roomType->room_type_id        = $request->room_type_id;
             $roomType->name                = $request->name;
             $roomType->slug                = Str::slug($request->name);
             $roomType->total_adult         = $request->total_adult;
@@ -169,6 +170,7 @@ class RoomTypeController extends Controller
         }
 
         $request->validate([
+            'room_type_id'        => 'string|max:255|unique:room_types,room_type_id',
             'name'                => 'required|string|max:255|unique:room_types,name,' . $id,
             'total_adult'         => 'required|integer|gte:0',
             'total_child'         => 'required|integer|gte:0',
