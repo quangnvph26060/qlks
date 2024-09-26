@@ -100,9 +100,20 @@
                                     {{-- <button class="btn btn--success input-group-text border-0 addItem flex-shrink-0 ms-4" type="button"><i class="las la-plus me-0"></i></button> --}}
                                 </div>
                             </div>
+
                             <div class="form-group">
                                 <label>@lang('Mã phòng')</label>
                                 <input class="form-control" name="room_id" type="text">
+                            </div>
+
+                            <div class="form-group">
+                                <label for="">Chọn giá</label>
+                                <select class="select2-multi-select" multiple="multiple" name="prices[]">
+                                    @foreach ($prices as $id => $name)
+                                        <option value="{{ $id }}">{{ $name }}</option>
+                                    @endforeach
+                                    <!-- Thêm các tùy chọn khác nếu cần -->
+                                </select>
                             </div>
 
                             <div class="append-item d-none"></div>
@@ -167,9 +178,30 @@
     <x-search-form filter='yes' />
 @endpush
 
+@push('style')
+    <style>
+        .modal {
+            z-index: 1070;
+            /* Giá trị mặc định cho Bootstrap */
+        }
+
+        .select2-container {
+            z-index: 1080;
+            /* Đảm bảo select2 hiển thị trên modal */
+        }
+    </style>
+@endpush
+
 @push('script')
     <script>
         "use strict";
+
+        $('.select2-multi-select').select2({
+            placeholder: "Select options",
+            // tags: false,
+            tokenSeparators: [','],
+            // dropdownParent: $('.append-item')
+        })
 
         $(document).on('click', '.addItem', function() {
             var modal = $(this).parents('.modal');

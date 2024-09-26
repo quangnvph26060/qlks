@@ -121,11 +121,7 @@ class RoomTypeController extends Controller
             $notify[] = ['error', $e->getMessage()];
             return back()->withNotify($notify);
         }
-    }
-
-    private function insertPrice($roomType, $request){
-        
-    }
+    }   
 
     private function insertProducts($request, $roomType)
     {

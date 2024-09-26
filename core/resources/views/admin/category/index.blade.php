@@ -115,7 +115,6 @@
                 const createNewRow = (data) => {
                     return `
                     <tr data-id="${data.id}">
-                        <td>1</td>
                         <td>${data.name}</td>
                         <td>${data.products_count || 0}</td>
                         <td>
@@ -238,8 +237,8 @@
                                 } else {
                                     $("table tbody").prepend(createNewRow(response
                                         .data));
-                                    updateTableIndexes();
-                                    4
+                                    // updateTableIndexes();
+
                                     notData();
                                 }
 
@@ -264,10 +263,12 @@
 
                 // Hàm cập nhật hàng khi chỉnh sửa danh mục thành công
                 function htmlStringSuccessUpdate(response) {
+                    console.log(response);
+
                     const $row = $("tr[data-id=" + response.data.id + "]");
-                    $row.find("td:nth-child(2)").text(response.data.name);
-                    $row.find("td:nth-child(3)").text(response.data.products_count || 0);
-                    $row.find("td:nth-child(4) input").prop('checked', response.data.status);
+                    $row.find("td:nth-child(1)").text(response.data.name);
+                    $row.find("td:nth-child(2)").text(response.data.products_count || 0);
+                    $row.find("td:nth-child(3) input").prop('checked', response.data.status);
                     $("#categoryForm").removeAttr('data-id');
                 }
 

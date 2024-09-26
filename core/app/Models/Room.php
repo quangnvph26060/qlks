@@ -37,4 +37,8 @@ class Room extends Model
     {
         return $this->isRoomClean() ? 'Đã dọn' : 'Chưa dọn';
     }
+
+    public function prices(){
+        return $this->belongsToMany(RoomPrice::class, 'room_type_prices', 'room_id', 'price_id');
+    }
 }

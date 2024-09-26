@@ -20,4 +20,9 @@ class RoomPrice extends Model
         'end_date',
         'status',
     ];
+
+    public function scopeActive($query)
+    {
+        return $query->where('status', self::STATUS_ACTIVE);
+    }
 }
