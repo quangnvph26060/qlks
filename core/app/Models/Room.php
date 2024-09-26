@@ -59,4 +59,10 @@ class Room extends Model
         }
      //   return $this->belongsToMany(RoomPrice::class, 'room_price_rooms', 'room_id', 'price_id');
     }
+    
+    public function roomPrices()
+    {
+        return $this->belongsToMany(RoomPrice::class, 'room_price_rooms', 'room_id', 'price_id')
+                    ->where('status', 'active');
+    }
 }
