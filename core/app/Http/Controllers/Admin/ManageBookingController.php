@@ -204,14 +204,14 @@ class ManageBookingController extends Controller
 
     public function checkOut(Request $request, $id)
     {
+       
         $booking = Booking::active()->with('payments')->withSum('usedPremiumService', 'total_amount')->findOrFail($id);
-
+        
         
         // if ($booking->check_out > now()->toDateString()) {
         //     $notify[] = ['error', 'Ngày thanh toán cho đặt phòng này lớn hơn hiện tại'];
         //     return back()->withNotify($notify);
         // }
-
         $due = getAmount($booking->total_amount - $booking->paid_amount);
 
         if ($due > 0) {

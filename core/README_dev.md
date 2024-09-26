@@ -278,3 +278,22 @@ ADD facility_id VARCHAR(255) NULL DEFAULT NULL;
 ALTER TABLE premium_services
 ADD service_id VARCHAR(255) NULL DEFAULT NULL;
 
+
+-- 26/09
+
+ALTER TABLE `room_prices` 
+ADD COLUMN start_time TIME NULL,
+ADD COLUMN end_time TIME NULL,
+ADD COLUMN specific_date DATE NULL;
+
+ALTER TABLE`room_prices` 
+MODIFY COLUMN start_date DATE,
+MODIFY COLUMN end_date DATE;
+
+ALTER TABLE room_price_rooms
+ADD COLUMN start_date DATE,
+ADD COLUMN end_date DATE,
+ADD COLUMN start_time TIME NULL,
+ADD COLUMN end_time TIME NULL,
+ADD COLUMN specific_date DATE NULL;
+

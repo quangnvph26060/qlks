@@ -19,5 +19,8 @@ class RoomPrice extends Model
         'start_date',
         'end_date',
         'status',
+        'start_time',
+        'end_time',
+        'specific_date'
     ];
 }
