@@ -297,3 +297,9 @@ ADD COLUMN start_time TIME NULL,
 ADD COLUMN end_time TIME NULL,
 ADD COLUMN specific_date DATE NULL;
 
+26/9/2024 - phong
+ALTER TABLE categories
+ADD category_id VARCHAR(255) NULL DEFAULT NULL;
+
+ALTER TABLE brands
+ADD brand_id VARCHAR(255) NULL DEFAULT NULL;

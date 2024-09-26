@@ -18,7 +18,7 @@ class FacilityController extends Controller
     public function save(Request $request, $id = 0)
     {
         $request->validate([
-            'facility_id' => 'unique:facilities,facility_id',
+            'facility_id' => 'unique:facilities,facility_id|max:6',
             'title'       => 'required|string|unique:facilities,title,' . $id,
             'icon'        => 'required'
         ]);

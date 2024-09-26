@@ -202,6 +202,12 @@
             tokenSeparators: [','],
             // dropdownParent: $('.append-item')
         })
+        //Chuyển mọi ký tự trong input room_id thành uppercase
+        $(document).ready(function() {
+            $('input[name="room_id"]').on('input', function() {
+                this.value = this.value.toUpperCase();
+            });
+        });
 
         $(document).on('click', '.addItem', function() {
             var modal = $(this).parents('.modal');

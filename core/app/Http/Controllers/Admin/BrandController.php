@@ -28,7 +28,7 @@ class BrandController extends Controller
         $search = request()->get('search');
         $perPage = request()->get('perPage', 10);
         $orderBy = request()->get('orderBy', 'id');
-        $columns = ['id', 'name', 'is_active'];
+        $columns = ['id', 'name', 'is_active', 'brand_id'];
         $relations = ['products'];
         $searchColumns = ['name',];
 
@@ -71,10 +71,13 @@ class BrandController extends Controller
             $validated  = Validator::make(
                 $request->all(),
                 [
+                    'brand_id' => 'unique:brands,brand_id|max:6',
                     'name' => 'required|unique:brands,name',
                     'description' => 'nullable',
                 ],
                 [
+                    'brand_id.max' => 'Mã thương hiệu không được vượt quá 6 ký tự',
+                    'brand_id.unique' => 'Mã thương hiệu đã tồn tại',
                     'name.required' => 'Vui lòng nhập tên thương hiệu!',
                     'name.unique' => 'Tên thương hiệu đã tồn tại!'
                 ]
@@ -118,7 +121,7 @@ class BrandController extends Controller
     public function edit(string $id)
     {
         $brand = Brand::query()
-            ->select('id', 'name', 'description', 'is_active')
+            ->select('id', 'name', 'description', 'is_active', 'brand_id')
             ->find($id);
 
         if (!$brand) {
@@ -143,6 +146,7 @@ class BrandController extends Controller
             $validated  = Validator::make(
                 $request->all(),
                 [
+                    'brand_id' => 'unique:brands,brand_id|max:6',
                     'name' => [
                         'required',
                         Rule::unique('brands', 'name')->ignore($id)
@@ -150,6 +154,8 @@ class BrandController extends Controller
                     'description' => 'nullable',
                 ],
                 [
+                    'brand_id.unique' => 'Mã thương hiệu đã tồn tại',
+                    'brand_id.max' => 'Mã thương hiệu không được quá 6 ký tự',
                     'name.required' => 'Vui lòng nhập tên thương hiệu!',
                     'name.unique' => 'Tên thương hiệu đã tồn tại!'
                 ]
