@@ -9,6 +9,7 @@
                             <thead>
                                 <tr>
                                     <th>@lang('Số phòng')</th>
+                                    <th>@lang('Mã phòng')</th>
                                     <th>@lang('Tên phòng')</th>
                                     <th>@lang('Trạng thái')</th>
                                     @can(['admin.hotel.room.status', 'admin.hotel.room.add'])
@@ -20,21 +21,28 @@
                                 @forelse($rooms as $room)
                                     <tr>
                                         <td> {{ $room->room_number }}</td>
+                                        <td> {{ $room->room_id ?? 'Chưa có mã phòng' }}</td>
                                         <td>{{ __($room->roomType->name) }}</td>
                                         <td> @php echo $room->statusBadge @endphp </td>
                                         @can(['admin.hotel.room.status', 'admin.hotel.room.add'])
                                             <td>
                                                 <div class="button--group">
                                                     @can('admin.hotel.room.add')
-                                                        <button class="btn btn-sm btn-outline--primary editBtn" data-resource="{{ $room }}"><i class="las la-pencil-alt"></i> @lang('Edit')</button>
+                                                        <button class="btn btn-sm btn-outline--primary editBtn"
+                                                            data-resource="{{ $room }}"><i class="las la-pencil-alt"></i>
+                                                            @lang('Edit')</button>
                                                     @endcan
 
                                                     @if ($room->status == Status::ENABLE)
-                                                        <button class="btn btn-sm btn-outline--danger confirmationBtn" data-action="{{ route('admin.hotel.room.status', $room->id) }}" data-question="@lang('Are your to disable this room?')" type="button">
+                                                        <button class="btn btn-sm btn-outline--danger confirmationBtn"
+                                                            data-action="{{ route('admin.hotel.room.status', $room->id) }}"
+                                                            data-question="@lang('Are your to disable this room?')" type="button">
                                                             <i class="la la-eye-slash"></i> @lang('Ngưng hoạt động')
                                                         </button>
                                                     @else
-                                                        <button class="btn btn-sm btn-outline--success confirmationBtn" data-action="{{ route('admin.hotel.room.status', $room->id) }}" data-question="@lang('Are your to enable this room?')" type="button">
+                                                        <button class="btn btn-sm btn-outline--success confirmationBtn"
+                                                            data-action="{{ route('admin.hotel.room.status', $room->id) }}"
+                                                            data-question="@lang('Are your to enable this room?')" type="button">
                                                             <i class="la la-eye"></i> @lang('Cho phép')
                                                         </button>
                                                     @endif
@@ -87,10 +95,14 @@
 
                                 <div class="d-flex">
                                     <div class="input-group row gx-0">
-                                        <input type="text" class="form-control" name=room_numbers[]" required>
+                                        <input type="text" class="form-control" name="room_numbers[]" required>
                                     </div>
-                                    <button class="btn btn--success input-group-text border-0 addItem flex-shrink-0 ms-4" type="button"><i class="las la-plus me-0"></i></button>
+                                    {{-- <button class="btn btn--success input-group-text border-0 addItem flex-shrink-0 ms-4" type="button"><i class="las la-plus me-0"></i></button> --}}
                                 </div>
+                            </div>
+                            <div class="form-group">
+                                <label>@lang('Mã phòng')</label>
+                                <input class="form-control" name="room_id" type="text">
                             </div>
 
                             <div class="append-item d-none"></div>
@@ -118,7 +130,7 @@
                         @csrf
                         <div class="modal-body">
                             <div class="form-group">
-                                <label>@lang('Room Type')</label>
+                                <label>@lang('Loại phòng')</label>
                                 <select class="form-control" name="room_type_id" required>
                                     <option disabled selected value="">@lang('Select One')</option>
                                     @foreach ($roomTypes as $roomType)
@@ -127,8 +139,12 @@
                                 </select>
                             </div>
                             <div class="form-group">
-                                <label>@lang('Room Number')</label>
+                                <label>@lang('Số phòng')</label>
                                 <input class="form-control" name="room_number" required type="text">
+                            </div>
+                            <div class="form-group">
+                                <label>@lang('Mã phòng')</label>
+                                <input class="form-control" name="room_id" type="text">
                             </div>
                         </div>
                         <div class="modal-footer">
@@ -146,7 +162,8 @@
 @endsection
 
 @push('breadcrumb-plugins')
-    <button class="btn btn-outline--primary" data-bs-target="#addModal" data-bs-toggle="modal"><i class="las la-plus"></i> @lang('Thêm mới')</button>
+    <button class="btn btn-outline--primary" data-bs-target="#addModal" data-bs-toggle="modal"><i class="las la-plus"></i>
+        @lang('Thêm mới')</button>
     <x-search-form filter='yes' />
 @endpush
 

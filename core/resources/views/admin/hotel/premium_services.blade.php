@@ -10,6 +10,7 @@
                         <table class="table--light table">
                             <thead>
                                 <tr>
+                                    <th>@lang('Mã dịch vụ')</th>
                                     <th>@lang('Tên dịch vụ')</th>
                                     <th>@lang('Giá')</th>
                                     <th>@lang('Trạng thái')</th>
@@ -21,7 +22,10 @@
                             <tbody>
                                 @forelse($premiumServices as $premiumService)
                                     <tr>
-                                        <td><span class="me-2">{{ $premiumServices->firstItem() + $loop->index }}.</span>{{ __($premiumService->name) }}</td>
+                                        <td>{{ $premiumService->service_id ?? 'Chưa có mã dịch vụ' }}</td>
+                                        <td><span
+                                                class="me-2">{{ $premiumServices->firstItem() + $loop->index }}.</span>{{ __($premiumService->name) }}
+                                        </td>
 
                                         <td>
                                             {{ showAmount($premiumService->cost) }}
@@ -34,18 +38,24 @@
                                             <td>
                                                 <div class="button--group">
                                                     @can('admin.hotel.premium.service.save')
-                                                        <button class="btn btn-sm btn-outline--primary cuModalBtn" data-has_status="1" data-modal_title="@lang('Update Premium Service')" data-resource="{{ $premiumService }}" type="button">
+                                                        <button class="btn btn-sm btn-outline--primary cuModalBtn" data-has_status="1"
+                                                            data-modal_title="@lang('Update Premium Service')"
+                                                            data-resource="{{ $premiumService }}" type="button">
                                                             <i class="la la-pencil"></i>@lang('Sửa')
                                                         </button>
                                                     @endcan
 
                                                     @can('admin.hotel.premium.service.status')
                                                         @if ($premiumService->status == Status::DISABLE)
-                                                            <button class="btn btn-sm btn-outline--success me-1 confirmationBtn" data-action="{{ route('admin.hotel.premium.service.status', $premiumService->id) }}" data-question="@lang('Are you sure to enable this premium service?')" type="button">
+                                                            <button class="btn btn-sm btn-outline--success me-1 confirmationBtn"
+                                                                data-action="{{ route('admin.hotel.premium.service.status', $premiumService->id) }}"
+                                                                data-question="@lang('Are you sure to enable this premium service?')" type="button">
                                                                 <i class="la la-eye"></i> @lang('Cho phép')
                                                             </button>
                                                         @else
-                                                            <button class="btn btn-sm btn-outline--danger confirmationBtn" data-action="{{ route('admin.hotel.premium.service.status', $premiumService->id) }}" data-question="@lang('Are you sure to disable this premium service?')" type="button">
+                                                            <button class="btn btn-sm btn-outline--danger confirmationBtn"
+                                                                data-action="{{ route('admin.hotel.premium.service.status', $premiumService->id) }}"
+                                                                data-question="@lang('Are you sure to disable this premium service?')" type="button">
                                                                 <i class="la la-eye-slash"></i> @lang('Ngưng hoạt động')
                                                             </button>
                                                         @endif
@@ -88,13 +98,19 @@
                         @csrf
                         <div class="modal-body">
                             <div class="form-group">
+                                <label> @lang('Mã dịch vụ')</label>
+                                <input class="form-control" name="service_id" required type="text"
+                                    value="{{ old('service_id') }}">
+                            </div>
+                            <div class="form-group">
                                 <label> @lang('Tên dịch vụ')</label>
                                 <input class="form-control" name="name" required type="text" value="{{ old('name') }}">
                             </div>
                             <div class="form-group">
                                 <label> @lang('Giá')</label>
                                 <div class="input-group">
-                                    <input class="form-control" name="cost" required step="0.01" type="number" value="{{ old('cost') }}">
+                                    <input class="form-control" name="cost" required step="0.01" type="number"
+                                        value="{{ old('cost') }}">
                                     <span class="input-group-text"> {{ gs()->cur_text }}</span>
                                 </div>
                             </div>
