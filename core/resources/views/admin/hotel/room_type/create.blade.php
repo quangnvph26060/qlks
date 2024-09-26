@@ -30,40 +30,6 @@
 
                             <div class="col-xl-4 col-md-4 col-sm-12">
                                 <div class="form-group">
-                                    <label class="required" for="fare">@lang('Giá') /@lang('Đêm')</label>
-                                    <div class="input-group">
-                                        <input class="form-control" id="fare" name="fare" required type="number"
-                                            value="{{ old('fare', @$roomType->fare ? getAmount(@$roomType->fare) : '') }}">
-                                        <span class="input-group-text">{{ __(gs('cur_text')) }}</span>
-                                    </div>
-                                </div>
-                            </div>
-
-                            <div class="col-xl-4 col-md-4 col-sm-12">
-                                <div class="form-group">
-                                    <label class="required" for="hourly_rate">@lang('Giá') /@lang('Giờ')</label>
-                                    <div class="input-group">
-                                        <input class="form-control" id="hourly_rate" name="hourly_rate" type="number"
-                                            value="{{ old('hourly_rate', @$roomType->hourly_rate ? getAmount(@$roomType->hourly_rate) : '0') }}">
-                                        <span class="input-group-text">{{ __(gs('cur_text')) }}</span>
-                                    </div>
-                                </div>
-                            </div>
-
-                            <div class="col-xl-4 col-md-4 col-sm-12">
-                                <div class="form-group">
-                                    <label class="required" for="seasonal_rate">@lang('Giá')
-                                        /@lang('mùa')</label>
-                                    <div class="input-group">
-                                        <input class="form-control" id="seasonal_rate" name="seasonal_rate" type="number"
-                                            value="{{ old('seasonal_rate', @$roomType->seasonal_rate ? getAmount(@$roomType->seasonal_rate) : '0') }}">
-                                        <span class="input-group-text">{{ __(gs('cur_text')) }}</span>
-                                    </div>
-                                </div>
-                            </div>
-
-                            <div class="col-xl-4 col-md-4 col-sm-12">
-                                <div class="form-group">
                                     <label>@lang('Phí hủy bỏ') /@lang('Đêm')</label>
                                     <div class="input-group">
                                         <input class="form-control cancellationFee" min="0" name="cancellation_fee"
