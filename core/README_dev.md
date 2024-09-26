@@ -162,8 +162,6 @@ ADD COLUMN is_clean BOOLEAN NOT NULL DEFAULT TRUE;
 ALTER TABLE `general_settings`
 ADD COLUMN `deposit` INT NULL AFTER `available_version`;
 
-
-
 -- 20-09
 CREATE TABLE `stock_entries` (
 `id` int NOT NULL,
@@ -193,17 +191,12 @@ ADD CONSTRAINT `stock_entries_ibfk_1` FOREIGN KEY (`product_id`) REFERENCES `pro
 ADD CONSTRAINT `stock_entries_ibfk_2` FOREIGN KEY (`warehouse_entry_id`) REFERENCES `warehouse_entries` (`id`) ON DELETE RESTRICT ON UPDATE RESTRICT;
 COMMIT;
 
--- 21/09  dev_quang
+-- 21/09 dev_quang
 ALTER TABLE booked_rooms MODIFY COLUMN booked_for DATETIME;
 
 ALTER TABLE bookings MODIFY COLUMN check_in DATETIME;
 
 ALTER TABLE bookings MODIFY COLUMN check_out DATETIME;
-
-
-
-
-
 
 --23/9/2024
 CREATE TABLE transactions (
@@ -212,3 +205,31 @@ name VARCHAR(255) NOT NULL,
 status INT NOT NULL
 );
 
+25/09/2004 (dat09)
+CREATE TABLE room_prices (
+id INT AUTO_INCREMENT PRIMARY KEY,
+name VARCHAR(255) NOT NULL, -- Tên của loại giá (giá ngày, giá giờ, giá sự kiện, ...)
+price DECIMAL(10, 2) NOT NULL, -- Giá trị của loại giá
+start_date DATETIME NOT NULL, -- Ngày bắt đầu áp dụng giá
+end_date DATETIME, -- Ngày kết thúc áp dụng giá (nếu có)
+status ENUM('active', 'inactive') DEFAULT 'active', -- Trạng thái của loại giá
+created_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
+updated_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP ON UPDATE CURRENT_TIMESTAMP
+);
+
+-- Thêm cột code vào bảng room_prices
+ALTER TABLE room_prices
+ADD COLUMN code VARCHAR(50) NOT NULL AFTER name; -- Thêm cột code sau cột name
+
+-- Thêm ràng buộc UNIQUE cho cặp name và code
+ALTER TABLE room_prices
+ADD UNIQUE (name, code); -- Thêm ràng buộc tính duy nhất cho name và code
+
+
+CREATE TABLE room_price_rooms (
+room_id INT NOT NULL, -- Khóa ngoại đến bảng rooms
+price_id INT NOT NULL, -- Khóa ngoại đến bảng room_prices
+PRIMARY KEY (room_id, price_id), -- Khóa chính kép để ngăn trùng lặp
+FOREIGN KEY (room_id) REFERENCES rooms(id) ON DELETE CASCADE,
+FOREIGN KEY (price_id) REFERENCES room_prices(id) ON DELETE CASCADE
+);

@@ -19,6 +19,7 @@ class CancelBookingController extends Controller {
         return view('admin.booking.cancel', compact('pageTitle', 'booking'));
     }
 
+
     public function cancelFullBooking($id) {
         $booking     = Booking::active()->findOrFail($id);
         $bookedRooms = BookedRoom::active()->where('booking_id', $booking->id);
@@ -48,13 +49,15 @@ class CancelBookingController extends Controller {
     }
 
     public function cancelBookingByDate(Request $request, $id) {
-           
-        if ($request->booked_for < now()->toDateString()) {
+        // dd($request->all());
+        // dd(Carbon::parse($request->booked_for)->toDateString() . '_'. now()->toDateString());
+        if (Carbon::parse($request->booked_for)->toDateString() < now()->toDateString()) {
             $notify[] = ['error', 'Không thể hủy các đặt phòng của ngày trước'];
             return back()->withNotify($notify);
         }
 
         $booking  = Booking::active()->find($id);
+
 
         if (!$booking) {
             $notify[] = ['error', 'Đặt phòng này không thể hủy được'];
@@ -62,22 +65,27 @@ class CancelBookingController extends Controller {
         }
 
         $bookedRooms         = BookedRoom::active()->where('booking_id', $booking->id);
-     
+
+
         $bookedForOtherDates = (clone $bookedRooms)->where('booked_for', '!=', $request->booked_for)->count();
 
-        $bookedRooms         = (clone $bookedRooms)->whereDate('booked_for', $request->booked_for);
+        $bookedRooms         = (clone $bookedRooms)->where('booked_for', $request->booked_for);
+
 
         $booking->cancellation_fee += (clone $bookedRooms)->sum('cancellation_fee');
         $booking->booking_fare  -= (clone $bookedRooms)->sum('fare');
         $booking->tax_charge -= (clone $bookedRooms)->sum('tax_charge');
 
-        if (!$bookedForOtherDates) {
+
+        if ($bookedForOtherDates == 0) {
             $booking->status = Status::BOOKING_CANCELED;
         }
-        
+
         $booking->save();
 
         $dateWiseBooked = (clone $bookedRooms)->get()->pluck('room_id')->toArray();
+
+
         $bookedRooms->update(['status' => Status::ROOM_CANCELED]);
 
         $this->updateCheckInCheckoutDate($booking);
