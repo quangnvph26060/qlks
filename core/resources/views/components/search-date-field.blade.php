@@ -35,7 +35,7 @@
                 maxDate: moment()
             });
             const changeDatePickerText = (event, startDate, endDate) => {
-                $(event.target).val(startDate.format('MMMM DD, YYYY') + ' - ' + endDate.format('MMMM DD, YYYY'));
+                $(event.target).val(startDate.format('MMMM DD, YYYY HH:mm') + ' - ' + endDate.format('MMMM DD, YYYY HH:mm'));
             }
 
 

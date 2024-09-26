@@ -85,9 +85,9 @@ class RoomTypeController extends Controller
             $roomType->slug                = Str::slug($request->name);
             $roomType->total_adult         = $request->total_adult;
             $roomType->total_child         = $request->total_child;
-            $roomType->fare                = $request->fare;
-            $roomType->hourly_rate         = $request->hourly_rate;
-            $roomType->seasonal_rate         = $request->seasonal_rate;
+            // $roomType->fare                = $request->fare;
+            // $roomType->hourly_rate         = $request->hourly_rate;
+            // $roomType->seasonal_rate         = $request->seasonal_rate;
             $roomType->keywords            = $request->keywords ?? [];
             $roomType->description         = htmlspecialchars_decode($purifier->purify($request->description));
             $roomType->beds                = $bedArray;
@@ -121,6 +121,10 @@ class RoomTypeController extends Controller
             $notify[] = ['error', $e->getMessage()];
             return back()->withNotify($notify);
         }
+    }
+
+    private function insertPrice($roomType, $request){
+        
     }
 
     private function insertProducts($request, $roomType)

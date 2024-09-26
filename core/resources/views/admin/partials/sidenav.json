@@ -98,6 +98,15 @@
             }
         ]
     },
+    "manage_prices": {
+        "keyword": [
+            "Quản lý bảng giá"
+        ],
+        "title": "Quản lý bảng giá",
+        "icon": "las la-dollar-sign",
+        "route_name": "admin.manage.price.all"
+    },
+
     "delayed_checkout": {
         "keyword": [
             "Khách trả phòng muộn"

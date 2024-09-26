@@ -242,6 +242,15 @@ Route::middleware('admin', 'adminPermission')->group(function () {
         });
     });
 
+    Route::controller('ManagePriceListController')->group(function () {
+        Route::get('priceList', 'priceList')->name('manage.price.all');
+        Route::post('priceList', 'store')->name('manage.price.store');
+        Route::get('priceList/{id}', 'edit')->name('manage.price.edit');
+        Route::put('priceList/{id}/update', 'update')->name('manage.price.update');
+        Route::put('priceList/{id}/updateStatus', 'updateStatus')->name('manage.price.updateStatus');
+        Route::delete('priceList/{id}', 'destroy')->name('manage.price.destroy');
+    });
+
     Route::name('booking.')->prefix('booking')->group(function () {
         Route::controller('BookingController')->group(function () {
             Route::get('all-bookings', 'allBookingList')->name('all');

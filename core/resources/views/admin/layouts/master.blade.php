@@ -41,6 +41,8 @@
     <script src="{{ asset('assets/global/js/select2.min.js') }}"></script>
     <script src="{{ asset('assets/admin/js/app.js') }}"></script>
     <script src="{{ asset('assets/admin/js/cu-modal.js') }}"></script>
+    <script src="{{ asset('assets/admin/js/vendor/sweetalert2@11.js') }}"></script>
+
 
     {{-- LOAD NIC EDIT --}}
     <script>

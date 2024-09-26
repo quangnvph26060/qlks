@@ -205,6 +205,16 @@ name VARCHAR(255) NOT NULL,
 status INT NOT NULL
 );
 
+
+25/09/2004 (dat09)
+CREATE TABLE room_prices (
+id INT AUTO_INCREMENT PRIMARY KEY,
+name VARCHAR(255) NOT NULL, -- Tên của loại giá (giá ngày, giá giờ, giá sự kiện, ...)
+price DECIMAL(10, 2) NOT NULL, -- Giá trị của loại giá
+start_date DATETIME NOT NULL, -- Ngày bắt đầu áp dụng giá
+end_date DATETIME, -- Ngày kết thúc áp dụng giá (nếu có)
+status ENUM('active', 'inactive') DEFAULT 'active', -- Trạng thái của loại giá
+
 24/9/2024
 ALTER TABLE `transactions`
 ADD `created_at` TIMESTAMP NULL DEFAULT CURRENT_TIMESTAMP,
@@ -218,8 +228,27 @@ per_day BIGINT DEFAULT 0,
 per_night BIGINT DEFAULT 0,
 per_season BIGINT DEFAULT 0,
 per_event BIGINT DEFAULT 0,
+
 created_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
 updated_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP ON UPDATE CURRENT_TIMESTAMP
+);
+
+
+-- Thêm cột code vào bảng room_prices
+ALTER TABLE room_prices
+ADD COLUMN code VARCHAR(50) NOT NULL AFTER name; -- Thêm cột code sau cột name
+
+-- Thêm ràng buộc UNIQUE cho cặp name và code
+ALTER TABLE room_prices
+ADD UNIQUE (name, code); -- Thêm ràng buộc tính duy nhất cho name và code
+
+
+CREATE TABLE room_price_rooms (
+room_id INT NOT NULL, -- Khóa ngoại đến bảng rooms
+price_id INT NOT NULL, -- Khóa ngoại đến bảng room_prices
+PRIMARY KEY (room_id, price_id), -- Khóa chính kép để ngăn trùng lặp
+FOREIGN KEY (room_id) REFERENCES rooms(id) ON DELETE CASCADE,
+FOREIGN KEY (price_id) REFERENCES room_prices(id) ON DELETE CASCADE
 );
 
 CREATE TABLE additional_fees (
@@ -248,3 +277,4 @@ ADD facility_id VARCHAR(255) NULL DEFAULT NULL;
 
 ALTER TABLE premium_services
 ADD service_id VARCHAR(255) NULL DEFAULT NULL;
+
