@@ -117,31 +117,33 @@
                     <div class="card-body results">
                         <div class="row">
 
-                                @foreach ($roomType->products ?? [] as $product)
-                                    <div class="col-md-4 pb-3 result-item" data-id="{{ $product->id }}}">
-                                        <div class="d-flex align-items-center border position-relative p-1" data-id="{{ $product->id }}">
-                                            <div class="img-container">
-                                                <img src="{{\Storage::url($product->image_path)}}" width="100"
-                                                    alt="" class="img-fluid">
-                                            </div>
-                                            <div class="info">
-                                                <div class="name ellipsis">
-                                                    <a href="#" class="text-decoration-none">{{$product->name}}</a>
-                                                </div>
-                                                <div class="price">
-                                                    <span class="current-price">Tồn kho: {{$product->stock ?? 0}}</span>
-                                                </div>
-                                                <div class="quantity d-flex align-items-center">
-                                                    <span class="current-stock me-2">Số lượng</span>
-                                                    <input type="number" name="products[{{$product->id}}]"
-                                                        class="form-control" min="1" value="{{$product->pivot->quantity}}">
-                                                </div>
-                                            </div>
-                                            <button class="btn-close position-absolute end-0 top-0 bg-danger"
-                                                style="border-radius: 0%"></button>
+                            @foreach ($roomType->products ?? [] as $product)
+                                <div class="col-md-4 pb-3 result-item" data-id="{{ $product->id }}}">
+                                    <div class="d-flex align-items-center border position-relative p-1"
+                                        data-id="{{ $product->id }}">
+                                        <div class="img-container">
+                                            <img src="{{ \Storage::url($product->image_path) }}" width="100"
+                                                alt="" class="img-fluid">
                                         </div>
+                                        <div class="info">
+                                            <div class="name ellipsis">
+                                                <a href="#" class="text-decoration-none">{{ $product->name }}</a>
+                                            </div>
+                                            <div class="price">
+                                                <span class="current-price">Tồn kho: {{ $product->stock ?? 0 }}</span>
+                                            </div>
+                                            <div class="quantity d-flex align-items-center">
+                                                <span class="current-stock me-2">Số lượng</span>
+                                                <input type="number" name="products[{{ $product->id }}]"
+                                                    class="form-control" min="1"
+                                                    value="{{ $product->pivot->quantity }}">
+                                            </div>
+                                        </div>
+                                        <button class="btn-close position-absolute end-0 top-0 bg-danger"
+                                            style="border-radius: 0%"></button>
                                     </div>
-                                @endforeach
+                                </div>
+                            @endforeach
                         </div>
                     </div>
                 </div>
@@ -343,13 +345,18 @@
             height: 30px;
             padding: 0;
         }
-
-
     </style>
 @endpush
 
 @push('script')
     <script>
+        //Chuyển mọi ký tự trong input room_type_id thành uppercased
+        $(document).ready(function() {
+            $('input[name="room_type_id"]').on('input', function() {
+                this.value = this.value.toUpperCase();
+            });
+        });
+
         (function($) {
             "use strict";
             let bedTypes = @json($bedTypes);

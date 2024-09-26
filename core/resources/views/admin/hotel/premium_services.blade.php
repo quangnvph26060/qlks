@@ -135,3 +135,12 @@
         </button>
     @endpush
 @endcan
+@push('script')
+    <script>
+        $(document).ready(function() {
+            $('input[name="service_id"]').on('input', function() {
+                this.value = this.value.toUpperCase();
+            });
+        });
+    </script>
+@endpush
