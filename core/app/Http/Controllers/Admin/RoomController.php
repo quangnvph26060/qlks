@@ -2,11 +2,12 @@
 
 namespace App\Http\Controllers\Admin;
 
-use App\Constants\Status;
-use App\Http\Controllers\Controller;
 use App\Models\Room;
 use App\Models\RoomType;
+use App\Constants\Status;
+use App\Models\RoomPrice;
 use Illuminate\Http\Request;
+use App\Http\Controllers\Controller;
 
 class RoomController extends Controller
 {
@@ -16,12 +17,14 @@ class RoomController extends Controller
         $roomTypes = RoomType::get();
         $rooms     = Room::searchable(['room_number', 'roomType:name'])->filter(['room_type_id'])->orderBy('room_number');
 
+        $prices = RoomPrice::active()->pluck('name', 'id');
+
         if (request()->status == Status::ENABLE || request()->status == Status::DISABLE) {
             $rooms = $rooms->filter(['status']);
         }
 
         $rooms =  $rooms->with('roomType.images')->orderBy('room_number', 'asc')->paginate(getPaginate());
-        return view('admin.hotel.rooms', compact('pageTitle', 'rooms', 'roomTypes'));
+        return view('admin.hotel.rooms', compact('pageTitle', 'rooms', 'roomTypes', 'prices'));
     }
 
     public function status($id)
@@ -41,7 +44,8 @@ class RoomController extends Controller
         $request->validate([
             'room_type_id' => 'required|exists:room_types,id',
             "$roomFiled"   => 'required',
-            'room_id'      => 'unique:rooms,room_id'
+            'room_id'      => 'unique:rooms,room_id',
+            'prices'       => 'required|array', // Thêm điều kiện cho prices
         ]);
 
         if ($id) {
@@ -72,6 +76,19 @@ class RoomController extends Controller
             }
 
             $message = 'Room added successfully';
+        }
+
+        // Đồng bộ hóa giá
+        if ($id) {
+            $room->prices()->sync($request->input('prices'));
+        } else {
+            // Nếu bạn đã thêm nhiều phòng, có thể cần đồng bộ cho từng phòng
+            foreach ($request->room_numbers as $roomNumber) {
+                $room = Room::where('room_number', $roomNumber)->first();
+                if ($room) {
+                    $room->prices()->sync($request->input('prices'));
+                }
+            }
         }
 
         $notify[] = ['success', $message];
