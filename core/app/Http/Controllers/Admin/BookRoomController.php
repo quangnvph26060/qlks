@@ -168,7 +168,7 @@ class BookRoomController extends Controller
             BookedRoom::insert($bookedRoomData);
             $checkIn  = BookedRoom::where('booking_id', $booking->id)->min('booked_for');
             $checkout = BookedRoom::where('booking_id', $booking->id)->max('booked_for');
-            \Log::info($request->all());
+           
             $booking->check_in = $checkIn;
 
             if($request->is_method === "receptionist"){

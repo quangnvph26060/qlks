@@ -68,27 +68,34 @@ class ManagePriceListController extends Controller
         $validator = Validator::make(
             $request->all(),
             [
-                'code' => 'required|unique:room_prices,code',
-                'name' => 'required|unique:room_prices,name',
-                'price' => 'required|numeric',
-                'start_date' => 'required|date',
-                'end_date' => 'required|date|after:start_date',
+                'code'          => 'required|unique:room_prices,code',
+                'name'          => 'required|unique:room_prices,name',
+                'price'         => 'required|numeric',
+                'start_date'    => 'required|date',
+                'end_date'      => 'required|date|after:start_date',
+                'start_time'    => 'nullable|date_format:H:i',
+                'end_time'      => 'nullable|date_format:H:i|after:start_time',
+                'specific_date' => 'nullable|date',
             ],
             [
-                'code.required' => 'Mã bảng giá không được để trống!',
-                'code.unique' => 'Mã bảng giá đã được sử dụng!',
-                'name.unique' => 'Tên loại giá đã được sử dụng!',
-                'name.required' => 'Tên loại giá không được để trống!',
-                'price.required' => 'Giá không được để trống!',
-                'price.numeric' => 'Giá không đúng định dạng!',
+                'code.required'       => 'Mã bảng giá không được để trống!',
+                'code.unique'         => 'Mã bảng giá đã được sử dụng!',
+                'name.unique'         => 'Tên loại giá đã được sử dụng!',
+                'name.required'       => 'Tên loại giá không được để trống!',
+                'price.required'      => 'Giá không được để trống!',
+                'price.numeric'       => 'Giá không đúng định dạng!',
                 'start_date.required' => 'Ngày bắt đầu không được để trống!',
-                'start_date.date' => 'Ngày bắt đầu không đúng định dạng!',
-                'end_date.required' => 'Ngày kết thúc không được để trống!',
-                'end_date.date' => 'Ngày kết thúc không đúng định dạng!',
-                'end_date.after' => 'Ngày kết thúc phải lớn hơn ngày bắt đầu!',
+                'start_date.date'     => 'Ngày bắt đầu không đúng định dạng!',
+                'end_date.required'   => 'Ngày kết thúc không được để trống!',
+                'end_date.date'       => 'Ngày kết thúc không đúng định dạng!',
+                'end_date.after'      => 'Ngày kết thúc phải lớn hơn ngày bắt đầu!',
+                'start_time.date_format' => 'Thời gian bắt đầu không đúng định dạng H:i.',
+                'end_time.date_format' => 'Thời gian kết thúc không đúng định dạng H:i.',
+                'end_time.after' => 'Thời gian kết thúc phải sau thời gian bắt đầu.',
+                'specific_date.date'  => 'Ngày đặc biệt không đúng định dạng!',
             ]
         );
-
+    
         if ($validator->fails()) {
             return response()->json([
                 'status' => false,
@@ -98,7 +105,6 @@ class ManagePriceListController extends Controller
         }
 
         $data = $validator->validated();
-
         // Chuyển đổi status thành active/inactive dựa trên giá trị gửi lên
         $data['status'] = $request->status == "on" ? 'active' : 'inactive';
 
