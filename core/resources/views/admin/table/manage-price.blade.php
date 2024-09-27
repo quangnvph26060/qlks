@@ -1,6 +1,7 @@
 @if ($response->isNotEmpty())
     @foreach ($response as $price)
         <tr data-id="{{ $price->id }}">
+            <th>{{ $loop->iteration }}</th>
             <td>{{ $price->code }}</td>
             <td>{{ $price->name }}</td>
             <td>{{ showAmount($price->price) }}</td>

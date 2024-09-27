@@ -15,7 +15,7 @@ class RoomController extends Controller
     {
         $pageTitle = 'Tất cả các phòng';
         $roomTypes = RoomType::get();
-        $rooms     = Room::searchable(['room_number', 'roomType:name'])->filter(['room_type_id'])->orderBy('room_number');
+        $rooms     = Room::searchable(['room_number', 'roomType:name'])->filter(['room_type_id'])->orderBy('room_number')->with('prices')->get();
 
         $prices = RoomPrice::active()->pluck('name', 'id');
 

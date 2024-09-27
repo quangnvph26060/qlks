@@ -33,7 +33,7 @@ class WarehouseController extends Controller
         $perPage = request()->get('perPage', 10);
         $orderBy = request()->get('orderBy', 'id');
         $columns = ['id', 'supplier_id', 'reference_code', 'total', 'status', 'created_at'];
-        $relations = ['supplier', 'return'];
+        $relations = ['supplier', 'return.return_items'];
         $searchColumns = ['reference_code'];
 
         $response = $this->repository

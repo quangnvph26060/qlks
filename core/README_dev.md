@@ -275,6 +275,13 @@ ADD facility_id VARCHAR(255) NULL DEFAULT NULL;
 ALTER TABLE premium_services
 ADD service_id VARCHAR(255) NULL DEFAULT NULL;
 
+
+
+-- 26/09 đạt 09
+ALTER TABLE `returns` ADD `total` INT NOT NULL DEFAULT '0' AFTER `status`;
+
+
+
 -- 26/09
 
 ALTER TABLE `room_prices`
@@ -306,6 +313,12 @@ ADD created_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP;
 ALTER TABLE room_price_rooms
 ADD updated_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP ON UPDATE CURRENT_TIMESTAMP;
 
-37/9/2024 phong_dev
+
+27/9/2024 phong_dev
 ALTER TABLE suppliers
 ADD supplier_id VARCHAR(255) NULL DEFAULT NULL;
+
+
+ALTER TABLE `room_price_rooms` ADD `status` BOOLEAN NOT NULL DEFAULT FALSE AFTER `specific_date`;
+
+
