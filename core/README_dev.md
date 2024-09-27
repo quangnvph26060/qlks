@@ -1,5 +1,9 @@
 composer require wuangdz/qutility
 
+php artisan schedule:work
+
+
+
 CREATE TABLE cache (
 `key` VARCHAR(255) CHARACTER SET utf8mb4 COLLATE utf8mb4_unicode_ci NOT NULL PRIMARY KEY,
 `value` MEDIUMTEXT CHARACTER SET utf8mb4 COLLATE utf8mb4_unicode_ci DEFAULT NULL,

@@ -27,6 +27,7 @@
                 if ($rooms->status == 1) {
                     $class = 'status-occupied'; // đang hoạt động; sắp tới
                 }
+                $price =   $rooms->roomPricesActive[0]['price'];
             @endphp
 
             <div class="col-md-2 main-room-card  card-{{ $class }} ">
@@ -39,18 +40,19 @@
 
 
                     <div class="content-booking mt-2 room-booking-{{ $class }}"
-                        data-hours="{{ $rooms->roomType->hourly_rate }}" data-day="{{ $rooms->roomType->fare }}"
-                        data-night="{{ $rooms->roomType->fare }}" data-name = "{{ $rooms->roomType->name }}"
+                        data-hours="{{ $price }}" data-day="{{ $price }}"
+                        data-night="{{ $price}}" data-name = "{{ $rooms->roomType->name }}"
                         data-roomNumber="{{ $rooms->room_number }}" data-room-type="{{ $rooms->room_type_id }}"
                         data-room="{{ $rooms->id }}">
                         <h5>{{ $rooms->room_number }} </h5>
                         <p class="single-line">{{ $rooms->roomType->name }}</p>
                         <div class="room-info">
-                            <p><i
+                            {{-- <p><i
                                     class="fas fa-clock icon"></i><span>{{ showAmount($rooms->roomType->hourly_rate) }}</span>
                             </p>
-                            <p><i class="fas fa-sun icon"></i>{{ showAmount($rooms->roomType->fare) }}</p>
-                            <p><i class="fas fa-moon icon"></i>{{ showAmount($rooms->roomType->fare) }}</p>
+                            <p><i class="fas fa-sun icon"></i>{{ showAmount($rooms->roomType->fare) }}</p> --}}
+                            <p>
+                                <i class="fas fa-dollar-sign icon"></i>{{ showAmount($price) }}</p>
                         </div>
                     </div>
                 </div>
@@ -65,12 +67,12 @@
                 $classClean = $room->getCleanStatusClass();
                 $classSvg = $room->getCleanStatusSvg();
                 $cleanText = $room->getCleanStatusText();
-
+                $price = $room->roomPricesActive[0]['price'];
+              
                 // test
                 // if($booking->booking->status === 3){
                 //     $class = 'demo-abc'; 
                 // }
-
                 if (
                     now() > $booking->booking->check_in &&
                     now() <= $booking->booking->check_out &&
@@ -107,8 +109,8 @@
                         key="{{ $booking->booking->key_status }}" bookingId="{{ $booking->booking_id }}" />
 
                     <div class="content-booking mt-2 room-booking-{{ $class }}"
-                        data-id="{{ $booking->booking_id }}" data-hours="{{ $booking->roomType->hourly_rate }}"
-                        data-day="{{ $booking->roomType->fare }}" data-night="{{ $booking->roomType->fare }}"
+                        data-id="{{ $booking->booking_id }}" data-hours="{{ $price }}"
+                        data-day="{{ $price }}" data-night="{{ $price }}"
                         data-name = "{{ $booking->roomType->name }} " data-roomNumber="{{ $booking->room->room_number }}"
                         data-room-type="{{ $booking->room_type_id }}" data-booking="{{ $booking->id }}">
                         <p> {{ $booking->booking->booking_number }}</p>
@@ -143,12 +145,14 @@
                         @if ($flag)
                             <p class="single-line">{{ $booking->roomType->name }}</p>
                             <div class="room-info">
-                                <p> <i class="fas fa-clock icon"></i>{{ showAmount($booking->roomType->hourly_rate) }}
+                                {{-- <p> <i class="fas fa-clock icon"></i>{{ showAmount($booking->roomType->hourly_rate) }}
                                 </p>
                                 <p> <i class="fas fa-sun icon"></i>{{ showAmount($booking->roomType->fare) }}
                                 </p>
                                 <p> <i class="fas fa-moon icon"></i>{{ showAmount($booking->roomType->fare) }}
-                                </p>
+                                </p> --}}
+                                <p>
+                                    <i class="fas fa-dollar-sign icon"></i>{{ showAmount($price) }}</p>
                             </div>
                         @else
                             @php

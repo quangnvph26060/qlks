@@ -216,17 +216,16 @@ class BookingController extends Controller {
 
         $disabledRoomTypeIDs = RoomType::where('status', 0)->pluck('id')->toArray();
         $bookedRooms         = $rooms->pluck('room_id')->toArray();
-        $emptyRooms          = Room::active()
+        $emptyRooms          = Room::active()->has('roomPricesActive')
              ->whereNotIn('id', $bookedRooms)
             ->whereNotIn('room_type_id', $disabledRoomTypeIDs) // loại trừ nhũng phòng ngưng hoạt động hoạt vô hiệu hóa 
-            ->with('roomType','roomPrices')
+            ->with('roomType','roomPricesActive')
             ->select('id', 'room_type_id', 'room_number','is_clean')
             ->get();
-    
         $scope = 'ALL';
         $is_method = 'Receptionist';
-        $bookings = BookedRoom::active()->with('booking', 'roomType', 'room', 'usedPremiumService')->get();
-
+        $bookings = BookedRoom::active()->with('booking', 'roomType', 'room', 'room.roomPricesActive', 'usedPremiumService')->get();
+         
         $userList = User::select('username', 'email', 'mobile', 'address')->get();
 
         return view('admin.booking.receptionist.list', compact('pageTitle','Title','emptyRooms','bookings','emptyMessage','userList'));
@@ -254,8 +253,8 @@ class BookingController extends Controller {
     }
     public function getPremiumServices()
     {
-        $pageTitle     = 'Thêm dịch vụ cao cấp';
-        $premiumServices = PremiumService::active()->get();
+        $pageTitle          = 'Thêm dịch vụ cao cấp';
+        $premiumServices    = PremiumService::active()->get();
         return ApiResponse::success($premiumServices, 'success', 200);
     }
     
