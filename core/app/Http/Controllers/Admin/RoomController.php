@@ -15,7 +15,7 @@ class RoomController extends Controller
     {
         $pageTitle = 'Tất cả các phòng';
         $roomTypes = RoomType::get();
-        $rooms     = Room::searchable(['room_number', 'roomType:name'])->filter(['room_type_id'])->orderBy('room_number')->with('prices')->get();
+        $rooms     = Room::searchable(['room_number', 'roomType:name'])->filter(['room_type_id'])->orderBy('room_number')->with('prices');
 
         $prices = RoomPrice::active()->pluck('name', 'id');
 
@@ -99,7 +99,7 @@ class RoomController extends Controller
            
                 $room = Room::where('room_number', $request->room_numbers)->first();
                 if ($room) {
-                   $room->prices($request->input('prices'));
+                   $room->updatePrices($request->input('prices'));
                   //  $room->prices()->sync($request->input('prices'));
                 }
            

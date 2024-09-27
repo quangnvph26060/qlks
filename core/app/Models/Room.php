@@ -40,8 +40,8 @@ class Room extends Model
     }
 
 
-
-    public function prices($data){
+    public function updatePrices($data){
+    
 
         foreach($data as $item){
             $roomPrice =  RoomPrice::find($item);
@@ -60,9 +60,11 @@ class Room extends Model
             $roomPriceRoooms->specific_date     = $roomPrice->specific_date;
             $roomPriceRoooms->save();
         }
-        //   return $this->belongsToMany(RoomPrice::class, 'room_price_rooms', 'room_id', 'price_id');
+       
     }
-
+    public function prices(){
+        return $this->belongsToMany(RoomPrice::class, 'room_price_rooms', 'room_id', 'price_id');
+    }
     public function scopeActive($query) {
         return $query->where('rooms.status', Status::ROOM_ACTIVE);
     }
