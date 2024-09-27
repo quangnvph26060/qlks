@@ -4,6 +4,7 @@
             <button class="btn btn-link btn-toggle" type="button"
                 onclick=" toggleRepresentatives('{{ $item->id }}', this)"></button>
         </td>
+        <td>{{ $item->supplier_id ?? 'Chưa có mã nhà cung cấp' }}</td>
         <td>{{ $item->name }}</td>
         <td>{{ $item->email }}</td>
         <td>{{ $item->phone }}</td>
@@ -11,10 +12,11 @@
         @can([])
             <td>
                 <div class="button--group">
-                    <button class="btn btn-sm btn-outline--primary btn-edit" data-id="{{ $item->id }}"
-                        data-modal_title="@lang('Cập nhật danh mục')" type="button">
+                    <a class="btn btn-sm btn-outline--primary btn-edit" data-id="{{ $item->id }}"
+                        href="{{ route('admin.supplier.edit', $item->id) }}" data-modal_title="@lang('Cập nhật danh mục')"
+                        type="button">
                         <i class="fas fa-edit"></i>@lang('Sửa')
-                    </button>
+                    </a>
                     <button class="btn btn-sm btn-outline--danger btn-delete" data-id="{{ $item->id }}"
                         data-modal_title="@lang('Xóa danh mục')" type="button" data-pro="{{ $item->products->count() }}">
                         <i class="fas fa-trash"></i>@lang('Xóa')

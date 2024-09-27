@@ -27,7 +27,7 @@ class StoreProductRequest extends FormRequest
             'import_price' => 'required|numeric',
             'selling_price' => 'required|numeric|gt:import_price',
             'description' => 'nullable',
-            'sku' => 'required|unique:products',
+            'sku' => 'required|unique:products|max:6',
             'category_id' => 'required',
             'brand_id' => 'required',
             'stock' => 'nullable|integer',
@@ -38,6 +38,7 @@ class StoreProductRequest extends FormRequest
     public function messages(): array
     {
         return [
+            'sku.max'                               => 'Mã sản phẩm chỉ có tối đa 6 ký tự',
             'name.required'                         => 'Vui lòng nhập :attribute',
             'name.unique'                           => 'Tên sản phẩm đã tồn tại',
             'import_price.required'                 => 'Vui lòng nhập :attribute',
@@ -71,7 +72,8 @@ class StoreProductRequest extends FormRequest
         ];
     }
 
-    protected function failedValidation(\Illuminate\Contracts\Validation\Validator $validator){
+    protected function failedValidation(\Illuminate\Contracts\Validation\Validator $validator)
+    {
         throw new HttpResponseException(
             response()->json([
                 'status' => false,

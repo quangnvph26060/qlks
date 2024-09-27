@@ -15,6 +15,7 @@ class ReturnGood extends Model
         'warehouse_entry_id',
         'reference_code',
         'status',
+        'total',
     ];
 
 

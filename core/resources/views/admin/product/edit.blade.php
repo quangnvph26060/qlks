@@ -140,6 +140,11 @@
 @push('script')
     <script src="{{ asset('assets/admin/js/ckeditor.js') }}"></script>
     <script>
+        $(document).ready(function() {
+            $('input[name="sku"]').on('input', function() {
+                this.value = this.value.toUpperCase();
+            });
+        });
         (function($) {
             "use strict";
             $(document).ready(function() {

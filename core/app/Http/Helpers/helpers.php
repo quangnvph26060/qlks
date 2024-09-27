@@ -613,7 +613,12 @@ function saveImages($request, string $inputName, string $directory = 'images', $
             $filename = time() . uniqid() . '.' . $image->getClientOriginalExtension();
 
             // Lưu hình ảnh đã được thay đổi kích thước vào storage
-            Storage::put($directory . '/' . $filename, $img->encode());
+            // ;
+            if (Storage::put($directory . '/' . $filename, $img->encode())) {
+                dd(123);
+            } else {
+                dd(456);
+            }
 
             // Lưu đường dẫn vào mảng
             $paths[] = $directory . '/' . $filename;

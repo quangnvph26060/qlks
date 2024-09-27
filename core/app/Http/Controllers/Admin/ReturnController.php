@@ -73,7 +73,6 @@ class ReturnController extends Controller
      */
     public function store(StoreReturnRequest $request, $id)
     {
-        // dd($request->products);
         DB::beginTransaction();
 
         try {
@@ -92,6 +91,10 @@ class ReturnController extends Controller
                 $total += $product->pivot->quantity * $product->import_price;
                 $return->warehouse_entry->entries->where('product_id', $product->id)->first()->increment('number_of_cancellations', $product->pivot->quantity);
             }
+
+            $return->update([
+                'total' => $total
+            ]);
 
             DB::commit();
 

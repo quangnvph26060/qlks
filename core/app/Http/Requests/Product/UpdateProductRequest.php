@@ -27,7 +27,7 @@ class UpdateProductRequest extends FormRequest
             'import_price' => 'required|numeric',
             'selling_price' => 'required|numeric|gt:import_price',
             'description' => 'nullable',
-            'sku' => 'required|unique:products,sku,' . $this->id,
+            'sku' => 'max:6|required|unique:products,sku,' . $this->id,
             'category_id' => 'required',
             'brand_id' => 'required',
             'stock' => 'nullable|integer',
@@ -38,6 +38,7 @@ class UpdateProductRequest extends FormRequest
     public function messages(): array
     {
         return [
+            'sku.max'                               => 'Mã sản phẩm không được quá 6 ký tự',
             'name.required'                         => 'Vui lòng nhập :attribute',
             'name.unique'                           => 'Tên sản phẩm đã tồn tại',
             'import_price.required'                 => 'Vui lòng nhập :attribute',
