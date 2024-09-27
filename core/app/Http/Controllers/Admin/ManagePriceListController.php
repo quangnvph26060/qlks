@@ -36,6 +36,7 @@ class ManagePriceListController extends Controller
         ];
         $relations = [];
         $searchColumns = [
+            'code',
             'name',
             'status',
         ];
