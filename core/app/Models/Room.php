@@ -2,6 +2,7 @@
 
 namespace App\Models;
 
+use App\Constants\Status;
 use App\Traits\GlobalStatus;
 use Illuminate\Database\Eloquent\Model;
 
@@ -59,10 +60,15 @@ class Room extends Model
         }
      //   return $this->belongsToMany(RoomPrice::class, 'room_price_rooms', 'room_id', 'price_id');
     }
+
+    public function scopeActive($query) {
+        return $query->where('rooms.status', Status::ROOM_ACTIVE);
+    }
     
     public function roomPrices()
     {
         return $this->belongsToMany(RoomPrice::class, 'room_price_rooms', 'room_id', 'price_id')
-                    ->where('status', 'active');
+                ->where('room_prices.status', 'active') 
+                ->withPivot('room_id', 'price_id', 'status','');
     }
 }
