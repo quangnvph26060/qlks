@@ -88,11 +88,13 @@
                                 <label for="">Ngày bắt đầu</label>
 
                                 <input type="date" name="start_date" class="form-control"
+
                                     placeholder="Chọn ngày và giờ" />
                             </div>
 
                             <div class="form-group mb-3 col-lg-6">
                                 <label for="">Ngày kết thúc</label>
+
                                 <input type="date" name="end_date" class="form-control"
                                     placeholder="Chọn ngày và giờ" />
                             </div>

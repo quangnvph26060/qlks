@@ -38,10 +38,11 @@ class Room extends Model
         return $this->isRoomClean() ? 'Đã dọn' : 'Chưa dọn';
     }
 
-    public function prices($data)
-    {
 
-        foreach ($data as $item) {
+
+    public function prices($data){
+
+        foreach($data as $item){
             $roomPrice =  RoomPrice::find($item);
             if (!$roomPrice) {
                 $notify[] = ['error', 'Giá không tồn tại'];
@@ -64,6 +65,8 @@ class Room extends Model
     public function roomPrices()
     {
         return $this->belongsToMany(RoomPrice::class, 'room_price_rooms', 'room_id', 'price_id')
-            ->where('status', 'active');
+
+                    ->where('status', 'active');
+
     }
 }
