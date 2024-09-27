@@ -12,12 +12,12 @@ class RepresentativeController extends Controller
 {
     public function store(Request $request)
     {
-        if ($request->ajax()) {
+            if ($request->ajax()) {
             $data = Validator::make(
                 data: $request->all(),
                 rules: [
                     'name'              => 'required',
-                    'email'             => 'required|email|unique:supplier',
+                    'email'             => 'required|email|unique:suppliers',
                     'phone'             => 'required|regex:/^([0-9\s\-\+\(\)]*)$/',
                     'position'          => 'nullable',
                 ],
@@ -40,6 +40,7 @@ class RepresentativeController extends Controller
                         'message'       => 'Thêm mới thành công.'
                     ]);
                 } catch (\Exception $e) {
+                    dd($e->getMessage());
                     return response()->json([
                         'status'        => false,
                         'message'       => 'Không tìm thấy nhà cung cấp!'

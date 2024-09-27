@@ -1,22 +1,22 @@
 @extends($activeTemplate . 'layouts.frontend')
 @section('content')
     <section class="section">
-        <div class="container">
+        <div class="container" style="max-width:1100px">
             <div class="row">
-                <div class="col-md-4">
+                <div class="col-lg-3 col-xl-3 d-custom-md-none">
                     <div class="card">
                         <div class="card-header">
-                            <h5 class="card-title">@lang('Chọn lọc theo:')</h5>
+                            <h5 class="card-title m-0">@lang('Chọn lọc theo:')</h5>
                         </div>
                         <div class="card-body border-bottom">
-                            <h6 class="card-text mb-2" style="font-size: 14px;">Ngân sách của bạn (mỗi đêm)</h6>
+                            <h6 class="card-text mb-2">Ngân sách của bạn (mỗi đêm)</h6>
                             <div class="range-value mb-2">
                                 <span id="priceMin">VNĐ 50.000</span> - <span id="priceMax">VNĐ 2.000.000+</span>
                             </div>
                             <input type="text" id="priceSlider" name="price" value="" />
                         </div>
                         <div class="card-body">
-                            <h6 class="card-text mb-2" style="font-size: 14px;">Tiện nghi</h6>
+                            <h6 class="card-text mb-2">Tiện nghi</h6>
                             <div id="amenities">
                                 <div class="form-check">
                                     <div class="d-flex justify-content-between alion-items-center">
@@ -79,7 +79,7 @@
                         </div>
                     </div>
                 </div>
-                <div class="col-md-8">
+                <div class="col-xl-9 col-lg-12 col-md-12">
                     <div class="row gy-4 justify-content-center">
                         @if ($roomTypes->count())
                             @include($activeTemplate . 'partials.room_cards', [
@@ -99,7 +99,6 @@
                     </div>
                 </div>
             </div>
-
         </div>
     </section>
 @endsection
@@ -250,81 +249,101 @@
 @push('style')
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/ion-rangeslider/2.3.0/css/ion.rangeSlider.min.css">
     <style>
-        body {
-            font-family: Arial, sans-serif;
-            margin: 0;
-            padding: 20px;
-            background-color: #f4f4f4;
-        }
-
-        .container {
-            max-width: 1110px;
-            margin: 0 auto;
-        }
-
-        .item {
-            display: flex;
-            justify-content: space-between;
-            margin-bottom: 20px;
-            background: white;
-            border-radius: 8px;
-            overflow: hidden;
-            box-shadow: 0 2px 8px rgba(0, 0, 0, 0.1);
-        }
-
-        .item img {
-            max-width: 40%;
+        .responsive-image {
+            max-width: 100%;
             height: auto;
-            display: block;
-            width: 240px;
-            height: 240px;
         }
 
-        .info {
-            margin-left: 20px;
-            flex: 1;
-            display: flex;
-            flex-direction: column;
-            /* justify-content: space-between; */
+        @media (max-width: 768px) {
+            .responsive-image {
+                max-width: 80%;
+            }
         }
 
-        .info h2 {
-            margin: 0 0 10px;
-            color: #333;
+        /* Khi màn hình nhỏ hơn 576px (mobile) */
+        @media (max-width: 576px) {
+            .responsive-image {
+                max-width: 70%;
+            }
         }
 
-        .info p {
-            margin: 5px 0;
-            line-height: 1.5;
-            color: #666;
+        .section {
+            padding-top: clamp(50px, 4vw, 100px);
         }
 
-        .price {
+        .card {
+            border: 1px solid #dee2e6;
+        }
+
+        label,
+        #toggleAmenities {
+            font-size: .75rem;
+        }
+
+
+        .form-check span {
+            font-size: .6rem !important;
+        }
+
+        .card-title {
+            font-size: 16px;
+        }
+
+        .card-text,
+        .text-muted.mb-1 {
+            font-size: 12px;
+        }
+
+        .end-0 {
+            right: 1px !important;
+        }
+
+        .fa-star {
+            font-size: 14px
+        }
+
+        .text-custom {
+            text-decoration: underline;
+            color: #007bff;
             font-weight: bold;
-            color: #e67e22;
         }
 
-        @media (max-width: 600px) {
-            .item {
-                flex-direction: column;
-            }
+        .d-block.text-muted {
+            font-size: 12px;
+        }
 
-            .item img {
-                max-width: 100%;
-            }
+        .card-body.border-bottom {
+            font-size: 12px;
+        }
 
-            .info {
-                padding: 10px;
+        @media (max-width: 1200px) {
+            .d-custom-md-none {
+                display: none;
             }
         }
 
-        .empty-message {
-            text-align: center;
+        @media (min-width: 990px) {
+            .col-custom-md-4 {
+                flex: 0 0 auto !important;
+                width: 30.33333333% !important;
+            }
+
+            .col-custom-md-2 {
+                flex: 0 0 auto !important;
+                width: 19.33333333% !important;
+            }
         }
 
-        .empty-message span {
-            font-size: 25px;
-            display: block;
+        @media (min-width: 768px) {
+            .col-custom-md-4 {
+                flex: 0 0 auto;
+                width: 25.33333333%;
+            }
+
+            .col-custom-md-2 {
+                flex: 0 0 auto;
+                width: 24.33333333%;
+            }
         }
     </style>
 @endpush

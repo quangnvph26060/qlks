@@ -38,8 +38,7 @@
                                 style="cursor: pointer; top: -7px !important; right: -5px !important; padding: 1px 4px !important">x</small>
                         </span>
                     @endforeach
-                    <span class="badge bg-primary cursor-pointer" data-toggle="modal" data-id="{{ $item->id }}"
-                        data-target="#addRepresentatives">Thêm
+                    <span class="badge bg-primary cursor-pointer show-modal" data-id="{{ $item->id }}">Thêm
                         (+)</span>
                 </span>
             </div>
