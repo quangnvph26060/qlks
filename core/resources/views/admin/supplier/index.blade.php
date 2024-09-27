@@ -29,6 +29,7 @@
                             <thead>
                                 <tr>
                                     <th></th>
+                                    <th>Mã Nhà Cung Cấp</th>
                                     <th>Tên Nhà Cung Cấp</th>
                                     <th>Email</th>
                                     <th>Số điện thoại</th>

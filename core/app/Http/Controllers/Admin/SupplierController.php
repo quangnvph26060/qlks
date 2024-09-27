@@ -10,6 +10,7 @@ use Illuminate\Support\Facades\Log;
 use App\Http\Controllers\Controller;
 use App\Repositories\BaseRepository;
 use App\Http\Requests\StoreSupplierRequest;
+use App\Http\Requests\UpdateSupplierRequest;
 
 class SupplierController extends Controller
 {
@@ -30,7 +31,7 @@ class SupplierController extends Controller
         $search = request()->get('search');
         $perPage = request()->get('perPage', 10);
         $orderBy = request()->get('orderBy', 'id');
-        $columns = ['id', 'name', 'email', 'phone', 'address'];
+        $columns = ['id', 'name', 'email', 'phone', 'address', 'supplier_id'];
         $relations = ['supplier_representatives'];
         $searchColumns = ['name', 'email', 'phone', 'address'];
         $relationSearchColumns = ['supplier_representatives' => ['email', 'name']];
@@ -118,15 +119,51 @@ class SupplierController extends Controller
      */
     public function edit(string $id)
     {
-        //
+        $pageTitle = "Cập nhật thông tin nhà cung cấp";
+        $banks = Bank::query()->pluck('name', 'id');
+        $supplier = Supplier::find($id);
+        return view('admin.supplier.edit', compact('pageTitle', 'banks', 'supplier'));
     }
 
     /**
      * Update the specified resource in storage.
      */
-    public function update(Request $request, string $id)
+    public function update(UpdateSupplierRequest $request, string $id)
     {
-        //
+
+        if ($request->ajax()) {
+            DB::beginTransaction();
+            try {
+                $supplier = Supplier::find($id);
+
+                $data                           = $request->validated();
+
+                dd($data);
+
+                $data['is_active'] = $request->is_active ? 1 : 0;
+
+                $supplier->update($data);
+
+                DB::commit();
+
+                session()->flash('success', 'Cập nhật thông tin nhà cung cấp thành công.');
+
+                return response()->json([
+                    'status'    => true,
+                ]);
+            } catch (\Exception $exception) {
+
+                dd($exception->getMessage());
+                DB::rollBack();
+                Log::error($exception->getMessage());
+                $this->repository->logError($exception);
+
+                return response()->json([
+                    'status'    => false,
+                    'message'   => 'Đã có lỗi xay ra, vui lòng thử lại sau!',
+                ]);
+            }
+        }
     }
 
     /**

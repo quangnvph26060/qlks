@@ -205,7 +205,6 @@ name VARCHAR(255) NOT NULL,
 status INT NOT NULL
 );
 
-
 25/09/2004 (dat09)
 CREATE TABLE room_prices (
 id INT AUTO_INCREMENT PRIMARY KEY,
@@ -233,7 +232,6 @@ created_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
 updated_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP ON UPDATE CURRENT_TIMESTAMP
 );
 
-
 -- Thêm cột code vào bảng room_prices
 ALTER TABLE room_prices
 ADD COLUMN code VARCHAR(50) NOT NULL AFTER name; -- Thêm cột code sau cột name
@@ -241,7 +239,6 @@ ADD COLUMN code VARCHAR(50) NOT NULL AFTER name; -- Thêm cột code sau cột n
 -- Thêm ràng buộc UNIQUE cho cặp name và code
 ALTER TABLE room_prices
 ADD UNIQUE (name, code); -- Thêm ràng buộc tính duy nhất cho name và code
-
 
 CREATE TABLE room_price_rooms (
 room_id INT NOT NULL, -- Khóa ngoại đến bảng rooms
@@ -279,18 +276,20 @@ ALTER TABLE premium_services
 ADD service_id VARCHAR(255) NULL DEFAULT NULL;
 
 
+
 -- 26/09 đạt 09
 ALTER TABLE `returns` ADD `total` INT NOT NULL DEFAULT '0' AFTER `status`;
 
 
+
 -- 26/09
 
-ALTER TABLE `room_prices` 
+ALTER TABLE `room_prices`
 ADD COLUMN start_time TIME NULL,
 ADD COLUMN end_time TIME NULL,
 ADD COLUMN specific_date DATE NULL;
 
-ALTER TABLE`room_prices` 
+ALTER TABLE`room_prices`
 MODIFY COLUMN start_date DATE,
 MODIFY COLUMN end_date DATE;
 
@@ -301,7 +300,6 @@ ADD COLUMN start_time TIME NULL,
 ADD COLUMN end_time TIME NULL,
 ADD COLUMN specific_date DATE NULL;
 
-
 26/9/2024 - phong
 ALTER TABLE categories
 ADD category_id VARCHAR(255) NULL DEFAULT NULL;
@@ -309,11 +307,18 @@ ADD category_id VARCHAR(255) NULL DEFAULT NULL;
 ALTER TABLE brands
 ADD brand_id VARCHAR(255) NULL DEFAULT NULL;
 
-
 ALTER TABLE room_price_rooms
 ADD created_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP;
 
 ALTER TABLE room_price_rooms
 ADD updated_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP ON UPDATE CURRENT_TIMESTAMP;
+
+
+27/9/2024 phong_dev
+ALTER TABLE suppliers
+ADD supplier_id VARCHAR(255) NULL DEFAULT NULL;
+
+
+ALTER TABLE `room_price_rooms` ADD `status` BOOLEAN NOT NULL DEFAULT FALSE AFTER `specific_date`;
 
 

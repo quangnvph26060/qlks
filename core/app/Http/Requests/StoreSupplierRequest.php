@@ -23,6 +23,7 @@ class StoreSupplierRequest extends FormRequest
     public function rules(): array
     {
         return [
+            'suppliers.supplier_id'                      => 'unique:suppliers,supplier_id|max:6',
             'suppliers.name'                             => 'required',
             'suppliers.email'                            => 'required|email|unique:suppliers',
             'suppliers.phone'                            => 'required|regex:/^([0-9\s\-\+\(\)]*)$/|min:10|max:10',
@@ -40,6 +41,8 @@ class StoreSupplierRequest extends FormRequest
     public function messages(): array
     {
         return [
+            'suppliers.supplier_id.max'                  => 'Mã nhà cung cấp không được quá 6 ký tự',
+            'suppliers.supplier_id.unique'               => 'Mã nhà cung cập đã tồn tại',
             'suppliers.name.required'                    => 'Vui lòng nhập :attribute!',
             'suppliers.email.required'                   => 'Vui lòng nhập :attribute!',
             'suppliers.email.email'                      => ':attribute không đúng định dạng!',
