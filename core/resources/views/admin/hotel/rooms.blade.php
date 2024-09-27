@@ -157,6 +157,15 @@
                                 <label>@lang('Mã phòng')</label>
                                 <input class="form-control" name="room_id" type="text">
                             </div>
+                            <div class="form-group">
+                                <label for="">Chọn giá</label>
+                                <select class="select2-multi-select" multiple="multiple" name="prices[]">
+                                    @foreach ($prices as $id => $name)
+                                        <option value="{{ $id }}">{{ $name }}</option>
+                                    @endforeach
+                                </select>
+                            </div>
+
                         </div>
                         <div class="modal-footer">
                             <button class="btn btn--primary w-100 h-45" type="submit">@lang('Submit')</button>
@@ -173,7 +182,8 @@
 @endsection
 
 @push('breadcrumb-plugins')
-    <button class="btn btn-outline--primary" data-bs-target="#addModal" data-bs-toggle="modal"><i class="las la-plus"></i>
+    <button class="btn btn-outline--primary" data-bs-target="#addModal" data-bs-toggle="modal"><i
+            class="las la-plus"></i>
         @lang('Thêm mới')</button>
     <x-search-form filter='yes' />
 @endpush
@@ -229,11 +239,15 @@
         $('.editBtn').on('click', function() {
             let modal = $('#editModal');
             let resource = $(this).data('resource');
+
             let route = `{{ route('admin.hotel.room.update', '') }}/${resource.id}`;
 
             modal.find('form').attr('action', route);
             modal.find('[name=room_type_id]').val(resource.room_type_id);
             modal.find('[name=room_number]').val(resource.room_number);
+            modal.find('[name=room_id]').val(resource.room_id);
+            let priceIds = resource.prices.map(price => price.pivot.price_id); // Adjust this if necessary
+            modal.find('.select2-multi-select').val(priceIds).trigger('change');
             modal.modal('show');
         });
 

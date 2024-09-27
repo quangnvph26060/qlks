@@ -15,8 +15,7 @@ class RoomController extends Controller
     {
         $pageTitle = 'Tất cả các phòng';
         $roomTypes = RoomType::get();
-        $rooms     = Room::searchable(['room_number', 'roomType:name'])->filter(['room_type_id'])->orderBy('room_number')->with('prices');
-
+        $rooms     = Room::searchable(['room_number', 'roomType:name'])->filter(['room_type_id'])->orderBy('room_number')->with('prices:name');
         $prices = RoomPrice::active()->pluck('name', 'id');
 
         if (request()->status == Status::ENABLE || request()->status == Status::DISABLE) {
@@ -24,6 +23,7 @@ class RoomController extends Controller
         }
 
         $rooms =  $rooms->with('roomType.images')->orderBy('room_number', 'asc')->paginate(getPaginate());
+
         return view('admin.hotel.rooms', compact('pageTitle', 'rooms', 'roomTypes', 'prices'));
     }
 
@@ -41,17 +41,21 @@ class RoomController extends Controller
     {
         $roomFiled = $id ? 'room_number' : 'room_numbers';
 
+
+        $roomId = $id ?? '';
+
+
         $request->validate([
             'room_type_id' => 'required|exists:room_types,id',
             "$roomFiled"   => 'required',
-            'room_id'      => 'unique:rooms,room_id',
+            'room_id'      => 'unique:rooms,room_id,' . $roomId,
             'prices'       => 'required|array', // Thêm điều kiện cho prices
         ]);
 
         if ($id) {
             $existsRoom = Room::where('room_number', $request->room_number)->where('id', '!=', $id)->exists();
         } else {
-          //  $existsRoom = Room::whereIn('room_number', $request->room_numbers)->count();
+            //  $existsRoom = Room::whereIn('room_number', $request->room_numbers)->count();
             $existsRoom = Room::where('room_number', $request->room_numbers)->first();
         }
 
@@ -80,7 +84,7 @@ class RoomController extends Controller
             $room->room_number = $request->room_numbers;
             $room->room_id = $request->room_id;
             $room->save();
-            
+
             $message = 'Phòng đã được thêm thành công';
         }
 
@@ -96,13 +100,12 @@ class RoomController extends Controller
             //          $room->prices()->sync($request->input('prices'));
             //     }
             // }
-           
-                $room = Room::where('room_number', $request->room_numbers)->first();
-                if ($room) {
-                   $room->updatePrices($request->input('prices'));
-                  //  $room->prices()->sync($request->input('prices'));
-                }
-           
+
+            $room = Room::where('room_number', $request->room_numbers)->first();
+            if ($room) {
+                $room->updatePrices($request->input('prices'));
+                //  $room->prices()->sync($request->input('prices'));
+            }
         }
 
         $notify[] = ['success', $message];

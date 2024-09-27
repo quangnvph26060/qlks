@@ -1,7 +1,7 @@
 @foreach ($roomType as $type)
     <div class="card p-3" style="max-width: 100%;">
         <div class="row g-0">
-            <div class="col-custom-md-4 position-relative">
+            <div class="col-custom-md-4 col-sm-5 col-custom-ssm-5 col-custom-sssm-5 position-relative">
                 <img src="core/public/storage/roomTypeImage/172741170266f635f6128d1.jpg" class="responsive-image rounded"
                     alt="Hotel Image">
                 <button class="btn btn-light position-absolute top-0 end-0 m-2 rounded-circle"
@@ -9,37 +9,50 @@
                     <i class="far fa-heart"></i>
                 </button>
             </div>
-            <div class="col-md-6">
-                <div class="card-body py-1">
-                    <h5 class="card-title text-primary fw-bold">
+            <div class="col-md-8 col-lg-6 col-sm-7 col-custom-ssm-7 col-custom-sssm-7">
+                <div class="card-body  py-1">
+                    <h5 class="card-title text-primary fw-bold ">
                         BIDV Central Da Lat Hotel
-                        <span class="text-warning ms-2">
+                        <span class="text-warning ms-2 rating">
                             <i class="fa fa-star"></i>
                             <i class="fa fa-star"></i>
                             <i class="fa fa-star"></i>
                         </span>
                     </h5>
-                    <p class="text-muted mb-1">
+                    {{-- <p class="text-muted mb-1">
                         <a href="#" class="text-custom">Đà Lạt</a> • <a href="#" class="text-custom">Xem
                             trên bản đồ</a> •
                         Cách trung tâm 0,7km
-                    </p>
+                    </p> --}}
                     <p class="card-text amenities">
-                        <label for="" class="text-muted me-1 fw-bold">Tiện nghi: </label><span
-                            class="badge bg-secondary ms-2">Thịt
-                            chó</span><span class="badge bg-secondary ms-1">Mắm tôm</span><span
-                            class="badge bg-secondary ms-1">Lá mơ</span>
+                        <label for="" class="text-muted me-1 fw-bold">Tiện nghi: </label>
+                        <span class="badge-container">
+                            <span class="badge bg-secondary ms-1">Bia</span>
+                            <span class="badge bg-secondary ms-1">Rśu</span>
+                            <span class="badge bg-secondary ms-2">Cafe</span>
+                            <span class="badge bg-secondary ms-1">Thức ăn</span>
+                            <span class="badge bg-secondary ms-1">Nhạc sống</span>
+                            <span class="badge bg-secondary ms-1">Wi-Fi</span>
+                            <span class="badge bg-secondary ms-1">Bô bơi</span>
+                        </span>
                     </p>
                     <p class="card-text utilities">
-                        <label for="" class="text-muted me-1 fw-bold">Tiện ích: </label><span
-                            class="badge bg-secondary ms-2">Bia</span><span
-                            class="badge bg-secondary ms-1">Rượu</span><span class="badge bg-secondary ms-2">Cafe</span>
+                        <label for="" class="text-muted me-1 fw-bold">Tiện ích:</label>
+                        <span class="badge-container">
+                            <span class="badge bg-secondary ms-1">Bia</span>
+                            <span class="badge bg-secondary ms-1">Rượu</span>
+                            <span class="badge bg-secondary ms-2">Cafe</span>
+                            <span class="badge bg-secondary ms-1">Thức ăn</span>
+                            <span class="badge bg-secondary ms-1">Nhạc sống</span>
+                            <span class="badge bg-secondary ms-1">Wi-Fi</span>
+                            <span class="badge bg-secondary ms-1">Bể bơi</span>
+                        </span>
                     </p>
-                    <p class="card-text utilities">
+                    <p class="card-text quality">
                         <label for="" class="text-muted me-1 fw-bold">Số lượng người(7): </label> <span>5 người
                             lớn | 2 trẻ em</span>
                     </p>
-                    <p class="card-text utilities">
+                    <p class="card-text sort-description">
                         <span> <label for="" class="text-muted me-1 fw-bold mb-0">Mô tả ngắn: </label>Lorem
                             ipsum dolor, sit amet consectetur
                             adipisicing elit. Alias magni quis soluta nemo at tempore! Autem voluptate rerum qui
@@ -47,10 +60,33 @@
                         </span>
                     </p>
 
+                    <div class="border-start d-flex flex-column justify-content-center d-lg-custom-none">
+                        <!-- Giá phòng -->
+                        <div class="price-info mb-1">
+                            <h6 class="text-danger fw-bold">2.500.000 VND</h6>
+                        </div>
+
+                        <!-- Chính sách -->
+                        <div class="policy-info mb-3  d-md-custom-none">
+                            <p class="small mb-1 text-muted">
+                                <i class="fas fa-check-circle text-success me-1"></i>Miễn phí hủy
+                            </p>
+                            <p class="small text-muted">
+                                <i class="fas fa-utensils me-1"></i>Bao gồm bữa sáng
+                            </p>
+                        </div>
+
+                        <!-- Nút đặt phòng -->
+                        <a class="btn btn-sm btn--base"
+                            href="{{ route('room.type.details', $type->slug) }}">
+                            <i class="la la-desktop me-2"></i>@lang('Đặt ngay')
+                        </a>
+                    </div>
+
                 </div>
 
             </div>
-            <div class="col-custom-md-2 ps-3 border-start d-flex flex-column justify-content-center">
+            <div class="col-custom-md-2 ps-3 border-start d-flex flex-column justify-content-center d-custom-none">
                 <!-- Giá phòng -->
                 <div class="price-info my-3 ">
                     <h6 class="text-danger fw-bold">2.500.000 VND</h6>
