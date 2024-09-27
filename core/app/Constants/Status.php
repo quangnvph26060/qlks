@@ -61,4 +61,8 @@ class Status
 
     const ROOM_CLEAN_ACTIVE = 1;
     const ROOM_CLEAN_INACTIVE = 0;
+
+    const PRICEROOM_ACTIVE = 1; 
+    const PRICEROOM_INACTIVE = 0;
+
 }
