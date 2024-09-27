@@ -86,21 +86,41 @@
 
                             <div class="form-group mb-3 col-lg-6">
                                 <label for="">Ngày bắt đầu</label>
-                                <input type="datetime-local" name="start_date" id="start_date" class="form-control"
+
+                                <input type="date" name="start_date" class="form-control"
+
+                                    placeholder="Chọn ngày và giờ" />
+                            </div>
+                            
+                            <div class="form-group mb-3 col-lg-6">
+                                <label for="">Ngày kết thúc</label>
+
+                                <input type="date" name="end_date" class="form-control"
                                     placeholder="Chọn ngày và giờ" />
                             </div>
                             <div class="form-group mb-3 col-lg-6">
-                                <label for="">Ngày kết thúc</label>
-                                <input type="datetime-local" name="end_date" id="end_date" class="form-control"
+                                <label for="">Thời gian bắt đầu</label>
+                                <input type="time" name="start_time" class="form-control"
                                     placeholder="Chọn ngày và giờ" />
                             </div>
+                            
+                            <div class="form-group mb-3 col-lg-6">
+                                <label for="">Thời gian kết thúc</label>
+                                <input type="time" name="end_time" class="form-control"
+                                    placeholder="Chọn ngày và giờ" />
+                            </div>
+                            <div class="form-group mb-3 col-lg-6">
+                                <label for="">Ngày đặc biệt</label>
+                                <input type="date" name="specific_date" class="form-control"
 
+                                    placeholder="Chọn ngày và giờ" />
+                            </div>
                             <div class="form-group mb-3 col-lg-12">
                                 <label for="">Giá trị</label>
                                 <div class="input-group">
                                     <input type="text" class="form-control" id="price" name="price"
                                         placeholder="Nhập giá">
-                                    <span class="input-group-text">{{ __(@$general->cur_text) }}</span>
+                                    <span class="input-group-text">{{ __(gs()->cur_text) }}</span>
                                 </div>
                             </div>
 
@@ -127,6 +147,7 @@
 @endsection
 
 @push('script')
+    <script src="{{ asset('assets/admin/js/vendor/sweetalert2@11.js') }}"></script>
     <script src="{{ asset('assets/admin/js/dataTable.js') }}"></script>
 
     <script>
@@ -302,6 +323,8 @@
 
 @push('style')
     <style>
+       
+       
         .radio-container {
             display: flex;
             align-items: center;

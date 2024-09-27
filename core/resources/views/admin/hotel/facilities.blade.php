@@ -88,7 +88,8 @@
                         <div class="modal-body">
                             <div class="form-group">
                                 <label> @lang('Mã cở sở vật chất')</label>
-                                <input class="form-control" name="facility_id" required type="text" value="{{ old('facility_id') }}">
+                                <input class="form-control" name="facility_id" required type="text"
+                                    value="{{ old('facility_id') }}">
                             </div>
                             <div class="form-group">
                                 <label> @lang('Cở sở vật chất')</label>
@@ -135,6 +136,13 @@
 
 @push('script')
     <script>
+        //Chuyển mọi ký tự trong input facility_id thành uppercase
+        $(document).ready(function() {
+            $('input[name="facility_id"]').on('input', function() {
+                this.value = this.value.toUpperCase();
+            });
+        });
+
         (function($) {
             "use strict";
 

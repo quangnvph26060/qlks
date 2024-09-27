@@ -12,6 +12,7 @@ use Illuminate\Http\Request;
 use App\Constants\Status;
 use App\Http\Responses\ApiResponse;
 use App\Models\PremiumService;
+use App\Models\RoomPriceRoom;
 use Symfony\Component\HttpKernel\Log\Logger;
 
 class BookingController extends Controller {
@@ -31,7 +32,7 @@ class BookingController extends Controller {
 
         $disabledRoomTypeIDs = RoomType::where('status', 0)->pluck('id')->toArray(); // Lấy danh sách các ID của loại phòng bị vô hiệu hóa
         $bookedRooms         = $rooms->pluck('room_id')->toArray(); // Lấy danh sách các ID của phòng đã được đặt hôm nay.
-        $emptyRooms          = Room::active()->whereNotIn('id', $bookedRooms)->whereNotIn('room_type_id', $disabledRoomTypeIDs)->with('roomType:id,name')->select('id', 'room_type_id', 'room_number')->get();
+        $emptyRooms          = Room::active()->whereNotIn('id', $bookedRooms)->whereNotIn('room_type_id', $disabledRoomTypeIDs)->with('roomType:id,name','roomPrices')->select('id', 'room_type_id', 'room_number')->get();
 
         return view('admin.booking.todays_booked', compact('pageTitle', 'rooms', 'emptyRooms'));
     }
@@ -212,16 +213,16 @@ class BookingController extends Controller {
         ])
         ->whereDate('booked_for', now()->toDateString())
         ->get();
-       
+
         $disabledRoomTypeIDs = RoomType::where('status', 0)->pluck('id')->toArray();
         $bookedRooms         = $rooms->pluck('room_id')->toArray();
         $emptyRooms          = Room::active()
              ->whereNotIn('id', $bookedRooms)
             ->whereNotIn('room_type_id', $disabledRoomTypeIDs) // loại trừ nhũng phòng ngưng hoạt động hoạt vô hiệu hóa 
-            ->with('roomType')
+            ->with('roomType','roomPrices')
             ->select('id', 'room_type_id', 'room_number','is_clean')
             ->get();
-        
+    
         $scope = 'ALL';
         $is_method = 'Receptionist';
         $bookings = BookedRoom::active()->with('booking', 'roomType', 'room', 'usedPremiumService')->get();

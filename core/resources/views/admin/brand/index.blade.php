@@ -8,6 +8,12 @@
                 <h3>@lang('Thêm Mới Thương Hiệu')</h3>
                 <form action="" method="POST" id="brandForm">
                     <div class="form-group mb-3">
+                        <label for="name">Mã Thương Hiệu </label>
+                        <input type="text" class="form-control" id="brand_id" name="brand_id"
+                            placeholder="Nhập mã thương hiệu">
+                        <small></small>
+                    </div>
+                    <div class="form-group mb-3">
                         <label for="name">Tên Thương Hiệu *</label>
                         <input type="text" class="form-control" id="name" name="name"
                             placeholder="Nhập tên thương hiệu">
@@ -55,7 +61,8 @@
                         <thead class="thead-light">
                             <tr>
                                 <th>@lang('STT')</th>
-                                <th>@lang('Tên danh mục')</th>
+                                <th>@lang('Mã thương hiệu')</th>
+                                <th>@lang('Tên thương hiệu')</th>
                                 <th>@lang('Sản phẩm (số lượng)')</th>
                                 <th>@lang('Trạng thái')</th>
                                 @can([])
@@ -83,9 +90,16 @@
 @push('script')
     <script src="{{ asset('assets/admin/js/dataTable.js') }}"></script>
     <script>
+        $(document).ready(function() {
+            $('input[name="brand_id"]').on('input', function() {
+                this.value = this.value.toUpperCase();
+            });
+        });
+
         (function($) {
             "use strict";
             $(document).ready(function() {
+
                 const apiUrl = '{{ route('admin.brand.index') }}'; // Thay đổi URL phù hợp
                 initDataFetch(apiUrl, true);
 
@@ -124,6 +138,7 @@
                     return `
                     <tr data-id="${data.id}">
                         <td>1</td>
+                        <td>${data.brand_id ?? 'Chưa có mã thương hiệu'}</td>
                         <td>${data.name}</td>
                         <td>${data.products_count || 0}</td>
                         <td>
@@ -169,6 +184,7 @@
                         method: "GET",
                         success: function(response) {
                             if (response.status) {
+                                $('#brand_id').val(response.data.brand_id);
                                 $("#name").val(response.data.name);
                                 $("#description").val(response.data.description);
                                 $("#is_active").prop('checked', response.data.is_active);
@@ -266,9 +282,10 @@
                 // Hàm cập nhật hàng khi chỉnh sửa danh mục thành công
                 function htmlStringSuccessUpdate(response) {
                     const $row = $("tr[data-id=" + response.data.id + "]");
-                    $row.find("td:nth-child(2)").text(response.data.name);
-                    $row.find("td:nth-child(3)").text(response.data.products_count || 0);
-                    $row.find("td:nth-child(4) input").prop('checked', response.data.is_active);
+                    $row.find("td:nth-child(2)").text(response.data.brand_id);
+                    $row.find("td:nth-child(3)").text(response.data.name);
+                    $row.find("td:nth-child(4)").text(response.data.products_count || 0);
+                    $row.find("td:nth-child(5) input").prop('checked', response.data.is_active);
                     $("#brandForm").removeAttr('data-id');
                 }
 

@@ -7,8 +7,15 @@
             <h3>@lang('Thêm Mới Danh Mục')</h3>
             <form action="" method="POST" id="categoryForm">
                 <div class="form-group mb-3">
+                    <label for="name">Mã Danh Mục </label>
+                    <input type="text" class="form-control" id="category_id" name="category_id"
+                        placeholder="Nhập mã danh mục">
+                    <small></small>
+                </div>
+                <div class="form-group mb-3">
                     <label for="name">Tên Danh Mục *</label>
-                    <input type="text" class="form-control" id="name" name="name" placeholder="Nhập tên danh mục">
+                    <input type="text" class="form-control" id="name" name="name"
+                        placeholder="Nhập tên danh mục">
                     <small></small>
                 </div>
                 <div class="form-group mb-3">
@@ -55,6 +62,8 @@
                             <table class="table--light style--two table" id="data-table">
                                 <thead>
                                     <tr>
+                                        <th>@lang('STT')</th>
+                                        <th>@lang('Mã danh mục')</th>
                                         <th>@lang('Tên danh mục')</th>
                                         <th class="w-25">@lang('Sản phẩm (số lượng)')</th>
                                         <th>@lang('Trạng thái')</th>
@@ -86,6 +95,12 @@
 @push('script')
     <script src="{{ asset('assets/admin/js/dataTable.js') }}"></script>
     <script>
+        //Chuyển mọi ký tự trong input category_id thành uppercase
+        $(document).ready(function() {
+            $('input[name="category_id"]').on('input', function() {
+                this.value = this.value.toUpperCase();
+            });
+        });
         (function($) {
             "use strict";
             $(document).ready(function() {
@@ -113,8 +128,12 @@
 
                 // Tạo một hàng mới trong bảng
                 const createNewRow = (data) => {
+                    console.log(data);
+
                     return `
                     <tr data-id="${data.id}">
+                        <td>1</td>
+                        <td>${data.category_id ?? 'Chưa có mã danh mục'}</td>
                         <td>${data.name}</td>
                         <td>${data.products_count || 0}</td>
                         <td>
@@ -160,6 +179,7 @@
                         method: "GET",
                         success: function(response) {
                             if (response.status) {
+                                $("#category_id").val(response.data.category_id);
                                 $("#name").val(response.data.name);
                                 $("#description").val(response.data.description);
                                 $("#status").prop('checked', response.data.status);
@@ -216,9 +236,6 @@
                     e.preventDefault();
                     const id = e.target.getAttribute('data-id');
 
-                    console.log(id);
-
-
                     const url = id ? "{{ route('admin.category.update', ':id') }}".replace(':id',
                             id) :
                         "{{ route('admin.category.store') }}";
@@ -266,9 +283,10 @@
                     console.log(response);
 
                     const $row = $("tr[data-id=" + response.data.id + "]");
-                    $row.find("td:nth-child(1)").text(response.data.name);
-                    $row.find("td:nth-child(2)").text(response.data.products_count || 0);
-                    $row.find("td:nth-child(3) input").prop('checked', response.data.status);
+                    $row.find("td:nth-child(2)").text(response.data.name);
+                    $row.find("td:nth-child(3)").text(response.data.name);
+                    $row.find("td:nth-child(4)").text(response.data.products_count || 0);
+                    $row.find("td:nth-child(5) input").prop('checked', response.data.status);
                     $("#categoryForm").removeAttr('data-id');
                 }
 

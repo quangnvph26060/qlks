@@ -18,7 +18,7 @@ class PremiumServiceController extends Controller
     public function save(Request $request, $id = 0)
     {
         $request->validate([
-            'service_id' => 'unique:premium_services,service_id',
+            'service_id' => 'unique:premium_services,service_id|max:6',
             'name'       => 'required|string|max:255|unique:premium_services,name,' . $id,
             'cost'       => 'required|integer|gt:0'
         ]);
