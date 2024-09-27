@@ -95,7 +95,7 @@
 
                                 <div class="d-flex">
                                     <div class="input-group row gx-0">
-                                        <input type="text" class="form-control" name="room_numbers[]" required>
+                                        <input type="text" class="form-control" name="room_numbers" required>
                                     </div>
                                     {{-- <button class="btn btn--success input-group-text border-0 addItem flex-shrink-0 ms-4" type="button"><i class="las la-plus me-0"></i></button> --}}
                                 </div>
@@ -202,6 +202,12 @@
             tokenSeparators: [','],
             // dropdownParent: $('.append-item')
         })
+        //Chuyển mọi ký tự trong input room_id thành uppercase
+        $(document).ready(function() {
+            $('input[name="room_id"]').on('input', function() {
+                this.value = this.value.toUpperCase();
+            });
+        });
 
         $(document).on('click', '.addItem', function() {
             var modal = $(this).parents('.modal');

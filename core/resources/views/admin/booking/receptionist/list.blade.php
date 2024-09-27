@@ -66,6 +66,11 @@
                 $classSvg = $room->getCleanStatusSvg();
                 $cleanText = $room->getCleanStatusText();
 
+                // test
+                // if($booking->booking->status === 3){
+                //     $class = 'demo-abc'; 
+                // }
+
                 if (
                     now() > $booking->booking->check_in &&
                     now() <= $booking->booking->check_out &&
@@ -1072,11 +1077,14 @@
 
             var checkOutTime;
             if (bookingType === 'gio') {
+                console.log('gio');
                 checkOutTime = new Date(now.getTime() + (1 * 60 * 60 * 1000)); // Cộng 1 giờ
             } else if (bookingType === 'ngay') {
+                console.log('ngay');
                 checkOutTime = new Date(now.getTime() + (1 * 24 * 60 * 60 *
                     1000)); // Cộng 1 ngày
             } else if (bookingType === 'dem') {
+                console.log('dem');
                 checkOutTime = new Date(now.getTime() + (12 * 60 * 60 *
                     1000)); // Cộng 12 giờ
             }
@@ -1105,15 +1113,6 @@
 
             var checkInDate = new Date(checkInTime);
             var checkOutDate = new Date(checkOutTime);
-
-
-
-            // array (
-            //     'room_type' => '2',
-            //     'date' => '09/11/2024 - 09/25/2024',
-            //     'rooms' => '3',
-            //     ) 
-
             var durationMs = checkOutDate - checkInDate;
 
             if (durationMs < 0) {
@@ -1139,7 +1138,6 @@
                 priceTime = parseFloat(window.savedDataNight.replace(',', '')) || 0;
                 updatedPrice = priceTime;
             }
-
 
             if (bookingType !== 'dem' && bookingType !== 'ngay') {
                 var updatedPrice = priceTime * formattedHours;

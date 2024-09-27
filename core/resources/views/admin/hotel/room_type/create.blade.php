@@ -30,40 +30,6 @@
 
                             <div class="col-xl-4 col-md-4 col-sm-12">
                                 <div class="form-group">
-                                    <label class="required" for="fare">@lang('Giá') /@lang('Đêm')</label>
-                                    <div class="input-group">
-                                        <input class="form-control" id="fare" name="fare" required type="number"
-                                            value="{{ old('fare', @$roomType->fare ? getAmount(@$roomType->fare) : '') }}">
-                                        <span class="input-group-text">{{ __(gs('cur_text')) }}</span>
-                                    </div>
-                                </div>
-                            </div>
-
-                            <div class="col-xl-4 col-md-4 col-sm-12">
-                                <div class="form-group">
-                                    <label class="required" for="hourly_rate">@lang('Giá') /@lang('Giờ')</label>
-                                    <div class="input-group">
-                                        <input class="form-control" id="hourly_rate" name="hourly_rate" type="number"
-                                            value="{{ old('hourly_rate', @$roomType->hourly_rate ? getAmount(@$roomType->hourly_rate) : '0') }}">
-                                        <span class="input-group-text">{{ __(gs('cur_text')) }}</span>
-                                    </div>
-                                </div>
-                            </div>
-
-                            <div class="col-xl-4 col-md-4 col-sm-12">
-                                <div class="form-group">
-                                    <label class="required" for="seasonal_rate">@lang('Giá')
-                                        /@lang('mùa')</label>
-                                    <div class="input-group">
-                                        <input class="form-control" id="seasonal_rate" name="seasonal_rate" type="number"
-                                            value="{{ old('seasonal_rate', @$roomType->seasonal_rate ? getAmount(@$roomType->seasonal_rate) : '0') }}">
-                                        <span class="input-group-text">{{ __(gs('cur_text')) }}</span>
-                                    </div>
-                                </div>
-                            </div>
-
-                            <div class="col-xl-4 col-md-4 col-sm-12">
-                                <div class="form-group">
                                     <label>@lang('Phí hủy bỏ') /@lang('Đêm')</label>
                                     <div class="input-group">
                                         <input class="form-control cancellationFee" min="0" name="cancellation_fee"
@@ -151,31 +117,33 @@
                     <div class="card-body results">
                         <div class="row">
 
-                                @foreach ($roomType->products ?? [] as $product)
-                                    <div class="col-md-4 pb-3 result-item" data-id="{{ $product->id }}}">
-                                        <div class="d-flex align-items-center border position-relative p-1" data-id="{{ $product->id }}">
-                                            <div class="img-container">
-                                                <img src="{{\Storage::url($product->image_path)}}" width="100"
-                                                    alt="" class="img-fluid">
-                                            </div>
-                                            <div class="info">
-                                                <div class="name ellipsis">
-                                                    <a href="#" class="text-decoration-none">{{$product->name}}</a>
-                                                </div>
-                                                <div class="price">
-                                                    <span class="current-price">Tồn kho: {{$product->stock ?? 0}}</span>
-                                                </div>
-                                                <div class="quantity d-flex align-items-center">
-                                                    <span class="current-stock me-2">Số lượng</span>
-                                                    <input type="number" name="products[{{$product->id}}]"
-                                                        class="form-control" min="1" value="{{$product->pivot->quantity}}">
-                                                </div>
-                                            </div>
-                                            <button class="btn-close position-absolute end-0 top-0 bg-danger"
-                                                style="border-radius: 0%"></button>
+                            @foreach ($roomType->products ?? [] as $product)
+                                <div class="col-md-4 pb-3 result-item" data-id="{{ $product->id }}}">
+                                    <div class="d-flex align-items-center border position-relative p-1"
+                                        data-id="{{ $product->id }}">
+                                        <div class="img-container">
+                                            <img src="{{ \Storage::url($product->image_path) }}" width="100"
+                                                alt="" class="img-fluid">
                                         </div>
+                                        <div class="info">
+                                            <div class="name ellipsis">
+                                                <a href="#" class="text-decoration-none">{{ $product->name }}</a>
+                                            </div>
+                                            <div class="price">
+                                                <span class="current-price">Tồn kho: {{ $product->stock ?? 0 }}</span>
+                                            </div>
+                                            <div class="quantity d-flex align-items-center">
+                                                <span class="current-stock me-2">Số lượng</span>
+                                                <input type="number" name="products[{{ $product->id }}]"
+                                                    class="form-control" min="1"
+                                                    value="{{ $product->pivot->quantity }}">
+                                            </div>
+                                        </div>
+                                        <button class="btn-close position-absolute end-0 top-0 bg-danger"
+                                            style="border-radius: 0%"></button>
                                     </div>
-                                @endforeach
+                                </div>
+                            @endforeach
                         </div>
                     </div>
                 </div>
@@ -377,13 +345,18 @@
             height: 30px;
             padding: 0;
         }
-
-
     </style>
 @endpush
 
 @push('script')
     <script>
+        //Chuyển mọi ký tự trong input room_type_id thành uppercased
+        $(document).ready(function() {
+            $('input[name="room_type_id"]').on('input', function() {
+                this.value = this.value.toUpperCase();
+            });
+        });
+
         (function($) {
             "use strict";
             let bedTypes = @json($bedTypes);

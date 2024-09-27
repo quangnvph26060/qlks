@@ -135,6 +135,12 @@
 
 @push('script')
     <script>
+        //Chuyển mọi ký tự trong input amenity_id thành uppercase
+        $(document).ready(function() {
+            $('input[name="amenity_id"]').on('input', function() {
+                this.value = this.value.toUpperCase();
+            });
+        });
         (function($) {
             "use strict";
 

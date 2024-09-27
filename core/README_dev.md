@@ -278,6 +278,42 @@ ADD facility_id VARCHAR(255) NULL DEFAULT NULL;
 ALTER TABLE premium_services
 ADD service_id VARCHAR(255) NULL DEFAULT NULL;
 
+
 -- 26/09 đạt 09
 ALTER TABLE `returns` ADD `total` INT NOT NULL DEFAULT '0' AFTER `status`;
+
+
+-- 26/09
+
+ALTER TABLE `room_prices` 
+ADD COLUMN start_time TIME NULL,
+ADD COLUMN end_time TIME NULL,
+ADD COLUMN specific_date DATE NULL;
+
+ALTER TABLE`room_prices` 
+MODIFY COLUMN start_date DATE,
+MODIFY COLUMN end_date DATE;
+
+ALTER TABLE room_price_rooms
+ADD COLUMN start_date DATE,
+ADD COLUMN end_date DATE,
+ADD COLUMN start_time TIME NULL,
+ADD COLUMN end_time TIME NULL,
+ADD COLUMN specific_date DATE NULL;
+
+
+26/9/2024 - phong
+ALTER TABLE categories
+ADD category_id VARCHAR(255) NULL DEFAULT NULL;
+
+ALTER TABLE brands
+ADD brand_id VARCHAR(255) NULL DEFAULT NULL;
+
+
+ALTER TABLE room_price_rooms
+ADD created_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP;
+
+ALTER TABLE room_price_rooms
+ADD updated_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP ON UPDATE CURRENT_TIMESTAMP;
+
 

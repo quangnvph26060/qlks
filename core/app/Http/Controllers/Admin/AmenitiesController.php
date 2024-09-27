@@ -18,7 +18,7 @@ class AmenitiesController extends Controller
     public function save(Request $request, $id = 0)
     {
         $request->validate([
-            'amenity_id' => 'unique:amenities,amenity_id',
+            'amenity_id' => 'unique:amenities,amenity_id|max:6',
             'title'      => 'required|string|unique:amenities,title,' . $id,
             'icon'       => 'required'
         ]);

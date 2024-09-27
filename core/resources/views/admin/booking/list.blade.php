@@ -150,29 +150,29 @@
                                                                 @endif
                                                             @endcan
 
-                                                            @can('admin.booking.merge')
+                                                            {{-- @can('admin.booking.merge')
                                                                 <a class="dropdown-item mergeBookingBtn" data-booking_number="{{ $booking->booking_number }}" data-id="{{ $booking->id }}" href="javascript:void(0)">
-                                                                    <i class="las la-object-group"></i> @lang('Merge Booking')
+                                                                    <i class="las la-object-group"></i> @lang('Hợp nhất Đặt chỗ')
                                                                 </a>
-                                                            @endcan
+                                                            @endcan --}}
 
                                                             @can('admin.booking.cancel')
                                                                 <a class="dropdown-item" href="{{ route('admin.booking.cancel', $booking->id) }}">
-                                                                    <i class="las la-times-circle"></i> @lang('Cancel Booking')
+                                                                    <i class="las la-times-circle"></i> @lang('Hủy đặt phòng')
                                                                 </a>
                                                             @endcan
 
                                                             @can('admin.booking.checkout')
                                                                 {{-- @if (now() >= $booking->check_out) --}}
                                                                     <a class="dropdown-item" href="{{ route('admin.booking.checkout', $booking->id) }}">
-                                                                        <i class="la la-sign-out"></i> @lang('Check Out')
+                                                                        <i class="la la-sign-out"></i> @lang('Trả phòng')
                                                                     </a>
                                                                 {{-- @endif --}}
                                                             @endcan
                                                         @endif
-                                                        @can('admin.booking.invoice')
+                                                        {{-- @can('admin.booking.invoice')
                                                             <a class="dropdown-item" href="{{ route('admin.booking.invoice', $booking->id) }}" target="_blank"><i class="las la-print"></i> @lang('Print Invoice')</a>
-                                                        @endcan
+                                                        @endcan --}}
                                                     </div>
                                                 </div>
                                             </td>
