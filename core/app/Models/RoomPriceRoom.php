@@ -10,7 +10,13 @@ class RoomPriceRoom extends Model
     use HasFactory;
 
     protected $fillable = [
-        'room_price_id',
         'room_id',
+        'price_id',
+        'status',  
     ];
+
+    public $incrementing = false; 
+    protected $primaryKey = ['room_id', 'price_id']; 
+    protected $keyType = 'string';
 }
+

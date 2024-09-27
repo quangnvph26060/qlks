@@ -71,7 +71,7 @@ class Room extends Model
     {
         return $this->belongsToMany(RoomPrice::class, 'room_price_rooms', 'room_id', 'price_id')
                 ->where('room_prices.status', 'active') 
-                ->withPivot('room_id', 'price_id', 'status','');
+                ->withPivot('room_id', 'price_id', 'start_date', 'end_date', 'start_time', 'end_time', 'specific_date', 'status');
 
     }
 }
