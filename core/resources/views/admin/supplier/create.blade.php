@@ -10,6 +10,12 @@
                     <div class="card-body">
                         <div class="row">
                             <div class="form-group mb-3 col-lg-6 col-md-6 col-sm-12">
+                                <label for="suppliers.supplier_id" class="control-label ">@lang('Mã nhà cung cấp')</label>
+                                <input type="text" name="suppliers[supplier_id]" id="suppliers.supplier_id"
+                                    class="form-control" placeholder="Nhập tên nhà cung cấp">
+                                <small></small>
+                            </div>
+                            <div class="form-group mb-3 col-lg-6 col-md-6 col-sm-12">
                                 <label for="suppliers.name" class="control-label required">@lang('Tên nhà cung cấp')</label>
                                 <input type="text" name="suppliers[name]" id="suppliers.name" class="form-control"
                                     placeholder="Nhập tên nhà cung cấp">
@@ -118,6 +124,10 @@
 @push('script')
     <script>
         $(document).ready(function() {
+            $('input[name="suppliers[supplier_id]"]').on('input', function(){
+                this.value = this.value.toUpperCase();
+            });
+
             $('#suppliers\\.bank_id').select2({
                 placeholder: '--- Chọn ngân hàng ---',
                 allowClear: true

@@ -30,7 +30,7 @@ class SupplierController extends Controller
         $search = request()->get('search');
         $perPage = request()->get('perPage', 10);
         $orderBy = request()->get('orderBy', 'id');
-        $columns = ['id', 'name', 'email', 'phone', 'address'];
+        $columns = ['id', 'name', 'email', 'phone', 'address', 'supplier_id'];
         $relations = ['supplier_representatives'];
         $searchColumns = ['name', 'email', 'phone', 'address'];
         $relationSearchColumns = ['supplier_representatives' => ['email', 'name']];

@@ -4,6 +4,7 @@
             <button class="btn btn-link btn-toggle" type="button"
                 onclick=" toggleRepresentatives('{{ $item->id }}', this)"></button>
         </td>
+        <td>{{ $item->supplier_id ?? 'Chưa có mã nhà cung cấp' }}</td>
         <td>{{ $item->name }}</td>
         <td>{{ $item->email }}</td>
         <td>{{ $item->phone }}</td>
