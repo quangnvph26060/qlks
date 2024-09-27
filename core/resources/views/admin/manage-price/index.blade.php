@@ -27,6 +27,7 @@
                             <table class="table--light style--two table" id="data-table">
                                 <thead>
                                     <tr>
+                                        <th>@lang('STT')</th>
                                         <th>@lang('Mã giá')</th>
                                         <th>@lang('Tên loại giá')</th>
                                         <th>@lang('Giá trị')</th>
@@ -85,12 +86,12 @@
 
                             <div class="form-group mb-3 col-lg-6">
                                 <label for="">Ngày bắt đầu</label>
-                                <input type="datetime-local" name="start_date" class="form-control"
+                                <input type="datetime-local" name="start_date" id="start_date" class="form-control"
                                     placeholder="Chọn ngày và giờ" />
                             </div>
                             <div class="form-group mb-3 col-lg-6">
                                 <label for="">Ngày kết thúc</label>
-                                <input type="datetime-local" name="end_date" class="form-control"
+                                <input type="datetime-local" name="end_date" id="end_date" class="form-control"
                                     placeholder="Chọn ngày và giờ" />
                             </div>
 
@@ -107,8 +108,7 @@
                                 <div class="radio-container" style="justify-content: left; gap: 10px">
                                     <label for="">Trạng thái</label>
                                     <label class="toggle">
-                                        <input type="checkbox" name="status" id="status"
-                                            checked>
+                                        <input type="checkbox" name="status" id="status" checked>
                                         <span class="slider"></span>
                                     </label>
                                 </div>
@@ -182,29 +182,33 @@
 
                     $.ajax({
                         type: "GET",
-                        url: "{{ route('admin.manage.price.edit', ':id') }}"
-                            .replace(':id', id),
+                        url: "{{ route('admin.manage.price.edit', ':id') }}".replace(':id', id),
                         success: function(response) {
+
                             if (response.status) {
-                                $('#staticBackdropLabel').text(
-                                    'Cập nhật');
+                                $('#staticBackdropLabel').text('Cập nhật');
                                 $('#code').val(response.data.code);
                                 $('#name').val(response.data.name);
-                                $('#start_date').val(response.data
-                                    .start_date);
-                                $('#end_date').val(response.data
-                                    .end_date);
-                                $('#price').val(response.data
-                                    .price);
-                                $('#status').prop('checked', response
-                                    .data.status == 'active' ? true : false);
+
+                                // Thêm giờ vào ngày
+                                let startDate = response.data.start_date +
+                                'T00:00'; // hoặc giờ thực tế
+                                let endDate = response.data.end_date +
+                                'T23:59'; // hoặc giờ thực tế
+
+                                $('#start_date').val(startDate);
+                                $('#end_date').val(endDate);
+
+                                $('#price').val(response.data.price);
+                                $('#status').prop('checked', response.data.status ==
+                                    'active');
                                 $('#method').val('PUT');
                                 $('#recordId').val(id);
                                 $('#staticBackdrop').modal('show');
                             }
                         }
-                    })
-                })
+                    });
+                });
 
                 $(document).on('click', '.btn-add', function() {
                     $('#priceForm')[0].reset();

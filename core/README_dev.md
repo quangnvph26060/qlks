@@ -278,3 +278,6 @@ ADD facility_id VARCHAR(255) NULL DEFAULT NULL;
 ALTER TABLE premium_services
 ADD service_id VARCHAR(255) NULL DEFAULT NULL;
 
+-- 26/09 đạt 09
+ALTER TABLE `returns` ADD `total` INT NOT NULL DEFAULT '0' AFTER `status`;
+

@@ -39,6 +39,6 @@ class Room extends Model
     }
 
     public function prices(){
-        return $this->belongsToMany(RoomPrice::class, 'room_type_prices', 'room_id', 'price_id');
+        return $this->belongsToMany(RoomPrice::class, 'room_price_rooms', 'room_id', 'price_id');
     }
 }
