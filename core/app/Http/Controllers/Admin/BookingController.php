@@ -128,6 +128,7 @@ class BookingController extends Controller {
             'activeBookedRooms.room:id,room_number',
             'bookedRooms.room:id,room_type_id,room_number',
             'bookedRooms.room.roomType:id,name',
+            'bookedRooms.room.roomPricesActive',
             'usedPremiumService.room',
             'usedPremiumService.premiumService',
             'payments'

@@ -872,13 +872,11 @@
                         let cancellation_fee, shouldRefund = 0;
 
                         var currentDate = '<?php echo now()->format('Y-m-d H:i:s'); ?>';
-
+                        
                         response.data.booked_rooms.forEach(function(booked, index) {
                             $('.booking-no').text(booked.room.room_number);
                             $('.room_serive').val(booked.room.room_number);
-                            let is_flag = false;
-
-
+                            let is_flag = false; 
                             if (booked.status === 1 && booked.booked_for >= currentDate) {
                                 total_fare = booked.fare;
                                 cancellation_fee = booked.cancellation_fee;
@@ -910,12 +908,12 @@
                                             ${booked.status === 'canceled' ? `<span class="text--danger text-sm">(@lang('Đã hủy'))</span>` : ''}
                                         </td>
                                         <td class="text-end" data-label="@lang('Giá')">
-                                            ${formatCurrency(booked.fare)}
+                                            ${formatCurrency(booked.room.room_prices_active[0]['price'])}
                                         </td>
 
                                     </tr>
                                 `;
-                            totalFare += parseFloat(booked.fare);
+                            totalFare += parseFloat(booked.room.room_prices_active[0]['price']);
 
                         });
                         rowsHtml += `
@@ -963,7 +961,7 @@
 
                         });
                         $('#user_services').append(rowsHtml1);
-                        console.log(response);
+                     //   console.log(response);
                         $('.booking_extra').val(response.data.id);
 
                         $('.customer_type').text(customer_type);

@@ -20,6 +20,7 @@
                             <i class="fa fa-star"></i>
                         </span>
                     </h5>
+                    <p class="text-muted  room-type">{{$room->roomType->name}}</p>
                     {{-- <p class="text-muted mb-1">
                         <a href="#" class="text-custom">Đà Lạt</a> • <a href="#" class="text-custom">Xem
                             trên bản đồ</a> •
