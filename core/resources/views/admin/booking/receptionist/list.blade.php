@@ -532,26 +532,17 @@
 <script>
     $(document).ready(function() {
         // choose option  rooms
-        var dirtyElements = document.querySelectorAll('.content-booking.mt-2.room-booking-status-dirty');
-        var dirtyCount = dirtyElements.length;
+        var dirtyCount = $('.content-booking.mt-2.room-booking-status-dirty').length;
+        var incomingCount = $('.content-booking.mt-2.room-booking-status-incoming').length;
+        var occupiedCount = $('.content-booking.mt-2.room-booking-status-occupied').length;
+        var lateCheckinCount = $('.content-booking.mt-2.room-booking-status-late-checkin').length;
+        var checkOutCount = $('.content-booking.mt-2.room-booking-status-check-out').length;
 
-        var incomingElements = document.querySelectorAll('.content-booking.mt-2.room-booking-status-incoming');
-        var incomingCount = incomingElements.length;
-
-        var occupiedElements = document.querySelectorAll('.content-booking.mt-2.room-booking-status-occupied');
-        var occupiedCount = occupiedElements.length;
-
-        var lateCheckinElements = document.querySelectorAll('.content-booking.mt-2.room-booking-status-late-checkin');
-        var lateCheckinCount = lateCheckinElements.length;
-
-        var checkOutElements = document.querySelectorAll('.content-booking.mt-2.room-booking-status-check-out');
-        var checkOutCount = checkOutElements.length;
-
-        $('.status-available-line').text('Đang trống (' + dirtyCount + ')');
-        $('.status-incoming-line').text('Sắp nhận (' + incomingCount + ')');
-        $('.status-occupied-line').text('Đang sử dụng (' + occupiedCount + ')');
-        $('.status-checkout-line').text('Nhận phòng muộn (' + lateCheckinCount + ')');
-        $('.status-overdue-line').text('Quá giờ trả (' + checkOutCount + ')');
+        $('.status-available-line-count').text('Đang trống (' + dirtyCount + ')');
+        $('.status-incoming-line-count').text('Sắp nhận (' + incomingCount + ')');
+        $('.status-occupied-line-count').text('Đang sử dụng (' + occupiedCount + ')');
+        $('.status-checkout-line-count').text('Nhận phòng muộn (' + lateCheckinCount + ')');
+        $('.status-overdue-line-count').text('Quá giờ trả (' + checkOutCount + ')');
 
         $('.status-button').click(function() {
             $(this).toggleClass('active');
