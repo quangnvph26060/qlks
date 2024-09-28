@@ -62,7 +62,7 @@ class BookRoomController extends Controller
 
     public function book(Request $request)
     {
-    //    dd($request->all());
+     //   dd($request->all());
         DB::beginTransaction();
         try {
             $validator = Validator::make($request->all(), [
@@ -75,7 +75,7 @@ class BookRoomController extends Controller
                 'room'            => 'required|array',
                 'paid_amount'     => 'nullable|numeric|gte:0' // tiền mà khách đã thanh toán trước
             ]);
-            //   \Log::info($request->all());
+
             if ($validator->fails()) {
                 return response()->json(['error' => $validator->errors()->all()]);
             }

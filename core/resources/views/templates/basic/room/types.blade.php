@@ -308,6 +308,11 @@
 @push('style')
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/ion-rangeslider/2.3.0/css/ion.rangeSlider.min.css">
     <style>
+        .room-type{
+            white-space: nowrap;         
+            overflow: hidden;            
+            text-overflow: ellipsis;     
+        }
         .responsive-image {
             max-width: 100%;
             height: auto;
