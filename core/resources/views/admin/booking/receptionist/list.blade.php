@@ -532,6 +532,9 @@
 <script>
     $(document).ready(function() {
         // choose option  rooms
+        var elements = document.querySelectorAll('.content-booking.mt-2.room-booking-status-dirty');
+        var count = elements.length;
+        console.log(count); // Kiểm tra xem các phần tử có được chọn không
         $('.status-button').click(function() {
             $(this).toggleClass('active');
 
