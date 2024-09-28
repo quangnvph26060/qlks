@@ -15,12 +15,10 @@ use App\Models\PremiumService;
 use App\Models\RoomPriceRoom;
 use Symfony\Component\HttpKernel\Log\Logger;
 
-class BookingController extends Controller
-{
-    public function todaysBooked()
-    {
+class BookingController extends Controller {
+    public function todaysBooked() {
         $pageTitle = request()->type == 'not_booked' ? 'Phòng có sẵn để đặt hôm nay' : 'Phòng đã đặt hôm nay';
-
+       
         $rooms = BookedRoom::active()
             ->with([
                 'room:id,room_number,room_type_id',
@@ -34,70 +32,61 @@ class BookingController extends Controller
 
         $disabledRoomTypeIDs = RoomType::where('status', 0)->pluck('id')->toArray(); // Lấy danh sách các ID của loại phòng bị vô hiệu hóa
         $bookedRooms         = $rooms->pluck('room_id')->toArray(); // Lấy danh sách các ID của phòng đã được đặt hôm nay.
-        $emptyRooms          = Room::active()->whereNotIn('id', $bookedRooms)->whereNotIn('room_type_id', $disabledRoomTypeIDs)->with('roomType:id,name', 'roomPrices')->select('id', 'room_type_id', 'room_number')->get();
+        $emptyRooms          = Room::active()->whereNotIn('id', $bookedRooms)->whereNotIn('room_type_id', $disabledRoomTypeIDs)->with('roomType:id,name','roomPrices')->select('id', 'room_type_id', 'room_number')->get();
 
         return view('admin.booking.todays_booked', compact('pageTitle', 'rooms', 'emptyRooms'));
     }
 
-    public function activeBookings()
-    {
+    public function activeBookings() {
         $pageTitle = 'Đặt chỗ đang hoạt động';
         $bookings = $this->bookingData('active');
         return view('admin.booking.list', compact('pageTitle', 'bookings'));
     }
 
-    public function checkedOutBookingList()
-    {
+    public function checkedOutBookingList() {
         $pageTitle = 'Đã kiểm tra Đặt phòng';
         $bookings = $this->bookingData('checkedOut');
         return view('admin.booking.list', compact('pageTitle', 'bookings'));
     }
 
-    public function delayedCheckout()
-    {
+    public function delayedCheckout() {
         $pageTitle = 'Đặt phòng thanh toán bị trì hoãn';
         $bookings = $this->bookingData('delayedCheckOut');
         return view('admin.booking.list', compact('pageTitle', 'bookings'));
     }
 
-    public function canceledBookingList()
-    {
+    public function canceledBookingList() {
         $pageTitle = 'Đặt phòng đã hủy';
         $bookings = $this->bookingData('canceled');
 
         return view('admin.booking.list', compact('pageTitle', 'bookings'));
     }
 
-    public function allBookingList()
-    {
+    public function allBookingList() {
         $pageTitle = 'Tất cả phòng';
         $bookings = $this->bookingData('ALL');
         return view('admin.booking.list', compact('pageTitle', 'bookings'));
     }
 
-    public function todayCheckInBooking()
-    {
+    public function todayCheckInBooking() {
         $pageTitle = 'Kiểm tra hôm nay';
         $bookings = $this->bookingData('todayCheckIn');
         return view('admin.booking.list', compact('pageTitle', 'bookings'));
     }
 
-    public function todayCheckoutBooking()
-    {
+    public function todayCheckoutBooking() {
         $pageTitle = 'Thanh toán hôm nay';
         $bookings = $this->bookingData('todayCheckout');
         return view('admin.booking.list', compact('pageTitle', 'bookings'));
     }
 
-    public function refundableBooking()
-    {
+    public function refundableBooking() {
         $pageTitle = 'Đặt chỗ có thể hoàn lại';
         $bookings = $this->bookingData('refundable');
         return view('admin.booking.list', compact('pageTitle', 'bookings'));
     }
 
-    public function pendingCheckIn()
-    {
+    public function pendingCheckIn() {
 
         $pageTitle         = 'Đang chờ kiểm tra';
         $bookings   = Booking::active()->keyNotGiven()->whereDate('check_in', '<=', now())->with('user')->withCount('activeBookedRooms as total_room')->get();
@@ -107,8 +96,7 @@ class BookingController extends Controller
         return view('admin.booking.pending_checkin_checkout', compact('pageTitle', 'bookings', 'emptyMessage', 'alertText'));
     }
 
-    public function delayedCheckouts()
-    {
+    public function delayedCheckouts() {
         $pageTitle    = 'Thanh toán bị trì hoãn';
         $bookings     = Booking::delayedCheckout()->get();
         $emptyMessage = 'Không tìm thấy thanh toán chậm';
@@ -116,8 +104,7 @@ class BookingController extends Controller
         return view('admin.booking.pending_checkin_checkout', compact('pageTitle', 'bookings', 'emptyMessage', 'alertText'));
     }
 
-    public function upcomingCheckIn()
-    {
+    public function upcomingCheckIn() {
 
         $pageTitle         = 'Đặt phòng sắp tới';
         $bookings          = Booking::active()->whereDate('check_in', '>', now())->whereDate('check_in', '<=', now()->addDays(gs('upcoming_checkin_days')))->with('user')->withCount('activeBookedRooms as total_room')->orderBy('check_in')->get()->groupBy('check_in');
@@ -126,8 +113,7 @@ class BookingController extends Controller
         return view('admin.booking.upcoming_checkin_checkout', compact('pageTitle', 'bookings', 'emptyMessage'));
     }
 
-    public function upcomingCheckout()
-    {
+    public function upcomingCheckout() {
         $pageTitle       = 'Đặt phòng thanh toán sắp tới';
         $bookings        = Booking::active()->whereDate('check_out', '>', now())->whereDate('check_out', '<=', now()->addDays(gs('upcoming_checkout_days')))->with('user')->withCount('activeBookedRooms as total_room')->orderBy('check_out')->get()->groupBy('check_out');
         $emptyMessage    = 'Không tìm thấy khoản thanh toán sắp tới';
@@ -135,8 +121,7 @@ class BookingController extends Controller
         return view('admin.booking.upcoming_checkin_checkout', compact('pageTitle', 'bookings', 'emptyMessage'));
     }
 
-    public function bookingDetails(Request $request,  $id)
-    {
+    public function bookingDetails(Request $request,  $id) {
         $booking = Booking::with([
             'bookedRooms',
             'activeBookedRooms:id,booking_id,room_id',
@@ -148,35 +133,33 @@ class BookingController extends Controller
             'payments'
         ])->findOrFail($id);
         // BookedRoom::where('booking_id', $id)->with('booking.user', 'room.roomType')->orderBy('booked_for')->get()->groupBy('booked_for');
-
-        if ($request->is_method === 'receptionist') {
+       
+        if($request->is_method === 'receptionist'){
             $returnedPayments  = $booking->payments->where('type', 'RETURNED');
             $receivedPayments  = $booking->payments->where('type', 'RECEIVED');
             $total_amount      = $booking->total_amount;
             $due               = $booking->due();
 
-            return response()->json(['status' => 'success', 'data' => $booking, 'returnedPayments' => $returnedPayments, 'receivedPayments' => $receivedPayments, 'total_amount' => $total_amount, 'due' => $due]);
+            return response()->json(['status' => 'success','data' => $booking, 'returnedPayments' => $returnedPayments, 'receivedPayments' => $receivedPayments, 'total_amount' => $total_amount, 'due' => $due]);
         }
         $pageTitle = 'Chi tiết đặt chỗ';
         return view('admin.booking.details', compact('pageTitle', 'booking'));
     }
 
-    public function bookedRooms(Request $request, $id)
-    {
+    public function bookedRooms(Request $request, $id) {
         $booking = Booking::findOrFail($id);
         $pageTitle = 'Phòng đã đặt';
         $bookedRooms = BookedRoom::where('booking_id', $id)->with('booking.user', 'room.roomType')->orderBy('booked_for')->get()->groupBy('booked_for');
         return view('admin.booking.booked_rooms', compact('pageTitle', 'bookedRooms', 'booking'));
     }
 
-    protected function bookingData($scope, $is_method = null)
-    {
-        if ($is_method == 'Receptionist') {
+    protected function bookingData($scope, $is_method = null) {
+        if($is_method == 'Receptionist'){
             $query = Booking::active();
-        } else {
+        }else{
             $query = Booking::query();
         }
-
+       
 
         if ($scope != "ALL") {
             $query = $query->$scope();
@@ -204,72 +187,68 @@ class BookingController extends Controller
         if ($request->check_out) {
             $query = $query->whereDate('check_out', $request->check_out);
         }
-        return $query->with('bookedRooms.room', 'bookedRooms.roomType', 'user', 'activeBookedRooms', 'activeBookedRooms.room:id,room_number')
+        return $query->with('bookedRooms.room','bookedRooms.roomType', 'user', 'activeBookedRooms', 'activeBookedRooms.room:id,room_number')
             ->withSum('usedPremiumService', 'total_amount')
             ->latest()
             ->orderBy('check_in', 'asc')
             ->paginate(getPaginate());
     }
+    
 
 
-
-    public function Receptionist()
-    {
+    public function Receptionist(){
 
         $emptyMessage   = '';
         $pageTitle      =  'Lễ tân';
         $Title          =  'Tất cả các phòng';
-
-
+       
+        
         $rooms = BookedRoom::active()
-            ->with([
-                'room',
-                'room.roomType',
-                'booking:id,user_id,booking_number',
-                'booking.user:id,firstname,lastname',
-                'usedPremiumService.premiumService:id,name'
-            ])
-            ->whereDate('booked_for', now()->toDateString())
-            ->get();
-        $roomCounts = [
-            'status-dirty' => 0,
-            'status-incoming' => 0,
-            'status-occupied' => 0,
-            'status-late-checkin' => 0,
-            'status-check-out' => 0,
-        ];
+        ->with([
+            'room',
+            'room.roomType',
+            'booking:id,user_id,booking_number',
+            'booking.user:id,firstname,lastname',
+            'usedPremiumService.premiumService:id,name'
+        ])
+        ->whereDate('booked_for', now()->toDateString())
+        ->get();
+
         $disabledRoomTypeIDs = RoomType::where('status', 0)->pluck('id')->toArray();
         $bookedRooms         = $rooms->pluck('room_id')->toArray();
         $emptyRooms          = Room::active()->has('roomPricesActive')
-            ->whereNotIn('id', $bookedRooms)
-            ->whereNotIn('room_type_id', $disabledRoomTypeIDs) // loại trừ nhũng phòng ngưng hoạt động hoạt vô hiệu hóa
-            ->with('roomType', 'roomPricesActive')
-            ->select('id', 'room_type_id', 'room_number', 'is_clean')
+             ->whereNotIn('id', $bookedRooms)
+            ->whereNotIn('room_type_id', $disabledRoomTypeIDs) // loại trừ nhũng phòng ngưng hoạt động hoạt vô hiệu hóa 
+            ->with('roomType','roomPricesActive')
+            ->select('id', 'room_type_id', 'room_number','is_clean')
             ->get();
         $scope = 'ALL';
         $is_method = 'Receptionist';
         $bookings = BookedRoom::active()->with('booking', 'roomType', 'room', 'room.roomPricesActive', 'usedPremiumService')->get();
-
+         
         $userList = User::select('username', 'email', 'mobile', 'address')->get();
 
-        return view('admin.booking.receptionist.list', compact('pageTitle', 'Title', 'emptyRooms', 'bookings', 'emptyMessage', 'userList', 'roomCounts'));
+        return view('admin.booking.receptionist.list', compact('pageTitle','Title','emptyRooms','bookings','emptyMessage','userList'));
     }
     public function changeCleanRoom(Request $request)
     {
         try {
-
+           
             $room = Room::where('room_number', $request->roomData)->firstOrFail();
-
+           
             $newStatus = ($room->is_clean == Status::ROOM_CLEAN_ACTIVE) ? 0 : 1;
             $room->update(['is_clean' => $newStatus]);
 
             return ApiResponse::success('', 'success', 200);
+    
         } catch (\Illuminate\Database\Eloquent\ModelNotFoundException $e) {
-
-            return ApiResponse::error('error', 404);
+            
+           return ApiResponse::error('error', 404);
+           
         } catch (\Exception $e) {
 
             return ApiResponse::error($e->getMessage(), 404);
+            
         }
     }
     public function getPremiumServices()
@@ -278,4 +257,5 @@ class BookingController extends Controller
         $premiumServices    = PremiumService::active()->get();
         return ApiResponse::success($premiumServices, 'success', 200);
     }
+    
 }
