@@ -1400,14 +1400,14 @@
     });
 </script>
 <script>
-    document.addEventListener('DOMContentLoaded', function() {
+    $(document).ready(function() {
         const roomCounts = @json($roomCounts);
 
         // Cập nhật số lượng phòng trong giao diện
-        document.getElementById('count-dirty').textContent = roomCounts['status-dirty'];
-        document.getElementById('count-incoming').textContent = roomCounts['status-incoming'];
-        document.getElementById('count-occupied').textContent = roomCounts['status-occupied'];
-        document.getElementById('count-late-checkin').textContent = roomCounts['status-late-checkin'];
-        document.getElementById('count-check-out').textContent = roomCounts['status-check-out'];
+        $('#count-dirty').text(roomCounts['status-dirty']);
+        $('#count-incoming').text(roomCounts['status-incoming']);
+        $('#count-occupied').text(roomCounts['status-occupied']);
+        $('#count-late-checkin').text(roomCounts['status-late-checkin']);
+        $('#count-check-out').text(roomCounts['status-check-out']);
     });
 </script>
