@@ -220,10 +220,9 @@ class SiteController extends Controller
     {
         $pageTitle = 'Loại phòng';
         // $roomTypes = RoomType::active()->with('images', 'amenities')->with(['images', 'amenities', 'rooms.roomPricesActive'])->get();
-        $rooms = Room::active()->with(['roomType.images', 'roomType.amenities:title', 'roomType.facilities:title', 'roomPricesActive'])->get();
-
+        $rooms = Room::active()->has('roomPricesActive')->with(['roomType.images', 'roomType.amenities:title', 'roomType.facilities:title', 'roomPricesActive'])->get();
         $countWishList = Wishlist::where('user_id', auth()->id())->count();
-
+        
         return view('Template::room.types', compact('pageTitle', 'rooms', 'countWishList'));
     }
 
