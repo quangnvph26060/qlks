@@ -110,7 +110,7 @@
                         <li>
                             <a class="{{ menuActive('contact') }}" href="{{ route('contact') }}">
                                 <i class="far fa-heart fa-lg"></i>
-                                <span class="notification-badge">{{ $countWishList }}</span> <!-- Added span here -->
+                                <span class="notification-badge">{{ $countWishList ?? 0}}</span> <!-- Added span here -->
                             </a>
                         </li>
                     </ul>

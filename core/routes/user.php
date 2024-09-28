@@ -102,7 +102,7 @@ Route::middleware('auth')->name('user.')->group(function () {
 
     Route::controller(WishlistController::class)->group(function () {
         Route::get('wishlist', 'index')->name('wishlist');
-        Route::post('add-to-wishlist/{id}', 'addToWishlist')->name('add.to.wishlist');
+        Route::post('add-to-wishlist/{id}', 'toggleWishlist')->name('toggle.wishlist');
         Route::post('remove-from-wishlist/{id}', 'removeFromWishlist')->name('remove.from.wishlist');
     });
 });
