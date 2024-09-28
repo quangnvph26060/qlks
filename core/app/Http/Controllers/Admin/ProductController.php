@@ -149,6 +149,7 @@ class ProductController extends Controller
     public function update(UpdateProductRequest $request, string $id)
     {
         $path = saveImages($request, 'image_path', 'products', 300, 300);
+        
         $product = Product::query()->find($id);
 
         if (!$product) {
@@ -160,7 +161,7 @@ class ProductController extends Controller
 
         try {
             $data = $request->validated();
-            if ($path[0] && $path[0] != $product->image_path) {
+            if ($path && $path[0] != $product->image_path) {
                 if (Storage::disk('public')->exists($product->image_path)) {
                     Storage::disk('public')->delete($product->image_path);
                 }
@@ -175,13 +176,13 @@ class ProductController extends Controller
                 'status' => true,
             ]);
         } catch (\Exception $e) {
-            if ($path[0] && Storage::disk('public')->exists($path[0])) {
+            if ($path !== null && Storage::disk('public')->exists($path[0])) {
                 Storage::disk('public')->delete($path[0]);
             }
 
             return response()->json([
                 'status' => false,
-                'message' => $e->getMessage()
+                'message' => $e->getMessage() . ' ' . $e->getLine()
             ]);
         }
     }

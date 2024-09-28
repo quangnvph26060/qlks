@@ -118,6 +118,14 @@
             };
 
             $(document).ready(function() {
+
+                $(document).on('click', '.show-modal', function() {
+                    const id = $(this).data('id');
+                    $('#representativeForm').attr('data-id', id);
+                    $('.modal').modal('show');
+
+                })
+
                 const apiUrl = '{{ route('admin.supplier.index') }}';
                 initDataFetch(apiUrl);
 
@@ -135,16 +143,10 @@
                     $("#representativeForm").attr('action', '');
                 }
 
-                $('#addRepresentatives').on('show.bs.modal', function(event) {
-                    var button = $(event.relatedTarget); // Nút đã được nhấn
-                    var dataId = button.data('id'); // Lấy data-id
-                    $(this).data('id', dataId); // Lưu data-id vào modal
-                });
-
                 $("#representativeForm").on("submit", function(e) {
                     e.preventDefault();
-                    var modal = $('#addRepresentatives');
-                    var dataId = modal.data('id');
+                    var dataId = $(this).data('id');
+
                     var action = $(this).attr('action') ?? '';
 
                     var formData = $(this).serializeArray();

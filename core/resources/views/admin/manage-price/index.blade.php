@@ -323,8 +323,6 @@
 
 @push('style')
     <style>
-
-
         .radio-container {
             display: flex;
             align-items: center;

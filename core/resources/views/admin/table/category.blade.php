@@ -10,6 +10,14 @@
                     <input class="form-check-input update-status" data-id="{{ $category->id }}" type="checkbox"
                         @checked($category->status)>
                 </div>
+
+                <div class="radio-container">
+                    <label class="toggle">
+                        <input type="checkbox" class="status-change" data-id="{{ $category->id }}"
+                            @checked($category->status == 'active')>
+                        <span class="slider"></span>
+                    </label>
+                </div>
             </td>
             @can([])
                 <td data-label="@lang('Hành động')">

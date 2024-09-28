@@ -326,3 +326,5 @@ ADD supplier_id VARCHAR(255) NULL DEFAULT NULL;
 ALTER TABLE `room_price_rooms` ADD `status` BOOLEAN NOT NULL DEFAULT FALSE AFTER `specific_date`;
 
 
+-- 27-09
+ALTER TABLE `room_price_rooms` ADD `status` BOOLEAN NOT NULL DEFAULT FALSE AFTER `specific_date`;

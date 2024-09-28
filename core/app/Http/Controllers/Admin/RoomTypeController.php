@@ -96,7 +96,7 @@ class RoomTypeController extends Controller
             $roomType->cancellation_policy = htmlspecialchars_decode($purifier->purify($request->cancellation_policy));
 
             if ($request->hasFile('main_image')) {
-                $main_images = saveImages($request, 'main_image', 'roomTypeImage', 1280, 720);
+                $main_images = saveImages($request, 'main_image', 'roomTypeImage', 600, 600);
                 if ($roomType->main_image && Storage::disk('public')->exists($roomType->main_image)) {
                     Storage::disk('public')->delete($roomType->main_image);
                 }
@@ -121,7 +121,7 @@ class RoomTypeController extends Controller
             $notify[] = ['error', $e->getMessage()];
             return back()->withNotify($notify);
         }
-    }   
+    }
 
     private function insertProducts($request, $roomType)
     {
@@ -174,7 +174,6 @@ class RoomTypeController extends Controller
             'name'                => 'required|string|max:255|unique:room_types,name,' . $id,
             'total_adult'         => 'required|integer|gte:0',
             'total_child'         => 'required|integer|gte:0',
-            'fare'                => 'required|gt:0',
             'amenities'           => 'nullable|array',
             'amenities.*'         => 'integer|exists:amenities,id',
             'keywords'            => 'nullable|array',
@@ -186,10 +185,10 @@ class RoomTypeController extends Controller
             'bed'                 => 'required|array',
             'bed.*'               => 'exists:bed_types,name',
             'cancellation_policy' => 'nullable|string',
-            'cancellation_fee'    => 'nullable|numeric|gte:0|lt:fare',
+            'cancellation_fee'    => 'nullable|numeric',
             'products'            => 'nullable|array',
-            // 'slug'                => 'required|unique:room_types,slug,' . $id
         ]);
+        // |gte:0|lt:fare
     }
 
     protected function insertImages(Request $request, $roomType)

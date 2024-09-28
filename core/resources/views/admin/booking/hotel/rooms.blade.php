@@ -172,6 +172,7 @@
         $('.editBtn').on('click', function() {
             let modal = $('#editModal');
             let resource = $(this).data('resource');
+
             let route = `{{ route('admin.hotel.room.update', '') }}/${resource.id}`;
 
             modal.find('form').attr('action', route);
