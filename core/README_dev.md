@@ -328,3 +328,16 @@ ALTER TABLE `room_price_rooms` ADD `status` BOOLEAN NOT NULL DEFAULT FALSE AFTER
 
 -- 27-09
 ALTER TABLE `room_price_rooms` ADD `status` BOOLEAN NOT NULL DEFAULT FALSE AFTER `specific_date`;
+
+-- 28-09
+CREATE TABLE wishlists (
+    id BIGINT UNSIGNED AUTO_INCREMENT PRIMARY KEY,
+    user_id BIGINT UNSIGNED NOT NULL,
+    room_id BIGINT UNSIGNED NOT NULL,
+    created_at TIMESTAMP NULL,
+    updated_at TIMESTAMP NULL,
+    UNIQUE KEY unique_user_room (user_id, room_id),
+    CONSTRAINT fk_user FOREIGN KEY (user_id) REFERENCES users (id) ON DELETE CASCADE,
+    CONSTRAINT fk_room FOREIGN KEY (room_id) REFERENCES rooms (id) ON DELETE CASCADE
+);
+

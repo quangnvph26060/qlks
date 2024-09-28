@@ -51,7 +51,8 @@
                 let heading = table.querySelectorAll('thead tr th');
                 Array.from(table.querySelectorAll('tbody tr')).forEach(row => {
                     Array.from(row.querySelectorAll('td')).forEach((column, i) => {
-                        (column.colSpan == 100) || column.setAttribute('data-label', heading[i].innerText)
+                        (column.colSpan == 100) || column.setAttribute('data-label', heading[i]
+                            .innerText)
                     });
                 });
             });

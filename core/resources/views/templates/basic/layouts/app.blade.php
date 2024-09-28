@@ -6,6 +6,7 @@
     <!-- Required meta tags -->
     <meta charset="utf-8">
     <meta content="width=device-width, initial-scale=1, shrink-to-fit=no" name="viewport">
+    <meta name="csrf-token" content="{{ csrf_token() }}">
     <title> {{ gs()->siteName(__($pageTitle)) }}</title>
     @include('partials.seo')
 
@@ -15,6 +16,7 @@
     <link href="{{ asset('assets/global/css/all.min.css') }}" rel="stylesheet">
     <link href="{{ asset('assets/global/css/bootstrap.min.css') }}" rel="stylesheet">
     <link href="{{ asset('assets/global/css/line-awesome.min.css') }}" rel="stylesheet" />
+    <link rel="stylesheet" href="{{ asset('assets/templates/basic/css/toastr.min.css') }}">
 
     <!-- slick slider css -->
     <link href="{{ asset($activeTemplateTrue . 'css/slick.css') }}" rel="stylesheet">
@@ -72,6 +74,7 @@
     <!-- jQuery library -->
     <script src="{{ asset('assets/global/js/jquery-3.7.1.min.js') }}"></script>
     <script src="{{ asset('assets/global/js/bootstrap.bundle.min.js') }}"></script>
+    <script src="assets/templates/basic/js/toastr.min.js"></script>
 
     <!-- slick  slider js -->
     <script src="{{ asset($activeTemplateTrue . 'js/slick.min.js') }}"></script>
@@ -101,6 +104,13 @@
     <script>
         (function($) {
             "use strict";
+
+            $.ajaxSetup({
+                headers: {
+                    'X-CSRF-TOKEN': $('meta[name="csrf-token"]').attr('content')
+                }
+            });
+
             $(".langSel").on("change", function() {
                 window.location.href = "{{ route('home') }}/change/" + $(this).val();
             });
@@ -168,6 +178,41 @@
                     disableSubmission = true;
                 }
             });
+
+            window.showMessageToast = function(type, message, time = 3000) {
+                toastr.options = {
+                    closeButton: true,
+                    debug: false,
+                    newestOnTop: true,
+                    progressBar: true,
+                    positionClass: "toast-top-center",
+                    preventDuplicates: true,
+                    onclick: null,
+                    showDuration: "300",
+                    hideDuration: "1000",
+                    timeOut: time,
+                    extendedTimeOut: "1000",
+                    showEasing: "swing",
+                    hideEasing: "linear",
+                    showMethod: "fadeIn",
+                    hideMethod: "fadeOut",
+                };
+
+                // Create a custom HTML for the toastr message
+                const toastHtml = `
+        <div class="custom-toast">
+            <i class="${type.icon}"></i> ${message}
+        </div>
+    `;
+
+                // Display the notification with custom HTML and type
+                toastr[type.name](toastHtml, '', {
+                    closeButton: true,
+                    tapToDismiss: false,
+                    progressBar: true,
+                });
+            };
+
 
         })(jQuery);
     </script>

@@ -1,18 +1,19 @@
-@foreach ($roomType as $type)
+@foreach ($rooms as $key => $room)
     <div class="card p-3" style="max-width: 100%;">
         <div class="row g-0">
             <div class="col-custom-md-4 col-sm-5 col-custom-ssm-5 col-custom-sssm-5 position-relative">
-                <img src="core/public/storage/roomTypeImage/172741170266f635f6128d1.jpg" class="responsive-image rounded"
+                <img src="{{ \Storage::url($room->roomType->main_image) }}" class="responsive-image rounded"
                     alt="Hotel Image">
-                <button class="btn btn-light position-absolute top-0 end-0 m-2 rounded-circle"
-                    style="padding:0.375rem 0.75rem">
+                <button
+                    class="btn btn-light position-absolute top-0 end-0 m-2 rounded-circle {{ $room->wishlist ? 'text-white bg-danger' : '' }}"
+                    id="show-wishlist-{{ $room->id }}" style="padding:0.375rem 0.75rem">
                     <i class="far fa-heart"></i>
                 </button>
             </div>
             <div class="col-md-8 col-lg-6 col-sm-7 col-custom-ssm-7 col-custom-sssm-7">
                 <div class="card-body  py-1">
                     <h5 class="card-title text-primary fw-bold ">
-                        BIDV Central Da Lat Hotel
+                        {{ $room->room_number }}
                         <span class="text-warning ms-2 rating">
                             <i class="fa fa-star"></i>
                             <i class="fa fa-star"></i>
@@ -27,36 +28,34 @@
                     <p class="card-text amenities">
                         <label for="" class="text-muted me-1 fw-bold">Tiện nghi: </label>
                         <span class="badge-container">
-                            <span class="badge bg-secondary ms-1">Bia</span>
-                            <span class="badge bg-secondary ms-1">Rśu</span>
-                            <span class="badge bg-secondary ms-2">Cafe</span>
-                            <span class="badge bg-secondary ms-1">Thức ăn</span>
-                            <span class="badge bg-secondary ms-1">Nhạc sống</span>
-                            <span class="badge bg-secondary ms-1">Wi-Fi</span>
-                            <span class="badge bg-secondary ms-1">Bô bơi</span>
+                            @if ($room->roomType->amenities)
+                                @foreach ($room->roomType->amenities as $amenity)
+                                    <span class="badge bg-secondary ms-1">{{ $amenity->title }}</span>
+                                @endforeach
+                            @endif
                         </span>
                     </p>
                     <p class="card-text utilities">
                         <label for="" class="text-muted me-1 fw-bold">Tiện ích:</label>
                         <span class="badge-container">
-                            <span class="badge bg-secondary ms-1">Bia</span>
-                            <span class="badge bg-secondary ms-1">Rượu</span>
-                            <span class="badge bg-secondary ms-2">Cafe</span>
-                            <span class="badge bg-secondary ms-1">Thức ăn</span>
-                            <span class="badge bg-secondary ms-1">Nhạc sống</span>
-                            <span class="badge bg-secondary ms-1">Wi-Fi</span>
-                            <span class="badge bg-secondary ms-1">Bể bơi</span>
+                            @if ($room->roomType->facilities)
+                                @foreach ($room->roomType->facilities as $utility)
+                                    <span class="badge bg-secondary ms-1">{{ $utility->title }}</span>
+                                @endforeach
+                            @else
+                                <span class="badge bg-secondary ms-1">Đang cập nhật</span>
+                            @endif
                         </span>
                     </p>
                     <p class="card-text quality">
-                        <label for="" class="text-muted me-1 fw-bold">Số lượng người(7): </label> <span>5 người
-                            lớn | 2 trẻ em</span>
+                        <label for="" class="text-muted me-1 fw-bold">Số lượng
+                            người({{ $room->roomType->total_adult + $room->roomType->total_children }}): </label>
+                        <span>{{ $room->roomType->total_adult }} người
+                            lớn | {{ $room->roomType->total_children ?? 0 }} trẻ em</span>
                     </p>
                     <p class="card-text sort-description">
-                        <span> <label for="" class="text-muted me-1 fw-bold mb-0">Mô tả ngắn: </label>Lorem
-                            ipsum dolor, sit amet consectetur
-                            adipisicing elit. Alias magni quis soluta nemo at tempore! Autem voluptate rerum qui
-                            molestiae. Ullam voluptates eius facilis, neque aliquid vitae numquam minima tempora.
+                        <span> <label for="" class="text-muted me-1 fw-bold mb-0">Mô tả ngắn: </label>
+                            {!! $room->roomType->description !!}
                         </span>
                     </p>
 
@@ -77,8 +76,7 @@
                         </div>
 
                         <!-- Nút đặt phòng -->
-                        <a class="btn btn-sm btn--base"
-                            href="{{ route('room.type.details', $type->slug) }}">
+                        <a class="btn btn-sm btn--base" href="{{ route('room.type.details', $room->roomType->slug) }}">
                             <i class="la la-desktop me-2"></i>@lang('Đặt ngay')
                         </a>
                     </div>
@@ -89,7 +87,7 @@
             <div class="col-custom-md-2 ps-3 border-start d-flex flex-column justify-content-center d-custom-none">
                 <!-- Giá phòng -->
                 <div class="price-info my-3 ">
-                    <h6 class="text-danger fw-bold">2.500.000 VND</h6>
+                    <h6 class="text-danger fw-bold">{{ showAmount($room->roomPricesActive[0]->price) }}</h6>
                 </div>
 
                 <!-- Chính sách -->
@@ -103,12 +101,12 @@
                 </div>
 
                 <!-- Nút đặt phòng -->
-                <a class="btn btn-sm btn--base" href="{{ route('room.type.details', $type->slug) }}">
+                <a class="btn btn-sm btn--base" href="{{ route('room.type.details', $room->roomType->slug) }}">
                     <i class="la la-desktop me-2"></i>@lang('Đặt ngay')
                 </a>
 
                 <!-- Nút yêu thích -->
-                <button class="btn btn-outline-danger btn-sm mt-2">
+                <button class="btn btn-outline-danger btn-sm mt-2 addWishlistBtn" data-id="{{ $room->id }}">
                     <i class="far fa-heart me-1"></i>Thêm vào yêu thích
                 </button>
             </div>

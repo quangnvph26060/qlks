@@ -1,5 +1,6 @@
 <?php
 
+use App\Http\Controllers\Admin\WishlistController;
 use Illuminate\Support\Facades\Route;
 
 Route::namespace('User\Auth')->name('user.')->group(function () {
@@ -97,5 +98,11 @@ Route::middleware('auth')->name('user.')->group(function () {
             Route::get('manual', 'manualDepositConfirm')->name('manual.confirm');
             Route::post('manual', 'manualDepositUpdate')->name('manual.update');
         });
+    });
+
+    Route::controller(WishlistController::class)->group(function () {
+        Route::get('wishlist', 'index')->name('wishlist');
+        Route::post('add-to-wishlist/{id}', 'addToWishlist')->name('add.to.wishlist');
+        Route::post('remove-from-wishlist/{id}', 'removeFromWishlist')->name('remove.from.wishlist');
     });
 });
