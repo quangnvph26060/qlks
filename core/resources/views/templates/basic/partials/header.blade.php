@@ -10,11 +10,13 @@
                 <div class="col-lg-5 d-sm-block d-none">
                     <ul class="header-info-list justify-content-lg-start justify-content-center">
                         <li>
-                            <a href="mailto:{{ $contactContent->data_values->email_address }}"><i class="fas fa-envelope"></i> {{ $contactContent->data_values->email_address }}</a>
+                            <a href="mailto:{{ $contactContent->data_values->email_address }}"><i
+                                    class="fas fa-envelope"></i> {{ $contactContent->data_values->email_address }}</a>
                         </li>
 
                         <li>
-                            <a href="tel:{{ $contactContent->data_values->contact_number }}"><i class="fas fa-phone-alt"></i> +{{ $contactContent->data_values->contact_number }}</a>
+                            <a href="tel:{{ $contactContent->data_values->contact_number }}"><i
+                                    class="fas fa-phone-alt"></i> +{{ $contactContent->data_values->contact_number }}</a>
                         </li>
                     </ul>
                 </div>
@@ -54,7 +56,8 @@
                                 </div>
                             @endif --}}
                             @guest
-                                <a class="header-user-btn" href="{{ route('user.login') }}"><i class="las la-sign-in-alt"></i> @lang('Đăng nhập')</a>
+                                <a class="header-user-btn" href="{{ route('user.login') }}"><i
+                                        class="las la-sign-in-alt"></i> @lang('Đăng nhập')</a>
                                 @if (gs('registration'))
                                     <a class="header-user-btn ms-2" href="{{ route('user.register') }}">
                                         <i class="las la-user"></i> @lang('Đăng ký')
@@ -63,8 +66,10 @@
                             @endguest
 
                             @auth
-                                <a class="header-user-btn" href="{{ route('user.home') }}"><i class="la la-dashboard"></i> @lang('Thống kê')</a>
-                                <a class="header-user-btn ms-2" href="{{ route('user.logout') }}"><i class="las la-sign-out-alt"></i> @lang('Đăng xuất')</a>
+                                <a class="header-user-btn" href="{{ route('user.home') }}"><i class="la la-dashboard"></i>
+                                    @lang('Thống kê')</a>
+                                <a class="header-user-btn ms-2" href="{{ route('user.logout') }}"><i
+                                        class="las la-sign-out-alt"></i> @lang('Đăng xuất')</a>
                             @endauth
                         </div>
                     </div>
@@ -78,7 +83,9 @@
                 <a class="site-logo site-title" href="{{ route('home') }}">
                     <img alt="logo" src="{{ siteLogo('dark') }}">
                 </a>
-                <button aria-controls="navbarSupportedContent" aria-expanded="false" aria-label="Toggle navigation" class="navbar-toggler ms-auto" data-bs-target="#navbarSupportedContent" data-bs-toggle="collapse" type="button">
+                <button aria-controls="navbarSupportedContent" aria-expanded="false" aria-label="Toggle navigation"
+                    class="navbar-toggler ms-auto" data-bs-target="#navbarSupportedContent" data-bs-toggle="collapse"
+                    type="button">
                     <div class="navbar-toggler__icon">
                         <i class="las la-bars"></i>
                     </div>
@@ -89,20 +96,28 @@
                         @if (@$pages)
                             @foreach ($pages as $data)
                                 <li>
-                                    <a class="@if (request()->url() == route('pages', [$data->slug])) active @endif" href="{{ route('pages', [$data->slug]) }}">{{ __(strtoupper($data->name)) }}</a>
+                                    <a class="@if (request()->url() == route('pages', [$data->slug])) active @endif"
+                                       href="{{ route('pages', [$data->slug]) }}">{{ __(strtoupper($data->name)) }}</a>
                                 </li>
                             @endforeach
                         @endif
                         <li>
                             <a class="{{ menuActive('blog') }}" href="{{ route('blog') }}">@lang('Cập nhật')</a>
                         </li>
-
                         <li>
                             <a class="{{ menuActive('contact') }}" href="{{ route('contact') }}">@lang('Liên hệ')</a>
                         </li>
+                        <li>
+                            <a class="{{ menuActive('contact') }}" href="{{ route('contact') }}">
+                                <i class="far fa-heart fa-lg"></i>
+                                <span class="notification-badge">{{ $countWishList }}</span> <!-- Added span here -->
+                            </a>
+                        </li>
                     </ul>
+
                     <div class="nav-right justify-content-xl-end ps-0 ps-xl-5">
-                        <a class="btn btn-sm btn--base" href="{{ route('room.types') }}"><i class="las la-hand-point-right"></i> ĐẶT PHÒNG</a>
+                        <a class="btn btn-sm btn--base" href="{{ route('room.types') }}"><i
+                                class="las la-hand-point-right"></i> ĐẶT PHÒNG</a>
                     </div>
                 </div>
             </nav>

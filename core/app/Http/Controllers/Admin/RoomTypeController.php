@@ -170,7 +170,7 @@ class RoomTypeController extends Controller
         }
 
         $request->validate([
-            'room_type_id'        => 'string|max:255|unique:room_types,room_type_id|max:6',
+            'room_type_id'        => 'string|max:255|max:6|unique:room_types,room_type_id,' . $id,
             'name'                => 'required|string|max:255|unique:room_types,name,' . $id,
             'total_adult'         => 'required|integer|gte:0',
             'total_child'         => 'required|integer|gte:0',

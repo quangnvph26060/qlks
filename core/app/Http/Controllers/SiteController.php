@@ -2,19 +2,20 @@
 
 namespace App\Http\Controllers;
 
-use App\Constants\Status;
-use App\Models\AdminNotification;
-use App\Models\BookingRequest;
-use App\Models\Frontend;
-use App\Models\Language;
+use Carbon\Carbon;
 use App\Models\Page;
 use App\Models\Room;
+use App\Models\Frontend;
+use App\Models\Language;
 use App\Models\RoomType;
+use App\Models\Wishlist;
+use App\Constants\Status;
 use App\Models\Subscriber;
-use App\Models\SupportMessage;
-use App\Models\SupportTicket;
-use Carbon\Carbon;
 use Illuminate\Http\Request;
+use App\Models\SupportTicket;
+use App\Models\BookingRequest;
+use App\Models\SupportMessage;
+use App\Models\AdminNotification;
 use Illuminate\Support\Facades\Cookie;
 use Illuminate\Support\Facades\Validator;
 
@@ -218,8 +219,12 @@ class SiteController extends Controller
     public function roomTypes()
     {
         $pageTitle = 'Loại phòng';
-        $roomTypes = RoomType::active()->with('images', 'amenities')->with(['images', 'amenities'])->get();
-        return view('Template::room.types', compact('pageTitle', 'roomTypes'));
+        // $roomTypes = RoomType::active()->with('images', 'amenities')->with(['images', 'amenities', 'rooms.roomPricesActive'])->get();
+        $rooms = Room::active()->with(['roomType.images', 'roomType.amenities:title', 'roomType.facilities:title', 'roomPricesActive'])->get();
+
+        $countWishList = Wishlist::where('user_id', auth()->id())->count();
+
+        return view('Template::room.types', compact('pageTitle', 'rooms', 'countWishList'));
     }
 
     public function filterRoomType(Request $request)

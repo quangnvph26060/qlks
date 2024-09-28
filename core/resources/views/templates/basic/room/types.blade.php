@@ -81,9 +81,9 @@
                 </div>
                 <div class="col-xl-9 col-lg-12 col-md-12">
                     <div class="row gy-4 justify-content-center">
-                        @if ($roomTypes->count())
+                        @if ($rooms->count())
                             @include($activeTemplate . 'partials.room_cards', [
-                                'roomType' => $roomTypes,
+                                'room' => $rooms,
                                 'class' => 'col-xl-4 col-md-6 col-xs-10',
                             ])
                         @else
@@ -109,6 +109,47 @@
 
     <script>
         $(document).ready(function() {
+
+            function incrementBadge() {
+                // Get the current value of the badge
+                var currentCount = parseInt($(".notification-badge").html());
+                // Increment the count
+                $(".notification-badge").html(currentCount + 1);
+            }
+
+            $(document).on('click', '.addWishlistBtn', function() {
+                let id = $(this).data('id');
+
+                $.ajax({
+                    url: "{{ route('user.add.to.wishlist', ':id') }}".replace(':id', id),
+                    type: "POST",
+                    success: function(response) {
+                        if (response.status === 'success') {
+                            $(`#show-wishlist-${id}`).addClass('text-white bg-danger');
+                            incrementBadge();
+
+                            showMessageToast({
+                                name: 'success',
+                                icon: 'las la-check-circle'
+                            }, response.message); // Use your success icon class
+                        } else {
+                            showMessageToast({
+                                name: 'error',
+                                icon: 'las la-exclamation-circle'
+                            }, response.message); // Use your error icon class
+                        }
+                    },
+                    error: function(response) {
+                        showMessageToast({
+                            name: 'error',
+                            icon: 'las la-exclamation-circle'
+                        }, response.message); // Use your error icon class
+                    }
+                });
+
+
+            })
+
             let amenitiesVisible = false;
 
             $('#toggleAmenities').on('click', function() {

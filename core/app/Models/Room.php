@@ -40,10 +40,11 @@ class Room extends Model
     }
 
 
-    public function updatePrices($data){
-    
+    public function updatePrices($data)
+    {
 
-        foreach($data as $item){
+
+        foreach ($data as $item) {
             $roomPrice =  RoomPrice::find($item);
             if (!$roomPrice) {
                 $notify[] = ['error', 'Giá không tồn tại'];
@@ -60,28 +61,32 @@ class Room extends Model
             $roomPriceRoooms->specific_date     = $roomPrice->specific_date;
             $roomPriceRoooms->save();
         }
-       
     }
-    public function prices(){
+    public function prices()
+    {
         return $this->belongsToMany(RoomPrice::class, 'room_price_rooms', 'room_id', 'price_id');
     }
-    public function scopeActive($query) {
+    public function scopeActive($query)
+    {
         return $query->where('rooms.status', Status::ROOM_ACTIVE);
     }
-    
+
     public function roomPrices()
     {
         return $this->belongsToMany(RoomPrice::class, 'room_price_rooms', 'room_id', 'price_id')
-                ->where('room_prices.status', 'active') 
-                ->withPivot('room_id', 'price_id', 'start_date', 'end_date', 'start_time', 'end_time', 'specific_date', 'status');
-
+            ->where('room_prices.status', 'active')
+            ->withPivot('room_id', 'price_id', 'start_date', 'end_date', 'start_time', 'end_time', 'specific_date', 'status');
     }
     public function roomPricesActive()
     {
         return $this->belongsToMany(RoomPrice::class, 'room_price_rooms', 'room_id', 'price_id')
-                ->where('room_prices.status', 'active') 
-                ->withPivot('room_id', 'price_id', 'start_date', 'end_date', 'start_time', 'end_time', 'specific_date', 'status')
-                ->where('room_price_rooms.status', 1);
+            ->where('room_prices.status', 'active')
+            ->withPivot('room_id', 'price_id', 'start_date', 'end_date', 'start_time', 'end_time', 'specific_date', 'status')
+            ->wherePivot('room_price_rooms.status', 1);
+    }
 
+    public function wishList()
+    {
+        return $this->hasOne(Wishlist::class);
     }
 }
