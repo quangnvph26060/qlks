@@ -68,10 +68,10 @@
                 $classSvg = $room->getCleanStatusSvg();
                 $cleanText = $room->getCleanStatusText();
                 $price = $room->roomPricesActive[0]['price'];
-              
+
                 // test
                 // if($booking->booking->status === 3){
-                //     $class = 'demo-abc'; 
+                //     $class = 'demo-abc';
                 // }
                 if (
                     now() > $booking->booking->check_in &&
@@ -532,6 +532,18 @@
 <script>
     $(document).ready(function() {
         // choose option  rooms
+        var dirtyCount = $('.content-booking.mt-2.room-booking-status-dirty').length;
+        var incomingCount = $('.content-booking.mt-2.room-booking-status-incoming').length;
+        var occupiedCount = $('.content-booking.mt-2.room-booking-status-occupied').length;
+        var lateCheckinCount = $('.content-booking.mt-2.room-booking-status-late-checkin').length;
+        var checkOutCount = $('.content-booking.mt-2.room-booking-status-check-out').length;
+
+        $('.status-available-line-count').text('Đang trống (' + dirtyCount + ')');
+        $('.status-incoming-line-count').text('Sắp nhận (' + incomingCount + ')');
+        $('.status-occupied-line-count').text('Đang sử dụng (' + occupiedCount + ')');
+        $('.status-checkout-line-count').text('Nhận phòng muộn (' + lateCheckinCount + ')');
+        $('.status-overdue-line-count').text('Quá giờ trả (' + checkOutCount + ')');
+
         $('.status-button').click(function() {
             $(this).toggleClass('active');
 
@@ -574,7 +586,7 @@
                 <div class="row w-100">
                     <div class="col-md-6">
                         <select class="custom-select no-right-radius w-100" name="services[]" required>
-                           
+
                         </select>
                     </div>
                     <div class="col-md-6">
@@ -584,7 +596,7 @@
                         </button>
                     </div>
 
-                   
+
                 </div>
             </div>`;
 
@@ -681,7 +693,7 @@
                                                             <td>
                                                                 <form method = "post" action = "${url}">
                                                                     @csrf
-                                                                    <button class="btn btn-sm btn-outline--danger confirmationBtn" 
+                                                                    <button class="btn btn-sm btn-outline--danger confirmationBtn"
                                                                     data-question="@lang('Bạn có chắc chắn muốn xóa dịch vụ này không?')">
                                                                         <i class="las la-trash-alt"></i>@lang('Delete')
                                                                     </button>
@@ -860,13 +872,11 @@
                         let cancellation_fee, shouldRefund = 0;
 
                         var currentDate = '<?php echo now()->format('Y-m-d H:i:s'); ?>';
-
+                        
                         response.data.booked_rooms.forEach(function(booked, index) {
                             $('.booking-no').text(booked.room.room_number);
                             $('.room_serive').val(booked.room.room_number);
-                            let is_flag = false;
-
-
+                            let is_flag = false; 
                             if (booked.status === 1 && booked.booked_for >= currentDate) {
                                 total_fare = booked.fare;
                                 cancellation_fee = booked.cancellation_fee;
@@ -879,10 +889,10 @@
                                            <button
                                                 ${is_flag ? "disabled" : ""}
                                                 data-id="${booked.booking_id}"
-                                                data-booked_for="${booked.booked_for}" 
-                                                data-fare="${ formatCurrency(total_fare) }" 
-                                                data-should_refund="${ formatCurrency(total_fare  - cancellation_fee) }" 
-                                                class="btn btn--danger cancelBookingBtn" 
+                                                data-booked_for="${booked.booked_for}"
+                                                data-fare="${ formatCurrency(total_fare) }"
+                                                data-should_refund="${ formatCurrency(total_fare  - cancellation_fee) }"
+                                                class="btn btn--danger cancelBookingBtn"
                                                 type="button">
                                                 @lang('Hủy đặt phòng')
                                             </button>
@@ -898,12 +908,12 @@
                                             ${booked.status === 'canceled' ? `<span class="text--danger text-sm">(@lang('Đã hủy'))</span>` : ''}
                                         </td>
                                         <td class="text-end" data-label="@lang('Giá')">
-                                            ${formatCurrency(booked.fare)}
+                                            ${formatCurrency(booked.room.room_prices_active[0]['price'])}
                                         </td>
 
                                     </tr>
                                 `;
-                            totalFare += parseFloat(booked.fare);
+                            totalFare += parseFloat(booked.room.room_prices_active[0]['price']);
 
                         });
                         rowsHtml += `
@@ -913,7 +923,7 @@
                                 </td>
 
                                 <td class="fw-bold text-end">
-                                    ${ formatCurrency(totalFare) } 
+                                    ${ formatCurrency(totalFare) }
                                 </td>
                             </tr>
                         `;
@@ -938,7 +948,7 @@
                                               <td class="text-center" data-label="@lang('Số lượng')">
                                                 ${booked.qty}
                                             </td>
-                                           
+
                                             <td class="text-end" data-label="@lang('Giá')">
                                                 ${formatCurrency(booked.premium_service.cost)}
                                             </td>
@@ -951,7 +961,7 @@
 
                         });
                         $('#user_services').append(rowsHtml1);
-                        console.log(response);
+                     //   console.log(response);
                         $('.booking_extra').val(response.data.id);
 
                         $('.customer_type').text(customer_type);
@@ -1129,7 +1139,7 @@
             var durationMinutes = Math.floor((durationMs % (1000 * 60 * 60)) / (1000 * 60));
 
 
-            var formattedHours = durationHours.toString().padStart(2, '0'); // giờ 
+            var formattedHours = durationHours.toString().padStart(2, '0'); // giờ
             var formattedMinutes = durationMinutes.toString().padStart(2, '0'); // phút
 
             let priceTime = 0;
@@ -1180,7 +1190,7 @@
         //     }
         // });
 
-        // validate nếu nhập không có tên khách hàng 
+        // validate nếu nhập không có tên khách hàng
         $('#customer-name').on('input', function() {
             const inputValue = $(this).val().toLowerCase();
             const options = $('#customer-names option');
@@ -1407,7 +1417,7 @@
             title: `<p>${title}</p>`
         });
     };
-    // tất cả các dịch vụ cao cấp 
+    // tất cả các dịch vụ cao cấp
     $(document).ready(function() {
         var langChoose = "{{ __('Chọn') }}";
         $.ajax({

@@ -112,8 +112,10 @@
                                 data-bs-toggle="offcanvas" data-bs-target="#offcanvasRight"
                                 aria-controls="offcanvasRight">
                                 <i class="far fa-heart fa-lg"></i>
+
                                 <span class="notification-badge"></span>
                                 <!-- Added span here -->
+
                             </a>
                         </li>
                     </ul>

@@ -146,46 +146,59 @@
             }
 
             function decrementBadge() {
-                // Get the current value of the badge
+
                 var currentCount = parseInt($(".notification-badge").html());
-                // Decrement the count
                 $(".notification-badge").html(currentCount - 1);
+            }
+
+            function showMessage(name, message) {
+                showMessageToast({
+                    name: name, // Truyền trực tiếp giá trị của biến 'name'
+                }, message); // Truyền thông điệp vào
             }
 
             $(document).on('click', '.addWishlistBtn', function() {
                 let id = $(this).data('id');
 
                 $.ajax({
-                    url: "{{ route('user.add.to.wishlist', ':id') }}".replace(':id',
-                        id),
+
+                    url: "{{ route('user.toggle.wishlist', ':id') }}".replace(':id',
+                        id), // Sửa lại URL route
                     type: "POST",
                     success: function(response) {
                         if (response.status === 'success') {
-                            $(`#show-wishlist-${id}`).addClass(
-                                'text-white bg-danger');
-                            incrementBadge();
+                            let wishlistButton = $(`#show-wishlist-${id}`);
 
-                            showMessageToast({
-                                name: 'success',
-                                icon: 'las la-check-circle'
-                            }, response.message); // Use your success icon class
+                            // Kiểm tra nếu phòng đã được thêm vào danh sách yêu thích hay không
+                            if (wishlistButton.hasClass('text-white bg-danger')) {
+                                wishlistButton.removeClass(
+                                    'text-white bg-danger'); // Xóa khỏi danh sách yêu thích
+                                decrementBadge();
+                                showMessage('error', 'Đã xóa phòng khỏi danh sách yêu thích') // Nếu có logic cho việc giảm số lượng
+                            } else {
+                                wishlistButton.addClass(
+                                    'text-white bg-danger'); // Thêm vào danh sách yêu thích
+                                incrementBadge();
+                                showMessage('success', 'Đã thêm phòng vào danh sách yêu thích') // Nếu có logic cho việc tăng số lượng
+                            }
+
+
+
                         } else {
                             showMessageToast({
                                 name: 'error',
-                                icon: 'las la-exclamation-circle'
-                            }, response.message); // Use your error icon class
+                            }, response.message);
                         }
                     },
                     error: function(response) {
                         showMessageToast({
                             name: 'error',
                             icon: 'las la-exclamation-circle'
-                        }, response.message); // Use your error icon class
+                        }, response.message);
                     }
                 });
+            });
 
-
-            })
 
             let amenitiesVisible = false;
 
@@ -327,6 +340,11 @@
 @push('style')
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/ion-rangeslider/2.3.0/css/ion.rangeSlider.min.css">
     <style>
+        .room-type{
+            white-space: nowrap;         
+            overflow: hidden;            
+            text-overflow: ellipsis;     
+        }
         .responsive-image {
             max-width: 100%;
             height: auto;
