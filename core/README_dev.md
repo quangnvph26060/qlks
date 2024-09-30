@@ -342,6 +342,26 @@ CREATE TABLE wishlists (
 );
 
 
+-- 30/09
+ALTER TABLE `rooms` ADD `main_image` VARCHAR(255) NOT NULL AFTER `room_number`, ADD `total_adult` INT NOT NULL DEFAULT '0' AFTER `main_image`, ADD `total_child` INT NOT NULL DEFAULT '0' AFTER `total_adult`, ADD `description` TEXT NULL AFTER `total_child`, ADD `beds` TEXT NULL AFTER `description`, ADD `cancellation_fee` DECIMAL(10.) NOT NULL AFTER `beds`, ADD `cancellation_policy` TEXT NULL AFTER `cancellation_fee`, ADD `code` VARCHAR(6) NOT NULL AFTER `cancellation_policy`;
+
+ALTER TABLE `rooms` DROP `room_id`;
+
+ALTER TABLE `room_types` CHANGE `room_type_id` `code` VARCHAR(6) CHARACTER SET utf8mb4 COLLATE utf8mb4_unicode_ci NULL;
+
+ALTER TABLE `brands` CHANGE `brand_id` `code` VARCHAR(6) CHARACTER SET utf8mb4 COLLATE utf8mb4_unicode_ci NULL;
+
+ALTER TABLE `amenities` CHANGE `amenity_id` `code` VARCHAR(6) CHARACTER SET utf8mb4 COLLATE utf8mb4_unicode_ci NULL;
+
+ALTER TABLE `facilities` CHANGE `facility_id` `code` VARCHAR(6) CHARACTER SET utf8mb4 COLLATE utf8mb4_unicode_ci NULL;
+
+ALTER TABLE `premium_services` CHANGE `service_id` `code` VARCHAR(6) CHARACTER SET utf8mb4 COLLATE utf8mb4_unicode_ci NULL;
+
+ALTER TABLE `categories` CHANGE `category_id` `code` VARCHAR(6) CHARACTER SET utf8mb4 COLLATE utf8mb4_unicode_ci NULL;
+
+ALTER TABLE `suppliers` ADD `code` VARCHAR(6) NULL AFTER `is_active`;
+
+
 --30-9 --phong
 ALTER TABLE room_type_amenities RENAME TO room_amenities;
 ALTER TABLE room_type_facilities RENAME TO room_facilities;
@@ -364,3 +384,4 @@ ALTER TABLE `room_types`
   DROP `cancellation_policy`,
   DROP `is_featured`,
   DROP `room_type_id`;
+
