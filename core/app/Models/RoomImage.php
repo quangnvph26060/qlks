@@ -6,7 +6,7 @@ use App\Traits\GlobalStatus;
 use Illuminate\Database\Eloquent\Model;
 use Illuminate\Database\Eloquent\Factories\HasFactory;
 
-class RoomTypeImage extends Model
+class RoomImage extends Model
 {
     use GlobalStatus;
     use HasFactory;
@@ -17,7 +17,7 @@ class RoomTypeImage extends Model
     ];
 
     protected $fillable = [
-        'room_type_id',
+        'room_id',
         'image'
     ];
 
