@@ -10,6 +10,7 @@
                         <table class="table--light table">
                             <thead>
                                 <tr>
+                                    <th>@lang('STT')</th>
                                     <th>@lang('Mã dịch vụ')</th>
                                     <th>@lang('Tên dịch vụ')</th>
                                     <th>@lang('Giá')</th>
@@ -22,9 +23,9 @@
                             <tbody>
                                 @forelse($premiumServices as $premiumService)
                                     <tr>
-                                        <td>{{ $premiumService->service_id ?? 'Chưa có mã dịch vụ' }}</td>
-                                        <td><span
-                                                class="me-2">{{ $premiumServices->firstItem() + $loop->index }}.</span>{{ __($premiumService->name) }}
+                                        <td>{{ $loop->iteration }}</td>
+                                        <td>{{ $premiumService->code ?? 'Chưa có mã dịch vụ' }}</td>
+                                        <td>{{ __($premiumService->name) }}
                                         </td>
 
                                         <td>
@@ -99,8 +100,8 @@
                         <div class="modal-body">
                             <div class="form-group">
                                 <label> @lang('Mã dịch vụ')</label>
-                                <input class="form-control" name="service_id" required type="text"
-                                    value="{{ old('service_id') }}">
+                                <input class="form-control" name="code" required type="text"
+                                    value="{{ old('code') }}">
                             </div>
                             <div class="form-group">
                                 <label> @lang('Tên dịch vụ')</label>
@@ -138,7 +139,7 @@
 @push('script')
     <script>
         $(document).ready(function() {
-            $('input[name="service_id"]').on('input', function() {
+            $('input[name="code"]').on('input', function() {
                 this.value = this.value.toUpperCase();
             });
         });

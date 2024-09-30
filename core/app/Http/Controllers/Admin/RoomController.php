@@ -14,15 +14,17 @@ class RoomController extends Controller
     public function index()
     {
         $pageTitle = 'Tất cả các phòng';
-        $roomTypes = RoomType::get();
-        $rooms     = Room::searchable(['room_number', 'roomType:name'])->filter(['room_type_id'])->orderBy('room_number')->with('prices:name');
+        $roomTypes = RoomType::all();
         $prices = RoomPrice::active()->pluck('name', 'id');
 
-        if (request()->status == Status::ENABLE || request()->status == Status::DISABLE) {
-            $rooms = $rooms->filter(['status']);
-        }
-
-        $rooms =  $rooms->with('roomType.images')->orderBy('room_number', 'asc')->paginate(getPaginate());
+        $rooms = Room::searchable(['room_number', 'roomType:name'])
+            ->filter(['room_type_id'])
+            ->when(request()->status, function ($query) {
+                return $query->filter(['status']);
+            })
+            ->with(['prices:name', 'images'])
+            ->orderBy('room_number', 'asc')
+            ->paginate(getPaginate());
 
         return view('admin.hotel.rooms', compact('pageTitle', 'rooms', 'roomTypes', 'prices'));
     }

@@ -18,9 +18,10 @@
                                 </tr>
                             </thead>
                             <tbody>
+                                {{-- @dd($amenities) --}}
                                 @forelse($amenities as $item)
                                     <tr>
-                                        <td>{{ $item->amenity_id ?? 'Chưa có mã tiện nghi' }}</td>
+                                        <td>{{ $item->code ?? 'Chưa có mã tiện nghi' }}</td>
                                         <td><span class="me-2">{{ $amenities->firstItem() + $loop->index }}.</span>
                                             {{ $item->title }}</td>
                                         <td> @php echo $item->icon @endphp </td>
@@ -88,7 +89,7 @@
                         <div class="modal-body">
                             <div class="form-group">
                                 <label> @lang('Mã tiện ích')</label>
-                                <input class="form-control" name="amenity_id" type="text" value="{{ old('amenity_id') }}">
+                                <input class="form-control" name="code" type="text" value="{{ old('code') }}">
                             </div>
                             <div class="form-group">
                                 <label> @lang('Tiện ích')</label>
