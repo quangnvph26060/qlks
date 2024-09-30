@@ -15,16 +15,27 @@
                         <div class="row">
                             <div class="col-xl-4 col-md-4 col-sm-12">
                                 <div class="form-group">
-                                    <label>@lang('Mã loại phòng')</label>
-                                    <input class="form-control" name="room_type_id" type="text"
-                                        value="{{ old('room_type_id', @$roomType->room_type_id) }}">
+                                    <label>@lang('Loại phòng')</label>
+                                    <select class="form-control" name="room_type_id" required>
+                                        <option disabled selected value="">@lang('Select One')</option>
+                                        @foreach ($roomTypes as $id => $name)
+                                            <option @selected($name) value="{{ $id }}">{{ __($name) }}</option>
+                                        @endforeach
+                                    </select>
                                 </div>
                             </div>
                             <div class="col-xl-4 col-md-4 col-sm-12">
                                 <div class="form-group">
-                                    <label>@lang('Tên loại phòng')</label>
-                                    <input class="form-control" name="name" required type="text"
-                                        value="{{ old('name', @$roomType->name) }}">
+                                    <label>@lang('Mã phòng')</label>
+                                    <input class="form-control" name="code" type="text"
+                                        value="{{ old('code', @$roomType->code) }}">
+                                </div>
+                            </div>
+                            <div class="col-xl-4 col-md-4 col-sm-12">
+                                <div class="form-group">
+                                    <label>@lang('Số phòng')</label>
+                                    <input class="form-control" name="room_number" required type="text"
+                                        value="{{ old('room_number', @$roomType->room_number) }}">
                                 </div>
                             </div>
 
@@ -55,8 +66,18 @@
                                         value="{{ old('total_child', @$roomType->total_child) }}">
                                 </div>
                             </div>
-
-                            <div class="col-xl-12 col-md-12">
+                            <div class="col-xl-6 col-md-4 col-sm-12">
+                                <div class="form-group">
+                                    <label for="">Chọn giá</label>
+                                    <select class="select2-multi-select" multiple="multiple" name="prices[]">
+                                        @foreach ($prices as $id => $name)
+                                            <option value="{{ $id }}">{{ $name }}</option>
+                                        @endforeach
+                                        <!-- Thêm các tùy chọn khác nếu cần -->
+                                    </select>
+                                </div>
+                            </div>
+                            <div class="col-xl-6 col-md-12">
                                 <div class="form-group position-relative">
                                     <label> @lang('Tiện nghi')</label>
                                     <select class="select2-multi-select" multiple="multiple" name="amenities[]">
@@ -78,7 +99,7 @@
                                 </div>
                             </div>
 
-                            <div class="col-xl-6 col-md-12">
+                            {{-- <div class="col-xl-6 col-md-12">
                                 <div class="form-group position-relative">
                                     <label>@lang('Từ khóa')</label>
                                     <select class="form-control select2-auto-tokenize" multiple="multiple"
@@ -86,7 +107,7 @@
                                     <small class="ml-2 mt-2">@lang('Phân tách nhiều từ khóa bằng') <code>,</code>(@lang('dấu phẩy'))
                                         @lang('hoặc') <code>@lang('enter')</code> @lang('key')</small>
                                 </div>
-                            </div>
+                            </div> --}}
 
                             <div class="col-xl-6 col-md-12">
                                 <div class="form-group">
@@ -299,7 +320,7 @@
 
 @push('breadcrumb-plugins')
     @if (@$roomType)
-        <a href="{{ route('room.type.details', $roomType->slug) }}" class="btn btn-sm btn-outline--dark"
+        <a href="{{ route('room.type.details', $roomType->room_number) }}" class="btn btn-sm btn-outline--dark"
             target="_blank"><i class="las la-eye"></i>@lang('Quick View')</a>
     @endif
     @can('admin.hotel.room.type.all')

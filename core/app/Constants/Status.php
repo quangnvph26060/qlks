@@ -43,6 +43,7 @@ class Status
     const ROOM_ACTIVE    = 1;
     const ROOM_CANCELED = 3;
     const ROOM_CHECKOUT  = 9;
+    const ROOM_FEATURED = 1;
 
     const BOOKED_ROOM_ACTIVE    = 1;
     const BOOKED_ROOM_CANCELED = 3;
