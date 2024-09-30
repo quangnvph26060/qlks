@@ -1,4 +1,4 @@
-@foreach ($rooms as $key => $room)
+@foreach ($rooms ?? [] as $key => $room)
     <div class="card p-3" style="max-width: 100%;">
         <div class="row g-0">
             <div class="col-custom-md-4 col-sm-5 col-custom-ssm-5 col-custom-sssm-5 position-relative">

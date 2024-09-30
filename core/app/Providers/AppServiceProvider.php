@@ -100,8 +100,7 @@ class AppServiceProvider extends ServiceProvider
 
             $wishListRooms = new RoomCollection($wishLists);
 
-            dd($wishListRooms);
-
+          
             $view->with([
                 'wishLists' => $wishListRooms,
             ]);
