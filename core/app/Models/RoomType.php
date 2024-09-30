@@ -15,20 +15,7 @@ class RoomType extends Model
         'beds'     => 'array'
     ];
 
-    public function amenities()
-    {
-        return $this->belongsToMany(Amenity::class, 'room_type_amenities', 'room_type_id', 'amenities_id')->withTimestamps();
-    }
-
-    public function products()
-    {
-        return $this->belongsToMany(Product::class, 'room_type_products', 'room_type_id', 'product_id')->withPivot('quantity');
-    }
-
-    public function facilities()
-    {
-        return $this->belongsToMany(Facility::class, 'room_type_facilities', 'room_type_id', 'facility_id')->withTimestamps();
-    }
+ 
 
     public function rooms()
     {
@@ -42,7 +29,7 @@ class RoomType extends Model
 
     public function images()
     {
-        return $this->hasMany(RoomTypeImage::class);
+        return $this->hasMany(RoomImage::class);
     }
 
     public function bookedRooms()

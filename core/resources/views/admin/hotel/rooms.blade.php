@@ -8,9 +8,9 @@
                         <table class="table--light style--two table">
                             <thead>
                                 <tr>
-                                    <th>@lang('Số phòng')</th>
-                                    <th>@lang('Mã phòng')</th>
-                                    <th>@lang('Tên phòng')</th>
+                                    <th>@lang('STT')</th>
+                                    <th>@lang('Mã loại phòng')</th>
+                                    <th>@lang('Tên loại phòng')</th>
                                     <th>@lang('Trạng thái')</th>
                                     @can(['admin.hotel.room.status', 'admin.hotel.room.add'])
                                         <th>@lang('Hành động')</th>
@@ -18,11 +18,13 @@
                                 </tr>
                             </thead>
                             <tbody>
-                                @forelse($rooms as $room)
+                                @forelse($roomTypes as  $room)
                                     <tr>
-                                        <td> {{ $room->room_number }}</td>
-                                        <td> {{ $room->room_id ?? 'Chưa có mã phòng' }}</td>
-                                        <td>{{ __($room->roomType->name) }}</td>
+                                        <td>{{$loop->iteration}}</td>
+                                        <td> {{ $room->code ?? 'Chưa có mã phòng'}}</td>
+                                        <td>{{ __($room->name) }}</td>
+                                      
+                                     
                                         <td> @php echo $room->statusBadge @endphp </td>
                                         @can(['admin.hotel.room.status', 'admin.hotel.room.add'])
                                             <td>
@@ -36,13 +38,13 @@
                                                     @if ($room->status == Status::ENABLE)
                                                         <button class="btn btn-sm btn-outline--danger confirmationBtn"
                                                             data-action="{{ route('admin.hotel.room.status', $room->id) }}"
-                                                            data-question="@lang('Are your to disable this room?')" type="button">
+                                                            data-question="@lang('Bạn có chắc chắn ngưng hoạt động không ?')" type="button">
                                                             <i class="la la-eye-slash"></i> @lang('Ngưng hoạt động')
                                                         </button>
                                                     @else
                                                         <button class="btn btn-sm btn-outline--success confirmationBtn"
                                                             data-action="{{ route('admin.hotel.room.status', $room->id) }}"
-                                                            data-question="@lang('Are your to enable this room?')" type="button">
+                                                            data-question="@lang('Bạn có muốn kích hoạt không ?')" type="button">
                                                             <i class="la la-eye"></i> @lang('Cho phép')
                                                         </button>
                                                     @endif

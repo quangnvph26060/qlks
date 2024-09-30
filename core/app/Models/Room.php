@@ -5,18 +5,39 @@ namespace App\Models;
 use App\Constants\Status;
 use App\Traits\GlobalStatus;
 use Illuminate\Database\Eloquent\Model;
+use Illuminate\Database\Eloquent\Casts\Attribute;
 
 class Room extends Model
 {
     use GlobalStatus;
 
     protected $fillable = ['id', 'is_clean'];
+    protected $casts = [
+        'keywords' => 'array',
+        'beds'     => 'array'
+    ];
 
+    public function amenities()
+    {
+        return $this->belongsToMany(Amenity::class, 'room_amenities', 'room_id', 'amenities_id')->withTimestamps();
+    }
+
+    public function products()
+    {
+        return $this->belongsToMany(Product::class, 'room_products', 'room_id', 'product_id')->withPivot('quantity');
+    }
+
+    public function facilities()
+    {
+        return $this->belongsToMany(Facility::class, 'room_facilities', 'room_id', 'facility_id')->withTimestamps();
+    }
     public function roomType()
     {
         return $this->belongsTo(RoomType::class);
     }
-
+    public function images()  {
+        return $this->hasMany(RoomImage::class);
+    }
     public function booked()
     {
         return $this->hasMany(BookedRoom::class, 'room_id');
@@ -88,5 +109,23 @@ class Room extends Model
     public function wishList()
     {
         return $this->hasOne(Wishlist::class);
+    }
+
+    public function featureBadge(): Attribute
+    {
+        return new Attribute(
+            function () {
+                $html = '';
+
+                if ($this->is_featured == Status::ROOM_FEATURED) {
+                    $html = '<span class="badge badge--primary">' . trans('Nổi bật') . '</span>';
+                    //Featured
+                } else {
+                    $html = '<span><span class="badge badge--dark">' . trans('Không có gì nổi bật') . '</span></span>';
+                }   //Unfeatured
+
+                return $html;
+            }
+        );
     }
 }

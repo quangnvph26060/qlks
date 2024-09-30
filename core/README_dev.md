@@ -385,3 +385,5 @@ ALTER TABLE `room_types`
   DROP `is_featured`,
   DROP `room_type_id`;
 
+--30-9 --Quang
+ALTER TABLE `rooms` ADD `is_featured` TINYINT(1) NOT NULL DEFAULT '0' AFTER `is_clean`;

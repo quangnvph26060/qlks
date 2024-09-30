@@ -136,7 +136,8 @@
             // if check out date was not given! then
             return;
         }
-        let unitFare = roomInfo.room_type.fare;
+
+        let unitFare = roomInfo.room_prices_active[0]['price'];
 
         @if (@$requestUnitFare)
             unitFare = "{{ $requestUnitFare }}";

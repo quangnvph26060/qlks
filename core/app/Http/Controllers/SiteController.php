@@ -307,11 +307,11 @@ class SiteController extends Controller
         }
     }
 
-    public function roomTypeDetails($slug)
+    public function roomTypeDetails($room_number)
     {
-        $roomType = RoomType::with('amenities', 'facilities', 'images')->where('slug', $slug)->first();
+        $roomType = Room::with('amenities', 'facilities', 'images')->where('room_number', $room_number)->first();
         abort_if(!$roomType, 404);
-        $pageTitle = $roomType->name;
+        $pageTitle = $roomType->room_number;
 
         return view('Template::room.details', compact('pageTitle', 'roomType'));
     }
