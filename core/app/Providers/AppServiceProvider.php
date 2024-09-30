@@ -2,18 +2,22 @@
 
 namespace App\Providers;
 
-use App\Constants\Status;
+use App\Http\Resources\Room\RoomCollection;
+use App\Models\User;
 use App\Lib\Searchable;
-use App\Models\AdminNotification;
 use App\Models\Booking;
-use App\Models\BookingRequest;
 use App\Models\Deposit;
 use App\Models\Frontend;
+use App\Models\Wishlist;
+use App\Constants\Status;
 use App\Models\SupportTicket;
-use App\Models\User;
-use Illuminate\Database\Eloquent\Builder;
-use Illuminate\Support\ServiceProvider;
+use App\Models\BookingRequest;
+use App\Models\AdminNotification;
 use Illuminate\Pagination\Paginator;
+use Illuminate\Support\Facades\Auth;
+use Illuminate\Support\Facades\View;
+use Illuminate\Support\ServiceProvider;
+use Illuminate\Database\Eloquent\Builder;
 
 class AppServiceProvider extends ServiceProvider
 {
@@ -63,7 +67,7 @@ class AppServiceProvider extends ServiceProvider
                 'delayedCheckoutCount'         => Booking::delayedCheckout()->count(),
                 'refundableBookingCount'       => Booking::refundable()->count(),
                 'pendingCheckInsCount'         => Booking::active()->keyNotGiven()->whereDate('check_in', '<=', now())->count(),
-         //       'updateAvailable'              => version_compare(gs('available_version'), systemDetails()['version'], '>') ? 'v' . gs('available_version') : false,
+                //       'updateAvailable'              => version_compare(gs('available_version'), systemDetails()['version'], '>') ? 'v' . gs('available_version') : false,
             ]);
         });
 
@@ -88,5 +92,21 @@ class AppServiceProvider extends ServiceProvider
 
         Paginator::useBootstrapFive();
         // Paginator::defaultView('vendor.pagination.custom');
+
+        View::composer('*', function ($view) {
+            $wishLists = Wishlist::with('room.roomType', 'room.roomPricesActive')
+                ->where('user_id', Auth::id())
+                ->get();
+
+            $wishListRooms = new RoomCollection($wishLists);
+
+            dd($wishListRooms);
+
+            $view->with([
+                'wishLists' => $wishListRooms,
+            ]);
+        });
+
+
     }
 }

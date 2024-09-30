@@ -110,6 +110,34 @@
     <script>
         $(document).ready(function() {
 
+            $(document).on('click', '.cancelWishlistBtn', function() {
+                if (!$(this).hasClass('text-white') && !$(this).hasClass('bg-danger')) {
+                    return;
+                }
+
+                let id = $(this).data('id');
+
+                $.ajax({
+                    url: "{{ route('user.remove.from.wishlist', ':id') }}".replace(':id', id),
+                    type: "POST",
+                    success: function(response) {
+                        if (response.status === 'success') {
+                            $(`#show-wishlist-${id}`).removeClass('text-white bg-danger');
+                            decrementBadge();
+                            showMessageToast({
+                                name: 'success',
+                                icon: 'las la-check-circle'
+                            }, response.message); // Use your success icon class
+                        } else {
+                            showMessageToast({
+                                name: 'error',
+                                icon: 'las la-exclamation-circle'
+                            }, response.message); // Use your error icon class
+                        }
+                    },
+                })
+            })
+
             function incrementBadge() {
                 // Get the current value of the badge
                 var currentCount = parseInt($(".notification-badge").html());
@@ -117,15 +145,24 @@
                 $(".notification-badge").html(currentCount + 1);
             }
 
+            function decrementBadge() {
+                // Get the current value of the badge
+                var currentCount = parseInt($(".notification-badge").html());
+                // Decrement the count
+                $(".notification-badge").html(currentCount - 1);
+            }
+
             $(document).on('click', '.addWishlistBtn', function() {
                 let id = $(this).data('id');
 
                 $.ajax({
-                    url: "{{ route('user.add.to.wishlist', ':id') }}".replace(':id', id),
+                    url: "{{ route('user.add.to.wishlist', ':id') }}".replace(':id',
+                        id),
                     type: "POST",
                     success: function(response) {
                         if (response.status === 'success') {
-                            $(`#show-wishlist-${id}`).addClass('text-white bg-danger');
+                            $(`#show-wishlist-${id}`).addClass(
+                                'text-white bg-danger');
                             incrementBadge();
 
                             showMessageToast({

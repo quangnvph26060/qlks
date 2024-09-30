@@ -11,6 +11,11 @@ class WishlistController extends Controller
 {
     public function addToWishlist($roomId)
     {
+
+        if (! Auth::check()) {
+            return response()->json(['message' => 'Vui lòng đăng nhập để thực hiện chực năng này!', 'status' => 'error']);
+        }
+
         $userId = Auth::id();
 
         $existing = Wishlist::where([

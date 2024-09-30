@@ -4,8 +4,8 @@
             <div class="col-custom-md-4 col-sm-5 col-custom-ssm-5 col-custom-sssm-5 position-relative">
                 <img src="{{ \Storage::url($room->roomType->main_image) }}" class="responsive-image rounded"
                     alt="Hotel Image">
-                <button
-                    class="btn btn-light position-absolute top-0 end-0 m-2 rounded-circle {{ $room->wishlist ? 'text-white bg-danger' : '' }}"
+                <button data-id="{{ $room->id }}"
+                    class="cancelWishlistBtn btn btn-light position-absolute top-0 end-0 m-2 rounded-circle {{ Auth::check() && $room->wishlist ? 'text-white bg-danger' : '' }}"
                     id="show-wishlist-{{ $room->id }}" style="padding:0.375rem 0.75rem">
                     <i class="far fa-heart"></i>
                 </button>
@@ -107,7 +107,7 @@
 
                 <!-- Nút yêu thích -->
                 <button class="btn btn-outline-danger btn-sm mt-2 addWishlistBtn" data-id="{{ $room->id }}">
-                    <i class="far fa-heart me-1"></i>Thêm vào yêu thích
+                    <i class="far fa-heart me-1"></i>Yêu thích
                 </button>
             </div>
 
