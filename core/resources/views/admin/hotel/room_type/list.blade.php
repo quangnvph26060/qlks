@@ -9,9 +9,9 @@
                             <thead>
                                 <tr>
                                     <th></th>
-                                    <th>@lang('Mã loại phòng')</th>
-                                    <th>@lang('Tên phòng')</th>
-                                    <th>@lang('Giá')</th>
+                                    <th>@lang('STT')</th>
+                                    <th>@lang('Loại phòng')</th>
+                                    <th>@lang('Số phòng')</th>
                                     <th>@lang('Trạng thái')</th>
                                     @can(['admin.hotel.room.type.edit', 'admin.hotel.room.type.status'])
                                         <th>@lang('Hành động')</th>
@@ -25,20 +25,14 @@
                                             <button class="btn btn-link btn-toggle" type="button"
                                                 onclick=" toggleRepresentatives('{{ $type->id }}', this)"></button>
                                         </td>
-                                        <td>
-                                            {{ $type->room_type_id ?? 'Chưa có mã loại phòng' }}
-                                        </td>
-                                        <td>
-                                            {{ $type->name }}
-                                        </td>
+                                        <td>{{$loop->iteration}}</td>
 
                                         <td>
-                                            <span class="fw-bold">
-                                                {{ showAmount($type->fare) }}
-                                            </span>
+                                            {{ $type->roomType->name}}
                                         </td>
-
-
+                                        <td>
+                                            {{ $type->room_number }}
+                                        </td>
                                         <td>@php echo $type->statusBadge  @endphp</td>
                                         @can(['admin.hotel.room.type.edit', 'admin.hotel.room.type.status'])
                                             <td>
