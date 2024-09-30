@@ -10,12 +10,8 @@ use Illuminate\Database\Eloquent\Casts\Attribute;
 class RoomType extends Model
 {
     use GlobalStatus;
-    protected $casts = [
-        'keywords' => 'array',
-        'beds'     => 'array'
-    ];
 
- 
+    protected $table = 'room_types';
 
     public function rooms()
     {
@@ -36,7 +32,10 @@ class RoomType extends Model
     {
         return $this->hasMany(BookedRoom::class)->active();
     }
-
+    public function scopeActive($query)
+    {
+        return $query->where('room_types.status', Status::ROOM_ACTIVE);
+    }
     //scope
     public function scopeFeatured($query)
     {
