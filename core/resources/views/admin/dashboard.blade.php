@@ -90,7 +90,7 @@
     </div>
 
     <div class="row mb-none-30 mt-5">
-        <div class="col-xl-4 col-lg-6 mb-30">
+        {{-- <div class="col-xl-4 col-lg-6 mb-30">
             <div class="card overflow-hidden">
                 <div class="card-body">
                     <h5 class="card-title">@lang('Đăng nhập bằng trình duyệt') (@lang('30 ngày qua'))</h5>
@@ -113,7 +113,7 @@
                     <canvas id="userCountryChart"></canvas>
                 </div>
             </div>
-        </div>
+        </div> --}}
     </div>
 @endsection
 

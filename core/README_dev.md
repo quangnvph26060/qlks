@@ -341,6 +341,7 @@ CREATE TABLE wishlists (
     CONSTRAINT fk_room FOREIGN KEY (room_id) REFERENCES rooms (id) ON DELETE CASCADE
 );
 
+
 -- 30/09
 ALTER TABLE `rooms` ADD `main_image` VARCHAR(255) NOT NULL AFTER `room_number`, ADD `total_adult` INT NOT NULL DEFAULT '0' AFTER `main_image`, ADD `total_child` INT NOT NULL DEFAULT '0' AFTER `total_adult`, ADD `description` TEXT NULL AFTER `total_child`, ADD `beds` TEXT NULL AFTER `description`, ADD `cancellation_fee` DECIMAL(10.) NOT NULL AFTER `beds`, ADD `cancellation_policy` TEXT NULL AFTER `cancellation_fee`, ADD `code` VARCHAR(6) NOT NULL AFTER `cancellation_policy`;
 
@@ -359,3 +360,28 @@ ALTER TABLE `premium_services` CHANGE `service_id` `code` VARCHAR(6) CHARACTER S
 ALTER TABLE `categories` CHANGE `category_id` `code` VARCHAR(6) CHARACTER SET utf8mb4 COLLATE utf8mb4_unicode_ci NULL;
 
 ALTER TABLE `suppliers` ADD `code` VARCHAR(6) NULL AFTER `is_active`;
+
+
+--30-9 --phong
+ALTER TABLE room_type_amenities RENAME TO room_amenities;
+ALTER TABLE room_type_facilities RENAME TO room_facilities;
+ALTER TABLE room_type_images RENAME TO room_images;
+ALTER TABLE room_type_products RENAME TO room_products;
+
+ALTER TABLE room_facilities RENAME COLUMN room_type_id TO room_id;
+ALTER TABLE room_amenities RENAME COLUMN room_type_id  TO room_id;
+ALTER TABLE room_images RENAME COLUMN room_type_id TO room_id;
+ALTER TABLE room_products RENAME COLUMN room_type_id TO room_id;
+
+ALTER TABLE `room_types`
+  DROP `total_adult`,
+  DROP `total_child`,
+  DROP `fare`,
+  DROP `keywords`,
+  DROP `description`,
+  DROP `beds`,
+  DROP `cancellation_fee`,
+  DROP `cancellation_policy`,
+  DROP `is_featured`,
+  DROP `room_type_id`;
+
