@@ -6537,3 +6537,12 @@ button .spinner-border {
     font-size: 10px; /* Font size */
     font-weight: bold; /* Make the text bold */
 }
+
+.offcanvas,
+.offcanvas-lg,
+.offcanvas-md,
+.offcanvas-sm,
+.offcanvas-xl,
+.offcanvas-xxl {
+    --bs-offcanvas-width: 450px;
+}

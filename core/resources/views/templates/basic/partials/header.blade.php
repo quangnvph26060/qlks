@@ -97,7 +97,7 @@
                             @foreach ($pages as $data)
                                 <li>
                                     <a class="@if (request()->url() == route('pages', [$data->slug])) active @endif"
-                                       href="{{ route('pages', [$data->slug]) }}">{{ __(strtoupper($data->name)) }}</a>
+                                        href="{{ route('pages', [$data->slug]) }}">{{ __(strtoupper($data->name)) }}</a>
                                 </li>
                             @endforeach
                         @endif
@@ -108,9 +108,14 @@
                             <a class="{{ menuActive('contact') }}" href="{{ route('contact') }}">@lang('Liên hệ')</a>
                         </li>
                         <li>
-                            <a class="{{ menuActive('contact') }}" href="{{ route('contact') }}">
+                            <a class="{{ menuActive('contact') }}" href="#" type="button"
+                                data-bs-toggle="offcanvas" data-bs-target="#offcanvasRight"
+                                aria-controls="offcanvasRight">
                                 <i class="far fa-heart fa-lg"></i>
-                                <span class="notification-badge">{{ $countWishList ?? 0}}</span> <!-- Added span here -->
+
+                                <span class="notification-badge"></span>
+                                <!-- Added span here -->
+
                             </a>
                         </li>
                     </ul>
@@ -124,3 +129,47 @@
         </div>
     </div>
 </header>
+{{--
+<button class="btn btn-primary" type="button" data-bs-toggle="offcanvas" data-bs-target="#offcanvasRight"
+    aria-controls="offcanvasRight">Toggle right offcanvas</button> --}}
+
+<div class="offcanvas offcanvas-end" tabindex="-1" id="offcanvasRight" aria-labelledby="offcanvasRightLabel">
+    <div class="offcanvas-header">
+        <h5 id="offcanvasRightLabel">Danh sách yêu thích</h5>
+        <button type="button" class="btn-close text-reset" data-bs-dismiss="offcanvas" aria-label="Close"></button>
+    </div>
+    <div class="offcanvas-body">
+        <div class="list-group">
+            {{-- @dd($wishLists) --}}
+            @foreach ($wishLists as $data)
+                <div class="list-group-item d-flex align-items-center">
+                    <!-- Checkbox -->
+                    <input type="checkbox" class="form-check-input me-3 room-checkbox" data-price="1500000"
+                        id="room-1">
+
+                    <!-- Ảnh phòng -->
+                    <img src="{{ \Storage::url($data->room->roomType->main_image) }}" alt="Room Image" class="rounded"
+                        style="max-width: 20%; object-fit: cover;">
+
+                    <!-- Thông tin phòng -->
+                    <div class="ms-3">
+                        <!-- Tên phòng -->
+                        <h5 class="mb-1">{{ $data->room->room_number }}</h5>
+
+                        <!-- Giá phòng -->
+                        <p class="mb-0 text-muted">Giá: {{ $data->room->prices[0]['price'] }}</p>
+                    </div>
+                </div>
+            @endforeach
+            <!-- Loop bắt đầu: lặp qua danh sách các phòng -->
+
+            <!-- Loop kết thúc -->
+        </div>
+
+        <!-- Hiển thị tổng giá -->
+        <div class="mt-4">
+            <h5>Tổng giá:</h5>
+            <p id="total-price" class="fw-bold">0 VNĐ</p>
+        </div>
+    </div>
+</div>

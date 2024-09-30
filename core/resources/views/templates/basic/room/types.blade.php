@@ -110,6 +110,34 @@
     <script>
         $(document).ready(function() {
 
+            $(document).on('click', '.cancelWishlistBtn', function() {
+                if (!$(this).hasClass('text-white') && !$(this).hasClass('bg-danger')) {
+                    return;
+                }
+
+                let id = $(this).data('id');
+
+                $.ajax({
+                    url: "{{ route('user.remove.from.wishlist', ':id') }}".replace(':id', id),
+                    type: "POST",
+                    success: function(response) {
+                        if (response.status === 'success') {
+                            $(`#show-wishlist-${id}`).removeClass('text-white bg-danger');
+                            decrementBadge();
+                            showMessageToast({
+                                name: 'success',
+                                icon: 'las la-check-circle'
+                            }, response.message); // Use your success icon class
+                        } else {
+                            showMessageToast({
+                                name: 'error',
+                                icon: 'las la-exclamation-circle'
+                            }, response.message); // Use your error icon class
+                        }
+                    },
+                })
+            })
+
             function incrementBadge() {
                 // Get the current value of the badge
                 var currentCount = parseInt($(".notification-badge").html());
@@ -118,6 +146,7 @@
             }
 
             function decrementBadge() {
+
                 var currentCount = parseInt($(".notification-badge").html());
                 $(".notification-badge").html(currentCount - 1);
             }
@@ -127,10 +156,12 @@
                     name: name, // Truyền trực tiếp giá trị của biến 'name'
                 }, message); // Truyền thông điệp vào
             }
+
             $(document).on('click', '.addWishlistBtn', function() {
                 let id = $(this).data('id');
 
                 $.ajax({
+
                     url: "{{ route('user.toggle.wishlist', ':id') }}".replace(':id',
                         id), // Sửa lại URL route
                     type: "POST",
@@ -150,6 +181,7 @@
                                 incrementBadge();
                                 showMessage('success', 'Đã thêm phòng vào danh sách yêu thích') // Nếu có logic cho việc tăng số lượng
                             }
+
 
 
                         } else {

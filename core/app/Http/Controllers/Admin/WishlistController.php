@@ -8,7 +8,9 @@ use Illuminate\Support\Facades\Auth;
 
 class WishlistController extends Controller
 {
+
     public function toggleWishlist($roomId)
+
     {
         $userId = Auth::id();
 
