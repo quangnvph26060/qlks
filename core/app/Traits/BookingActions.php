@@ -19,11 +19,11 @@ trait BookingActions {
                 },
                 'roomType' => function ($q) {
                     $q->select('id', 'name', 'fare');
-                },
+                }, 'roomPricesActive'
                
-            ],'roomPricesActive')
+            ])
             ->get();
-            \Log::info($rooms);
+         
         if (count($rooms) < $request->rooms) {
             return ['error' => ['Số phòng yêu cầu không có sẵn cho ngày đã chọn']]; //The requested number of rooms is not available for the selected date
         }
