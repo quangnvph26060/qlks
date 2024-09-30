@@ -341,3 +341,26 @@ CREATE TABLE wishlists (
     CONSTRAINT fk_room FOREIGN KEY (room_id) REFERENCES rooms (id) ON DELETE CASCADE
 );
 
+
+--30-9 --phong
+ALTER TABLE room_type_amenities RENAME TO room_amenities;
+ALTER TABLE room_type_facilities RENAME TO room_facilities;
+ALTER TABLE room_type_images RENAME TO room_images;
+ALTER TABLE room_type_products RENAME TO room_products;
+
+ALTER TABLE room_facilities RENAME COLUMN room_type_id TO room_id;
+ALTER TABLE room_amenities RENAME COLUMN room_type_id  TO room_id;
+ALTER TABLE room_images RENAME COLUMN room_type_id TO room_id;
+ALTER TABLE room_products RENAME COLUMN room_type_id TO room_id;
+
+ALTER TABLE `room_types`
+  DROP `total_adult`,
+  DROP `total_child`,
+  DROP `fare`,
+  DROP `keywords`,
+  DROP `description`,
+  DROP `beds`,
+  DROP `cancellation_fee`,
+  DROP `cancellation_policy`,
+  DROP `is_featured`,
+  DROP `room_type_id`;
