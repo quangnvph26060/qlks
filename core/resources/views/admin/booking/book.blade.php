@@ -10,7 +10,7 @@
                                 <div class="form-group flex-fill">
                                     <label>@lang('Loại phòng')</label>
                                     <select class="form-control" name="room_type" required>
-                                        <option value="">@lang('Select One')</option>
+                                        <option value="">@lang('Chọn một')</option>
                                         @foreach ($roomTypes as $type)
                                             <option value="{{ $type->id }}">{{ $type->name }}</option>
                                         @endforeach
@@ -88,7 +88,7 @@
 
                             <div class="col-12 guestInputDiv">
                                 <div class="form-group">
-                                    <label>@lang('Name')</label>
+                                    <label>@lang('Tên')</label>
                                     <input class="form-control forGuest" name="guest_name" required type="text">
                                 </div>
                             </div>
@@ -287,8 +287,8 @@
                         $('.bookingInfo').html(response.html);
                         let roomTypeId = $('[name=room_type]').val();
                         $('[name=room_type_id]').val(roomTypeId);
-                       
-                        
+
+
                         $('.booking-wrapper').removeClass('d-none');
                     }
                 },

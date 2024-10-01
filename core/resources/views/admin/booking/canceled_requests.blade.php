@@ -10,7 +10,7 @@
                                 <tr>
                                     <th>@lang('Tên khách hàng') | @lang('Email')</th>
                                     <th>@lang('Số lượng phòng') | @lang('Loại phòng')</th>
-                                    <th>@lang('Check In') | @lang('Check Out')</th>
+                                    <th>@lang('Nhận phòng') | @lang('Trả phòng')</th>
                                     <th>@lang('Giá /Đêm') | @lang('Tổng giá')</th>
                                 </tr>
                             </thead>
@@ -40,7 +40,7 @@
                                         <td>
                                             {{ showDateTime($bookingRequest->check_in, 'd M, Y') }}
                                             <br>
-                                            <span class="text--info">@lang('to')</span>
+                                            <span class="text--info">@lang('đến')</span>
                                             {{ showDateTime($bookingRequest->check_out, 'd M, Y') }}
                                         </td>
 
@@ -83,7 +83,7 @@
                 <div class="modal-body">
                 </div>
                 <div class="modal-footer">
-                    <button class="btn btn--dark" data-bs-dismiss="modal" type="button">@lang('Close')</button>
+                    <button class="btn btn--dark" data-bs-dismiss="modal" type="button">@lang('Đóng')</button>
                 </div>
             </div>
         </div>

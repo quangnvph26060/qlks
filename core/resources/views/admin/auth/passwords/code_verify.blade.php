@@ -12,7 +12,7 @@
 
                     <div class="code-box-wrapper d-flex w-100">
                         <div class="form-group mb-3 flex-fill">
-                            <span class="text-white">@lang('Verification Code')</span>
+                            <span class="text-white">@lang('Mã xác minh')</span>
                             <div class="verification-code">
                                 <input type="text" name="code" class="overflow-hidden" autocomplete="off">
                                 <div class="boxes">

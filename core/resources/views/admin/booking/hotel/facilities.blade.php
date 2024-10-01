@@ -8,11 +8,11 @@
                         <table class="table--light style--two table">
                             <thead>
                                 <tr>
-                                    <th>@lang('Title')</th>
-                                    <th>@lang('Icon')</th>
-                                    <th>@lang('Status')</th>
+                                    <th>@lang('Tiện nghi')</th>
+                                    <th>@lang('Biểu tượng')</th>
+                                    <th>@lang('Trạng thái')</th>
                                     @can(['admin.hotel.facility.save', 'admin.hotel.facility.status'])
-                                        <th>@lang('Action')</th>
+                                        <th>@lang('Hành động')</th>
                                     @endcan
                                 </tr>
                             </thead>
@@ -26,7 +26,7 @@
                                             <td>
                                                 <div class="button--group">
                                                     @can('admin.hotel.facility.save')
-                                                        <button class="btn btn-sm btn-outline--primary cuModalBtn" data-has_status="1" data-modal_title="@lang('Update Facility')" data-resource="{{ $item }}" type="button">
+                                                        <button class="btn btn-sm btn-outline--primary cuModalBtn" data-has_status="1" data-modal_title="@lang('Cập nhật thông tin tiện nghi')" data-resource="{{ $item }}" type="button">
                                                             <i class="la la-pencil"></i>@lang('Sửa')
                                                         </button>
                                                     @endcan
@@ -78,7 +78,7 @@
                         @csrf
                         <div class="modal-body">
                             <div class="form-group">
-                                <label> @lang('Cở sở vật chất')</label>
+                                <label> @lang('Tiện nghi')</label>
                                 <input class="form-control" name="title" required type="text" value="{{ old('title') }}">
                             </div>
                             <div class="form-group">
@@ -91,7 +91,7 @@
                         </div>
 
                         <div class="modal-footer">
-                            <button class="btn btn--primary w-100 h-45" type="submit">@lang('Submit')</button>
+                            <button class="btn btn--primary w-100 h-45" type="submit">@lang('Xác nhận')</button>
                         </div>
                     </form>
                 </div>

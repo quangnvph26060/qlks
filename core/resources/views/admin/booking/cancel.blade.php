@@ -50,7 +50,7 @@
                     @can('admin.booking.cancel.full')
                         <form action="{{ route('admin.booking.cancel.full', $booking->id) }}" method="post">
                             @csrf
-                            <button class="btn btn--primary h-45 w-100" type="submit">@lang('Confirm Cancellation')</button>
+                            <button class="btn btn--primary h-45 w-100" type="submit">@lang('Xác nhận hủy')</button>
                         </form>
                     @endcan
                 </div>
