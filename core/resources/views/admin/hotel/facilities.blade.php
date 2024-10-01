@@ -8,6 +8,7 @@
                         <table class="table--light style--two table">
                             <thead>
                                 <tr>
+                                    <th>@lang('STT')</th>
                                     <th>@lang('Mã tiện nghi')</th>
                                     <th>@lang('Tên tiện nghi')</th>
                                     <th>@lang('Biểu tượng')</th>
@@ -20,8 +21,9 @@
                             <tbody>
                                 @forelse($facilities as $item)
                                     <tr>
-                                        <td>{{ $item->facility_id ?? 'Chưa có mã tiện nghi' }}</td>
-                                        <td><span class="me-2">{{ $facilities->firstItem() + $loop->index }}.</span>
+                                        <td>{{ $loop->iteration }}</td>
+                                        <td>{{ $item->code ?? 'Chưa có mã tiện nghi' }}</td>
+                                        <td>
                                             {{ $item->title }}</td>
                                         <td> @php echo $item->icon @endphp </td>
                                         <td> @php echo $item->statusBadge @endphp </td>
@@ -88,8 +90,8 @@
                         <div class="modal-body">
                             <div class="form-group">
                                 <label> @lang('Mã cở sở vật chất')</label>
-                                <input class="form-control" name="facility_id" required type="text"
-                                    value="{{ old('facility_id') }}">
+                                <input class="form-control" name="code" required type="text"
+                                    value="{{ old('code') }}">
                             </div>
                             <div class="form-group">
                                 <label> @lang('Cở sở vật chất')</label>

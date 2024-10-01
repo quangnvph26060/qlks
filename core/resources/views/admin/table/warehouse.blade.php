@@ -29,5 +29,5 @@
             </td>
             <td data-label="Tổng tiền">{{ showAmount($total) }}</td>
         </tr>
-    @endforeach
+    @endforeachf
 @endif

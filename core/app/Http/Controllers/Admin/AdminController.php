@@ -26,7 +26,7 @@ class AdminController extends Controller
         $todaysBookedRoomIds                = BookedRoom::active()->whereDate('booked_for', todaysDate())->pluck('room_id')->toArray();
 
         $widget['today_booked']             = count($todaysBookedRoomIds);
-        $widget['today_available']          = Room::active()->whereNotIn('id', $todaysBookedRoomIds)->count();
+        $widget['today_available']          = Room::active()->has('roomPricesActive')->whereNotIn('id', $todaysBookedRoomIds)->count();
         $widget['total']                    = Booking::count();
         $widget['active']                   = Booking::active()->count();
         $widget['pending_checkin']          = Booking::active()->KeyNotGiven()->whereDate('check_in', '<=', now())->count();
