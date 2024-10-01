@@ -28,6 +28,8 @@
             padding: 0.375rem 0.625rem;
             font-size: 0.875rem;
         }
+
+     
     </style>
 @endpush
 

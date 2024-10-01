@@ -2,8 +2,9 @@
 
 namespace App\Http\Controllers\Admin;
 
-use App\Http\Controllers\Controller;
+use App\Models\Room;
 use App\Models\Wishlist;
+use App\Http\Controllers\Controller;
 use Illuminate\Support\Facades\Auth;
 
 class WishlistController extends Controller
@@ -26,12 +27,18 @@ class WishlistController extends Controller
             return response()->json(['message' => 'Đã xóa khỏi danh sách yêu thích', 'status' => 'success']);
         } else {
             //Nếu phòng chưa có, thêm vào danh sách yêu thích
-            Wishlist::create([
+            $wishlist =  Wishlist::create([
                 'user_id' => $userId,
                 'room_id' => $roomId,
             ]);
 
-            return response()->json(['message' => 'Đã thêm vào danh sách yêu thích', 'status' => 'success']);
+            $room = Room::with(['roomPricesActive' => function ($query) { $query->where('status', 'active'); }])->where('id', $roomId)->first();
+
+            return response()->json([
+                'message' => 'Đã thêm vào danh sách yêu thích',
+                'status' => 'success',
+                'data' => $room,
+            ]);
         }
     }
 }

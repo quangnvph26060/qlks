@@ -10,12 +10,6 @@ use Illuminate\Database\Eloquent\Casts\Attribute;
 class RoomType extends Model
 {
     use GlobalStatus;
-    protected $casts = [
-        'keywords' => 'array',
-        'beds'     => 'array'
-    ];
-
- 
 
     public function rooms()
     {
@@ -38,10 +32,10 @@ class RoomType extends Model
     }
 
     //scope
-    public function scopeFeatured($query)
-    {
-        return $query->where('is_featured', Status::ROOM_TYPE_FEATURED);
-    }
+    // public function scopeFeatured($query)
+    // {
+    //     return $query->where('is_featured', Status::ROOM_TYPE_FEATURED);
+    // }
 
     public function featureBadge(): Attribute
     {

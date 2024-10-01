@@ -6498,12 +6498,12 @@ button .spinner-border {
 }
 
 .toast {
-    width: auto !important;
-    /* Set width to auto to fit content */
-    max-width: 400px !important;
-    /* Limit the maximum width */
-    margin: 10px auto !important;
-    /* Center with a margin */
+    width: auto !important; /* Set width to auto to fit content */
+    max-width: 400px !important; /* Limit the maximum width */
+    margin: 10px auto !important; /* Center with a margin */
+    white-space: nowrap; /* Prevent line breaks */
+    overflow: hidden; /* Hide overflow content */
+    text-overflow: ellipsis; /* Show ellipsis for overflowed text */
 }
 /* Style for success notification */
 .toastr.success {
@@ -6519,6 +6519,7 @@ button .spinner-border {
 .custom-toast {
     display: flex;
     align-items: center;
+    margin-right: 10px;
 }
 
 .custom-toast i {
@@ -6545,4 +6546,15 @@ button .spinner-border {
 .offcanvas-xl,
 .offcanvas-xxl {
     --bs-offcanvas-width: 450px;
+}
+
+.total-price {
+    position: absolute; /* Đặt vị trí tuyệt đối */
+    bottom: 0; /* Gắn vào đáy của offcanvas */
+    left: 0; /* Căng từ bên trái của offcanvas */
+    right: 0; /* Căng đến bên phải của offcanvas */
+    padding: 10px 15px; /* Khoảng cách bên trong */
+    background-color: #f8f9fa; /* Màu nền nhẹ */
+    border-top: 1px solid #dee2e6; /* Đường viền trên */
+    z-index: 1050; /* Đảm bảo nằm trên các phần tử khác */
 }

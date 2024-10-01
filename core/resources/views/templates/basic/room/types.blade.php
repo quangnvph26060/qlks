@@ -109,34 +109,33 @@
 
     <script>
         $(document).ready(function() {
+            // $(document).on('click', '.cancelWishlistBtn', function() {
+            //     if (!$(this).hasClass('text-white') && !$(this).hasClass('bg-danger')) {
+            //         return;
+            //     }
 
-            $(document).on('click', '.cancelWishlistBtn', function() {
-                if (!$(this).hasClass('text-white') && !$(this).hasClass('bg-danger')) {
-                    return;
-                }
+            //     let id = $(this).data('id');
 
-                let id = $(this).data('id');
-
-                $.ajax({
-                    url: "{{ route('user.remove.from.wishlist', ':id') }}".replace(':id', id),
-                    type: "POST",
-                    success: function(response) {
-                        if (response.status === 'success') {
-                            $(`#show-wishlist-${id}`).removeClass('text-white bg-danger');
-                            decrementBadge();
-                            showMessageToast({
-                                name: 'success',
-                                icon: 'las la-check-circle'
-                            }, response.message); // Use your success icon class
-                        } else {
-                            showMessageToast({
-                                name: 'error',
-                                icon: 'las la-exclamation-circle'
-                            }, response.message); // Use your error icon class
-                        }
-                    },
-                })
-            })
+            //     $.ajax({
+            //         url: "{{ route('user.remove.from.wishlist', ':id') }}".replace(':id', id),
+            //         type: "POST",
+            //         success: function(response) {
+            //             if (response.status === 'success') {
+            //                 $(`#show-wishlist-${id}`).removeClass('text-white bg-danger');
+            //                 decrementBadge();
+            //                 showMessageToast({
+            //                     name: 'success',
+            //                     icon: 'las la-check-circle'
+            //                 }, response.message); // Use your success icon class
+            //             } else {
+            //                 showMessageToast({
+            //                     name: 'error',
+            //                     icon: 'las la-exclamation-circle'
+            //                 }, response.message); // Use your error icon class
+            //             }
+            //         },
+            //     })
+            // })
 
             function incrementBadge() {
                 // Get the current value of the badge
@@ -161,32 +160,36 @@
                 let id = $(this).data('id');
 
                 $.ajax({
-
-                    url: "{{ route('user.toggle.wishlist', ':id') }}".replace(':id',
-                        id), // Sửa lại URL route
+                    url: "{{ route('user.toggle.wishlist', ':id') }}".replace(':id', id),
                     type: "POST",
                     success: function(response) {
                         if (response.status === 'success') {
                             let wishlistButton = $(`#show-wishlist-${id}`);
+                            let roomElement = $(`.room-${id}`);
 
-                            // Kiểm tra nếu phòng đã được thêm vào danh sách yêu thích hay không
                             if (wishlistButton.hasClass('text-white bg-danger')) {
+                                roomElement.remove(); // Xóa phần tử
+                                checkNotRoomWishlist();
+
                                 wishlistButton.removeClass(
-                                    'text-white bg-danger'); // Xóa khỏi danh sách yêu thích
+                                    'text-white bg-danger'); // Cập nhật nút
+
                                 decrementBadge();
-                                showMessage('error', 'Đã xóa phòng khỏi danh sách yêu thích') // Nếu có logic cho việc giảm số lượng
+                                showMessage('error', 'Đã xóa phòng khỏi danh sách yêu thích');
+
+                                // Kiểm tra xem còn phòng nào không
                             } else {
+                                appendToWishlist(response.data);
                                 wishlistButton.addClass(
                                     'text-white bg-danger'); // Thêm vào danh sách yêu thích
                                 incrementBadge();
-                                showMessage('success', 'Đã thêm phòng vào danh sách yêu thích') // Nếu có logic cho việc tăng số lượng
+                                showMessage('success', 'Đã thêm phòng vào danh sách yêu thích');
+
+                                $('#wishlist-message').hide(); // Ẩn thông báo
                             }
-
-
-
                         } else {
                             showMessageToast({
-                                name: 'error',
+                                name: 'error'
                             }, response.message);
                         }
                     },
@@ -201,6 +204,26 @@
 
 
             let amenitiesVisible = false;
+
+            function appendToWishlist(roomData) {
+                console.log(roomData);
+
+                const image_path = "{{ \Storage::url('') }}" + roomData.room.main_image;
+                const wishlistContainer = $('.append-child');
+
+                const newRoomHtml = /*html*/ `
+                    <div class="border rounded p-2 d-flex align-items-center mb-3 rooms room-${roomData.room.id}">
+                        <input type="checkbox" class="form-check-input me-2 room-checkbox" data-price="1500000" id="room-${roomData.id}">
+                        <img src="${image_path}" alt="Room Image" class="rounded" style="max-width: 20%; object-fit: cover;">
+                        <div class="ms-3">
+                            <h5 class="mb-1">${roomData.room.room_number}</h5>
+                            <p class="mb-0 text-muted">Giá: ${roomData.room.room_prices_active[0].price}</p>
+                        </div>
+                    </div>
+    `;
+
+                wishlistContainer.append(newRoomHtml);
+            }
 
             $('#toggleAmenities').on('click', function() {
                 if (!amenitiesVisible) {
@@ -311,6 +334,20 @@
             });
         });
 
+        function checkNotRoomWishlist() {
+
+            if ($('.list-group div.rooms').length == 0) {
+                console.log(123);
+
+                $('#wishlist-message').show();
+            } else {
+                console.log(456);
+
+                $('#wishlist-message').hide();
+            }
+
+        }
+
         function formatCurrency(value) {
             return value.toString().replace(/\B(?=(\d{3})+(?!\d))/g, '.');
         }
@@ -340,11 +377,12 @@
 @push('style')
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/ion-rangeslider/2.3.0/css/ion.rangeSlider.min.css">
     <style>
-        .room-type{
-            white-space: nowrap;         
-            overflow: hidden;            
-            text-overflow: ellipsis;     
+        .room-type {
+            white-space: nowrap;
+            overflow: hidden;
+            text-overflow: ellipsis;
         }
+
         .responsive-image {
             max-width: 100%;
             height: auto;

@@ -12,11 +12,15 @@ class RoomPriceRoom extends Model
     protected $fillable = [
         'room_id',
         'price_id',
-        'status',  
+        'start_date',
+        'end_date',
+        'start_time',
+        'end_time',
+        'specific_date',
+        'status'
     ];
 
-    public $incrementing = false; 
-    protected $primaryKey = ['room_id', 'price_id']; 
+    public $incrementing = false;
+    protected $primaryKey = ['room_id', 'price_id'];
     protected $keyType = 'string';
 }
-

@@ -22,7 +22,7 @@ class RoomController extends Controller
             $rooms = $rooms->filter(['status']);
         }
 
-        $rooms =  $rooms->with('roomType.images')->orderBy('room_number', 'asc')->paginate(getPaginate());
+        $rooms =  $rooms->with('images')->orderBy('room_number', 'asc')->paginate(getPaginate());
 
         return view('admin.hotel.rooms', compact('pageTitle', 'rooms', 'roomTypes', 'prices'));
     }
