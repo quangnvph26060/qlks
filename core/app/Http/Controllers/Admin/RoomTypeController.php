@@ -40,6 +40,7 @@ class RoomTypeController extends Controller
         $bedTypes    = BedType::all();
         $roomTypes   = RoomType::pluck('name', 'id');
         $prices = RoomPrice::active()->pluck('name', 'id');
+
         return view('admin.hotel.room_type.create', compact('pageTitle', 'amenities', 'facilities', 'bedTypes', 'roomTypes', 'prices'));
     }
 
@@ -52,17 +53,24 @@ class RoomTypeController extends Controller
         $bedTypes    = BedType::all();
         $images      = [];
         $roomTypes   = RoomType::pluck('name', 'id');
+        $prices = RoomPrice::active()->pluck('name', 'id');
+        $selectedPrices = $roomType->prices()->pluck('id')->toArray();
+
+        // dd($selectedPrices);
+
         foreach ($roomType->images as $key => $image) {
             $img['id']  = $image->id;
             $img['src'] = Storage::url($image->image);
             $images[]   = $img;
         }
 
-        return view('admin.hotel.room_type.create', compact('pageTitle', 'roomType', 'amenities', 'facilities', 'bedTypes', 'images', 'roomTypes'));
+
+        return view('admin.hotel.room_type.create', compact('pageTitle', 'roomType', 'amenities', 'facilities', 'bedTypes', 'images', 'roomTypes', 'prices', 'selectedPrices'));
     }
 
     public function save(Request $request, $id = 0)
-    { 
+    {
+        // dd($request->all());
         $this->validation($request, $id);
         DB::beginTransaction();
         try {
@@ -88,13 +96,8 @@ class RoomTypeController extends Controller
             $room->code                = $request->code;
             $room->room_type_id        = $request->room_type_id;
             $room->room_number         = $request->room_number;
-            // $roomType->slug                = Str::slug($request->name);
             $room->total_adult         = $request->total_adult;
             $room->total_child         = $request->total_child;
-            // $roomType->fare                = $request->fare;
-            // $roomType->hourly_rate         = $request->hourly_rate;
-            // $roomType->seasonal_rate         = $request->seasonal_rate;
-            // $roomType->keywords            = $request->keywords ?? [];
             $room->description         = htmlspecialchars_decode($purifier->purify($request->description));
             $room->beds                = $bedArray;
             $room->is_featured         = $request->is_featured ? 1 : 0;
@@ -109,14 +112,31 @@ class RoomTypeController extends Controller
                 }
                 $room->main_image = $main_images[0];
             }
-            
+
             $room->save();
 
-            $insertRoomPrice = Room::where('room_number', $room->room_number)->first();
-            if ($insertRoomPrice) {
-                $insertRoomPrice->updatePrices($request->input('prices'));
+            if ($request->prices) {
+                $arr = [];
+                foreach ($request->prices as  $value) {
+                    $data = RoomPrice::find($value);
+                    $arr[$value] = [
+                        'start_date' => $data->start_date,
+                        'end_date' => $data->end_date,
+                        'start_time' => $data->start_time,
+                        'end_time' => $data->end_time,
+                        'specific_date' => $data->specific_date
+                    ];
+                }
+
+                $room->prices()->sync($arr);
             }
-            
+
+
+            // $insertRoomPrice = Room::where('room_number', $room->room_number)->first();
+            // if ($insertRoomPrice) {
+            //     $insertRoomPrice->updatePrices($request->input('prices'));
+            // }
+
             $room->amenities()->sync($request->amenities);
             $room->facilities()->sync($request->facilities);
 
@@ -129,6 +149,9 @@ class RoomTypeController extends Controller
             $notify[] = ['success', $notification];
             return back()->withNotify($notify);
         } catch (\Exception $e) {
+            dd([
+                'message' => $e->getMessage(),
+            ]);
             DB::rollBack();
             FacadesLog::error($e->getMessage());
             $notify[] = ['error', $e->getMessage()];
@@ -136,40 +159,45 @@ class RoomTypeController extends Controller
         }
     }
 
-    private function insertProducts($request, $roomType)
+    private function insertProducts($request, $room)
     {
+        $data = [];
+
+        // Lấy các sản phẩm hiện tại đã được liên kết với roomType để tăng lại tồn kho
+        $currentProducts = $room->products()->pluck('quantity', 'product_id')->toArray();
+
+        // Tăng lại số lượng sản phẩm vào kho cho các sản phẩm hiện tại
+        foreach ($currentProducts as $productId => $quantity) {
+            Product::find($productId)->increment('stock', $quantity);
+        }
+
+        // Kiểm tra xem phòng có tồn tại không
+        if (!$room || !$room->id) {
+            throw new \Exception('Room not found or invalid.');
+        }
+
+        // Tạo mảng rules cho việc validate số lượng sản phẩm
+        $rules = [];
+
         if ($request->products) {
-            $data = [];
-
-            // Lấy các sản phẩm hiện tại đã được liên kết với roomType để tăng lại tồn kho
-            $currentProducts = $roomType->products()->pluck('quantity', 'product_id')->toArray();
-
-            // Tăng lại số lượng sản phẩm vào kho cho các sản phẩm hiện tại
-            foreach ($currentProducts as $productId => $quantity) {
-                Product::find($productId)->increment('stock', $quantity);
-            }
-
-            // Tạo mảng rules cho việc validate số lượng sản phẩm
-            $rules = [];
 
             // Validate và trừ đi số lượng sản phẩm mới
             foreach ($request->products as $productId => $quantity) {
                 // Kiểm tra tồn kho bằng custom validation rule (StockCheck)
                 $rules["products.$productId"] = ['required', 'integer', 'min:1', new StockCheck($productId)];
 
-                // Kiểm tra nếu tồn kho hợp lệ thì trừ số lượng sản phẩm từ stock
-                $data[$productId] = ['quantity' => $quantity];
-
                 // Trừ số lượng sản phẩm từ kho
                 Product::find($productId)->decrement('stock', $quantity);
+                $data[$productId] = ['quantity' => $quantity];
             }
-
-            // Thực hiện validate toàn bộ sản phẩm và số lượng
-            $validated = $request->validate($rules);
-
-            // Liên kết sản phẩm mới với roomType
-            $roomType->products()->sync($data);
         }
+
+
+        // Thực hiện validate toàn bộ sản phẩm và số lượng
+        $validated = $request->validate($rules);
+
+        // Liên kết sản phẩm mới với room
+        $room->products()->sync($data);
     }
 
 
@@ -183,7 +211,7 @@ class RoomTypeController extends Controller
         }
 
         $request->validate([
-            'code'                => 'string|max:6|unique:rooms,code,'.$id,
+            'code'                => 'string|max:6|unique:rooms,code,' . $id,
             'room_number'         => 'required|string|max:255',
             'total_adult'         => 'required|integer|gte:0',
             'total_child'         => 'required|integer|gte:0',

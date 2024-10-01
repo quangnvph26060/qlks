@@ -1,7 +1,7 @@
 @php
 $content = getContent('featured_room.content', true);
 
-$roomType = App\Models\RoomType::active()
+$roomType = App\Models\Room::active()
     ->featured()
     ->with(['images', 'amenities'])
     ->get();

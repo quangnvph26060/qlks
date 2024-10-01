@@ -28,4 +28,9 @@ class RoomPrice extends Model
     {
         return $query->where('status', self::STATUS_ACTIVE);
     }
+
+    public function rooms()
+    {
+        return $this->belongsToMany(Room::class, 'room_price_rooms', 'price_id', 'room_id')->withPivot('start_date', 'end_date', 'start_time', 'end_time', 'specific_date', 'status');
+    }
 }

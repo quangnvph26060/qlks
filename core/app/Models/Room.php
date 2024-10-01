@@ -63,9 +63,9 @@ class Room extends Model
 
     public function updatePrices($data)
     {
-
-
         foreach ($data as $item) {
+
+
             $roomPrice =  RoomPrice::find($item);
             if (!$roomPrice) {
                 $notify[] = ['error', 'Giá không tồn tại'];
@@ -81,11 +81,13 @@ class Room extends Model
             $roomPriceRoooms->end_time          = $roomPrice->end_time;
             $roomPriceRoooms->specific_date     = $roomPrice->specific_date;
             $roomPriceRoooms->save();
+
+            dd($roomPriceRoooms);
         }
     }
     public function prices()
     {
-        return $this->belongsToMany(RoomPrice::class, 'room_price_rooms', 'room_id', 'price_id');
+        return $this->belongsToMany(RoomPrice::class, 'room_price_rooms', 'room_id', 'price_id')->withPivot('start_date', 'end_date', 'start_time', 'end_time', 'specific_date', 'status');
     }
     public function scopeActive($query)
     {
@@ -127,5 +129,10 @@ class Room extends Model
                 return $html;
             }
         );
+    }
+
+    public function scopeFeatured($query)
+    {
+        return $query->where('is_featured', Status::ROOM_TYPE_FEATURED);
     }
 }

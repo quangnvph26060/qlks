@@ -26,6 +26,9 @@ class RoomController extends Controller
         }
 
 
+    //    $rooms =  $rooms->with('images')->orderBy('room_number', 'asc')->paginate(getPaginate());
+
+
         $rooms =  $rooms->paginate(getPaginate());
 
 

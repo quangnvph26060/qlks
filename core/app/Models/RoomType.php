@@ -11,7 +11,9 @@ class RoomType extends Model
 {
     use GlobalStatus;
 
+
     protected $table = 'room_types';
+
 
     public function rooms()
     {
@@ -37,10 +39,10 @@ class RoomType extends Model
         return $query->where('room_types.status', Status::ROOM_ACTIVE);
     }
     //scope
-    public function scopeFeatured($query)
-    {
-        return $query->where('is_featured', Status::ROOM_TYPE_FEATURED);
-    }
+    // public function scopeFeatured($query)
+    // {
+    //     return $query->where('is_featured', Status::ROOM_TYPE_FEATURED);
+    // }
 
     public function featureBadge(): Attribute
     {

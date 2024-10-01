@@ -12,35 +12,32 @@
             </div>
             <div class="col-md-8 col-lg-6 col-sm-7 col-custom-ssm-7 col-custom-sssm-7">
                 <div class="card-body  py-1">
-                    <h5 class="card-title text-primary fw-bold ">
+                    <h3 class=" text-primary fw-bold ">
                         {{ $room->room_number }}
                         <span class="text-warning ms-2 rating">
                             <i class="fa fa-star"></i>
                             <i class="fa fa-star"></i>
                             <i class="fa fa-star"></i>
                         </span>
-                    </h5>
-                    <p class="text-muted  room-type">{{$room->roomType->name}}</p>
-                    {{-- <p class="text-muted mb-1">
-                        <a href="#" class="text-custom">Đà Lạt</a> • <a href="#" class="text-custom">Xem
-                            trên bản đồ</a> •
-                        Cách trung tâm 0,7km
-                    </p> --}}
+                    </h3>
+                    <span class="text-muted room-type">({{ $room->roomType->name }})</span>
                     <p class="card-text amenities">
                         <label for="" class="text-muted me-1 fw-bold">Tiện nghi: </label>
                         <span class="badge-container">
-                            @if ($room->roomType->amenities)
-                                @foreach ($room->roomType->amenities as $amenity)
+                            @if ($room->amenities)
+                                @foreach ($room->amenities as $amenity)
                                     <span class="badge bg-secondary ms-1">{{ $amenity->title }}</span>
                                 @endforeach
+                            @else
+                                <span class="badge bg-secondary ms-1">Đang cập nhật</span>
                             @endif
                         </span>
                     </p>
                     <p class="card-text utilities">
                         <label for="" class="text-muted me-1 fw-bold">Tiện ích:</label>
                         <span class="badge-container">
-                            @if ($room->roomType->facilities)
-                                @foreach ($room->roomType->facilities as $utility)
+                            @if ($room->facilities)
+                                @foreach ($room->facilities as $utility)
                                     <span class="badge bg-secondary ms-1">{{ $utility->title }}</span>
                                 @endforeach
                             @else
@@ -50,13 +47,13 @@
                     </p>
                     <p class="card-text quality">
                         <label for="" class="text-muted me-1 fw-bold">Số lượng
-                            người({{ $room->roomType->total_adult + $room->roomType->total_children }}): </label>
-                        <span>{{ $room->roomType->total_adult }} người
-                            lớn | {{ $room->roomType->total_children ?? 0 }} trẻ em</span>
+                            người({{ $room->total_adult + $room->total_children }}): </label>
+                        <span>{{ $room->total_adult }} người
+                            lớn | {{ $room->total_children ?? 0 }} trẻ em</span>
                     </p>
                     <p class="card-text sort-description">
                         <span> <label for="" class="text-muted me-1 fw-bold mb-0">Mô tả ngắn: </label>
-                            {!! $room->roomType->description !!}
+                            {!! $room->description ?? 'Đang cập nhật...' !!}
                         </span>
                     </p>
 
@@ -88,7 +85,7 @@
             <div class="col-custom-md-2 ps-3 border-start d-flex flex-column justify-content-center d-custom-none">
                 <!-- Giá phòng -->
                 <div class="price-info my-3 ">
-                    <h6 class="text-danger fw-bold">{{ showAmount($room->roomPricesActive[0]->price) }}</h6>
+                    <h6 class="text-danger fw-bold">{{ showAmount($room->roomPricesActive->first()->price) }}</h6>
                 </div>
 
                 <!-- Chính sách -->

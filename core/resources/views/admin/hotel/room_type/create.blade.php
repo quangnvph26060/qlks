@@ -19,7 +19,8 @@
                                     <select class="form-control" name="room_type_id" required>
                                         <option disabled selected value="">@lang('Select One')</option>
                                         @foreach ($roomTypes as $id => $name)
-                                            <option @selected($name) value="{{ $id }}">{{ __($name) }}</option>
+                                            <option @selected(old('room_type_id', @$roomType->room_type_id) == $id) value="{{ $id }}">
+                                                {{ __($name) }}</option>
                                         @endforeach
                                     </select>
                                 </div>
@@ -67,11 +68,19 @@
                                 </div>
                             </div>
                             <div class="col-xl-6 col-md-4 col-sm-12">
+                                @php
+                                    if (empty($selectedPrices)) {
+                                        $selectedPrices = [];
+                                    }
+                                @endphp
                                 <div class="form-group">
                                     <label for="">Chọn giá</label>
                                     <select class="select2-multi-select" multiple="multiple" name="prices[]">
                                         @foreach ($prices as $id => $name)
-                                            <option value="{{ $id }}">{{ $name }}</option>
+                                            <option value="{{ $id }}"
+                                                @if (in_array($id, $selectedPrices)) selected @endif>
+                                                {{ $name }}
+                                            </option>
                                         @endforeach
                                         <!-- Thêm các tùy chọn khác nếu cần -->
                                     </select>
