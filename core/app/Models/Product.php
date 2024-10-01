@@ -2,6 +2,7 @@
 
 namespace App\Models;
 
+use App\Constants\Status;
 use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\Model;
 
@@ -31,7 +32,10 @@ class Product extends Model
     {
         return $this->belongsTo(Brand::class, 'brand_id');
     }
-
+    public function scopeFeatured($query)
+    {
+        return $query->where('is_published', Status::ROOM_TYPE_FEATURED);
+    }
 
     protected $cats = [
         'is_published' => 'boolean',
