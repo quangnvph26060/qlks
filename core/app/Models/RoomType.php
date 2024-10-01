@@ -11,6 +11,10 @@ class RoomType extends Model
 {
     use GlobalStatus;
 
+
+    protected $table = 'room_types';
+
+
     public function rooms()
     {
         return $this->hasMany(Room::class);
@@ -30,7 +34,10 @@ class RoomType extends Model
     {
         return $this->hasMany(BookedRoom::class)->active();
     }
-
+    public function scopeActive($query)
+    {
+        return $query->where('room_types.status', Status::ROOM_ACTIVE);
+    }
     //scope
     // public function scopeFeatured($query)
     // {
