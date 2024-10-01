@@ -16,21 +16,21 @@
             <tbody>
                 @forelse ($bookingRequests as $bookingRequest)
                     <tr>
-                        <td><span class="fw-bold me-1">{{ $bookingRequests->firstItem() + $loop->index }}.</span> {{ __($bookingRequest->roomType->name) }}</td>
+                        <td><span class="fw-bold me-1">{{ $bookingRequests->firstItem() + $loop->index }}.</span> {{ __($bookingRequest->room->name) }}</td>
 
                         <td>
                             {{ showDateTime($bookingRequest->check_in, 'd M, Y') }} - {{ showDateTime($bookingRequest->check_out, 'd M, Y') }}</td>
 
                         <td>
                             {{ $bookingRequest->number_of_rooms }} {{ Str::plural(trans('room'), $bookingRequest->number_of_rooms) }}
-                            <br>@lang('for')
-                            {{ $bookingRequest->bookFor() }} {{ Str::plural(trans('night'), $bookingRequest->bookFor()) }}
+                            <br>@lang('trong')
+                            {{ $bookingRequest->bookFor() }} {{ Str::plural(trans('đêm'), $bookingRequest->bookFor()) }}
                         </td>
 
                         <td>
                             {{ showAmount($bookingRequest->unit_fare + $bookingRequest->taxCharge()) }}
                             <br>
-                            @lang('Including') {{ __(gs()->tax_name) }}
+                            @lang('Đã bao gồm thuế')
                         </td>
 
                         <td class="fw-bold">{{ showAmount($bookingRequest->total_amount) }}</span></td>

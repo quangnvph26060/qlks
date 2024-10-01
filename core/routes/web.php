@@ -18,10 +18,10 @@ Route::get('/test-notify', function () {
         'fullname' => 'văn quang',
         'username' => 'văn quang',
     ];
-    
+
     $subject = 'Test Notify Email';
     $message = 'This is a test email using the notify function.';
-    
+
     notify($user, 'DEFAULT', [
         'subject' => $subject,
         'message' => $message,
@@ -63,7 +63,8 @@ Route::controller('SiteController')->group(function () {
     Route::get('updates', 'blog')->name('blog');
     Route::get('full-article/{slug}', 'blogDetails')->name('blog.details');
     Route::get('book-online', 'roomTypes')->name('room.types');
-    Route::get('room-type/{slug}', 'roomTypeDetails')->name('room.type.details');
+    Route::get('basic-room-filter', 'basicRoomFilter')->name('basic.room.filter');
+    Route::get('room-type/{room_number}', 'roomTypeDetails')->name('room.type.details');
     Route::get('room-search', 'checkRoomAvailability')->name('room.available.search');
 
     Route::get('policy/{slug}', 'policyPages')->name('policy.pages');

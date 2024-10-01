@@ -6,7 +6,7 @@ $bannerCon = getContent('banner.content', true);
         <div class="container">
             <div class="row justify-content-center">
                 <div class="col-lg-6 text-center">
-                    <h2 class="title text-white">{{ __($pageTitle) }}</h2>
+                    <h2 class="title text-white">Phòng {{ __($pageTitle) }}</h2>
                 </div>
             </div>
         </div>
