@@ -2,9 +2,10 @@
 
 namespace App\Http\Controllers\User;
 
-use App\Http\Controllers\Controller;
-use App\Models\BookingRequest;
 use App\Models\Booking;
+use App\Models\BookingRequest;
+use App\Http\Controllers\Controller;
+use Illuminate\Support\Facades\Auth;
 
 class BookingController extends Controller
 {
@@ -12,20 +13,21 @@ class BookingController extends Controller
     public function allBookings()
     {
         $pageTitle = 'Booking History';
-        $bookings  = Booking::where('user_id', auth()->id())->orderBy('id', 'DESC')->orderBy('check_out', 'asc')->paginate(getPaginate());
+        $bookings  = Booking::where('user_id', Auth::id())->orderBy('id', 'DESC')->orderBy('check_out', 'asc')->paginate(getPaginate());
         return view('Template::user.booking.all', compact('pageTitle', 'bookings'));
     }
 
     public function bookingRequestList()
     {
         $pageTitle = "Tất cả yêu cầu đặt chỗ";
-        $bookingRequests = BookingRequest::where('user_id', auth()->id())->with('roomType')->orderBy('id', 'DESC')->paginate(getPaginate());
+        $bookingRequests = BookingRequest::where('user_id', Auth::id())->with('room')->orderBy('id', 'DESC')->paginate(getPaginate());
         return view('Template::user.booking.request', compact('bookingRequests', 'pageTitle'));
     }
 
+
     public function cancelBookingRequest($id)
     {
-        BookingRequest::initial()->where('user_id', auth()->id())->where('id', $id)->delete();
+        BookingRequest::initial()->where('user_id', Auth::id())->where('id', $id)->delete();
 
         $notify[] = ['success', 'Booking request canceled successfully'];
         return back()->withNotify($notify);
@@ -33,7 +35,7 @@ class BookingController extends Controller
 
     public function bookingDetails($id)
     {
-        $user = auth()->user();
+        $user = Auth::user();
         $booking = Booking::where('user_id', $user->id)->with([
             'bookedRooms',
             'bookedRooms.room:id,room_type_id,room_number',

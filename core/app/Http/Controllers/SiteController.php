@@ -5,6 +5,9 @@ namespace App\Http\Controllers;
 use Carbon\Carbon;
 use App\Models\Page;
 use App\Models\Room;
+use App\Models\User;
+use App\Models\Amenity;
+use App\Models\Facility;
 use App\Models\Frontend;
 use App\Models\Language;
 use App\Models\RoomType;
@@ -16,6 +19,7 @@ use App\Models\SupportTicket;
 use App\Models\BookingRequest;
 use App\Models\SupportMessage;
 use App\Models\AdminNotification;
+use Illuminate\Support\Facades\Auth;
 use Illuminate\Support\Facades\Cookie;
 use Illuminate\Support\Facades\Validator;
 
@@ -221,8 +225,46 @@ class SiteController extends Controller
         $pageTitle = 'Loại phòng';
         // $roomTypes = RoomType::active()->with('images', 'amenities')->with(['images', 'amenities', 'rooms.roomPricesActive'])->get();
         $rooms = Room::active()->has('roomPricesActive')->with(['images', 'amenities:title', 'facilities:title', 'roomPricesActive'])->get();
+        $amenities = Amenity::all();
+        $facilities = Facility::all();
 
-        return view('Template::room.types', compact('pageTitle', 'rooms'));
+        return view('Template::room.types', compact('pageTitle', 'rooms', 'amenities', 'facilities'));
+    }
+
+    public function basicRoomFilter(Request $request)
+    {
+        $query = Room::query()->active()->has('roomPricesActive')->with(['amenities:title', 'facilities:title', 'roomPricesActive']);
+
+        // Lọc theo giá tối thiểu
+        $query->when($request->priceMin && $request->priceMax, function ($q) use ($request) {
+            $minPrice = str_replace('.', '', $request->priceMin);
+            $maxPrice = str_replace(['.', '+'], '', $request->priceMax);
+
+            return $q->whereHas('roomPricesActive', function ($subQuery) use ($minPrice, $maxPrice) {
+                return $subQuery->whereBetween('price', [$minPrice, $maxPrice]);
+            });
+        });
+
+
+        // Lọc theo tiện ích
+        $query->when($request->facilities, function ($q) use ($request) {
+            return $q->whereHas('facilities', function ($subQuery) use ($request) {
+                $subQuery->whereIn('facility_id', $request->facilities);
+            });
+        });
+
+        // Lọc theo tiện nghi
+        $query->when($request->amenities, function ($q) use ($request) {
+            return $q->whereHas('amenities', function ($subQuery) use ($request) {
+                $subQuery->whereIn('amenities_id', $request->amenities);
+            });
+        });
+
+        $data = $query->get();
+
+        return response()->json([
+            'data' => view('templates.basic.room.results', compact('data'))->render(),
+        ]);
     }
 
     public function filterRoomType(Request $request)
@@ -283,7 +325,7 @@ class SiteController extends Controller
                         ->where('rooms.status', Status::ENABLE)
                         ->where('booked_rooms.status', Status::ROOM_ACTIVE)
                         ->whereBetween('booked_for', [Carbon::parse($request->check_in)->format('Y-m-d'), Carbon::parse($request->check_out)->format('Y-m-d')])
-                        ->whereColumn('booked_rooms.room_type_id', 'room_types.id');
+                        ->whereColumn('booked_rooms.room_type_id', 'room.id');
                 }])
                 ->selectRaw('(SELECT total_rooms - booked_rooms) as available_rooms')
                 ->havingRaw('(total_rooms - booked_rooms) > 0');
@@ -309,73 +351,58 @@ class SiteController extends Controller
 
     public function roomTypeDetails($room_number)
     {
-        $roomType = Room::with('amenities', 'facilities', 'images')->where('room_number', $room_number)->first();
-        abort_if(!$roomType, 404);
-        $pageTitle = $roomType->room_number;
+        $room = Room::with('amenities', 'facilities', 'images')->where('room_number', $room_number)->first();
+        abort_if(!$room, 404);
+        $pageTitle = $room->room_number;
 
-        return view('Template::room.details', compact('pageTitle', 'roomType'));
+        return view('Template::room.details', compact('pageTitle', 'room'));
     }
 
     public function sendBookingRequest(Request $request)
     {
-
         $request->validate([
-            'room_type_id'    => 'required|integer',
-            'check_in'        => 'required|date_format:m/d/Y|after:yesterday',
-            'check_out'       => 'nullable|date_format:m/d/Y|after_or_equal:check_in',
-            'number_of_rooms' => 'required|integer:gt:0'
+            'room_id'     => 'required|exists:rooms,id',  // Kiểm tra phòng cụ thể
+            'check_in'    => 'required|date_format:m/d/Y|after:yesterday',
+            'check_out'   => 'nullable|date_format:m/d/Y|after_or_equal:check_in',
         ]);
 
 
-        $general = gs();
-        $roomType = RoomType::findOrFail($request->room_type_id);
-
-        if (!auth()->check()) {
-            session()->put('BOOKING_REQUEST', route('room.type.details', [$roomType->id, slug($roomType->name)]));
-            return to_route('user.login');
+        if (!Auth::check()) {
+            return redirect()->route('user.login')->with('BOOKING_REQUEST', true);
         }
 
         $checkInDate   = Carbon::parse($request->check_in);
         $checkOutDate  = Carbon::parse($request->check_out);
+        $user = Auth::user();
+        $room = Room::with('roomPricesActive:price')->find($request->room_id);
 
-        //Check limitation of number of rooms
-        $availableRoom = $this->getMinimumAvailableRoom($request);
+        $bookingRequest = new BookingRequest();
+        $bookingRequest->user_id = $user->id;
+        $bookingRequest->room_id = $request->room_id;
+        $bookingRequest->check_in = $checkInDate;
+        $bookingRequest->check_out = $checkOutDate;
+        $bookingRequest->unit_fare = $room->roomPricesActive->first()->price;
 
-        if ($request->number_of_rooms > $availableRoom) {
-            $notify[] = ['error', 'Số lượng phòng vượt quá giới hạn'];
-            return back()->withNotify($notify);
-        }
-
-        $user = auth()->user();
-
-        $bookingRequest                  = new BookingRequest();
-        $bookingRequest->user_id         = $user->id;
-        $bookingRequest->number_of_rooms = $request->number_of_rooms;
-        $bookingRequest->room_type_id    = $request->room_type_id;
-        $bookingRequest->check_in        = $checkInDate;
-        $bookingRequest->check_out       = $checkOutDate;
-        $bookingRequest->unit_fare       = $roomType->fare;
-
-        $bookingAmount = $roomType->fare * $request->number_of_rooms * ($checkInDate->diffInDays($checkOutDate));
-        $taxCharge     = $bookingAmount * $general->tax / 100;
-        $bookingRequest->tax_charge   = $taxCharge;
+        $bookingAmount = $bookingRequest->unit_fare * ($checkInDate->diffInDays($checkOutDate));
+        $taxCharge = $bookingAmount * config('app.tax_rate') / 100;
+        $bookingRequest->tax_charge = $taxCharge;
         $bookingRequest->total_amount = $bookingAmount + $taxCharge;
         $bookingRequest->save();
 
-        $adminNotification = new AdminNotification();
-        $adminNotification->user_id = $user->id;
-        $adminNotification->title = $user->fullname . ' requested to book rooms';
-        $adminNotification->click_url = urlPath('admin.request.booking.approve', $bookingRequest->id);
-        $adminNotification->save();
+        // Thông báo cho admin
+        AdminNotification::create([
+            'user_id' => $user->id,
+            'title' => "$user->fullname đã yêu cầu đặt phòng",
+            'click_url' => urlPath('admin.request.booking.approve', $bookingRequest->id),
+        ]);
 
-        $notify[] = ['success', 'Yêu cầu đặt chỗ đã được gửi thành công'];
-        return to_route('user.booking.request.all')->withNotify($notify);
+        return redirect()->route('user.booking.request.all')->with('success', 'Yêu cầu đặt chỗ đã được gửi thành công');
     }
+
 
     public function checkRoomAvailability(Request $request)
     {
         $validator = Validator::make($request->all(), [
-            'room_type_id' => 'required|exists:room_types,id',
             'check_in'     => 'required|date_format:m/d/Y|after:yesterday',
             'check_out'    => 'required|date_format:m/d/Y|after_or_equal:check_in'
         ]);
@@ -386,32 +413,34 @@ class SiteController extends Controller
 
         $availableRoom = $this->getMinimumAvailableRoom($request);
 
-        if (!$availableRoom) {
-            return response()->json(['error' => 'Không có phòng trống giữa những ngày này']);
-        }
-
-        return response()->json(['success' => $availableRoom]);
+        return $availableRoom
+            ? response()->json(['success' => $availableRoom])
+            : response()->json(['error' => 'Không có phòng trống giữa những ngày này']);
     }
+
 
 
     protected function getMinimumAvailableRoom($request)
     {
-
-        $checkInDate           = Carbon::parse($request->check_in);
-        $checkOutDate          = Carbon::parse($request->check_out);
+        $checkInDate = Carbon::parse($request->check_in);
+        $checkOutDate = Carbon::parse($request->check_out);
         $dateWiseAvailableRoom = [];
 
-        for ($checkInDate; $checkInDate <= $checkOutDate; $checkInDate->addDays()) {
-            $checkIn = $checkInDate->format('Y-m-d');
+        for ($date = $checkInDate; $date <= $checkOutDate; $date->addDay()) {
+            $bookedRooms = Room::where('id', $request->room_id)
+                ->whereHas('booked', function ($query) use ($date) {
+                    $query->whereDate('booked_for', $date);
+                })->count();
 
-            $bookedRooms = Room::where('room_type_id', $request->room_type_id)
-                ->whereHas('booked', function ($booked) use ($checkIn) {
-                    $booked->active()->whereDate('booked_for', $checkIn);
-                })->get('id')->toArray();
-
-            $dateWiseAvailableRoom[] = Room::active()->where('room_type_id', $request->room_type_id)->whereNotIn('id', $bookedRooms)->count();
+            $dateWiseAvailableRoom[] = 1 - $bookedRooms;  // Mỗi yêu cầu chỉ đặt một phòng
         }
 
         return min($dateWiseAvailableRoom);
+    }
+
+    public function amenities()
+    {
+
+        return response()->json($amenities);
     }
 }

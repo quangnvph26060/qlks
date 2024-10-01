@@ -9,7 +9,7 @@ class Wishlist extends Model
 {
     use HasFactory;
 
-    protected $fillable = ['user_id', 'room_id'];
+    protected $fillable = ['user_id', 'room_id', 'publish'];
 
     // Relationship with User
     public function user()
@@ -22,4 +22,8 @@ class Wishlist extends Model
     {
         return $this->belongsTo(Room::class);
     }
+
+    protected $casts = [
+        'publish' => 'boolean'
+    ];
 }

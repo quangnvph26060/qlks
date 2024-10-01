@@ -136,24 +136,35 @@
     </div>
     <div class="offcanvas-body">
         <div class="list-group append-child">
-            @forelse ($wishLists as $data)
-                <div class="border rounded p-2 d-flex align-items-center mb-3 rooms room-{{ $data->room->id }} ">
-                    <input type="checkbox" class="form-check-input me-2 room-checkbox" data-price="1500000"
-                        id="room-{{ $loop->index }}">
+            @php($total = 0)
+            @if ($wishLists->isNotEmpty())
+                @foreach ($wishLists as $data)
+                    @if ($data->room->roomPricesActive->count() > 0 && $data->publish)
+                        @php($total += $data->room->roomPricesActive->first()->price)
+                    @endif
+                    <div class="border rounded p-2 d-flex align-items-center mb-3 rooms room-{{ $data->room->id }}">
+                        <input type="checkbox" class="form-check-input me-2 room-checkbox" @checked($data->publish)
+                            data-id="{{ $data->room->id }}" id="room-{{ $loop->index }}">
 
-                    <img src="{{ \Storage::url($data->room->roomType->main_image) }}" alt="Room Image" class="rounded"
-                        style="max-width: 20%; object-fit: cover;">
+                        <img src="{{ \Storage::url($data->room->main_image) }}" alt="Room Image" class="rounded"
+                            style="max-width: 20%; object-fit: cover;">
 
-                    <div class="ms-3">
-                        <h5 class="mb-1">{{ $data->room->room_number }}</h5>
-                        <p class="mb-0 text-muted">Giá: {{ $data->room->prices[0]['price'] }}</p>
+                        <div class="ms-3">
+                            <div class="d-flex align-items-center">
+                                <h5 class="mb-1">{{ $data->room->room_number }}</h5>
+                                <p class="mb-1 ms-1 text-muted">({{ $data->room->roomType->name }})</p>
+                            </div>
+                            <p class="mb-0 text-muted">Giá:
+                                {{ showAmount($data->room->roomPricesActive->first()->price) }}
+                            </p>
+                        </div>
                     </div>
-                </div>
-            @empty
+                @endforeach
+            @else
                 <div id="wishlist-message" class="alert alert-warning text-center">
                     <i class="las la-exclamation-circle"></i> Chưa có phòng nào được yêu thích.
                 </div>
-            @endforelse
+            @endif
         </div>
     </div>
 
@@ -165,8 +176,13 @@
         </div>
         <div class="d-flex align-items-center">
             <p class="">Tổng thanh toán:</p>
-            <p id="total-price" class="fw-bold mx-3">0 VNĐ</p>
+            <p id="total-price" class="fw-bold mx-3"><span class="show-total">{{ showAmount($total) ?? 0 }}</span>
+            </p>
             <button class="btn btn-sm btn--base">ĐẶT NGAY</button>
         </div>
     </div>
+</div>
+
+<div class="loader-overlay" style="display: none;">
+    <div class="loader"></div>
 </div>

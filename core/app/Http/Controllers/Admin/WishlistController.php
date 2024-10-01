@@ -5,6 +5,7 @@ namespace App\Http\Controllers\Admin;
 use App\Models\Room;
 use App\Models\Wishlist;
 use App\Http\Controllers\Controller;
+use App\Models\User;
 use Illuminate\Support\Facades\Auth;
 
 class WishlistController extends Controller
@@ -32,7 +33,7 @@ class WishlistController extends Controller
                 'room_id' => $roomId,
             ]);
 
-            $room = Room::with(['roomPricesActive' => function ($query) { $query->where('status', 'active'); }])->where('id', $roomId)->first();
+            $room = Room::with(['roomPricesActive:price', 'wishList'])->where('id', $roomId)->first();
 
             return response()->json([
                 'message' => 'Đã thêm vào danh sách yêu thích',
@@ -40,5 +41,69 @@ class WishlistController extends Controller
                 'data' => $room,
             ]);
         }
+    }
+
+    public function handlePublish($id)
+    {
+        $user = Auth::user();
+
+        /**
+         *  @var User $user
+         *
+         */
+
+        $user->wishList()->where('room_id', $id)->update(['publish' => !$user->wishList()->where('room_id', $id)->first()->publish]);
+
+
+        $wishlist = $user->wishList()->where('publish', 1)->with('room')->get();
+
+
+        $total = 0;
+
+        if ($wishlist->isNotEmpty()) {
+            foreach ($wishlist as $item) {
+                if ($item->room) {
+                    $total += $item->room->roomPricesActive->first()->price;
+                }
+            }
+        }
+
+        return response()->json([
+            'message' => 'Đã thay đổi trạng thái',
+            'status' => 'success',
+            'total' => $total,
+        ]);
+    }
+
+    public function handlePublishAll()
+    {
+
+        $user = Auth::user();
+
+        /**
+         *  @var User $user
+         *
+         */
+
+        $user->wishList()->update(['publish' => !$user->wishList()->first()->publish]);
+
+        $wishlist = $user->wishList()->where('publish', 1)->with('room')->get();
+
+
+        $total = 0;
+
+        if ($wishlist->isNotEmpty()) {
+            foreach ($wishlist as $item) {
+                if ($item->room) {
+                    $total += $item->room->roomPricesActive->first()->price;
+                }
+            }
+        }
+
+        return response()->json([
+            'message' => 'Đã thay đổi trạng thái',
+            'status' => 'success',
+            'total' => $total,
+        ]);
     }
 }

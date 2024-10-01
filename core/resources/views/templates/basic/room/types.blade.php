@@ -15,72 +15,46 @@
                             </div>
                             <input type="text" id="priceSlider" name="price" value="" />
                         </div>
-                        <div class="card-body">
+                        <div class="card-body border-bottom">
                             <h6 class="card-text mb-2">Tiện nghi</h6>
                             <div id="amenities">
-                                <div class="form-check">
-                                    <div class="d-flex justify-content-between alion-items-center">
-                                        <div>
-                                            <input class="form-check-input" type="checkbox" id="parking" />
-                                            <label class="form-check-label" for="parking">Chỗ đỗ xe</label>
+                                <div class="form-check amenity">
+                                    @foreach ($amenities as $amenity)
+                                        <div class="d-flex justify-content-between align-items-center">
+                                            <div>
+                                                <input class="form-check-input amenity-checkbox" type="checkbox"
+                                                    id="amenity-{{ $amenity->id }}" value="{{ $amenity->id }}" />
+                                                <label class="form-check-label"
+                                                    for="amenity-{{ $amenity->id }}">{{ $amenity->title }}</label>
+                                            </div>
                                         </div>
-                                        <div>
-                                            <span class="badge bg-secondary">1015</span>
-                                        </div>
-                                    </div>
-                                </div>
-                                <div class="form-check">
-                                    <div class="d-flex justify-content-between">
-                                        <div>
-                                            <input class="form-check-input" type="checkbox" id="restaurant" />
-                                            <label class="form-check-label" for="restaurant">Nhà hàng</label>
-                                        </div>
-                                        <div>
-                                            <span class="badge bg-secondary">162</span>
-                                        </div>
-                                    </div>
-                                </div>
-                                <div class="form-check">
-                                    <div class="d-flex justify-content-between">
-                                        <div>
-                                            <input class="form-check-input" type="checkbox" id="petFriendly" />
-                                            <label class="form-check-label" for="petFriendly">Cho phép mang theo vật
-                                                nuôi</label>
-                                        </div>
-                                        <div>
-                                            <span class="badge bg-secondary">309</span>
-                                        </div>
-                                    </div>
-                                </div>
-                                <div class="form-check">
-                                    <div class="d-flex justify-content-between">
-                                        <div>
-                                            <input class="form-check-input" type="checkbox" id="roomService" />
-                                            <label class="form-check-label" for="roomService">Dịch vụ phòng</label>
-                                        </div>
-                                        <div>
-                                            <span class="badge bg-secondary">657</span>
-                                        </div>
-                                    </div>
-                                </div>
-                                <div class="form-check">
-                                    <div class="d-flex justify-content-between">
-                                        <div>
-                                            <input class="form-check-input" type="checkbox" id="24HourService" />
-                                            <label class="form-check-label" for="24HourService">Lễ tân 24 giờ</label>
-                                        </div>
-                                        <div>
-                                            <span class="badge bg-secondary">667</span>
-                                        </div>
-                                    </div>
+                                    @endforeach
                                 </div>
                             </div>
-                            <button class="btn btn-link mt-3 p-0" id="toggleAmenities">Hiển thị tất cả 15 loại ▼</button>
                         </div>
+
+                        <div class="card-body">
+                            <h6 class="card-text mb-2">Tiện ích</h6>
+                            <div id="facilities">
+                                <div class="form-check facility">
+                                    @foreach ($facilities as $facility)
+                                        <div class="d-flex justify-content-between align-items-center">
+                                            <div>
+                                                <input class="form-check-input facility-checkbox" type="checkbox"
+                                                    id="facility-{{ $facility->id }}" value="{{ $facility->id }}" />
+                                                <label class="form-check-label"
+                                                    for="facility-{{ $facility->id }}">{{ $facility->title }}</label>
+                                            </div>
+                                        </div>
+                                    @endforeach
+                                </div>
+                            </div>
+                        </div>
+
                     </div>
                 </div>
                 <div class="col-xl-9 col-lg-12 col-md-12">
-                    <div class="row gy-4 justify-content-center">
+                    <div class="row gy-4 justify-content-center" id="results-container">
                         @if ($rooms->count())
                             @include($activeTemplate . 'partials.room_cards', [
                                 'room' => $rooms,
@@ -106,36 +80,10 @@
 @push('script')
     <script src="https://code.jquery.com/jquery-3.5.1.min.js"></script>
     <script src="https://cdnjs.cloudflare.com/ajax/libs/ion-rangeslider/2.3.0/js/ion.rangeSlider.min.js"></script>
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/animate.css/4.1.1/animate.min.css" />
 
     <script>
         $(document).ready(function() {
-            // $(document).on('click', '.cancelWishlistBtn', function() {
-            //     if (!$(this).hasClass('text-white') && !$(this).hasClass('bg-danger')) {
-            //         return;
-            //     }
-
-            //     let id = $(this).data('id');
-
-            //     $.ajax({
-            //         url: "{{ route('user.remove.from.wishlist', ':id') }}".replace(':id', id),
-            //         type: "POST",
-            //         success: function(response) {
-            //             if (response.status === 'success') {
-            //                 $(`#show-wishlist-${id}`).removeClass('text-white bg-danger');
-            //                 decrementBadge();
-            //                 showMessageToast({
-            //                     name: 'success',
-            //                     icon: 'las la-check-circle'
-            //                 }, response.message); // Use your success icon class
-            //             } else {
-            //                 showMessageToast({
-            //                     name: 'error',
-            //                     icon: 'las la-exclamation-circle'
-            //                 }, response.message); // Use your error icon class
-            //             }
-            //         },
-            //     })
-            // })
 
             function incrementBadge() {
                 // Get the current value of the badge
@@ -155,6 +103,40 @@
                     name: name, // Truyền trực tiếp giá trị của biến 'name'
                 }, message); // Truyền thông điệp vào
             }
+
+            function formatCurrency(amount) {
+                // Convert the number to a string and replace commas with dots
+                return amount.toString().replace(/\B(?=(\d{3})+(?!\d))/g, ",") + ' VND';
+            }
+
+            $(document).on('click', '.room-checkbox', function() {
+                let id = $(this).data('id');
+
+                $.ajax({
+                    url: "{{ route('user.handle.publish', ':id') }}".replace(':id', id),
+                    type: "POST",
+                    success: function(response) {
+                        if (response.status === 'success') {
+                            $('.show-total').html(formatCurrency(response.total));
+                        }
+                    }
+                })
+
+            })
+
+            $('#select-all').on('change', function() {
+                $('.room-checkbox').prop('checked', $(this).prop('checked'));
+
+                $.ajax({
+                    url: "{{ route('user.handle.publish.all') }}",
+                    type: "POST",
+                    success: function(response) {
+                        if (response.status === 'success') {
+                            $('.show-total').html(formatCurrency(response.total));
+                        }
+                    }
+                })
+            })
 
             $(document).on('click', '.addWishlistBtn', function() {
                 let id = $(this).data('id');
@@ -206,143 +188,125 @@
             let amenitiesVisible = false;
 
             function appendToWishlist(roomData) {
-                console.log(roomData);
 
-                const image_path = "{{ \Storage::url('') }}" + roomData.room.main_image;
+                const image_path = "{{ \Storage::url('') }}" + roomData.main_image;
                 const wishlistContainer = $('.append-child');
 
                 const newRoomHtml = /*html*/ `
-                    <div class="border rounded p-2 d-flex align-items-center mb-3 rooms room-${roomData.room.id}">
+                    <div class="border rounded p-2 d-flex align-items-center mb-3 rooms room-${roomData.id}">
                         <input type="checkbox" class="form-check-input me-2 room-checkbox" data-price="1500000" id="room-${roomData.id}">
                         <img src="${image_path}" alt="Room Image" class="rounded" style="max-width: 20%; object-fit: cover;">
                         <div class="ms-3">
-                            <h5 class="mb-1">${roomData.room.room_number}</h5>
-                            <p class="mb-0 text-muted">Giá: ${roomData.room.room_prices_active[0].price}</p>
+                            <h5 class="mb-1">${roomData.room_number}</h5>
+                            <p class="mb-0 text-muted">Giá: ${roomData.room_prices_active[0].price}</p>
                         </div>
                     </div>
-    `;
+                    `;
 
-                wishlistContainer.append(newRoomHtml);
+                wishlistContainer.prepend(newRoomHtml);
             }
 
+            const amenities = $('#amenities .amenity');
+            const hiddenAmenities = $('#amenities .amenity:gt(7)'); // Ẩn các tiện nghi từ thứ 8 trở đi
+
+            // Kiểm tra số lượng tiện nghi
+            if (amenities.length > 8) {
+                $('#toggleAmenities').removeClass('hidden');
+            }
+
+            hiddenAmenities.hide();
+
             $('#toggleAmenities').on('click', function() {
-                if (!amenitiesVisible) {
-                    // Thêm 15 tiện nghi mới
-                    const newAmenities = [{
-                            id: 'wifi',
-                            label: 'Wifi miễn phí',
-                            count: 1200
-                        },
-                        {
-                            id: 'pool',
-                            label: 'Hồ bơi',
-                            count: 450
-                        },
-                        {
-                            id: 'gym',
-                            label: 'Phòng tập gym',
-                            count: 300
-                        },
-                        {
-                            id: 'spa',
-                            label: 'Dịch vụ spa',
-                            count: 200
-                        },
-                        {
-                            id: 'breakfast',
-                            label: 'Bữa sáng miễn phí',
-                            count: 800
-                        },
-                        {
-                            id: 'bar',
-                            label: 'Quầy bar',
-                            count: 150
-                        },
-                        {
-                            id: 'shuttle',
-                            label: 'Dịch vụ đưa đón',
-                            count: 90
-                        },
-                        {
-                            id: 'kitchen',
-                            label: 'Bếp chung',
-                            count: 75
-                        },
-                        {
-                            id: 'luggage',
-                            label: 'Giữ hành lý',
-                            count: 50
-                        },
-                        {
-                            id: 'laundry',
-                            label: 'Dịch vụ giặt ủi',
-                            count: 30
-                        },
-                        {
-                            id: 'conference',
-                            label: 'Phòng hội nghị',
-                            count: 20
-                        },
-                        {
-                            id: 'nonSmoking',
-                            label: 'Phòng không hút thuốc',
-                            count: 10
-                        },
-                        {
-                            id: 'fireplace',
-                            label: 'Lò sưởi',
-                            count: 5
-                        },
-                        {
-                            id: 'view',
-                            label: 'Cảnh đẹp',
-                            count: 15
-                        },
-                        {
-                            id: 'security',
-                            label: 'An ninh 24/7',
-                            count: 100
-                        }
-                    ];
+                hiddenAmenities.toggle();
+                $(this).text($(this).text().includes('▼') ? 'Ẩn đi ▲' : 'Hiển thị tất cả ▼');
+            });
 
-                    newAmenities.forEach(amenity => {
-                        const div = `
-                        <div class="form-check">
-                            <div class="d-flex justify-content-between">
-                                <div>
-                                    <input class="form-check-input" type="checkbox" id="${amenity.id}" />
-                                    <label class="form-check-label" for="${amenity.id}">${amenity.label}</label>
-                                </div>
-                                <div>
-                                    <span class="badge bg-secondary">${amenity.count}</span>
-                                </div>
-                            </div>
-                        </div>
-                    `;
-                        $('#amenities').append(div);
-                    });
+            // Xử lý tiện ích
+            const facilities = $('#facilities .amenity');
+            const hiddenFacilities = $('#facilities .amenity:gt(7)'); // Ẩn các tiện ích từ thứ 8 trở đi
 
-                    $(this).text('Thu gọn ▲');
-                } else {
-                    // Xóa các tiện nghi mới
-                    $('#amenities .form-check:gt(4)').remove(); // Xóa từ tiện nghi thứ 5 trở đi
+            // Kiểm tra số lượng tiện ích
+            if (facilities.length > 8) {
+                $('#toggleFacilities').removeClass('hidden');
+            }
 
-                    $(this).text('Hiển thị tất cả 15 loại ▼');
-                }
+            hiddenFacilities.hide();
 
-                amenitiesVisible = !amenitiesVisible;
+            $('#toggleFacilities').on('click', function() {
+                hiddenFacilities.toggle();
+                $(this).text($(this).text().includes('▼') ? 'Ẩn đi ▲' : 'Hiển thị tất cả ▼');
             });
         });
+
+        let timeout = null;
+
+        function filterRoom() {
+            $('.loader-overlay').show();
+
+            let priceMin = $('#priceMin').text().replace('VNĐ ', '').replace('.', '');
+            let priceMax = $('#priceMax').text().replace('VNĐ ', '').replace('.', '');
+
+            // Lấy các tiện ích đã được chọn
+            let facilities = $('.facility-checkbox:checked').map(function() {
+                return $(this).val(); // Lấy giá trị (ID) của checkbox đã chọn
+            }).get();
+
+            // Lấy các tiện nghi đã được chọn
+            let amenities = $('.amenity-checkbox:checked').map(function() {
+                return $(this).val(); // Lấy giá trị (ID) của checkbox đã chọn
+            }).get();
+
+            let data = {
+                priceMin: priceMin,
+                priceMax: priceMax,
+                facilities: facilities,
+                amenities: amenities
+            };
+
+            clearTimeout(timeout);
+            timeout = setTimeout(function() {
+                // Hiển thị loader
+
+                $.ajax({
+                    type: "GET",
+                    url: "{{ route('basic.room.filter') }}",
+                    data: data,
+                    success: function(data) {
+                        $('#results-container').empty();
+                        $('#results-container').html(data.data);
+                    },
+                    complete: function() {
+                        // Ẩn loader khi hoàn tất
+                        $('.loader-overlay').hide();
+                    },
+                    error: function(xhr) {
+                        console.error(xhr.responseText); // Xử lý lỗi
+                        $('.loader-overlay').hide(); // Ẩn loader trong trường hợp lỗi
+                    }
+                });
+            }, 500);
+        }
+
+        $(document).on('click', '.facility-checkbox', function() {
+
+            filterRoom();
+
+        })
+
+
+        $(document).on('click', '.amenity-checkbox', function() {
+
+            filterRoom();
+
+        })
+
+
 
         function checkNotRoomWishlist() {
 
             if ($('.list-group div.rooms').length == 0) {
-                console.log(123);
-
                 $('#wishlist-message').show();
             } else {
-                console.log(456);
-
                 $('#wishlist-message').hide();
             }
 
@@ -364,11 +328,16 @@
                 // Cập nhật giá trị hiển thị khi kéo thanh trượt
                 $('#priceMin').text("VNĐ " + formatCurrency(data.from));
                 $('#priceMax').text("VNĐ " + formatCurrency(data.to) + "+");
+
             },
             onFinish: function(data) {
+
                 // Cập nhật giá trị hiển thị khi chọn xong
                 $('#priceMin').text("VNĐ " + formatCurrency(data.from));
                 $('#priceMax').text("VNĐ " + formatCurrency(data.to) + "+");
+
+                filterRoom();
+
             }
         });
     </script>
@@ -377,6 +346,49 @@
 @push('style')
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/ion-rangeslider/2.3.0/css/ion.rangeSlider.min.css">
     <style>
+        /* Fullscreen overlay */
+        .loader-overlay {
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100vw;
+            height: 100vh;
+            background-color: rgba(128, 128, 128, 0.5);
+            /* Gray background with 50% opacity */
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            z-index: 9999;
+        }
+
+        /* Loader styles */
+        .loader {
+            border: 8px solid rgba(255, 255, 255, 0.3);
+            /* Light border */
+            border-top: 8px solid #ffffff;
+            /* White border for rotating effect */
+            border-radius: 50%;
+            width: 60px;
+            height: 60px;
+            animation: spin 1s linear infinite;
+        }
+
+        /* Spin animation */
+        @keyframes spin {
+            0% {
+                transform: rotate(0deg);
+            }
+
+            100% {
+                transform: rotate(360deg);
+            }
+        }
+
+
+        .hidden {
+            display: none;
+        }
+
         .room-type {
             white-space: nowrap;
             overflow: hidden;

@@ -389,6 +389,15 @@ ALTER TABLE `room_types`
 ALTER TABLE `rooms` ADD `is_featured` TINYINT(1) NOT NULL DEFAULT '0' AFTER `is_clean`;
 
 
+-- 01/10
+ALTER TABLE `wishlists` ADD `publish` BOOLEAN NOT NULL DEFAULT TRUE AFTER `room_id`;
+
+ALTER TABLE `booking_requests`
+    DROP COLUMN `number_of_rooms`,        -- Loại bỏ cột số lượng phòng
+    DROP COLUMN `room_type_id`,           -- Loại bỏ cột loại phòng
+    ADD COLUMN `room_id` INT UNSIGNED NOT NULL AFTER `user_id`;  -- Thêm cột room_id
+
+
 -- 10/01
 ALTER TABLE `bookings`
 ADD COLUMN product_cost DECIMAL(28,8) NOT NULL DEFAULT 0.00000000;  
@@ -407,3 +416,4 @@ CREATE TABLE userd_product_rooms (
     created_at TIMESTAMP,
     updated_at TIMESTAMP
 );
+
