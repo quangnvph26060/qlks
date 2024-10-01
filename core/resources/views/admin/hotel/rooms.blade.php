@@ -18,13 +18,13 @@
                                 </tr>
                             </thead>
                             <tbody>
-                                @forelse($roomTypes as  $room)
+                                @forelse($rooms as  $room)
                                     <tr>
-                                        <td>{{$loop->iteration}}</td>
-                                        <td> {{ $room->code ?? 'Chưa có mã phòng'}}</td>
+                                        <td>{{ $loop->iteration }}</td>
+                                        <td> {{ $room->code ?? 'Chưa có mã phòng' }}</td>
                                         <td>{{ __($room->name) }}</td>
-                                      
-                                     
+
+
                                         <td> @php echo $room->statusBadge @endphp </td>
                                         @can(['admin.hotel.room.status', 'admin.hotel.room.add'])
                                             <td>
@@ -75,50 +75,34 @@
             <div class="modal-dialog" role="document">
                 <div class="modal-content">
                     <div class="modal-header">
-                        <h5 class="modal-title">@lang('Thêm mới phòng')</h5>
+                        <h5 class="modal-title">@lang('Thêm loại phòng mới')</h5>
                         <button aria-label="Close" class="close" data-bs-dismiss="modal" type="button">
                             <i class="las la-times"></i>
                         </button>
                     </div>
-                    <form action="{{ route('admin.hotel.room.add') }}" method="POST">
+                    <form action="{{ route('admin.hotel.room.add') }}" method="POST" enctype="multipart/form-data">
                         @csrf
                         <div class="modal-body">
                             <div class="form-group">
-                                <label>@lang('Loại phòng')</label>
-                                <select class="form-control" name="room_type_id" required>
-                                    <option disabled selected value="">@lang('Select One')</option>
-                                    @foreach ($roomTypes as $roomType)
-                                        <option value="{{ $roomType->id }}">{{ __($roomType->name) }}</option>
-                                    @endforeach
-                                </select>
+                                <label>@lang('Mã loại phòng')</label>
+                                <input class="form-control" name="code" type="text" required>
                             </div>
                             <div class="form-group">
-                                <label>@lang('Số phòng')</label>
-
-                                <div class="d-flex">
-                                    <div class="input-group row gx-0">
-                                        <input type="text" class="form-control" name="room_numbers" required>
-                                    </div>
-                                    {{-- <button class="btn btn--success input-group-text border-0 addItem flex-shrink-0 ms-4" type="button"><i class="las la-plus me-0"></i></button> --}}
+                                <label>@lang('Tên loại phòng')</label>
+                                <input class="form-control" name="name" type="text" required>
+                            </div>
+                            <div class="form-group">
+                                <div class="upload-box">
+                                    <input type="file" id="add_main_image" name="main_image" accept="image/*" required>
+                                    <label for="add_main_image" class="upload-label">
+                                        <i class="fas fa-cloud-upload-alt"></i>
+                                        <span>Ảnh loại phòng</span>
+                                    </label>
+                                    <img id="add_preview" class="preview-image" src="" alt="Preview Image"
+                                        style="display: none;">
+                                    <small class="text-danger"></small>
                                 </div>
                             </div>
-
-                            <div class="form-group">
-                                <label>@lang('Mã phòng')</label>
-                                <input class="form-control" name="room_id" type="text">
-                            </div>
-
-                            <div class="form-group">
-                                <label for="">Chọn giá</label>
-                                <select class="select2-multi-select" multiple="multiple" name="prices[]">
-                                    @foreach ($prices as $id => $name)
-                                        <option value="{{ $id }}">{{ $name }}</option>
-                                    @endforeach
-                                    <!-- Thêm các tùy chọn khác nếu cần -->
-                                </select>
-                            </div>
-
-                            <div class="append-item d-none"></div>
                         </div>
                         <div class="modal-footer">
                             <button class="btn btn--primary w-100 h-45" type="submit">@lang('Submit')</button>
@@ -139,35 +123,29 @@
                             <i class="las la-times"></i>
                         </button>
                     </div>
-                    <form action="" method="POST">
+                    <form action="" method="POST" enctype="multipart/form-data">
                         @csrf
                         <div class="modal-body">
                             <div class="form-group">
-                                <label>@lang('Loại phòng')</label>
-                                <select class="form-control" name="room_type_id" required>
-                                    <option disabled selected value="">@lang('Select One')</option>
-                                    @foreach ($roomTypes as $roomType)
-                                        <option value="{{ $roomType->id }}">{{ __($roomType->name) }}</option>
-                                    @endforeach
-                                </select>
+                                <label>@lang('Mã loại phòng')</label>
+                                <input class="form-control" name="code" type="text">
                             </div>
                             <div class="form-group">
-                                <label>@lang('Số phòng')</label>
-                                <input class="form-control" name="room_number" required type="text">
+                                <label>@lang('Tên loại phòng')</label>
+                                <input class="form-control" name="name" type="text">
                             </div>
                             <div class="form-group">
-                                <label>@lang('Mã phòng')</label>
-                                <input class="form-control" name="room_id" type="text">
+                                <div class="upload-box">
+                                    <input type="file" id="edit_main_image" name="main_image" accept="image/*">
+                                    <label for="edit_main_image" class="upload-label">
+                                        <i class="fas fa-cloud-upload-alt"></i>
+                                        <span>Ảnh loại phòng</span>
+                                    </label>
+                                    <img id="showImage" class="preview-image" src="" alt="Preview Image"
+                                        style="display: none;">
+                                    <small class="text-danger"></small>
+                                </div>
                             </div>
-                            <div class="form-group">
-                                <label for="">Chọn giá</label>
-                                <select class="select2-multi-select" multiple="multiple" name="prices[]">
-                                    @foreach ($prices as $id => $name)
-                                        <option value="{{ $id }}">{{ $name }}</option>
-                                    @endforeach
-                                </select>
-                            </div>
-
                         </div>
                         <div class="modal-footer">
                             <button class="btn btn--primary w-100 h-45" type="submit">@lang('Submit')</button>
@@ -177,6 +155,8 @@
             </div>
         </div>
     @endcan
+
+
 
     @can('admin.hotel.room.status')
         <x-confirmation-modal />
@@ -192,6 +172,66 @@
 
 @push('style')
     <style>
+        .upload-box {
+            width: 100%;
+            height: 200px;
+            border: 2px dashed #ccc;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            cursor: pointer;
+            position: relative;
+            margin: 20px auto;
+            transition: border-color 0.3s ease;
+            overflow: hidden;
+        }
+
+        .upload-box:hover {
+            border-color: #999;
+        }
+
+        .upload-label {
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            font-size: 16px;
+            color: #666;
+            z-index: 2;
+        }
+
+        .upload-label i {
+            font-size: 40px;
+            margin-bottom: 10px;
+            color: #666;
+        }
+
+        .upload-box input[type="file"] {
+            position: absolute;
+            width: 100%;
+            height: 100%;
+            opacity: 0;
+            cursor: pointer;
+            z-index: 3;
+            /* Đảm bảo input file nằm trên cùng để có thể click vào */
+        }
+
+        .upload-box span {
+            font-size: 14px;
+            color: #666;
+            margin-top: 5px;
+            text-align: center;
+        }
+
+        .preview-image {
+            position: absolute;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            object-fit: cover;
+            z-index: 1;
+        }
+
         .modal {
             z-index: 1070;
             /* Giá trị mặc định cho Bootstrap */
@@ -241,16 +281,67 @@
         $('.editBtn').on('click', function() {
             let modal = $('#editModal');
             let resource = $(this).data('resource');
+            console.log(resource);
 
             let route = `{{ route('admin.hotel.room.update', '') }}/${resource.id}`;
-
             modal.find('form').attr('action', route);
-            modal.find('[name=room_type_id]').val(resource.room_type_id);
-            modal.find('[name=room_number]').val(resource.room_number);
-            modal.find('[name=room_id]').val(resource.room_id);
-            let priceIds = resource.prices.map(price => price.pivot.price_id); // Adjust this if necessary
-            modal.find('.select2-multi-select').val(priceIds).trigger('change');
+            modal.find('[name=code]').val(resource.code);
+            modal.find('[name=name]').val(resource.name);
+
+            // Hiển thị hình ảnh cũ nếu có
+            let showImage = modal.find('#showImage');
+            showImage.attr('src', 'http://quanlykhachsan.test/storage/' + resource.main_image);
+            showImage.show();
+
+            // Đặt lại file input
+            $('#edit_main_image').val(''); // Đặt lại file input cho modal chỉnh sửa
+
             modal.modal('show');
+        });
+
+        // Sự kiện để hiển thị ảnh mới khi người dùng chọn cho modal chỉnh sửa
+        $('#edit_main_image').on('change', function(event) {
+            const input = event.target;
+            const showImage = document.getElementById('showImage');
+
+            if (input.files && input.files[0]) {
+                const reader = new FileReader();
+
+                reader.onload = function(e) {
+                    showImage.src = e.target.result; // Gán src cho img
+                    showImage.style.display = 'block'; // Hiện ảnh mới
+                };
+                reader.readAsDataURL(input.files[0]); // Đọc file dưới dạng URL base64
+            } else {
+                showImage.style.display = 'none'; // Ẩn ảnh nếu không có file
+            }
+        });
+
+        // Sự kiện để hiển thị ảnh mới khi người dùng chọn cho modal thêm
+        $('#add_main_image').on('change', function(event) {
+            const input = event.target;
+            const preview = document.getElementById('add_preview');
+            const labelIcon = document.querySelector('#addModal .upload-label i'); // Icon tải lên
+            const labelText = document.querySelector('#addModal .upload-label span'); // Text tải lên
+
+            if (input.files && input.files[0]) {
+                const reader = new FileReader();
+
+                reader.onload = function(e) {
+                    preview.src = e.target.result;
+                    preview.style.display = 'block';
+                    labelIcon.style.display = 'none'; // Ẩn icon
+                    labelText.style.display = 'none'; // Ẩn văn bản
+                };
+
+                reader.readAsDataURL(input.files[0]); // Đọc file dưới dạng URL base64
+            } else {
+                // Nếu không có tệp nào được chọn, đặt lại preview
+                preview.src = '';
+                preview.style.display = 'none';
+                labelIcon.style.display = 'block'; // Hiện icon
+                labelText.style.display = 'block'; // Hiện văn bản
+            }
         });
 
         $(document).on('click', '.removeRoomBtn', function() {
@@ -266,6 +357,32 @@
         });
         $('#addModal').on('hidden.bs.modal', function(e) {
             $(this).find('.append-item').html('');
+        });
+
+        $('#main_image').on('change', function(event) {
+            const input = event.target;
+            const preview = document.getElementById('preview');
+            const labelIcon = document.querySelector('.upload-label i'); // Icon tải lên
+            const labelText = document.querySelector('.upload-label span'); // Text tải lên
+
+            if (input.files && input.files[0]) {
+                const reader = new FileReader();
+
+                reader.onload = function(e) {
+                    preview.src = e.target.result;
+                    preview.style.display = 'block';
+                    labelIcon.style.display = 'none'; // Ẩn icon
+                    labelText.style.display = 'none'; // Ẩn văn bản
+                };
+
+                reader.readAsDataURL(input.files[0]); // Đọc file dưới dạng URL base64
+            } else {
+                // Nếu không có tệp nào được chọn, đặt lại preview
+                preview.src = '';
+                preview.style.display = 'none';
+                labelIcon.style.display = 'block'; // Hiện icon
+                labelText.style.display = 'block'; // Hiện văn bản
+            }
         });
     </script>
 @endpush
