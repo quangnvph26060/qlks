@@ -1,21 +1,13 @@
 @extends('admin.layouts.app')
 @section('panel')
     <div class="row">
-        <div class="form-group flex-fill">
-            <label>@lang('Ngày nhận phòng - Ngày trả phòng')</label>
-            <div class="d-flex">
-                <input autocomplete="off" class="bookingDatePicker form-control bg--white" name="dates"
-                    placeholder="@lang('Chọn ngày')" required type="text">
-                <button class="btn-primary-dates" id="search-rooms-dates" style="width: 100px"> Tìm kiếm</button>
-            </div>
-        </div>
+
     </div>
     <div class="row">
         <div class="col">
             @include('admin.booking.partials.system-1')
         </div>
     </div>
-
     <div class="row">
         <div class="col">
             <div class="header-row">
@@ -24,8 +16,8 @@
             </div>
         </div>
     </div>
-    <div class="row" id="roomListContainer">
-        {{-- phòng trống  --}}
+    <div class="row">
+        <!-- Room P.201 -->
         @forelse($emptyRooms as $rooms)
             @php
                 $classClean = $rooms->getCleanStatusClass();
@@ -35,7 +27,7 @@
                 if ($rooms->status == 1) {
                     $class = 'status-occupied'; // đang hoạt động; sắp tới
                 }
-                $price = $rooms->roomPricesActive[0]['price'];
+                $price =   $rooms->roomPricesActive[0]['price'];
             @endphp
 
             <div class="col-md-2 main-room-card  card-{{ $class }} ">
@@ -47,10 +39,11 @@
 
 
 
-                    <div class="content-booking mt-2 room-booking-{{ $class }}" data-hours="{{ $price }}"
-                        data-day="{{ $price }}" data-night="{{ $price }}"
-                        data-name = "{{ $rooms->roomType->name }}" data-roomNumber="{{ $rooms->room_number }}"
-                        data-room-type="{{ $rooms->room_type_id }}" data-room="{{ $rooms->id }}">
+                    <div class="content-booking mt-2 room-booking-{{ $class }}"
+                        data-hours="{{ $price }}" data-day="{{ $price }}"
+                        data-night="{{ $price}}" data-name = "{{ $rooms->roomType->name }}"
+                        data-roomNumber="{{ $rooms->room_number }}" data-room-type="{{ $rooms->room_type_id }}"
+                        data-room="{{ $rooms->id }}">
                         <h5>{{ $rooms->room_number }} </h5>
                         <p class="single-line">{{ $rooms->roomType->name }}</p>
                         <div class="room-info">
@@ -59,8 +52,7 @@
                             </p>
                             <p><i class="fas fa-sun icon"></i>{{ showAmount($rooms->roomType->fare) }}</p> --}}
                             <p>
-                                <i class="fas fa-dollar-sign icon"></i>{{ showAmount($price) }}
-                            </p>
+                                <i class="fas fa-dollar-sign icon"></i>{{ showAmount($price) }}</p>
                         </div>
                     </div>
                 </div>
@@ -68,8 +60,6 @@
         @empty
             <p class="text-center" colspan="100%">{{ __($emptyMessage) }}</p>
         @endforelse
-        {{-- phòng đã đặt  --}}
-
         @forelse($bookings as $booking)
             @php
                 $class = 'status-dirty';
@@ -103,8 +93,8 @@
                 }
                 $key_status = false;
                 if (
-                    now()->format('Y-m-d H:i:s') >= $booking->booking->check_in &&
-                    now()->format('Y-m-d H:i:s') < $booking->booking->check_out &&
+                    now()->format('Y-m-d') >= $booking->booking->check_in &&
+                    now()->format('Y-m-d') < $booking->booking->check_out &&
                     $booking->booking->key_status == Status::DISABLE
                 ) {
                     $key_status = true;
@@ -162,8 +152,7 @@
                                 <p> <i class="fas fa-moon icon"></i>{{ showAmount($booking->roomType->fare) }}
                                 </p> --}}
                                 <p>
-                                    <i class="fas fa-dollar-sign icon"></i>{{ showAmount($price) }}
-                                </p>
+                                    <i class="fas fa-dollar-sign icon"></i>{{ showAmount($price) }}</p>
                             </div>
                         @else
                             @php
@@ -538,90 +527,61 @@
 <script src="https://cdn.jsdelivr.net/npm/@popperjs/core@2.5.3/dist/umd/popper.min.js"></script>
 @push('script-lib')
     <script src="{{ asset('assets/admin/js/vendor/sweetalert2@11.js') }}"></script>
-    <script type="text/javascript" src="https://cdn.jsdelivr.net/jquery/latest/jquery.min.js"></script>
-    <script type="text/javascript" src="https://cdn.jsdelivr.net/momentjs/latest/moment.min.js"></script>
-    <script type="text/javascript" src="https://cdn.jsdelivr.net/npm/daterangepicker/daterangepicker.min.js"></script>
-    <link rel="stylesheet" type="text/css" href="https://cdn.jsdelivr.net/npm/daterangepicker/daterangepicker.css" />
 @endpush
-@push('script')
-    <script>
-        $(document).ready(function() {
-            $('#search-rooms-dates').click(function() {
-                const dates = $('input[name="dates"]').val();
-                const [startDate, endDate] = dates.split(' - ');
-                $.ajax({
-                    url: '{{ route('admin.searchrooms.booking.searchrooms') }}',
-                    type: 'GET',
-                    data: {
-                        _token: '{{ csrf_token() }}',
-                        startDate,
-                        endDate
-                    },
-                    success: function(response) {
 
-                        // console.log(response.emptyRooms);
-                        // console.log(response.bookings);
-                        // console.log(response.userList);
-                    },
-                    error: function(xhr) {
-                        console.error('AJAX Error:', xhr.responseText);
-                    }
+<script>
+    $(document).ready(function() {
+        // choose option  rooms
+        var dirtyCount = $('.content-booking.mt-2.room-booking-status-dirty').length;
+        var incomingCount = $('.content-booking.mt-2.room-booking-status-incoming').length;
+        var occupiedCount = $('.content-booking.mt-2.room-booking-status-occupied').length;
+        var lateCheckinCount = $('.content-booking.mt-2.room-booking-status-late-checkin').length;
+        var checkOutCount = $('.content-booking.mt-2.room-booking-status-check-out').length;
+
+        $('.status-available-line-count').text('Đang trống (' + dirtyCount + ')');
+        $('.status-incoming-line-count').text('Sắp nhận (' + incomingCount + ')');
+        $('.status-occupied-line-count').text('Đang sử dụng (' + occupiedCount + ')');
+        $('.status-checkout-line-count').text('Nhận phòng muộn (' + lateCheckinCount + ')');
+        $('.status-overdue-line-count').text('Quá giờ trả (' + checkOutCount + ')');
+
+        $('.status-button').click(function() {
+            $(this).toggleClass('active');
+
+            var selectedStatuses = [];
+
+            $('.status-button.active').each(function() {
+                selectedStatuses.push($(this).data('status'));
+            });
+
+            if (selectedStatuses.length === 0) {
+                $('.room-card').show();
+                $('.main-room-card').show();
+            } else {
+                $('.room-card').hide();
+                selectedStatuses.forEach(function(status) {
+                    $('.room-card').filter('.status-' + status).show();
                 });
 
-            })
+                $('.main-room-card').hide();
+                selectedStatuses.forEach(function(status) {
+                    $('.main-room-card').filter('.card-status-' + status).show();
+                });
+            }
+
         });
 
-        $(document).ready(function() {
+        // $('.more_select').on('click', function() {
 
-            $('input[name="dates"]').daterangepicker();
-            // choose option  rooms
-            var dirtyCount = $('.content-booking.mt-2.room-booking-status-dirty').length;
-            var incomingCount = $('.content-booking.mt-2.room-booking-status-incoming').length;
-            var occupiedCount = $('.content-booking.mt-2.room-booking-status-occupied').length;
-            var lateCheckinCount = $('.content-booking.mt-2.room-booking-status-late-checkin').length;
-            var checkOutCount = $('.content-booking.mt-2.room-booking-status-check-out').length;
-
-            $('.status-available-line-count').text('Đang trống (' + dirtyCount + ')');
-            $('.status-incoming-line-count').text('Sắp nhận (' + incomingCount + ')');
-            $('.status-occupied-line-count').text('Đang sử dụng (' + occupiedCount + ')');
-            $('.status-checkout-line-count').text('Nhận phòng muộn (' + lateCheckinCount + ')');
-            $('.status-overdue-line-count').text('Quá giờ trả (' + checkOutCount + ')');
-
-            $('.status-button').click(function() {
-                $(this).toggleClass('active');
-
-                var selectedStatuses = [];
-
-                $('.status-button.active').each(function() {
-                    selectedStatuses.push($(this).data('status'));
-                });
-
-                if (selectedStatuses.length === 0) {
-                    $('.room-card').show();
-                    $('.main-room-card').show();
-                } else {
-                    $('.room-card').hide();
-                    selectedStatuses.forEach(function(status) {
-                        $('.room-card').filter('.status-' + status).show();
-                    });
-
-                    $('.main-room-card').hide();
-                    selectedStatuses.forEach(function(status) {
-                        $('.main-room-card').filter('.card-status-' + status).show();
-                    });
-                }
-
-            });
-
-            // add_premium_service
-            $('.add_premium_service').on('click', function(event) {
-                event.stopPropagation();
-                $('#serviceModal').modal('show');
-            });
+        // });
+        // add_premium_service
+        $('.add_premium_service').on('click', function(event) {
+            event.stopPropagation();
+            $('#serviceModal').modal('show');
+        });
 
 
-            $('.addServiceBtn').on('click', function() {
-                const content = `
+        $('.addServiceBtn').on('click', function() {
+            const content = `
             <div class="d-flex service-item position-relative mb-3 flex-wrap">
                 <div class="row w-100">
                     <div class="col-md-6">
@@ -640,87 +600,87 @@
                 </div>
             </div>`;
 
-                $('.service-wrapper').append(content);
-                const select = $('.service-wrapper').find('select[name="services[]"]')
-                    .last();
+            $('.service-wrapper').append(content);
+            const select = $('.service-wrapper').find('select[name="services[]"]')
+                .last();
 
 
-                $.ajax({
-                    url: '{{ route('admin.services.booking.services') }}',
-                    type: 'GET',
-                    success: function(data) {
-                        select.empty();
+            $.ajax({
+                url: '{{ route('admin.services.booking.services') }}',
+                type: 'GET',
+                success: function(data) {
+                    select.empty();
 
-                        data.data.forEach(function(service) {
-                            var option =
-                                `<option value="${service.id}">${service.name} - ${formatCurrency(service.cost)}</option>`;
-                            select.append(option);
-                        });
-                    },
-                    error: function(error) {
-                        console.log('Error:', error);
+                    data.data.forEach(function(service) {
+                        var option =
+                            `<option value="${service.id}">${service.name} - ${formatCurrency(service.cost)}</option>`;
+                        select.append(option);
+                    });
+                },
+                error: function(error) {
+                    console.log('Error:', error);
+                }
+            });
+        });
+
+        $('.service-wrapper').on('click', '.removeServiceBtn', function() {
+            $(this).closest('.service-item').remove();
+        });
+
+        $('.handoverKeyBtn').on('click', function(event) {
+            let data = $(this).data();
+
+            event.stopPropagation();
+            var url = `{{ route('admin.booking.key.handover', ['id' => ':id']) }}`.replace(':id', data
+                .id);
+
+            $.ajax({
+                url: url,
+                type: 'POST',
+                data: {
+                    is_method: "receptionist"
+                },
+                success: function(response) {
+                    if (response.status === 'success') {
+                        window.location.reload();
                     }
-                });
+                },
+                error: function(xhr, status, error) {
+                    console.error('Lỗi:', error);
+                }
             });
+        });
 
-            $('.service-wrapper').on('click', '.removeServiceBtn', function() {
-                $(this).closest('.service-item').remove();
-            });
+        $('.premium_service').on('click', function() {
+            let data = $(this).data();
 
-            $('.handoverKeyBtn').on('click', function(event) {
-                let data = $(this).data();
+            var url = `{{ route('admin.booking.service.details', ['id' => ':id']) }}`.replace(':id',
+                data.id);
 
-                event.stopPropagation();
-                var url = `{{ route('admin.booking.key.handover', ['id' => ':id']) }}`.replace(':id', data
-                    .id);
+            $.ajax({
+                url: url,
+                type: 'GET',
+                data: {
+                    is_method: "receptionist"
+                },
+                success: function(response) {
+                    if (response.status === "success") {
+                        $('#table_service').empty();
+                        if (response.services.data.length === 0) {
 
-                $.ajax({
-                    url: url,
-                    type: 'POST',
-                    data: {
-                        is_method: "receptionist"
-                    },
-                    success: function(response) {
-                        if (response.status === 'success') {
-                            window.location.reload();
-                        }
-                    },
-                    error: function(xhr, status, error) {
-                        console.error('Lỗi:', error);
-                    }
-                });
-            });
-
-            $('.premium_service').on('click', function() {
-                let data = $(this).data();
-
-                var url = `{{ route('admin.booking.service.details', ['id' => ':id']) }}`.replace(':id',
-                    data.id);
-
-                $.ajax({
-                    url: url,
-                    type: 'GET',
-                    data: {
-                        is_method: "receptionist"
-                    },
-                    success: function(response) {
-                        if (response.status === "success") {
-                            $('#table_service').empty();
-                            if (response.services.data.length === 0) {
-
-                                $('#table_service').append(`
+                            $('#table_service').append(`
                                             <tr>
                                                 <td colspan="9" class="text-center">Không có dịch vụ nào!</td>
                                             </tr>
                                         `);
-                            } else {
+                        } else {
 
 
-                                $.each(response.services.data, function(index, service) {
-                                    var url =
-                                        `{{ route('admin.premium.service.delete', ['id' => ':id']) }}`
-                                        .replace(':id', service.id);
-                                    var html = `
+                            $.each(response.services.data, function(index, service) {
+                                var url =
+                                    `{{ route('admin.premium.service.delete', ['id' => ':id']) }}`
+                                    .replace(':id', service.id);
+                                var html = `
                                                         <tr>
                                                             <td>${index + 1}</td>
                                                             <td><span class="fw-bold">${ service.service_date } </span></td>
@@ -741,189 +701,189 @@
                                                             </td>
                                                         </tr>
                                                     `;
-                                    $('#table_service').append(html);
-                                });
-                            }
-
+                                $('#table_service').append(html);
+                            });
                         }
 
-                        // Show the modal after loading data
-                        $('#premium_serviceModal').modal('show');
+                    }
+
+                    // Show the modal after loading data
+                    $('#premium_serviceModal').modal('show');
+                },
+                error: function(xhr, status, error) {
+                    console.error('Lỗi:', error);
+                }
+            });
+        });
+
+        function checkService(url, method, is_value) {
+
+        }
+
+        $('.room-icon').on('click', function() {
+            let roomData = $(this).attr('data-room');
+            let roomClean = $(this).attr('data-clean');
+            let textClean = '';
+
+            if (roomClean == 1) {
+                textClean = '<strong style="color: red;">Chưa dọn</strong>';
+            } else {
+                textClean = '<strong style="color: #28a745;">Sạch</strong>';
+            }
+
+            $('#dynamicModalLabel').html('Chuyển trạng thái buồng phòng ' + roomData +
+                ' thành ' +
+                textClean);
+            $('#modalRoomInfo').html('Chuyển trạng thái buồng phòng ' + roomData +
+                ' thành ' +
+                textClean);
+
+            var modal = new bootstrap.Modal($('#dynamicModal'));
+            $('.btn-clean').off('click').on('click', function(event) {
+                event.stopPropagation();
+                var url = `{{ route('admin.roomclean.booking.roomclean') }}`;
+                $.ajax({
+                    url: url,
+                    type: 'POST',
+                    data: {
+                        roomData: roomData,
+                        roomClean: roomClean
+                    },
+                    success: function(response) {
+                        if (response.status === 'success') {
+                            modal.hide();
+                            window.location.reload();
+                        }
                     },
                     error: function(xhr, status, error) {
+
                         console.error('Lỗi:', error);
                     }
                 });
             });
+            modal.show();
+        });
 
-            function checkService(url, method, is_value) {
+        $('.room-booking-status-dirty').on('click', function() {
+            const modal = new bootstrap.Modal($('#myModal-booking')[0]);
+            modal.show();
 
-            }
-
-            $('.room-icon').on('click', function() {
-                let roomData = $(this).attr('data-room');
-                let roomClean = $(this).attr('data-clean');
-                let textClean = '';
-
-                if (roomClean == 1) {
-                    textClean = '<strong style="color: red;">Chưa dọn</strong>';
-                } else {
-                    textClean = '<strong style="color: #28a745;">Sạch</strong>';
-                }
-
-                $('#dynamicModalLabel').html('Chuyển trạng thái buồng phòng ' + roomData +
-                    ' thành ' +
-                    textClean);
-                $('#modalRoomInfo').html('Chuyển trạng thái buồng phòng ' + roomData +
-                    ' thành ' +
-                    textClean);
-
-                var modal = new bootstrap.Modal($('#dynamicModal'));
-                $('.btn-clean').off('click').on('click', function(event) {
-                    event.stopPropagation();
-                    var url = `{{ route('admin.roomclean.booking.roomclean') }}`;
-                    $.ajax({
-                        url: url,
-                        type: 'POST',
-                        data: {
-                            roomData: roomData,
-                            roomClean: roomClean
-                        },
-                        success: function(response) {
-                            if (response.status === 'success') {
-                                modal.hide();
-                                window.location.reload();
-                            }
-                        },
-                        error: function(xhr, status, error) {
-
-                            console.error('Lỗi:', error);
-                        }
-                    });
-                });
-                modal.show();
-            });
-
-            $('.room-booking-status-dirty').on('click', function() {
-                const modal = new bootstrap.Modal($('#myModal-booking')[0]);
-                modal.show();
-
-                const dataHours = $(this).data('hours').replace(',', '');
-                const dataName = $(this).data('name');
-                const dataRoomType = $(this).data('room-type');
-                const dataRoom = $(this).data('room');
-                const dataRoomNumber = $(this).data('roomnumber');
+            const dataHours = $(this).data('hours').replace(',', '');
+            const dataName = $(this).data('name');
+            const dataRoomType = $(this).data('room-type');
+            const dataRoom = $(this).data('room');
+            const dataRoomNumber = $(this).data('roomnumber');
 
 
-                const dataDay = $(this).data('day').replace(',', '');
-                const dataNight = $(this).data('night').replace(',', '');
+            const dataDay = $(this).data('day').replace(',', '');
+            const dataNight = $(this).data('night').replace(',', '');
 
-                $('[name=room_type_id]').val(dataRoomType);
-                $('[name=room_type]').val(dataRoom);
-                $('#customer-price-booking, #input-price-booking').val(parseInt(dataHours, 10));
-                $('#book_name').text(dataName);
-                $('#roomNumber').val(dataRoomNumber);
+            $('[name=room_type_id]').val(dataRoomType);
+            $('[name=room_type]').val(dataRoom);
+            $('#customer-price-booking, #input-price-booking').val(parseInt(dataHours, 10));
+            $('#book_name').text(dataName);
+            $('#roomNumber').val(dataRoomNumber);
 
-                window.savedDataHours = dataHours;
-                window.savedDataDay = dataDay;
-                window.savedDataNight = dataNight;
-            });
+            window.savedDataHours = dataHours;
+            window.savedDataDay = dataDay;
+            window.savedDataNight = dataNight;
+        });
 
-            $('.room-booking-status-occupied').on('click', function() {
-                var id = $(this).data('id');
-                var booking_id = $(this).data('booking');
-                handleLateCheckinClick(id, booking_id);
-            });
+        $('.room-booking-status-occupied').on('click', function() {
+            var id = $(this).data('id');
+            var booking_id = $(this).data('booking');
+            handleLateCheckinClick(id, booking_id);
+        });
 
-            $('.room-booking-status-incoming').on('click', function() {
-                var id = $(this).data('id');
-                var booking_id = $(this).data('booking');
-                handleLateCheckinClick(id, booking_id);
-            });
+        $('.room-booking-status-incoming').on('click', function() {
+            var id = $(this).data('id');
+            var booking_id = $(this).data('booking');
+            handleLateCheckinClick(id, booking_id);
+        });
 
-            $('.room-booking-status-late-checkin').on('click', function() {
-                var id = $(this).data('id');
-                var booking_id = $(this).data('booking');
-                handleLateCheckinClick(id, booking_id);
-            });
+        $('.room-booking-status-late-checkin').on('click', function() {
+            var id = $(this).data('id');
+            var booking_id = $(this).data('booking');
+            handleLateCheckinClick(id, booking_id);
+        });
 
-            $('.room-booking-status-check-out').on('click', function() {
-                var id = $(this).data('id');
-                var booking_id = $(this).data('booking');
-                handleLateCheckinClick(id, booking_id);
-            });
-
-
-            function handleLateCheckinClick(id, booking_id) {
-
-                var url = `{{ route('admin.booking.details', ['id' => ':id']) }}`.replace(':id', id);
-                $('#booking_id').val(id);
-                var dataToSend = {
-                    is_method: 'receptionist'
-                };
-                fetchDataAndDisplayModal(url, dataToSend);
-            }
-
-            function fetchDataAndDisplayModal(url, dataToSend) {
-                $.ajax({
-                    url: url,
-                    data: dataToSend,
-                    type: 'GET',
-                    success: function(response) {
-                        if (response.status === 'success') {
-
-                            var customer_type = response.data.user_id ?
-                                "Khách hàng đã đăng ký" : " Khách hàng lưu trú"
+        $('.room-booking-status-check-out').on('click', function() {
+            var id = $(this).data('id');
+            var booking_id = $(this).data('booking');
+            handleLateCheckinClick(id, booking_id);
+        });
 
 
-                            if (customer_type) {
-                                var url_user_info =
-                                    `{{ can('admin.users.detail') ? route('admin.users.detail', ['id' => ':id']) : 'javascript:void(0)' }}`
-                                    .replace(':id', response.data.user_id);
+        function handleLateCheckinClick(id, booking_id) {
 
-                                $.ajax({
-                                    url: url_user_info,
-                                    data: dataToSend,
-                                    type: 'GET',
-                                    success: function(response) {
-                                        if (response.status === 'success') {
+            var url = `{{ route('admin.booking.details', ['id' => ':id']) }}`.replace(':id', id);
+            $('#booking_id').val(id);
+            var dataToSend = {
+                is_method: 'receptionist'
+            };
+            fetchDataAndDisplayModal(url, dataToSend);
+        }
 
-                                            $('.user_info').text(
-                                                `${response.data.username} - ${response.data.email}`
-                                            );
-                                        }
+        function fetchDataAndDisplayModal(url, dataToSend) {
+            $.ajax({
+                url: url,
+                data: dataToSend,
+                type: 'GET',
+                success: function(response) {
+                    if (response.status === 'success') {
 
-                                    },
-                                    error: function(xhr, status, error) {
+                        var customer_type = response.data.user_id ?
+                            "Khách hàng đã đăng ký" : " Khách hàng lưu trú"
+
+
+                        if (customer_type) {
+                            var url_user_info =
+                                `{{ can('admin.users.detail') ? route('admin.users.detail', ['id' => ':id']) : 'javascript:void(0)' }}`
+                                .replace(':id', response.data.user_id);
+
+                            $.ajax({
+                                url: url_user_info,
+                                data: dataToSend,
+                                type: 'GET',
+                                success: function(response) {
+                                    if (response.status === 'success') {
 
                                         $('.user_info').text(
-                                            `${response.data.guest_details.name} - ${response.data.guest_details.email}`
+                                            `${response.data.username} - ${response.data.email}`
                                         );
-
-                                        // console.error('Error:', error);
                                     }
-                                });
-                            }
 
-                            $('#bookings-table-body').empty();
-                            let rowsHtml = '';
-                            let totalFare = 0;
-                            let total_fare = 0;
-                            let cancellation_fee, shouldRefund = 0;
+                                },
+                                error: function(xhr, status, error) {
 
-                            var currentDate = '<?php echo now()->format('Y-m-d H:i:s'); ?>';
+                                    $('.user_info').text(
+                                        `${response.data.guest_details.name} - ${response.data.guest_details.email}`
+                                    );
 
-                            response.data.booked_rooms.forEach(function(booked, index) {
-                                $('.booking-no').text(booked.room.room_number);
-                                $('.room_serive').val(booked.room.room_number);
-                                let is_flag = false;
-                                if (booked.status === 1 && booked.booked_for >= currentDate) {
-                                    total_fare = booked.fare;
-                                    cancellation_fee = booked.cancellation_fee;
-                                } else {
-                                    is_flag = true;
+                                    // console.error('Error:', error);
                                 }
-                                rowsHtml += `
+                            });
+                        }
+
+                        $('#bookings-table-body').empty();
+                        let rowsHtml = '';
+                        let totalFare = 0;
+                        let total_fare = 0;
+                        let cancellation_fee, shouldRefund = 0;
+
+                        var currentDate = '<?php echo now()->format('Y-m-d H:i:s'); ?>';
+
+                        response.data.booked_rooms.forEach(function(booked, index) {
+                            $('.booking-no').text(booked.room.room_number);
+                            $('.room_serive').val(booked.room.room_number);
+                            let is_flag = false;
+                            if (booked.status === 1 && booked.booked_for >= currentDate) {
+                                total_fare = booked.fare;
+                                cancellation_fee = booked.cancellation_fee;
+                            } else {
+                                is_flag = true;
+                            }
+                            rowsHtml += `
                                     <tr>
                                         <td  class="text-center " data-label="@lang('Hành động')">
                                            <button
@@ -953,12 +913,10 @@
 
                                     </tr>
                                 `;
-                                totalFare += parseFloat(booked.room.room_prices_active[0][
-                                    'price'
-                                ]);
+                            totalFare += parseFloat(booked.room.room_prices_active[0]['price']);
 
-                            });
-                            rowsHtml += `
+                        });
+                        rowsHtml += `
                             <tr>
                                 <td class="text-end" colspan="3">
                                     <span class="fw-bold">@lang('Tổng giá')</span>
@@ -969,14 +927,14 @@
                                 </td>
                             </tr>
                         `;
-                            $('#bookings-table-body').append(rowsHtml);
+                        $('#bookings-table-body').append(rowsHtml);
 
-                            $('#user_services').empty();
+                        $('#user_services').empty();
 
-                            let rowsHtml1 = '';
-                            response.data.used_premium_service.forEach(function(booked,
-                                index) {
-                                rowsHtml1 += `
+                        let rowsHtml1 = '';
+                        response.data.used_premium_service.forEach(function(booked,
+                            index) {
+                            rowsHtml1 += `
                                         <tr>
                                             <td class="bg--date text-center" data-label="@lang('Ngày')">
                                                 ${booked.service_date}
@@ -1001,97 +959,67 @@
                                     `;
 
 
-                            });
-                            $('#user_services').append(rowsHtml1);
-                            //   console.log(response);
-                            $('.booking_extra').val(response.data.id);
+                        });
+                        $('#user_services').append(rowsHtml1);
+                     //   console.log(response);
+                        $('.booking_extra').val(response.data.id);
 
-                            $('.customer_type').text(customer_type);
-                            $('.booking_number').text(response.data.booking_number);
-                            $('.check_in').text(response.data.check_in);
-                            $('.check_out').text(response.data.check_out);
-                            $('.booking_price').text(response.data.booked_rooms.fare);
+                        $('.customer_type').text(customer_type);
+                        $('.booking_number').text(response.data.booking_number);
+                        $('.check_in').text(response.data.check_in);
+                        $('.check_out').text(response.data.check_out);
+                        $('.booking_price').text(response.data.booked_rooms.fare);
 
-                            const paid_amount = formatCurrency(response.data.paid_amount);
-                            $('.total_received').text("-" + paid_amount);
-                            $('.total_refunded').text(response.returnedPayments);
-                            const total_amount = formatCurrency(response.total_amount)
-                            $('.total_fare').text("+" + total_amount);
-                            const due = formatCurrency(response.due);
-                            if (response.due > 0) {
-                                $('#number_fare').text('Số tiền phải thu: ');
-                                $('#color_payment').addClass('text--success');
-                                $('#dueMessage1').text("@lang('Nhận thanh toán')");
-                                $('#dueMessage').text("@lang('Phải thu từ người dùng')");
-                                $('#submitBtnCheckOut').attr('disabled', true);
+                        const paid_amount = formatCurrency(response.data.paid_amount);
+                        $('.total_received').text("-" + paid_amount);
+                        $('.total_refunded').text(response.returnedPayments);
+                        const total_amount = formatCurrency(response.total_amount)
+                        $('.total_fare').text("+" + total_amount);
+                        const due = formatCurrency(response.due);
+                        if (response.due > 0) {
+                            $('#number_fare').text('Số tiền phải thu: ');
+                            $('#color_payment').addClass('text--success');
+                            $('#dueMessage1').text("@lang('Nhận thanh toán')");
+                            $('#dueMessage').text("@lang('Phải thu từ người dùng')");
+                            $('#submitBtnCheckOut').attr('disabled', true);
 
-                                $('#customer_payment, #customer_payment1').text(due);
-                            } else {
-                                $('#number_fare').text('Số tiền hoàn lại: ');
-                                $('#dueMessage1').text("@lang('Số tiền hoàn lại')");
-                                $('#dueMessage').text("Có thể hoàn trả");
-                                $('#customer_payment1').text(due);
+                            $('#customer_payment, #customer_payment1').text(due);
+                        } else {
+                            $('#number_fare').text('Số tiền hoàn lại: ');
+                            $('#dueMessage1').text("@lang('Số tiền hoàn lại')");
+                            $('#dueMessage').text("Có thể hoàn trả");
+                            $('#customer_payment1').text(due);
 
-                                $('#submitBtnCheckOut').attr('disabled', false);
-                            }
-                            $('.btn-primary').on('click', function() {
-                                let inputFareBooking = $('.input_fare_booking')
-                                    .val();
-                                if (inputFareBooking === "") {
-                                    showSwalMessage('error',
-                                        'Vui lòng nhập số tiền');
-                                    return;
-                                }
-                            });
-
-                            $('#myModal-booking-status').modal('show');
+                            $('#submitBtnCheckOut').attr('disabled', false);
                         }
-                    },
-                    error: function(xhr, status, error) {
-                        console.error('Error:', error);
+                        $('.btn-primary').on('click', function() {
+                            let inputFareBooking = $('.input_fare_booking')
+                                .val();
+                            if (inputFareBooking === "") {
+                                showSwalMessage('error',
+                                    'Vui lòng nhập số tiền');
+                                return;
+                            }
+                        });
 
+                        $('#myModal-booking-status').modal('show');
                     }
-                });
-            }
-            $('#submitBtn').click(function(e) {
-                e.preventDefault();
+                },
+                error: function(xhr, status, error) {
+                    console.error('Error:', error);
 
-                var booking_id = $('#booking_id').val();
-                var amount = $('#amount_payment').val();
-
-                $('#amount_payment_errors').text('');
-                if (amount > 0) {
-                    var url = `{{ route('admin.booking.payment', ['id' => ':id']) }}`.replace(':id',
-                        booking_id);
-
-                    $.ajax({
-                        url: url,
-                        type: "POST",
-                        data: {
-                            _token: '{{ csrf_token() }}',
-                            amount: amount,
-                            is_method: "receptionist"
-                        },
-                        success: function(response) {
-                            if (response.status === 'success') {
-                                handleLateCheckinClick(response.id, response.booking_id)
-                                notify('success', `Đã nhận thanh toán thành công`);
-                            }
-                        },
-                        error: function(xhr, status, error) {
-                            console.error(xhr.responseText);
-                            console.log(xhr.status);
-                            alert("Đã có lỗi xảy ra. Vui lòng thử lại.");
-                        }
-                    });
-                } else {
-                    $('#amount_payment_errors').text('Vui lòng nhập số tiền!');
                 }
             });
+        }
+        $('#submitBtn').click(function(e) {
+            e.preventDefault();
 
-            $('#submitBtnCheckOut').click(function(e) {
-                var booking_id = $('#booking_id').val();
-                var url = `{{ route('admin.booking.checkout', ['id' => ':id']) }}`.replace(':id',
+            var booking_id = $('#booking_id').val();
+            var amount = $('#amount_payment').val();
+
+            $('#amount_payment_errors').text('');
+            if (amount > 0) {
+                var url = `{{ route('admin.booking.payment', ['id' => ':id']) }}`.replace(':id',
                     booking_id);
 
                 $.ajax({
@@ -1099,13 +1027,13 @@
                     type: "POST",
                     data: {
                         _token: '{{ csrf_token() }}',
+                        amount: amount,
                         is_method: "receptionist"
                     },
                     success: function(response) {
                         if (response.status === 'success') {
                             handleLateCheckinClick(response.id, response.booking_id)
-                            notify('success', `Đặt phòng đã được thanh toán thành công`);
-                            window.location.reload();
+                            notify('success', `Đã nhận thanh toán thành công`);
                         }
                     },
                     error: function(xhr, status, error) {
@@ -1114,422 +1042,451 @@
                         alert("Đã có lỗi xảy ra. Vui lòng thử lại.");
                     }
                 });
-            })
-            var now = new Date();
-            var year = now.getFullYear();
-            var month = (now.getMonth() + 1).toString().padStart(2, '0');
-            var day = now.getDate().toString().padStart(2, '0');
-            var hours = now.getHours().toString().padStart(2, '0');
-            var minutes = now.getMinutes().toString().padStart(2, '0');
-
-            var currentDateTime = `${year}-${month}-${day}T${hours}:${minutes}`;
-            var checkInTime = document.getElementById('checkInTime');
-            checkInTime.value = currentDateTime;
-
-            let bookingType;
-            $('#bookingType').on('change', function() {
-                bookingType = $(this).val();
-                var now = new Date();
-
-                var checkOutTime;
-                if (bookingType === 'gio') {
-                    console.log('gio');
-                    checkOutTime = new Date(now.getTime() + (1 * 60 * 60 * 1000)); // Cộng 1 giờ
-                } else if (bookingType === 'ngay') {
-                    console.log('ngay');
-                    checkOutTime = new Date(now.getTime() + (1 * 24 * 60 * 60 *
-                        1000)); // Cộng 1 ngày
-                } else if (bookingType === 'dem') {
-                    console.log('dem');
-                    checkOutTime = new Date(now.getTime() + (12 * 60 * 60 *
-                        1000)); // Cộng 12 giờ
-                }
-
-                var checkOutYear = checkOutTime.getFullYear();
-                var checkOutMonth = (checkOutTime.getMonth() + 1).toString().padStart(2, '0');
-                var checkOutDay = checkOutTime.getDate().toString().padStart(2, '0');
-                var checkOutHours = checkOutTime.getHours().toString().padStart(2, '0');
-                var checkOutMinutes = checkOutTime.getMinutes().toString().padStart(2, '0');
-                var checkOutDateTime =
-                    `${checkOutYear}-${checkOutMonth}-${checkOutDay}T${checkOutHours}:${checkOutMinutes}`;
-
-                $('#checkOutTime').val(checkOutDateTime);
-                calculateDuration();
-
-            });
-
-            function calculateDuration(event) {
-
-                var checkInTime = $('#checkInTime').val();
-                var checkOutTime = $('#checkOutTime').val();
-                if (!checkInTime || !checkOutTime) {
-                    $('.inputTime').text('Vui lòng nhập cả thời gian check-in và check-out.');
-                    return;
-                }
-
-                var checkInDate = new Date(checkInTime);
-                var checkOutDate = new Date(checkOutTime);
-                var durationMs = checkOutDate - checkInDate;
-
-                if (durationMs < 0) {
-                    $('.inputTime').text('Thời gian check-out phải sau thời gian check-in.');
-                    return;
-                }
-
-
-                var durationHours = Math.floor(durationMs / (1000 * 60 * 60));
-                var durationMinutes = Math.floor((durationMs % (1000 * 60 * 60)) / (1000 * 60));
-
-
-                var formattedHours = durationHours.toString().padStart(2, '0'); // giờ
-                var formattedMinutes = durationMinutes.toString().padStart(2, '0'); // phút
-
-                let priceTime = 0;
-                if (bookingType === 'gio') {
-                    priceTime = parseFloat(window.savedDataHours.replace(',', '')) || 0;
-                } else if (bookingType === 'ngay') {
-                    priceTime = parseFloat(window.savedDataDay.replace(',', '')) || 0;
-                    updatedPrice = priceTime;
-                } else if (bookingType === 'dem') {
-                    priceTime = parseFloat(window.savedDataNight.replace(',', '')) || 0;
-                    updatedPrice = priceTime;
-                }
-
-                if (bookingType !== 'dem' && bookingType !== 'ngay') {
-                    var updatedPrice = priceTime * formattedHours;
-                }
-
-
-                $('#input-price-booking').val(updatedPrice.toLocaleString());
-                $('#customer-price-booking').val(updatedPrice.toLocaleString());
-
-                $('.inputTime').text(formattedHours + ':' + formattedMinutes);
-            }
-
-            $('#checkInTime, #checkOutTime').on('change', calculateDuration);
-
-
-            $('.customer-svg-icon').on('click', function() {
-                $('#customer-popup').addClass('active');
-            });
-
-            $('#customer-closePopup, #customer-close').on('click', function() {
-                $('#customer-popup').removeClass('active');
-            });
-
-            // loại khách hàng
-            // $('#guest_type').on('change', function() {
-            //     var selectedValue = $(this).val();
-
-            //     if (selectedValue == '1') { // Khách đã đăng ký
-
-            //         $('#name, #phone, #address').closest('label, input').hide();
-
-            //         $('#email').closest('label, input').show();
-            //     } else {
-
-            //         $('#name, #email, #phone, #address').closest('label, input').show();
-            //     }
-            // });
-
-            // validate nếu nhập không có tên khách hàng
-            $('#customer-name').on('input', function() {
-                const inputValue = $(this).val().toLowerCase();
-                const options = $('#customer-names option');
-                let isValid = false;
-
-
-                options.each(function() {
-                    if ($(this).val().toLowerCase() === inputValue) {
-                        isValid = true;
-
-                        return false; // Break the loop
-                    }
-                });
-
-                if (isValid) {
-                    $('#error-message').hide();
-
-
-                } else {
-                    $('#error-message').show();
-                }
-            });
-            // thông tin khách hàng
-            $('#customer-name').on('input', function() {
-
-                var inputValue = $(this).val().toLowerCase();
-                var isValid = false;
-                var matchedOption = null;
-
-                $('#customer-names option').each(function() {
-                    if ($(this).val().toLowerCase() === inputValue) {
-                        matchedOption = $(this);
-                        isValid = true;
-                        return false; // Break the loop
-                    }
-                });
-
-                if (isValid && matchedOption) {
-                    // Update the user info with the data-* attributes
-                    $('.username-user').text(matchedOption.val());
-                    $('.email-user').text(matchedOption.data('user'));
-
-
-                    $('.email-user1').val(matchedOption.val());
-                    $('.username-user1').val(matchedOption.data('user'));
-                    $('.mobile-user').val(matchedOption.data('mobi'));
-                    $('.address-user').val(matchedOption.data('address'));
-                } else {
-                    // Clear the user info if no match
-                    $('.username-user').text('');
-                    $('.email-user').text('');
-                }
-            });
-            // btn booking
-            $('.btn-confirm').on('click', function() {
-
-                $('.booking-form').submit();
-            });
-
-
-            function getDatesBetween(startDate, endDate, roomType) {
-                let dates = [];
-                let currentDate = new Date(startDate);
-                endDate = new Date(endDate);
-
-                while (currentDate <= endDate) {
-
-
-                    let formattedDate =
-                        `${currentDate.getMonth() + 1}/${String(currentDate.getDate()).padStart(2, '0')}/${currentDate.getFullYear()} ` +
-                        `${String(currentDate.getHours()).padStart(2, '0')}:${String(currentDate.getMinutes()).padStart(2, '0')}:${String(currentDate.getSeconds()).padStart(2, '0')}`;
-
-                    dates.push(`${roomType}-${formattedDate}`);
-
-
-                    currentDate.setDate(currentDate.getDate() + 1);
-                }
-
-                return dates;
-            }
-            $('.booking-form').on('submit', function(e) {
-                e.preventDefault();
-
-                let formData = $(this).serializeArray();
-
-
-                let formObject = {};
-                formData.forEach(function(field) {
-                    formObject[field.name] = field.value;
-                });
-
-                let queryString = $.param(formObject);
-
-                const params = new URLSearchParams(queryString);
-                const checkInTime = params.get('checkInTime');
-                const checkOutTime = params.get('checkOutTime');
-
-                if (!checkInTime || !checkOutTime) {
-                    let missingField = !checkInTime ? 'nhận phòng' : 'trả phòng';
-                    notify('error', `Vui lòng chọn thời gian ${missingField}`);
-                    return false;
-                }
-
-                const startDate = new Date(checkInTime);
-                const endDate = new Date(checkOutTime);
-
-                const roomDates = getDatesBetween(startDate, endDate, params.get('room_type'));
-
-                roomDates.forEach(function(date, index) {
-                    formData.push({
-                        name: 'room[]',
-                        value: date
-                    });
-                });
-                const guest_type = $('.guest_type').val();
-
-                if (guest_type === "") {
-                    formData.push({
-                        name: 'guest_type',
-                        value: 1
-                    })
-                } else {
-                    formData.push({
-                        name: 'guest_type',
-                        value: 0
-                    })
-                }
-                formData.push({
-                    name: 'is_method',
-                    value: 'receptionist',
-                });
-                let url = $(this).attr('action');
-                $.ajax({
-                    type: "POST",
-                    url: url,
-                    data: formData,
-                    success: function(response) {
-                        if (response.success) {
-                            notify('success', response.success);
-                            $('.bookingInfo').html('');
-                            $('.booking-wrapper').addClass('d-none');
-                            $(document).find('.orderListItem').remove();
-                            $('.orderList').addClass('d-none');
-                            $('.formRoomSearch').trigger('reset');
-                            $('#myModal-booking').hide();
-                            window.location.reload();
-                        } else {
-                            notify('error', response.error);
-                        }
-                    },
-                });
-            });
-
-
-            $('.btn-user-info').on('click', function(event) {
-                // Lấy giá trị của guest_type
-                //    let guestType = $('#guest_type').val();
-                event.stopPropagation();
-
-
-                let name = $('#name').val();
-                let email = $('#email').val();
-                let phone = $('#phone').val();
-                let address = $('#address').val();
-
-
-                $('.email-user').text(email);
-
-                $('.username-user').text(name);
-                $('.guest_type').val(0);
-
-                $('.username-user1').val(name);
-                $('.email-user1').val(email);
-                $('.mobile-user').val(phone);
-                $('.address-user').val(address);
-                $('#customer-popup').removeClass('active');
-
-
-            });
-
-            $('.extraChargeBtn').on('click', function() {
-                let data = $(this).data();
-                let id = $('.booking_extra').val();
-                let modal = $('#extraChargeModal');
-                modal.find('.modal-title').text($(this).text());
-                if (data.type == 'add') {
-                    modal.find('form').attr('action',
-                        `{{ route('admin.booking.extra.charge.add', '') }}/${id}`);
-                    modal.find('[name=type]').val('add');
-                } else {
-                    modal.find('form').attr('action',
-                        `{{ route('admin.booking.extra.charge.subtract', '') }}/${id}`
-                    );
-                    modal.find('[name=type]').val('subtract');
-                }
-                modal.modal('show');
-            });
-
-        });
-
-
-
-        function formatCurrency(amount) {
-            const parts = amount.toString().split('.');
-            const integerPart = parts[0];
-            const formattedInteger = integerPart.replace(/\B(?=(\d{3})+(?!\d))/g, '.');
-
-            return formattedInteger + ' ' + 'VND';
-        }
-        const showSwalMessage = (icon, title, timer = 2000) => {
-            const Toast = Swal.mixin({
-                toast: true,
-                position: "top-end",
-                showConfirmButton: false,
-                timer: timer,
-                timerProgressBar: true,
-                didOpen: (toast) => {
-                    toast.onmouseenter = Swal.stopTimer;
-                    toast.onmouseleave = Swal.resumeTimer;
-                }
-            });
-            Toast.fire({
-                icon: icon,
-                title: `<p>${title}</p>`
-            });
-        };
-        // tất cả các dịch vụ cao cấp
-        $(document).ready(function() {
-            var langChoose = "{{ __('Chọn') }}";
-            $.ajax({
-                url: '{{ route('admin.services.booking.services') }}',
-                type: 'GET',
-                success: function(data) {
-                    $('select[name="services[]"]').empty();
-                    $('select[name="services[]"]').append('<option value="">' + langChoose +
-                        '</option>');
-
-                    data.data.forEach(function(service) {
-                        var option =
-                            `<option value="${service.id}">${service.name} - ${formatCurrency(service.cost)}</option>`;
-                        $('select[name="services[]"]').append(option);
-                    });
-                },
-                error: function(error) {
-                    console.log('Error:', error);
-                }
-            });
-            let serviceForm = $('.add-service-form');
-
-            serviceForm.on('submit', function(e) {
-                e.preventDefault();
-
-                let formData = $(this).serialize();
-                let url = $(this).attr('action');
-
-                $.ajax({
-                    type: "POST",
-                    url: url,
-                    data: formData,
-                    success: function(response) {
-                        if (response.success) {
-                            notify('success', response.success);
-                            let firstItem = $(
-                                '.first-service-wrapper .service-item');
-                            $(document).find('.service-wrapper').find(
-                                '.service-item').not(
-                                firstItem).remove();
-                            serviceForm.trigger("reset");
-                            $('#serviceModal').hide();
-                        } else {
-                            $.each(response.error, function(key, value) {
-                                notify('error', value);
-                            });
-                        }
-                    },
-                });
-            });
-        });
-
-        $(document).on('click', '.cancelBookingBtn', function() {
-
-            let modal = $('#cancelBookingModal');
-            let data = $(this).data();
-            let action;
-
-            if (data.booked_for) {
-                action = `{{ route('admin.booking.booked.day.cancel', '') }}/${data.id}`;
-                modal.find('[name=booked_for]').val(data.booked_for);
             } else {
-                action = `{{ route('admin.booking.booked.room.cancel', '') }}/${data.id}`;
+                $('#amount_payment_errors').text('Vui lòng nhập số tiền!');
+            }
+        });
+
+        $('#submitBtnCheckOut').click(function(e) {
+            var booking_id = $('#booking_id').val();
+            var url = `{{ route('admin.booking.checkout', ['id' => ':id']) }}`.replace(':id',
+                booking_id);
+
+            $.ajax({
+                url: url,
+                type: "POST",
+                data: {
+                    _token: '{{ csrf_token() }}',
+                    is_method: "receptionist"
+                },
+                success: function(response) {
+                    if (response.status === 'success') {
+                        handleLateCheckinClick(response.id, response.booking_id)
+                        notify('success', `Đặt phòng đã được thanh toán thành công`);
+                        window.location.reload();
+                    }
+                },
+                error: function(xhr, status, error) {
+                    console.error(xhr.responseText);
+                    console.log(xhr.status);
+                    alert("Đã có lỗi xảy ra. Vui lòng thử lại.");
+                }
+            });
+        })
+        var now = new Date();
+        var year = now.getFullYear();
+        var month = (now.getMonth() + 1).toString().padStart(2, '0');
+        var day = now.getDate().toString().padStart(2, '0');
+        var hours = now.getHours().toString().padStart(2, '0');
+        var minutes = now.getMinutes().toString().padStart(2, '0');
+
+        var currentDateTime = `${year}-${month}-${day}T${hours}:${minutes}`;
+        var checkInTime = document.getElementById('checkInTime');
+        checkInTime.value = currentDateTime;
+
+        let bookingType;
+        $('#bookingType').on('change', function() {
+            bookingType = $(this).val();
+            var now = new Date();
+
+            var checkOutTime;
+            if (bookingType === 'gio') {
+                console.log('gio');
+                checkOutTime = new Date(now.getTime() + (1 * 60 * 60 * 1000)); // Cộng 1 giờ
+            } else if (bookingType === 'ngay') {
+                console.log('ngay');
+                checkOutTime = new Date(now.getTime() + (1 * 24 * 60 * 60 *
+                    1000)); // Cộng 1 ngày
+            } else if (bookingType === 'dem') {
+                console.log('dem');
+                checkOutTime = new Date(now.getTime() + (12 * 60 * 60 *
+                    1000)); // Cộng 12 giờ
             }
 
-            modal.find('.modal-title').text(`@lang('Hủy đặt phòng')`);
-            modal.find('form').attr('action', action);
-            modal.find('.totalFare').text(data.fare);
-            modal.find('.refundableAmount').text(data.should_refund);
+            var checkOutYear = checkOutTime.getFullYear();
+            var checkOutMonth = (checkOutTime.getMonth() + 1).toString().padStart(2, '0');
+            var checkOutDay = checkOutTime.getDate().toString().padStart(2, '0');
+            var checkOutHours = checkOutTime.getHours().toString().padStart(2, '0');
+            var checkOutMinutes = checkOutTime.getMinutes().toString().padStart(2, '0');
+            var checkOutDateTime =
+                `${checkOutYear}-${checkOutMonth}-${checkOutDay}T${checkOutHours}:${checkOutMinutes}`;
+
+            $('#checkOutTime').val(checkOutDateTime);
+            calculateDuration();
+
+        });
+
+        function calculateDuration(event) {
+
+            var checkInTime = $('#checkInTime').val();
+            var checkOutTime = $('#checkOutTime').val();
+            if (!checkInTime || !checkOutTime) {
+                $('.inputTime').text('Vui lòng nhập cả thời gian check-in và check-out.');
+                return;
+            }
+
+            var checkInDate = new Date(checkInTime);
+            var checkOutDate = new Date(checkOutTime);
+            var durationMs = checkOutDate - checkInDate;
+
+            if (durationMs < 0) {
+                $('.inputTime').text('Thời gian check-out phải sau thời gian check-in.');
+                return;
+            }
+
+
+            var durationHours = Math.floor(durationMs / (1000 * 60 * 60));
+            var durationMinutes = Math.floor((durationMs % (1000 * 60 * 60)) / (1000 * 60));
+
+
+            var formattedHours = durationHours.toString().padStart(2, '0'); // giờ
+            var formattedMinutes = durationMinutes.toString().padStart(2, '0'); // phút
+
+            let priceTime = 0;
+            if (bookingType === 'gio') {
+                priceTime = parseFloat(window.savedDataHours.replace(',', '')) || 0;
+            } else if (bookingType === 'ngay') {
+                priceTime = parseFloat(window.savedDataDay.replace(',', '')) || 0;
+                updatedPrice = priceTime;
+            } else if (bookingType === 'dem') {
+                priceTime = parseFloat(window.savedDataNight.replace(',', '')) || 0;
+                updatedPrice = priceTime;
+            }
+
+            if (bookingType !== 'dem' && bookingType !== 'ngay') {
+                var updatedPrice = priceTime * formattedHours;
+            }
+
+
+            $('#input-price-booking').val(updatedPrice.toLocaleString());
+            $('#customer-price-booking').val(updatedPrice.toLocaleString());
+
+            $('.inputTime').text(formattedHours + ':' + formattedMinutes);
+        }
+
+        $('#checkInTime, #checkOutTime').on('change', calculateDuration);
+
+
+        $('.customer-svg-icon').on('click', function() {
+            $('#customer-popup').addClass('active');
+        });
+
+        $('#customer-closePopup, #customer-close').on('click', function() {
+            $('#customer-popup').removeClass('active');
+        });
+
+        // loại khách hàng
+        // $('#guest_type').on('change', function() {
+        //     var selectedValue = $(this).val();
+
+        //     if (selectedValue == '1') { // Khách đã đăng ký
+
+        //         $('#name, #phone, #address').closest('label, input').hide();
+
+        //         $('#email').closest('label, input').show();
+        //     } else {
+
+        //         $('#name, #email, #phone, #address').closest('label, input').show();
+        //     }
+        // });
+
+        // validate nếu nhập không có tên khách hàng
+        $('#customer-name').on('input', function() {
+            const inputValue = $(this).val().toLowerCase();
+            const options = $('#customer-names option');
+            let isValid = false;
+
+
+            options.each(function() {
+                if ($(this).val().toLowerCase() === inputValue) {
+                    isValid = true;
+
+                    return false; // Break the loop
+                }
+            });
+
+            if (isValid) {
+                $('#error-message').hide();
+
+
+            } else {
+                $('#error-message').show();
+            }
+        });
+        // thông tin khách hàng
+        $('#customer-name').on('input', function() {
+
+            var inputValue = $(this).val().toLowerCase();
+            var isValid = false;
+            var matchedOption = null;
+
+            $('#customer-names option').each(function() {
+                if ($(this).val().toLowerCase() === inputValue) {
+                    matchedOption = $(this);
+                    isValid = true;
+                    return false; // Break the loop
+                }
+            });
+
+            if (isValid && matchedOption) {
+                // Update the user info with the data-* attributes
+                $('.username-user').text(matchedOption.val());
+                $('.email-user').text(matchedOption.data('user'));
+
+
+                $('.email-user1').val(matchedOption.val());
+                $('.username-user1').val(matchedOption.data('user'));
+                $('.mobile-user').val(matchedOption.data('mobi'));
+                $('.address-user').val(matchedOption.data('address'));
+            } else {
+                // Clear the user info if no match
+                $('.username-user').text('');
+                $('.email-user').text('');
+            }
+        });
+        // btn booking
+        $('.btn-confirm').on('click', function() {
+
+            $('.booking-form').submit();
+        });
+
+
+        function getDatesBetween(startDate, endDate, roomType) {
+            let dates = [];
+            let currentDate = new Date(startDate);
+            endDate = new Date(endDate);
+
+            while (currentDate <= endDate) {
+
+
+                let formattedDate =
+                    `${currentDate.getMonth() + 1}/${String(currentDate.getDate()).padStart(2, '0')}/${currentDate.getFullYear()} ` +
+                    `${String(currentDate.getHours()).padStart(2, '0')}:${String(currentDate.getMinutes()).padStart(2, '0')}:${String(currentDate.getSeconds()).padStart(2, '0')}`;
+
+                dates.push(`${roomType}-${formattedDate}`);
+
+
+                currentDate.setDate(currentDate.getDate() + 1);
+            }
+
+            return dates;
+        }
+        $('.booking-form').on('submit', function(e) {
+            e.preventDefault();
+
+            let formData = $(this).serializeArray();
+
+
+            let formObject = {};
+            formData.forEach(function(field) {
+                formObject[field.name] = field.value;
+            });
+
+            let queryString = $.param(formObject);
+
+            const params = new URLSearchParams(queryString);
+            const checkInTime = params.get('checkInTime');
+            const checkOutTime = params.get('checkOutTime');
+
+            if (!checkInTime || !checkOutTime) {
+                let missingField = !checkInTime ? 'nhận phòng' : 'trả phòng';
+                notify('error', `Vui lòng chọn thời gian ${missingField}`);
+                return false;
+            }
+
+            const startDate = new Date(checkInTime);
+            const endDate = new Date(checkOutTime);
+
+            const roomDates = getDatesBetween(startDate, endDate, params.get('room_type'));
+
+            roomDates.forEach(function(date, index) {
+                formData.push({
+                    name: 'room[]',
+                    value: date
+                });
+            });
+            const guest_type = $('.guest_type').val();
+
+            if (guest_type === "") {
+                formData.push({
+                    name: 'guest_type',
+                    value: 1
+                })
+            } else {
+                formData.push({
+                    name: 'guest_type',
+                    value: 0
+                })
+            }
+            formData.push({
+                name: 'is_method',
+                value: 'receptionist',
+            });
+            let url = $(this).attr('action');
+            $.ajax({
+                type: "POST",
+                url: url,
+                data: formData,
+                success: function(response) {
+                    if (response.success) {
+                        notify('success', response.success);
+                        $('.bookingInfo').html('');
+                        $('.booking-wrapper').addClass('d-none');
+                        $(document).find('.orderListItem').remove();
+                        $('.orderList').addClass('d-none');
+                        $('.formRoomSearch').trigger('reset');
+                        $('#myModal-booking').hide();
+                        window.location.reload();
+                    } else {
+                        notify('error', response.error);
+                    }
+                },
+            });
+        });
+
+
+        $('.btn-user-info').on('click', function(event) {
+            // Lấy giá trị của guest_type
+            //    let guestType = $('#guest_type').val();
+            event.stopPropagation();
+
+
+            let name = $('#name').val();
+            let email = $('#email').val();
+            let phone = $('#phone').val();
+            let address = $('#address').val();
+
+
+            $('.email-user').text(email);
+
+            $('.username-user').text(name);
+            $('.guest_type').val(0);
+
+            $('.username-user1').val(name);
+            $('.email-user1').val(email);
+            $('.mobile-user').val(phone);
+            $('.address-user').val(address);
+            $('#customer-popup').removeClass('active');
+
+
+        });
+
+        $('.extraChargeBtn').on('click', function() {
+            let data = $(this).data();
+            let id = $('.booking_extra').val();
+            let modal = $('#extraChargeModal');
+            modal.find('.modal-title').text($(this).text());
+            if (data.type == 'add') {
+                modal.find('form').attr('action',
+                    `{{ route('admin.booking.extra.charge.add', '') }}/${id}`);
+                modal.find('[name=type]').val('add');
+            } else {
+                modal.find('form').attr('action',
+                    `{{ route('admin.booking.extra.charge.subtract', '') }}/${id}`
+                );
+                modal.find('[name=type]').val('subtract');
+            }
             modal.modal('show');
         });
-    </script>
-@endpush
+
+    });
+
+
+
+    function formatCurrency(amount) {
+        const parts = amount.toString().split('.');
+        const integerPart = parts[0];
+        const formattedInteger = integerPart.replace(/\B(?=(\d{3})+(?!\d))/g, '.');
+
+        return formattedInteger + ' ' + 'VND';
+    }
+    const showSwalMessage = (icon, title, timer = 2000) => {
+        const Toast = Swal.mixin({
+            toast: true,
+            position: "top-end",
+            showConfirmButton: false,
+            timer: timer,
+            timerProgressBar: true,
+            didOpen: (toast) => {
+                toast.onmouseenter = Swal.stopTimer;
+                toast.onmouseleave = Swal.resumeTimer;
+            }
+        });
+        Toast.fire({
+            icon: icon,
+            title: `<p>${title}</p>`
+        });
+    };
+    // tất cả các dịch vụ cao cấp
+    $(document).ready(function() {
+        var langChoose = "{{ __('Chọn') }}";
+        $.ajax({
+            url: '{{ route('admin.services.booking.services') }}',
+            type: 'GET',
+            success: function(data) {
+                $('select[name="services[]"]').empty();
+                $('select[name="services[]"]').append('<option value="">' + langChoose +
+                    '</option>');
+
+                data.data.forEach(function(service) {
+                    var option =
+                        `<option value="${service.id}">${service.name} - ${formatCurrency(service.cost)}</option>`;
+                    $('select[name="services[]"]').append(option);
+                });
+            },
+            error: function(error) {
+                console.log('Error:', error);
+            }
+        });
+        let serviceForm = $('.add-service-form');
+
+        serviceForm.on('submit', function(e) {
+            e.preventDefault();
+
+            let formData = $(this).serialize();
+            let url = $(this).attr('action');
+
+            $.ajax({
+                type: "POST",
+                url: url,
+                data: formData,
+                success: function(response) {
+                    if (response.success) {
+                        notify('success', response.success);
+                        let firstItem = $(
+                            '.first-service-wrapper .service-item');
+                        $(document).find('.service-wrapper').find(
+                            '.service-item').not(
+                            firstItem).remove();
+                        serviceForm.trigger("reset");
+                        $('#serviceModal').hide();
+                    } else {
+                        $.each(response.error, function(key, value) {
+                            notify('error', value);
+                        });
+                    }
+                },
+            });
+        });
+    });
+
+    $(document).on('click', '.cancelBookingBtn', function() {
+
+        let modal = $('#cancelBookingModal');
+        let data = $(this).data();
+        let action;
+
+        if (data.booked_for) {
+            action = `{{ route('admin.booking.booked.day.cancel', '') }}/${data.id}`;
+            modal.find('[name=booked_for]').val(data.booked_for);
+        } else {
+            action = `{{ route('admin.booking.booked.room.cancel', '') }}/${data.id}`;
+        }
+
+        modal.find('.modal-title').text(`@lang('Hủy đặt phòng')`);
+        modal.find('form').attr('action', action);
+        modal.find('.totalFare').text(data.fare);
+        modal.find('.refundableAmount').text(data.should_refund);
+        modal.modal('show');
+    });
+</script>

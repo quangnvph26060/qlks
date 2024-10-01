@@ -72,9 +72,9 @@
                         @csrf
                         <div class="modal-body">
                             <div class="form-group">
-                                <label>@lang('Room Type')</label>
+                                <label>@lang('Loại phòng')</label>
                                 <select class="form-control" name="room_type_id" required>
-                                    <option disabled selected value="">@lang('Select One')</option>
+                                    <option disabled selected value="">@lang('Chọn một')</option>
                                     @foreach ($roomTypes as $roomType)
                                         <option value="{{ $roomType->id }}">{{ __($roomType->name) }}</option>
                                     @endforeach
@@ -94,7 +94,7 @@
                             <div class="append-item d-none"></div>
                         </div>
                         <div class="modal-footer">
-                            <button class="btn btn--primary w-100 h-45" type="submit">@lang('Submit')</button>
+                            <button class="btn btn--primary w-100 h-45" type="submit">@lang('Xác nhận')</button>
                         </div>
                     </form>
                 </div>
@@ -107,7 +107,7 @@
             <div class="modal-dialog" role="document">
                 <div class="modal-content">
                     <div class="modal-header">
-                        <h5 class="modal-title">@lang('Update Room')</h5>
+                        <h5 class="modal-title">@lang('Cập nhật phòng')</h5>
                         <button aria-label="Close" class="close" data-bs-dismiss="modal" type="button">
                             <i class="las la-times"></i>
                         </button>
@@ -116,21 +116,21 @@
                         @csrf
                         <div class="modal-body">
                             <div class="form-group">
-                                <label>@lang('Room Type')</label>
+                                <label>@lang('Loại phòng')</label>
                                 <select class="form-control" name="room_type_id" required>
-                                    <option disabled selected value="">@lang('Select One')</option>
+                                    <option disabled selected value="">@lang('Chọn một')</option>
                                     @foreach ($roomTypes as $roomType)
                                         <option value="{{ $roomType->id }}">{{ __($roomType->name) }}</option>
                                     @endforeach
                                 </select>
                             </div>
                             <div class="form-group">
-                                <label>@lang('Room Number')</label>
+                                <label>@lang('Số phòng')</label>
                                 <input class="form-control" name="room_number" required type="text">
                             </div>
                         </div>
                         <div class="modal-footer">
-                            <button class="btn btn--primary w-100 h-45" type="submit">@lang('Submit')</button>
+                            <button class="btn btn--primary w-100 h-45" type="submit">@lang('Xác nhận')</button>
                         </div>
                     </form>
                 </div>

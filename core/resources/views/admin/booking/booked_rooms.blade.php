@@ -2,7 +2,7 @@
 @section('panel')
     <div class="row">
         <div class="col-lg-12">
-            <h6 class="d-inline">@lang('Booking Number'):</h6> #{{ $booking->booking_number }}
+            <h6 class="d-inline">@lang('Mã đặt phòng'):</h6> #{{ $booking->booking_number }}
             <div class="d-flex flex-wrap justify-content-between align-items-center gap-2">
 
                 <div class="d-flex flex-wrap gap-3">
@@ -41,7 +41,7 @@
                     </div>
                     <div class="d-flex align-items-center gap-1">
                         <span class="custom--label bg--dark"></span>
-                        <span>@lang('Checked Out')</span>
+                        <span>@lang('Đã trả phòng')</span>
                     </div>
                     <div class="d-flex align-items-center gap-1">
                         <span class="custom--label bg--18"></span>

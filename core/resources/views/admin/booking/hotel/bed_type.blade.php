@@ -75,7 +75,7 @@
                         </div>
 
                         <div class="modal-footer">
-                            <button class="btn btn--primary w-100 h-45" type="submit">@lang('Submit')</button>
+                            <button class="btn btn--primary w-100 h-45" type="submit">@lang('Xác nhận')</button>
                         </div>
                     </form>
                 </div>

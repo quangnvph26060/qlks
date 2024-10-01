@@ -12,7 +12,7 @@
                                     <th>@lang('Biểu tượng')</th>
                                     <th>@lang('Trạng thái')</th>
                                     @can(['admin.hotel.amenity.save', 'admin.hotel.amenity.status'])
-                                        <th>@lang('Action')</th>
+                                        <th>@lang('Hành động')</th>
                                     @endcan
                                 </tr>
                             </thead>
@@ -70,7 +70,7 @@
             <div class="modal-dialog" role="document">
                 <div class="modal-content">
                     <div class="modal-header">
-                        <h5 class="modal-title"> @lang('Add Amenties')</h5>
+                        <h5 class="modal-title"> @lang('Thêm tiện ích')</h5>
                         <button aria-label="Close" class="close" data-bs-dismiss="modal" type="button">
                             <i class="las la-times"></i>
                         </button>
@@ -79,7 +79,7 @@
                         @csrf
                         <div class="modal-body">
                             <div class="form-group">
-                                <label> @lang('Tiện ích')</label>
+                                <label> @lang('Tên tiện ích')</label>
                                 <input class="form-control" name="title" required type="text" value="{{ old('title') }}">
                             </div>
                             <div class="form-group">

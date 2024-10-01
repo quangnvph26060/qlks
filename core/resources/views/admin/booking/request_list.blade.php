@@ -9,13 +9,13 @@
                             <thead>
                                 <tr>
                                     <th>@lang('S.N.') </th>
-                                    <th>@lang('Username') | @lang('Email')</th>
-                                    <th>@lang('Room Qty') | @lang('Room Type')</th>
-                                    <th>@lang('Check In') | @lang('Check Out')</th>
-                                    <th>@lang('Booked For')</th>
-                                    <th>@lang('Fare /Night') | @lang('Total Fare')</th>
+                                    <th>@lang('Tên người dùng') | @lang('Email')</th>
+                                    <th>@lang('Số lượng phòng') | @lang('Loại phòng')</th>
+                                    <th>@lang('Nhận phòng') | @lang('Trả phòng')</th>
+                                    <th>@lang('Đặt cho')</th>
+                                    <th>@lang('Phí/Đêm') | @lang('Tổng tiền')</th>
                                     @can(['admin.request.booking.approve', 'admin.request.booking.cancel'])
-                                        <th>@lang('Action')</th>
+                                        <th>@lang('Hành động')</th>
                                     @endcan
                                 </tr>
                             </thead>
@@ -53,7 +53,7 @@
                                         </td>
 
                                         <td>
-                                            {{ $bookingRequest->bookFor() }} @lang('Night')
+                                            {{ $bookingRequest->bookFor() }} @lang('Đêm')
                                             <br>
                                             <span>
                                                 {{ $bookingRequest->number_of_rooms }} @lang('Danh sách phòng')
@@ -104,7 +104,7 @@
 @endsection
 
 @push('breadcrumb-plugins')
-    <x-search-form placeholder="User/Email" />
+    <x-search-form placeholder="Người dùng/Email" />
     @can('admin.booking.active')
         <a class="btn btn--success" href="{{ route('admin.booking.active') }}"><i class="las la-check-circle"></i>@lang('Đặt chỗ đang hoạt động')</a>
     @endcan
