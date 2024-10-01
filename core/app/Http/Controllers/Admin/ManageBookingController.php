@@ -28,13 +28,12 @@ class ManageBookingController extends Controller
             $notify[] = ['error', 'Chìa khóa đã được trao cho khách'];
             return back()->withNotify($notify);
         }
-
-        if (now()->format('Y-m-d') < $booking->check_in) {
+        if (now()->format('Y-m-d H:i:s') < $booking->check_in) {
             $notify[] = ['error', 'Bạn không thể giao chìa khóa trước ngày nhận phòng'];
             return back()->withNotify($notify);
         }
 
-        if (now()->format('Y-m-d') >= $booking->check_out) {
+        if (now()->format('Y-m-d H:i:s') >= $booking->check_out) {
             $notify[] = ['error', 'Bạn không thể giao chìa khóa sau ngày trả phòng'];
             return back()->withNotify($notify);
         }

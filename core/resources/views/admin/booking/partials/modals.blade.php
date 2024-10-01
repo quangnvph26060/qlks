@@ -41,7 +41,7 @@
           <div class="modal-dialog" role="document">
               <div class="modal-content">
                   <div class="modal-header">
-                      <h5 class="modal-title">@lang('Key Handover')</h5>
+                      <h5 class="modal-title">@lang('Bàn giao chìa khóa')</h5>
                       <button aria-label="Close" class="close" data-bs-dismiss="modal" type="button">
                           <i class="las la-times"></i>
                       </button>
@@ -49,12 +49,12 @@
                   <form action="" method="post">
                       @csrf
                       <div class="modal-body">
-                          <p class="fw-bold"> @lang('Rooms')</p>
+                          <p class="fw-bold"> @lang('Phòng')</p>
                           <div class="bookedRooms"></div>
                       </div>
 
                       <div class="modal-footer">
-                          <button class="btn btn--primary w-100 h-45" type="submit">@lang('Handover Now')</button>
+                          <button class="btn btn--primary w-100 h-45" type="submit">@lang('Bàn giao ngay')</button>
                       </div>
                   </form>
               </div>

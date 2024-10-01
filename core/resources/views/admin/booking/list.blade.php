@@ -143,7 +143,10 @@
 
                                                         @if ($booking->status == Status::BOOKING_ACTIVE)
                                                             @can('admin.booking.key.handover')
-                                                                @if (now()->format('Y-m-d') >= $booking->check_in && now()->format('Y-m-d') < $booking->check_out && $booking->key_status == Status::DISABLE)
+                                                            
+
+
+                                                                @if (now()->format('Y-m-d H:i:s') >= $booking->check_in && now()->format('Y-m-d H:i:s') < $booking->check_out && $booking->key_status == Status::DISABLE)
                                                                     <a class="dropdown-item handoverKeyBtn" data-booked_rooms="{{ $booking->activeBookedRooms->unique('room_id') }}" data-id="{{ $booking->id }}" href="javascript:void(0)">
                                                                         <i class="las la-key"></i> @lang('Bàn giao chìa khóa')
                                                                     </a>
