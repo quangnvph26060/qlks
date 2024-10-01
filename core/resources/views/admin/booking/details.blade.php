@@ -25,7 +25,7 @@
 
                         <div>
 
-                            <small class="fw-500"> <i class="la la-user"></i> @lang('Name')</small><br>
+                            <small class="fw-500"> <i class="la la-user"></i> @lang('Tên')</small><br>
                             @if ($booking->user_id)
                                 <a class="fw-bold d-block text--primary" href="{{ can('admin.users.detail') ? route('admin.users.detail', $booking->user_id) : 'javascript:void(0)' }}">{{ $booking->user->fullname }}</a>
                             @else
@@ -43,7 +43,7 @@
                         </div>
 
                         <div>
-                            <small class="fw-500"><i class="la la-mobile"></i> @lang('Di động')</small>
+                            <small class="fw-500"><i class="la la-mobile"></i> @lang('Số điện thoại động')</small>
 
                             <span class="d-block">
                                 @if ($booking->user_id)
@@ -113,26 +113,26 @@
 
                         <div class="d-flex flex-column gap-3">
                             <div>
-                                <small class="fw-500">@lang('Booked At')</small> <br>
+                                <small class="fw-500">@lang('Đặt lúc')</small> <br>
                                 <small> <em class="text-muted">{{ showDateTime($booking->created_at, 'd M, Y h:i A') }}</em></small>
                             </div>
 
                             <div>
-                                <small class="fw-500">@lang('Check-In')</small> <br>
+                                <small class="fw-500">@lang('Nhận phòng')</small> <br>
                                 <small><em>{{ showDateTime($booking->check_in, 'd M, Y') }}</em></small>
                             </div>
 
                             <div>
-                                <small class="fw-500">@lang('Checkout')</small> <br>
+                                <small class="fw-500">@lang('Trả phòng')</small> <br>
                                 <small><em>{{ showDateTime($booking->check_out, 'd M, Y') }}</em></small>
                             </div>
 
                             <div>
-                                <small class="fw-500">@lang('Checked-In At')</small> <br>
+                                <small class="fw-500">@lang('Nhận phòng lúc')</small> <br>
                                 <small> <em class="text-muted">{{ showDateTime($booking->checked_in_at, 'd M, Y h:i A') }}</em></small>
                             </div>
                             <div>
-                                <small class="fw-500">@lang('Checked Out At')</small> <br>
+                                <small class="fw-500">@lang('Trả phòng lúc')</small> <br>
                                 <small> <em class="text-muted">
                                         @if ($booking->checked_out_at)
                                             {{ showDateTime($booking->checked_out_at, 'd M, Y h:i A') }}
@@ -236,7 +236,7 @@
                                                 @foreach ($services as $service)
                                                     <tr>
                                                         @if ($loop->first)
-                                                            <td class="bg--date text-center" data-label="@lang('Date')" rowspan="{{ count($services) }}">
+                                                            <td class="bg--date text-center" data-label="@lang('Ngày')" rowspan="{{ count($services) }}">
                                                                 {{ showDateTime($service->service_date, 'd M, Y') }}
                                                             </td>
                                                         @endif
@@ -299,7 +299,7 @@
                                         <tr>
                                             <th>@lang('Thời gian')</th>
                                             <th>@lang('Loại thanh toán')</th>
-                                            <th>@lang('Amount')</th>
+                                            <th>@lang('Số lượng')</th>
                                         </tr>
                                     </thead>
 
@@ -309,9 +309,9 @@
                                                 <td class="text-start">{{ __(showDateTime($payment->created_at, 'd M, Y H:i A')) }}</td>
                                                 <td>
                                                     @if ($payment->admin_id == 0)
-                                                        @lang('Online Payment')
+                                                        @lang('Chuyển khoản')
                                                     @else
-                                                        @lang('Cash Payment')
+                                                        @lang('Tiền mặt')
                                                     @endif
                                                 </td>
                                                 <td>{{ showAmount($payment->amount) }}
@@ -320,7 +320,7 @@
 
                                         <tr>
                                             <td class="text-end fw-bold" colspan="2">
-                                                @lang('Total')
+                                                @lang('Tổng tiền')
                                             </td>
                                             <td class="fw-bold">
                                                 {{ showAmount($receivedPyaments->sum('amount')) }}
@@ -355,7 +355,7 @@
                                         <tr>
                                             <td class="text-start">{{ __(showDateTime($payment->created_at, 'd M, Y H:i A')) }}</td>
                                             <td>
-                                                @lang('Cash Payment')
+                                                @lang('Tiền mặt')
                                             </td>
                                             <td>{{ showAmount($payment->amount) }}
                                         </tr>
@@ -363,7 +363,7 @@
 
                                     <tr>
                                         <td class="text-end" colspan="2">
-                                            <span class="fw-bold">@lang('Total')</span>
+                                            <span class="fw-bold">@lang('Tổng tiền')</span>
                                         </td>
                                         <td class="fw-bold">
                                             {{ showAmount($returnedPyaments->sum('amount')) }}
@@ -390,7 +390,7 @@
                                     <span> +{{ showAmount($totalFare) }}</span>
                                 </li>
                                 <li class="d-flex justify-content-between list-group-item align-items-start">
-                                    <span>{{ __(gs()->tax_name) }} @lang('Charge') <small>({{ showAmount($booking->taxPercentage(), currencyFormat: false) }}%)</small></span>
+                                    <span>{{ __(gs()->tax_name) }} @lang('Thuế') <small>({{ showAmount($booking->taxPercentage(), currencyFormat: false) }}%)</small></span>
                                     <span> +{{ showAmount($totalTaxCharge) }}</span>
                                 </li>
 
@@ -468,7 +468,7 @@
             @endcan
 
             <button aria-expanded="false" class="btn btn-sm btn--info dropdown-toggle" data-bs-toggle="dropdown" type="button">
-                <i class="la la-ellipsis-v"></i>@lang('More')
+                <i class="la la-ellipsis-v"></i>@lang('Thêm')
             </button>
 
             <div class="dropdown-menu">
@@ -494,7 +494,7 @@
                     @can('admin.booking.key.handover')
                         @if (now()->format('Y-m-d') >= $booking->check_in && now()->format('Y-m-d') < $booking->check_out && $booking->key_status == Status::DISABLE)
                             <a class="dropdown-item handoverKeyBtn" data-booked_rooms="{{ $booking->activeBookedRooms->unique('room_id') }}" data-id="{{ $booking->id }}" href="javascript:void(0)">
-                                <i class="las la-key"></i> @lang('Handover Keys')
+                                <i class="las la-key"></i> @lang('Giao chìa khóa')
                             </a>
                         @endif
                     @endcan
@@ -507,21 +507,21 @@
 
                     @can('admin.booking.cancel')
                         <a class="dropdown-item" href="{{ route('admin.booking.cancel', $booking->id) }}">
-                            <i class="las la-times-circle"></i> @lang('Cancel Booking')
+                            <i class="las la-times-circle"></i> @lang('Hủy đặt phòng')
                         </a>
                     @endcan
 
                     @can('admin.booking.checkout')
                         @if (now() >= $booking->check_out)
                             <a class="dropdown-item" href="{{ route('admin.booking.checkout', $booking->id) }}">
-                                <i class="la la-sign-out"></i> @lang('Check Out')
+                                <i class="la la-sign-out"></i> @lang('Trả phòng')
                             </a>
                         @endif
                     @endcan
                 @endif
 
                 @can('admin.booking.invoice')
-                    <a class="dropdown-item" href="{{ route('admin.booking.invoice', $booking->id) }}" target="_blank"><i class="las la-print"></i> @lang('Print Invoice')</a>
+                    <a class="dropdown-item" href="{{ route('admin.booking.invoice', $booking->id) }}" target="_blank"><i class="las la-print"></i> @lang('Xuất hóa đơn')</a>
                 @endcan
             </div>
 

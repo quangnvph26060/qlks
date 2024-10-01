@@ -12,6 +12,7 @@ use Illuminate\Http\Request;
 use App\Constants\Status;
 use App\Http\Responses\ApiResponse;
 use App\Models\PremiumService;
+use App\Models\Product;
 use App\Models\RoomPriceRoom;
 use Carbon\Carbon;
 use Symfony\Component\HttpKernel\Log\Logger;
@@ -131,6 +132,8 @@ class BookingController extends Controller {
             'bookedRooms.room.roomPricesActive',
             'usedPremiumService.room',
             'usedPremiumService.premiumService',
+            'usedProductRoom.room',
+            'usedProductRoom.product',
             'payments'
         ])->findOrFail($id);
         // BookedRoom::where('booking_id', $id)->with('booking.user', 'room.roomType')->orderBy('booked_for')->get()->groupBy('booked_for');
@@ -194,7 +197,27 @@ class BookingController extends Controller {
             ->paginate(getPaginate());
     }
     public function searchRooms(Request $request){
-        \Log::info($request->all());
+        $startDate = Carbon::createFromFormat('m/d/Y', $request->startDate)->format('Y-m-d');
+        $endDate = Carbon::createFromFormat('m/d/Y', $request->endDate)->format('Y-m-d');
+      
+        $rooms = BookedRoom::active()
+        ->with([
+            'room',
+            'room.roomType',
+            'booking:id,user_id,booking_number',
+            'booking.user:id,firstname,lastname',
+            'usedPremiumService.premiumService:id,name'
+        ]) ->whereBetween('booked_for', [ $startDate,  $endDate ])->get();
+        
+        $disabledRoomTypeIDs = RoomType::where('status', 0)->pluck('id')->toArray();
+        $bookedRooms         = $rooms->pluck('room_id')->toArray();
+        $emptyRooms          = Room::active()->has('roomPricesActive')
+            ->whereNotIn('id', $bookedRooms)
+            ->whereNotIn('room_type_id', $disabledRoomTypeIDs) // loại trừ nhũng phòng ngưng hoạt động hoạt vô hiệu hóa 
+            ->with('roomType','roomPricesActive')
+            ->select('id', 'room_type_id', 'room_number','is_clean')
+            ->get();
+      
     }
     public function Receptionist(Request $request){
       
@@ -209,7 +232,15 @@ class BookingController extends Controller {
                 'booking:id,user_id,booking_number',
                 'booking.user:id,firstname,lastname',
                 'usedPremiumService.premiumService:id,name'
-            ]) ->whereDate('booked_for', now()->toDateString()) ->get();
+            ]);
+            if($request->startDate != ""){
+                $startDate = Carbon::createFromFormat('m/d/Y', $request->startDate)->format('Y-m-d');
+                $endDate = Carbon::createFromFormat('m/d/Y', $request->endDate)->format('Y-m-d');
+                $rooms->whereBetween('booked_for', [ $startDate,  $endDate ]);
+            }else{
+                $rooms->whereDate('booked_for', now()->toDateString());
+            }
+            $rooms->get();
 
         $disabledRoomTypeIDs = RoomType::where('status', 0)->pluck('id')->toArray();
         $bookedRooms         = $rooms->pluck('room_id')->toArray();
@@ -222,18 +253,12 @@ class BookingController extends Controller {
         $scope = 'ALL';
         $is_method = 'Receptionist';
         $bookings = BookedRoom::active()->with('booking', 'roomType', 'room', 'room.roomPricesActive', 'usedPremiumService')->get();
-         
+      
         $userList = User::select('username', 'email', 'mobile', 'address')->get();
 
-        // if ($request->ajax()) {
-        //     return response()->json([
-        //         'emptyRooms' => $emptyRooms,
-        //         'bookings'   => $bookings,
-        //         'userList'   => $userList,
-        //         'pageTitle'  => $pageTitle,
-        //         'Title'      => $Title,
-        //     ]);
-        // }
+        if ($request->ajax()) {
+            return view('admin.booking.partials.empty_rooms', ['dataRooms' => $emptyRooms])->render();
+        }
         return view('admin.booking.receptionist.list', compact('pageTitle','Title','emptyRooms','bookings','emptyMessage','userList'));
     }
 
@@ -261,9 +286,12 @@ class BookingController extends Controller {
 
     public function getPremiumServices()
     {
-        $pageTitle          = 'Thêm dịch vụ cao cấp';
         $premiumServices    = PremiumService::active()->get();
         return ApiResponse::success($premiumServices, 'success', 200);
     }
+    public function getProduct(){
+        $product    = Product::Featured()->get();
+        return ApiResponse::success($product, 'success', 200);
+    } 
     
 }

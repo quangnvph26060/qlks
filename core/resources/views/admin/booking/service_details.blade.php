@@ -46,8 +46,8 @@
 
                                         @can('admin.premium.service.delete')
                                             <td>
-                                                <button class="btn btn-sm btn-outline--danger confirmationBtn" data-action="{{ route('admin.premium.service.delete', $service->id) }}" data-question="@lang('Are you sure, you want to delete this service?')">
-                                                    <i class="las la-trash-alt"></i>@lang('Delete')
+                                                <button class="btn btn-sm btn-outline--danger confirmationBtn" data-action="{{ route('admin.premium.service.delete', $service->id) }}" data-question="@lang('Bạn có chắc chắn muốn xóa dịch vụ này không?')">
+                                                    <i class="las la-trash-alt"></i>@lang('Xóa')
                                                 </button>
                                             </td>
                                         @endcan
@@ -77,5 +77,5 @@
 @endsection
 
 @push('breadcrumb-plugins')
-    <x-search-form placeholder="Room No. / Service Name" />
+    <x-search-form placeholder="Số phòng / Tên dịch vụ" />
 @endpush

@@ -68,7 +68,7 @@
                             </li>
                         </ul>
                         <div class="d-flex justify-content-between align-items-center border-top p-2 px-3">
-                            <span>@lang('Grand Total')</span>
+                            <span>@lang('Tổng cộng')</span>
                             <span class="totalFare" data-amount="0"></span>
                         </div>
                         <div class="d-flex justify-content-between align-items-center border-top p-2 px-3">
@@ -90,7 +90,7 @@
                     </div>
 
                     @can('admin.request.booking.assign.room')
-                        <button class="btn btn--primary w-100 h-45 btn-book confirmationBtn" data-action="{{ route('admin.request.booking.assign.room') }}" data-question="@lang('Bạn có chắc chắn muốn đặt những phòng này không?')" type="button">@lang('Book Now')</button>
+                        <button class="btn btn--primary w-100 h-45 btn-book confirmationBtn" data-action="{{ route('admin.request.booking.assign.room') }}" data-question="@lang('Bạn có chắc chắn muốn đặt những phòng này không?')" type="button">@lang('Đặt ngay')</button>
                     @endcan
 
                 </div>

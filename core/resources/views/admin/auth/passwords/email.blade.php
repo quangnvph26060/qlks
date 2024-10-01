@@ -17,7 +17,7 @@
                                         <input type="email" name="email" class="form-control" value="{{ old('email') }}" required>
                                     </div>
                                     <x-captcha />
-                                    <button type="submit" class="btn cmn-btn w-100">@lang('Submit')</button>
+                                    <button type="submit" class="btn cmn-btn w-100">@lang('Xác nhận')</button>
                                     <div class="text-center mt-3">
                                         <a href="{{ route('admin.login') }}" class="text-white"><i class="las la-sign-in-alt" aria-hidden="true"></i>@lang('Back to Login')</a>
                                     </div>
