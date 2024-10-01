@@ -71,7 +71,7 @@
                                 <div class="form-group">
                                     <label>@lang('Phí phần trăm thuế')</label>
                                     <div class="input-group">
-                                        <input class="form-control" name="tax" required type="text" value="{{ gs('tax') }}">
+                                        <input class="form-control" name="tax" required type="text" value="{{ number_format(gs('tax')) }}">
                                         <span class="input-group-text">%</span>
                                     </div>
                                 </div>

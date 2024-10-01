@@ -41,25 +41,25 @@
                         <div class="card-body">
                             <div class="mb-3 d-flex flex-wrap justify-content-between align-items-center">
                                 <span>
-                                    @lang('Booking Number'): <span class="fw-500">#{{ $booking->booking_number }}</span>
+                                    @lang('Mã đặt phòng'): <span class="fw-500">#{{ $booking->booking_number }}</span>
                                 </span>
                                 @php
                                     echo $booking->status_badge;
-                                    
+
                                 @endphp
                             </div>
                             @can(['admin.booking.invoice', 'admin.booking.checkout', 'admin.booking.payment'])
                                 <div class="d-flex flex-wrap justify-content-center gap-3">
                                     @can('admin.booking.invoice')
-                                        <a class="btn btn-lg btn--info flex-grow-1" href="{{ route('admin.booking.invoice', $booking->id) }}" target="_blank"><i class="las la-print"></i>@lang('Print Invoice')</a>
+                                        <a class="btn btn-lg btn--info flex-grow-1" href="{{ route('admin.booking.invoice', $booking->id) }}" target="_blank"><i class="las la-print"></i>@lang('In hóa đơn')</a>
                                     @endcan
 
                                     @can('admin.booking.payment')
-                                        <a class="btn btn-lg btn--primary flex-grow-1" href="{{ route('admin.booking.payment', $booking->id) }}"><i class="la la-money-bill"></i>@lang('Go To Payment')</a>
+                                        <a class="btn btn-lg btn--primary flex-grow-1" href="{{ route('admin.booking.payment', $booking->id) }}"><i class="la la-money-bill"></i>@lang('Đến trang thanh toán')</a>
                                     @endcan
 
                                     @can('admin.booking.checkout')
-                                        <button class="btn btn-lg btn--dark flex-grow-1 confirmationBtn" data-action="{{ route('admin.booking.checkout', $booking->id) }}" data-question="@lang('Bạn có chắc chắn muốn checkout phòng này không?')"><i class="las la-sign-out-alt"></i>@lang('Check Out')</button>
+                                        <button class="btn btn-lg btn--dark flex-grow-1 confirmationBtn" data-action="{{ route('admin.booking.checkout', $booking->id) }}" data-question="@lang('Bạn có chắc chắn muốn trả phòng này không?')"><i class="las la-sign-out-alt"></i>@lang('Trả phòng')</button>
                                     @endcan
                                 </div>
                             @endcan

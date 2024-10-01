@@ -3,7 +3,7 @@
           <div class="modal-dialog" role="document">
               <div class="modal-content">
                   <div class="modal-header">
-                      <h5 class="modal-title">@lang('Merging with'): <span class="booking-with"></span></h5>
+                      <h5 class="modal-title">@lang('Kết hợp với'): <span class="booking-with"></span></h5>
                       <button aria-label="Close" class="close" data-bs-dismiss="modal" type="button">
                           <i class="las la-times"></i>
                       </button>
@@ -13,7 +13,7 @@
                       <div class="modal-body">
 
                           <div class="form-group">
-                              <label class="required">@lang('Booking Number')</label>
+                              <label class="required">@lang('Mã đặt phòng')</label>
                               <div class="d-flex">
                                   <div class="input-group row gx-0">
                                       <input class="form-control" name="booking_numbers[]" required type="text">
@@ -28,7 +28,7 @@
                           <div class="more-bookings"></div>
                       </div>
                       <div class="modal-footer">
-                          <button class="btn btn--primary h-45 w-100" type="submit">@lang('Submit')</button>
+                          <button class="btn btn--primary h-45 w-100" type="submit">@lang('Xác nhận')</button>
                       </div>
                   </form>
               </div>
@@ -49,7 +49,7 @@
                   <form action="" method="post">
                       @csrf
                       <div class="modal-body">
-                          <p class="fw-bold"> @lang('Phòng')</p>
+                          <p class="fw-bold"> @lang('Danh sách phòng')</p>
                           <div class="bookedRooms"></div>
                       </div>
 

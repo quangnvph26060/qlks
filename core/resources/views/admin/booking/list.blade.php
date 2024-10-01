@@ -3,29 +3,29 @@
     <div class="row">
         <div class="col-lg-12">
             <div class="show-filter mb-3 text-end">
-                <button class="btn btn-outline--primary showFilterBtn btn-sm" type="button"><i class="las la-filter"></i> @lang('Filter')</button>
+                <button class="btn btn-outline--primary showFilterBtn btn-sm" type="button"><i class="las la-filter"></i> @lang('Lọc')</button>
             </div>
             <div class="card responsive-filter-card mb-4">
                 <div class="card-body">
                     <form action="">
                         <div class="d-flex flex-wrap gap-4">
                             <div class="flex-grow-1">
-                                <label>@lang('Keywords') <i class="las la-info-circle text--info" title="@lang('Search by booking number, username or email')"></i></label>
+                                <label>@lang('Từ khóa') <i class="las la-info-circle text--info" title="@lang('Tìm kiếm bằng mã đặt phòng, tên người dùng hoặc email')"></i></label>
                                 <input class="form-control" name="search" type="text" value="{{ request()->search }}">
                             </div>
 
                             <div class="flex-grow-1">
-                                <label>@lang('Check In')</label>
+                                <label>@lang('Nhận phòng')</label>
                                 <input autocomplete="off" class="datePicker form-control" name="check_in" type="text" value="{{ request()->check_in }}">
                             </div>
 
                             <div class="flex-grow-1">
-                                <label>@lang('Checkout')</label>
+                                <label>@lang('Trả phòng')</label>
                                 <input autocomplete="off" class="datePicker1 form-control" name="check_out" type="text" value="{{ request()->check_out }}">
                             </div>
 
                             <div class="flex-grow-1 align-self-end">
-                                <button class="btn btn--primary w-100 h-45"><i class="fas fa-filter"></i> @lang('Filter')</button>
+                                <button class="btn btn--primary w-100 h-45"><i class="fas fa-filter"></i> @lang('Lọc')</button>
                             </div>
                         </div>
                     </form>
@@ -119,7 +119,7 @@
                                                     @endcan
 
                                                     <button aria-expanded="false" class="btn btn-sm btn-outline--info" data-bs-toggle="dropdown" type="button">
-                                                        <i class="las la-ellipsis-v"></i>@lang('More')
+                                                        <i class="las la-ellipsis-v"></i>@lang('Thêm')
                                                     </button>
 
                                                     <div class="dropdown-menu">

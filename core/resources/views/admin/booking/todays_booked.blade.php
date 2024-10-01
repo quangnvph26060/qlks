@@ -89,7 +89,7 @@
                 <div class="card-body">
                     <div class="text-center message">
                         <i class="las la-file la-3x"></i>
-                        <h4>@lang('No room available to book')</h4>
+                        <h4>@lang('Không có phòng trống')</h4>
                     </div>
                 </div>
             </div>
@@ -105,7 +105,7 @@
                     <button aria-label="Close" class="btn-close" data-bs-dismiss="modal" type="button"></button>
                 </div>
                 <div class="modal-body">
-                    <h5 class="text--center">@lang('No Premium service yet.')</h5>
+                    <h5 class="text--center">@lang('Chưa có dịch vụ cao cấp')</h5>
                 </div>
             </div>
         </div>
@@ -139,10 +139,10 @@
                 if (services.length) {
                     content += `<ul class="list-group-flush">
                     <li class="list-group-item d-flex justify-content-between">
-                        <span class="w-25">@lang('Name')</span>
-                        <span class="w-25 text-center">@lang('Qty')</span>
-                        <span class="w-25 text-center">@lang('Price')</span>
-                        <span class="w-25 text-end">@lang('Total')</span>
+                        <span class="w-25">@lang('Tên')</span>
+                        <span class="w-25 text-center">@lang('Số lượng')</span>
+                        <span class="w-25 text-center">@lang('Giá')</span>
+                        <span class="w-25 text-end">@lang('Tổng tiền')</span>
                     </li>
                     `;
 
