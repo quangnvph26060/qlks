@@ -128,7 +128,7 @@ class BookRoomController extends Controller
                 $data['booked_for']       = Carbon::parse($bookedFor)->format('Y-m-d H:i:s');
                 $data['fare']             = $room->roomPricesActive[0]['price'];
                 $data['tax_charge']       = $room->roomPricesActive[0]['price'] * $tax / 100;
-                $data['cancellation_fee'] = $room->roomType->cancellation_fee;
+                $data['cancellation_fee'] = $room->cancellation_fee;
                 $data['status']           = Status::ROOM_ACTIVE;
                 $data['created_at']       = now();
                 $data['updated_at']       = now();
@@ -173,10 +173,8 @@ class BookRoomController extends Controller
             $booking->check_in = $checkIn;
 
             if($request->is_method === "receptionist"){
-
                 $booking->check_out = Carbon::parse($request->checkOutTime)->format('Y-m-d H:i:s');
             }else{
-
                 $booking->check_out = Carbon::parse($checkout)->addDay()->toDateString();
             }
             $booking->save();

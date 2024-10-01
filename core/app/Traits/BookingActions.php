@@ -18,7 +18,7 @@ trait BookingActions {
                     $q->active();
                 },
                 'roomType' => function ($q) {
-                    $q->select('id', 'name', 'fare');
+                    $q->select('id', 'name');
                 }, 'roomPricesActive'
                
             ])

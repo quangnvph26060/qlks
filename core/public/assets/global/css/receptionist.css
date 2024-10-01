@@ -279,7 +279,7 @@
 
 
     .status-available-line .status-dot {
-        background-color: #17a2b8;
+        background-color: white;
     }
 
     /* Blue */
@@ -502,7 +502,8 @@
 }
 .btn-primary-service,
 .btn-primary-1,
-.btn-primary-2
+.btn-primary-2,
+.btn-primary-dates
 {
     padding: 8px 12px;
     color: #fff;
