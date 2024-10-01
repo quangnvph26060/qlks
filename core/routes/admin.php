@@ -297,6 +297,7 @@ Route::middleware('admin', 'adminPermission')->group(function () {
         Route::get('searchrooms', 'searchRooms')->name('searchrooms.booking.searchrooms');
         Route::post('room-clean', 'changeCleanRoom')->name('roomclean.booking.roomclean');
         Route::get('get-premium-services', 'getPremiumServices')->name('services.booking.services');
+        Route::get('get-product', 'getProduct')->name('product.booking.product');
     });
 
     // Manage booking premium services
@@ -304,6 +305,7 @@ Route::middleware('admin', 'adminPermission')->group(function () {
         Route::get('all', 'all')->name('list');
         Route::get('add-new', 'addNew')->name('add');
         Route::post('add', 'addService')->name('save');
+        Route::post('add-product', 'addProduct')->name('save-product');
         Route::post('delete/{id}', 'delete')->name('delete');
     });
 
