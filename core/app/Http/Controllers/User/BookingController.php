@@ -20,7 +20,8 @@ class BookingController extends Controller
     public function bookingRequestList()
     {
         $pageTitle = "Tất cả yêu cầu đặt chỗ";
-        $bookingRequests = BookingRequest::where('user_id', Auth::id())->with('room')->orderBy('id', 'DESC')->paginate(getPaginate());
+        $bookingRequests = BookingRequest::where('user_id', Auth::id())->with('bookingItems')->orderBy('id', 'DESC')->paginate(getPaginate());
+        // dd($bookingRequests);
         return view('Template::user.booking.request', compact('bookingRequests', 'pageTitle'));
     }
 

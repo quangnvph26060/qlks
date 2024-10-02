@@ -218,6 +218,7 @@
             $('.booking').on('click', function() {
                 let minCheckIn = $('[name=check_in]').val();
                 let maxCheckOut = $('[name=check_out]').val();
+
                 console.log(minCheckIn >= maxCheckOut);
                 if (minCheckIn >= maxCheckOut) {
                     notify('error', 'Ngày nhận phòng phải lớn hơn ngày trả phòng!')

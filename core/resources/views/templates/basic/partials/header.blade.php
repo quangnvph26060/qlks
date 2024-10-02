@@ -194,13 +194,14 @@
                 <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
             </div>
             <div class="modal-body">
-                <form action="" method="post">
+                <form action="{{ route('request.booking') }}" method="post">
+                    @csrf
                     <div class="row">
                         <div class="mb-3 col-md-6">
                             <label class="fw-bold">@lang('Ngày nhận')</label>
                             <div class="custom-icon-field">
-                                <input class="check-in-date-3 form--control" name="check_in"
-                                    placeholder="@lang('Ngày/Tháng/Năm')" type="date">
+                                <input class="check-in-date-3 form--control" placeholder="@lang('Ngày/Tháng/Năm')" name="check_in"
+                                    type="date">
                                 <i class="fas fa-calendar-alt"></i>
                             </div>
                         </div>
@@ -208,19 +209,20 @@
                         <div class="mb-3 col-md-6">
                             <label class="fw-bold">@lang('Ngày trả')</label>
                             <div class="custom-icon-field">
-                                <input class="check-out-date-4 form--control" name="check_out"
-                                    placeholder="@lang('Ngày/Tháng/Năm')" type="date">
+                                <input class="check-out-date-4 form--control" placeholder="@lang('Ngày/Tháng/Năm')" name="check_out"
+                                    type="date">
                                 <i class="fas fa-calendar-alt"></i>
                             </div>
                             <div class="bookingLimitationMsg text--warning"></div>
                         </div>
                     </div>
+                    <div class="modal-footer">
+                        <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Close</button>
+                        <button type="submit" class="btn btn-primary">Save changes</button>
+                    </div>
                 </form>
             </div>
-            <div class="modal-footer">
-                <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Close</button>
-                <button type="button" class="btn btn-primary">Save changes</button>
-            </div>
+
         </div>
     </div>
 </div>

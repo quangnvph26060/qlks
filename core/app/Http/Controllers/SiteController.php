@@ -360,40 +360,88 @@ class SiteController extends Controller
 
     public function sendBookingRequest(Request $request)
     {
-        $request->validate([
-            'room_id'     => 'required|exists:rooms,id',  // Kiểm tra phòng cụ thể
-            'check_in'    => 'required|date_format:m/d/Y|after:yesterday',
-            'check_out'   => 'nullable|date_format:m/d/Y|after_or_equal:check_in',
-        ]);
+        // dd($request->all());
+        // $request->validate([
+        //     'room_id'     => 'required|exists:rooms,id',  // Kiểm tra phòng cụ thể
+        //     'check_in'    => 'required|date_format:m/d/Y|after:yesterday|after:today',
+        //     'check_out'   => 'nullable|date_format:m/d/Y|after_or_equal:check_in',
+        // ]);
 
 
         if (!Auth::check()) {
             return redirect()->route('user.login')->with('BOOKING_REQUEST', true);
         }
 
-        $checkInDate   = Carbon::parse($request->check_in);
-        $checkOutDate  = Carbon::parse($request->check_out);
+        if ($this->getMinimumAvailableRoom($request) < 1) {
+            $notify[] = ['error', 'Room not available'];
+            return back()->withNotify($notify);
+        }
+
+        /**
+         *@var User $user
+         * */
+
         $user = Auth::user();
-        $room = Room::with('roomPricesActive:price')->find($request->room_id);
 
-        $bookingRequest = new BookingRequest();
-        $bookingRequest->user_id = $user->id;
-        $bookingRequest->room_id = $request->room_id;
-        $bookingRequest->check_in = $checkInDate;
-        $bookingRequest->check_out = $checkOutDate;
-        $bookingRequest->unit_fare = $room->roomPricesActive->first()->price;
+        $wishLists = $user->wishlist()->where('publish', 1)->with('room.roomPricesActive:price')->get();
 
-        $bookingAmount = $bookingRequest->unit_fare * ($checkInDate->diffInDays($checkOutDate));
-        $taxCharge = $bookingAmount * config('app.tax_rate') / 100;
-        $bookingRequest->tax_charge = $taxCharge;
-        $bookingRequest->total_amount = $bookingAmount + $taxCharge;
-        $bookingRequest->save();
+        $checkInDate = Carbon::parse($request->check_in);
+        $checkOutDate = Carbon::parse($request->check_out);
+
+        $bookRequest = BookingRequest::create([
+            'user_id' => $user->id,
+            'check_in' => $checkInDate,
+            'check_out' => $checkOutDate,
+        ]);
+
+        $totalAmount = 0;
+        $bookingRequestItems = []; // Khởi tạo mảng để chứa các mục đặt phòng
+
+        foreach ($wishLists as $item) {
+            $roomData = []; // Khởi tạo mảng cho dữ liệu phòng
+
+            $roomData['room_id'] = $item->room->id;
+            $roomData['unit_fare'] = $item->room->roomPricesActive->first()->price;
+
+            $totalDays = $checkInDate->diffInDays($checkOutDate);
+            $totalFare = $roomData['unit_fare'] * $totalDays;
+
+            $roomData['tax-charge'] = $totalFare * config('app.tax_rate') / 100;
+            $totalAmount += $totalFare + $roomData['tax-charge'];
+
+            $bookingRequestItems[] = $roomData;
+        }
+
+        $bookRequest->bookingRequestItems()->createMany($bookingRequestItems);
+
+        $bookRequest->total_amount = $totalAmount;
+        $bookRequest->save();
+
+
+
+        // $checkInDate   = Carbon::parse($request->check_in);
+        // $checkOutDate  = Carbon::parse($request->check_out);
+        // $user = Auth::user();
+        // $room = Room::with('roomPricesActive:price')->find($request->room_id);
+
+        // $bookingRequest = new BookingRequest();
+        // $bookingRequest->user_id = $user->id;
+        // $bookingRequest->room_id = $request->room_id;
+        // $bookingRequest->check_in = $checkInDate;
+        // $bookingRequest->check_out = $checkOutDate;
+        // $bookingRequest->unit_fare = $room->roomPricesActive->first()->price;
+
+        // $bookingAmount = $bookingRequest->unit_fare * ($checkInDate->diffInDays($checkOutDate));
+        // $taxCharge = $bookingAmount * config('app.tax_rate') / 100;
+        // $bookingRequest->tax_charge = $taxCharge;
+        // $bookingRequest->total_amount = $bookingAmount + $taxCharge;
+        // $bookingRequest->save();
 
         // Thông báo cho admin
         AdminNotification::create([
             'user_id' => $user->id,
-            'title' => "$user->fullname đã yêu cầu đặt phòng",
-            'click_url' => urlPath('admin.request.booking.approve', $bookingRequest->id),
+            'title' => $user->fullname . " đã yêu cầu đặt phòng",
+            'click_url' => urlPath('admin.request.booking.approve', $bookRequest->id),
         ]);
 
         return redirect()->route('user.booking.request.all')->with('success', 'Yêu cầu đặt chỗ đã được gửi thành công');
