@@ -12,10 +12,9 @@ class WishlistController extends Controller
 {
 
     public function toggleWishlist($roomId)
-
-    {
+    { 
         $userId = Auth::id();
-
+       
         //Kiểm tra xem phòng đã có trong danh sách yêu thích hay chưa
         $wishlist = Wishlist::where([
             'user_id' => $userId,

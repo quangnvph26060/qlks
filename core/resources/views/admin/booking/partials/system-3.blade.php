@@ -7,7 +7,7 @@
             </button>
         </h2>
         <div>
-            <a href="javascript:void(0)" class=" btn-primary-service add_premium_service"> <i
+            <a href="#" class=" btn-primary-service add_premium_service"> <i
                     class="las la-plus-circle"></i> Thêm dịch vụ cao cấp</a>
         </div>
     </div>
