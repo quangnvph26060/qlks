@@ -870,7 +870,7 @@
 
                             if (customer_type) {
                                 var url_user_info =
-                                    `{{ can('admin.users.detail') ? route('admin.users.detail', ['id' => ':id']) : 'javascript:void(0)' }}`
+                                    `{{ can('admin.users.detail') ? route('admin.users.detail', ['id' => ':id']) :"" }}`
                                     .replace(':id', response.data.user_id);
 
                                 $.ajax({

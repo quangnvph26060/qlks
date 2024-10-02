@@ -15,7 +15,7 @@
                     </label>
                 </div>
             </td>
-            @can([])
+            @can('admin.manage.price.all')
                 <td>
                     <div class="button--group">
                         <button class="btn btn-sm btn-outline--primary btn-edit" data-id="{{ $price->id }}"

@@ -17,13 +17,14 @@ class Role extends Model
     public static function hasPermission($code = null)
     {
         $admin = Auth::guard('admin')->user();
-
+       
         if ($admin->id == 1) {
             return true;
         }
 
         $roleName        = $admin->role->name;
         $permissionCache = $roleName . '_permission';
+      
         $permissions     = Cache::get($permissionCache);
 
         if (!$permissions) {
