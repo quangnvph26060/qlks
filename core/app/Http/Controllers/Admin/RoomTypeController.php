@@ -70,7 +70,7 @@ class RoomTypeController extends Controller
 
     public function save(Request $request, $id = 0)
     {
-        // dd($request->all());
+      //   dd($request->all());
         $this->validation($request, $id);
         DB::beginTransaction();
         try {

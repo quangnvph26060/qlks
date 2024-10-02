@@ -2,7 +2,8 @@
     <div class="card p-3 room-item" style="max-width: 100%;">
         <div class="row g-0">
             <div class="col-custom-md-4 col-sm-5 col-custom-ssm-5 col-custom-sssm-5 position-relative">
-                <img src="{{ \Storage::url($room->main_image) }}" class="responsive-image rounded"
+              
+                <img src="{{ \Storage::url( $room->main_image) }}" class="responsive-image rounded"
                     alt="Hotel Image">
                 <button data-id="{{ $room->id }}"
                     class="cancelWishlistBtn btn btn-light position-absolute top-0 end-0 m-2 rounded-circle {{ Auth::check() && $room->wishlist ? 'text-white bg-danger' : '' }}"
