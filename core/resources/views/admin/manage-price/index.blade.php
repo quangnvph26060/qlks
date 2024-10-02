@@ -34,7 +34,7 @@
                                         <th>@lang('Thời gian bắt đầu')</th>
                                         <th>@lang('Thời gian kết thúc')</th>
                                         <th>@lang('Trạng thái')</th>
-                                        @can([])
+                                        @can('admin.manage.price.all')
                                             <th>@lang('Hành động')</th>
                                         @endcan
                                     </tr>

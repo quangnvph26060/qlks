@@ -95,7 +95,8 @@
         ],
         "title": "Quản lý bảng giá",
         "icon": "las la-dollar-sign",
-        "route_name": "admin.manage.price.all"
+        "route_name": "admin.manage.price.all",
+        "menu_active": "admin.manage.price.all"
     },
 
     "delayed_checkout": {
