@@ -149,9 +149,9 @@ class RoomTypeController extends Controller
             $notify[] = ['success', $notification];
             return back()->withNotify($notify);
         } catch (\Exception $e) {
-            dd([
-                'message' => $e->getMessage(),
-            ]);
+            // dd([
+            //     'message' => $e->getMessage(),
+            // ]);
             DB::rollBack();
             FacadesLog::error($e->getMessage());
             $notify[] = ['error', $e->getMessage()];
