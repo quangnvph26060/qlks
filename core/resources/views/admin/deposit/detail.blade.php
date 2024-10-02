@@ -40,11 +40,11 @@
                             <span class="fw-bold">{{ showAmount($deposit->amount) }}</span>
                         </li>
                         <li class="list-group-item d-flex justify-content-between align-items-center">
-                            @lang('Charge')
+                            @lang('Thuế')
                             <span class="fw-bold">{{ showAmount($deposit->charge) }}</span>
                         </li>
                         <li class="list-group-item d-flex justify-content-between align-items-center">
-                            @lang('After Charge')
+                            @lang('Sau thuế')
                             <span class="fw-bold">{{ showAmount($deposit->amount + $deposit->charge) }}</span>
                         </li>
                         <li class="list-group-item d-flex justify-content-between align-items-center">
@@ -53,7 +53,7 @@
                                 = {{ showAmount($deposit->rate, currencyFormat: false) }} {{ __($deposit->baseCurrency()) }}</span>
                         </li>
                         <li class="list-group-item d-flex justify-content-between align-items-center">
-                            @lang('After Rate Conversion')
+                            @lang('Sau khi chuyển đổi tỷ giá')
                             <span class="fw-bold">{{ showAmount($deposit->final_amount, currencyFormat: false) }} {{ __($deposit->method_currency) }}</span>
                         </li>
                         <li class="list-group-item d-flex justify-content-between align-items-center">
@@ -62,7 +62,7 @@
                         </li>
                         @if ($deposit->admin_feedback)
                             <li class="list-group-item">
-                                <strong>@lang('Admin Response')</strong>
+                                <strong>@lang('Phản hổi của admin')</strong>
                                 <br>
                                 <p>{{ __($deposit->admin_feedback) }}</p>
                             </li>
@@ -134,7 +134,7 @@
             <div class="modal-dialog" role="document">
                 <div class="modal-content">
                     <div class="modal-header">
-                        <h5 class="modal-title">@lang('Reject Deposit Confirmation')</h5>
+                        <h5 class="modal-title">@lang('Từ chối xác nhận đặt cọc')</h5>
                         <button type="button" class="close" data-bs-dismiss="modal" aria-label="Close">
                             <i class="las la-times"></i>
                         </button>
@@ -143,16 +143,16 @@
                         @csrf
                         <input type="hidden" name="id" value="{{ $deposit->id }}">
                         <div class="modal-body">
-                            <p>@lang('Are you sure to') <span class="fw-bold">@lang('reject')</span> <span class="fw-bold text--success">{{ showAmount($deposit->amount) }}</span> @lang('deposit of') <span class="fw-bold">{{ @$deposit->user->username }}</span>?</p>
+                            <p>@lang('Bạn có muốn') <span class="fw-bold">@lang('từ chối')</span> <span class="fw-bold text--success">{{ showAmount($deposit->amount) }}</span> @lang('tiền đặt cọc của') <span class="fw-bold">{{ @$deposit->user->username }}</span>?</p>
 
                             <div class="form-group">
-                                <label class="mt-2">@lang('Reason for Rejection')</label>
+                                <label class="mt-2">@lang('Lý do từ chối')</label>
                                 <textarea name="message" maxlength="255" class="form-control" rows="5" required>{{ old('message') }}</textarea>
                             </div>
 
                         </div>
                         <div class="modal-footer">
-                            <button type="submit" class="btn btn--primary w-100 h-45">@lang('Submit')</button>
+                            <button type="submit" class="btn btn--primary w-100 h-45">@lang('Xác nhận')</button>
                         </div>
                     </form>
                 </div>

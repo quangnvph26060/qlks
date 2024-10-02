@@ -27,7 +27,7 @@
                 </span>
             </div>
             <div class="list-item">
-                <span>@lang('Di động')</span>
+                <span>@lang('Số điện thoại động')</span>
                 <span>
                     @if ($booking->user_id)
                         +{{ $booking->user->mobile }}
@@ -40,9 +40,9 @@
                 <span>@lang('Địa chỉ')</span>
                 <span>
                     @if ($booking->user_id)
-                        {{ $booking->user->address ?? 'N/A' }}
+                        {{ $booking->user->address ?? 'Chưa có địa chỉ' }}
                     @else
-                        {{ $booking->guest_details->address ?? 'N/A' }}
+                        {{ $booking->guest_details->address ?? 'Chưa có địa chỉ' }}
                     @endif
                 </span>
             </div>

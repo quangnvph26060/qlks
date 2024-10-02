@@ -87,13 +87,14 @@
         align-items: center;
         min-height: calc(100% - 1rem);
     }
-    #serviceModal{
+    #serviceModal,#productModal{
         background: #3e454552;
     }
     .room-info p {
         color: gainsboro !important;
     }
-    .removeServiceBtn {
+    .removeServiceBtn,
+    .removeProductBtn {
         position: absolute;
         height: 25px;
         width: 25px;
@@ -277,7 +278,9 @@
         margin-right: 6px;
     }
 
-
+    .room-booking-status-dirty {
+        pointer-events: auto; /* Đảm bảo rằng nó có thể nhận sự kiện */
+    }
     .status-available-line .status-dot {
         background-color: white;
     }
