@@ -54,6 +54,9 @@
                     </div>
                 </div>
                 <div class="col-xl-9 col-lg-12 col-md-12">
+                    <div class="loader-overlay" style="display: none;">
+                        <div class="loader"></div>
+                    </div>
                     <div class="row gy-4 justify-content-center" id="results-container">
                         @if ($rooms->count())
                             @include($activeTemplate . 'partials.room_cards', [
@@ -84,6 +87,7 @@
 
     <script>
         $(document).ready(function() {
+
 
             function incrementBadge() {
                 // Get the current value of the badge
@@ -124,11 +128,23 @@
 
             })
 
+            var publish = 0;
+            // Nếu tất cả checkbox con đều được chọn
+            if ($('.room-checkbox:checked').length === $('.room-checkbox').length) {
+
+                $('#select-all').prop('checked', true); // Đánh dấu checkbox "select-all"
+            } else {
+
+                $('#select-all').prop('checked', false); // Bỏ chọn checkbox "select-all"
+            }
+
+
             $('#select-all').on('change', function() {
+                publish = $(this).prop('checked') ? 1 : 0;
                 $('.room-checkbox').prop('checked', $(this).prop('checked'));
 
                 $.ajax({
-                    url: "{{ route('user.handle.publish.all') }}",
+                    url: "{{ route('user.handle.publish.all') }}" + '?publish=' + publish,
                     type: "POST",
                     success: function(response) {
                         if (response.status === 'success') {
@@ -145,7 +161,9 @@
                     url: "{{ route('user.toggle.wishlist', ':id') }}".replace(':id', id),
                     type: "POST",
                     success: function(response) {
+
                         if (response.status === 'success') {
+                            $('.show-total').html(formatCurrency(response.total));
                             let wishlistButton = $(`#show-wishlist-${id}`);
                             let roomElement = $(`.room-${id}`);
 
@@ -176,10 +194,12 @@
                         }
                     },
                     error: function(response) {
+                        console.log(response);
+
                         showMessageToast({
                             name: 'error',
                             icon: 'las la-exclamation-circle'
-                        }, response.message);
+                        }, response.responseJSON.message);
                     }
                 });
             });
@@ -191,13 +211,18 @@
 
                 const image_path = "{{ \Storage::url('') }}" + roomData.main_image;
                 const wishlistContainer = $('.append-child');
+                const checked = roomData.wish_list.publish == true ? 'checked' : '';
+
 
                 const newRoomHtml = /*html*/ `
                     <div class="border rounded p-2 d-flex align-items-center mb-3 rooms room-${roomData.id}">
-                        <input type="checkbox" class="form-check-input me-2 room-checkbox" data-price="1500000" id="room-${roomData.id}">
+                        <input ${checked} type="checkbox" class="form-check-input me-2 room-checkbox" data-price="1500000" id="room-${roomData.id}">
                         <img src="${image_path}" alt="Room Image" class="rounded" style="max-width: 20%; object-fit: cover;">
                         <div class="ms-3">
-                            <h5 class="mb-1">${roomData.room_number}</h5>
+                            <div class="d-flex align-items-center">
+                                <h5 class="mb-1">${roomData.room_number}</h5>
+                                <p class="mb-1 ms-1 text-muted">(${roomData.room_type.name})</p>
+                            </div>
                             <p class="mb-0 text-muted">Giá: ${roomData.room_prices_active[0].price}</p>
                         </div>
                     </div>
@@ -305,8 +330,12 @@
         function checkNotRoomWishlist() {
 
             if ($('.list-group div.rooms').length == 0) {
+                console.log("no data");
+
                 $('#wishlist-message').show();
             } else {
+                console.log("has data");
+
                 $('#wishlist-message').hide();
             }
 

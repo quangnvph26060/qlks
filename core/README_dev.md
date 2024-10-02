@@ -395,3 +395,23 @@ ALTER TABLE `booking_requests`
     DROP COLUMN `number_of_rooms`,        -- Loại bỏ cột số lượng phòng
     DROP COLUMN `room_type_id`,           -- Loại bỏ cột loại phòng
     ADD COLUMN `room_id` INT UNSIGNED NOT NULL AFTER `user_id`;  -- Thêm cột room_id
+
+-- 02/10
+CREATE TABLE `booking_request_items` (
+  `id` int NOT NULL,
+  `booking_request_id` bigint UNSIGNED NOT NULL,
+  `room_id` bigint UNSIGNED NOT NULL,
+  `unit_fare` decimal(12,0) NOT NULL,
+  `tax-charge` decimal(12,0) NOT NULL,
+  `status` tinyint(1) NOT NULL DEFAULT '0' COMMENT '	0 = pending, 1 = approved, 3 = cancelled;	'
+) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_unicode_ci;
+
+
+ALTER TABLE `booking_request_items`
+  ADD KEY `booking_request_id` (`booking_request_id`),
+  ADD KEY `room_id` (`room_id`);
+
+ALTER TABLE `booking_request_items`
+  ADD CONSTRAINT `booking_request_items_ibfk_1` FOREIGN KEY (`booking_request_id`) REFERENCES `booking_requests` (`id`) ON DELETE RESTRICT ON UPDATE RESTRICT,
+  ADD CONSTRAINT `booking_request_items_ibfk_2` FOREIGN KEY (`room_id`) REFERENCES `rooms` (`id`) ON DELETE RESTRICT ON UPDATE RESTRICT;
+COMMIT;

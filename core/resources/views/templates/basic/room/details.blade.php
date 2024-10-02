@@ -202,10 +202,10 @@
     </style>
 @endpush
 
-@push('script-lib')
+{{-- @push('script-lib')
     <script src="{{ asset($activeTemplateTrue . 'js/datepicker.min.js') }}"></script>
     <script src="{{ asset($activeTemplateTrue . 'js/datepicker.en.js') }}"></script>
-@endpush
+@endpush --}}
 
 @push('script')
     <script>

@@ -111,6 +111,10 @@
                 }
             });
 
+            $('.show-modal').on('click', function() {
+                $('#exampleModall').modal('show');
+            });
+
             $(".langSel").on("change", function() {
                 window.location.href = "{{ route('home') }}/change/" + $(this).val();
             });
@@ -214,7 +218,10 @@
             };
 
 
+
         })(jQuery);
+
+
     </script>
 </body>
 
