@@ -168,6 +168,8 @@
         </div>
     </div>
 
+
+
     <!-- Khu vực tổng giá -->
     <div class="total-price d-flex justify-content-between align-items-center">
         <div>
@@ -178,11 +180,73 @@
             <p class="">Tổng thanh toán:</p>
             <p id="total-price" class="fw-bold mx-3"><span class="show-total">{{ showAmount($total) ?? 0 }}</span>
             </p>
-            <button class="btn btn-sm btn--base">ĐẶT NGAY</button>
+            <button class="btn btn-sm btn--base show-modal">ĐẶT NGAY</button>
         </div>
     </div>
 </div>
 
-<div class="loader-overlay" style="display: none;">
-    <div class="loader"></div>
+{{-- modal --}}
+<div class="modal fade" id="exampleModall" tabindex="-1" aria-labelledby="exampleModalLabel" aria-hidden="true">
+    <div class="modal-dialog modal-lg">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h5 class="modal-title" id="exampleModalLabel">Ngày nhận phòng - Ngày trả phòng</h5>
+                <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+            </div>
+            <div class="modal-body">
+                <form action="" method="post">
+                    <div class="row">
+                        <div class="mb-3 col-md-6">
+                            <label class="fw-bold">@lang('Ngày nhận')</label>
+                            <div class="custom-icon-field">
+                                <input class="check-in-date-3 form--control" name="check_in"
+                                    placeholder="@lang('Ngày/Tháng/Năm')" type="date">
+                                <i class="fas fa-calendar-alt"></i>
+                            </div>
+                        </div>
+
+                        <div class="mb-3 col-md-6">
+                            <label class="fw-bold">@lang('Ngày trả')</label>
+                            <div class="custom-icon-field">
+                                <input class="check-out-date-4 form--control" name="check_out"
+                                    placeholder="@lang('Ngày/Tháng/Năm')" type="date">
+                                <i class="fas fa-calendar-alt"></i>
+                            </div>
+                            <div class="bookingLimitationMsg text--warning"></div>
+                        </div>
+                    </div>
+                </form>
+            </div>
+            <div class="modal-footer">
+                <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Close</button>
+                <button type="button" class="btn btn-primary">Save changes</button>
+            </div>
+        </div>
+    </div>
 </div>
+
+
+
+
+@push('script-lib')
+    <!-- datepicker js -->
+    <script src="{{ asset($activeTemplateTrue . 'js/datepicker.min.js') }}"></script>
+    <script src="{{ asset($activeTemplateTrue . 'js/datepicker.en.js') }}"></script>
+
+    <script>
+        // var datepicker3 = $('.check-in-date-3').datepicker({
+        //     autoClose: true
+        // });
+        // var datepicker4 = $('.check-out-date-4').datepicker({
+        //     autoClose: true
+        // });
+    </script>
+@endpush
+
+{{-- @push('style')
+    <style>
+        .datepicker--nav {
+            z-index: 9999 !important;
+        }
+    </style>
+@endpush --}}

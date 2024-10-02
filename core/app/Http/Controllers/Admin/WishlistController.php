@@ -25,7 +25,11 @@ class WishlistController extends Controller
         if ($wishlist) {
             //Nếu đã có trong danh sách yêu thích, xóa khỏi danh sách
             $wishlist->delete();
-            return response()->json(['message' => 'Đã xóa khỏi danh sách yêu thích', 'status' => 'success']);
+            // return response()->json(['message' => 'Đã xóa khỏi danh sách yêu thích', 'status' => 'success']);
+            $response = [
+                'message' => 'Đã xóa khỏi danh sách yêu thích',
+                'status' => 'success',
+            ];
         } else {
             //Nếu phòng chưa có, thêm vào danh sách yêu thích
             $wishlist =  Wishlist::create([
@@ -33,14 +37,26 @@ class WishlistController extends Controller
                 'room_id' => $roomId,
             ]);
 
-            $room = Room::with(['roomPricesActive:price', 'wishList'])->where('id', $roomId)->first();
+            $room = Room::with(['roomPricesActive:price', 'wishList', 'roomType'])->where('id', $roomId)->first();
 
-            return response()->json([
+            $response = [
                 'message' => 'Đã thêm vào danh sách yêu thích',
                 'status' => 'success',
                 'data' => $room,
-            ]);
+            ];
         }
+
+        $wishList = Wishlist::with('room.roomPricesActive:price')->where('user_id', $userId)->get();
+
+        $total = 0;
+
+        foreach ($wishList as $item) {
+            if ($item->room) {
+                $total += $item->room->roomPricesActive->first()->price;
+            }
+        }
+
+        return response()->json(array_merge($response, ['total' => $total]));
     }
 
     public function handlePublish($id)
@@ -57,22 +73,28 @@ class WishlistController extends Controller
 
         $wishlist = $user->wishList()->where('publish', 1)->with('room')->get();
 
-
-        $total = 0;
-
-        if ($wishlist->isNotEmpty()) {
-            foreach ($wishlist as $item) {
-                if ($item->room) {
-                    $total += $item->room->roomPricesActive->first()->price;
-                }
-            }
-        }
+        $total = $this->totalAmount($wishlist);
 
         return response()->json([
             'message' => 'Đã thay đổi trạng thái',
             'status' => 'success',
             'total' => $total,
         ]);
+    }
+
+    public function totalAmount($wishList)
+    {
+        $total = 0;
+
+        if ($wishList->isNotEmpty()) {
+            foreach ($wishList as $item) {
+                if ($item->room) {
+                    $total += $item->room->roomPricesActive->first()->price;
+                }
+            }
+        }
+
+        return $total;
     }
 
     public function handlePublishAll()
@@ -85,20 +107,12 @@ class WishlistController extends Controller
          *
          */
 
-        $user->wishList()->update(['publish' => !$user->wishList()->first()->publish]);
+        $user->wishList()->update(['publish' =>  request('publish', 0)]);
 
         $wishlist = $user->wishList()->where('publish', 1)->with('room')->get();
 
 
-        $total = 0;
-
-        if ($wishlist->isNotEmpty()) {
-            foreach ($wishlist as $item) {
-                if ($item->room) {
-                    $total += $item->room->roomPricesActive->first()->price;
-                }
-            }
-        }
+        $total = $this->totalAmount($wishlist);
 
         return response()->json([
             'message' => 'Đã thay đổi trạng thái',
