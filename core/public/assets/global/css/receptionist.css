@@ -435,6 +435,7 @@
 }
 
 .customer-popup.active {
+    border-radius: 8px;
     display: block;
 }
 

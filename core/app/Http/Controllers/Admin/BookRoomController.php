@@ -62,6 +62,7 @@ class BookRoomController extends Controller
 
     public function book(Request $request)
     {
+        \Log::info($request->all());
         DB::beginTransaction();
         try {
             $validator = Validator::make($request->all(), [
@@ -95,7 +96,7 @@ class BookRoomController extends Controller
 
             $bookedRoomData = [];
             $totalFare      = 0;
-            $tax            = gs('tax');
+            $tax            = gs('tax'); // thuế
           
             foreach ($request->room as $room) {
                 $data      = [];

@@ -870,7 +870,7 @@
 
                             if (customer_type) {
                                 var url_user_info =
-                                    `{{ can('admin.users.detail') ? route('admin.users.detail', ['id' => ':id']) :"" }}`
+                                    `{{ can('admin.users.detail') ? route('admin.users.detail', ['id' => ':id']) : '' }}`
                                     .replace(':id', response.data.user_id);
 
                                 $.ajax({
@@ -997,10 +997,10 @@
                             $('#user_product').empty();
 
                             let rowsHtmlProduct = '';
-                            console.log( response.data.used_product_room);
-                            
+                            console.log(response.data.used_product_room);
+
                             response.data.used_product_room.forEach(function(booked, index) {
-                                    rowsHtmlProduct += `
+                                rowsHtmlProduct += `
                                         <tr>
                                             <td class="bg--date text-center" data-label="@lang('Ngày')">
                                                 ${booked.product_date}
@@ -1158,16 +1158,12 @@
 
                 var checkOutTime;
                 if (bookingType === 'gio') {
-                    console.log('gio');
                     checkOutTime = new Date(now.getTime() + (1 * 60 * 60 * 1000)); // Cộng 1 giờ
                 } else if (bookingType === 'ngay') {
-                    console.log('ngay');
-                    checkOutTime = new Date(now.getTime() + (1 * 24 * 60 * 60 *
-                        1000)); // Cộng 1 ngày
+                    checkOutTime = new Date(now.getTime() + (1 * 24 * 60 * 60 * 1000)); // Cộng 1 ngày
+
                 } else if (bookingType === 'dem') {
-                    console.log('dem');
-                    checkOutTime = new Date(now.getTime() + (12 * 60 * 60 *
-                        1000)); // Cộng 12 giờ
+                    checkOutTime = new Date(now.getTime() + (12 * 60 * 60 * 1000)); // Cộng 12 giờ
                 }
 
                 var checkOutYear = checkOutTime.getFullYear();
@@ -1210,25 +1206,36 @@
                 var formattedMinutes = durationMinutes.toString().padStart(2, '0'); // phút
 
                 let priceTime = 0;
-                if (bookingType === 'gio') {
-                    priceTime = parseFloat(window.savedDataHours.replace(',', '')) || 0;
-                } else if (bookingType === 'ngay') {
-                    priceTime = parseFloat(window.savedDataDay.replace(',', '')) || 0;
-                    updatedPrice = priceTime;
-                } else if (bookingType === 'dem') {
-                    priceTime = parseFloat(window.savedDataNight.replace(',', '')) || 0;
-                    updatedPrice = priceTime;
+                switch (bookingType) {
+                    case 'gio':
+                        priceTime = parseFloat(window.savedDataHours.replace(',', '')) || 0;
+                        break;
+                    case 'ngay':
+                        priceTime = parseFloat(window.savedDataDay.replace(',', '')) || 0;
+                        break;
+                    case 'dem':
+                        priceTime = parseFloat(window.savedDataNight.replace(',', '')) || 0;
+                        break;
                 }
 
-                if (bookingType !== 'dem' && bookingType !== 'ngay') {
-                    var updatedPrice = priceTime * formattedHours;
-                }
+                $('.inputTime').text(`${formattedHours}:${formattedMinutes}`);
 
+                let updatedPrice = 0;
+
+                const dateTimeDate = formattedHours / 24; // Số ngày
+                const dateTimeNight = formattedHours / 12; // Số đêm
+
+                if (formattedHours >= 24) {
+                    updatedPrice = dateTimeDate * priceTime; // Tính theo ngày
+                } else if (formattedHours >= 12) {
+                    updatedPrice = dateTimeNight * priceTime; // Tính theo đêm
+                } else {
+                    updatedPrice = formattedHours * priceTime; // Tính theo giờ
+                }
 
                 $('#input-price-booking').val(updatedPrice.toLocaleString());
                 $('#customer-price-booking').val(updatedPrice.toLocaleString());
 
-                $('.inputTime').text(formattedHours + ':' + formattedMinutes);
             }
 
             $('#checkInTime, #checkOutTime').on('change', calculateDuration);

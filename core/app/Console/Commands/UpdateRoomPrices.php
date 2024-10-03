@@ -41,10 +41,7 @@ class UpdateRoomPrices extends Command
 
         $rooms = Room::active()->has('roomPrices')->with('roomPrices')->get();
         foreach ($rooms as $room) {
-
             $activePrice = null;
-            //   \Log::info($room);
-
             foreach ($room->roomPrices as $price) {
 
                 // Ưu tiên 1: Kiểm tra giờ (start_time, end_time)
