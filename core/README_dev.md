@@ -417,6 +417,11 @@ ALTER TABLE `booking_request_items`
   ADD CONSTRAINT `booking_request_items_ibfk_2` FOREIGN KEY (`room_id`) REFERENCES `rooms` (`id`) ON DELETE RESTRICT ON UPDATE RESTRICT;
 COMMIT;
 
+ALTER TABLE `booking_requests`
+  DROP `room_id`,
+  DROP `unit_fare`,
+  DROP `tax_charge`;
+
 -- 10/01
 ALTER TABLE `bookings`
 ADD COLUMN product_cost DECIMAL(28,8) NOT NULL DEFAULT 0.00000000;  
@@ -435,4 +440,7 @@ CREATE TABLE userd_product_rooms (
     created_at TIMESTAMP,
     updated_at TIMESTAMP
 );
+
+-- 03/10
+ALTER TABLE `booking_request_items` CHANGE `id` `id` INT NOT NULL AUTO_INCREMENT, add PRIMARY KEY (`id`);
 

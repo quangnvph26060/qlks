@@ -194,13 +194,14 @@
                 <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
             </div>
             <div class="modal-body">
-                <form action="" method="post">
+                <form action="{{ route('request.booking') }}" method="post">
+                    @csrf
                     <div class="row">
                         <div class="mb-3 col-md-6">
                             <label class="fw-bold">@lang('Ngày nhận')</label>
                             <div class="custom-icon-field">
-                                <input class="check-in-date-3 form--control" name="check_in"
-                                    placeholder="@lang('Ngày/Tháng/Năm')" type="date">
+                                <input class="check-in-date-3 form--control" placeholder="@lang('Ngày/Tháng/Năm')"
+                                    name="check_in" type="date">
                                 <i class="fas fa-calendar-alt"></i>
                             </div>
                         </div>
@@ -208,19 +209,20 @@
                         <div class="mb-3 col-md-6">
                             <label class="fw-bold">@lang('Ngày trả')</label>
                             <div class="custom-icon-field">
-                                <input class="check-out-date-4 form--control" name="check_out"
-                                    placeholder="@lang('Ngày/Tháng/Năm')" type="date">
+                                <input class="check-out-date-4 form--control" placeholder="@lang('Ngày/Tháng/Năm')"
+                                    name="check_out" type="date">
                                 <i class="fas fa-calendar-alt"></i>
                             </div>
                             <div class="bookingLimitationMsg text--warning"></div>
                         </div>
                     </div>
+                    <div class="modal-footer">
+                        <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Close</button>
+                        <button type="submit" class="btn btn-primary">Save changes</button>
+                    </div>
                 </form>
             </div>
-            <div class="modal-footer">
-                <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Close</button>
-                <button type="button" class="btn btn-primary">Save changes</button>
-            </div>
+
         </div>
     </div>
 </div>
@@ -240,6 +242,73 @@
         // var datepicker4 = $('.check-out-date-4').datepicker({
         //     autoClose: true
         // });
+    </script>
+@endpush
+
+@push('script')
+    <script>
+        function formatCurrency(amount) {
+            // Convert the number to a string and replace commas with dots
+            return amount.toString().replace(/\B(?=(\d{3})+(?!\d))/g, ",") + ' VND';
+        }
+
+        $(document).on('click', '.room-checkbox', function() {
+            let id = $(this).data('id');
+
+            $.ajax({
+                url: "{{ route('user.handle.publish', ':id') }}".replace(':id', id),
+                type: "POST",
+                success: function(response) {
+                    if (response.status === 'success') {
+                        $('.show-total').html(formatCurrency(response.total));
+                    }
+                    updateBookingButton();
+                }
+            })
+
+        })
+
+        var publish = 0;
+        // Nếu tất cả checkbox con đều được chọn
+        if ($('.room-checkbox:checked').length === $('.room-checkbox').length) {
+
+            $('#select-all').prop('checked', true); // Đánh dấu checkbox "select-all"
+        } else {
+
+            $('#select-all').prop('checked', false); // Bỏ chọn checkbox "select-all"
+        }
+
+
+        $('#select-all').on('change', function() {
+
+            if ($('.room-checkbox').length > 0) {
+                publish = $(this).prop('checked') ? 1 : 0;
+                $('.room-checkbox').prop('checked', $(this).prop('checked'));
+                $.ajax({
+                    url: "{{ route('user.handle.publish.all') }}" + '?publish=' + publish,
+                    type: "POST",
+                    success: function(response) {
+                        if (response.status === 'success') {
+                            $('.show-total').html(formatCurrency(response.total));
+                        }
+                        updateBookingButton();
+                    }
+                })
+            }
+        })
+
+        function updateBookingButton() {
+            // Kiểm tra xem có checkbox nào được chọn hay không
+            if ($('.room-checkbox:checked').length > 0) {
+
+                $('.show-modal').removeClass('disabled');
+            } else {
+
+                $('.show-modal').addClass('disabled');
+            }
+        }
+
+        updateBookingButton();
     </script>
 @endpush
 

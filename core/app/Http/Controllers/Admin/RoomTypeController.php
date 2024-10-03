@@ -70,15 +70,15 @@ class RoomTypeController extends Controller
 
     public function save(Request $request, $id = 0)
     {
-      //   dd($request->all());
+
         $this->validation($request, $id);
         DB::beginTransaction();
         try {
-            if ($request->room) {
+            if ($request->room_number) {
                 $roomNumbers = Room::pluck('room_number')->toArray();
-                $exists = array_intersect($request->room, $roomNumbers);
-                if (!empty($exists)) {
-                    $notify[] = ['error', implode(', ', $exists) . ' room number already exists'];
+                $exists = in_array($request->room_number, $roomNumbers);
+                if ($exists) {
+                    $notify[] = ['error',' số phòng đã tồn tại'];
                     return back()->withNotify($notify);
                 }
             }
@@ -87,10 +87,10 @@ class RoomTypeController extends Controller
 
             if ($id) {
                 $room         = Room::findOrFail($id);
-                $notification     = 'Đã cập nhật loại phòng thành công';
+                $notification     = 'Đã cập nhật phòng thành công';
             } else {
                 $room        = new Room();
-                $notification     = 'Đã thêm loại phòng thành công';
+                $notification     = 'Đã thêm phòng thành công';
             }
 
             $room->code                = $request->code;

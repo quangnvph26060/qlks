@@ -150,6 +150,7 @@
                                         <input autocomplete="off" class="check-in-date form--control"
                                             data-date-format="mm/dd/yyyy" data-language="en"
                                             data-multiple-dates-separator=" - " data-position='top left' data-range="false"
+                                            name="check_in_1"
                                             form="confirmation-form" name="check_in" placeholder="@lang('Ngày/Tháng/Năm')"
                                             type="text">
                                         <i class="fas fa-calendar-alt"></i>
@@ -162,6 +163,7 @@
                                         <input autocomplete="off" class="check-out-date form--control"
                                             data-date-format="mm/dd/yyyy" data-language="en"
                                             data-multiple-dates-separator=" - " data-position='top left' data-range="false"
+                                            name="check_out_1"
                                             form="confirmation-form" name="check_out" placeholder="@lang('Ngày/Tháng/Năm')"
                                             type="text">
                                         <i class="fas fa-calendar-alt"></i>
@@ -216,9 +218,10 @@
             // btnRequest.attr('disabled', true);
 
             $('.booking').on('click', function() {
-                let minCheckIn = $('[name=check_in]').val();
-                let maxCheckOut = $('[name=check_out]').val();
-                console.log(minCheckIn >= maxCheckOut);
+                let minCheckIn = $('[name=check_in_1]').val();
+                let maxCheckOut = $('[name=check_out_1]').val();
+
+                console.log(minCheckIn + ' ' + maxCheckOut);
                 if (minCheckIn >= maxCheckOut) {
                     notify('error', 'Ngày nhận phòng phải lớn hơn ngày trả phòng!')
                     $(this).removeClass('confirmationBtn');
@@ -251,9 +254,9 @@
             function getAvaliableRooms() {
                 let data = {};
 
-                data.check_in = $('input[name=check_in]').val();
-                data.check_out = $('input[name=check_out]').val();
-                data.room_type_id = $('input[name=room_type_id]').val();
+                data.check_in = $('input[name=check_in_1]').val();
+                data.check_out = $('input[name=check_out_1]').val();
+                data.room_type_id = $('input[name=room_id]').val();
 
                 // $('[name=number_of_rooms]').val('');
 
