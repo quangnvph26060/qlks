@@ -441,3 +441,6 @@ CREATE TABLE userd_product_rooms (
     updated_at TIMESTAMP
 );
 
+-- 03/10
+ALTER TABLE `booking_request_items` CHANGE `id` `id` INT NOT NULL AUTO_INCREMENT, add PRIMARY KEY (`id`);
+

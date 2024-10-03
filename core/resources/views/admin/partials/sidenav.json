@@ -58,9 +58,9 @@
             },
             {
                 "keyword": [
-                    "Hạng phòng"
+                    "Phòng"
                 ],
-                "title": "Hạng phòng",
+                "title": "Phòng",
                 "route_name": "admin.hotel.room.type.all",
                 "menu_active": [
                     "admin.hotel.room.type.all",
@@ -70,9 +70,9 @@
             },
             {
                 "keyword": [
-                    "Phòng"
+                    "Hạng phòng"
                 ],
-                "title": "Phòng",
+                "title": "Hạng phòng",
                 "route_name": "admin.hotel.room.all",
                 "menu_active": "admin.hotel.room.all"
             },
@@ -95,7 +95,8 @@
         ],
         "title": "Quản lý bảng giá",
         "icon": "las la-dollar-sign",
-        "route_name": "admin.manage.price.all"
+        "route_name": "admin.manage.price.all",
+        "menu_active": "admin.manage.price.all"
     },
 
     "delayed_checkout": {

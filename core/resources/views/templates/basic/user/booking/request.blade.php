@@ -4,9 +4,10 @@
         <table class="custom--table head--base table">
             <thead>
                 <tr>
-                    <th></th>
+                    <th>STT</th>
                     <th>@lang('Check In') - @lang('Check Out')</th>
                     <th>@lang('Số lượng phòng')</th>
+                    <th>@lang('Thuế')</th>
                     <th>@lang('Total')</th>
                     <th>@lang('Status')</th>
                     <th>@lang('Action')</th>
@@ -16,37 +17,33 @@
                 @forelse ($bookingRequests as $bookingRequest)
                     <tr>
                         <td>
-                            <button class="btn btn-link btn-toggle" type="button"
-                                onclick=" toggleRepresentatives('{{ $bookingRequest->id }}', this)"></button>
+                            <h6> {{ $loop->iteration }}.</h6>
                         </td>
 
                         <td>
-                            {{ showDateTime($bookingRequest->check_in, 'd M, Y') }} -
-                            {{ showDateTime($bookingRequest->check_out, 'd M, Y') }}</td>
+                            <p> {{ showDateTime($bookingRequest->check_in, 'd M, Y') }}</p>
+                            <p> {{ showDateTime($bookingRequest->check_out, 'd M, Y') }}</p>
+                        </td>
                         <td>
                             {{ $bookingRequest->bookingItems->count() }}</td>
+                        <td>
+                            {{ showAmount($bookingRequest->bookingItems->sum('tax-charge')) }}</td>
 
-                        <td class="fw-bold">{{ showAmount($bookingRequest->total_amount) }}</span></td>
+                        <td class="fw-bold">
+                            <p> {{ showAmount($bookingRequest->total_amount) }}</p>
+                            <small class="text-muted">Đã bao gồm thuế</small>
+                        </td>
 
                         <td>@php echo $bookingRequest->statusBadge;@endphp</td>
 
                         <td>
+                            <button data-resource="{{ $bookingRequest->bookingItems }}"
+                                class="btn btn-sm btn-outline--primary detail-booking-request"><i class="las la-desktop"></i>
+                            </button>
                             <button @disabled($bookingRequest->status) class="btn btn-sm btn-outline--danger confirmationBtn"
                                 data-action="{{ route('user.booking.request.cancel', $bookingRequest->id) }}"
                                 data-question="@lang('Are you sure to cancel this request?')"><i class="las la-times-circle"></i>
                                 @lang('Cancel')</button>
-                        </td>
-                    </tr>
-                    <tr class="collapse" id="rep-{{ $bookingRequest->id }}">
-                        <td colspan="8">
-                            <div class="representatives-container">
-                                <span class="representatives-label">Danh mục:</span>
-                                <span class="representatives-list">
-                                    <span class="badge bg-warning me-2 cursor-pointer">
-                                        <small class="representative-name"> </small>
-                                    </span>
-                                </span>
-                            </div>
                         </td>
                     </tr>
                 @empty
@@ -64,6 +61,40 @@
         @endif
     </div>
     <x-confirmation-modal />
+
+
+    <!-- Modal -->
+    <div class="modal fade" id="staticBackdrop" tabindex="-1" aria-labelledby="staticBackdrop" aria-hidden="true">
+        <div class="modal-dialog madal-dialog-centered modal-lg">
+            <div class="modal-content">
+                <div class="modal-header">
+                    <h5 class="modal-title" id="staticBackdrop">Danh sách phòng đã yêu cầu đặt</h5>
+                    <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+                </div>
+                <div class="modal-body">
+                    <div class="table-responsive--md">
+                        <table class="custom--table head--base table">
+                            <thead>
+                                <tr>
+                                    <th>@lang('Số phòng')</th>
+                                    <th>@lang('Giá phòng')</th>
+                                    <th>@lang('Thuế')</th>
+                                    <th>@lang('Trạng thái')</th>
+                                    <th>@lang('Hành động')</th>
+                                </tr>
+                            </thead>
+                            <tbody id="tbody">
+
+                            </tbody>
+                        </table>
+                    </div>
+                </div>
+                <div class="modal-footer">
+                    <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Close</button>
+                </div>
+            </div>
+        </div>
+    </div>
 @endsection
 
 @push('style')
@@ -158,10 +189,45 @@
 
 @push('script')
     <script>
-        window.toggleRepresentatives = function(id, button) {
-            const row = document.getElementById('rep-' + id);
-            row.classList.toggle('show');
-            button.classList.toggle('collapsed');
-        };
+        $(document).on('click', '.detail-booking-request', function() {
+            appendToTable($(this).data('resource'));
+            $('#staticBackdrop').modal('show');
+        })
+
+        function formatPrice(amount) {
+            const formattedAmount = amount.toString().replace(/\B(?=(\d{3})+(?!\d))/g, ".");
+            return `${formattedAmount} VND`;
+        }
+
+        function appendToTable(data) {
+
+            $('#tbody').empty();
+            var html = '';
+            let disabled = '';
+            data.forEach(element => {
+                if (element['status'] == 0) {
+                    element['status'] = '<span class="badge bg-warning">@lang('Đang chờ xử lý')</span>';
+                } else if (element['status'] == 1) {
+                    element['status'] = '<span class="badge bg-success">@lang('Đã chấp nhận')</span>';
+                } else {
+                    element['status'] = '<span class="badge bg-danger">@lang('Đã hủy')</span>';
+                }
+
+                if (element['status'] === 0) {
+                    disabled = 'disabled';
+                }
+                html += `
+                    <tr>
+                        <td>${element['room']['room_number']}</td>
+                        <td>${formatPrice(Number(element['unit_fare']))}</td>
+                        <td>${formatPrice(Number(element['tax-charge']))}</td>
+                        <td>${element['status']}</td>
+                        <td><button ${disabled} class="btn btn-sm btn-outline--danger">Hủy phòng</button></td>
+                    </tr>
+                `
+            });
+
+            $('#tbody').html(html);
+        }
     </script>
 @endpush

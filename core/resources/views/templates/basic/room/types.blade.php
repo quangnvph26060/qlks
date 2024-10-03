@@ -108,51 +108,53 @@
                 }, message); // Truyền thông điệp vào
             }
 
-            function formatCurrency(amount) {
-                // Convert the number to a string and replace commas with dots
-                return amount.toString().replace(/\B(?=(\d{3})+(?!\d))/g, ",") + ' VND';
-            }
+            // function formatCurrency(amount) {
+            //     // Convert the number to a string and replace commas with dots
+            //     return amount.toString().replace(/\B(?=(\d{3})+(?!\d))/g, ",") + ' VND';
+            // }
 
-            $(document).on('click', '.room-checkbox', function() {
-                let id = $(this).data('id');
+            // $(document).on('click', '.room-checkbox', function() {
+            //     console.log(123);
 
-                $.ajax({
-                    url: "{{ route('user.handle.publish', ':id') }}".replace(':id', id),
-                    type: "POST",
-                    success: function(response) {
-                        if (response.status === 'success') {
-                            $('.show-total').html(formatCurrency(response.total));
-                        }
-                    }
-                })
+            //     let id = $(this).data('id');
 
-            })
+            //     $.ajax({
+            //         url: "{{ route('user.handle.publish', ':id') }}".replace(':id', id),
+            //         type: "POST",
+            //         success: function(response) {
+            //             if (response.status === 'success') {
+            //                 $('.show-total').html(formatCurrency(response.total));
+            //             }
+            //         }
+            //     })
 
-            var publish = 0;
-            // Nếu tất cả checkbox con đều được chọn
-            if ($('.room-checkbox:checked').length === $('.room-checkbox').length) {
+            // })
 
-                $('#select-all').prop('checked', true); // Đánh dấu checkbox "select-all"
-            } else {
+            // var publish = 0;
+            // // Nếu tất cả checkbox con đều được chọn
+            // if ($('.room-checkbox:checked').length === $('.room-checkbox').length) {
 
-                $('#select-all').prop('checked', false); // Bỏ chọn checkbox "select-all"
-            }
+            //     $('#select-all').prop('checked', true); // Đánh dấu checkbox "select-all"
+            // } else {
+
+            //     $('#select-all').prop('checked', false); // Bỏ chọn checkbox "select-all"
+            // }
 
 
-            $('#select-all').on('change', function() {
-                publish = $(this).prop('checked') ? 1 : 0;
-                $('.room-checkbox').prop('checked', $(this).prop('checked'));
+            // $('#select-all').on('change', function() {
+            //     publish = $(this).prop('checked') ? 1 : 0;
+            //     $('.room-checkbox').prop('checked', $(this).prop('checked'));
 
-                $.ajax({
-                    url: "{{ route('user.handle.publish.all') }}" + '?publish=' + publish,
-                    type: "POST",
-                    success: function(response) {
-                        if (response.status === 'success') {
-                            $('.show-total').html(formatCurrency(response.total));
-                        }
-                    }
-                })
-            })
+            //     $.ajax({
+            //         url: "{{ route('user.handle.publish.all') }}" + '?publish=' + publish,
+            //         type: "POST",
+            //         success: function(response) {
+            //             if (response.status === 'success') {
+            //                 $('.show-total').html(formatCurrency(response.total));
+            //             }
+            //         }
+            //     })
+            // })
 
             $(document).on('click', '.addWishlistBtn', function() {
                 let id = $(this).data('id');

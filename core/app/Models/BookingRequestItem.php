@@ -20,4 +20,9 @@ class BookingRequestItem extends Model
         'tax-charge',
         'status',
     ];
+
+    public function room()
+    {
+        return $this->belongsTo(Room::class);
+    }
 }

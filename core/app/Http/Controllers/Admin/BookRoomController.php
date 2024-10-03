@@ -62,7 +62,6 @@ class BookRoomController extends Controller
 
     public function book(Request $request)
     {
-   
         DB::beginTransaction();
         try {
             $validator = Validator::make($request->all(), [
