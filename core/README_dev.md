@@ -397,6 +397,24 @@ ALTER TABLE `booking_requests`
     DROP COLUMN `room_type_id`,           -- Loại bỏ cột loại phòng
     ADD COLUMN `room_id` INT UNSIGNED NOT NULL AFTER `user_id`;  -- Thêm cột room_id
 
+
+ALTER TABLE `bookings`
+ADD COLUMN product_cost DECIMAL(28,8) NOT NULL DEFAULT 0.00000000;  
+CREATE TABLE userd_product_rooms (
+    id BIGINT UNSIGNED NOT NULL AUTO_INCREMENT PRIMARY KEY,
+    booking_id INT UNSIGNED NOT NULL DEFAULT 0,
+    product_id INT UNSIGNED NOT NULL DEFAULT 0,
+    room_id INT UNSIGNED NOT NULL DEFAULT 0,
+    booked_room_id INT UNSIGNED,
+    qty INT UNSIGNED NOT NULL DEFAULT 0,
+    unit_price DECIMAL(28,8) NOT NULL DEFAULT 0.00000000,
+    total_amount DECIMAL(28,8) NOT NULL DEFAULT 0.00000000,
+    product_date DATE,
+    admin_id INT UNSIGNED NOT NULL DEFAULT 0,
+    created_at TIMESTAMP,
+    updated_at TIMESTAMP
+);
+
 -- 02/10
 CREATE TABLE `booking_request_items` (
   `id` int NOT NULL,
@@ -421,25 +439,6 @@ ALTER TABLE `booking_requests`
   DROP `room_id`,
   DROP `unit_fare`,
   DROP `tax_charge`;
-
--- 10/01
-ALTER TABLE `bookings`
-ADD COLUMN product_cost DECIMAL(28,8) NOT NULL DEFAULT 0.00000000;  
-
-CREATE TABLE userd_product_rooms (
-    id BIGINT UNSIGNED NOT NULL AUTO_INCREMENT PRIMARY KEY,
-    booking_id INT UNSIGNED NOT NULL DEFAULT 0,
-    product_id INT UNSIGNED NOT NULL DEFAULT 0,
-    room_id INT UNSIGNED NOT NULL DEFAULT 0,
-    booked_room_id INT UNSIGNED,
-    qty INT UNSIGNED NOT NULL DEFAULT 0,
-    unit_price DECIMAL(28,8) NOT NULL DEFAULT 0.00000000,
-    total_amount DECIMAL(28,8) NOT NULL DEFAULT 0.00000000,
-    product_date DATE,
-    admin_id INT UNSIGNED NOT NULL DEFAULT 0,
-    created_at TIMESTAMP,
-    updated_at TIMESTAMP
-);
 
 -- 03/10
 ALTER TABLE `booking_request_items` CHANGE `id` `id` INT NOT NULL AUTO_INCREMENT, add PRIMARY KEY (`id`);
