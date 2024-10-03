@@ -12,14 +12,14 @@ class WishlistController extends Controller
 {
 
     public function toggleWishlist($roomId)
-    { 
+    {
         $userId = Auth::id();
-       
+
         //Kiểm tra xem phòng đã có trong danh sách yêu thích hay chưa
         $wishlist = Wishlist::where([
             'user_id' => $userId,
             'room_id' => $roomId,
-        ])->first();
+        ])->first();            
 
         if ($wishlist) {
             //Nếu đã có trong danh sách yêu thích, xóa khỏi danh sách

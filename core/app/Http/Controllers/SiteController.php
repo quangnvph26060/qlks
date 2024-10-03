@@ -19,6 +19,7 @@ use App\Models\SupportTicket;
 use App\Models\BookingRequest;
 use App\Models\SupportMessage;
 use App\Models\AdminNotification;
+use Illuminate\Support\Facades\DB;
 use Illuminate\Support\Facades\Auth;
 use Illuminate\Support\Facades\Cookie;
 use Illuminate\Support\Facades\Validator;
@@ -224,7 +225,7 @@ class SiteController extends Controller
     {
         $pageTitle = 'Loại phòng';
         // $roomTypes = RoomType::active()->with('images', 'amenities')->with(['images', 'amenities', 'rooms.roomPricesActive'])->get();
-        $rooms = Room::active()->has('roomPricesActive')->with(['images', 'amenities:title', 'facilities:title', 'roomPricesActive'])->get();
+        $rooms = Room::active()->has('roomPricesActive')->with(['images', 'amenities:title', 'facilities:title', 'roomPricesActive'])->where('status', 1)->get();
         $amenities = Amenity::all();
         $facilities = Facility::all();
 
@@ -237,13 +238,15 @@ class SiteController extends Controller
 
         // Lọc theo giá tối thiểu
         $query->when($request->priceMin && $request->priceMax, function ($q) use ($request) {
-            $minPrice = str_replace('.', '', $request->priceMin);
-            $maxPrice = str_replace(['.', '+'], '', $request->priceMax);
+            // Loại bỏ dấu phẩy và chuỗi "VND"
+            $minPrice = str_replace(['.', ',', ' VND'], '', $request->priceMin);
+            $maxPrice = str_replace(['.', ',', ' VND', '+'], '', $request->priceMax);
 
             return $q->whereHas('roomPricesActive', function ($subQuery) use ($minPrice, $maxPrice) {
-                return $subQuery->whereBetween('price', [$minPrice, $maxPrice]);
+                return $subQuery->whereBetween('price', [(int)$minPrice, (int)$maxPrice]);
             });
         });
+
 
 
         // Lọc theo tiện ích
@@ -360,43 +363,120 @@ class SiteController extends Controller
 
     public function sendBookingRequest(Request $request)
     {
-        $request->validate([
-            'room_id'     => 'required|exists:rooms,id',  // Kiểm tra phòng cụ thể
-            'check_in'    => 'required|date_format:m/d/Y|after:yesterday',
-            'check_out'   => 'nullable|date_format:m/d/Y|after_or_equal:check_in',
-        ]);
+        // dd($request->check_in, $request->check_out);
+        $rules = [];
+
+        if ($request->check_in) {
+            // Chuyển từ Y-m-d sang m/d/Y
+
+            $rules['check_in'] = 'required|after:today';
+        }
+
+        if ($request->check_out) {
+            // Chuyển từ Y-m-d sang m/d/Y
+            $rules['check_out'] = 'nullable|after_or_equal:check_in';
+        }
 
 
+
+        // Kiểm tra nếu room_id có trong request
+        if ($request->room_id) {
+            $rules['room_id'] = 'required|exists:rooms,id';
+        }
+
+        // Kiểm tra ngày check_in và check_out cho trường hợp thứ hai
+        if ($request->check_in_1) {
+            $rules['check_in_1'] = 'required|date_format:m/d/Y|after:today';
+        }
+
+        if ($request->check_out_1) {
+            $rules['check_out_1'] = 'required|date_format:m/d/Y|after_or_equal:check_in_1';
+        }
+
+        $request->validate($rules);
+
+        // Kiểm tra người dùng đã đăng nhập chưa
         if (!Auth::check()) {
             return redirect()->route('user.login')->with('BOOKING_REQUEST', true);
         }
 
-        $checkInDate   = Carbon::parse($request->check_in);
-        $checkOutDate  = Carbon::parse($request->check_out);
+        // Kiểm tra số lượng phòng khả dụng
+        if ($this->getMinimumAvailableRoom($request) < 1) {
+            return back()->withNotify(['error', 'Room not available']);
+        }
+
         $user = Auth::user();
-        $room = Room::with('roomPricesActive:price')->find($request->room_id);
+        $checkInDate = Carbon::parse($request->check_in ?? $request->check_in_1);
+        $checkOutDate = Carbon::parse($request->check_out ?? $request->check_out_1);
 
-        $bookingRequest = new BookingRequest();
-        $bookingRequest->user_id = $user->id;
-        $bookingRequest->room_id = $request->room_id;
-        $bookingRequest->check_in = $checkInDate;
-        $bookingRequest->check_out = $checkOutDate;
-        $bookingRequest->unit_fare = $room->roomPricesActive->first()->price;
+        // Tạo BookingRequest trong transaction để đảm bảo tính toàn vẹn dữ liệu
+        DB::transaction(function () use ($request, $user, $checkInDate, $checkOutDate) {
+            $bookRequest = BookingRequest::create([
+                'user_id' => $user->id,
+                'check_in' => $checkInDate,
+                'check_out' => $checkOutDate,
+            ]);
 
-        $bookingAmount = $bookingRequest->unit_fare * ($checkInDate->diffInDays($checkOutDate));
-        $taxCharge = $bookingAmount * config('app.tax_rate') / 100;
-        $bookingRequest->tax_charge = $taxCharge;
-        $bookingRequest->total_amount = $bookingAmount + $taxCharge;
-        $bookingRequest->save();
+            $totalAmount = 0;
+            $bookingRequestItems = [];
 
-        // Thông báo cho admin
-        AdminNotification::create([
-            'user_id' => $user->id,
-            'title' => "$user->fullname đã yêu cầu đặt phòng",
-            'click_url' => urlPath('admin.request.booking.approve', $bookingRequest->id),
-        ]);
+            // Trường hợp khi có room_id
+            if ($request->room_id) {
+                $room = Room::with('roomPricesActive:price')->findOrFail($request->room_id);
+                $roomPrice = $room->roomPricesActive->first()->price;
 
-        return redirect()->route('user.booking.request.all')->with('success', 'Yêu cầu đặt chỗ đã được gửi thành công');
+                $totalDays = $checkInDate->diffInDays($checkOutDate);
+                $totalFare = $roomPrice * $totalDays;
+
+                $taxCharge = $totalFare * config('app.tax_rate') / 100;
+                $totalAmount += $totalFare + $taxCharge;
+
+                $bookingRequestItems[] = [
+                    'room_id' => $room->id,
+                    'unit_fare' => $roomPrice,
+                    'tax-charge' => $taxCharge,
+                ];
+            } else {
+                /**
+                 * @var User $user
+                 */
+                $wishLists = $user->wishlist()->where('publish', 1)
+                    ->with('room.roomPricesActive:price')->get();
+
+                foreach ($wishLists as $item) {
+                    $roomPrice = $item->room->roomPricesActive->first()->price;
+
+                    $totalDays = $checkInDate->diffInDays($checkOutDate);
+                    $totalFare = $roomPrice * $totalDays;
+
+                    $taxCharge = $totalFare * config('app.tax_rate') / 100;
+                    $totalAmount += $totalFare + $taxCharge;
+                    $bookingRequestItems[] = [
+                        'room_id' => $item->room->id,
+                        'unit_fare' => $roomPrice,
+                        'tax-charge' => $taxCharge,
+                    ];
+
+                    $item->delete();
+                }
+            }
+            // Lưu các mục đặt phòng vào BookingRequest
+            $bookRequest->bookingRequestItems()->createMany($bookingRequestItems);
+
+            // Cập nhật tổng số tiền
+            $bookRequest->total_amount = $totalAmount;
+            $bookRequest->save();
+
+            // Gửi thông báo cho admin
+            AdminNotification::create([
+                'user_id' => $user->id,
+                'title' => $user->fullname . " đã yêu cầu đặt phòng",
+                'click_url' => route('admin.request.booking.approve', $bookRequest->id),
+            ]);
+        });
+
+        return redirect()->route('user.booking.request.all')
+            ->with('success', 'Yêu cầu đặt chỗ đã được gửi thành công');
     }
 
 

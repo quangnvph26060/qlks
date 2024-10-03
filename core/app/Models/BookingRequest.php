@@ -7,40 +7,39 @@ use Carbon\Carbon;
 use Illuminate\Database\Eloquent\Model;
 use Illuminate\Database\Eloquent\Casts\Attribute;
 
-class BookingRequest extends Model {
+class BookingRequest extends Model
+{
 
-    protected $fillable = ['id'];
+    protected $fillable = ['id', 'booking_id', 'user_id', 'check_in', 'check_out', 'total_amount', 'status'];
 
-    protected $casts = [
-        'room_type_details' => 'object'
-    ];
-
-    public function user() {
+    public function user()
+    {
         return $this->belongsTo(User::class);
     }
 
-    public function booking() {
+    public function booking()
+    {
         return $this->belongsTo(Booking::class);
     }
 
-    public function room() {
-        return $this->belongsTo(Room::class);
-    }
-
     //scope
-    public function scopeInitial($query) {
+    public function scopeInitial($query)
+    {
         return $query->where('status', Status::BOOKING_REQUEST_PENDING);
     }
 
-    public function scopeApproved($query) {
+    public function scopeApproved($query)
+    {
         return $query->where('status', Status::BOOKING_REQUEST_APPROVED);
     }
 
-    public function scopeCanceled($query) {
+    public function scopeCanceled($query)
+    {
         return $query->where('status', Status::BOOKING_REQUEST_CANCELED);
     }
 
-    public function statusBadge(): Attribute {
+    public function statusBadge(): Attribute
+    {
         $className = 'badge badge--';
         if ($this->status == Status::BOOKING_REQUEST_PENDING) {
             $className .= 'warning';
@@ -54,23 +53,37 @@ class BookingRequest extends Model {
         }
 
         return new Attribute(
-            get: fn () => "<span class='badge badge--$className'>" . trans($text) . "</span>",
+            get: fn() => "<span class='badge badge--$className'>" . trans($text) . "</span>",
         );
     }
 
-    function bookFor() {
+    function bookFor()
+    {
         return Carbon::parse($this->check_in)->diffInDays(Carbon::parse($this->check_out));
     }
 
-    public function totalFare() {
+    public function totalFare()
+    {
         return $this->total_amount - $this->tax_charge;
     }
 
-    public function taxPercentage() {
+    public function taxPercentage()
+    {
         return $this->tax_charge * 100 / ($this->totalFare() > 0 ? $this->totalFare() : 1);
     }
 
-    public function taxCharge() {
+    public function taxCharge()
+    {
         return $this->unit_fare * $this->taxPercentage() / 100;
+    }
+
+    public function bookingRequestItems()
+    {
+        return $this->hasMany(BookingRequestItem::class);
+    }
+
+    public function bookingItems()
+    {
+        return $this->hasMany(BookingRequestItem::class);
     }
 }
