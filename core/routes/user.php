@@ -93,6 +93,7 @@ Route::middleware('auth')->name('user.')->group(function () {
                 Route::get('payment/{id}', 'payment')->name('payment');
                 Route::get('details/{id}', 'bookingDetails')->name('details');
                 Route::post('request/cancel/{id}', 'cancelBookingRequest')->name('request.cancel');
+                Route::post('request-item/cancel/{id}', 'cancelBookingRequestItem')->name('request-item.cancel');
             });
         });
 

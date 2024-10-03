@@ -17,13 +17,16 @@
                             </div>
                             @can('admin.language.store.key')
                                 <div class="col-md-5 mt-md-0 mt-3">
-                                    <button type="button" data-bs-toggle="modal" data-bs-target="#addModal" class="btn btn-sm btn-outline--primary float-end"><i class="fas fa-plus"></i> @lang('Thêm khóa mới') </button>
+                                    <button type="button" data-bs-toggle="modal" data-bs-target="#addModal"
+                                        class="btn btn-sm btn-outline--primary float-end"><i class="fas fa-plus"></i>
+                                        @lang('Thêm khóa mới') </button>
                                 </div>
                             @endcan
                         </div>
                         <hr>
                         <div class="table-responsive--sm table-responsive">
-                            <table class="table table--light tabstyle--two custom-data-table white-space-wrap" id="myTable">
+                            <table class="table table--light tabstyle--two custom-data-table white-space-wrap"
+                                id="myTable">
                                 <thead>
                                     <tr>
                                         <th>
@@ -48,13 +51,19 @@
                                                 <td>
                                                     <div class="button--group">
                                                         @can('admin.language.update.key')
-                                                            <button type="button" data-bs-target="#editModal" data-bs-toggle="modal" data-title="{{ $k }}" data-key="{{ $k }}" data-value="{{ $language }}" class="editModal btn btn-sm btn-outline--primary">
+                                                            <button type="button" data-bs-target="#editModal"
+                                                                data-bs-toggle="modal" data-title="{{ $k }}"
+                                                                data-key="{{ $k }}" data-value="{{ $language }}"
+                                                                class="editModal btn btn-sm btn-outline--primary">
                                                                 <i class="la la-pencil"></i> @lang('Edit')
                                                             </button>
                                                         @endcan
 
                                                         @can('admin.language.delete.key')
-                                                            <button type="button" data-key="{{ $k }}" data-value="{{ $language }}" data-bs-toggle="modal" data-bs-target="#DelModal" class="btn btn-sm btn-outline--danger deleteKey">
+                                                            <button type="button" data-key="{{ $k }}"
+                                                                data-value="{{ $language }}" data-bs-toggle="modal"
+                                                                data-bs-target="#DelModal"
+                                                                class="btn btn-sm btn-outline--danger deleteKey">
                                                                 <i class="la la-trash"></i> @lang('Remove')
                                                             </button>
                                                         @endcan
@@ -83,7 +92,8 @@
         </div>
 
         @can('admin.language.store.key')
-            <div class="modal fade" id="addModal" tabindex="-1" role="dialog" aria-labelledby="addModalLabel" aria-hidden="true">
+            <div class="modal fade" id="addModal" tabindex="-1" role="dialog" aria-labelledby="addModalLabel"
+                aria-hidden="true">
                 <div class="modal-dialog modal-lg">
                     <div class="modal-content">
                         <div class="modal-header">
@@ -98,12 +108,14 @@
                             <div class="modal-body">
                                 <div class="form-group">
                                     <label for="key">@lang('Key')</label>
-                                    <input type="text" class="form-control" id="key" name="key" value="{{ old('key') }}" required>
+                                    <input type="text" class="form-control" id="key" name="key"
+                                        value="{{ old('key') }}" required>
 
                                 </div>
                                 <div class="form-group">
                                     <label for="value">@lang('Value')</label>
-                                    <input type="text" class="form-control" id="value" name="value" value="{{ old('value') }}" required>
+                                    <input type="text" class="form-control" id="value" name="value"
+                                        value="{{ old('value') }}" required>
 
                                 </div>
                             </div>
@@ -118,12 +130,14 @@
         @endcan
 
         @can('admin.language.update.key')
-            <div class="modal fade" id="editModal" tabindex="-1" role="dialog" aria-labelledby="editModalLabel" aria-hidden="true">
+            <div class="modal fade" id="editModal" tabindex="-1" role="dialog" aria-labelledby="editModalLabel"
+                aria-hidden="true">
                 <div class="modal-dialog modal-lg">
                     <div class="modal-content">
                         <div class="modal-header">
                             <h4 class="modal-title" id="editModalLabel">@lang('Edit')</h4>
-                            <button type="button" class="close" data-bs-dismiss="modal" aria-label="Close"><i class="las la-times"></i></button>
+                            <button type="button" class="close" data-bs-dismiss="modal" aria-label="Close"><i
+                                    class="las la-times"></i></button>
                         </div>
 
                         <form action="{{ route('admin.language.update.key', $lang->id) }}" method="post">
@@ -146,12 +160,15 @@
         @endcan
         <!-- Modal for DELETE -->
         @can('admin.language.delete.key')
-            <div class="modal fade" id="DelModal" tabindex="-1" role="dialog" aria-labelledby="DelModalLabel" aria-hidden="true">
+            <div class="modal fade" id="DelModal" tabindex="-1" role="dialog" aria-labelledby="DelModalLabel"
+                aria-hidden="true">
                 <div class="modal-dialog">
                     <div class="modal-content">
                         <div class="modal-header">
-                            <h5 class="modal-title" id="DelModalLabel"> @lang('Confirmation Alert!')</h5>
-                            <button type="button" class="close" data-bs-dismiss="modal" aria-label="Close"><i class="las la-times"></i></button>
+                            <h5 class="modal-title" id="DelModalLabel"> @lang('
+                            Cảnh báo xác nhận!')</h5>
+                            <button type="button" class="close" data-bs-dismiss="modal" aria-label="Close"><i
+                                    class="las la-times"></i></button>
                         </div>
                         <div class="modal-body">
                             <p>@lang('Are you sure to delete this key from this language?')</p>
@@ -161,7 +178,8 @@
                             <input type="hidden" name="key">
                             <input type="hidden" name="value">
                             <div class="modal-footer">
-                                <button type="button" class="btn btn--dark" data-bs-dismiss="modal">@lang('No')</button>
+                                <button type="button" class="btn btn--dark"
+                                    data-bs-dismiss="modal">@lang('No')</button>
                                 <button type="submit" class="btn btn--primary">@lang('Yes')</button>
                             </div>
                         </form>
@@ -179,7 +197,8 @@
                 <div class="modal-content">
                     <div class="modal-header">
                         <h4 class="modal-title">@lang('Import Keywords')</h4>
-                        <button type="button" class="close" data-bs-dismiss="modal" aria-label="Close"><i class="las la-times"></i></button>
+                        <button type="button" class="close" data-bs-dismiss="modal" aria-label="Close"><i
+                                class="las la-times"></i></button>
                     </div>
                     <div class="modal-body">
                         <div class="form-group">
@@ -208,7 +227,8 @@
 @push('breadcrumb-plugins')
     <x-search-form placeholder="Search keywords" />
     @can('admin.language.import.lang')
-        <button type="button" class="btn btn-sm btn-outline--primary importBtn"><i class="la la-download"></i>@lang('Import Keywords')</button>
+        <button type="button" class="btn btn-sm btn-outline--primary importBtn"><i
+                class="la la-download"></i>@lang('Import Keywords')</button>
     @endcan
 @endpush
 

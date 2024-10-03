@@ -19,8 +19,8 @@ class ManageBookingRequestController extends Controller
 
     public function index()
     {
-        $pageTitle       = 'Tất cả yêu cầu đặt chỗ';
-        $bookingRequests = $this->bookingRequestData('initial');
+        $pageTitle = 'Tất cả yêu cầu đặt chỗ';
+        $bookingRequests = $this->bookingRequestData('initial'); // Lấy đối tượng phân trang
         return view('admin.booking.request_list', compact('pageTitle', 'bookingRequests'));
     }
 
@@ -50,7 +50,7 @@ class ManageBookingRequestController extends Controller
 
     public function approve(Request $request, $id)
     {
-        $bookingRequest = BookingRequest::with('user', 'roomType:id,name')->findOrFail($id);
+        $bookingRequest = BookingRequest::findOrFail($id);
         if ($bookingRequest->status) {
             $notify[] = ['error', 'Yêu cầu đặt phòng này đã được chấp thuận'];
             return to_route('admin.request.booking.all')->withNotify($notify);
@@ -58,12 +58,14 @@ class ManageBookingRequestController extends Controller
         $pageTitle = "Chỉ định phòng";
 
         $request->merge([
-            'room_type'     => $bookingRequest->room_type_id,
+            'room_type'     => $bookingRequest->room_id,
             'rooms'         => $bookingRequest->number_of_rooms,
             'checkin_date'  => $bookingRequest->check_in,
             'checkout_date' => $bookingRequest->check_out,
             'unit_fare'     => $bookingRequest->unit_fare
         ]);
+
+        // dd($request->all());
 
         $view =  $this->getRooms($request); // getRooms function's definition is in App/Traits/BookingActions
 
@@ -178,9 +180,48 @@ class ManageBookingRequestController extends Controller
         }
     }
 
+    // protected function bookingRequestData($scope)
+    // {
+    //     $query = BookingRequest::$scope()->searchable(['user:username,email'])->with('user')->orderBy('id', 'DESC')->paginate(getPaginate());
+    //     return $query;
+    // }
+
     protected function bookingRequestData($scope)
     {
-        $query = BookingRequest::$scope()->searchable(['user:username,email', 'roomType:name'])->with('user', 'roomType')->orderBy('id', 'DESC')->paginate(getPaginate());
-        return $query;
+        $query = BookingRequest::$scope()
+            ->searchable(['user:username,email'])
+            ->with('user', 'bookingItems.room.roomType')
+            ->orderBy('id', 'DESC')
+            ->paginate(getPaginate()); // Thay vì trả về mảng, giữ lại đối tượng phân trang
+
+        // Thêm thông tin phòng vào đối tượng phân trang
+        foreach ($query as $bookingRequest) {
+            $roomTypeCounts = [];
+
+            foreach ($bookingRequest->bookingItems as $bookingItem) {
+                $roomTypeId = $bookingItem->room->room_type_id;
+                $roomTypeName = $bookingItem->room->roomType->name;
+
+                if (isset($roomTypeCounts[$roomTypeId])) {
+                    $roomTypeCounts[$roomTypeId]['count']++;
+                } else {
+                    $roomTypeCounts[$roomTypeId] = [
+                        'name' => $roomTypeName,
+                        'count' => 1,
+                    ];
+                }
+            }
+
+            // Tạo chuỗi thông tin cho từng yêu cầu
+            $info = [];
+            foreach ($roomTypeCounts as $roomTypeData) {
+                $info[] = $roomTypeData['count'] . " " . $roomTypeData['name'];
+            }
+
+            // Lưu thông tin vào thuộc tính `roomInfo` của bookingRequest
+            $bookingRequest->roomInfo = implode(" | ", $info); // Thêm thông tin phòng vào model
+        }
+
+        return $query; // Trả về đối tượng phân trang
     }
 }

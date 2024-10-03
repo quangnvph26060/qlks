@@ -444,3 +444,8 @@ CREATE TABLE userd_product_rooms (
 -- 03/10
 ALTER TABLE `booking_request_items` CHANGE `id` `id` INT NOT NULL AUTO_INCREMENT, add PRIMARY KEY (`id`);
 
+ALTER TABLE `booking_request_items` CHANGE `tax-charge` `tax_charge` DECIMAL(12,0) NOT NULL;
+
+ALTER TABLE `booked_rooms` DROP `room_type_id`;
+
+

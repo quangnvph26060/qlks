@@ -363,17 +363,13 @@ class SiteController extends Controller
 
     public function sendBookingRequest(Request $request)
     {
-        // dd($request->check_in, $request->check_out);
         $rules = [];
 
         if ($request->check_in) {
-            // Chuyển từ Y-m-d sang m/d/Y
-
             $rules['check_in'] = 'required|after:today';
         }
 
         if ($request->check_out) {
-            // Chuyển từ Y-m-d sang m/d/Y
             $rules['check_out'] = 'nullable|after_or_equal:check_in';
         }
 
@@ -393,7 +389,8 @@ class SiteController extends Controller
             $rules['check_out_1'] = 'required|date_format:m/d/Y|after_or_equal:check_in_1';
         }
 
-        $request->validate($rules);
+       $data = $request->validate($rules);
+
 
         // Kiểm tra người dùng đã đăng nhập chưa
         if (!Auth::check()) {
@@ -434,7 +431,7 @@ class SiteController extends Controller
                 $bookingRequestItems[] = [
                     'room_id' => $room->id,
                     'unit_fare' => $roomPrice,
-                    'tax-charge' => $taxCharge,
+                    'tax_charge' => $taxCharge,
                 ];
             } else {
                 /**
@@ -454,7 +451,7 @@ class SiteController extends Controller
                     $bookingRequestItems[] = [
                         'room_id' => $item->room->id,
                         'unit_fare' => $roomPrice,
-                        'tax-charge' => $taxCharge,
+                        'tax_charge' => $taxCharge,
                     ];
 
                     $item->delete();
@@ -502,8 +499,8 @@ class SiteController extends Controller
 
     protected function getMinimumAvailableRoom($request)
     {
-        $checkInDate = Carbon::parse($request->check_in);
-        $checkOutDate = Carbon::parse($request->check_out);
+        $checkInDate = Carbon::parse($request->check_in ?? $request->check_in_1);
+        $checkOutDate = Carbon::parse($request->check_out ?? $request->check_out_1);
         $dateWiseAvailableRoom = [];
 
         for ($date = $checkInDate; $date <= $checkOutDate; $date->addDay()) {

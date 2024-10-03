@@ -27,7 +27,9 @@ class PaymentController extends Controller
         $pageTitle = 'Phương thức thanh toán';
         $methods = Transaction::where('status', 1)->get();
 
-        $booking = Booking::with(['bookedRooms.roomType.images', 'bookedRooms.room', 'bookedRooms.booking.user'])->findOrFail($id);
+        // $booking = Booking::with(['bookedRooms.roomType.images', 'bookedRooms.room', 'bookedRooms.booking.user'])->findOrFail($id);
+        $booking = Booking::with(['bookedRooms'])->findOrFail($id);
+        dd($booking);
         $deposit = GeneralSetting::value('deposit');
         return view('Template::user.payment.deposit', compact('pageTitle', 'booking', 'gatewayCurrency', 'deposit', 'methods'));
     }

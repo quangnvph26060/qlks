@@ -21,7 +21,7 @@
 
                     <div class="d-flex flex-wrap gap-3 justify-content-between mb-1">
                         <div class="d-flex flex-column mb-3">
-                            <h6 class="text--primary">{{ $bookingRequest->roomType->name }}</h6>
+                            {{-- <h6 class="text--primary">{{ $bookingRequest->roomType->name }}</h6> --}}
                             <small class="text-muted">@lang('Loại phòng')</small>
                         </div>
 

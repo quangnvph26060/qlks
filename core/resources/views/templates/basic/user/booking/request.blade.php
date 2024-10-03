@@ -27,7 +27,7 @@
                         <td>
                             {{ $bookingRequest->bookingItems->count() }}</td>
                         <td>
-                            {{ showAmount($bookingRequest->bookingItems->sum('tax-charge')) }}</td>
+                            {{ showAmount($bookingRequest->bookingItems->sum('tax_charge')) }}</td>
 
                         <td class="fw-bold">
                             <p> {{ showAmount($bookingRequest->total_amount) }}</p>
@@ -42,7 +42,7 @@
                             </button>
                             <button @disabled($bookingRequest->status) class="btn btn-sm btn-outline--danger confirmationBtn"
                                 data-action="{{ route('user.booking.request.cancel', $bookingRequest->id) }}"
-                                data-question="@lang('Are you sure to cancel this request?')"><i class="las la-times-circle"></i>
+                                data-question="@lang('Bạn có chắc chắn hủy yêu cầu này không?')"><i class="las la-times-circle"></i>
                                 @lang('Cancel')</button>
                         </td>
                     </tr>
@@ -65,7 +65,7 @@
 
     <!-- Modal -->
     <div class="modal fade" id="staticBackdrop" tabindex="-1" aria-labelledby="staticBackdrop" aria-hidden="true">
-        <div class="modal-dialog madal-dialog-centered modal-lg">
+        <div class="modal-dialog madal-dialog-centered modal-lg modal-custom">
             <div class="modal-content">
                 <div class="modal-header">
                     <h5 class="modal-title" id="staticBackdrop">Danh sách phòng đã yêu cầu đặt</h5>
@@ -90,7 +90,7 @@
                     </div>
                 </div>
                 <div class="modal-footer">
-                    <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Close</button>
+                    <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Đóng</button>
                 </div>
             </div>
         </div>
@@ -99,6 +99,18 @@
 
 @push('style')
     <style>
+        #staticBackdrop {
+            z-index: 1050 !important;
+        }
+
+        .modal-backdrop {
+            z-index: 1049 !important;
+        }
+
+        #confirmationModal {
+            z-index: 1060 !important;
+        }
+
         .custom--table tbody td:first-child,
         .custom--table thead th:first-child {
             text-align: center;
@@ -200,32 +212,45 @@
         }
 
         function appendToTable(data) {
-
             $('#tbody').empty();
-            var html = '';
-            let disabled = '';
-            data.forEach(element => {
-                if (element['status'] == 0) {
-                    element['status'] = '<span class="badge bg-warning">@lang('Đang chờ xử lý')</span>';
-                } else if (element['status'] == 1) {
-                    element['status'] = '<span class="badge bg-success">@lang('Đã chấp nhận')</span>';
-                } else {
-                    element['status'] = '<span class="badge bg-danger">@lang('Đã hủy')</span>';
+
+            const html = data.map(element => {
+                let statusBadge = '';
+                let disabled = 'disabled';
+
+                switch (element['status']) {
+                    case 0:
+                        statusBadge = '<span class="badge bg-warning">@lang('Đang chờ xử lý')</span>';
+                        disabled = '';
+                        break;
+                    case 1:
+                        statusBadge = '<span class="badge bg-success">@lang('Đã chấp nhận')</span>';
+                        break;
+                    default:
+                        statusBadge = '<span class="badge bg-danger">@lang('Đã hủy')</span>';
+                        break;
                 }
 
-                if (element['status'] === 0) {
-                    disabled = 'disabled';
-                }
-                html += `
-                    <tr>
-                        <td>${element['room']['room_number']}</td>
-                        <td>${formatPrice(Number(element['unit_fare']))}</td>
-                        <td>${formatPrice(Number(element['tax-charge']))}</td>
-                        <td>${element['status']}</td>
-                        <td><button ${disabled} class="btn btn-sm btn-outline--danger">Hủy phòng</button></td>
-                    </tr>
-                `
-            });
+                // Xây dựng URL từ route Laravel
+                const actionUrl = `{{ route('user.booking.request-item.cancel', ':id') }}`.replace(':id', element[
+                    'id']);
+                return `
+            <tr data-id="${element['id']}">
+                <td>${element['room']['room_number']}</td>
+                <td>${formatPrice(Number(element['unit_fare']))}</td>
+                <td>${formatPrice(Number(element['tax_charge']))}</td>
+                <td>${statusBadge}</td>
+                <td>
+                    <button ${disabled}
+                    data-action="${actionUrl}"
+                    data-question="@lang('Xác nhận yêu cầu hủy phòng?')"
+                    class="btn btn-sm btn-outline--danger confirmationBtn"
+                    >Hủy phòng
+                    </button>
+                </td>
+            </tr>
+        `;
+            }).join('');
 
             $('#tbody').html(html);
         }
