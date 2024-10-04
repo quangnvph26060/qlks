@@ -514,6 +514,7 @@
 .btn-primary-2,
 .btn-primary-dates
 {
+    text-wrap: nowrap;
     padding: 8px 12px;
     color: #fff;
     background-color: #337ab7;
