@@ -72,12 +72,12 @@ class UpdateRoomPrices extends Command
                     }
                 }
             }
-
+            DB::table('room_price_rooms')->where('room_id', $room->id)->update(['status' => Status::PRICEROOM_INACTIVE]);
             // Hiển thị giá đang hoạt động
             if (!is_null($activePrice)) {
 
                 try {
-                    DB::table('room_price_rooms')->where('room_id', $room->id)->update(['status' => Status::PRICEROOM_INACTIVE]);
+                   
 
                     DB::table('room_price_rooms')
                         ->where('room_id', $room->id)

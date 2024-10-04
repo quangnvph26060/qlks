@@ -1,7 +1,7 @@
 <div class="modal fade productModal" id="productModal" tabindex="-1" aria-labelledby="productModalLabel"
 aria-hidden="true">
 <div class="modal-dialog">
-    <div class="modal-content" style="width: 50%;">
+    <div class="modal-content add-serve-mobi">
         <div class="modal-header">
             <h5 class="modal-title" id="productModalLabel">Thêm sản phẩm </h5>
             <button type="button" class="close" data-dismiss="modal" aria-label="Close">
@@ -29,32 +29,34 @@ aria-hidden="true">
                     </div>
                 </div>
 
-                <div class="form-group">
+                
                     <div class="form-group d-flex justify-content-end">
                         <button type="button" class="btn btn-success addProductBtn"><i
                                 class="las la-plus"></i> Thêm</button>
                     </div>
                     <label for="services">Danh sách sản phẩm</label>
-                    <div class="product-wrapper">
+                    <div class="row product-wrapper">
                         <div class="first-product-wrapper">
-                            <div class="d-flex service-item position-relative mb-3 flex-wrap">
-                                <div class="row w-100">
-                                    <div class="col-md-6">
-                                        <select class="custom-select no-right-radius w-100" name="product[]"
+                            <div class="d-flex service-item position-relative mb-3 flex-wrap-mobi">
+                                <div class="row">
+                                    <div class="col-md-6 col-sm-12">
+                                      <div class="form-group">
+                                            <select class="form-control custom-select no-right-radius" name="product[]"
                                             required>
-
-
-                                        </select>
+                                            </select>
+                                      </div>
                                     </div>
-                                    <div class="col-md-6">
-                                        <input class="form-control no-left-radius w-100 h-40" name="qty[]"
+                                    <div class="col-md-6 col-sm-12">
+                                        <div class="form-group">
+                                        <input class="form-control no-left-radius" name="qty[]"
                                             placeholder="@lang('Số lượng')" required type="text">
+                                        </div>
                                     </div>
                                 </div>
                             </div>
                         </div>
                     </div>
-                </div>
+               
 
                 
                     <div class="form-group">

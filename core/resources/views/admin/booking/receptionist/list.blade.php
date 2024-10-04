@@ -86,11 +86,12 @@
                         data-day="{{ $price }}" data-night="{{ $price }}"
                         data-name = "{{ $booking->roomType->name }} " data-roomNumber="{{ $booking->room->room_number }}"
                         data-room-type="{{ $booking->room_type_id }}" data-booking="{{ $booking->id }}">
-                        <p> {{ $booking->booking->booking_number }}</p>
-                        <p> {{ $booking->roomType->name }}</p>
-                        <p> {{ $booking->booking->check_in }} - {{ $booking->booking->check_out }}</p>
-                        <h3>{{ $booking->room->room_number }}</h3>
-                        {!! $booking->booking->checkGuest() !!}
+                        {{-- <p> {{ $booking->booking->booking_number }}</p> --}}
+                        <h1>{{ $booking->room->room_number }}</h1>
+                        <h3> {{ $booking->roomType->name }}</h3>
+                        {{-- <p> {{ $booking->booking->check_in }} - {{ $booking->booking->check_out }}</p> --}}
+
+                        <p> {!! $booking->booking->checkGuest() !!} </p>
 
                         @php
 
@@ -824,6 +825,8 @@
             $('.room-booking-status-occupied').on('click', function() {
                 var id = $(this).data('id');
                 var booking_id = $(this).data('booking');
+
+
                 handleLateCheckinClick(id, booking_id);
             });
 
@@ -952,7 +955,7 @@
                             });
                             rowsHtml += `
                             <tr>
-                                <td class="text-end" colspan="3">
+                                <td class="text-end" colspan="4">
                                     <span class="fw-bold">@lang('Tổng giá')</span>
                                 </td>
 
@@ -1099,6 +1102,7 @@
                         },
                         success: function(response) {
                             if (response.status === 'success') {
+                                $('#amount_payment').val("");
                                 handleLateCheckinClick(response.id, response.booking_id)
                                 notify('success', `Đã nhận thanh toán thành công`);
                             }
@@ -1462,37 +1466,6 @@
                 }
                 modal.modal('show');
             });
-
-        });
-
-
-
-        function formatCurrency(amount) {
-            const parts = amount.toString().split('.');
-            const integerPart = parts[0];
-            const formattedInteger = integerPart.replace(/\B(?=(\d{3})+(?!\d))/g, '.');
-
-            return formattedInteger + ' ' + 'VND';
-        }
-        const showSwalMessage = (icon, title, timer = 2000) => {
-            const Toast = Swal.mixin({
-                toast: true,
-                position: "top-end",
-                showConfirmButton: false,
-                timer: timer,
-                timerProgressBar: true,
-                didOpen: (toast) => {
-                    toast.onmouseenter = Swal.stopTimer;
-                    toast.onmouseleave = Swal.resumeTimer;
-                }
-            });
-            Toast.fire({
-                icon: icon,
-                title: `<p>${title}</p>`
-            });
-        };
-        // tất cả các dịch vụ cao cấp
-        $(document).ready(function() {
             var langChoose = "{{ __('Chọn') }}";
             $.ajax({
                 url: '{{ route('admin.services.booking.services') }}',
@@ -1537,7 +1510,6 @@
 
                 let formData = $(this).serialize();
                 let url = $(this).attr('action');
-
                 $.ajax({
                     type: "POST",
                     url: url,
@@ -1545,13 +1517,14 @@
                     success: function(response) {
                         if (response.success) {
                             notify('success', response.success);
-                            let firstItem = $(
-                                '.first-service-wrapper .service-item');
-                            $(document).find('.service-wrapper').find(
-                                '.service-item').not(
-                                firstItem).remove();
+                            let firstItem = $('.first-service-wrapper .service-item');
+                            // $(document).find('.service-wrapper').find('.service-item').not(firstItem).remove();
+                                
                             serviceForm.trigger("reset");
                             $('#serviceModal').hide();
+
+                            handleLateCheckinClick(response.data['booking_id'], response.data[
+                                'booked_room_id']);
                         } else {
                             $.each(response.error, function(key, value) {
                                 notify('error', value);
@@ -1560,7 +1533,37 @@
                     },
                 });
             });
+
         });
+
+
+
+        function formatCurrency(amount) {
+            const parts = amount.toString().split('.');
+            const integerPart = parts[0];
+            const formattedInteger = integerPart.replace(/\B(?=(\d{3})+(?!\d))/g, '.');
+
+            return formattedInteger + ' ' + 'VND';
+        }
+        const showSwalMessage = (icon, title, timer = 2000) => {
+            const Toast = Swal.mixin({
+                toast: true,
+                position: "top-end",
+                showConfirmButton: false,
+                timer: timer,
+                timerProgressBar: true,
+                didOpen: (toast) => {
+                    toast.onmouseenter = Swal.stopTimer;
+                    toast.onmouseleave = Swal.resumeTimer;
+                }
+            });
+            Toast.fire({
+                icon: icon,
+                title: `<p>${title}</p>`
+            });
+        };
+      
+      
 
         $(document).on('click', '.cancelBookingBtn', function() {
 
