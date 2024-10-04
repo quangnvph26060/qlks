@@ -365,7 +365,7 @@
                                 </div>
                                 <div class="card">
                                     <div class="card-body">
-                                        <div class="d-flex justify-content-between mt-3 mb-3">
+                                        <div class="d-flex justify-content-between mt-3 mb-3 coloumn-mobi">
                                             <h5 class="card-title">@lang('Tóm tắt thanh toán')</h5>
                                             <div>
                                                 {{-- data-id="{{ $booking->id }}" --}}
