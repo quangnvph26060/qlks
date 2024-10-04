@@ -1,4 +1,4 @@
-<div class="accordion-item">
+<div class="accordion-item mt-3">
     <div class="d-flex justify-content-between mt-2 mb-2">
         <h2 class="accordion-header" id="premiumServiceHeading">
             <button aria-controls="premiumService" aria-expanded="false" class="accordion-button"

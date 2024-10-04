@@ -86,11 +86,12 @@
                         data-day="{{ $price }}" data-night="{{ $price }}"
                         data-name = "{{ $booking->roomType->name }} " data-roomNumber="{{ $booking->room->room_number }}"
                         data-room-type="{{ $booking->room_type_id }}" data-booking="{{ $booking->id }}">
-                        <p> {{ $booking->booking->booking_number }}</p>
-                        <p> {{ $booking->roomType->name }}</p>
-                        <p> {{ $booking->booking->check_in }} - {{ $booking->booking->check_out }}</p>
-                        <h3>{{ $booking->room->room_number }}</h3>
-                        {!! $booking->booking->checkGuest() !!}
+                        {{-- <p> {{ $booking->booking->booking_number }}</p> --}}
+                        <h1>{{ $booking->room->room_number }}</h1>
+                        <h3> {{ $booking->roomType->name }}</h3>
+                        {{-- <p> {{ $booking->booking->check_in }} - {{ $booking->booking->check_out }}</p> --}}
+
+                        <p> {!! $booking->booking->checkGuest() !!} </p>
 
                         @php
 
@@ -824,6 +825,8 @@
             $('.room-booking-status-occupied').on('click', function() {
                 var id = $(this).data('id');
                 var booking_id = $(this).data('booking');
+
+
                 handleLateCheckinClick(id, booking_id);
             });
 
@@ -870,7 +873,7 @@
 
                             if (customer_type) {
                                 var url_user_info =
-                                    `{{ can('admin.users.detail') ? route('admin.users.detail', ['id' => ':id']) :"" }}`
+                                    `{{ can('admin.users.detail') ? route('admin.users.detail', ['id' => ':id']) : '' }}`
                                     .replace(':id', response.data.user_id);
 
                                 $.ajax({
@@ -952,7 +955,7 @@
                             });
                             rowsHtml += `
                             <tr>
-                                <td class="text-end" colspan="3">
+                                <td class="text-end" colspan="4">
                                     <span class="fw-bold">@lang('Tổng giá')</span>
                                 </td>
 
@@ -997,10 +1000,10 @@
                             $('#user_product').empty();
 
                             let rowsHtmlProduct = '';
-                            console.log( response.data.used_product_room);
-                            
+                            console.log(response.data.used_product_room);
+
                             response.data.used_product_room.forEach(function(booked, index) {
-                                    rowsHtmlProduct += `
+                                rowsHtmlProduct += `
                                         <tr>
                                             <td class="bg--date text-center" data-label="@lang('Ngày')">
                                                 ${booked.product_date}
@@ -1099,6 +1102,7 @@
                         },
                         success: function(response) {
                             if (response.status === 'success') {
+                                $('#amount_payment').val("");
                                 handleLateCheckinClick(response.id, response.booking_id)
                                 notify('success', `Đã nhận thanh toán thành công`);
                             }
@@ -1158,16 +1162,12 @@
 
                 var checkOutTime;
                 if (bookingType === 'gio') {
-                    console.log('gio');
                     checkOutTime = new Date(now.getTime() + (1 * 60 * 60 * 1000)); // Cộng 1 giờ
                 } else if (bookingType === 'ngay') {
-                    console.log('ngay');
-                    checkOutTime = new Date(now.getTime() + (1 * 24 * 60 * 60 *
-                        1000)); // Cộng 1 ngày
+                    checkOutTime = new Date(now.getTime() + (1 * 24 * 60 * 60 * 1000)); // Cộng 1 ngày
+
                 } else if (bookingType === 'dem') {
-                    console.log('dem');
-                    checkOutTime = new Date(now.getTime() + (12 * 60 * 60 *
-                        1000)); // Cộng 12 giờ
+                    checkOutTime = new Date(now.getTime() + (12 * 60 * 60 * 1000)); // Cộng 12 giờ
                 }
 
                 var checkOutYear = checkOutTime.getFullYear();
@@ -1210,25 +1210,36 @@
                 var formattedMinutes = durationMinutes.toString().padStart(2, '0'); // phút
 
                 let priceTime = 0;
-                if (bookingType === 'gio') {
-                    priceTime = parseFloat(window.savedDataHours.replace(',', '')) || 0;
-                } else if (bookingType === 'ngay') {
-                    priceTime = parseFloat(window.savedDataDay.replace(',', '')) || 0;
-                    updatedPrice = priceTime;
-                } else if (bookingType === 'dem') {
-                    priceTime = parseFloat(window.savedDataNight.replace(',', '')) || 0;
-                    updatedPrice = priceTime;
+                switch (bookingType) {
+                    case 'gio':
+                        priceTime = parseFloat(window.savedDataHours.replace(',', '')) || 0;
+                        break;
+                    case 'ngay':
+                        priceTime = parseFloat(window.savedDataDay.replace(',', '')) || 0;
+                        break;
+                    case 'dem':
+                        priceTime = parseFloat(window.savedDataNight.replace(',', '')) || 0;
+                        break;
                 }
 
-                if (bookingType !== 'dem' && bookingType !== 'ngay') {
-                    var updatedPrice = priceTime * formattedHours;
-                }
+                $('.inputTime').text(`${formattedHours}:${formattedMinutes}`);
 
+                let updatedPrice = 0;
+
+                const dateTimeDate = formattedHours / 24; // Số ngày
+                const dateTimeNight = formattedHours / 12; // Số đêm
+
+                if (formattedHours >= 24) {
+                    updatedPrice = dateTimeDate * priceTime; // Tính theo ngày
+                } else if (formattedHours >= 12) {
+                    updatedPrice = dateTimeNight * priceTime; // Tính theo đêm
+                } else {
+                    updatedPrice = formattedHours * priceTime; // Tính theo giờ
+                }
 
                 $('#input-price-booking').val(updatedPrice.toLocaleString());
                 $('#customer-price-booking').val(updatedPrice.toLocaleString());
 
-                $('.inputTime').text(formattedHours + ':' + formattedMinutes);
             }
 
             $('#checkInTime, #checkOutTime').on('change', calculateDuration);
@@ -1455,37 +1466,6 @@
                 }
                 modal.modal('show');
             });
-
-        });
-
-
-
-        function formatCurrency(amount) {
-            const parts = amount.toString().split('.');
-            const integerPart = parts[0];
-            const formattedInteger = integerPart.replace(/\B(?=(\d{3})+(?!\d))/g, '.');
-
-            return formattedInteger + ' ' + 'VND';
-        }
-        const showSwalMessage = (icon, title, timer = 2000) => {
-            const Toast = Swal.mixin({
-                toast: true,
-                position: "top-end",
-                showConfirmButton: false,
-                timer: timer,
-                timerProgressBar: true,
-                didOpen: (toast) => {
-                    toast.onmouseenter = Swal.stopTimer;
-                    toast.onmouseleave = Swal.resumeTimer;
-                }
-            });
-            Toast.fire({
-                icon: icon,
-                title: `<p>${title}</p>`
-            });
-        };
-        // tất cả các dịch vụ cao cấp
-        $(document).ready(function() {
             var langChoose = "{{ __('Chọn') }}";
             $.ajax({
                 url: '{{ route('admin.services.booking.services') }}',
@@ -1530,7 +1510,6 @@
 
                 let formData = $(this).serialize();
                 let url = $(this).attr('action');
-
                 $.ajax({
                     type: "POST",
                     url: url,
@@ -1538,13 +1517,14 @@
                     success: function(response) {
                         if (response.success) {
                             notify('success', response.success);
-                            let firstItem = $(
-                                '.first-service-wrapper .service-item');
-                            $(document).find('.service-wrapper').find(
-                                '.service-item').not(
-                                firstItem).remove();
+                            let firstItem = $('.first-service-wrapper .service-item');
+                            // $(document).find('.service-wrapper').find('.service-item').not(firstItem).remove();
+                                
                             serviceForm.trigger("reset");
                             $('#serviceModal').hide();
+
+                            handleLateCheckinClick(response.data['booking_id'], response.data[
+                                'booked_room_id']);
                         } else {
                             $.each(response.error, function(key, value) {
                                 notify('error', value);
@@ -1553,7 +1533,37 @@
                     },
                 });
             });
+
         });
+
+
+
+        function formatCurrency(amount) {
+            const parts = amount.toString().split('.');
+            const integerPart = parts[0];
+            const formattedInteger = integerPart.replace(/\B(?=(\d{3})+(?!\d))/g, '.');
+
+            return formattedInteger + ' ' + 'VND';
+        }
+        const showSwalMessage = (icon, title, timer = 2000) => {
+            const Toast = Swal.mixin({
+                toast: true,
+                position: "top-end",
+                showConfirmButton: false,
+                timer: timer,
+                timerProgressBar: true,
+                didOpen: (toast) => {
+                    toast.onmouseenter = Swal.stopTimer;
+                    toast.onmouseleave = Swal.resumeTimer;
+                }
+            });
+            Toast.fire({
+                icon: icon,
+                title: `<p>${title}</p>`
+            });
+        };
+      
+      
 
         $(document).on('click', '.cancelBookingBtn', function() {
 

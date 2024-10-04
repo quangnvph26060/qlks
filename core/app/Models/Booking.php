@@ -167,7 +167,7 @@ class Booking extends Model
     {
         return new Attribute(
             function () {
-                return getAmount($this->booking_fare + $this->tax_charge + $this->service_cost + $this->product_cost + $this->extra_charge + $this->cancellation_fee - $this->extra_charge_subtracted);
+                return getAmount($this->booking_fare + $this->tax_charge + $this->service_cost + $this->product_cost + $this->extra_charge + $this->cancellation_fee - $this->extra_charge_subtracted); 
             }
         );
     }

@@ -433,8 +433,14 @@
     z-index: 1000;
     box-shadow: 0px 4px 10px rgba(0, 0, 0, 0.1);
 }
-
+.content-booking {
+    line-height: 10px;
+}
+.bookingDatePicker {
+    padding-left: 10px !important;
+}
 .customer-popup.active {
+    border-radius: 8px;
     display: block;
 }
 
@@ -517,6 +523,9 @@
 .serviceModal{
 
 }
+.add-serve-mobi{
+    width: 50%;
+}
 @media (max-width:768px) {
     .mobi-table td{
         padding: 10px !important;
@@ -532,5 +541,20 @@
     }
     #more_select {
         transform: translate(-3px, 38px) !important;
+    }
+    .cancel-booking{
+        width: 95%;
+    }
+    .add-serve-mobi{
+        width: 95%;
+    }
+    .w-100{
+        width: unset !important;
+    }
+    .flex-wrap-mobi{
+        flex-direction: column;
+    }
+    .card-body{
+        padding: 0px !important;
     }
 }
