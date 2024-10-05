@@ -19,7 +19,7 @@ class RegistrationStep
         $user = auth()->user();
         if (!$user->profile_complete) {
             if ($request->is('api/*')) {
-                $notify[] = 'Please complete your profile to go next';
+                $notify[] = 'Vui lòng hoàn tất hồ sơ của bạn để tiếp tục';
                 return response()->json([
                     'remark'=>'profile_incomplete',
                     'status'=>'error',

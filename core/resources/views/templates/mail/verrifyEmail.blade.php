@@ -78,8 +78,7 @@
                 dưới. Mã này sẽ hết hạn sau 5 phút.
             </p>
             <div class="verification-code">123456</div>
-            <p>
-                Nếu bạn không yêu cầu mã này, vui lòng bỏ qua email này.</p>
+            <p>Nếu bạn không yêu cầu mã này, vui lòng bỏ qua email này.</p>
         </div>
         <div class="email-footer">
             <p>&copy; 2024 Công ty của bạn. Mọi quyền được bảo lưu.</p>

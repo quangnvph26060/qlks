@@ -1,5 +1,6 @@
 <?php
 
+use App\Jobs\JobSendMail;
 use Illuminate\Support\Facades\Route;
 use Illuminate\Support\Facades\Mail;
 //test
@@ -11,6 +12,18 @@ Route::get('/send-test-email', function () {
 
     return 'Email sent successfully!';
 });
+
+
+
+Route::get('demo', function () {
+
+    $arrSendMail = [
+        'type' => 'demo'
+    ];
+    JobSendMail::dispatch($arrSendMail);
+});
+
+
 Route::get('/test-notify', function () {
     $user = (object)[
         'id' => 1,

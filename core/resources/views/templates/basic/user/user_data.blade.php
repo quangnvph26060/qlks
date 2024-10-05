@@ -18,7 +18,7 @@
                                             <small class="text--danger usernameExist"></small>
                                         </div>
                                     </div>
-                                    <div class="col-md-6">
+                                    {{-- <div class="col-md-6">
                                         <div class="form-group">
                                             <label class="form-label">@lang('Quốc gia')</label>
                                             <select name="country" class="form-control form--control select2" required>
@@ -28,7 +28,7 @@
                                                 @endforeach
                                             </select>
                                         </div>
-                                    </div>
+                                    </div> --}}
 
                                     <div class="col-md-6">
                                         <div class="form-group">
@@ -107,8 +107,8 @@
 
             $('input[name=mobile_code]').val($('select[name=country] :selected').data('mobile_code'));
             $('input[name=country_code]').val($('select[name=country] :selected').data('code'));
-            $('.mobile-code').text('+' + $('select[name=country] :selected').data('mobile_code'));
-
+        //    $('.mobile-code').text('+' + $('select[name=country] :selected').data('mobile_code'));
+            $('.mobile-code').text('+84');
 
             $('.checkUser').on('focusout', function(e) {
                 var value = $(this).val();

@@ -12,8 +12,9 @@
                 </div>
                 <div class="col-md-8 col-lg-6 col-xl-5">
                     <div class="auth-section__form">
-                        <h3 class="title mb-2">{{ __(@$loginContent->data_values->form_heading) }}</h3>
-                        <p class="subtitle">{{ __(@$loginContent->data_values->form_subheading) }} </p>
+                        <h3 class="title mb-2">Đăng nhập tài khoản</h3>
+                        <p class="subtitle">Chào mừng đến với Viser Hotel,
+                            phần mềm quản lý khách sạn chuyên nghiệp</p>
                         <form method="POST" action="{{ route('user.login') }}" class="account-form verify-gcaptcha mt-3">
                             @csrf
                             <div class="col-md-12">

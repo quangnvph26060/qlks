@@ -25,14 +25,14 @@
                             </span>
                         @endif
 
-                        <h3 class="title mb-2">{{ __(@$registerContent->data_values->heading) }}</h3>
-                        <p class="subtitle">{{ __(@$registerContent->data_values->subheading) }} </p>
+                        <h3 class="title mb-2">Đăng ký tài khoản</h3>
+                        <p class="subtitle">Khi bạn tạo tài khoản, nó sẽ giúp bạn đặt phòng hoàn hảo. </p>
                         <form action="{{ route('user.register') }}" class="account-form disableSubmission verify-gcaptcha mt-3" method="POST">
                             @csrf
                             <div class="row">
                                 <div class="col-sm-12">
                                     <div class="form-group">
-                                        <label>@lang('First Name')</label>
+                                        <label>@lang('Tên')</label>
                                         <div class="custom-icon-field">
                                             <input type="text" class="form--control" name="firstname" placeholder="@lang('First Name')" value="{{ old('firstname') }}" required>
                                             <i class="fas fa-user"></i>
@@ -41,7 +41,7 @@
                                 </div>
                                 <div class="col-sm-12">
                                     <div class="form-group">
-                                        <label>@lang('Last Name')</label>
+                                        <label>@lang('Họ')</label>
                                         <div class="custom-icon-field">
                                             <input type="text" class="form--control" name="lastname" placeholder="@lang('Last Name')" value="{{ old('lastname') }}" required>
                                             <i class="fas fa-user"></i>
@@ -60,9 +60,9 @@
 
                                 <div class="col-md-6">
                                     <div class="form-group">
-                                        <label>@lang('Password')</label>
+                                        <label>@lang('Mật khẩu')</label>
                                         <div class="custom-icon-field">
-                                            <input type="password" class="form--control @if (gs('secure_password')) secure-password @endif" name="password" placeholder="@lang('Password')" required>
+                                            <input type="password" class="form--control @if (gs('secure_password')) secure-password @endif" name="password" placeholder="@lang('Mật khẩu')" required>
                                             <i class="fas fa-lock"></i>
 
                                             <span class="input-eye"><i class="far fa-eye-slash"></i></span>
@@ -72,9 +72,9 @@
 
                                 <div class="col-md-6">
                                     <div class="form-group">
-                                        <label>@lang('Confirm Password')</label>
+                                        <label>@lang('Xác nhận mật khâủ')</label>
                                         <div class="custom-icon-field">
-                                            <input type="password" class="form--control" name="password_confirmation" placeholder="@lang('Confirm Password')" required>
+                                            <input type="password" class="form--control" name="password_confirmation" placeholder="@lang('Xác nhận mật khẩu')" required>
                                             <i class="fas fa-lock"></i>
 
                                             <span class="input-eye"><i class="far fa-eye-slash"></i></span>
@@ -105,7 +105,7 @@
                                 @endif
 
                                 <div class="col-lg-12">
-                                    <button class="btn btn--base w-100" type="submit">@lang('CREATE AN ACCOUNT')</button>
+                                    <button class="btn btn--base w-100" type="submit">@lang('Đăng ký tài khoản')</button>
                                 </div>
                             </div>
                         </form>

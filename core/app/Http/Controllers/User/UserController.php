@@ -86,9 +86,9 @@ class UserController extends Controller
         $countries    = implode(',', array_column($countryData, 'country'));
 
         $request->validate([
-            'country_code' => 'required|in:' . $countryCodes,
-            'country'      => 'required|in:' . $countries,
-            'mobile_code'  => 'required|in:' . $mobileCodes,
+        //    'country_code' => 'required|in:' . $countryCodes,
+         //   'country'      => 'required|in:' . $countries,
+           // 'mobile_code' => 'required|digits_between:10,11',
             'username'     => 'required|unique:users|min:6',
             'mobile'       => ['required', 'regex:/^([0-9]*)$/', Rule::unique('users')->where('dial_code', $request->mobile_code)],
         ]);
@@ -98,22 +98,31 @@ class UserController extends Controller
             $notify[] = ['error', 'No special character, space or capital letters in username.'];
             return back()->withNotify($notify)->withInput($request->all());
         }
-
-        $user->country_code = $request->country_code;
+        $user->country_code = "VN";
         $user->mobile       = $request->mobile;
         $user->username     = $request->username;
-
 
         $user->address = $request->address;
         $user->city = $request->city;
         $user->state = $request->state;
         $user->zip = $request->zip;
-        $user->country_name = @$request->country;
+        $user->country_name = "Vietnam";
         $user->dial_code = $request->mobile_code;
-
+        $user->status = 1;
+        $user->ev = 1;
+        $user->sv = 1;
+        $user->status = 1;
         $user->profile_complete = Status::YES;
         $user->save();
 
+        $subject = 'Đăng ký thành công';
+        $message = 'Thông tin tài khoản';
+    
+        notify($user, 'DEFAULT', [
+            'subject' => $subject,
+            'message' => $message,
+        ], ['email'], false);
+        
         return to_route('user.home');
     }
 

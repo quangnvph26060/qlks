@@ -82,58 +82,58 @@ class AuthorizationController extends Controller
         return back()->withNotify($notify);
     }
 
-    public function emailVerification(Request $request)
-    {
-        $request->validate([
-            'code' => 'required'
-        ]);
+    // public function emailVerification(Request $request)
+    // {
+    //     $request->validate([
+    //         'code' => 'required'
+    //     ]);
 
-        $user = auth()->user();
+    //     $user = auth()->user();
 
-        if ($user->ver_code == $request->code) {
-            $user->ev = Status::VERIFIED;
-            $user->ver_code = null;
-            $user->ver_code_send_at = null;
-            $user->save();
+    //     if ($user->ver_code == $request->code) {
+    //         $user->ev = Status::VERIFIED;
+    //         $user->ver_code = null;
+    //         $user->ver_code_send_at = null;
+    //         $user->save();
 
-            $redirection = Intended::getRedirection();
-            return $redirection ? $redirection : to_route('user.home');
-        }
-        throw ValidationException::withMessages(['code' => 'Verification code didn\'t match!']);
-    }
+    //         $redirection = Intended::getRedirection();
+    //         return $redirection ? $redirection : to_route('user.home');
+    //     }
+    //     throw ValidationException::withMessages(['code' => 'Verification code didn\'t match!']);
+    // }
 
-    public function mobileVerification(Request $request)
-    {
-        $request->validate([
-            'code' => 'required',
-        ]);
+    // public function mobileVerification(Request $request)
+    // {
+    //     $request->validate([
+    //         'code' => 'required',
+    //     ]);
 
 
-        $user = auth()->user();
-        if ($user->ver_code == $request->code) {
-            $user->sv = Status::VERIFIED;
-            $user->ver_code = null;
-            $user->ver_code_send_at = null;
-            $user->save();
-            $redirection = Intended::getRedirection();
-            return $redirection ? $redirection : to_route('user.home');
-        }
-        throw ValidationException::withMessages(['code' => 'Verification code didn\'t match!']);
-    }
+    //     $user = auth()->user();
+    //     if ($user->ver_code == $request->code) {
+    //         $user->sv = Status::VERIFIED;
+    //         $user->ver_code = null;
+    //         $user->ver_code_send_at = null;
+    //         $user->save();
+    //         $redirection = Intended::getRedirection();
+    //         return $redirection ? $redirection : to_route('user.home');
+    //     }
+    //     throw ValidationException::withMessages(['code' => 'Verification code didn\'t match!']);
+    // }
 
-    public function g2faVerification(Request $request)
-    {
-        $user = auth()->user();
-        $request->validate([
-            'code' => 'required',
-        ]);
-        $response = verifyG2fa($user, $request->code);
-        if ($response) {
-            $redirection = Intended::getRedirection();
-            return $redirection ? $redirection : to_route('user.home');
-        } else {
-            $notify[] = ['error', 'Wrong verification code'];
-            return back()->withNotify($notify);
-        }
-    }
+    // public function g2faVerification(Request $request)
+    // {
+    //     $user = auth()->user();
+    //     $request->validate([
+    //         'code' => 'required',
+    //     ]);
+    //     $response = verifyG2fa($user, $request->code);
+    //     if ($response) {
+    //         $redirection = Intended::getRedirection();
+    //         return $redirection ? $redirection : to_route('user.home');
+    //     } else {
+    //         $notify[] = ['error', 'Wrong verification code'];
+    //         return back()->withNotify($notify);
+    //     }
+    // }
 }

@@ -443,3 +443,7 @@ ALTER TABLE `booking_requests`
 -- 03/10
 ALTER TABLE `booking_request_items` CHANGE `id` `id` INT NOT NULL AUTO_INCREMENT, add PRIMARY KEY (`id`);
 
+
+--04/10
+php artisan migrate --path=/database/migrations/2024_10_04_145642_create_jobs_table.php
+php artisan migrate --path=/database/migrations/2024_10_04_153437_create_failed_jobs_table.php
