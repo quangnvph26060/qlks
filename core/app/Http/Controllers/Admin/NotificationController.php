@@ -22,6 +22,7 @@ class NotificationController extends Controller
 
     public function globalEmailUpdate(Request $request)
     {
+      
         try {
           
             $request->validate([
@@ -40,8 +41,9 @@ class NotificationController extends Controller
             $emailTemplate->email_body = $request->email_template;
             $emailTemplate->save();
     
-          
-            $filePath = resource_path('views/templates/mail/email-register.blade.php');
+            if($emailTemplate->act == 'EMAIL_REGISTER'){
+                $filePath = resource_path('views/templates/mail/email-register.blade.php');
+            }
             File::put($filePath, $request->email_template);
     
             // Thông báo thành công
