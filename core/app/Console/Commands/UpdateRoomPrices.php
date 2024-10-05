@@ -41,10 +41,7 @@ class UpdateRoomPrices extends Command
 
         $rooms = Room::active()->has('roomPrices')->with('roomPrices')->get();
         foreach ($rooms as $room) {
-
             $activePrice = null;
-            //   \Log::info($room);
-
             foreach ($room->roomPrices as $price) {
 
                 // Ưu tiên 1: Kiểm tra giờ (start_time, end_time)
@@ -75,12 +72,12 @@ class UpdateRoomPrices extends Command
                     }
                 }
             }
-
+            DB::table('room_price_rooms')->where('room_id', $room->id)->update(['status' => Status::PRICEROOM_INACTIVE]);
             // Hiển thị giá đang hoạt động
             if (!is_null($activePrice)) {
 
                 try {
-                    DB::table('room_price_rooms')->where('room_id', $room->id)->update(['status' => Status::PRICEROOM_INACTIVE]);
+                   
 
                     DB::table('room_price_rooms')
                         ->where('room_id', $room->id)

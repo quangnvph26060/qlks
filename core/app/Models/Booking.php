@@ -9,6 +9,8 @@ use Illuminate\Database\Eloquent\Casts\Attribute;
 class Booking extends Model
 {
 
+    protected $fillable = ['booking_number', 'user_id', 'check_in', 'check_out', 'guest_details', 'tax_charge', 'booking_fare', 'service_cost', 'extra_charge', 'extra_charge_subtracted', 'paid_amount', 'cancellation_fee', 'refunded_amount', 'key_status', 'status', 'checked_in_at', 'checked_out_at', 'created_at', 'updated_at', 'product_cost'];
+
     protected $casts = [
         'guest_details' => 'object',
         'checked_out_at' => 'datetime'
@@ -16,7 +18,7 @@ class Booking extends Model
 
     public function getId()
     {
-        return BookedRoom::where('booking_id', $this->id)->value('id'); 
+        return BookedRoom::where('booking_id', $this->id)->value('id');
     }
     public function user()
     {
@@ -29,7 +31,6 @@ class Booking extends Model
             return '<p class="text-boder">Khách lẻ</p>';
         }
         return '<p class="text-boder">' . $user->username . '</p> <p class="text-boder">' . $user->mobile . '</p>';
-
     }
     public function bookingRequest()
     {
@@ -118,7 +119,7 @@ class Booking extends Model
     {
         return $query->whereDate('check_in', now());
     }
-    // thanh toán hôm nay 
+    // thanh toán hôm nay
     public function scopeTodayCheckout($query)
     {
         return $query->whereDate('check_out', now());
@@ -148,10 +149,10 @@ class Booking extends Model
                     $text = 'Đang hoạt động'; // Running
                 } elseif (now() < $this->check_in && $this->status == Status::BOOKING_ACTIVE) {
                     $class = "badge--warning";
-                    $text = 'Sắp tới'; // Upcoming 
-                } elseif ($this->status == Status::BOOKING_CANCELED) { // BOOKING_CANCELED = 3 
+                    $text = 'Sắp tới'; // Upcoming
+                } elseif ($this->status == Status::BOOKING_CANCELED) { // BOOKING_CANCELED = 3
                     $class = "badge--danger";
-                    $text = 'Đã hủy'; // Canceled 
+                    $text = 'Đã hủy'; // Canceled
                 } else {
                     $class = "badge--dark";
                     $text = 'Trả phòng'; // Checked Out
@@ -167,7 +168,7 @@ class Booking extends Model
     {
         return new Attribute(
             function () {
-                return getAmount($this->booking_fare + $this->tax_charge + $this->service_cost + $this->product_cost + $this->extra_charge + $this->cancellation_fee - $this->extra_charge_subtracted);
+                return getAmount($this->booking_fare + $this->tax_charge + $this->service_cost + $this->product_cost + $this->extra_charge + $this->cancellation_fee - $this->extra_charge_subtracted); 
             }
         );
     }

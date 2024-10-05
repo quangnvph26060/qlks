@@ -84,17 +84,22 @@ class BookingPremiumServiceController extends Controller
         $action->booking_id = $serviceRoom->booking_id;
         $action->remark     = 'added_extra_service';
         $action->admin_id   = authAdmin()->id;
-        $action->save();
+        $action->save();    
 
-        return response()->json(['success' => 'Dịch vụ cao cấp được thêm thành công']);
+        $data = [
+            'booking_id' => $booking->id,
+            'booked_room_id' => $booking->getId()
+        ];
+
+        return response()->json(['success' => 'Dịch vụ cao cấp được thêm thành công','data'=>$data]);
     }
     public function addProduct(Request $request)
     {
         $validator = Validator::make($request->all(), [
             'room_number'  => 'required',
             'product_date' => 'required|date_format:Y-m-d|before:tomorrow',
-            'product'     => 'required|array',
-            'product.*'   => 'required|exists:products,id',
+            'product'      => 'required|array',
+            'product.*'    => 'required|exists:products,id',
             'qty'          => 'required|array',
             'qty.*'        => 'integer|gt:0'
         ]);
@@ -142,8 +147,12 @@ class BookingPremiumServiceController extends Controller
         $action->remark     = 'added_extra_product';
         $action->admin_id   = authAdmin()->id;
         $action->save();
+        $data = [
+            'booking_id' => $booking->id,
+            'booked_room_id' => $booking->getId()
+        ];
 
-        return response()->json(['success' => 'Sản phẩm được thêm thành công']);
+        return response()->json(['success' => 'Sản phẩm được thêm thành công','data' => $data]);
     }
     public function delete($id)
     {

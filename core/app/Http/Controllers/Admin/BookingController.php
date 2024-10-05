@@ -20,7 +20,7 @@ use Symfony\Component\HttpKernel\Log\Logger;
 class BookingController extends Controller {
     public function todaysBooked() {
         $pageTitle = request()->type == 'not_booked' ? 'Phòng có sẵn để đặt hôm nay' : 'Phòng đã đặt hôm nay';
-       
+
         $rooms = BookedRoom::active()
             ->with([
                 'room:id,room_number,room_type_id',
@@ -136,8 +136,9 @@ class BookingController extends Controller {
             'usedProductRoom.product',
             'payments'
         ])->findOrFail($id);
+
         // BookedRoom::where('booking_id', $id)->with('booking.user', 'room.roomType')->orderBy('booked_for')->get()->groupBy('booked_for');
-       
+
         if($request->is_method === 'receptionist'){
             $returnedPayments  = $booking->payments->where('type', 'RETURNED');
             $receivedPayments  = $booking->payments->where('type', 'RECEIVED');
@@ -163,7 +164,7 @@ class BookingController extends Controller {
         }else{
             $query = Booking::query();
         }
-       
+
         if ($scope != "ALL") {
             $query = $query->$scope();
         }
@@ -199,7 +200,7 @@ class BookingController extends Controller {
     public function searchRooms(Request $request){
         $startDate = Carbon::createFromFormat('m/d/Y', $request->startDate)->format('Y-m-d');
         $endDate = Carbon::createFromFormat('m/d/Y', $request->endDate)->format('Y-m-d');
-      
+
         $rooms = BookedRoom::active()
         ->with([
             'room',
@@ -208,23 +209,23 @@ class BookingController extends Controller {
             'booking.user:id,firstname,lastname',
             'usedPremiumService.premiumService:id,name'
         ]) ->whereBetween('booked_for', [ $startDate,  $endDate ])->get();
-        
+
         $disabledRoomTypeIDs = RoomType::where('status', 0)->pluck('id')->toArray();
         $bookedRooms         = $rooms->pluck('room_id')->toArray();
         $emptyRooms          = Room::active()->has('roomPricesActive')
             ->whereNotIn('id', $bookedRooms)
-            ->whereNotIn('room_type_id', $disabledRoomTypeIDs) // loại trừ nhũng phòng ngưng hoạt động hoạt vô hiệu hóa 
+            ->whereNotIn('room_type_id', $disabledRoomTypeIDs) // loại trừ nhũng phòng ngưng hoạt động hoạt vô hiệu hóa
             ->with('roomType','roomPricesActive')
             ->select('id', 'room_type_id', 'room_number','is_clean')
             ->get();
-      
+
     }
     public function Receptionist(Request $request){
-      
+
         $emptyMessage   = '';
         $pageTitle      =  'Lễ tân';
         $Title          =  'Tất cả các phòng';
-       
+
         $rooms = BookedRoom::active()
             ->with([
                 'room',
@@ -246,14 +247,14 @@ class BookingController extends Controller {
         $bookedRooms         = $rooms->pluck('room_id')->toArray();
         $emptyRooms          = Room::active()->has('roomPricesActive')
              ->whereNotIn('id', $bookedRooms)
-            ->whereNotIn('room_type_id', $disabledRoomTypeIDs) // loại trừ nhũng phòng ngưng hoạt động hoạt vô hiệu hóa 
+            ->whereNotIn('room_type_id', $disabledRoomTypeIDs) // loại trừ nhũng phòng ngưng hoạt động hoạt vô hiệu hóa
             ->with('roomType','roomPricesActive')
             ->select('id', 'room_type_id', 'room_number','is_clean')
             ->get();
         $scope = 'ALL';
         $is_method = 'Receptionist';
         $bookings = BookedRoom::active()->with('booking', 'roomType', 'room', 'room.roomPricesActive', 'usedPremiumService')->get();
-      
+
         $userList = User::select('username', 'email', 'mobile', 'address')->get();
 
         if ($request->ajax()) {
@@ -265,22 +266,22 @@ class BookingController extends Controller {
     public function changeCleanRoom(Request $request)
     {
         try {
-           
+
             $room = Room::where('room_number', $request->roomData)->firstOrFail();
-           
+
             $newStatus = ($room->is_clean == Status::ROOM_CLEAN_ACTIVE) ? 0 : 1;
             $room->update(['is_clean' => $newStatus]);
 
             return ApiResponse::success('', 'success', 200);
-    
+
         } catch (\Illuminate\Database\Eloquent\ModelNotFoundException $e) {
-            
+
            return ApiResponse::error('error', 404);
-           
+
         } catch (\Exception $e) {
 
             return ApiResponse::error($e->getMessage(), 404);
-            
+
         }
     }
 
@@ -292,6 +293,6 @@ class BookingController extends Controller {
     public function getProduct(){
         $product    = Product::Featured()->get();
         return ApiResponse::success($product, 'success', 200);
-    } 
-    
+    }
+
 }
