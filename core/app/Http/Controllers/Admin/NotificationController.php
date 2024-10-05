@@ -4,35 +4,55 @@ namespace App\Http\Controllers\Admin;
 
 use App\Constants\Status;
 use App\Http\Controllers\Controller;
+use App\Models\EmailTemplate;
 use App\Models\NotificationTemplate;
 use App\Notify\Sms;
 use App\Rules\FileTypeValidate;
 use Illuminate\Http\Request;
+use Illuminate\Support\Facades\File;
 
 class NotificationController extends Controller
 {
     public function globalEmail()
     {
-        $pageTitle = 'Mẫu Email Toàn Cầu';
-        return view('admin.notification.global_email_template', compact('pageTitle'));
+        $pageTitle = 'Mẫu Email';
+        $listTemplateEmail = EmailTemplate::all();
+        return view('admin.notification.global_email_template', compact('pageTitle','listTemplateEmail'));
     }
 
     public function globalEmailUpdate(Request $request)
     {
-        $request->validate([
-            'email_from' => 'required|email|string|max:40',
-            'email_from_name' => 'required',
-            'email_template' => 'required',
-        ]);
-
-        $general = gs();
-        $general->email_from = $request->email_from;
-        $general->email_from_name = $request->email_from_name;
-        $general->email_template = $request->email_template;
-        $general->save();
-
-        $notify[] = ['success', 'Mẫu email toàn cầu đã được cập nhật thành công'];
-        return back()->withNotify($notify);
+        try {
+          
+            $request->validate([
+                'email_template' => 'required',
+                'id_email' => 'required|numeric', 
+            ]);
+    
+           
+            $emailTemplate = EmailTemplate::find($request->id_email);
+            if (!$emailTemplate) {
+                $notify[] = ['error', 'Không tìm thấy mẫu email!'];
+                return back()->withNotify($notify);
+            }
+    
+          
+            $emailTemplate->email_body = $request->email_template;
+            $emailTemplate->save();
+    
+          
+            $filePath = resource_path('views/templates/mail/email-register.blade.php');
+            File::put($filePath, $request->email_template);
+    
+            // Thông báo thành công
+            $notify[] = ['success', 'Mẫu email toàn cầu đã được cập nhật thành công'];
+            return back()->withNotify($notify);
+    
+        } catch (\Exception $e) {
+                \Log::info($e->getMessage());
+            $notify[] = ['error', 'Đã xảy ra lỗi: ' . $e->getMessage()];
+            return back()->withNotify($notify);
+        }
     }
 
     public function globalSms()

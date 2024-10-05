@@ -7,6 +7,7 @@ use App\Lib\CurlRequest;
 use App\Lib\FileManager;
 use App\Models\Admin;
 use App\Models\BookingActionHistory;
+use App\Models\EmailTemplate;
 use App\Models\Extension;
 use App\Models\Frontend;
 use App\Models\GeneralSetting;
@@ -630,4 +631,10 @@ function getRandomColor()
 {
     $colors = ['primary', 'secondary', 'success', 'danger', 'warning', 'info', 'light', 'dark'];
     return 'bg-' . $colors[array_rand($colors)];
+}
+function findTemplateEmail ($data)
+{
+    $emailTempalte =   EmailTemplate::active()->where('act',$data)->first();
+
+    return $emailTempalte;
 }
