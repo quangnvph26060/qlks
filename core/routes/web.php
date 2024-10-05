@@ -1,5 +1,6 @@
 <?php
 
+use App\Events\EventRegisterUser;
 use App\Jobs\JobSendMail;
 use Illuminate\Support\Facades\Route;
 use Illuminate\Support\Facades\Mail;
@@ -17,10 +18,8 @@ Route::get('/send-test-email', function () {
 
 Route::get('demo', function () {
 
-    $arrSendMail = [
-        'type' => 'demo'
-    ];
-    JobSendMail::dispatch($arrSendMail);
+    $data = ['type'=>'EMAIL_REGISTER','name' => 'John Doe', 'email' => 'quang3011003@gmail.com','password'=>'12345678'];
+    event(new EventRegisterUser($data));
 });
 
 

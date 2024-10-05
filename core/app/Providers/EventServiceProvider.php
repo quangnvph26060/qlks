@@ -2,6 +2,8 @@
 
 namespace App\Providers;
 
+use App\Events\EventRegisterUser;
+use App\Listeners\ListenerRegisterUser;
 use Illuminate\Support\ServiceProvider;
 
 class EventServiceProvider extends ServiceProvider
@@ -10,8 +12,8 @@ class EventServiceProvider extends ServiceProvider
      * Register services.
      */
     protected $listen = [
-        'App\Events\EventRegisterUser' => [
-            'App\Listeners\ListenerRegisterUser',
+        EventRegisterUser::class => [
+            ListenerRegisterUser::class,
         ],
     ];
     

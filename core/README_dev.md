@@ -447,3 +447,14 @@ ALTER TABLE `booking_request_items` CHANGE `id` `id` INT NOT NULL AUTO_INCREMENT
 --04/10
 php artisan migrate --path=/database/migrations/2024_10_04_145642_create_jobs_table.php
 php artisan migrate --path=/database/migrations/2024_10_04_153437_create_failed_jobs_table.php
+--05/10
+CREATE TABLE notification_templates (
+    id INT AUTO_INCREMENT PRIMARY KEY,
+    act VARCHAR(255) COLLATE utf8mb4_unicode_ci NOT NULL,
+    name VARCHAR(255) COLLATE utf8mb4_unicode_ci NOT NULL,
+    email_body TEXT COLLATE utf8mb4_unicode_ci,
+    subject VARCHAR(255) COLLATE utf8mb4_unicode_ci NOT NULL,
+    status TINYINT(1) NOT NULL DEFAULT 1, -- 1: active, 0: inactive
+    created_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
+    updated_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP ON UPDATE CURRENT_TIMESTAMP
+) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_unicode_ci; 
