@@ -104,13 +104,6 @@
             /* Màu nền khi hover */
         }
 
-        /* .booked_infor {
-                                                            background-color: #f8f9fa;
-                                                            border: 1px solid #dee2e6;
-                                                            padding: 15px;
-                                                            border-radius: 5px;
-                                                            margin-bottom: 20px;
-                                                        } */
 
         .booked_infor h4 {
             font-size: 18px;
@@ -151,33 +144,38 @@
                         <div class="row justify-content-center gy-sm-4 gy-3">
                             <div class="col-lg-6">
                                 <div class="payment-system-list is-scrollable gateway-option-list">
-                                    {{-- {{$booking}} --}}
-                                    <div class="booked_infor">
-                                        <h4>Thông tin phòng</h4>
-                                        <img src="{{ asset($booking->bookedRooms[0]->roomType->main_image) }}"
-                                            alt="ảnh phòng">
-                                        <p>Mã đặt phòng: {{ $booking->bookedRooms[0]->booking->booking_number }}</p>
-                                        <p>Loại phòng: {{ $booking->bookedRooms[0]->roomType->name }}</p>
-                                        <p>Phòng số: {{ $booking->bookedRooms[0]->room->room_number }}</p>
-                                        <p>Ngày:
-                                            {{ Carbon\Carbon::parse($booking->bookedRooms[0]->booking->check_in)->format('d/m/Y') }}
+                                    {{--  --}}
+                                    <div class="d-flex justify-content-between mb-3 mt-1 border-bottom pb-2">
+                                        <h4>Thông tin phòng </h4>
+                                        <small>(
+                                            {{ Carbon\Carbon::parse($booking->check_in)->format('d/m/Y') }}
                                             -
-                                            {{ Carbon\Carbon::parse($booking->bookedRooms[0]->booking->check_out)->format('d/m/Y') }}
-                                        </p>
-                                        <h4>Thông tin người đặt</h4>
-                                        <p>Tên người đặt:
-                                            {{ $booking->bookedRooms[0]->booking->user->lastname }}
-                                            {{ $booking->bookedRooms[0]->booking->user->firstname }}
-                                        </p>
-                                        <p>Email: {{ $booking->bookedRooms[0]->booking->user->email }}</p>
-                                        <p>Số điện thoại: {{ $booking->bookedRooms[0]->booking->user->mobile }}</p>
-                                        <p>Địa chỉ: {{ $booking->bookedRooms[0]->booking->user->address }},
-                                            {{ $booking->bookedRooms[0]->booking->user->city }},
-                                            {{ $booking->bookedRooms[0]->booking->user->state }}</p>
-                                        <p>Quốc gia:
-                                            {{ $booking->bookedRooms[0]->booking->user->country_name }}({{ $booking->bookedRooms[0]->booking->user->country_code }})
-                                        </p>
+                                            {{ Carbon\Carbon::parse($booking->check_out)->format('d/m/Y') }}
+                                            )</small>
                                     </div>
+                                    {{-- {{$booking}} --}}
+                                    @foreach ($booking->bookedRooms as $room)
+                                        <div class="booked_infor row border-bottom mb-3">
+                                            <div class="booked_infor__img col-md-4"> <img class="img-fluid"
+                                                    src="{{ showImageStorage($room->room->main_image) }}" alt="ảnh phòng">
+                                            </div>
+
+                                            <div class="text-infor col-md-8 ps-0">
+                                                <h5 class="mb-2">Phòng {{ $room->room->room_number }}
+                                                    <small class="text-muted">({{ $room->room->roomType->name }})</small>
+                                                </h5>
+                                                <p class="m-0">
+                                                    {{ $room->room->total_adult }} người lớn |
+                                                    {{ $room->room->total_child }} trẻ em
+                                                </p>
+                                                <p class="m-0">
+                                                    {{ showAmount($room->fare + $room->tax_charge) }} x
+                                                    {{ \Carbon\Carbon::parse($booking->check_in)->diffInDays($booking->check_out) }}
+                                                </p>
+                                            </div>
+                                        </div>
+                                    @endforeach
+
                                     @foreach ($gatewayCurrency as $data)
                                         <label for="{{ titleToKey($data->name) }}"
                                             class="payment-item @if ($loop->index > 4) d-none @endif gateway-option">
@@ -206,6 +204,7 @@
                                             <span class="payment-item__btn__icon"><i class="fas fa-chevron-down"></i></span>
                                         </button>
                                     @endif
+
                                 </div>
                             </div>
                             <div class="col-lg-6">
@@ -216,8 +215,7 @@
                                         </div>
                                         <div class="deposit-info__input">
                                             <p class="text">
-                                                <span>{{ number_format($booking->bookedRooms[0]->booking->booking_fare) }}</span>
-                                                {{ __(gs('cur_text')) }}
+                                                <span>{{ showAmount($booking->booking_fare) }}</span>
                                             </p>
                                         </div>
                                     </div>
@@ -225,12 +223,12 @@
                                     <div class="deposit-info">
                                         <div class="deposit-info__title">
                                             <p class="text has-icon"> @lang('Thuế')
-                                                <span></span>
                                             </p>
                                         </div>
                                         <div class="deposit-info__input">
-                                            <p class="text"><span
-                                                    class="gateway-limit">{{ number_format($booking->bookedRooms[0]->booking->tax_charge) }}</span>
+                                            <p class="text"><span class="gateway-limit">
+                                                    <span>{{ showAmount($booking->tax_charge) }}</span>
+                                                </span>
                                             </p>
                                         </div>
                                     </div>
@@ -254,8 +252,8 @@
                                         </div>
                                         <div class="deposit-info__input">
                                             <p class="text"><span
-                                                    class="final-amount">{{ number_format($booking->bookedRooms[0]->booking->booking_fare + $booking->bookedRooms[0]->booking->tax_charge) }}</span>
-                                                {{ __(gs('cur_text')) }}</p>
+                                                    class="final-amount">{{ showAmount($booking->booking_fare + $booking->tax_charge) }}</span>
+                                            </p>
                                         </div>
                                     </div>
 
@@ -285,7 +283,7 @@
                                         @lang('Chuyển đổi với') <span class="gateway-currency"></span> @lang('và giá trị cuối cùng sẽ hiển thị ở bước tiếp theo')
                                     </div>
                                     <!-- Checkbox Đặt cọc -->
-                                    <div class="deposit-info deposit-option mb-3">
+                                    <div class="deposit-info deposit-option my-3">
                                         <div class="form-check">
                                             <input type="checkbox" class="form-check-input deposit-checkbox"
                                                 id="deposit-checkbox" value="{{ $deposit }}">
@@ -295,15 +293,9 @@
                                         </div>
                                         <div class="deposit-info__input">
                                             <p class="text">
-                                                @php
-                                                    $deposit_money =
-                                                        (($booking->bookedRooms[0]->booking->booking_fare +
-                                                            $booking->bookedRooms[0]->booking->tax_charge) *
-                                                            $deposit) /
-                                                        100;
-                                                @endphp
-                                                <span class="deposit-amount">{{ number_format($deposit_money) }}</span>
-                                                {{ __(gs('cur_text')) }}
+                                                <span class="deposit-amount">
+                                                    <span>{{ showAmount((int)($booking->booking_fare + $booking->tax_charge) * ($deposit / 100) )}}</span>
+                                                </span>
                                             </p>
                                         </div>
                                     </div>
@@ -346,10 +338,11 @@
                             alt="Mã QR" class="img-fluid mb-3">
                     </div>
                     <div class="payment-info">
-                        <p><strong>Nội dung chuyển khoản: </strong>{{ $booking->bookedRooms[0]->booking->user->lastname }}
+                        <p><strong>Nội dung chuyển khoản: </strong>
+                            {{-- {{ $booking->bookedRooms[0]->booking->user->lastname }} --}}
                             +
-                            {{ $booking->bookedRooms[0]->booking->user->firstname }} đặt phòng<span
-                                id="paymentContent"></span></p>
+                            {{-- {{ $booking->bookedRooms[0]->booking->user->firstname }} --}}
+                            đặt phòng<span id="paymentContent"></span></p>
                     </div>
                 </div>
                 <div class="modal-footer">
