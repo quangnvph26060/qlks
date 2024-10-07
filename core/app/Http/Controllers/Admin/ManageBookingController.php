@@ -150,7 +150,7 @@ class ManageBookingController extends Controller
         $booking = Booking::findOrFail($id);
         $booking->extra_charge += $request->amount;
         $booking->save();
-        $reason = showAmount($request->amount) . ' added for ' . $request->reason;
+        $reason = showAmount($request->amount) . ' được thêm vào cho  ' . $request->reason; // added for
 
         $booking->createActionHistory('extra_charge_added', $reason);
 

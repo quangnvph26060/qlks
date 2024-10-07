@@ -163,6 +163,39 @@ function keyToTitle($text)
     return ucfirst(preg_replace("/[^A-Za-z0-9 ]/", ' ', $text));
 }
 
+function keyBookingAction($text)
+{
+    switch ($text) {
+        case "added_extra_service":
+            return "Đã thêm dịch vụ bổ sung";
+            break;
+        case "key_handover":
+            return "Bàn giao chìa khóa";
+            break;
+        case "payment_received":
+            return "Đã nhận thanh toán";
+            break;
+        case "book_room":
+            return "Đặt phòng";
+            break;
+        case "checked_out":
+            return "Trả phòng";
+            break;
+        case "cancel_booking":
+            return "Hủy đặt phòng";
+            break;
+        case "approve_booking_request":
+            return "Yêu cầu phê duyệt đặt phòng";
+            break;
+        default:
+            return "Hành động không xác định";
+            break;
+    }
+}
+
+
+
+
 function titleToKey($text)
 {
     return strtolower(str_replace(' ', '_', $text));
@@ -634,6 +667,7 @@ function getRandomColor()
 }
 
 
+
 function showImageStorage($path)
 {
     if (Storage::exists($path)) {
@@ -641,9 +675,11 @@ function showImageStorage($path)
     }
 
     return asset('assets/images/default.png');
+}
+
 function findTemplateEmail ($data)
 {
-    $emailTempalte =   EmailTemplate::active()->where('act',$data)->first();
+    $emailTempalte =   EmailTemplate::active()->where('act', $data)->first();
 
     return $emailTempalte;
 }

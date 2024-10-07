@@ -1,6 +1,10 @@
 @extends('admin.layouts.app')
 
 @section('panel')
+@php
+    
+
+@endphp
     <div class="row">
         <div class="col-lg-12">
             <div class="card b-radius--10">
@@ -27,7 +31,7 @@
                                             @if ($log->details)
                                                 {{ __($log->details) }}
                                             @else
-                                                {{ __(keyToTitle($log->remark)) }}
+                                                {{ __(keyBookingAction($log->remark)) }}
                                             @endif
                                         </td>
 

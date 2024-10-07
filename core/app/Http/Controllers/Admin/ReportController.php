@@ -42,7 +42,7 @@ class ReportController extends Controller
 
     public function bookingSituationHistory()
     {
-        $pageTitle  = 'Booking Situation Report';
+        $pageTitle  = 'Báo cáo tình hình đặt phòng';
         $remarks    = BookingActionHistory::groupBy('remark')->orderBy('remark')->get('remark');
         $query      = BookingActionHistory::searchable(['booking:booking_number'])->filter(['remark']);
         $bookingLog = $query->with('booking', 'admin')->orderBy('id', 'desc')->paginate(getPaginate());
