@@ -4,8 +4,8 @@
         @include('admin.notification.top_bar')
     @endpush
     <div class="row">
-        @include('admin.notification.global_template_nav')
-        @include('admin.notification.global_shortcodes')
+        {{-- @include('admin.notification.global_template_nav') --}}
+        {{-- @include('admin.notification.global_shortcodes') --}}
 
         <div class="col-md-12">
             <div class="card mt-5">
@@ -13,22 +13,30 @@
                     <form action="{{ route('admin.setting.notification.global.email.update') }}" method="POST">
                         @csrf
                         <div class="row">
-                            <div class="col-md-6">
+                            <div class="col-md-12">
                                 <div class="form-group">
-                                    <label>@lang('Email Sent From - Name') </label>
-                                    <input type="text" class="form-control " placeholder="@lang('Email address')" name="email_from_name" value="{{ gs('email_from_name') }}" required>
+                                    <label>@lang('Danh sách email') </label>
+                                    <br>
+                                    <select name="id_email" id="emailTemplateSelect">
+                                        <option value="">Chọn mẫu template email</option>
+                                        @foreach ($listTemplateEmail as $template)
+                                            <option value="{{ $template->id }}" data-form="{{ $template->email_body }}">
+                                                {{ $template->name }}</option>
+                                        @endforeach
+                                    </select>
                                 </div>
                             </div>
-                            <div class="col-md-6">
+                            {{-- <div class="col-md-6">
                                 <div class="form-group">
                                     <label>@lang('Email được gửi từ - Email') </label>
                                     <input type="text" class="form-control " placeholder="@lang('Email address')" name="email_from" value="{{ gs('email_from') }}" required>
                                 </div>
-                            </div>
+                            </div> --}}
                             <div class="col-md-6">
                                 <div class="form-group">
                                     <label>@lang('Email Body') </label>
-                                    <textarea name="email_template" rows="10" class="form-control emailTemplateEditor" id="htmlInput" placeholder="@lang('Your email template')">{{ gs('email_template') }}</textarea>
+                                    <textarea name="email_template" rows="10" class="form-control emailTemplateEditor" id="htmlInput"
+                                        placeholder="@lang('Your email template')"></textarea>
                                 </div>
                             </div>
                             <div class="col-md-6">
@@ -63,11 +71,19 @@
 @endpush
 
 @push('script')
+    <script src="https://code.jquery.com/jquery-3.6.0.min.js"></script>
     <script>
-        var iframe = document.getElementById('iframePreview');
-        $(".emailTemplateEditor").on('input', function() {
-            var htmlContent = document.getElementById('htmlInput').value;
-            iframe.src = 'data:text/html;charset=utf-8,' + encodeURIComponent(htmlContent);
-        }).trigger('input');
+        $(document).ready(function() {
+            $('#emailTemplateSelect').change(function() {
+                var selectedOption = $(this).find('option:selected');
+                var name = selectedOption.data('form');
+
+                $('.emailTemplateEditor').val(name);
+                var iframe = document.getElementById('iframePreview');
+                $(".emailTemplateEditor").on('input', function() {
+                    iframe.src = 'data:text/html;charset=utf-8,' + encodeURIComponent(name);
+                }).trigger('input');
+            });
+        });
     </script>
 @endpush

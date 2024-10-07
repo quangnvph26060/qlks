@@ -3,6 +3,7 @@
 namespace App\Http\Controllers\User;
 
 use App\Constants\Status;
+use App\Events\EventRegisterUser;
 use App\Http\Controllers\Controller;
 use App\Lib\FormProcessor;
 use App\Models\Booking;
@@ -118,10 +119,11 @@ class UserController extends Controller
         $subject = 'Đăng ký thành công';
         $message = 'Thông tin tài khoản';
     
-        notify($user, 'DEFAULT', [
-            'subject' => $subject,
-            'message' => $message,
-        ], ['email'], false);
+        // notify($user, 'DEFAULT', [
+        //     'subject' => $subject,
+        //     'message' => $message,
+        // ], ['email'], false);
+       
         
         return to_route('user.home');
     }

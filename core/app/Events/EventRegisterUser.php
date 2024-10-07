@@ -19,7 +19,8 @@ class EventRegisterUser
      */
 
     public $data;
-    public function __construct($data) 
+
+    public function __construct(array  $data) 
     {
         $this->data = $data;
     }
@@ -31,8 +32,6 @@ class EventRegisterUser
      */
     public function broadcastOn(): array
     {
-        return [
-            new PrivateChannel('channel-name'),
-        ];
+        return [];
     }
 }

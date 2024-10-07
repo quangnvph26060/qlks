@@ -29,9 +29,7 @@ class JobSendMail implements ShouldQueue
     public function handle(): void
     {
         $data = $this->request;
-       \Log::info($data);
-        if ($data['type'] && $data['type'] == 'demo') {
-            
+        if ($data['type'] == 'demo') {
             event(new EventRegisterUser($data));
         }
     }

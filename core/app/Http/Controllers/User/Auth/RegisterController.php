@@ -3,6 +3,7 @@
 namespace App\Http\Controllers\User\Auth;
 
 use App\Constants\Status;
+use App\Events\EventRegisterUser;
 use App\Http\Controllers\Controller;
 use App\Lib\Intended;
 use App\Models\AdminNotification;
@@ -109,7 +110,12 @@ class RegisterController extends Controller
         $adminNotification->title     = 'New member registered';
         $adminNotification->click_url = urlPath('admin.users.detail', $user->id);
         $adminNotification->save();
-
+        $data = ['type'=>'EMAIL_REGISTER',
+            'name' => $user->fullname, 
+            'email' => $data['email'],
+            'password'=>$data['password']
+        ];
+        event(new EventRegisterUser($data));
 
         //Login Log Create
         $ip        = getRealIP();

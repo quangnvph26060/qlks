@@ -7,6 +7,7 @@ use App\Lib\CurlRequest;
 use App\Lib\FileManager;
 use App\Models\Admin;
 use App\Models\BookingActionHistory;
+use App\Models\EmailTemplate;
 use App\Models\Extension;
 use App\Models\Frontend;
 use App\Models\GeneralSetting;
@@ -640,4 +641,9 @@ function showImageStorage($path)
     }
 
     return asset('assets/images/default.png');
+function findTemplateEmail ($data)
+{
+    $emailTempalte =   EmailTemplate::active()->where('act',$data)->first();
+
+    return $emailTempalte;
 }
