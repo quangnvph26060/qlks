@@ -13,6 +13,7 @@ use App\Models\Language;
 use App\Models\RoomType;
 use App\Models\Wishlist;
 use App\Constants\Status;
+use App\Models\BookedRoom;
 use App\Models\Subscriber;
 use Illuminate\Http\Request;
 use App\Models\SupportTicket;
@@ -20,6 +21,7 @@ use App\Models\BookingRequest;
 use App\Models\SupportMessage;
 use App\Models\AdminNotification;
 use Illuminate\Support\Facades\DB;
+use Illuminate\Http\Client\Response;
 use Illuminate\Support\Facades\Auth;
 use Illuminate\Support\Facades\Cookie;
 use Illuminate\Support\Facades\Validator;
@@ -224,13 +226,29 @@ class SiteController extends Controller
     public function roomTypes()
     {
         $pageTitle = 'Loại phòng';
-        // $roomTypes = RoomType::active()->with('images', 'amenities')->with(['images', 'amenities', 'rooms.roomPricesActive'])->get();
-        $rooms = Room::active()->has('roomPricesActive')->with(['images', 'amenities:title', 'facilities:title', 'roomPricesActive'])->where('status', 1)->get();
+
+        // Lấy danh sách các phòng đã đặt hôm nay
+        $bookedRoomsToday = BookedRoom::whereDate('booked_for', now()->toDateString())
+            ->pluck('room_id')
+            ->toArray();
+
+        // Lấy các phòng hiện tại vẫn còn trống và có thể đặt
+        $rooms = Room::active()
+            ->has('roomPricesActive')
+            ->whereNotIn('id', $bookedRoomsToday)  // Loại bỏ các phòng đã được đặt hôm nay
+            ->with(['images', 'amenities:title', 'facilities:title', 'roomPricesActive'])
+            ->get();
+
+        // Lấy tất cả tiện nghi và cơ sở vật chất
         $amenities = Amenity::all();
         $facilities = Facility::all();
 
+        // dd($rooms);
+
+        // Trả về view với các biến đã truyền
         return view('Template::room.types', compact('pageTitle', 'rooms', 'amenities', 'facilities'));
     }
+
 
     public function basicRoomFilter(Request $request)
     {
@@ -363,17 +381,13 @@ class SiteController extends Controller
 
     public function sendBookingRequest(Request $request)
     {
-        // dd($request->check_in, $request->check_out);
         $rules = [];
 
         if ($request->check_in) {
-            // Chuyển từ Y-m-d sang m/d/Y
-
             $rules['check_in'] = 'required|after:today';
         }
 
         if ($request->check_out) {
-            // Chuyển từ Y-m-d sang m/d/Y
             $rules['check_out'] = 'nullable|after_or_equal:check_in';
         }
 
@@ -393,7 +407,8 @@ class SiteController extends Controller
             $rules['check_out_1'] = 'required|date_format:m/d/Y|after_or_equal:check_in_1';
         }
 
-        $request->validate($rules);
+        $data = $request->validate($rules);
+
 
         // Kiểm tra người dùng đã đăng nhập chưa
         if (!Auth::check()) {
@@ -404,6 +419,8 @@ class SiteController extends Controller
         if ($this->getMinimumAvailableRoom($request) < 1) {
             return back()->withNotify(['error', 'Room not available']);
         }
+
+
 
         $user = Auth::user();
         $checkInDate = Carbon::parse($request->check_in ?? $request->check_in_1);
@@ -434,7 +451,7 @@ class SiteController extends Controller
                 $bookingRequestItems[] = [
                     'room_id' => $room->id,
                     'unit_fare' => $roomPrice,
-                    'tax-charge' => $taxCharge,
+                    'tax_charge' => $taxCharge,
                 ];
             } else {
                 /**
@@ -454,7 +471,7 @@ class SiteController extends Controller
                     $bookingRequestItems[] = [
                         'room_id' => $item->room->id,
                         'unit_fare' => $roomPrice,
-                        'tax-charge' => $taxCharge,
+                        'tax_charge' => $taxCharge,
                     ];
 
                     $item->delete();
@@ -502,9 +519,10 @@ class SiteController extends Controller
 
     protected function getMinimumAvailableRoom($request)
     {
-        $checkInDate = Carbon::parse($request->check_in);
-        $checkOutDate = Carbon::parse($request->check_out);
+        $checkInDate = Carbon::parse($request->check_in ?? $request->check_in_1);
+        $checkOutDate = Carbon::parse($request->check_out ?? $request->check_out_1);
         $dateWiseAvailableRoom = [];
+
 
         for ($date = $checkInDate; $date <= $checkOutDate; $date->addDay()) {
             $bookedRooms = Room::where('id', $request->room_id)

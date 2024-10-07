@@ -188,7 +188,11 @@
                                 showMessage('success', 'Đã thêm phòng vào danh sách yêu thích');
 
                                 $('#wishlist-message').hide(); // Ẩn thông báo
+
                             }
+
+                            updateBookingButton();
+
                         } else {
                             showMessageToast({
                                 name: 'error'

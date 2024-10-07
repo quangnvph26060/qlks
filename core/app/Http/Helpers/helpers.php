@@ -632,6 +632,15 @@ function getRandomColor()
     $colors = ['primary', 'secondary', 'success', 'danger', 'warning', 'info', 'light', 'dark'];
     return 'bg-' . $colors[array_rand($colors)];
 }
+
+
+function showImageStorage($path)
+{
+    if (Storage::exists($path)) {
+        return Storage::url($path);
+    }
+
+    return asset('assets/images/default.png');
 function findTemplateEmail ($data)
 {
     $emailTempalte =   EmailTemplate::active()->where('act',$data)->first();

@@ -9,6 +9,10 @@ use Illuminate\Database\Eloquent\Casts\Attribute;
 class BookedRoom extends Model {
     protected $guarded = ['id'];
 
+    protected $fillable = [
+        'booking_id', 'room_id', 'booked_for', 'status'
+    ];
+
     public function booking() {
         return $this->belongsTo(Booking::class, 'booking_id');
     }

@@ -17,12 +17,17 @@ class BookingRequestItem extends Model
         'booking_request_id',
         'room_id',
         'unit_fare',
-        'tax-charge',
+        'tax_charge',
         'status',
     ];
 
     public function room()
     {
         return $this->belongsTo(Room::class);
+    }
+
+    public function bookingRequest()
+    {
+        return $this->belongsTo(BookingRequest::class);
     }
 }

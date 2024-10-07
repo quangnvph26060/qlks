@@ -1,3 +1,4 @@
+
 <table class="table--light table-bordered booking-table table">
     <thead>
         <tr>

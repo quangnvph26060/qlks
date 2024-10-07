@@ -2,9 +2,11 @@
 
 namespace App\Providers;
 
+use App\Events\RoomCancellationEvent;
 use App\Events\EventRegisterUser;
 use App\Listeners\ListenerRegisterUser;
 use Illuminate\Support\ServiceProvider;
+use App\Listeners\SendRoomCancellationEmail;
 
 class EventServiceProvider extends ServiceProvider
 {
@@ -15,14 +17,14 @@ class EventServiceProvider extends ServiceProvider
         EventRegisterUser::class => [
             ListenerRegisterUser::class,
         ],
+        RoomCancellationEvent::class => [
+            SendRoomCancellationEmail::class,
+        ],
     ];
-    
-    
-    public function register(): void
-    {
-       
-    }
-    
+
+
+    public function register(): void {}
+
     /**
      * Bootstrap services.
      */

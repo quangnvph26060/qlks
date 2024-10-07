@@ -298,6 +298,7 @@
         })
 
         function updateBookingButton() {
+
             // Kiểm tra xem có checkbox nào được chọn hay không
             if ($('.room-checkbox:checked').length > 0) {
 

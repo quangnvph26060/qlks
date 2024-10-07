@@ -443,10 +443,16 @@ ALTER TABLE `booking_requests`
 -- 03/10
 ALTER TABLE `booking_request_items` CHANGE `id` `id` INT NOT NULL AUTO_INCREMENT, add PRIMARY KEY (`id`);
 
+ALTER TABLE `booking_request_items` CHANGE `tax-charge` `tax_charge` DECIMAL(12,0) NOT NULL;
+
+ALTER TABLE `booked_rooms` DROP `room_type_id`;
+
+
 
 --04/10
 php artisan migrate --path=/database/migrations/2024_10_04_145642_create_jobs_table.php
 php artisan migrate --path=/database/migrations/2024_10_04_153437_create_failed_jobs_table.php
+
 --05/10
 CREATE TABLE notification_templates (
     id INT AUTO_INCREMENT PRIMARY KEY,

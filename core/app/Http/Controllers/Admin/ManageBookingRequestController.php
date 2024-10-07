@@ -2,15 +2,19 @@
 
 namespace App\Http\Controllers\Admin;
 
-use App\Constants\Status;
-use App\Http\Controllers\Controller;
-use Illuminate\Http\Request;
-use App\Models\BookingRequest;
+use Carbon\Carbon;
 use App\Models\Room;
 use App\Models\Booking;
+use App\Constants\Status;
 use App\Models\BookedRoom;
+use Illuminate\Http\Request;
+use App\Models\BookingRequest;
 use App\Traits\BookingActions;
-use Carbon\Carbon;
+use App\Models\BookingRequestItem;
+use Illuminate\Support\Facades\DB;
+use App\Http\Controllers\Controller;
+use App\Events\RoomCancellationEvent;
+use Illuminate\Support\Facades\Event;
 use Illuminate\Validation\ValidationException;
 
 class ManageBookingRequestController extends Controller
@@ -19,8 +23,8 @@ class ManageBookingRequestController extends Controller
 
     public function index()
     {
-        $pageTitle       = 'Tất cả yêu cầu đặt chỗ';
-        $bookingRequests = $this->bookingRequestData('initial');
+        $pageTitle = 'Tất cả yêu cầu đặt chỗ';
+        $bookingRequests = $this->bookingRequestData('initial'); // Lấy đối tượng phân trang
         return view('admin.booking.request_list', compact('pageTitle', 'bookingRequests'));
     }
 
@@ -50,103 +54,193 @@ class ManageBookingRequestController extends Controller
 
     public function approve(Request $request, $id)
     {
-        $bookingRequest = BookingRequest::with('user', 'roomType:id,name')->findOrFail($id);
+        $bookingRequest = BookingRequest::with('bookingItems.room.roomType')->findOrFail($id);
+
+
         if ($bookingRequest->status) {
             $notify[] = ['error', 'Yêu cầu đặt phòng này đã được chấp thuận'];
             return to_route('admin.request.booking.all')->withNotify($notify);
         }
         $pageTitle = "Chỉ định phòng";
 
+        $roomTypes = $bookingRequest->bookingItems->map(function ($item) {
+            return $item->room->roomType->name; // Giả sử 'name' là thuộc tính chứa tên loại phòng
+        })->unique();
+
         $request->merge([
-            'room_type'     => $bookingRequest->room_type_id,
-            'rooms'         => $bookingRequest->number_of_rooms,
+            'room_id'     => $bookingRequest->bookingItems->first()->room_id,
+            'rooms'         => $bookingRequest->bookingItems->count(),
             'checkin_date'  => $bookingRequest->check_in,
             'checkout_date' => $bookingRequest->check_out,
-            'unit_fare'     => $bookingRequest->unit_fare
+            'total_amount'     => $bookingRequest->total_amount
         ]);
 
-        $view =  $this->getRooms($request); // getRooms function's definition is in App/Traits/BookingActions
+        $roomTypesName = implode(', ', $roomTypes->toArray());
 
-        return view('admin.booking.request_approve', compact('pageTitle', 'view', 'bookingRequest'));
+        $response =  $this->checkRoomAvailability($request, $bookingRequest);
+
+        return view('admin.booking.request_approve', compact('pageTitle', 'bookingRequest', 'roomTypesName', 'response', 'roomTypes'));
     }
+
+    private function checkRoomAvailability(Request $request, $bookingRequest)
+    {
+        $checkIn = Carbon::parse($request->checkin_date)->format('Y-m-d');
+        $checkOut = Carbon::parse($request->checkout_date)->format('Y-m-d');
+
+        // Duyệt qua các phòng trong $bookingRequest
+        foreach ($bookingRequest->bookingItems as $room) {
+            // Kiểm tra xem phòng có bị đặt trong khoảng thời gian này hay không
+            $bookedRoom = BookedRoom::with('booking')
+                ->where('room_id', $room->room_id)
+                ->where('status', 1)  // Phòng đã được đặt
+                ->where(function ($query) use ($checkIn, $checkOut) {
+                    // Kiểm tra xem phòng đã đặt trùng với ngày mới
+                    $query->whereBetween('booked_for', [$checkIn, $checkOut])
+                        // Kiểm tra xem phòng có booking với ngày checkout sau ngày checkin yêu cầu
+                        ->orWhereHas('booking', function ($subQuery) use ($checkIn) {
+                            $subQuery->where('check_out', '>', $checkIn);
+                        });
+                })
+                ->first(); // Chỉ cần lấy một kết quả
+
+            // Kiểm tra kết quả, nếu phòng đã được đặt thì set is_used = true, ngược lại là false
+            $room->is_used = $bookedRoom ? true : false;
+        }
+
+        // Trả về booking request đã được cập nhật
+        return $bookingRequest;
+    }
+
+
 
     public function assignRoom(Request $request)
     {
-        $request->validate([
-            'booking_request_id' => 'required|exists:booking_requests,id',
-            'room'               => 'required|array',
-            'paid_amount'        => 'nullable|numeric|gt:0'
-        ]);
+        try {
+            DB::beginTransaction();
 
-        $bookingRequest = BookingRequest::with('user', 'roomType')->findOrFail($request->booking_request_id);
-        $this->bookingValidation($request, $bookingRequest);
+            // Bước 1: Xác nhận thông tin của booking request
+            $bookingRequest = BookingRequest::with('bookingItems.room')
+                ->find($request->booking_request_id);
 
-        $user           = $bookingRequest->user;
-        $checkInDate    = Carbon::parse($bookingRequest->check_in);
-        $checkOutDate   = Carbon::parse($bookingRequest->check_out);
-        $bookingFare    = $bookingRequest->unit_fare * $bookingRequest->number_of_rooms * $checkInDate->diffInDays($checkOutDate);
+            if (!$bookingRequest) {
+                return to_route('admin.request.booking.all')
+                    ->withErrors('Không tìm thấy yêu cầu đặt phòng');
+            }
 
-        $booking                   = new Booking();
-        $booking->booking_number   = getTrx();
-        $booking->user_id          = $user->id;
-        $booking->check_in         = $bookingRequest->check_in;
-        $booking->check_out        = $bookingRequest->check_out;
-        $booking->tax_charge       = $bookingRequest->tax_charge;
-        $booking->booking_fare     = $bookingFare;
-        $booking->paid_amount      = $request->paid_amount ?? 0;
-        $booking->save();
+            // Bước 2: Tạo một booking mới
+            $booking = Booking::create([
+                'booking_number' => uniqid(),
+                'user_id' => $bookingRequest->user_id,
+                'check_in' => $bookingRequest->check_in,
+                'check_out' => $bookingRequest->check_out,
+                'guest_details' => $request->guest_details,
+                'tax_charge' => 0,
+                'booking_fare' => 0,
+                'status' => Status::BOOKING_ACTIVE,
+            ]);
 
-        $booking->createActionHistory('approve_booking_request');
+            $request->merge(['booking_id' => $booking->id]);
 
-        if ($request->paid_amount > 0) {
-            $booking->createPaymentLog($request->paid_amount, 'RECEIVED');
+            // Bước 3: Kiểm tra và hủy các phòng trùng
+            $availableRooms = $this->checkAndCancelRooms($request);
+
+            if (empty($availableRooms)) {
+                return back()->withErrors('Tất cả các phòng yêu cầu đã bị trùng.');
+            }
+
+            // Tính toán tổng chi phí
+            $totalAmount = collect($availableRooms)->sum(function ($room) use ($bookingRequest) {
+                return ($room['fare'] + $room['tax_charge']) *
+                    Carbon::parse($bookingRequest->check_in)
+                    ->diffInDays(Carbon::parse($bookingRequest->check_out));
+            });
+
+            // Cập nhật giá trị cho booking
+            $booking->update([
+                'booking_fare' => $totalAmount,
+                'tax_charge' => $totalAmount * 0.1,
+            ]);
+
+            // Bước 5: Thêm các phòng không bị trùng vào bảng BookedRoom
+            BookedRoom::insert($availableRooms);
+
+            DB::commit();
+
+            return response()->json([
+                'success' => true,
+                'message' => 'Đặt phòng thành công.',
+                'booking' => $booking,
+            ]);
+        } catch (\Exception $e) {
+            dd($e->getMessage() . $e->getLine());
+            DB::rollBack();
+            return back()->withErrors('Đã có lỗi xảy ra, vui lòng thử lại sau!');
         }
-
-        $roomIds      = [];
-        $bookingRoom  = [];
-
-        foreach ($request->room as $key => $room) {
-            $roomId       = explode('-', $room)[0];
-            $bookedFor    = explode('-', $room)[1];
-            $bookedFor    = Carbon::parse($bookedFor)->format('Y-m-d');
-            $room         = Room::with('roomType')->findOrFail($roomId);
-
-            $bookingRoom[$key]['booking_id']    = $booking->id;
-            $bookingRoom[$key]['room_type_id']  = $room->room_type_id;
-            $bookingRoom[$key]['room_id']       = $room->id;
-            $bookingRoom[$key]['booked_for']    = $bookedFor;
-            $bookingRoom[$key]['fare']          = $room->roomType->fare;
-            $bookingRoom[$key]['tax_charge']    = $booking->tax_charge / count($request->room);
-            $bookingRoom[$key]['cancellation_fee'] = $room->roomType->cancellation_fee;
-            $bookingRoom[$key]['status']        = Status::ROOM_ACTIVE;
-            $bookingRoom[$key]['created_at']    = now();
-            $bookingRoom[$key]['updated_at']    = now();
-
-            array_push($roomIds, $room->id);
-        }
-
-        BookedRoom::insert($bookingRoom);
-
-        $booking->status = Status::BOOKING_ACTIVE;
-        $booking->save();
-
-        $bookingRequest->delete();
-
-        $roomNumbers = Room::whereIn('id', $roomIds)->pluck('room_number')->toArray();
-        $rooms       = implode(" , ", $roomNumbers);
-
-        notify($user, 'ROOM_BOOKED', [
-            'booking_number' => $booking->booking_number,
-            'amount'         => showAmount($booking->total_amount, currencyFormat: false),
-            'paid_amount'    => showAmount($booking->paid_amount, currencyFormat: false),
-            'rooms'          => $rooms,
-            'check_in'       => Carbon::parse($booking->check_in)->format('d M, Y'),
-            'check_out'      => Carbon::parse($booking->check_out)->format('d M, Y')
-        ]);
-
-        $notify[] = ['success', 'Booking Request approved successfully'];
-        return to_route('admin.request.booking.all')->withNotify($notify);
     }
+
+    /**
+     * Hàm kiểm tra và hủy các phòng trùng
+     */
+    private function checkAndCancelRooms($request)
+    {
+        $data = $request->all();
+        $cancelledRooms = $data['roomCanNotAssign'] ?? [];
+        $availableRooms = $data['roomCanAssign'] ?? [];
+
+        if (!empty($cancelledRooms)) {
+            BookingRequestItem::where('booking_request_id', $data['booking_request_id'])
+                ->whereIn('room_id', $cancelledRooms)
+                ->update(['status' => Status::ROOM_CANCELED]);
+
+            try {
+                \Log::info($cancelledRooms);
+                $this->sendCancellationNotifications($cancelledRooms, $data['booking_request_id']);
+            } catch (\Exception $e) {
+                \Log::info($e->getMessage());
+            }
+        }
+
+        if (!empty($availableRooms)) {
+            \Log::info($availableRooms);
+            return BookingRequestItem::with('room', 'bookingRequest')
+                ->where('booking_request_id', $data['booking_request_id'])
+                ->whereIn('room_id', $availableRooms)
+                ->get()
+                ->map(function ($item) use ($data) {
+                    return [
+                        'booking_id' => $data['booking_id'],
+                        'room_id' => $item->room_id,
+                        'booked_for' => $item->bookingRequest->check_in,
+                        'fare' => $item->unit_fare,
+                        'tax_charge' => $item->tax_charge,
+                        'cancellation_fee' => $item->room->cancellation_fee,
+                        'status' => Status::ROOM_ACTIVE,
+                    ];
+                })->toArray();
+        } else {
+            $booking = Booking::find($data['booking_id']);
+
+            $booking->delete();
+
+            return [];
+        }
+    }
+
+
+
+    /**
+     * Hàm gửi email thông báo về các phòng bị hủy
+     */
+    private function sendCancellationNotifications($cancelledRooms, $bookingRequestId)
+    {
+        $bookingRequest = BookingRequest::with('bookingItems.room', 'user')->find($bookingRequestId);
+
+        // Dispatch sự kiện với đối tượng BookingRequest
+        Event::dispatch(new RoomCancellationEvent($bookingRequest, $cancelledRooms));
+    }
+
+
+
 
     private function bookingValidation($request, $bookingRequest)
     {
@@ -178,9 +272,48 @@ class ManageBookingRequestController extends Controller
         }
     }
 
+    // protected function bookingRequestData($scope)
+    // {
+    //     $query = BookingRequest::$scope()->searchable(['user:username,email'])->with('user')->orderBy('id', 'DESC')->paginate(getPaginate());
+    //     return $query;
+    // }
+
     protected function bookingRequestData($scope)
     {
-        $query = BookingRequest::$scope()->searchable(['user:username,email', 'roomType:name'])->with('user', 'roomType')->orderBy('id', 'DESC')->paginate(getPaginate());
-        return $query;
+        $query = BookingRequest::$scope()
+            ->searchable(['user:username,email'])
+            ->with('user', 'bookingItems.room.roomType')
+            ->orderBy('id', 'DESC')
+            ->paginate(getPaginate()); // Thay vì trả về mảng, giữ lại đối tượng phân trang
+
+        // Thêm thông tin phòng vào đối tượng phân trang
+        foreach ($query as $bookingRequest) {
+            $roomTypeCounts = [];
+
+            foreach ($bookingRequest->bookingItems as $bookingItem) {
+                $roomTypeId = $bookingItem->room->room_type_id;
+                $roomTypeName = $bookingItem->room->roomType->name;
+
+                if (isset($roomTypeCounts[$roomTypeId])) {
+                    $roomTypeCounts[$roomTypeId]['count']++;
+                } else {
+                    $roomTypeCounts[$roomTypeId] = [
+                        'name' => $roomTypeName,
+                        'count' => 1,
+                    ];
+                }
+            }
+
+            // Tạo chuỗi thông tin cho từng yêu cầu
+            $info = [];
+            foreach ($roomTypeCounts as $roomTypeData) {
+                $info[] = $roomTypeData['count'] . " " . $roomTypeData['name'];
+            }
+
+            // Lưu thông tin vào thuộc tính `roomInfo` của bookingRequest
+            $bookingRequest->roomInfo = implode(" | ", $info); // Thêm thông tin phòng vào model
+        }
+
+        return $query; // Trả về đối tượng phân trang
     }
 }

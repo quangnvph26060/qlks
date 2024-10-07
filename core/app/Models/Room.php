@@ -91,7 +91,10 @@ class Room extends Model
     }
     public function scopeActive($query)
     {
-        return $query->where('rooms.status', Status::ROOM_ACTIVE);
+        return $query->where([
+            'rooms.status'=> Status::ROOM_ACTIVE
+            // 'rooms.is_clean'=> Status::ROOM_CLEAN_ACTIVE
+        ]);
     }
 
     public function roomPrices()
