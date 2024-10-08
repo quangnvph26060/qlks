@@ -53,7 +53,7 @@
                                                                 <td height="20"></td>
                                                             </tr>
                                                             <tr>
-                                                                <td align="center" style="font-family: 'Open sans', Arial, sans-serif; color:#FFFFFF; font-size:16px; font-weight: bold;">This is a System Generated Email</td>
+                                                                <td align="center" style="font-family: 'Open sans', Arial, sans-serif; color:#FFFFFF; font-size:16px; font-weight: bold;">Đây là email được tạo bởi hệ thống</td>
                                                             </tr>
                                                             <tr>
                                                                 <td height="20"></td>
