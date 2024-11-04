@@ -676,16 +676,10 @@ function showImageStorage($path)
 
     return asset('assets/images/default.png');
 }
-<<<<<<< Updated upstream
 
 function findTemplateEmail ($data)
 {
     $emailTempalte =   EmailTemplate::active()->where('act', $data)->first();
-=======
-function findTemplateEmail ($data)
-{
-    $emailTempalte =   EmailTemplate::active()->where('act',$data)->first();
->>>>>>> Stashed changes
 
     return $emailTempalte;
 }

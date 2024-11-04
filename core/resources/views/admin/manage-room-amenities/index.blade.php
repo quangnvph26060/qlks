@@ -73,8 +73,8 @@
                         <div class="row">
                             <div class="form-group mb-3">
                                 <label for="">Phòng</label>
-                                <select name="room_ids[]" id="room-multiple-choice" multiple class="form-control">
-                                    <option value="" disabled>--Chọn phòng--</option>
+                                <select name="room_id" id="room-multiple-choice" class="form-control">
+                                    <option value="" selected>--Chọn phòng--</option>
                                     @foreach ($rooms as $room)
                                         <option value="{{ $room->id }}">{{ $room->code }}</option>
                                     @endforeach
@@ -84,33 +84,29 @@
                         <div class="row">
                             <div class="form-group mb-3">
                                 <label for="">Các tiện nghi <code>(Được chọn nhiều)</code></label>
-                                @if ($amenities->isNotEmpty())
-                                    @foreach ($amenities as $amenity)
-                                        <div class="form-check">
-                                            <input class="form-check-input" type="checkbox" value=""
-                                                id="flexCheckDefault">
-                                            <label class="form-check-label" for="flexCheckDefault">
-                                                {{ $amenity->title }}
-                                            </label>
-                                        </div>
-                                    @endforeach
-                                @else
-                                    <p>Chưa có tiện ích nào!</p>
-                                @endif
+                                <div class="form-check-group mt-3">
+                                    @if ($amenities->isNotEmpty())
+                                        @foreach ($amenities as $amenity)
+                                            <div class="form-check">
+                                                <input class="form-check-input" type="checkbox" value="{{ $amenity->id }}"
+                                                    name="amenities_id[]" multiple id="checkbox-amenity-add">
+                                                <label class="form-check-label" for="checkbox-amenity-add">
+                                                    {{ $amenity->title }}
+                                                </label>
+                                            </div>
+                                        @endforeach
+                                    @else
+                                        <p>Chưa có tiện ích nào!</p>
+                                    @endif
+                                </div>
 
-
-                                {{-- <select class="form-control" id="amenities-multiple-choice" name="amenities_id[]"
-                                    multiple="multiple">
-                                    <option value="" disabled>--Chọn tiện ích--</option>
-                                    @foreach ($amenities as $amenity)
-                                        <option value="{{ $amenity->id }}">{{ $amenity->title }}</option>
-                                    @endforeach
-                                </select> --}}
                             </div>
                         </div>
                         <div class="modal-footer">
                             <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Đóng</button>
-                            <button type="submit" class="btn btn-primary">Thực hiện</button>
+                            @if ($amenities->isNotEmpty())
+                                <button type="submit" class="btn btn-primary">Thực hiện</button>
+                            @endif
                         </div>
                     </form>
                 </div>
@@ -134,27 +130,25 @@
                             <div class="form-group mb-3">
                                 <label for="">Phòng</label>
                                 <select name="room_id" id="room-choice" class="form-control">
-                                    <option value="" disabled>--Chọn phòng--</option>
-                                    @foreach ($rooms as $room)
-                                        <option value="{{ $room->id }}">{{ $room->code }}</option>
-                                    @endforeach
+
                                 </select>
                             </div>
                         </div>
                         <div class="row">
                             <div class="form-group mb-3">
                                 <label for="">Các tiện nghi <code>(Được chọn nhiều)</code></label>
-                                <select class="form-control" id="amenities-multiple-choice-edit" name="amenities_id[]"
-                                    multiple="multiple">
-                                    @foreach ($amenities as $amenity)
-                                        <option value="{{ $amenity->id }}">{{ $amenity->title }}</option>
-                                    @endforeach
-                                </select>
+                                <div id="checkbox-amenity" class="form-check-group mt-3">
+
+                                </div>
+
+
                             </div>
                         </div>
                         <div class="modal-footer">
                             <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Đóng</button>
-                            <button type="submit" class="btn btn-primary">Thực hiện</button>
+                            @if ($amenities->isNotEmpty())
+                                <button type="submit" class="btn btn-primary">Thực hiện</button>
+                            @endif
                         </div>
                     </form>
                 </div>
@@ -162,6 +156,8 @@
             </div>
         </div>
     </div>
+
+
 @endsection
 
 @push('script')
@@ -173,9 +169,6 @@
         (function($) {
             "use strict"
             $(document).ready(function() {
-                becomesSelect2('amenities-multiple-choice', 'Hãy chọn mã phòng')
-                becomesSelect2('room-multiple-choice', 'Hãy chọn các tiện ích cho phòng')
-                becomesSelect2('amenities-multiple-choice-edit', 'Hãy chọn các tiện ích cho phòng')
                 const apiUrl = '{{ route('admin.hotel.room.amenities.all') }}';
                 initDataFetch(apiUrl);
 
@@ -194,8 +187,6 @@
                         data: $(this).serializeArray(),
                         success: function(response) {
                             if (response.status) {
-                                $('#amenities-multiple-choice').val([]).trigger('change');
-                                $('#room-multiple-choice').val([]).trigger('change');
                                 showSwalMessage('success', response.message);
                                 $('#staticBackdrop').modal('hide');
                                 initDataFetch(apiUrl);
@@ -218,15 +209,44 @@
                             ':id',
                             id),
                         success: function(response) {
-
                             if (response.status) {
+                                $('#showEditRoomAmenity').modal('show');
+                                //auto selected room
+                                let roomSelect = $('#room-choice');
+                                roomSelect.empty();
+                                response.rooms.forEach(room => {
+                                    let selected = room.id === response.roomEdit
+                                        .id ? 'selected' :
+                                        '';
+                                    roomSelect.append(
+                                        `<option value="${room.id}" ${selected}>${room.code}</option>`
+                                    );
+                                });
+                                roomSelect.trigger('change');
+                                //
+                                //auto selected amentity
+                                let amenitesContainer = $('#checkbox-amenity');
+                                amenitesContainer.empty();
+
+                                response.amenities.forEach(amenity => {
+                                    let checked = response.selectedAmenities
+                                        .includes(amenity
+                                            .id) ? 'checked' : '';
+                                    amenitesContainer.append(`
+                                    <div class="form-check">
+                 <input class="form-check-input" type="checkbox" value="${amenity.id}" ${checked} multiple
+                                                name="amenities_id[]"  id="">
+                                            <label class="form-check-label" for="">
+                                                 ${amenity.title}
+                                            </label> </div>`)
+                                });
+                                ///
+
+
                                 $('#staticBackdropLabel').text('Cập nhật');
-                                $('#amenities-multiple-choice-edit').val(response
-                                    .selectedAmenities).trigger('change');
-                                $('#room-choice').val(response.room.id).trigger('change');
                                 $('#method').val('PUT');
                                 $('#recordId').val(id);
-                                $('#showEditRoomAmenity').modal('show');
+
                             }
                         }
                     });
@@ -234,7 +254,7 @@
 
                 $(document).on('click', '.btn-add', function() {
                     $('#roomsAddAmenityForm')[0].reset();
-                    $('#method').val('POST'); // Đặt phương thức thành POST
+                    $('#method').val('POST');
                     $('#staticBackdropLabel').text(
                         'Thêm mới'); // Đặt lại tiêu đề là "Thêm mới"
                     $('#staticBackdrop').modal('show');
@@ -245,106 +265,22 @@
                         url: '{{ route('admin.hotel.room.amenities.update') }}',
                         method: 'POST',
                         data: $(this).serialize(),
-                        success: function() {
+                        success: function(response) {
                             if (response.status) {
                                 showSwalMessage('success', response.message);
                                 $('#showEditRoomAmenity').modal('hide');
                                 initDataFetch(apiUrl);
                             }
                         },
-                        error: function() {
+                        error: function(error) {
                             alert('Có lỗi xảy ra khi cập nhật tiện nghi.');
                         }
                     });
                 });
 
 
-                // $(document).on('click', '.btn-delete', function() {
-                //     let id = $(this).data('id');
-
-                //     Swal.fire({
-                //         title: 'Xóa vĩnh viễn',
-                //         text: 'Bạn có chắc chắn không?',
-                //         icon: 'warning',
-                //         showCancelButton: true,
-                //         confirmButtonColor: '#3085d6',
-                //         cancelButtonColor: '#d33',
-                //         confirmButtonText: 'Đồng ý',
-                //         cancelButtonText: 'Huỷ'
-                //     }).then((result) => {
-                //         if (result.isConfirmed) {
-                //             $.ajax({
-                //                 type: "DELETE",
-                //                 url: "{{ route('admin.manage.price.destroy', ':id') }}"
-                //                     .replace(':id', id),
-                //                 success: function(response) {
-                //                     if (response.status) {
-                //                         showSwalMessage('success', response
-                //                             .message);
-                //                         initDataFetch(apiUrl);
-                //                     } else {
-                //                         showSwalMessage('error', response
-                //                             .message);
-                //                     }
-                //                 }
-                //             });
-                //         }
-                //     })
-                // })
-
-                // $(document).on('change', '.status-change', function() {
-                //     let checkbox = $(this);
-                //     let id = checkbox.data('id');
-
-
-                //     let isChecked = checkbox.is(':checked');
-
-                //     Swal.fire({
-                //         title: 'Thay đổi trạng thái',
-                //         text: 'Bạn có chắc chắn thay đổi trạng thái?',
-                //         icon: 'warning',
-                //         showCancelButton: true,
-                //         confirmButtonColor: '#3085d6',
-                //         cancelButtonColor: '#d33',
-                //         confirmButtonText: 'Đồng ý',
-                //         cancelButtonText: 'Huỷ'
-                //     }).then((result) => {
-                //         if (result.isConfirmed) {
-                //             $.ajax({
-                //                 type: "PUT",
-                //                 url: "{{ route('admin.manage.price.updateStatus', ':id') }}"
-                //                     .replace(':id', id),
-                //                 success: function(response) {
-                //                     if (response.status) {
-                //                         showSwalMessage('success', response
-                //                             .message);
-                //                         initDataFetch(apiUrl);
-                //                     } else {
-                //                         checkbox.prop('checked', !
-                //                             isChecked);
-                //                         showSwalMessage('error', response
-                //                             .message);
-                //                     }
-                //                 }
-                //             });
-                //         } else {
-                //             checkbox.prop('checked', !
-                //                 isChecked);
-                //         }
-                //     });
-                // });
 
             });
-
-
-            function becomesSelect2(selector, placeholder) {
-                $('#' + selector).select2({
-                    dropdownParent: $('#staticBackdrop'),
-                    placeholder: "Hãy chọn mã phòng",
-                    width: '100%'
-                });
-            }
-
         })(jQuery);
     </script>
 @endpush
@@ -423,12 +359,32 @@
         .radio-group input[type="radio"] {
             margin-right: 5px;
             accent-color: #007bff;
-            /* Màu xanh cho Hoạt động */
         }
 
         .radio-group label {
             margin-right: 20px;
             font-size: 16px;
+        }
+
+        .form-check-group {
+            display: flex;
+            flex-wrap: wrap;
+            gap: 10px;
+        }
+
+        .form-check {
+            margin-right: 15px;
+        }
+
+        .form-check-input {
+            width: 25px;
+            height: 25px;
+            margin-right: 10px;
+        }
+
+        .form-check-label {
+            font-size: 18px;
+            line-height: 25px;
         }
     </style>
 @endpush
