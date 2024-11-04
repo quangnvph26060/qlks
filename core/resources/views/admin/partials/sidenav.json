@@ -93,6 +93,14 @@
                 "title": "Quản lý tiện nghi phòng",
                 "route_name": "admin.hotel.room.amenities.all",
                 "menu_active": "admin.hotel.room.amenities.all"
+            },
+            {
+                "keyword": [
+                    "Quản lý cơ sở vật chất phòng"
+                ],
+                "title": "Quản lý cơ sở vật chất phòng",
+                "route_name": "admin.hotel.room.facilities.all",
+                "menu_active": "admin.hotel.room.facilities.all"
             }
           
         ]

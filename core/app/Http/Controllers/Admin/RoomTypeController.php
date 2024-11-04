@@ -70,7 +70,6 @@ class RoomTypeController extends Controller
 
     public function save(Request $request, $id = 0)
     {
-
         $this->validation($request, $id);
         DB::beginTransaction();
         try {
@@ -78,7 +77,7 @@ class RoomTypeController extends Controller
                 $roomNumbers = Room::pluck('room_number')->toArray();
                 $exists = in_array($request->room_number, $roomNumbers);
                 if ($exists) {
-                    $notify[] = ['error',' số phòng đã tồn tại'];
+                    $notify[] = ['error', ' số phòng đã tồn tại'];
                     return back()->withNotify($notify);
                 }
             }
@@ -104,6 +103,7 @@ class RoomTypeController extends Controller
             $room->cancellation_fee    = $request->cancellation_fee ?? 0;
             $room->cancellation_policy = htmlspecialchars_decode($purifier->purify($request->cancellation_policy));
             $room->is_clean            = Status::ROOM_CLEAN_ACTIVE;
+            $room->status              = $request->status ? 1 : 0;
 
             if ($request->hasFile('main_image')) {
                 $main_images = saveImages($request, 'main_image', 'roomImage', 600, 600);

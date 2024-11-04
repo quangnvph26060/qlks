@@ -52,7 +52,7 @@
                                 </div>
                             </div>
 
-                            <div class="col-xl-6 col-md-4 col-sm-12">
+                            <div class="col-xl-4 col-md-4 col-sm-12">
                                 <div class="form-group">
                                     <label>@lang('Tổng số người')</label>
                                     <input class="form-control" min="1" name="total_adult" required type="number"
@@ -60,7 +60,7 @@
                                 </div>
                             </div>
 
-                            <div class="col-xl-6 col-md-4 col-sm-12">
+                            <div class="col-xl-4 col-md-4 col-sm-12">
                                 <div class="form-group">
                                     <label>@lang('Tống số trẻ em')</label>
                                     <input class="form-control" min="0" name="total_child" required type="number"
@@ -68,12 +68,12 @@
                                 </div>
                             </div>
                             <div class="col-xl-6 col-md-4 col-sm-12">
-                                @php
+                                {{-- @php
                                     if (empty($selectedPrices)) {
                                         $selectedPrices = [];
                                     }
-                                @endphp
-                                <div class="form-group">
+                                @endphp --}}
+                                {{-- <div class="form-group">
                                     <label for="">Chọn giá</label>
                                     <select class="select2-multi-select" multiple="multiple" name="prices[]">
                                         @foreach ($prices as $id => $name)
@@ -84,9 +84,9 @@
                                         @endforeach
                                         <!-- Thêm các tùy chọn khác nếu cần -->
                                     </select>
-                                </div>
+                                </div> --}}
                             </div>
-                            <div class="col-xl-6 col-md-12">
+                            {{-- <div class="col-xl-6 col-md-12">
                                 <div class="form-group position-relative">
                                     <label> @lang('Tiện nghi')</label>
                                     <select class="select2-multi-select" multiple="multiple" name="amenities[]">
@@ -106,7 +106,7 @@
                                         @endforeach
                                     </select>
                                 </div>
-                            </div>
+                            </div> --}}
 
                             {{-- <div class="col-xl-6 col-md-12">
                                 <div class="form-group position-relative">
@@ -118,6 +118,9 @@
                                 </div>
                             </div> --}}
 
+
+                        </div>
+                        <div class="row">
                             <div class="col-xl-6 col-md-12">
                                 <div class="form-group">
                                     <label class="me-2"> @lang('Nổi bật') </label>
@@ -286,6 +289,24 @@
                         </div>
                     </div>
                 </div>
+                <div class="card mt-3">
+                    <div class="card-header">
+                        <h5 class="card-title mb-0">
+                            @lang('Trạng thái')
+                        </h5>
+                    </div>
+                    <div class="card-body">
+                        <div class="row">
+                            <div class="radio-container">
+                                <label class="toggle">
+                                    <input type="checkbox" name="status" class="status-change"
+                                        @checked(@$roomType->status == 1)>
+                                    <span class="slider"></span>
+                                </label>
+                            </div>
+                        </div>
+                    </div>
+                </div>
 
                 @can('admin.hotel.room.type.save')
                     <div class="card mt-3">
@@ -374,6 +395,108 @@
             width: 50px;
             height: 30px;
             padding: 0;
+        }
+    </style>
+@endpush
+@push('style')
+    <style>
+        .radio-container {
+            display: flex;
+
+        }
+
+        .toggle {
+            position: relative;
+            display: inline-block;
+            width: 52px;
+            height: 29px;
+        }
+
+        .toggle input {
+            display: none;
+        }
+
+        .slider {
+            position: absolute;
+            cursor: pointer;
+            top: 0;
+            left: 0;
+            right: 0;
+            bottom: 0;
+            background-color: #ccc;
+            transition: .4s;
+            border-radius: 34px;
+        }
+
+        .slider:before {
+            position: absolute;
+            content: "";
+            height: 20px;
+            width: 20px;
+            left: 4px;
+            bottom: 4px;
+            background-color: white;
+            transition: .4s;
+            border-radius: 50%;
+        }
+
+        input:checked+.slider {
+            background-color: #4CAF50;
+        }
+
+        input:checked+.slider:before {
+            transform: translateX(24px);
+        }
+
+        .label {
+            margin-left: 20px;
+            font-size: 18px;
+            font-weight: bold;
+        }
+
+        .status-input {
+            margin-bottom: 20px;
+        }
+
+        .status-input label {
+            font-weight: bold;
+            margin-right: 10px;
+        }
+
+        .radio-group {
+            display: flex;
+            align-items: center;
+        }
+
+        .radio-group input[type="radio"] {
+            margin-right: 5px;
+            accent-color: #007bff;
+        }
+
+        .radio-group label {
+            margin-right: 20px;
+            font-size: 16px;
+        }
+
+        .form-check-group {
+            display: flex;
+            flex-wrap: wrap;
+            gap: 10px;
+        }
+
+        .form-check {
+            margin-right: 15px;
+        }
+
+        .form-check-input {
+            width: 25px;
+            height: 25px;
+            margin-right: 10px;
+        }
+
+        .form-check-label {
+            font-size: 18px;
+            line-height: 25px;
         }
     </style>
 @endpush
