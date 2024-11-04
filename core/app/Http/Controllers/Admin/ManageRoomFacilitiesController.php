@@ -3,13 +3,13 @@
 namespace App\Http\Controllers\Admin;
 
 use App\Http\Controllers\Controller;
-use App\Models\Amenity;
+use App\Models\Facility;
 use App\Models\Room;
 use App\Repositories\BaseRepository;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Validator;
 
-class ManageRoomAmenitiesController extends Controller
+class ManageRoomFacilitiesController extends Controller
 {
     protected $repository;
 
@@ -19,9 +19,9 @@ class ManageRoomAmenitiesController extends Controller
     }
     public function index()
     {
-        $rooms = Room::where('status' , 1)->get();
-        $amenities = Amenity::where('status' , 1)->get();
-        $pageTitle = 'Danh sách tiện ghi của phòng';
+        $rooms = Room::where('status', 1)->get();
+        $facilities = Facility::where('status', 1)->get();
+        $pageTitle = 'Danh sách cơ sở vật chất của phòng';
         $search = request()->get('search');
         $perPage = request()->get('perPage', 10);
         $orderBy = request()->get('orderBy', 'id');
@@ -32,7 +32,7 @@ class ManageRoomAmenitiesController extends Controller
             'room_number',
             'description'
         ];
-        $relations = ['amenities', 'roomType'];
+        $relations = ['facilities', 'roomType'];
         $searchColumns = [
             'code',
         ];
@@ -52,26 +52,26 @@ class ManageRoomAmenitiesController extends Controller
 
         if (request()->ajax()) {
             return response()->json([
-                'results' => view('admin.table.manage-amenity-room', compact('response'))->render(),
+                'results' => view('admin.table.manage-facility-room', compact('response'))->render(),
                 'pagination' => view('vendor.pagination.custom', compact('response'))->render(),
             ]);
         }
-        return view('admin.manage-room-amenities.index', compact('rooms', 'amenities','pageTitle'));
+        return view('admin.manage-room-facilities.index', compact('rooms', 'facilities', 'pageTitle'));
     }
-    public function addAmenitiesToTheRoom(Request $request)
+    public function store(Request $request)
     {
         $validator = Validator::make(
             $request->all(),
             [
                 'room_id' => 'required',
-                'amenities_id' => 'required|array',
-                'amenities_id.*' => 'exists:amenities,id',
+                'facilities_id' => 'required|array',
+                'facilities_id.*' => 'exists:facilities,id',
             ],
             [
                 'room_id.required' => 'Vui lòng chọn phòng.',
-                'amenities_id.required' => 'Vui lòng chọn tiện nghi.',
-                'amenities_id.array' => 'Danh sách tiện nghi không hợp lệ.',
-                'amenities_id.*.exists' => 'Một hoặc nhiều tiện nghi không tồn tại.',
+                'facilities_id.required' => 'Vui lòng chọn tiện nghi.',
+                'facilities_id.array' => 'Danh sách tiện nghi không hợp lệ.',
+                'facilities_id.*.exists' => 'Một hoặc nhiều tiện nghi không tồn tại.',
             ]
         );
         if ($validator->fails()) {
@@ -84,7 +84,7 @@ class ManageRoomAmenitiesController extends Controller
 
         $room = Room::find($request->room_id);
         if ($room) {
-            $room->amenities()->sync($request->amenities_id);
+            $room->facilities()->sync($request->facilities_id);
         }
 
         return response()->json([
@@ -92,13 +92,12 @@ class ManageRoomAmenitiesController extends Controller
             'message' => 'Thao tác thành công!'
         ]);
     }
-
     public function edit($id)
     {
         $rooms = Room::select('id', 'code')->where('status' , 1)->get();
         $roomEdit = Room::query()->find($id);
-        $amenities = Amenity::select('id', 'title', 'code')->where('status' , 1)->get();
-        $selectedAmenities = $roomEdit->amenities->pluck('id')->toArray();
+        $facilities = Facility::select('id', 'title', 'code')->where('status' , 1)->get();
+        $selectedfacilities = $roomEdit->facilities->pluck('id')->toArray();
         if (!$roomEdit) {
             return response()->json([
                 'status' => false,
@@ -109,19 +108,19 @@ class ManageRoomAmenitiesController extends Controller
             'status' => true,
             'rooms' => $rooms,
             'roomEdit' => $roomEdit,
-            'amenities' => $amenities,
-            'selectedAmenities' => $selectedAmenities,
+            'facilities' => $facilities,
+            'selectedfacilities' => $selectedfacilities,
         ]);
     }
     public function update(Request $request)
     {
         $request->validate([
             'room_id' => 'required|exists:rooms,id',
-            'amenities_id' => 'nullable|array',
-            'amenities_id.*' => 'exists:amenities,id',
+            'facilities_id' => 'nullable|array',
+            'facilities_id.*' => 'exists:facilities,id',
         ]);
         $room = Room::find($request->room_id);
-        $room->amenities()->sync($request->amenities_id ?? []);
+        $room->facilities()->sync($request->facilities_id ?? []);
         return response()->json([
             'status' => true,
             'message' => 'Cập nhật tiện nghi cho phòng thành công!'

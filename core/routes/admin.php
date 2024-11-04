@@ -221,6 +221,13 @@ Route::middleware('admin', 'adminPermission')->group(function () {
             Route::get('room/edit-amenity/{id}', 'edit')->name('edit');
             Route::post('/rooms/update-amenity', 'update')->name('update');
         });
+        //Manage Facilities with room
+        Route::controller('ManageRoomFacilitiesController')->name('room.facilities.')->prefix('roomFacilities')->group(function () {
+            Route::get('', 'index')->name('all');
+            Route::post('/rooms/add-facility', 'store')->name('store');
+            Route::get('room/edit-facility/{id}', 'edit')->name('edit');
+            Route::post('/rooms/update-facility', 'update')->name('update');
+        });
     });
 
     Route::controller('BookRoomController')->group(function () {

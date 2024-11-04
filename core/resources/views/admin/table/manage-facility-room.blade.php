@@ -1,22 +1,22 @@
 @if ($response->isNotEmpty())
     @foreach ($response as $room)
-        @if ($room->amenities->count())
+        @if ($room->facilities->count())
             <tr data-id="{{ $room->id }}">
                 <th>{{ $loop->iteration }}</th>
                 <td>{{ $room->code }}</td>
                 <td>{{ $room->roomType->name }}</td>
                 <td>{{ $room->room_number }}</td>
                 <td>
-                    @if ($room->amenities->count() > 0)
-                        @foreach ($room->amenities as $item)
+                    @if ($room->facilities->count() > 0)
+                        @foreach ($room->facilities as $item)
                             <span class="badge {{ getRandomColor() }}">{{ $item->title }}</span>
                         @endforeach
                     @else
-                        <p>Chưa có tiện nghi nào !</p>
+                        <p>Chưa có cơ sở vật chất nào !</p>
                     @endif
 
                 </td>
-                @can('admin.hotel.room.amenities.all')
+                @can('admin.hotel.room.facilities.all')
                     <td>
                         <div class="button--group">
                             <button class="btn btn-sm btn-outline--primary btn-edit" data-id="{{ $room->id }}"
