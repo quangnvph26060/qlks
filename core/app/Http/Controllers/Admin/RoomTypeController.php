@@ -19,17 +19,77 @@ use Illuminate\Support\Facades\DB;
 use App\Http\Controllers\Controller;
 use App\Models\RoomImage;
 use App\Models\RoomPrice;
+use App\Repositories\BaseRepository;
 use Illuminate\Support\Facades\Log as FacadesLog;
 use Illuminate\Support\Facades\Storage;
 
 
 class RoomTypeController extends Controller
 {
+    protected $repository;
+
+    public function __construct()
+    {
+        $this->repository = new BaseRepository(new Room());
+    }
     public function index()
     {
         $pageTitle   = 'Danh sách  phòng';
-        $typeList    = Room::with('amenities', 'facilities', 'products')->latest()->paginate(getPaginate());
-        return view('admin.hotel.room_type.list', compact('pageTitle', 'typeList'));
+        // $typeList    = Room::with('amenities', 'facilities', 'products')->latest()->paginate(getPaginate());
+        // return view('admin.hotel.room_type.list', compact('pageTitle', 'typeList'));
+        $search = request()->get('search');
+        $perPage = request()->get('perPage', 10);
+        $orderBy = request()->get('orderBy', 'id');
+        $columns = [
+            'id',
+            'room_type_id',
+            'room_number',
+            'main_image',
+            'total_adult',
+            'total_child',
+            'description',
+            'beds',
+            'cancellation_fee',
+            'cancellation_policy',
+            'code',
+            'status',
+            'created_at',
+            'updated_at',
+            'is_clean',
+            'is_featured'
+        ];
+        $relations = [
+            'amenities',
+            'facilities',
+            'products',
+            'roomType'
+        ];
+        $searchColumns = [
+            'code',
+            'room_number',
+        ];
+        $relationSearchColumns = ['roomType' => ['name']];
+
+        $response = $this->repository
+            ->customPaginate(
+                $columns,
+                $relations,
+                $perPage,
+                $orderBy,
+                $search,
+                [],
+                $searchColumns,
+                $relationSearchColumns
+            );
+
+
+        if (request()->ajax()) {
+            return response()->json([
+                'results' => view('admin.table.manage-type-room', compact('response'))->render(),
+                'pagination' => view('vendor.pagination.custom', compact('response'))->render(),
+            ]);
+        }
+        return view('admin.hotel.room_type.list', compact('pageTitle'));
     }
 
     public function create()

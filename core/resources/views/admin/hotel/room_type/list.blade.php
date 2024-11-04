@@ -2,16 +2,33 @@
 @section('panel')
     <div class="row">
         <div class="col-lg-12">
+            <div class="d-flex justify-content-between mb-3">
+                <div class="dt-length">
+                    <select name="example_length" id="perPage" style=" padding: 1px 3px; margin-right: 8px;"
+                        aria-controls="example" class="perPage">
+                        <option value="10">10</option>
+                        <option value="25">25</option>
+                        <option value="50">50</option>
+                        <option value="100">100</option>
+                    </select><label for="perPage"> entries per page</label>
+                </div>
+                <div class="search">
+                    <label for="searchInput">Search:</label>
+                    <input class="searchInput"
+                        style="padding: 1px 3px; border: 1px solid rgb(121, 117, 117, 0.5); margin-left: 8px;"
+                        type="search" placeholder="Tìm kiếm...">
+                </div>
+            </div>
             <div class="card b-radius--10">
                 <div class="card-body p-0">
                     <div class="table-responsive--md table-responsive">
-                        <table class="table--light style--two table table-striped">
+                        <table class="table--light style--two table table-striped" id="data-table">
                             <thead>
                                 <tr>
                                     <th></th>
                                     <th>@lang('STT')</th>
                                     <th>@lang('Loại phòng')</th>
-                                    <th>@lang('Số phòng')</th>
+                                    <th>@lang('Tên phòng')</th>
                                     <th>@lang('Trạng thái')</th>
                                     @can(['admin.hotel.room.type.edit', 'admin.hotel.room.type.status'])
                                         <th>@lang('Hành động')</th>
@@ -19,96 +36,13 @@
                                 </tr>
                             </thead>
                             <tbody>
-                                @forelse($typeList as $type)
-                                    <tr>
-                                        <td>
-                                            <button class="btn btn-link btn-toggle" type="button"
-                                                onclick=" toggleRepresentatives('{{ $type->id }}', this)"></button>
-                                        </td>
-                                        <td>{{$loop->iteration}}</td>
 
-                                        <td>
-                                            {{ $type->roomType->name}}
-                                        </td>
-                                        <td>
-                                            {{ $type->room_number }}
-                                        </td>
-                                        <td>@php echo $type->statusBadge  @endphp</td>
-                                        @can(['admin.hotel.room.type.edit', 'admin.hotel.room.type.status'])
-                                            <td>
-                                                <div class="button--group">
-                                                    @can('admin.hotel.room.type.edit')
-                                                        <a class="btn btn-sm btn-outline--primary"
-                                                            href="{{ route('admin.hotel.room.type.edit', $type->id) }}"> <i
-                                                                class="la la-pencil"></i>@lang('Sửa')
-                                                        </a>
-                                                    @endcan
-                                                    @can('admin.hotel.room.type.status')
-                                                        @if ($type->status == 0)
-                                                            <button class="btn btn-sm btn-outline--success ms-1 confirmationBtn"
-                                                                data-action="{{ route('admin.hotel.room.type.status', $type->id) }}"
-                                                                data-question="@lang('Bạn có chắc chắn muốn bật loại phòng này không?')">
-                                                                <i class="la la-eye"></i> @lang('Cho phép')
-                                                            </button>
-                                                        @else
-                                                            <button class="btn btn-sm btn-outline--danger ms-1 confirmationBtn"
-                                                                data-action="{{ route('admin.hotel.room.type.status', $type->id) }}"
-                                                                data-question="@lang('Bạn có chắc chắn muốn vô hiệu hóa loại phòng này không?')">
-                                                                <i class="la la-eye-slash"></i> @lang('Ngưng hoạt động')
-                                                            </button>
-                                                        @endif
-                                                    @endcan
-                                                </div>
-                                            </td>
-                                        @endcan
-
-                                    </tr>
-
-                                    <tr class="collapse" id="rep-{{ $type->id }}">
-                                        <td colspan="8">
-                                            @if ($type->products->count() > 0)
-                                                <div class="representatives-container">
-                                                    <span class="representatives-label">Sản phẩm:</span>
-                                                    <span class="representatives-list">
-                                                        @foreach ($type->products as $product)
-                                                            <span
-                                                                class="badge {{ getRandomColor() }} me-2 mb-1 cursor-pointer">
-                                                                <small class="representative-name">
-                                                                    {{ $product->name }}</small>
-                                                            </span>
-                                                        @endforeach
-                                                    </span>
-                                                </div>
-                                            @endif
-                                            <div class="representatives-container">
-                                                <span class="representatives-label">Số lượng người:</span>
-                                                <span class="representatives-list">
-                                                    {{ $type->total_adult }} người lớn | {{ $type->total_child }} trẻ em
-                                                </span>
-                                            </div>
-                                            <div class="representatives-container">
-                                                <span class="representatives-label">Trạng thái tính năng:</span>
-                                                <span class="representatives-list">
-                                                    {!! $type->featureBadge !!}
-                                                </span>
-                                            </div>
-                                        </td>
-                                    </tr>
-                                @empty
-                                    <tr>
-                                        <td class="text-muted text-center" colspan="100%">{{ __($emptyMessage) }}</td>
-                                    </tr>
-                                @endforelse
 
                             </tbody>
                         </table>
                     </div>
                 </div>
-                @if ($typeList->hasPages())
-                    <div class="card-footer py-4">
-                        {{ paginateLinks($typeList) }}
-                    </div>
-                @endif
+
             </div>
         </div>
     </div>
@@ -124,12 +58,17 @@
 @endcan
 
 @push('script')
+    <script src="{{ asset('assets/admin/js/dataTable.js') }}"></script>
     <script>
         toggleRepresentatives = function(id, button) {
             const row = document.getElementById('rep-' + id);
             row.classList.toggle('show');
             button.classList.toggle('collapsed');
         };
+        $(document).ready(function() {
+            const apiUrl = '{{ route('admin.hotel.room.type.all') }}';
+            initDataFetch(apiUrl);
+        })
     </script>
 @endpush
 
