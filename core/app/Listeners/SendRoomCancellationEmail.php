@@ -9,7 +9,7 @@ use App\Events\RoomCancellationEvent;
 use Illuminate\Queue\InteractsWithQueue;
 use Illuminate\Contracts\Queue\ShouldQueue;
 
-class SendRoomCancellationEmail implements ShouldQueue
+class SendRoomCancellationEmail
 {
     /**
      * Create the event listener.
