@@ -85,6 +85,14 @@
                 "title": "Dịch vụ cao cấp",
                 "route_name": "admin.hotel.premium.service.all",
                 "menu_active": "admin.hotel.premium.service.all"
+            },
+            {
+                "keyword": [
+                    "Quản lý tiện nghi phòng"
+                ],
+                "title": "Quản lý tiện nghi phòng",
+                "route_name": "admin.hotel.room.amenities.all",
+                "menu_active": "admin.hotel.room.amenities.all"
             }
           
         ]
