@@ -13,7 +13,7 @@
                     <div class="card-body">
                         @csrf
                         <div class="row">
-                            <div class="col-xl-4 col-md-4 col-sm-12">
+                            <div class="col-xl-6 col-md-6 col-sm-12">
                                 <div class="form-group">
                                     <label>@lang('Loại phòng')</label>
                                     <select class="form-control" name="room_type_id" required>
@@ -25,22 +25,15 @@
                                     </select>
                                 </div>
                             </div>
-                            <div class="col-xl-4 col-md-4 col-sm-12">
+                            <div class="col-xl-6 col-md-6 col-sm-12">
                                 <div class="form-group">
                                     <label>@lang('Mã phòng')</label>
                                     <input class="form-control" name="code" type="text"
                                         value="{{ old('code', @$roomType->code) }}">
                                 </div>
                             </div>
-                            <div class="col-xl-4 col-md-4 col-sm-12">
-                                <div class="form-group">
-                                    <label>@lang('Số phòng')</label>
-                                    <input class="form-control" name="room_number" required type="text"
-                                        value="{{ old('room_number', @$roomType->room_number) }}">
-                                </div>
-                            </div>
 
-                            <div class="col-xl-4 col-md-4 col-sm-12">
+                            {{-- <div class="col-xl-4 col-md-4 col-sm-12">
                                 <div class="form-group">
                                     <label>@lang('Phí hủy bỏ') /@lang('Đêm')</label>
                                     <div class="input-group">
@@ -50,30 +43,16 @@
                                         <span class="input-group-text">{{ __(gs('cur_text')) }}</span>
                                     </div>
                                 </div>
-                            </div>
+                            </div> --}}
 
-                            <div class="col-xl-4 col-md-4 col-sm-12">
-                                <div class="form-group">
-                                    <label>@lang('Tổng số người')</label>
-                                    <input class="form-control" min="1" name="total_adult" required type="number"
-                                        value="{{ old('total_adult', @$roomType->total_adult) }}">
-                                </div>
-                            </div>
 
-                            <div class="col-xl-4 col-md-4 col-sm-12">
-                                <div class="form-group">
-                                    <label>@lang('Tống số trẻ em')</label>
-                                    <input class="form-control" min="0" name="total_child" required type="number"
-                                        value="{{ old('total_child', @$roomType->total_child) }}">
-                                </div>
-                            </div>
-                            <div class="col-xl-6 col-md-4 col-sm-12">
-                                {{-- @php
+                            {{-- <div class="col-xl-6 col-md-4 col-sm-12">
+                                @php
                                     if (empty($selectedPrices)) {
                                         $selectedPrices = [];
                                     }
-                                @endphp --}}
-                                {{-- <div class="form-group">
+                                @endphp
+                                <div class="form-group">
                                     <label for="">Chọn giá</label>
                                     <select class="select2-multi-select" multiple="multiple" name="prices[]">
                                         @foreach ($prices as $id => $name)
@@ -82,10 +61,10 @@
                                                 {{ $name }}
                                             </option>
                                         @endforeach
-                                        <!-- Thêm các tùy chọn khác nếu cần -->
+                                   
                                     </select>
-                                </div> --}}
-                            </div>
+                                </div>
+                            </div> --}}
                             {{-- <div class="col-xl-6 col-md-12">
                                 <div class="form-group position-relative">
                                     <label> @lang('Tiện nghi')</label>
@@ -119,6 +98,63 @@
                             </div> --}}
 
 
+                        </div>
+                        <div class="row">
+                            <div class="col-xl-4 col-md-4 col-sm-12">
+                                <div class="form-group">
+                                    <label>@lang('Số phòng')</label>
+                                    {{-- <input class="form-control" name="room_number" required type="text"
+                                        value="{{ old('room_number', @$roomType->room_number) }}"> --}}
+                                    <div class="d-flex align-items-center qty-input">
+                                        <button class="btn btn-light qty-count qty-count--minus border-end"
+                                            data-action="minus" type="button">-</button>
+                                        <input class="form-control text-center product-qty border-0" type="number"
+                                            name="room_number" min="1" max="100"
+                                            value="{{ old('room_number', @$roomType->room_number ?? 1) }}" readonly
+                                            required>
+                                        <button class="btn btn-light qty-count qty-count--add border-start"
+                                            data-action="add" type="button">+</button>
+                                    </div>
+                                </div>
+                            </div>
+
+                            <div class="col-xl-4 col-md-4 col-sm-12">
+                                {{-- <div class="form-group">
+                                    <label>@lang('Tổng số người')</label>
+                                    <input class="form-control" min="1" name="total_adult" required type="number"
+                                        value="{{ old('total_adult', @$roomType->total_adult) }}">
+                                </div> --}}
+                                <label>@lang('Tổng số người')</label>
+                                <div class="d-flex align-items-center qty-input">
+                                    <button class="btn btn-light qty-count qty-count--minus border-end" data-action="minus"
+                                        type="button">-</button>
+                                    <input class="form-control text-center product-qty border-0" type="number"
+                                        name="total_adult" min="1" max="100"
+                                        value="{{ old('total_adult', @$roomType->total_adult ?? 1) }}" readonly required>
+                                    <button class="btn btn-light qty-count qty-count--add border-start" data-action="add"
+                                        type="button">+</button>
+                                </div>
+
+                            </div>
+
+                            <div class="col-xl-4 col-md-4 col-sm-12">
+                                <div class="form-group">
+                                    <label>@lang('Tống số trẻ em')</label>
+                                    {{-- <input class="form-control" min="0" name="total_child" required type="number"
+                                        value="{{ old('total_child', @$roomType->total_child) }}"> --}}
+                                    <div class="d-flex align-items-center qty-input">
+                                        <button class="btn btn-light qty-count qty-count--minus border-end"
+                                            data-action="minus" type="button">-</button>
+                                        <input class="form-control text-center product-qty border-0" type="number"
+                                            name="total_child" min="1" max="100"
+                                            value="{{ old('total_child', @$roomType->total_child ?? 1) }}" readonly
+                                            required>
+                                        <button class="btn btn-light qty-count qty-count--add border-start"
+                                            data-action="add" type="button">+</button>
+                                    </div>
+
+                                </div>
+                            </div>
                         </div>
                         <div class="row">
                             <div class="col-xl-6 col-md-12">
@@ -194,6 +230,16 @@
                                     <input @isset($roomType) readonly @endisset class="form-control"
                                         min="1" name="total_bed" required type="number"
                                         value="{{ @$roomType ? count(@$roomType->beds) : '' }}">
+                                    {{-- <div class="d-flex align-items-center qty-input">
+                                        <button class="btn btn-light qty-count qty-count--minus border-end decrement-bed"
+                                            data-action="minus" type="button">-</button>
+                                        <input class="form-control text-center product-qty border-0" type="number"
+                                            name="total_bed" max="100"
+                                            value="{{ @$roomType ? count(@$roomType->beds) : 0 }}"
+                                            @isset($roomType) readonly @endisset required>
+                                        <button class="btn btn-light qty-count qty-count--add border-start increment-bed"
+                                            data-action="add" type="button">+</button>
+                                    </div> --}}
                                 </div>
                             </div>
                         </div>
@@ -300,7 +346,7 @@
                             <div class="radio-container">
                                 <label class="toggle">
                                     <input type="checkbox" name="status" class="status-change"
-                                        @checked(@$roomType->status == 1)>
+                                        @checked(@$roomType->status == 0)>
                                     <span class="slider"></span>
                                 </label>
                             </div>
@@ -397,8 +443,6 @@
             padding: 0;
         }
     </style>
-@endpush
-@push('style')
     <style>
         .radio-container {
             display: flex;
@@ -499,7 +543,37 @@
             line-height: 25px;
         }
     </style>
+    <style>
+        .qty-input .product-qty {
+            width: 60px;
+            -moz-appearance: textfield;
+        }
+
+        .qty-input .product-qty::-webkit-outer-spin-button,
+        .qty-input .product-qty::-webkit-inner-spin-button {
+            -webkit-appearance: none;
+            margin: 0;
+        }
+
+        .qty-input .qty-count {
+            font-size: 1.25rem;
+            font-weight: bold;
+            width: 2.5rem;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+        }
+
+        /* .qty-input .qty-count--add::after {
+                                                                    content: "+";
+                                                                }
+
+                                                                .qty-input .qty-count--minus::after {
+                                                                    content: "-";
+                                                                } */
+    </style>
 @endpush
+
 
 @push('script')
     <script>
@@ -664,6 +738,53 @@
                     $('.bed').html(content);
                 }
             });
+            // $('.increment-bed').on('click', function() {
+            //     var totalBed = $('[name=total_bed]').val();
+            //     console.log(totalBed)
+            //     if (totalBed) {
+            //         let content = '<div class="row border-top pt-3">';
+            //         for (var i = 0; i <= totalBed; i++) {
+            //             content += getBedContent(i);
+            //         }
+            //         content += '</div>';
+            //         $('.bed').html(content);
+            //     }
+            // });
+            // $('.decrement-bed').on('click', function() {
+            //     var $input = $('[name=total_bed]');
+            //     var totalBed = parseInt($input.val()) || 0; // Đảm bảo là số nguyên
+            //     console.log(totalBed);
+            //     if (totalBed >= 0) { // Kiểm tra nếu số lượng giường lớn hơn 0
+            //         totalBed--; // Giảm số lượng giường xuống 1
+            //         $input.val(totalBed); // Cập nhật giá trị cho input
+            //         updateBedContent(totalBed); // Cập nhật nội dung giường
+            //     }
+            // });
+
+            // // Hàm để cập nhật nội dung giường
+            // function updateBedContent(totalBed) {
+            //     if (totalBed) {
+            //         let content = '<div class="row border-top pt-3">';
+            //         for (var i = 0; i < totalBed; i++) { // Chỉ lặp từ 0 đến totalBed - 1
+            //             content += getBedContent(i);
+            //         }
+            //         content += '</div>';
+            //         $('.bed').html(content); // Cập nhật nội dung giường trong phần tử có class .bed
+            //     } else {
+            //         $('.bed').html(''); // Nếu không có giường, xóa nội dung
+            //     }
+            // }
+            // $('').on('click', function() {
+            //     var totalBed = $('[name=total_bed]').val();
+            //     if (totalBed) {
+            //         let content = '<div class="row border-top pt-3">';
+            //         for (var i = 1; i <= totalBed; i++) {
+            //             content += getBedContent(i);
+            //         }
+            //         content += '</div>';
+            //         $('.bed').html(content);
+            //     }
+            // });
 
             function getBedContent(number) {
                 return `
@@ -694,17 +815,17 @@
 
 
             //common js
-            $('[name=total_bed]').on('input', function() {
-                var totalBed = $(this).val();
-                if (totalBed) {
-                    let content = '<div class="row border-top pt-3">';
-                    for (var i = 1; i <= totalBed; i++) {
-                        content += getBedContent(i);
-                    }
-                    content += '</div>';
-                    $('.bed').html(content);
-                }
-            });
+            // $('[name=total_bed]').on('input', function() {
+            //     var totalBed = $(this).val();
+            //     if (totalBed) {
+            //         let content = '<div class="row border-top pt-3">';
+            //         for (var i = 1; i <= totalBed; i++) {
+            //             content += getBedContent(i);
+            //         }
+            //         content += '</div>';
+            //         $('.bed').html(content);
+            //     }
+            // });
 
             $(document).on('click', '.btnRemove', function() {
                 $(this).closest('.number-field-wrapper').remove();
@@ -856,5 +977,138 @@
                 }
             });
         })(jQuery);
+    </script>
+    {{-- <script>
+        var QtyInput = (function() {
+            var $qtyInputs = $(".qty-input");
+
+            if (!$qtyInputs.length) {
+                return;
+            }
+
+            var $inputs = $qtyInputs.find(".product-qty");
+            var $countBtn = $qtyInputs.find(".qty-count");
+            var qtyMin = parseInt($inputs.attr("min"));
+            var qtyMax = parseInt($inputs.attr("max"));
+
+            $inputs.change(function() {
+                var $this = $(this);
+                var $minusBtn = $this.siblings(".qty-count--minus");
+                var $addBtn = $this.siblings(".qty-count--add");
+                var qty = parseInt($this.val());
+
+                if (isNaN(qty) || qty <= qtyMin) {
+                    $this.val(qtyMin);
+                    $minusBtn.attr("disabled", true);
+                } else {
+                    $minusBtn.attr("disabled", false);
+
+                    if (qty >= qtyMax) {
+                        $this.val(qtyMax);
+                        $addBtn.attr('disabled', true);
+                    } else {
+                        $this.val(qty);
+                        $addBtn.attr('disabled', false);
+                    }
+                }
+            });
+
+            $countBtn.click(function() {
+                var operator = this.dataset.action;
+                var $this = $(this);
+                var $input = $this.siblings(".product-qty");
+                var qty = parseInt($input.val());
+
+                if (operator == "add") {
+                    qty += 1;
+                    if (qty >= qtyMin + 1) {
+                        $this.siblings(".qty-count--minus").attr("disabled", false);
+                    }
+
+                    if (qty >= qtyMax) {
+                        $this.attr("disabled", true);
+                    }
+                } else {
+                    qty = qty <= qtyMin ? qtyMin : (qty -= 1);
+
+                    if (qty == qtyMin) {
+                        $this.attr("disabled", true);
+                    }
+
+                    if (qty < qtyMax) {
+                        $this.siblings(".qty-count--add").attr("disabled", false);
+                    }
+                }
+
+                $input.val(qty);
+            });
+        })();
+    </script> --}}
+    <script>
+        var QtyInput = (function() {
+            var $qtyInputs = $(".qty-input");
+
+            if (!$qtyInputs.length) {
+                return;
+            }
+
+            var $inputs = $qtyInputs.find(".product-qty");
+            var $countBtn = $qtyInputs.find(".qty-count");
+            var qtyMax = parseInt($inputs.attr("max"));
+
+            $inputs.change(function() {
+                var $this = $(this);
+                var $minusBtn = $this.siblings(".qty-count--minus");
+                var $addBtn = $this.siblings(".qty-count--add");
+                var qty = parseInt($this.val());
+
+                if (isNaN(qty) || qty < 0) {
+                    $this.val(0); // Đặt giá trị về 0 nếu không hợp lệ
+                    $minusBtn.attr("disabled", true); // Vô hiệu hóa nút giảm
+                } else {
+                    $minusBtn.attr("disabled", false);
+
+                    if (qty >= qtyMax) {
+                        $this.val(qtyMax);
+                        $addBtn.attr('disabled', true);
+                    } else {
+                        $this.val(qty);
+                        $addBtn.attr('disabled', false);
+                    }
+                }
+            });
+
+            $countBtn.click(function() {
+                var operator = this.dataset.action;
+                var $this = $(this);
+                var $input = $this.siblings(".product-qty");
+                var qty = parseInt($input.val());
+
+                if (operator == "add") {
+                    qty += 1;
+                    if (qty >= 1) { // Kích hoạt nút giảm khi qty lớn hơn 0
+                        $this.siblings(".qty-count--minus").attr("disabled", false);
+                    }
+
+                    if (qty >= qtyMax) {
+                        $this.attr("disabled", true); // Vô hiệu hóa nút tăng khi đạt tối đa
+                    }
+                } else {
+                    qty -= 1; // Giảm giá trị
+
+                    // Đảm bảo giá trị không dưới 0
+                    if (qty < 0) {
+                        qty = 0; // Đặt về 0 nếu giảm xuống dưới 0
+                        $this.attr("disabled", true); // Vô hiệu hóa nút giảm khi đạt 0
+                    }
+
+                    if (qty < qtyMax) {
+                        $this.siblings(".qty-count--add").attr("disabled", false);
+                    }
+                }
+
+                $input.val(qty); // Cập nhật giá trị cho input
+            });
+        })();
     </script>
 @endpush

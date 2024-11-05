@@ -44,19 +44,10 @@ class RoomTypeController extends Controller
             'id',
             'room_type_id',
             'room_number',
-            'main_image',
-            'total_adult',
-            'total_child',
-            'description',
-            'beds',
-            'cancellation_fee',
-            'cancellation_policy',
             'code',
             'status',
             'created_at',
             'updated_at',
-            'is_clean',
-            'is_featured'
         ];
         $relations = [
             'amenities',
@@ -130,6 +121,7 @@ class RoomTypeController extends Controller
 
     public function save(Request $request, $id = 0)
     {
+        dd($request->all());
         $this->validation($request, $id);
         DB::beginTransaction();
         try {
@@ -160,7 +152,7 @@ class RoomTypeController extends Controller
             $room->description         = htmlspecialchars_decode($purifier->purify($request->description));
             $room->beds                = $bedArray;
             $room->is_featured         = $request->is_featured ? 1 : 0;
-            $room->cancellation_fee    = $request->cancellation_fee ?? 0;
+            //$room->cancellation_fee    = $request->cancellation_fee ?? 0;
             $room->cancellation_policy = htmlspecialchars_decode($purifier->purify($request->cancellation_policy));
             $room->is_clean            = Status::ROOM_CLEAN_ACTIVE;
             $room->status              = $request->status ? 1 : 0;
