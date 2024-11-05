@@ -6,10 +6,11 @@ use App\Constants\Status;
 use App\Traits\GlobalStatus;
 use Illuminate\Database\Eloquent\Model;
 use Illuminate\Database\Eloquent\Casts\Attribute;
+use Illuminate\Database\Eloquent\SoftDeletes;
 
 class Room extends Model
 {
-    use GlobalStatus;
+    use GlobalStatus , SoftDeletes;
 
     protected $fillable = ['id', 'is_clean'];
     protected $casts = [

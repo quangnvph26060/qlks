@@ -18,6 +18,17 @@
                         style="padding: 1px 3px; border: 1px solid rgb(121, 117, 117, 0.5); margin-left: 8px;"
                         type="search" placeholder="Tìm kiếm...">
                 </div>
+                <div class="dropdown">
+                    <a class="btn btn-outline-secondary dropdown-toggle" href="#" role="button"
+                        data-bs-toggle="dropdown" aria-expanded="false">
+                        Thao tác
+                    </a>
+                    <ul class="dropdown-menu">
+                        <li><a class="dropdown-item"
+                                href="{{ route('admin.hotel.room.type.all.deleted') }}">Các phòng đã xóa</a>
+                        </li>
+                    </ul>
+                </div>
             </div>
             <div class="card b-radius--10">
                 <div class="card-body p-0">
@@ -26,11 +37,16 @@
                             <thead>
                                 <tr>
                                     <th></th>
-                                    <th>@lang('STT')</th>
+                                    {{-- <th>@lang('STT')</th> --}}
                                     <th>@lang('Loại phòng')</th>
                                     <th>@lang('Tên phòng')</th>
+                                    <th>@lang('Mã phòng')</th>
+                                    <th>@lang('Tiện nghi')</th>
+                                    <th>@lang('Cở sở vật chất')</th>
+                                    <th>@lang('Các loại giá')</th>
                                     <th>@lang('Trạng thái')</th>
-                                    @can(['admin.hotel.room.type.edit', 'admin.hotel.room.type.status'])
+                                    @can(['admin.hotel.room.type.edit', 'admin.hotel.room.type.status',
+                                        'admin.hotel.room.type.destroy'])
                                         <th>@lang('Hành động')</th>
                                     @endcan
                                 </tr>
@@ -40,9 +56,12 @@
 
                             </tbody>
                         </table>
+
                     </div>
                 </div>
+                <div id="pagination" class="m-3">
 
+                </div>
             </div>
         </div>
     </div>
@@ -68,6 +87,40 @@
         $(document).ready(function() {
             const apiUrl = '{{ route('admin.hotel.room.type.all') }}';
             initDataFetch(apiUrl);
+
+
+            $(document).on('click', '.btn-delete', function() {
+                let id = $(this).data('id');
+
+                Swal.fire({
+                    title: 'Xóa phòng',
+                    text: 'Bạn có chắc chắn không?',
+                    icon: 'warning',
+                    showCancelButton: true,
+                    confirmButtonColor: '#3085d6',
+                    cancelButtonColor: '#d33',
+                    confirmButtonText: 'Đồng ý',
+                    cancelButtonText: 'Huỷ'
+                }).then((result) => {
+                    if (result.isConfirmed) {
+                        $.ajax({
+                            type: "DELETE",
+                            url: "{{ route('admin.hotel.room.type.destroy', ':id') }}"
+                                .replace(':id', id),
+                            success: function(response) {
+                                if (response.status) {
+                                    showSwalMessage('success', response
+                                        .message);
+                                    initDataFetch(apiUrl);
+                                } else {
+                                    showSwalMessage('error', response
+                                        .message);
+                                }
+                            }
+                        });
+                    }
+                })
+            })
         })
     </script>
 @endpush

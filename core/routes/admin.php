@@ -198,6 +198,8 @@ Route::middleware('admin', 'adminPermission')->group(function () {
             Route::post('status/{id}', 'status')->name('status');
 
             Route::get('check-slug', 'checkSlug')->name('check.slug');
+            Route::delete('delete/{id}', 'destroy')->name('destroy');
+            Route::get('/deleted', 'roomDeleted')->name('all.deleted');
         });
 
         //Room

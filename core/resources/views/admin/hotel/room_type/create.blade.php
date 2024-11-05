@@ -565,12 +565,12 @@
         }
 
         /* .qty-input .qty-count--add::after {
-                                                                    content: "+";
-                                                                }
+                                                                        content: "+";
+                                                                    }
 
-                                                                .qty-input .qty-count--minus::after {
-                                                                    content: "-";
-                                                                } */
+                                                                    .qty-input .qty-count--minus::after {
+                                                                        content: "-";
+                                                                    } */
     </style>
 @endpush
 
@@ -978,7 +978,7 @@
             });
         })(jQuery);
     </script>
-    {{-- <script>
+    <script>
         var QtyInput = (function() {
             var $qtyInputs = $(".qty-input");
 
@@ -1041,73 +1041,6 @@
                 }
 
                 $input.val(qty);
-            });
-        })();
-    </script> --}}
-    <script>
-        var QtyInput = (function() {
-            var $qtyInputs = $(".qty-input");
-
-            if (!$qtyInputs.length) {
-                return;
-            }
-
-            var $inputs = $qtyInputs.find(".product-qty");
-            var $countBtn = $qtyInputs.find(".qty-count");
-            var qtyMax = parseInt($inputs.attr("max"));
-
-            $inputs.change(function() {
-                var $this = $(this);
-                var $minusBtn = $this.siblings(".qty-count--minus");
-                var $addBtn = $this.siblings(".qty-count--add");
-                var qty = parseInt($this.val());
-
-                if (isNaN(qty) || qty < 0) {
-                    $this.val(0); // Đặt giá trị về 0 nếu không hợp lệ
-                    $minusBtn.attr("disabled", true); // Vô hiệu hóa nút giảm
-                } else {
-                    $minusBtn.attr("disabled", false);
-
-                    if (qty >= qtyMax) {
-                        $this.val(qtyMax);
-                        $addBtn.attr('disabled', true);
-                    } else {
-                        $this.val(qty);
-                        $addBtn.attr('disabled', false);
-                    }
-                }
-            });
-
-            $countBtn.click(function() {
-                var operator = this.dataset.action;
-                var $this = $(this);
-                var $input = $this.siblings(".product-qty");
-                var qty = parseInt($input.val());
-
-                if (operator == "add") {
-                    qty += 1;
-                    if (qty >= 1) { // Kích hoạt nút giảm khi qty lớn hơn 0
-                        $this.siblings(".qty-count--minus").attr("disabled", false);
-                    }
-
-                    if (qty >= qtyMax) {
-                        $this.attr("disabled", true); // Vô hiệu hóa nút tăng khi đạt tối đa
-                    }
-                } else {
-                    qty -= 1; // Giảm giá trị
-
-                    // Đảm bảo giá trị không dưới 0
-                    if (qty < 0) {
-                        qty = 0; // Đặt về 0 nếu giảm xuống dưới 0
-                        $this.attr("disabled", true); // Vô hiệu hóa nút giảm khi đạt 0
-                    }
-
-                    if (qty < qtyMax) {
-                        $this.siblings(".qty-count--add").attr("disabled", false);
-                    }
-                }
-
-                $input.val(qty); // Cập nhật giá trị cho input
             });
         })();
     </script>
