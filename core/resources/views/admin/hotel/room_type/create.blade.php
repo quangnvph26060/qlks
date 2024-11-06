@@ -227,9 +227,9 @@
                             <div class="col-sm-4">
                                 <div class="form-group">
                                     <h4 class="mb-1">@lang('Tổng số giường')</h4>
-                                    <input @isset($roomType) readonly @endisset class="form-control"
+                                    {{-- <input @isset($roomType) readonly @endisset class="form-control"
                                         min="1" name="total_bed" required type="number"
-                                        value="{{ @$roomType ? count(@$roomType->beds) : '' }}">
+                                        value="{{ @$roomType ? count(@$roomType->beds) : '' }}"> --}}
                                     {{-- <div class="d-flex align-items-center qty-input">
                                         <button class="btn btn-light qty-count qty-count--minus border-end decrement-bed"
                                             data-action="minus" type="button">-</button>
@@ -240,11 +240,24 @@
                                         <button class="btn btn-light qty-count qty-count--add border-start increment-bed"
                                             data-action="add" type="button">+</button>
                                     </div> --}}
+                                    <div class="quantity-container-bed d-flex align-items-center qty-input">
+                                        <button id="decrease-bed"
+                                            class="btn btn-light qty-bed border-end"
+                                            type="button">-</button>
+                                        <input type="number" @isset($roomType) readonly @endisset
+                                            name="total_bed" id="quantity-bed"
+                                            class="form-control text-center product-qty border-0"
+                                            value="{{ @$roomType ? count(@$roomType->beds) : 0 }}" readonly
+                                            min="0" />
+                                        <button id="increase-bed"
+                                            class="btn btn-light qty-bed border-start"
+                                            type="button">+</button>
+                                    </div>
                                 </div>
                             </div>
                         </div>
-                        <div class="bed">
-                            @isset($roomType)
+                        <div class="bed d-flex flex-wrap justify-content-start" id="bed">
+                            {{-- @isset($roomType)
                                 <div class="row border-top pt-3">
                                     @foreach ($roomType->beds as $bed)
                                         <div class="col-md-3 number-field-wrapper bed-content">
@@ -270,7 +283,7 @@
                                 </div>
                                 <button class="btn btn--success addMore" type="button"> <i
                                         class="la la-plus"></i>@lang('Add More')</button>
-                            @endisset
+                            @endisset --}}
                         </div>
                     </div>
                 </div>
@@ -544,9 +557,16 @@
         }
     </style>
     <style>
+        .qty-input {
+            border: 1px solid #ccc;
+            width: 140px;
+            border-radius: 3px;
+        }
         .qty-input .product-qty {
             width: 60px;
             -moz-appearance: textfield;
+            background-color: white;
+            
         }
 
         .qty-input .product-qty::-webkit-outer-spin-button,
@@ -555,22 +575,14 @@
             margin: 0;
         }
 
-        .qty-input .qty-count {
+        .qty-input .qty-count , .qty-bed {
             font-size: 1.25rem;
-            font-weight: bold;
             width: 2.5rem;
             display: flex;
             justify-content: center;
             align-items: center;
+            background-color: white
         }
-
-        /* .qty-input .qty-count--add::after {
-                                                                    content: "+";
-                                                                }
-
-                                                                .qty-input .qty-count--minus::after {
-                                                                    content: "-";
-                                                                } */
     </style>
 @endpush
 
@@ -726,56 +738,9 @@
                 $('[name=total_room]').val(totalRoom);
             }
 
-            //bed js
-            $('[name=total_bed]').on('input', function() {
-                var totalBed = $(this).val();
-                if (totalBed) {
-                    let content = '<div class="row border-top pt-3">';
-                    for (var i = 1; i <= totalBed; i++) {
-                        content += getBedContent(i);
-                    }
-                    content += '</div>';
-                    $('.bed').html(content);
-                }
-            });
-            // $('.increment-bed').on('click', function() {
-            //     var totalBed = $('[name=total_bed]').val();
-            //     console.log(totalBed)
-            //     if (totalBed) {
-            //         let content = '<div class="row border-top pt-3">';
-            //         for (var i = 0; i <= totalBed; i++) {
-            //             content += getBedContent(i);
-            //         }
-            //         content += '</div>';
-            //         $('.bed').html(content);
-            //     }
-            // });
-            // $('.decrement-bed').on('click', function() {
-            //     var $input = $('[name=total_bed]');
-            //     var totalBed = parseInt($input.val()) || 0; // Đảm bảo là số nguyên
-            //     console.log(totalBed);
-            //     if (totalBed >= 0) { // Kiểm tra nếu số lượng giường lớn hơn 0
-            //         totalBed--; // Giảm số lượng giường xuống 1
-            //         $input.val(totalBed); // Cập nhật giá trị cho input
-            //         updateBedContent(totalBed); // Cập nhật nội dung giường
-            //     }
-            // });
-
-            // // Hàm để cập nhật nội dung giường
-            // function updateBedContent(totalBed) {
-            //     if (totalBed) {
-            //         let content = '<div class="row border-top pt-3">';
-            //         for (var i = 0; i < totalBed; i++) { // Chỉ lặp từ 0 đến totalBed - 1
-            //             content += getBedContent(i);
-            //         }
-            //         content += '</div>';
-            //         $('.bed').html(content); // Cập nhật nội dung giường trong phần tử có class .bed
-            //     } else {
-            //         $('.bed').html(''); // Nếu không có giường, xóa nội dung
-            //     }
-            // }
-            // $('').on('click', function() {
-            //     var totalBed = $('[name=total_bed]').val();
+            //Mã tăng số lượng giường
+            // $('[name=total_bed]').on('input', function() {
+            //     var totalBed = $(this).val();
             //     if (totalBed) {
             //         let content = '<div class="row border-top pt-3">';
             //         for (var i = 1; i <= totalBed; i++) {
@@ -788,7 +753,7 @@
 
             function getBedContent(number) {
                 return `
-                    <div class="col-md-3 number-field-wrapper bed-content">
+                    <div class="col-md-2 number-field-wrapper bed-content m-1">
                         <div class="form-group">
                             <label for="bed" class="required">@lang('Bed') - <span class="serialNumber">${number}</span></label>
                             <div class="input-group"><select class="form-control bedType" name="bed[${number}]">
@@ -799,6 +764,28 @@
                         </div>
                     </div>`;
             }
+
+            function updateDivs() {
+                $("#bed").empty();
+                let quantity = parseInt($("#quantity-bed").val());
+                for (let i = 0; i < quantity; i++) {
+                    let newDiv = $(getBedContent(i))
+                    $("#bed").append(newDiv);
+                }
+            }
+            $("#increase-bed").click(function() {
+                let quantity = parseInt($("#quantity-bed").val());
+                $("#quantity-bed").val(quantity + 1);
+                updateDivs();
+            });
+            $("#decrease-bed").click(function() {
+                let quantity = parseInt($("#quantity-bed").val());
+                if (quantity > 0) {
+                    $("#quantity-bed").val(quantity - 1);
+                    updateDivs();
+                }
+            });
+            updateDivs();
 
             function setTotalBed() {
                 var totalBed = $('.bedType').length;
@@ -814,18 +801,11 @@
             }
 
 
-            //common js
-            // $('[name=total_bed]').on('input', function() {
-            //     var totalBed = $(this).val();
-            //     if (totalBed) {
-            //         let content = '<div class="row border-top pt-3">';
-            //         for (var i = 1; i <= totalBed; i++) {
-            //             content += getBedContent(i);
-            //         }
-            //         content += '</div>';
-            //         $('.bed').html(content);
-            //     }
-            // });
+            // /////////////////////////
+
+
+
+
 
             $(document).on('click', '.btnRemove', function() {
                 $(this).closest('.number-field-wrapper').remove();
@@ -978,7 +958,7 @@
             });
         })(jQuery);
     </script>
-    {{-- <script>
+    <script>
         var QtyInput = (function() {
             var $qtyInputs = $(".qty-input");
 
@@ -1041,73 +1021,6 @@
                 }
 
                 $input.val(qty);
-            });
-        })();
-    </script> --}}
-    <script>
-        var QtyInput = (function() {
-            var $qtyInputs = $(".qty-input");
-
-            if (!$qtyInputs.length) {
-                return;
-            }
-
-            var $inputs = $qtyInputs.find(".product-qty");
-            var $countBtn = $qtyInputs.find(".qty-count");
-            var qtyMax = parseInt($inputs.attr("max"));
-
-            $inputs.change(function() {
-                var $this = $(this);
-                var $minusBtn = $this.siblings(".qty-count--minus");
-                var $addBtn = $this.siblings(".qty-count--add");
-                var qty = parseInt($this.val());
-
-                if (isNaN(qty) || qty < 0) {
-                    $this.val(0); // Đặt giá trị về 0 nếu không hợp lệ
-                    $minusBtn.attr("disabled", true); // Vô hiệu hóa nút giảm
-                } else {
-                    $minusBtn.attr("disabled", false);
-
-                    if (qty >= qtyMax) {
-                        $this.val(qtyMax);
-                        $addBtn.attr('disabled', true);
-                    } else {
-                        $this.val(qty);
-                        $addBtn.attr('disabled', false);
-                    }
-                }
-            });
-
-            $countBtn.click(function() {
-                var operator = this.dataset.action;
-                var $this = $(this);
-                var $input = $this.siblings(".product-qty");
-                var qty = parseInt($input.val());
-
-                if (operator == "add") {
-                    qty += 1;
-                    if (qty >= 1) { // Kích hoạt nút giảm khi qty lớn hơn 0
-                        $this.siblings(".qty-count--minus").attr("disabled", false);
-                    }
-
-                    if (qty >= qtyMax) {
-                        $this.attr("disabled", true); // Vô hiệu hóa nút tăng khi đạt tối đa
-                    }
-                } else {
-                    qty -= 1; // Giảm giá trị
-
-                    // Đảm bảo giá trị không dưới 0
-                    if (qty < 0) {
-                        qty = 0; // Đặt về 0 nếu giảm xuống dưới 0
-                        $this.attr("disabled", true); // Vô hiệu hóa nút giảm khi đạt 0
-                    }
-
-                    if (qty < qtyMax) {
-                        $this.siblings(".qty-count--add").attr("disabled", false);
-                    }
-                }
-
-                $input.val(qty); // Cập nhật giá trị cho input
             });
         })();
     </script>

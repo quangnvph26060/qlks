@@ -343,4 +343,43 @@ class RoomTypeController extends Controller
             'exists' => $exist
         ]);
     }
+
+    public function destroy($id)
+    {
+        $room = Room::find($id);
+
+        if (! $room) {
+            return response()->json([
+                'status' => false,
+                'message' => 'Dữ liệu không tồn tại trên hệ thống!'
+            ]);
+        }
+
+        $room->delete();
+        return response()->json([
+            'status' => true,
+            'message' => 'Thao tác thành công.'
+        ]);
+    }
+
+    public function  roomDeleted()
+    {
+        $pageTitle   = 'Danh sách các phòng đã xóa';
+        $typeList    = Room::with('amenities', 'facilities', 'products')->onlyTrashed()->latest()->paginate(getPaginate());
+        return view('admin.hotel.room_type.room-deleted', compact('pageTitle', 'typeList'));
+    }
+    public function restore($id)
+    {
+        $room = Room::withTrashed()->find($id);
+        if (! $room) {
+            $notification = 'Không tìm thấy dữ liệu';
+            $notify[] = ['error', $notification];
+            return back()->withNotify($notify);
+        }
+
+        $room->restore();
+        $notification = 'Phòng đã được khôi phục thành công.';
+        $notify[] = ['success', $notification];
+        return back()->withNotify($notify);
+    }
 }

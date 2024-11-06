@@ -466,6 +466,10 @@ CREATE TABLE notification_templates (
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_unicode_ci; 
 
 
+ALTER TABLE `rooms` ADD `deleted_at` TIMESTAMP NULL AFTER `updated_at`;
+
+
 
 07/10
 ALTER TABLE `booking_request_items` DROP FOREIGN KEY `booking_request_items_ibfk_1`; ALTER TABLE `booking_request_items` ADD CONSTRAINT `booking_request_items_ibfk_1` FOREIGN KEY (`booking_request_id`) REFERENCES `booking_requests`(`id`) ON DELETE CASCADE ON UPDATE RESTRICT;
+
