@@ -15,6 +15,7 @@ use App\Models\PremiumService;
 use App\Models\Product;
 use App\Models\RoomPriceRoom;
 use Carbon\Carbon;
+use Symfony\Component\Console\Helper\Helper;
 use Symfony\Component\HttpKernel\Log\Logger;
 
 class BookingController extends Controller
@@ -239,7 +240,6 @@ class BookingController extends Controller
     }
     public function Receptionist(Request $request)
     {
-
         $emptyMessage   = '';
         $pageTitle      =  'Lễ tân';
         $Title          =  'Tất cả các phòng';
@@ -302,12 +302,13 @@ class BookingController extends Controller
             ->get();
 
         $userList = User::select('username', 'email', 'mobile', 'address')->get();
-
+        $is_result = false;
         if ($request->ajax()) {
-            return view('admin.booking.partials.empty_rooms', ['dataRooms' => $emptyRooms,'bookings'=>$bookings])->render();
+            $is_result = true;
+            return view('admin.booking.partials.empty_rooms', ['dataRooms' => $emptyRooms, 'bookings' => $bookings, 'is_result' => $is_result])->render();
         }
         $roomType = RoomType::active()->select('id', 'name')->get();
-        return view('admin.booking.receptionist.list', compact('pageTitle', 'Title', 'emptyRooms', 'bookings', 'emptyMessage', 'userList', 'roomType'));
+        return view('admin.booking.receptionist.list', compact('pageTitle', 'Title', 'emptyRooms', 'bookings', 'emptyMessage', 'userList', 'roomType', 'is_result'));
     }
 
     public function changeCleanRoom(Request $request)
@@ -334,9 +335,25 @@ class BookingController extends Controller
         $premiumServices    = PremiumService::active()->get();
         return ApiResponse::success($premiumServices, 'success', 200);
     }
+
     public function getProduct()
     {
         $product    = Product::Featured()->get();
         return ApiResponse::success($product, 'success', 200);
+    }
+
+    public function writeCccd(Request $request)
+    {
+       
+
+        $fileName = $request->file('image')->getPathname();
+  
+        $response = writeCccd($fileName);
+
+        if (isset($response['error'])) {
+            return response()->json(['error' => $response['error']], 500);
+        } else {
+            return response()->json($response, 200);
+        }
     }
 }
