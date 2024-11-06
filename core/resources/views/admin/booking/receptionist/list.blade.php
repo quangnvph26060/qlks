@@ -1414,7 +1414,7 @@
                 // Lấy giá trị của guest_type
                 //    let guestType = $('#guest_type').val();
                 event.stopPropagation();
-                
+
                 let name = $('#name').val();
                 let email = $('#email').val();
                 let phone = $('#phone').val();
@@ -1435,6 +1435,7 @@
             });
             // cccd
             $('.camera-svg-icon-add').on('click', function() {
+              
                 $('#fileUpload').click();
             });
 
@@ -1442,14 +1443,15 @@
             $('#fileUpload').on('change', function(event) {
                 const files = event.target.files;
                 const file = files[0]; // Lấy file đầu tiên trong danh sách
-                $('#loading').show();
+              
                 if (file) {
-
+                 
                     const formData = new FormData();
                     formData.append('image', file);
                     formData.append('_token', '{{ csrf_token() }}');
     
                     var url = '{{ route('admin.booking.writeCccd') }}';
+                    $('#loading').show();
                     $.ajax({
                         url: url,
                         type: 'POST',
