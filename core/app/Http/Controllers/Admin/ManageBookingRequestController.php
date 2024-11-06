@@ -6,6 +6,7 @@ use Carbon\Carbon;
 use App\Models\Room;
 use App\Models\Booking;
 use App\Constants\Status;
+use App\Events\EventRegisterUser;
 use App\Models\BookedRoom;
 use Illuminate\Http\Request;
 use App\Models\BookingRequest;
@@ -14,6 +15,7 @@ use App\Models\BookingRequestItem;
 use Illuminate\Support\Facades\DB;
 use App\Http\Controllers\Controller;
 use App\Events\RoomCancellationEvent;
+use Illuminate\Container\Attributes\Log;
 use Illuminate\Support\Facades\Event;
 use Illuminate\Validation\ValidationException;
 
@@ -143,9 +145,20 @@ class ManageBookingRequestController extends Controller
 
             // Bước 3: Kiểm tra và hủy các phòng trùng
             $availableRooms = $this->checkAndCancelRooms($request);
-
+           
             if (empty($availableRooms)) {
-                return back()->withErrors('Tất cả các phòng yêu cầu đã bị trùng.');
+               
+                $result =   BookingRequest::find($request->booking_request_id);
+                if (!$result) {
+                    $notify[] = ['error', 'Không đặt phòng thành công'];
+                    return back()->withNotify($notify);
+                    DB::rollBack();
+                }
+                $result->delete();
+                Booking::where('id', $booking->id)->delete(); 
+                DB::commit();
+                $notify[] = ['success', 'Tất cả các phòng yêu cầu đã bị trùng.'];
+                return redirect()->route('admin.request.booking.all')->withNotify($notify);
             }
 
             // Tính toán tổng chi phí
@@ -160,19 +173,21 @@ class ManageBookingRequestController extends Controller
                 'booking_fare' => $totalAmount,
                 'tax_charge' => $totalAmount * 0.1,
             ]);
-
             // Bước 5: Thêm các phòng không bị trùng vào bảng BookedRoom
-            BookedRoom::insert($availableRooms);
+            $bookedRoom = BookedRoom::insert($availableRooms);
+            if (!$bookedRoom) {
+                $notify[] = ['error', 'Không đặt phòng thành công'];
+                return back()->withNotify($notify);
+                DB::rollBack();
+            }
 
+            BookingRequestItem::where('booking_request_id', $request->booking_request_id)->delete();
+
+            BookingRequest::find($request->booking_request_id)->delete();
             DB::commit();
-
-            return response()->json([
-                'success' => true,
-                'message' => 'Đặt phòng thành công.',
-                'booking' => $booking,
-            ]);
+            $notify[] = ['success', 'Đặt phòng thành công'];
+            return redirect()->route('admin.request.booking.all')->withNotify($notify);
         } catch (\Exception $e) {
-            dd($e->getMessage() . $e->getLine());
             DB::rollBack();
             return back()->withErrors('Đã có lỗi xảy ra, vui lòng thử lại sau!');
         }
@@ -181,19 +196,36 @@ class ManageBookingRequestController extends Controller
     /**
      * Hàm kiểm tra và hủy các phòng trùng
      */
+    // [2024-10-07 17:07:49] local.INFO: array (
+    //     'roomCanAssign' => 
+    //     array (
+    //       0 => '31',
+    //     ),
+    //     'booking_request_id' => '25',
+    //     '_token' => 'yeqqYuI73RgiVydf0VG0NP5x0WzOgxuZYKolLax3',
+    //   )
     private function checkAndCancelRooms($request)
     {
         $data = $request->all();
         $cancelledRooms = $data['roomCanNotAssign'] ?? [];
         $availableRooms = $data['roomCanAssign'] ?? [];
-
+        \Log::info($data);
+        // [2024-10-08 08:41:26] local.INFO: array (
+        //     'roomCanNotAssign' => 
+        //     array (
+        //       0 => '28',
+        //     ),
+        //     'booking_request_id' => '35',
+        //     '_token' => 'kMvlKH9zQ1NzzVJJSdmpDajyTd5VU9RaMncUg01t',
+        //     'booking_id' => 199,
+        //   )  
+          
         if (!empty($cancelledRooms)) {
             BookingRequestItem::where('booking_request_id', $data['booking_request_id'])
                 ->whereIn('room_id', $cancelledRooms)
                 ->update(['status' => Status::ROOM_CANCELED]);
 
             try {
-                \Log::info($cancelledRooms);
                 $this->sendCancellationNotifications($cancelledRooms, $data['booking_request_id']);
             } catch (\Exception $e) {
                 \Log::info($e->getMessage());
@@ -201,7 +233,6 @@ class ManageBookingRequestController extends Controller
         }
 
         if (!empty($availableRooms)) {
-            \Log::info($availableRooms);
             return BookingRequestItem::with('room', 'bookingRequest')
                 ->where('booking_request_id', $data['booking_request_id'])
                 ->whereIn('room_id', $availableRooms)
@@ -217,13 +248,9 @@ class ManageBookingRequestController extends Controller
                         'status' => Status::ROOM_ACTIVE,
                     ];
                 })->toArray();
-        } else {
-            $booking = Booking::find($data['booking_id']);
-
-            $booking->delete();
-
-            return [];
         }
+
+        return [];
     }
 
 
@@ -234,9 +261,14 @@ class ManageBookingRequestController extends Controller
     private function sendCancellationNotifications($cancelledRooms, $bookingRequestId)
     {
         $bookingRequest = BookingRequest::with('bookingItems.room', 'user')->find($bookingRequestId);
-
         // Dispatch sự kiện với đối tượng BookingRequest
-        Event::dispatch(new RoomCancellationEvent($bookingRequest, $cancelledRooms));
+        $data = ['type'=>'EMAIL_CANCEL_BOOKED_ROOM',
+        'bookingRequest' => $bookingRequest,
+        'cancelledRooms'=>$cancelledRooms
+            ];
+        event(new RoomCancellationEvent($data));
+       
+    
     }
 
 

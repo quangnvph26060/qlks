@@ -10,6 +10,7 @@ use App\Models\AdminNotification;
 use App\Models\User;
 use App\Models\UserLogin;
 use Illuminate\Auth\Events\Registered;
+use Illuminate\Support\Facades\Event;
 use Illuminate\Foundation\Auth\RegistersUsers;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Hash;
@@ -115,8 +116,7 @@ class RegisterController extends Controller
             'email' => $data['email'],
             'password'=>$data['password']
         ];
-        event(new EventRegisterUser($data));
-
+         event(new EventRegisterUser($data));
         //Login Log Create
         $ip        = getRealIP();
         $exist     = UserLogin::where('user_ip', $ip)->first();

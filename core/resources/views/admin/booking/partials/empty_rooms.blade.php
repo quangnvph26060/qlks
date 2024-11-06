@@ -18,7 +18,7 @@
                 classSvg="{{ $classSvg }}" cleanText="{{ $cleanText }}"
                 roomNumber="{{ $rooms->room_number }}" />
 
-            <div class="content-booking mt-2 room-booking-{{ $class }}" data-hours="{{ $price }}"
+            <div class="content-booking mt-2 room-booking-{{ $class }} pt-90 " data-hours="{{ $price }}"
                 data-day="{{ $price }}" data-night="{{ $price }}"
                 data-name="{{ $rooms->roomType->name }}" data-roomNumber="{{ $rooms->room_number }}"
                 data-room-type="{{ $rooms->room_type_id }}" data-room="{{ $rooms->id }}">

@@ -41,8 +41,15 @@ class NotificationController extends Controller
             $emailTemplate->email_body = $request->email_template;
             $emailTemplate->save();
     
-            if($emailTemplate->act == 'EMAIL_REGISTER'){
-                $filePath = resource_path('views/templates/mail/email-register.blade.php');
+            switch ($emailTemplate->act) {
+                case 'EMAIL_REGISTER':
+                    $filePath = resource_path('views/templates/mail/email-register.blade.php');
+                    break;
+                case 'EMAIL_CANCEL_BOOKED_ROOM':
+                    $filePath = resource_path('views/templates/mail/room_cancellation.blade.php');
+                    break;
+                default:
+                    break;
             }
             File::put($filePath, $request->email_template);
     
