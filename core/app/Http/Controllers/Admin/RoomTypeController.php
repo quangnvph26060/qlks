@@ -368,4 +368,18 @@ class RoomTypeController extends Controller
         $typeList    = Room::with('amenities', 'facilities', 'products')->onlyTrashed()->latest()->paginate(getPaginate());
         return view('admin.hotel.room_type.room-deleted', compact('pageTitle', 'typeList'));
     }
+    public function restore($id)
+    {
+        $room = Room::withTrashed()->find($id);
+        if (! $room) {
+            $notification = 'Không tìm thấy dữ liệu';
+            $notify[] = ['error', $notification];
+            return back()->withNotify($notify);
+        }
+
+        $room->restore();
+        $notification = 'Phòng đã được khôi phục thành công.';
+        $notify[] = ['success', $notification];
+        return back()->withNotify($notify);
+    }
 }

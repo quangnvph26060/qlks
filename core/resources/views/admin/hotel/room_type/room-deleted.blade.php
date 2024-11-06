@@ -72,15 +72,12 @@
 
                                         <td>---------</td>
                                         <td>@php echo $type->statusBadge  @endphp</td>
-                                        @can(['admin.hotel.room.type.deleted.all'])
+                                        @can(['admin.hotel.room.type.deleted.restore'])
                                             <td>
                                                 <div class="button--group">
-                                                    @can('admin.hotel.room.type.deleted.all')
-                                                        <button class="btn btn-sm btn-outline--warning btn-delete"
-                                                            data-id="{{ $type->id }}" data-modal_title="@lang('Xóa')"
-                                                            type="button">
-                                                            <i class="fas fa-trash-restore"></i>@lang('Khôi phục')
-                                                        </button>
+                                                    @can('admin.hotel.room.type.deleted.restore')
+                                                        <a href="{{ route('admin.hotel.room.type.restore', $type->id) }}"
+                                                            class="btn btn-sm btn-outline--warning">@lang('Khôi phục')</a>
                                                     @endcan
 
                                                 </div>
@@ -148,6 +145,44 @@
             row.classList.toggle('show');
             button.classList.toggle('collapsed');
         };
+        $(document).ready(function() {
+            const apiUrl = '{{ route('admin.hotel.room.type.all.deleted') }}';
+            initDataFetch(apiUrl);
+
+
+            $(document).on('click', '.btn-restore-room', function() {
+                let id = $(this).data('id');
+
+                Swal.fire({
+                    title: 'Khôi phục phòng',
+                    text: 'Bạn có chắc chắn không?',
+                    icon: 'warning',
+                    showCancelButton: true,
+                    confirmButtonColor: '#3085d6',
+                    cancelButtonColor: '#d33',
+                    confirmButtonText: 'Đồng ý',
+                    cancelButtonText: 'Huỷ'
+                }).then((result) => {
+                    if (result.isConfirmed) {
+                        $.ajax({
+                            type: "GET",
+                            url: "{{ route('admin.hotel.room.type.restore', ':id') }}"
+                                .replace(':id', id),
+                            success: function(response) {
+                                if (response.status) {
+                                    showSwalMessage('success', response
+                                        .message);
+                                    initDataFetch(apiUrl);
+                                } else {
+                                    showSwalMessage('error', response
+                                        .message);
+                                }
+                            }
+                        });
+                    }
+                })
+            })
+        })
     </script>
 @endpush
 @push('style')

@@ -200,6 +200,7 @@ Route::middleware('admin', 'adminPermission')->group(function () {
             Route::get('check-slug', 'checkSlug')->name('check.slug');
             Route::delete('delete/{id}', 'destroy')->name('destroy');
             Route::get('/deleted', 'roomDeleted')->name('all.deleted');
+            Route::get('/restore/{id}', 'restore')->name('restore');
         });
 
         //Room
