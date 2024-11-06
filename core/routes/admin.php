@@ -256,6 +256,8 @@ Route::middleware('admin', 'adminPermission')->group(function () {
             Route::get('booking-invoice/{id}', 'generateInvoice')->name('invoice');
 
             Route::post('key/handover/{id}', 'handoverKey')->name('key.handover');
+
+            Route::post('write-cccd', 'writeCccd')->name('writeCccd');
         });
     });
 

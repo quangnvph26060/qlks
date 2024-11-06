@@ -6,39 +6,54 @@
             <div class="d-flex">
                 <input autocomplete="off" class="bookingDatePicker form-control bg--white" name="dates"
                     placeholder="@lang('Chọn ngày')" required type="text">
-              
+
             </div>
         </div>
         <div class="col-lg-2">
             <label>@lang('Tên khách hàng')</label>
             <div class="d-flex">
-             <input type="text" id="search-custom" class="input-group form-control " placeholder="Tên khách hàng">
-              
+                <input type="text" id="search-custom" class="input-group form-control " placeholder="Tên khách hàng">
+
             </div>
         </div>
         <div class="col-lg-2">
             <label>@lang('Mã đặt phòng')</label>
             <div class="d-flex">
-             <input type="text" id="search-code-room" class="input-group form-control " placeholder="Mã đặt phòng">
-              
+                <input type="text" id="search-code-room" class="input-group form-control " placeholder="Mã đặt phòng">
+
             </div>
         </div>
         <div class="col-lg-2">
             <label>@lang('Hạng phòng')</label>
             <div class="d-flex">
-              <select name="" id="search-room-type"  class="form-group form-control">
-                <option value="">Chọn hạng phòng</option>
-                @foreach($roomType as $item)
-                    <option value="{{$item->id}}">{{$item->name}}</option>
-                @endforeach
-              </select>
-              
+                <select name="" id="search-room-type" class="form-group form-control">
+                    <option value="">Chọn hạng phòng</option>
+                    @foreach ($roomType as $item)
+                        <option value="{{ $item->id }}">{{ $item->name }}</option>
+                    @endforeach
+                </select>
+
             </div>
         </div>
-        <div class="col-lg-2 d-flex flex-column h-45 m-top-10" >
-     
-             <label>&nbsp;</label>
-            <button class="btn-primary-dates" id="search-rooms-dates" style="width: 100px"> Tìm kiếm</button>
+        <div class="col-lg-2 d-flex flex-column h-45 m-top-10">
+
+            <label>&nbsp;</label>
+            <div class="d-flex">
+                <button class="btn-primary-dates" id="search-rooms-dates" style="width: 100px">
+                    <svg xmlns="http://www.w3.org/2000/svg" width="15" height="20" viewBox="0 0 20 20">
+                        <path fill="currentColor"
+                            d="M8.195 0c4.527 0 8.196 3.62 8.196 8.084a7.989 7.989 0 0 1-1.977 5.267l5.388 5.473a.686.686 0 0 1-.015.98a.71.71 0 0 1-.993-.014l-5.383-5.47a8.23 8.23 0 0 1-5.216 1.849C3.67 16.169 0 12.549 0 8.084C0 3.62 3.67 0 8.195 0Zm0 1.386c-3.75 0-6.79 2.999-6.79 6.698c0 3.7 3.04 6.699 6.79 6.699s6.791-3 6.791-6.699c0-3.7-3.04-6.698-6.79-6.698Z" />
+                    </svg>
+                    Tìm kiếm</button>
+                <a href="{{ url()->current() }}" class="btn btn-warning" id="search-rooms-dates"
+                    style="width: 100px;color: #ffffff">
+
+                    <svg xmlns="http://www.w3.org/2000/svg" width="15" height="20" viewBox="0 0 17 17">
+                        <path fill="currentColor" fill-rule="evenodd"
+                            d="M.04 7.379C.115 3.257 3.392-.033 7.344.042c3.917.073 6.854 2.929 6.83 7.003h1.545a.572.572 0 0 1 0 .799L13.873 9.86a.546.546 0 0 1-.785 0l-1.725-2.016a.57.57 0 0 1 0-.799h1.422c.023-3.338-2.259-5.584-5.467-5.644c-3.233-.062-5.912 2.63-5.975 6.002c-.062 3.322 2.445 6.077 5.613 6.216v1.361C3.059 14.842-.035 11.46.04 7.379z" />
+                    </svg>
+                    Tải lại</a>
+            </div>
         </div>
     </div>
     <div class="row">
@@ -63,115 +78,8 @@
     <div class="row" id="roomListContainer">
 
         @include('admin.booking.partials.empty_rooms', ['dataRooms' => $emptyRooms ?? []])
-        @forelse($bookings as $booking)
-            @php
-                $class = 'status-dirty';
-                $room = $booking->room;
-                $classClean = $room->getCleanStatusClass();
-                $classSvg = $room->getCleanStatusSvg();
-                $cleanText = $room->getCleanStatusText();
-                $price = $room->roomPricesActive[0]['price'];
 
-                // test
-                // if($booking->booking->status === 3){
-                //     $class = 'demo-abc';
-                // }
-                if (
-                    now() > $booking->booking->check_in &&
-                    now() <= $booking->booking->check_out &&
-                    $booking->booking->status == 1 &&
-                    $booking->booking->key_status == 1
-                ) {
-                    $class = 'status-occupied'; // đang hoạt động;
-                } elseif (now() < $booking->booking->check_in && $booking->booking->status == 1) {
-                    $class = 'status-incoming'; // sắp nhận
-                } elseif ($booking->booking->check_out < now() && $booking->booking->key_status == 1) {
-                    $class = 'status-check-out'; // quá giờ trả
-                } elseif (
-                    now() >= $booking->booking->check_in &&
-                    $booking->booking->status == 1 &&
-                    $booking->booking->key_status == 0
-                ) {
-                    $class = 'status-late-checkin'; // nhận phòng muộn
-                }
-                $key_status = false;
-                if (
-                    now()->format('Y-m-d H:i:s') >= $booking->booking->check_in &&
-                    now()->format('Y-m-d H:i:s') < $booking->booking->check_out &&
-                    $booking->booking->key_status == Status::DISABLE
-                ) {
-                    $key_status = true;
-                }
-            @endphp
-            <div class="col-md-2 main-room-card card-{{ $class }}">
-                <div class="room-card {{ $class }}">
-
-                    <x-room-badge styleClass="dropdown" isClean="{{ $booking->room->is_clean }}"
-                        classClean="{{ $classClean }}" classSvg="{{ $classSvg }}" cleanText="{{ $cleanText }}"
-                        roomNumber="{{ $booking->room->room_number }}" keyStatus="{{ $key_status }}"
-                        key="{{ $booking->booking->key_status }}" bookingId="{{ $booking->booking_id }}" />
-
-                    <div class="content-booking mt-2 room-booking-{{ $class }}"
-                        data-id="{{ $booking->booking_id }}" data-hours="{{ $price }}"
-                        data-day="{{ $price }}" data-night="{{ $price }}"
-                        data-name = "{{ $booking->roomType->name }} " data-roomNumber="{{ $booking->room->room_number }}"
-                        data-room-type="{{ $booking->room_type_id }}" data-booking="{{ $booking->id }}">
-                        {{-- <p> {{ $booking->booking->booking_number }}</p> --}}
-                        <h1>{{ $booking->room->room_number }}</h1>
-                        <h3> {{ $booking->roomType->name }}</h3>
-                        {{-- <p> {{ $booking->booking->check_in }} - {{ $booking->booking->check_out }}</p> --}}
-
-                        <p> {!! $booking->booking->checkGuest() !!} </p>
-
-                        @php
-
-                            $currentTime = now();
-                            $checkInTime = $booking->booking->check_in;
-                            $flag = true;
-                            // So sánh thời gian hiện tại và thời gian check-in
-                            if ($currentTime < $checkInTime) {
-                                $flag = false;
-                                // Tính khoảng cách thời gian giữa check-in và thời gian hiện tại
-                                $diffInHours = $currentTime->diffInHours($checkInTime);
-                                $diffInDays = $currentTime->diffInDays($checkInTime);
-                                if ($diffInHours < 24) {
-                                    $roundedHours = floor($diffInHours);
-                                    $time_check_in = "Còn $roundedHours giờ nữa nhận phòng.";
-                                } else {
-                                    $roundedDays = floor($diffInDays);
-                                    $time_check_in = "Còn $roundedDays ngày nữa nhận phòng.";
-                                }
-                            } else {
-                                $flag = true;
-                            }
-                        @endphp
-
-                        @if ($flag)
-                            <p class="single-line">{{ $booking->roomType->name }}</p>
-                            <div class="room-info">
-                                {{-- <p> <i class="fas fa-clock icon"></i>{{ showAmount($booking->roomType->hourly_rate) }}
-                                </p>
-                                <p> <i class="fas fa-sun icon"></i>{{ showAmount($booking->roomType->fare) }}
-                                </p>
-                                <p> <i class="fas fa-moon icon"></i>{{ showAmount($booking->roomType->fare) }}
-                                </p> --}}
-                                <p>
-                                    <i class="fas fa-dollar-sign icon"></i>{{ showAmount($price) }}
-                                </p>
-                            </div>
-                        @else
-                            @php
-                                echo $time_check_in;
-                            @endphp
-                        @endif
-
-                    </div>
-                </div>
-            </div>
-        @empty
-            <p class="text-center" colspan="100%">{{ __($emptyMessage) }}</p>
-        @endforelse
-
+        @include('admin.booking.partials.booked_rooms', ['bookings' => $bookings ?? []])
 
 
     </div>
@@ -190,13 +98,26 @@
                             <div class="customer-input-container">
                                 <input id="customer-name" list="customer-names" type="text" class="customer-form-control"
                                     placeholder="Email khách hàng">
-                                <svg xmlns="http://www.w3.org/2000/svg" class="customer-svg-icon" width="20"
-                                    height="20" viewBox="0 0 24 24">
-                                    <g fill="none" stroke="currentColor" stroke-width="2">
-                                        <path stroke-linecap="round" d="M12 8v4m0 0v4m0-4h4m-4 0H8" />
-                                        <circle cx="12" cy="12" r="10" />
-                                    </g>
-                                </svg>
+
+                                <div class="d-flex customer-svg-icon" style="gap: 5px">
+                                    <svg xmlns="http://www.w3.org/2000/svg" class="camera-svg-icon-add" width="20"
+                                        height="20" viewBox="0 0 1024 1024">
+                                        <path fill="currentColor"
+                                            d="M928 224H780.816L704 96H320l-76.8 128H96c-32 0-96 32-96 95.008V832c0 53.008 48 96 89.328 96H930c42 0 94-44.992 94-94.992V320c0-32-32-96-96-96zm32 609.008c0 12.624-20.463 30.288-29.999 31.008H89.521c-7.408-.609-25.52-15.04-25.52-32.016V319.008c0-20.272 27.232-30.496 32-31.008h183.44l76.8-128h313.647l57.12 96.945l17.6 31.055H928c22.56 0 31.68 29.472 32 32v513.008zM512.001 320c-123.712 0-224 100.288-224 224s100.288 224 224 224s224-100.288 224-224s-100.288-224-224-224zm0 384c-88.224 0-160-71.776-160-160s71.776-160 160-160s160 71.776 160 160s-71.776 160-160 160z" />
+                                    </svg>
+
+                                    <input type="file" class="file-upload-input" id="fileUpload">
+                                    <svg xmlns="http://www.w3.org/2000/svg" class="customer-svg-icon-add" width="20"
+                                        height="20" viewBox="0 0 24 24">
+                                        <g fill="none" stroke="currentColor" stroke-width="2">
+                                            <path stroke-linecap="round" d="M12 8v4m0 0v4m0-4h4m-4 0H8" />
+                                            <circle cx="12" cy="12" r="10" />
+                                        </g>
+                                    </svg>
+                                </div>
+
+
+
 
                             </div>
                             <div class="user-info-customer">
@@ -490,11 +411,22 @@
 
     @include('admin.booking.partials.modal-cancel-booking')
     </div>
+    <div id="loading" style="display: none;">
+        <svg xmlns="http://www.w3.org/2000/svg" width="40" height="40" viewBox="0 0 24 24">
+            <path fill="none" stroke="currentColor" stroke-dasharray="15" stroke-dashoffset="15"
+                stroke-linecap="round" stroke-width="2" d="M12 3C16.9706 3 21 7.02944 21 12">
+                <animate fill="freeze" attributeName="stroke-dashoffset" dur="0.3s" values="15;0" />
+                <animateTransform attributeName="transform" dur="1.5s" repeatCount="indefinite" type="rotate"
+                    values="0 12 12;360 12 12" />
+            </path>
+        </svg>
+    </div>
 @endsection
 
 @push('style')
     <link rel="stylesheet" href="{{ asset('assets/global/css/receptionist.css') }}">
 @endpush
+<script src="https://cdn.jsdelivr.net/npm/tesseract.js"></script>
 
 <script src="https://code.jquery.com/jquery-3.5.1.slim.min.js"></script>
 <script src="https://cdn.jsdelivr.net/npm/@popperjs/core@2.5.3/dist/umd/popper.min.js"></script>
@@ -746,7 +678,8 @@
 
             function cleanRoom() {
                 $('.room-icon').on('click', function(e) {
-                    e.preventDefault(); e.stopPropagation();
+                    e.preventDefault();
+                    e.stopPropagation();
                     let roomData = $(this).attr('data-room');
                     let roomClean = $(this).attr('data-clean');
                     let textClean = '';
@@ -831,6 +764,7 @@
 
             $('#search-rooms-dates').click(function(event) {
                 event.preventDefault();
+                $('#loading').show();
                 const dates = $('input[name="dates"]').val();
                 const codeRoom = $('#search-code-room').val();
                 const roomType = $('#search-room-type').val();
@@ -848,12 +782,14 @@
                         roomType
                     },
                     success: function(response) {
+                        $('#loading').hide();
                         $('#empty-rooms').html(response);
                         $('#roomListContainer').empty();
                         attachClickHandlersBooked();
                         cleanRoom();
                     },
                     error: function(xhr) {
+                        $('#loading').hide();
                         console.error('AJAX Error:', xhr.responseText);
                     }
                 });
@@ -873,11 +809,22 @@
                 handleLateCheckinClick(id, booking_id);
             });
 
-            $('.room-booking-status-late-checkin').on('click', function() {
-                var id = $(this).data('id');
-                var booking_id = $(this).data('booking');
-                handleLateCheckinClick(id, booking_id);
-            });
+            // $('.room-booking-status-late-checkin').on('click', function() {
+            //     var id = $(this).data('id');
+            //     var booking_id = $(this).data('booking');
+            //     handleLateCheckinClick(id, booking_id);
+            // });
+            function handleLateCheckinEvent() {
+                $('.room-booking-status-late-checkin').on('click', function() {
+                    var id = $(this).data('id');
+                    var booking_id = $(this).data('booking');
+                    handleLateCheckinClick(id, booking_id);
+                });
+            }
+
+            // Sử dụng hàm
+            handleLateCheckinEvent();
+
 
             $('.room-booking-status-check-out').on('click', function() {
                 var id = $(this).data('id');
@@ -897,11 +844,13 @@
             }
 
             function fetchDataAndDisplayModal(url, dataToSend) {
+                $('#loading').show();
                 $.ajax({
                     url: url,
                     data: dataToSend,
                     type: 'GET',
                     success: function(response) {
+                        $('#loading').hide();
                         if (response.status === 'success') {
 
                             var customer_type = response.data.user_id ?
@@ -1113,6 +1062,7 @@
                         }
                     },
                     error: function(xhr, status, error) {
+                        $('#loading').hide();
                         console.error('Error:', error);
 
                     }
@@ -1282,7 +1232,7 @@
             $('#checkInTime, #checkOutTime').on('change', calculateDuration);
 
 
-            $('.customer-svg-icon').on('click', function() {
+            $('.customer-svg-icon-add').on('click', function() {
                 $('#customer-popup').addClass('active');
             });
 
@@ -1465,12 +1415,10 @@
                 //    let guestType = $('#guest_type').val();
                 event.stopPropagation();
 
-
                 let name = $('#name').val();
                 let email = $('#email').val();
                 let phone = $('#phone').val();
                 let address = $('#address').val();
-
 
                 $('.email-user').text(email);
 
@@ -1485,6 +1433,51 @@
 
 
             });
+            // cccd
+            $('.camera-svg-icon-add').on('click', function() {
+              
+                $('#fileUpload').click();
+            });
+
+            // Xử lý sự kiện khi file được chọn
+            $('#fileUpload').on('change', function(event) {
+                const files = event.target.files;
+                const file = files[0]; // Lấy file đầu tiên trong danh sách
+              
+                if (file) {
+                 
+                    const formData = new FormData();
+                    formData.append('image', file);
+                    formData.append('_token', '{{ csrf_token() }}');
+    
+                    var url = '{{ route('admin.booking.writeCccd') }}';
+                    $('#loading').show();
+                    $.ajax({
+                        url: url,
+                        type: 'POST',
+                        data: formData,
+                        processData: false, // Để tránh xử lý dữ liệu
+                        contentType: false, // Để tránh thiết lập header Content-Type
+                        success: function(response) {
+                            $('#loading').hide();
+                         
+                            $('.username-user').text(response.data[0]['name']);
+                           
+                            $('.customer-svg-icon-add').click();
+
+                            $('#name').val(response.data[0]['name']);
+                           $('#address').val(response.data[0]['address']);
+                          
+                        },
+                        error: function(xhr, status, error) {
+                            $('#loading').hide();
+                            console.error("Lỗi khi gửi yêu cầu API:", error);
+                        }
+                    });
+                }
+                $(this).val(null);
+            });
+
 
             $('.extraChargeBtn').on('click', function() {
                 let data = $(this).data();
@@ -1556,7 +1549,7 @@
                             notify('success', response.success);
                             let firstItem = $('.first-service-wrapper .service-item');
                             // $(document).find('.service-wrapper').find('.service-item').not(firstItem).remove();
-                                
+
                             serviceForm.trigger("reset");
                             $('#serviceModal').hide();
 
@@ -1599,8 +1592,8 @@
                 title: `<p>${title}</p>`
             });
         };
-      
-      
+
+
 
         $(document).on('click', '.cancelBookingBtn', function() {
 

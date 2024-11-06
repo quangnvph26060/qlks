@@ -683,3 +683,36 @@ function findTemplateEmail ($data)
 
     return $emailTempalte;
 }
+
+function writeCccd($imagePath)
+{
+    $curl = curl_init();
+
+    $finfo = finfo_open(FILEINFO_MIME_TYPE);
+    $mime = finfo_file($finfo, $imagePath);
+
+    $cFile = curl_file_create($imagePath, $mime, basename($imagePath));
+    $data = array("image" => $cFile, "filename" => $cFile->postname);
+
+    curl_setopt_array($curl, array(
+        CURLOPT_URL => "https://api.fpt.ai/vision/idr/vnm",
+        CURLOPT_CUSTOMREQUEST => "POST",
+        CURLOPT_POSTFIELDS => $data,
+        CURLOPT_HTTPHEADER => array(
+            "api-key: mSFO5W71CkGvdF4Xx3hua9F9WCSTHMiv"
+        ),
+        CURLOPT_RETURNTRANSFER => true,
+    ));
+
+    $response = curl_exec($curl);
+    $err = curl_error($curl);
+
+    curl_close($curl);
+
+    $decodedData = json_decode(stripslashes($response), true);
+    if ($err) {
+        return ['error' => "cURL Error #" . $err];
+    } else {
+        return $decodedData;
+    }
+}
