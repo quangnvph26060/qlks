@@ -6,7 +6,7 @@
 </head>
 
 <body>
-    <h1>Xin chào {{ $user->last_name . ' ' . $user->first_name }},</h1>
+    <h1>Xin chào {{ $user->username }},</h1>
     <p>Chúng tôi rất tiếc phải thông báo rằng các phòng sau đây trong đơn đặt phòng của bạn đã bị hủy:</p>
     <ul>
         @foreach ($canceledRooms as $item)

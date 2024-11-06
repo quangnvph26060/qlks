@@ -17,13 +17,11 @@ class RoomCancellationEvent
     /**
      * Create a new event instance.
      */
-    public $bookingRequest;
-    public $cancelledRooms;
+    public $data;
 
-    public function __construct($bookingRequest, $cancelledRooms)
+    public function __construct(array  $data) 
     {
-        $this->bookingRequest = $bookingRequest;
-        $this->cancelledRooms = $cancelledRooms;
+        $this->data = $data;
     }
 
     /**
@@ -33,8 +31,8 @@ class RoomCancellationEvent
      */
     public function broadcastOn(): array
     {
-        return [
-            new PrivateChannel('channel-name'),
-        ];
+        return [];
+           
+       
     }
 }

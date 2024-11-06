@@ -1,13 +1,44 @@
 @extends('admin.layouts.app')
 @section('panel')
     <div class="row">
-        <div class="form-group flex-fill">
+        <div class="col-lg-2 ">
             <label>@lang('Ngày nhận phòng - Ngày trả phòng')</label>
             <div class="d-flex">
                 <input autocomplete="off" class="bookingDatePicker form-control bg--white" name="dates"
                     placeholder="@lang('Chọn ngày')" required type="text">
-                <button class="btn-primary-dates" id="search-rooms-dates" style="width: 100px"> Tìm kiếm</button>
+              
             </div>
+        </div>
+        <div class="col-lg-2">
+            <label>@lang('Tên khách hàng')</label>
+            <div class="d-flex">
+             <input type="text" id="search-custom" class="input-group form-control " placeholder="Tên khách hàng">
+              
+            </div>
+        </div>
+        <div class="col-lg-2">
+            <label>@lang('Mã đặt phòng')</label>
+            <div class="d-flex">
+             <input type="text" id="search-code-room" class="input-group form-control " placeholder="Mã đặt phòng">
+              
+            </div>
+        </div>
+        <div class="col-lg-2">
+            <label>@lang('Hạng phòng')</label>
+            <div class="d-flex">
+              <select name="" id="search-room-type"  class="form-group form-control">
+                <option value="">Chọn hạng phòng</option>
+                @foreach($roomType as $item)
+                    <option value="{{$item->id}}">{{$item->name}}</option>
+                @endforeach
+              </select>
+              
+            </div>
+        </div>
+        <div class="col-lg-2 d-flex flex-column h-45 m-top-10" >
+     
+             <label>&nbsp;</label>
+            <button class="btn-primary-dates" id="search-rooms-dates" style="width: 100px"> Tìm kiếm</button>
         </div>
     </div>
     <div class="row">
@@ -32,7 +63,6 @@
     <div class="row" id="roomListContainer">
 
         @include('admin.booking.partials.empty_rooms', ['dataRooms' => $emptyRooms ?? []])
-
         @forelse($bookings as $booking)
             @php
                 $class = 'status-dirty';
@@ -715,7 +745,8 @@
             }
 
             function cleanRoom() {
-                $('.room-icon').on('click', function() {
+                $('.room-icon').on('click', function(e) {
+                    e.preventDefault(); e.stopPropagation();
                     let roomData = $(this).attr('data-room');
                     let roomClean = $(this).attr('data-clean');
                     let textClean = '';
@@ -801,6 +832,9 @@
             $('#search-rooms-dates').click(function(event) {
                 event.preventDefault();
                 const dates = $('input[name="dates"]').val();
+                const codeRoom = $('#search-code-room').val();
+                const roomType = $('#search-room-type').val();
+                const customer = $('#search-custom').val();
                 const [startDate, endDate] = dates.split(' - ');
                 $.ajax({
                     url: '{{ route('admin.receptionist.booking.receptionist') }}',
@@ -808,7 +842,10 @@
                     data: {
                         _token: '{{ csrf_token() }}',
                         startDate,
-                        endDate
+                        endDate,
+                        customer,
+                        codeRoom,
+                        roomType
                     },
                     success: function(response) {
                         $('#empty-rooms').html(response);

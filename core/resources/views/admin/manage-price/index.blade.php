@@ -1,6 +1,6 @@
 @extends('admin.layouts.app')
 @section('panel')
-    <div class="row">
+    {{-- <div class="row">
         <!-- Khối bên phải: Danh sách danh mục -->
         <div class="col-md-12">
             <div class="border p-2">
@@ -51,7 +51,141 @@
 
             </div>
         </div>
+    </div> --}}
+
+
+    <div class="container">
+
+        <h2>Thêm Giá Phòng</h2>
+
+        <table class="table table-bordered" id="roomPricesTable">
+
+            <thead>
+
+                <tr>
+
+                    <th>Tên Phòng</th>
+
+                    <th>Loại Giá</th>
+
+                    <th>Giá</th>
+
+                </tr>
+
+            </thead>
+
+            <tbody>
+
+                <tr>
+
+                    <td rowspan="3">Phòng 1</td>
+
+                    <td>Giá Giờ</td>
+
+                    <td><input type="number" step="1000" class="form-control" id="pricePerHour1"></td>
+
+                </tr>
+
+                <tr>
+
+                    <td>Giá Cả Ngày</td>
+
+                    <td><input type="number" step="1000" class="form-control" id="fullDayPrice1"></td>
+
+                </tr>
+
+                <tr>
+
+                    <td>Giá Qua Đêm</td>
+
+                    <td><input type="number" step="1000" class="form-control" id="overnightPrice1"></td>
+
+                </tr>
+
+                <tr>
+
+                    <td rowspan="3">Phòng 2</td>
+
+                    <td>Giá Giờ</td>
+
+                    <td><input type="number" step="1000" class="form-control" id="pricePerHour2"></td>
+
+                </tr>
+
+                <tr>
+
+                    <td>Giá Cả Ngày</td>
+
+                    <td><input type="number" step="1000" class="form-control" id="fullDayPrice2"></td>
+
+                </tr>
+
+                <tr>
+
+                    <td>Giá Qua Đêm</td>
+
+                    <td><input type="number" step="1000" class="form-control" id="overnightPrice2"></td>
+
+                </tr>
+
+            </tbody>
+
+        </table>
+
+        <button class="btn btn-primary" onclick="addRoomPrices()">Thêm Giá</button>
+
+        <button class="btn btn-success" id="addColumnBtn" data-toggle="modal" data-target="#addDayModal">Thêm
+            Cột</button>
+
     </div>
+
+
+    <!-- Modal -->
+    <div class="modal fade" id="addDayModal" tabindex="-1" role="dialog" aria-labelledby="addDayModalLabel"
+        aria-hidden="true">
+        <div class="modal-dialog" role="document">
+            <div class="modal-content">
+                <div class="modal-header">
+                    <h5 class="modal-title" id="addDayModalLabel">Chọn Ngày</h5>
+                    <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+                        <span aria-hidden="true">&times;</span>
+                    </button>
+                </div>
+                <div class="modal-body">
+                    <form id="dateSelectionForm">
+                        <div class="form-check">
+                            <input class="form-check-input" type="checkbox" value="Monday" id="dayMonday">
+                            <label class="form-check-label" for="dayMonday">Thứ Hai</label>
+                        </div>
+                        <div class="form-check">
+                            <input class="form-check-input" type="checkbox" value="Tuesday" id="dayTuesday">
+                            <label class="form-check-label" for="dayTuesday">Thứ Ba</label>
+                        </div>
+                        <div class="form-check">
+                            <input class="form-check-input" type="checkbox" value="Wednesday" id="dayWednesday">
+                            <label class="form-check-label" for="dayWednesday">Thứ Tư</label>
+                        </div>
+                        <div class="form-check">
+                            <input class="form-check-input" type="checkbox" value="Thursday" id="dayThursday">
+                            <label class="form-check-label" for="dayThursday">Thứ Năm</label>
+                        </div>
+                        <div class="form-check">
+                            <input class="form-check-input" type="checkbox" value="Friday" id="dayFriday">
+                            <label class="form-check-label" for="dayFriday">Thứ Sáu</label>
+                        </div>
+                    </form>
+                </div>
+                <div class="modal-footer">
+                    <button type="button" class="btn btn-secondary" data-dismiss="modal">Đóng</button>
+                    <button type="button" class="btn btn-primary" onclick="addDayColumn()">Thêm Cột Ngày</button>
+                </div>
+            </div>
+        </div>
+    </div>
+
+
+
+
     @can('')
         @push('breadcrumb-plugins')
             <button type="button" class="btn btn-outline--primary btn-add">
@@ -59,7 +193,8 @@
             </button>
         @endpush
     @endcan
-
+    
+            {{-- modal  --}}
     <div class="modal fade" id="staticBackdrop" data-bs-backdrop="static" data-bs-keyboard="false" tabindex="-1"
         aria-labelledby="staticBackdropLabel" aria-hidden="true">
         <div class="modal-dialog modal-lg">
@@ -147,9 +282,94 @@
 @endsection
 
 @push('script')
+<script src="https://code.jquery.com/jquery-3.5.1.slim.min.js"></script>
+<script src="https://cdn.jsdelivr.net/npm/@popperjs/core@2.9.1/dist/umd/popper.min.js"></script>
+<script src="https://stackpath.bootstrapcdn.com/bootstrap/4.5.2/js/bootstrap.min.js"></script>
     <script src="{{ asset('assets/admin/js/vendor/sweetalert2@11.js') }}"></script>
     <script src="{{ asset('assets/admin/js/dataTable.js') }}"></script>
 
+    <script>
+
+        // Biến để lưu trữ danh sách các cột đã được thêm
+
+        let addedColumns = [];
+
+        function addDayColumn() {
+            const table = document.getElementById("roomPricesTable");
+            const tableRows = table.getElementsByTagName('tr');
+            const selectedDays = Array.from(document.querySelectorAll('input[type=checkbox]:checked')).map(day => day.value);
+
+            selectedDays.forEach(day => {
+                if (!addedColumns.includes(day)) {
+                    const headerRow = tableRows[0];
+                    const headerCell = document.createElement('th');
+                    headerCell.textContent = day;
+                    headerCell.dataset.day = day;
+                    headerRow.appendChild(headerCell);
+
+                    for (let i = 1; i < tableRows.length; i++) {
+                        const row = tableRows[i];
+                        const inputCell = document.createElement('td');
+                        const input = document.createElement('input');
+                        input.type = "number";
+                        input.step = "1000";
+                        input.className = "form-control";
+                        input.placeholder = "Nhập giá";
+                        input.id = "input-" + day + "-" + i;
+                        inputCell.dataset.day = day;
+                        inputCell.appendChild(input);
+                        row.appendChild(inputCell);
+                    }
+
+                    // Thêm ngày vào danh sách đã thêm
+                    addedColumns.push(day);
+                }
+
+
+            });
+
+            $('#addDayModal').modal('hide');
+        }
+
+        // Sự kiện khi checkbox không được chọn nữa
+
+        document.querySelectorAll('input[type=checkbox]').forEach(checkbox => {
+            checkbox.addEventListener('change', function () {
+                const day = this.value;
+                const table = document.getElementById("roomPricesTable");
+
+                // Xóa tất cả các cột trong thead và tbody có data-day tương ứng
+                if (!this.checked) {
+                    const headerRow = table.getElementsByTagName('thead')[0].getElementsByTagName('tr')[0];
+                    const headerCells = headerRow.getElementsByTagName('th');
+
+                    // Xóa cột trong thead
+                    for (let i = 0; i < headerCells.length; i++) {
+                        const cell = headerCells[i];
+                        if (cell.getAttribute('data-day') === day) {
+                            cell.remove();
+                        }
+                    }
+
+                    // Xóa cột trong tbody
+                    const tbodyRows = table.getElementsByTagName('tbody')[0].getElementsByTagName('tr');
+
+                    for (let i = 0; i < tbodyRows.length; i++) {
+                        const cells = tbodyRows[i].getElementsByTagName('td');
+                        for (let j = 0; j < cells.length; j++) {
+                            const cell = cells[j];
+                            if (cell.getAttribute('data-day') === day) {
+                                cell.remove();
+                            }
+                        }
+                    }
+                }
+            });
+        });
+
+
+
+    </script>
     <script>
         (function($) {
             "use strict"
@@ -323,6 +543,11 @@
 
 @push('style')
     <style>
+        input[type="number"] {
+
+        width: 80px;
+
+        }
         .radio-container {
             display: flex;
             align-items: center;
