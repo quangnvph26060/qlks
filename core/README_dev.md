@@ -473,3 +473,41 @@ ALTER TABLE `rooms` ADD `deleted_at` TIMESTAMP NULL AFTER `updated_at`;
 07/10
 ALTER TABLE `booking_request_items` DROP FOREIGN KEY `booking_request_items_ibfk_1`; ALTER TABLE `booking_request_items` ADD CONSTRAINT `booking_request_items_ibfk_1` FOREIGN KEY (`booking_request_id`) REFERENCES `booking_requests`(`id`) ON DELETE CASCADE ON UPDATE RESTRICT;
 
+06/11 devquangnv
+
+CREATE TABLE price_types (
+    id INT AUTO_INCREMENT PRIMARY KEY,
+    name VARCHAR(50)
+) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_unicode_ci;
+
+CREATE TABLE days_of_week (
+    id INT AUTO_INCREMENT PRIMARY KEY,
+    name VARCHAR(20)
+) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_unicode_ci;
+
+CREATE TABLE rooms_prices (
+    id INT AUTO_INCREMENT PRIMARY KEY,
+    room_id INT, -- Assuming room_id refers to the room's ID
+    price_type_id INT,
+    day_of_week_id INT,
+    first_hour DECIMAL(10, 2),
+    additional_hour DECIMAL(10, 2),
+    full_day DECIMAL(10, 2),
+    overnight DECIMAL(10, 2),
+    created_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
+    updated_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP ON UPDATE CURRENT_TIMESTAMP
+
+) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_unicode_ci;
+
+CREATE TABLE holiday_prices (
+    id INT AUTO_INCREMENT PRIMARY KEY,
+    room_id INT,
+    price_type_id INT,
+    holiday_date DATE,
+    first_hour DECIMAL(10, 2),
+    additional_hour DECIMAL(10, 2),
+    full_day DECIMAL(10, 2),
+    overnight DECIMAL(10, 2),
+    created_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
+    updated_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP ON UPDATE CURRENT_TIMESTAMP
+) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_unicode_ci;
