@@ -4,8 +4,14 @@ namespace App\Http\Controllers\Admin;
 
 use Illuminate\Http\Request;
 use App\Http\Controllers\Controller;
+use App\Models\DayOfWeek;
+use App\Models\HolidayPrice;
+use App\Models\PriceType;
+use App\Models\Room;
 use App\Models\RoomPrice;
 use App\Repositories\BaseRepository;
+use Carbon\Carbon;
+use Illuminate\Support\Facades\DB;
 use Illuminate\Support\Facades\Validator;
 
 class ManagePriceListController extends Controller
@@ -14,7 +20,7 @@ class ManagePriceListController extends Controller
 
     public function __construct()
     {
-        $this->repository = new BaseRepository(new RoomPrice());
+        $this->repository = new BaseRepository(new Room());
     }
 
     public function priceList()
@@ -27,20 +33,24 @@ class ManagePriceListController extends Controller
         $orderBy = request()->get('orderBy', 'id');
         $columns = [
             'id',
+            'room_type_id',
+            'room_number',
             'code',
-            'name',
-            'price',
-            'start_date',
-            'end_date',
             'status',
+            'created_at',
+            'updated_at',
         ];
-        $relations = [];
+        $relations = [
+            'amenities',
+            'facilities',
+            'products',
+            'roomPrices'
+        ];
         $searchColumns = [
             'code',
-            'name',
-            'status',
+            'room_number',
         ];
-        $relationSearchColumns = [];
+        $relationSearchColumns = ['roomType' => ['name']];
 
         $response = $this->repository
             ->customPaginate(
@@ -61,42 +71,16 @@ class ManagePriceListController extends Controller
                 'pagination' => view('vendor.pagination.custom', compact('response'))->render(),
             ]);
         }
-        return view('admin.manage-price.index', compact('pageTitle'));
+        $rooms = Room::select('id', 'code', 'room_number')->get();
+        $priceTypes = PriceType::all();
+        $daysOfWeek = DayOfWeek::all();
+        return view('admin.manage-price.index', compact('pageTitle', 'rooms', 'priceTypes', 'daysOfWeek'));
     }
 
     public function store(Request $request)
     {
-        $validator = Validator::make(
-            $request->all(),
-            [
-                'code'          => 'required|unique:room_prices,code',
-                'name'          => 'required|unique:room_prices,name',
-                'price'         => 'required|numeric',
-                'start_date'    => 'required|date',
-                'end_date'      => 'required|date|after:start_date',
-                'start_time'    => 'nullable|date_format:H:i',
-                'end_time'      => 'nullable|date_format:H:i|after:start_time',
-                'specific_date' => 'nullable|date',
-            ],
-            [
-                'code.required'       => 'Mã bảng giá không được để trống!',
-                'code.unique'         => 'Mã bảng giá đã được sử dụng!',
-                'name.unique'         => 'Tên loại giá đã được sử dụng!',
-                'name.required'       => 'Tên loại giá không được để trống!',
-                'price.required'      => 'Giá không được để trống!',
-                'price.numeric'       => 'Giá không đúng định dạng!',
-                'start_date.required' => 'Ngày bắt đầu không được để trống!',
-                'start_date.date'     => 'Ngày bắt đầu không đúng định dạng!',
-                'end_date.required'   => 'Ngày kết thúc không được để trống!',
-                'end_date.date'       => 'Ngày kết thúc không đúng định dạng!',
-                'end_date.after'      => 'Ngày kết thúc phải lớn hơn ngày bắt đầu!',
-                'start_time.date_format' => 'Thời gian bắt đầu không đúng định dạng H:i.',
-                'end_time.date_format' => 'Thời gian kết thúc không đúng định dạng H:i.',
-                'end_time.after' => 'Thời gian kết thúc phải sau thời gian bắt đầu.',
-                'specific_date.date'  => 'Ngày đặc biệt không đúng định dạng!',
-            ]
-        );
-    
+
+        $validator = $this->validationPrice($request);
         if ($validator->fails()) {
             return response()->json([
                 'status' => false,
@@ -104,13 +88,24 @@ class ManagePriceListController extends Controller
                 'key' => $validator->errors()->keys()[0],
             ]);
         }
-
         $data = $validator->validated();
-        // Chuyển đổi status thành active/inactive dựa trên giá trị gửi lên
-        $data['status'] = $request->status == "on" ? 'active' : 'inactive';
-
-        RoomPrice::create($data);
-
+        $existingRecord = DB::table('rooms_prices')
+            ->where('room_id', $data['room_id'])
+            ->where('price_type_id', $data['price_type_id'])
+            ->where('day_of_week_id', $data['day_of_week_id'])
+            ->first();
+        if ($existingRecord) {
+            return response()->json([
+                'status' => false,
+                'message' => 'Cặp phòng, loại giá và ngày trong tuần này đã tồn tại'
+            ]);
+        }
+        if (!empty($data['holiday_date'])) {
+            $data['holiday_date'] = Carbon::parse($data['holiday_date']);
+            HolidayPrice::create($data);
+        } else {
+            RoomPrice::create($data);
+        }
         return response()->json([
             'status' => true,
             'message' => 'Thao tác thành công!'
@@ -229,5 +224,41 @@ class ManagePriceListController extends Controller
             'status' => true,
             'message' => 'Thao tác thành công.'
         ]);
+    }
+
+    protected function validationPrice($request)
+    {
+        $validator = Validator::make(
+            $request->all(),
+            [
+                'room_id' => 'required|exists:rooms,id',
+                'price_type_id' => 'required|exists:price_types,id',
+                'day_of_week_id' => 'nullable|exists:days_of_week,id',
+                'holiday_date' => 'nullable|date',
+                'first_hour' => 'required|numeric',
+                'additional_hour' => 'required|numeric',
+                'full_day' => 'required|numeric',
+                'overnight' => 'required|numeric',
+                'room_price_unique' => 'unique:rooms_prices,room_id,price_type_id,day_of_week_id',
+            ],
+            [
+                'room_id.required' => 'Chọn phòng không được trống',
+                'room_id.exists' => 'Phòng đã chọn không tồn tại',
+                'price_type_id.required' => 'Chọn loại giá không được trống',
+                'price_type_id.exists' => 'Loại giá đã chọn không tồn tại',
+                'day_of_week_id.exists' => 'Ngày trong tuần không tồn tại',
+                'holiday_date.date' => 'Ngày lễ không hợp lệ',
+                'first_hour.required' => 'Giá giờ đầu tiên không được trống',
+                'first_hour.numeric' => 'Giá giờ đầu tiên phải là số',
+                'additional_hour.required' => 'Giá giờ thêm không được trống',
+                'additional_hour.numeric' => 'Giá giờ thêm phải là số',
+                'full_day.required' => 'Giá cả ngày không được trống',
+                'full_day.numeric' => 'Giá cả ngày phải là số',
+                'overnight.required' => 'Giá qua đêm không được trống',
+                'overnight.numeric' => 'Giá qua đêm phải là số',
+                'room_price_unique' => 'Cặp phòng, loại giá và ngày trong tuần đã tồn tại.',
+            ]
+        );
+        return $validator;
     }
 }
