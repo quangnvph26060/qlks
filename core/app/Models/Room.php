@@ -10,13 +10,21 @@ use Illuminate\Database\Eloquent\SoftDeletes;
 
 class Room extends Model
 {
-    use GlobalStatus , SoftDeletes;
+    use GlobalStatus, SoftDeletes;
 
     protected $fillable = ['id', 'is_clean'];
     protected $casts = [
         'keywords' => 'array',
         'beds'     => 'array'
     ];
+    public function roomPrices()
+    {
+        return $this->hasMany(RoomPrice::class , 'room_id');
+    }
+    public function holidayPrices()
+    {
+        return $this->hasMany(HolidayPrice::class , 'room_id');
+    }
 
     public function amenities()
     {
@@ -36,7 +44,8 @@ class Room extends Model
     {
         return $this->belongsTo(RoomType::class);
     }
-    public function images()  {
+    public function images()
+    {
         return $this->hasMany(RoomImage::class);
     }
     public function booked()
@@ -86,24 +95,24 @@ class Room extends Model
             dd($roomPriceRoooms);
         }
     }
-    public function prices()
-    {
-        return $this->belongsToMany(RoomPrice::class, 'room_price_rooms', 'room_id', 'price_id')->withPivot('start_date', 'end_date', 'start_time', 'end_time', 'specific_date', 'status');
-    }
+    // public function prices()
+    // {
+    //     return $this->belongsToMany(RoomPrice::class, 'room_price_rooms', 'room_id', 'price_id')->withPivot('start_date', 'end_date', 'start_time', 'end_time', 'specific_date', 'status');
+    // }
     public function scopeActive($query)
     {
         return $query->where([
-            'rooms.status'=> Status::ROOM_ACTIVE
+            'rooms.status' => Status::ROOM_ACTIVE
             // 'rooms.is_clean'=> Status::ROOM_CLEAN_ACTIVE
         ]);
     }
 
-    public function roomPrices()
-    {
-        return $this->belongsToMany(RoomPrice::class, 'room_price_rooms', 'room_id', 'price_id')
-            ->where('room_prices.status', 'active')
-            ->withPivot('room_id', 'price_id', 'start_date', 'end_date', 'start_time', 'end_time', 'specific_date', 'status');
-    }
+    // public function roomPrices()
+    // {
+    //     return $this->belongsToMany(RoomPrice::class, 'room_price_rooms', 'room_id', 'price_id')
+    //         ->where('room_prices.status', 'active')
+    //         ->withPivot('room_id', 'price_id', 'start_date', 'end_date', 'start_time', 'end_time', 'specific_date', 'status');
+    // }
     public function roomPricesActive()
     {
         return $this->belongsToMany(RoomPrice::class, 'room_price_rooms', 'room_id', 'price_id')
