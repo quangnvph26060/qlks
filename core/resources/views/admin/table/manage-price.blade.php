@@ -1,34 +1,52 @@
 @if ($response->isNotEmpty())
-    @foreach ($response as $price)
-        <tr data-id="{{ $price->id }}">
-            <th>{{ $loop->iteration }}</th>
-            <td>{{ $price->code }}</td>
-            <td>{{ $price->name }}</td>
-            <td>{{ showAmount($price->price) }}</td>
-            <td>{{ \Carbon\Carbon::parse($price->start_date)->format('d/m/Y H:i') }}</td>
-            <td>{{ \Carbon\Carbon::parse($price->end_date)->format('d/m/Y H:i') }}</td>
+    @foreach ($response as $room)
+        <tr data-id="{{ $room->id }}">
             <td>
-                <div class="radio-container">
-                    <label class="toggle">
-                        <input type="checkbox" class="status-change" data-id="{{ $price->id }}" @checked($price->status == 'active')>
-                        <span class="slider"></span>
-                    </label>
+                {{ $room->code }}
+            </td>
+            <td>
+                <div class="row">
+                    <div class="border-bottom p-4">
+                        Giá giờ
+                    </div>
+                </div>
+                <div class="row">
+                    <div class="border-bottom p-4">
+                        Giá cả ngày
+                    </div>
+                </div>
+                <div class="row">
+                    <div class="p-4">
+                        Giá đêm
+                    </div>
                 </div>
             </td>
-            @can('admin.manage.price.all')
-                <td>
-                    <div class="button--group">
-                        <button class="btn btn-sm btn-outline--primary btn-edit" data-id="{{ $price->id }}"
-                            data-modal_title="@lang('Cập nhật danh mục')" type="button">
-                            <i class="fas fa-edit"></i>@lang('Sửa')
-                        </button>
-                        <button class="btn btn-sm btn-outline--danger btn-delete" data-id="{{ $price->id }}"
-                            data-modal_title="@lang('Xóa danh mục')" type="button">
-                            <i class="fas fa-trash"></i>@lang('Xóa')
-                        </button>
+            <td>
+                @foreach ($collection as $item)
+                    
+                @endforeach
+                <div class="row">
+                    <div class="border-bottom p-3">
+                        <input type="number" step="1000" class="form-control" id="pricePerHour1"
+                            data-bs-toggle="modal" data-bs-target="#priceModal">
                     </div>
-                </td>
-            @endcan
+                </div>
+                <div class="row">
+                    <div class="border-bottom p-3">
+                        <input type="number" step="1000" class="form-control" id="fullDayPrice1"
+                            data-bs-toggle="modal" data-bs-target="#priceModal">
+                    </div>
+                </div>
+                <div class="row">
+                    <div class="p-3">
+                        <input type="number" step="1000" class="form-control" id="overnightPrice1"
+                            data-bs-toggle="modal" data-bs-target="#priceModal">
+                    </div>
+                </div>
+            </td>
+
         </tr>
     @endforeach
+
+
 @endif
