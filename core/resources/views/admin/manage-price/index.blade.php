@@ -1,6 +1,6 @@
 @extends('admin.layouts.app')
 @section('panel')
-    <div class="row">
+    {{-- <div class="row">
         <!-- Khối bên phải: Danh sách danh mục -->
         <div class="col-md-12">
             <div class="border p-2">
@@ -24,15 +24,18 @@
                 <div class="card b-radius--10">
                     <div class="card-body p-0">
                         <div class="table-responsive--sm table-responsive">
-                            <table class="table--light style--two table roomPricesTable" id="data-table">
+                            <table class="table--light style--two table" id="data-table">
                                 <thead>
                                     <tr>
+                                        <th>@lang('STT')</th>
+                                        <th>@lang('Mã giá')</th>
                                         <th>@lang('Tên loại giá')</th>
-                                        <th>@lang('Loại giá')</th>
-                                        <th>@lang('Giá mặc định')</th>
+                                        <th>@lang('Giá trị')</th>
+                                        <th>@lang('Thời gian bắt đầu')</th>
+                                        <th>@lang('Thời gian kết thúc')</th>
+                                        <th>@lang('Trạng thái')</th>
                                         @can('admin.manage.price.all')
-                                            <th>@lang('Thứ,ngày')</th>
-                                            <th>@lang('Ngày đặc biệt')</th>
+                                            <th>@lang('Hành động')</th>
                                         @endcan
                                     </tr>
                                 </thead>
@@ -48,12 +51,12 @@
 
             </div>
         </div>
-    </div>
+    </div> --}}
 
 
     <div class="container">
 
-        {{-- <h2>Thêm Giá Phòng</h2>
+        <h2>Thêm Giá Phòng</h2>
 
         <table class="table table-bordered" id="roomPricesTable">
 
@@ -71,14 +74,11 @@
 
             </thead>
 
-            <tbody> 
-                <tr>
-                     <td rowspan="4">Phòng 1</td>
-                </tr>
+            <tbody>
 
                 <tr>
 
-                    
+                    <td rowspan="3">Phòng 1</td>
 
                     <td>Giá Giờ</td>
 
@@ -90,7 +90,7 @@
 
                     <td>Giá Cả Ngày</td>
 
-                    <td><input type="number" step="1000" class="form-control" id="fullDayPrice1" ></td>
+                    <td><input type="number" step="1000" class="form-control" id="fullDayPrice1"></td>
 
                 </tr>
 
@@ -98,19 +98,43 @@
 
                     <td>Giá Qua Đêm</td>
 
-                    <td><input type="number" step="1000" class="form-control" id="overnightPrice1"
-                            ></td>
+                    <td><input type="number" step="1000" class="form-control" id="overnightPrice1"></td>
+
                 </tr>
 
-             
+                <tr>
+
+                    <td rowspan="3">Phòng 2</td>
+
+                    <td>Giá Giờ</td>
+
+                    <td><input type="number" step="1000" class="form-control" id="pricePerHour2"></td>
+
+                </tr>
+
+                <tr>
+
+                    <td>Giá Cả Ngày</td>
+
+                    <td><input type="number" step="1000" class="form-control" id="fullDayPrice2"></td>
+
+                </tr>
+
+                <tr>
+
+                    <td>Giá Qua Đêm</td>
+
+                    <td><input type="number" step="1000" class="form-control" id="overnightPrice2"></td>
+
+                </tr>
 
             </tbody>
 
-        </table> --}}
+        </table>
 
-        <button class="btn btn-primary mt-2" onclick="addRoomPrices()">Thêm Giá</button>
+        <button class="btn btn-primary" onclick="addRoomPrices()">Thêm Giá</button>
 
-        <button class="btn btn-success mt-2" id="addColumnBtn" data-toggle="modal" data-target="#addDayModal">Thêm
+        <button class="btn btn-success" id="addColumnBtn" data-toggle="modal" data-target="#addDayModal">Thêm
             Cột</button>
 
     </div>
@@ -130,28 +154,23 @@
                 <div class="modal-body">
                     <form id="dateSelectionForm">
                         <div class="form-check">
-                            <input class="form-check-input" type="checkbox" value="Monday" id="dayMonday"
-                                name="selectedDays[]">
+                            <input class="form-check-input" type="checkbox" value="Monday" id="dayMonday">
                             <label class="form-check-label" for="dayMonday">Thứ Hai</label>
                         </div>
                         <div class="form-check">
-                            <input class="form-check-input" type="checkbox" value="Tuesday" id="dayTuesday"
-                                name="selectedDays[]">
+                            <input class="form-check-input" type="checkbox" value="Tuesday" id="dayTuesday">
                             <label class="form-check-label" for="dayTuesday">Thứ Ba</label>
                         </div>
                         <div class="form-check">
-                            <input class="form-check-input" type="checkbox" value="Wednesday" id="dayWednesday"
-                                name="selectedDays[]">
+                            <input class="form-check-input" type="checkbox" value="Wednesday" id="dayWednesday">
                             <label class="form-check-label" for="dayWednesday">Thứ Tư</label>
                         </div>
                         <div class="form-check">
-                            <input class="form-check-input" type="checkbox" value="Thursday" id="dayThursday"
-                                name="selectedDays[]">
+                            <input class="form-check-input" type="checkbox" value="Thursday" id="dayThursday">
                             <label class="form-check-label" for="dayThursday">Thứ Năm</label>
                         </div>
                         <div class="form-check">
-                            <input class="form-check-input" type="checkbox" value="Friday" id="dayFriday"
-                                name="selectedDays[]">
+                            <input class="form-check-input" type="checkbox" value="Friday" id="dayFriday">
                             <label class="form-check-label" for="dayFriday">Thứ Sáu</label>
                         </div>
                     </form>
@@ -174,8 +193,8 @@
             </button>
         @endpush
     @endcan
-
-    {{-- modal  --}}
+    
+            {{-- modal  --}}
     <div class="modal fade" id="staticBackdrop" data-bs-backdrop="static" data-bs-keyboard="false" tabindex="-1"
         aria-labelledby="staticBackdropLabel" aria-hidden="true">
         <div class="modal-dialog modal-lg">
@@ -190,73 +209,64 @@
                         <input type="hidden" name="id" id="recordId">
                         <div class="row">
                             <div class="form-group mb-3 col-lg-6">
-                                <label for="">Phòng</label>
-                                <select name="room_id" id="room_id" class="form-control">
-                                    <option value="">Chọn mã phòng (Tên phòng)</option>
-                                    @foreach ($rooms as $id => $room)
-                                        <option @selected(old('room_id', $room->id) == $id) value="{{ $room->id }}">
-                                            {{ $room->code }} ({{ $room->room_number }})</option>
-                                    @endforeach
-                                </select>
-                            </div>
-                            {{-- @php
-                                if(empty($selectedTypePrice)){
-                                    $selectedTypePrice = [];
-                                }
-                            @endphp
-                            <div class="form-group mb-3 col-lg-6">
-                                <label for="price_type_id">Loại Giá</label>
-                                <select name="price_type_id[]" id="price_type_id" class="select2-multi-select" multiple>
-                                    @foreach ($priceTypes as $id => $priceType)
-                                        <option value="{{ $priceType->id }}"   @if (in_array($id, $selectedTypePrice)) selected @endif>{{ $priceType->name }}</option>
-                                    @endforeach
-                                </select>
-                            </div> --}}
-                            <div class="form-group mb-3 col-lg-6">
-                                <label for="price_type_id">Loại Giá</label>
-                                <select name="price_type_id" id="price_type_id" class="form-control">
-                                    <option value="">Hãy chọn loại giá</option>
-                                    @foreach ($priceTypes as $id => $priceType)
-                                        <option value="{{ $priceType->id }}">{{ $priceType->name }}</option>
-                                    @endforeach
-                                </select>
-                            </div>
-                            <div class="form-group">
-                                <label for="day_of_week_id">Ngày trong tuần</label>
-                                <select name="day_of_week_id" class="form-control">
-                                    <option value="">Chọn nếu không phải ngày lễ</option>
-                                    @foreach ($daysOfWeek as $day)
-                                        <option value="{{ $day->id }}">{{ $day->name }}</option>
-                                    @endforeach
-                                </select>
+                                <label for="">Mã giá</label>
+                                <input type="text" class="form-control" id="code" name="code"
+                                    placeholder="Mã giá">
                             </div>
                             <div class="form-group mb-3 col-lg-6">
-                                <label for="holiday_date">Ngày lễ (nếu có)</label>
-                                <input type="date" name="holiday_date" class="form-control">
-                            </div>
-
-
-                            <div class="form-group mb-3 col-lg-6">
-                                <label for="">Giá giờ đầu tiên</label>
-                                <input type="text" name="first_hour" id="first_hour" placeholder="Giá giờ đầu tiên"
-                                    class="form-control">
+                                <label for="">Tên loại giá</label>
+                                <input type="text" class="form-control" id="name" name="name"
+                                    placeholder="Nhập loại giá">
                             </div>
 
                             <div class="form-group mb-3 col-lg-6">
-                                <label for="">Giá giờ tiếp theo</label>
-                                <input type="text" name="additional_hour" id="additional_hour"
-                                    placeholder="Giá giờ tiếp theo" class="form-control">
+                                <label for="">Ngày bắt đầu</label>
+
+                                <input type="date" name="start_date" class="form-control"
+
+                                    placeholder="Chọn ngày và giờ" />
                             </div>
 
                             <div class="form-group mb-3 col-lg-6">
-                                <label for="">Giá qua đêm</label>
-                                <input type="text" name="overnight" id="overnight" placeholder="Giá qua đêm"
-                                    class="form-control">
+                                <label for="">Ngày kết thúc</label>
+
+                                <input type="date" name="end_date" class="form-control"
+                                    placeholder="Chọn ngày và giờ" />
                             </div>
                             <div class="form-group mb-3 col-lg-6">
-                                <label for="">Giá cả ngày</label>
-                                <input type="text" name="full_day" id="full_day" placeholder="Giá cả ngày"
-                                    class="form-control">
+                                <label for="">Thời gian bắt đầu</label>
+                                <input type="time" name="start_time" class="form-control"
+                                    placeholder="Chọn ngày và giờ" />
+                            </div>
+
+                            <div class="form-group mb-3 col-lg-6">
+                                <label for="">Thời gian kết thúc</label>
+                                <input type="time" name="end_time" class="form-control"
+                                    placeholder="Chọn ngày và giờ" />
+                            </div>
+                            <div class="form-group mb-3 col-lg-6">
+                                <label for="">Ngày đặc biệt</label>
+                                <input type="date" name="specific_date" class="form-control"
+
+                                    placeholder="Chọn ngày và giờ" />
+                            </div>
+                            <div class="form-group mb-3 col-lg-12">
+                                <label for="">Giá trị</label>
+                                <div class="input-group">
+                                    <input type="text" class="form-control" id="price" name="price"
+                                        placeholder="Nhập giá">
+                                    <span class="input-group-text">{{ __(gs()->cur_text) }}</span>
+                                </div>
+                            </div>
+
+                            <div class="form-group mb-3 col-lg-12">
+                                <div class="radio-container" style="justify-content: left; gap: 10px">
+                                    <label for="">Trạng thái</label>
+                                    <label class="toggle">
+                                        <input type="checkbox" name="status" id="status" checked>
+                                        <span class="slider"></span>
+                                    </label>
+                                </div>
                             </div>
                         </div>
                         <div class="modal-footer">
@@ -269,66 +279,33 @@
             </div>
         </div>
     </div>
-
-
-    <!-- Modal Giá -->
-    <div class="modal fade" id="priceModal" tabindex="-1" role="dialog" aria-labelledby="priceModalLabel"
-        aria-hidden="true">
-        <div class="modal-dialog" role="document">
-            <div class="modal-content">
-                <div class="modal-header">
-                    <h5 class="modal-title" id="priceModalLabel">Nhập Giá</h5>
-                    <button type="button" class="close" data-dismiss="modal" aria-label="Close">
-                        <span aria-hidden="true" onclick="closePriceModal()">&times;</span>
-                    </button>
-                </div>
-                <div class="modal-body">
-                    <input type="number" class="form-control" placeholder="Nhập giá tại đây...">
-                </div>
-                <div class="modal-footer">
-                    <button type="button" class="btn btn-secondary" onclick="closePriceModal()"
-                        data-dismiss="modal">Đóng</button>
-                    <button type="button" class="btn btn-primary">Lưu</button>
-                </div>
-            </div>
-        </div>
-    </div>
 @endsection
 
 @push('script')
+
+
     <script src="https://cdn.jsdelivr.net/npm/@popperjs/core@2.9.1/dist/umd/popper.min.js"></script>
     <script src="https://stackpath.bootstrapcdn.com/bootstrap/4.5.2/js/bootstrap.min.js"></script>
 
     <script src="{{ asset('assets/admin/js/vendor/sweetalert2@11.js') }}"></script>
     <script src="{{ asset('assets/admin/js/dataTable.js') }}"></script>
-    <script src="{{ asset('assets/admin/js/fontawesome-iconpicker.js') }}"></script>
 
     <script>
+
         // Biến để lưu trữ danh sách các cột đã được thêm
+
         let addedColumns = [];
-        let columnCounter = 1;
 
         function addDayColumn() {
-            const table = document.querySelector(".roomPricesTable");
+            const table = document.getElementById("roomPricesTable");
             const tableRows = table.getElementsByTagName('tr');
-            const selectedDays = Array.from(document.querySelectorAll('input[name="selectedDays[]"]:checked'))
-                .map(day => day.value);
+            const selectedDays = Array.from(document.querySelectorAll('input[type=checkbox]:checked')).map(day => day.value);
 
             selectedDays.forEach(day => {
                 if (!addedColumns.includes(day)) {
                     const headerRow = tableRows[0];
                     const headerCell = document.createElement('th');
                     headerCell.textContent = day;
-
-                    // Thêm nút xóa vào tiêu đề cột
-                    const deleteButton = document.createElement('button');
-                    deleteButton.className = "btn btn-danger btn-sm ms-2";
-                    deleteButton.textContent = "Xóa";
-                    deleteButton.onclick = function() {
-                        removeDayColumn(day);
-                    };
-                    headerCell.appendChild(deleteButton);
-
                     headerCell.dataset.day = day;
                     headerRow.appendChild(headerCell);
 
@@ -340,108 +317,26 @@
                         input.step = "1000";
                         input.className = "form-control";
                         input.placeholder = "Nhập giá";
-                        input.id = `input-${day}-${i}-${columnCounter}`;
+                        input.id = "input-" + day + "-" + i;
                         inputCell.dataset.day = day;
-                        // Gán sự kiện click để mở modal
-                        input.addEventListener("click", () => openPriceModal(day, i));
                         inputCell.appendChild(input);
                         row.appendChild(inputCell);
                     }
 
+                    // Thêm ngày vào danh sách đã thêm
                     addedColumns.push(day);
-                    columnCounter++;
                 }
+
+
             });
+
             $('#addDayModal').modal('hide');
-            document.getElementById("dateSelectionForm").reset();
         }
-
-        function removeDayColumn(day) {
-            const table = document.querySelector(".roomPricesTable");
-            const tableRows = table.getElementsByTagName('tr');
-
-            // Xóa cột trong hàng tiêu đề
-            const headerRow = tableRows[0];
-            for (let i = 0; i < headerRow.cells.length; i++) {
-                if (headerRow.cells[i].dataset.day === day) {
-                    headerRow.deleteCell(i);
-                    break;
-                }
-            }
-
-            // Xóa cột trong các hàng dữ liệu
-            for (let i = 1; i < tableRows.length; i++) {
-                const row = tableRows[i];
-                for (let j = 0; j < row.cells.length; j++) {
-                    if (row.cells[j].dataset.day === day) {
-                        row.deleteCell(j);
-                        break;
-                    }
-                }
-            }
-
-            // Xóa ngày đó khỏi danh sách đã thêm
-            addedColumns = addedColumns.filter(column => column !== day);
-        }
-
-        function openPriceModal(day, rowIndex) {
-            document.getElementById("priceModalLabel").textContent = `Nhập giá cho ${day} - Dòng ${rowIndex}`;
-            $('#priceModal').modal('show');
-        }
-
-        function closePriceModal() {
-            $('#priceModal').modal('hide');
-        }
-        initSelect2MultiSelect();
-        initSelect2AutoTokenize();
-
-        var dropdownParent;
-
-        function initSelect2MultiSelect(selector = null) {
-
-            if (selector) {
-                dropdownParent = $(selector).parents('.form-group');
-
-                $(selector).select2({
-                    dropdownParent: dropdownParent
-                });
-            } else {
-                $.each($('.select2-multi-select'), function(indexInArray, selector) {
-                    dropdownParent = $(selector).parents('.form-group');
-                    $(selector).select2({
-                        dropdownParent: dropdownParent
-                    });
-                });
-            }
-        }
-
-        function initSelect2AutoTokenize(selector = null) {
-
-            if (selector) {
-                dropdownParent = $(selector).parents('.form-group');
-
-                $(selector).select2({
-                    dropdownParent: dropdownParent
-                });
-            } else {
-                $.each($('.select2-auto-tokenize'), function(indexInArray, selector) {
-                    dropdownParent = $(selector).parents('.form-group');
-                    $(selector).select2({
-                        dropdownParent: dropdownParent,
-                        tags: true,
-                        tokenSeparators: [',']
-                    });
-                });
-            }
-        }
-
-
-
 
         // Sự kiện khi checkbox không được chọn nữa
 
-        document.querySelectorAll('input[name="selectedDays[]"]:checked]').forEach(checkbox => {
-            checkbox.addEventListener('change', function() {
+        document.querySelectorAll('input[type=checkbox]').forEach(checkbox => {
+            checkbox.addEventListener('change', function () {
                 const day = this.value;
                 const table = document.getElementById("roomPricesTable");
 
@@ -473,7 +368,16 @@
                 }
             });
         });
+
+
+
     </script>
+
+
+
+
+
+
     <script>
         (function($) {
             "use strict"
@@ -512,7 +416,6 @@
                                 showSwalMessage('success', response.message);
                                 $('#staticBackdrop').modal('hide');
                                 initDataFetch(apiUrl);
-                                window.location.href = window.location.href;
                             } else {
                                 $('input').removeClass('is-invalid');
                                 $(`#${response.key}`).addClass('is-invalid');
@@ -528,17 +431,26 @@
 
                     $.ajax({
                         type: "GET",
-                        url: "{{ route('admin.manage.price.edit', ':id') }}".replace(':id',
-                            id),
+                        url: "{{ route('admin.manage.price.edit', ':id') }}".replace(':id', id),
                         success: function(response) {
 
                             if (response.status) {
                                 $('#staticBackdropLabel').text('Cập nhật');
-                                $('#room_id').val(response.data.room_id);
-                                $('#first_hour').val(response.data.first_hour);
-                                $('#additional_hour').val(response.data.additional_hour);
-                                $('#full_day').val(response.data.full_day);
-                                $('#overnight').val(response.data.overnight);
+                                $('#code').val(response.data.code);
+                                $('#name').val(response.data.name);
+
+                                // Thêm giờ vào ngày
+                                let startDate = response.data.start_date +
+                                'T00:00'; // hoặc giờ thực tế
+                                let endDate = response.data.end_date +
+                                'T23:59'; // hoặc giờ thực tế
+
+                                $('#start_date').val(startDate);
+                                $('#end_date').val(endDate);
+
+                                $('#price').val(response.data.price);
+                                $('#status').prop('checked', response.data.status ==
+                                    'active');
                                 $('#method').val('PUT');
                                 $('#recordId').val(id);
                                 $('#staticBackdrop').modal('show');
@@ -641,10 +553,9 @@
     <style>
         input[type="number"] {
 
-            width: 80px;
+        width: 80px;
 
         }
-
         .radio-container {
             display: flex;
             align-items: center;
@@ -723,16 +634,6 @@
         .radio-group label {
             margin-right: 20px;
             font-size: 16px;
-        }
-
-
-        .table-bordered {
-            border: 1px solid #000;
-        }
-
-        .table-bordered th,
-        .table-bordered td {
-            border: 1px solid #000;
         }
     </style>
 @endpush
