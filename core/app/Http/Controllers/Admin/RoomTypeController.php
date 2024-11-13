@@ -3,6 +3,7 @@
 namespace App\Http\Controllers\Admin;
 
 use App\Constants\Status;
+use App\Models\Booking;
 use Log;
 use App\Models\Room;
 use App\Models\Amenity;
@@ -17,6 +18,7 @@ use App\Models\RoomTypeImage;
 use App\Rules\FileTypeValidate;
 use Illuminate\Support\Facades\DB;
 use App\Http\Controllers\Controller;
+use App\Models\BookedRoom;
 use App\Models\RoomImage;
 use App\Models\RoomPrice;
 use App\Repositories\BaseRepository;
@@ -121,26 +123,36 @@ class RoomTypeController extends Controller
 
     public function save(Request $request, $id = 0)
     {
-        dd($request->all());
+        //  dd($request->all());
         $this->validation($request, $id);
         DB::beginTransaction();
         try {
-            if ($request->room_number) {
-                $roomNumbers = Room::pluck('room_number')->toArray();
-                $exists = in_array($request->room_number, $roomNumbers);
-                if ($exists) {
-                    $notify[] = ['error', ' số phòng đã tồn tại'];
-                    return back()->withNotify($notify);
-                }
-            }
-            $bedArray         = array_values($request->bed ?? []);
+            // if ($request->room_number) {
+            //     $roomNumbers = Room::pluck('room_number')->toArray();
+            //     $exists = in_array($request->room_number, $roomNumbers);
+            //     if ($exists) {
+            //         $notify[] = ['error', ' số phòng đã tồn tại'];
+            //         return back()->withNotify($notify);
+            //     }
+            // }
+            // $bedArray         = array_values($request->bed ?? []);
             $purifier         = new \HTMLPurifier();
 
             if ($id) {
                 $room         = Room::findOrFail($id);
+
                 $notification     = 'Đã cập nhật phòng thành công';
             } else {
+                if ($request->room_number) {
+                    $roomNumbers = Room::pluck('room_number')->toArray();
+                    $exists = in_array($request->room_number, $roomNumbers);
+                    if ($exists) {
+                        $notify[] = ['error', ' Số phòng đã tồn tại'];
+                        return back()->withNotify($notify);
+                    }
+                }
                 $room        = new Room();
+
                 $notification     = 'Đã thêm phòng thành công';
             }
 
@@ -150,7 +162,7 @@ class RoomTypeController extends Controller
             $room->total_adult         = $request->total_adult;
             $room->total_child         = $request->total_child;
             $room->description         = htmlspecialchars_decode($purifier->purify($request->description));
-            $room->beds                = $bedArray;
+            // $room->beds                = $bedArray;
             $room->is_featured         = $request->is_featured ? 1 : 0;
             //$room->cancellation_fee    = $request->cancellation_fee ?? 0;
             $room->cancellation_policy = htmlspecialchars_decode($purifier->purify($request->cancellation_policy));
@@ -273,10 +285,10 @@ class RoomTypeController extends Controller
             'keywords.*'          => 'string',
             'facilities'          => 'nullable|array',
             'facilities.*'        => 'integer|exists:facilities,id',
-            'total_bed'           => 'required|gt:0',
+            // 'total_bed'           => 'required|gt:0',
             'main_image'          => $imgValidation,
-            'bed'                 => 'required|array',
-            'bed.*'               => 'exists:bed_types,name',
+            // 'bed'                 => 'required|array',
+            // 'bed.*'               => 'exists:bed_types,name',
             'cancellation_policy' => 'nullable|string',
             'cancellation_fee'    => 'nullable|numeric',
             'products'            => 'nullable|array',
@@ -355,6 +367,28 @@ class RoomTypeController extends Controller
             ]);
         }
 
+        if ($room->amenities()->exists()) {
+            return response()->json([
+                'status' => false,
+                'message' => 'Không thể xóa vì phòng đang có tiện nghi.'
+            ]);
+        }
+
+        if ($room->facilities()->exists()) {
+            return response()->json([
+                'status' => false,
+                'message' => 'Không thể xóa vì phòng đang có cơ sở vật chất.'
+            ]);
+        }
+
+        $bookings = BookedRoom::where('room_id', $id)->where('status', 1)->first();
+
+        if ($bookings) {
+            return response()->json([
+                'status' => false,
+                'message' => 'Không thể xóa vì phòng đang được thuệ.'
+            ]);
+        }
         $room->delete();
         return response()->json([
             'status' => true,

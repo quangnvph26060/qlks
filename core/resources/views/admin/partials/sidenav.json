@@ -88,21 +88,29 @@
             },
             {
                 "keyword": [
-                    "Quản lý tiện nghi phòng"
+                    "Quản lý tiện nghi "
                 ],
-                "title": "Quản lý tiện nghi phòng",
+                "title": "Quản lý tiện nghi ",
                 "route_name": "admin.hotel.room.amenities.all",
                 "menu_active": "admin.hotel.room.amenities.all"
             },
             {
                 "keyword": [
-                    "Quản lý cơ sở vật chất phòng"
+                    "Quản lý cơ sở vật chất "
                 ],
-                "title": "Quản lý cơ sở vật chất phòng",
+                "title": "Quản lý cơ sở vật chất ",
                 "route_name": "admin.hotel.room.facilities.all",
                 "menu_active": "admin.hotel.room.facilities.all"
+            },
+            {
+                "keyword": [
+                    "Quản lý sản phẩm"
+                ],
+                "title": "Quản lý sản phẩm",
+                "route_name": "admin.hotel.room.product.all",
+                "menu_active": "admin.hotel.room.product.all"
             }
-          
+
         ]
     },
     "manage_prices": {
@@ -566,7 +574,7 @@
         "route_name": "admin.subscriber.index",
         "menu_active": "admin.subscriber.*"
     },
-   
+
     "reports": {
         "title": "Lịch sử",
         "icon": "la la-list",
