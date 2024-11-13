@@ -1,6 +1,7 @@
 <?php
 
 use App\Http\Controllers\Admin\FeeController;
+use App\Http\Controllers\Admin\PriceController;
 use App\Http\Controllers\Admin\TransactionController;
 use Illuminate\Support\Facades\Route;
 
@@ -376,6 +377,25 @@ Route::middleware('admin', 'adminPermission')->group(function () {
         Route::get('delete/{id}', [TransactionController::class, 'delete'])->name('delete');
         Route::post('change-status/{id}', [TransactionController::class, 'changeTransactionStatus'])->name('changeStatus');
     });
+    // price in room
+    Route::prefix('price')->name('price.')->group(function () {
+        Route::post('/switchPrice', [PriceController::class, 'switchPrice'])->name('switchPrice');
+        // Route::get('add', [TransactionController::class, 'add'])->name('add');
+        // Route::post('store', [TransactionController::class, 'store'])->name('store');
+        // Route::get('detail/{id}', [TransactionController::class, 'edit'])->name('edit');
+        // Route::put('update/{id}', [TransactionController::class, 'update'])->name('update');
+        // Route::get('delete/{id}', [TransactionController::class, 'delete'])->name('delete');
+        // Route::post('change-status/{id}', [TransactionController::class, 'changeTransactionStatus'])->name('changeStatus');
+    });
+
+
+
+
+
+
+
+
+
 
     // DEPOSIT SYSTEM
     Route::controller('DepositController')->prefix('payment')->name('deposit.')->group(function () {
