@@ -83,7 +83,7 @@ class Room extends Model
             $roomPriceRoooms->specific_date     = $roomPrice->specific_date;
             $roomPriceRoooms->save();
 
-            dd($roomPriceRoooms);
+         
         }
     }
     public function prices()

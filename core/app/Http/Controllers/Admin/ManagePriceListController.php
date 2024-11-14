@@ -4,6 +4,7 @@ namespace App\Http\Controllers\Admin;
 
 use Illuminate\Http\Request;
 use App\Http\Controllers\Controller;
+use App\Models\Room;
 use App\Models\RoomPrice;
 use App\Repositories\BaseRepository;
 use Illuminate\Support\Facades\Validator;
@@ -62,6 +63,9 @@ class ManagePriceListController extends Controller
             ]);
         }
         return view('admin.manage-price.index', compact('pageTitle'));
+        $rooms = Room::active()->get();
+      //  dd($rooms);
+        return view('admin.manage-price.index', compact('pageTitle','rooms'));
     }
 
     public function store(Request $request)
@@ -96,7 +100,7 @@ class ManagePriceListController extends Controller
                 'specific_date.date'  => 'Ngày đặc biệt không đúng định dạng!',
             ]
         );
-    
+
         if ($validator->fails()) {
             return response()->json([
                 'status' => false,
