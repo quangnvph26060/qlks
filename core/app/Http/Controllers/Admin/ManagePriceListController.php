@@ -63,7 +63,7 @@ class ManagePriceListController extends Controller
             ]);
         }
         $rooms = Room::active()->get();
-      //  dd($rooms);
+         
         return view('admin.manage-price.index', compact('pageTitle','rooms'));
     }
 

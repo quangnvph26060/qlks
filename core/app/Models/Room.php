@@ -10,14 +10,27 @@ use Illuminate\Database\Eloquent\SoftDeletes;
 
 class Room extends Model
 {
-    use GlobalStatus , SoftDeletes;
+    use GlobalStatus, SoftDeletes;
 
     protected $fillable = ['id', 'is_clean'];
     protected $casts = [
         'keywords' => 'array',
         'beds'     => 'array'
     ];
-
+    // price
+    // Trong model Room
+    public function regularRoom()
+    {
+        return RegularRoomPrice::where('room_price_id', $this->id)->first();
+    }
+    public function roomPricePerDay()
+    {
+        return RoomPricePerDay::where('room_price_id', $this->id)->first();
+    }
+    // public function regularRoom()
+    // {
+    //     return $this->hasOne(RegularRoomPrice::class, 'id', 'id');
+    // }
     public function amenities()
     {
         return $this->belongsToMany(Amenity::class, 'room_amenities', 'room_id', 'amenities_id')->withTimestamps();
@@ -36,7 +49,8 @@ class Room extends Model
     {
         return $this->belongsTo(RoomType::class);
     }
-    public function images()  {
+    public function images()
+    {
         return $this->hasMany(RoomImage::class);
     }
     public function booked()
@@ -82,8 +96,6 @@ class Room extends Model
             $roomPriceRoooms->end_time          = $roomPrice->end_time;
             $roomPriceRoooms->specific_date     = $roomPrice->specific_date;
             $roomPriceRoooms->save();
-
-         
         }
     }
     public function prices()
@@ -93,7 +105,7 @@ class Room extends Model
     public function scopeActive($query)
     {
         return $query->where([
-            'rooms.status'=> Status::ROOM_ACTIVE
+            'rooms.status' => Status::ROOM_ACTIVE
             // 'rooms.is_clean'=> Status::ROOM_CLEAN_ACTIVE
         ]);
     }

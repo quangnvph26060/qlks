@@ -75,9 +75,13 @@
                     </tr>
                 </thead>
                 <tbody>
+
                     @foreach ($rooms as $item)
+                        @php
+                            $regularRoom = $item->regularRoom();
+                        @endphp
                         <tr>
-                            <td rowspan="3">{{ $item->room_number }}</td>
+                            <td rowspan="3"> {{ $item->room_number }} </td>
 
                             <td class="small-column">Giá Giờ</td>
 
@@ -85,23 +89,27 @@
                                 <div class="d-flex price-hour price-input" id="priceContainerHour">
                                     <p class="d-flex text-end">Từ giờ đầu tiên: &nbsp;<br>Mỗi giờ:</p>
                                     <input type="number" step="1000" class="form-control" data-id="{{ $item->id }}"
-                                        id="pricePerHour" placeholder="Nhập giá">
+                                        id="pricePerHour" value="{{ $regularRoom ? $regularRoom->hourly_price : '' }}"
+                                        placeholder="Nhập giá">
                                 </div>
                             </td>
                         </tr>
 
                         <tr>
                             <td class="small-column">Giá Cả Ngày</td>
-                            <td><input type="number" step="1000"class="form-control mf-table"
-                                    data-id="{{ $item->id }}" id="fullDayPrice" placeholder="Nhập giá"></td>
+                            <td><input type="number" step="1000"class="form-control mf-table fullDayPrice"
+                                    data-id="{{ $item->id }}"
+                                    value="{{ $regularRoom ? $regularRoom->daily_price : '' }}" placeholder="Nhập giá"></td>
                         </tr>
 
                         <tr>
 
                             <td class="small-column">Giá Qua Đêm</td>
 
-                            <td><input type="number" step="1000" class="form-control mf-table "
-                                    data-id="{{ $item->id }}" id="overnightPrice" placeholder="Nhập giá"></td>
+                            <td><input type="number" step="1000" class="form-control mf-table overnightPrice"
+                                    data-id="{{ $item->id }}"
+                                    value="{{ $regularRoom ? $regularRoom->overnight_price : '' }}" placeholder="Nhập giá">
+                            </td>
 
                         </tr>
                     @endforeach
@@ -311,7 +319,19 @@
     </script>
     <script>
         $('body').on('click', '#priceContainerHour', function() {
+            var dataId = $(this).find('#pricePerHour').data('id');
+            var dataDate = $(this).find('#pricePerHour').data('date');
+            var price = $(this).find('#pricePerHour').val();
+
+            $('#priceModal').find('#firstHour').attr('data-date', dataDate);
+            $('#priceModal').find('#firstHour').attr('data-id', dataId);
+            $('#priceModal').find('#firstHour').val(price);
+
             $('#priceModal').modal('show');
+        });
+        $('#priceModal').on('hidden.bs.modal', function(e) {
+            $('#priceModal').find('#firstHour').attr('data-id', '');
+            $('#priceModal').find('#firstHour').attr('data-date', '');
         });
         // giá giờ tiếp theo    
         $(document).ready(function() {
@@ -329,7 +349,7 @@
 
                 $('#priceModal .modal-body').append(newHtml);
                 console.log('123');
-                
+
             });
 
             $('#priceModal').on('click', '.svg-close', function(event) {
@@ -338,52 +358,77 @@
             });
         });
 
-        // giá cả ngày
         $(document).ready(function() {
-            $('#fullDayPrice').on('blur', function() {
-                var price = $(this).val();
-                var dataId = $(this).data('id');
-                console.log(price);
-                var url = '{{route('admin.price.switchPrice')}}'
-                // Thực hiện AJAX request
+            function sendAjaxRequest(price, dataId, dataDate, method) {
+                var url = '{{ route('admin.price.switchPrice') }}';
+
                 $.ajax({
                     url: url,
                     method: 'POST',
-                    data: { price: price, room_id: dataId, method : "method_fullday" },
+                    data: {
+                        price: price,
+                        room_id: dataId,
+                        method: method,
+                        date: dataDate ?? "",
+                    },
                     success: function(response) {
-                        console.log('Dữ liệu đã được gửi thành công.');
+                        if (response.status === "success") {
+                            Swal.fire({
+                                position: "top-end",
+                                icon: "success",
+                                title: response.message,
+                                showConfirmButton: false,
+                                timer: 1500
+                            });
+
+                        }
                         // Xử lý dữ liệu trả về từ server nếu cần
                     },
                     error: function(xhr, status, error) {
                         console.error('Đã xảy ra lỗi trong quá trình gửi dữ liệu: ' + error);
                     }
                 });
-            });
-        });
-        // giá qua đêm
-        $(document).ready(function() {
-            $('#overnightPrice').on('blur', function() {
+            }
+
+            // Giá cả ngày
+            $(document).on('blur', '.fullDayPrice', function() {
                 var price = $(this).val();
                 var dataId = $(this).data('id');
-                console.log(price);
-                var url = '{{route('admin.price.switchPrice')}}'
-                // Thực hiện AJAX request
-                $.ajax({
-                    url: url,
-                    method: 'POST',
-                    data: { price: price, room_id: dataId, method : "method_overnightPrice" },
-                    success: function(response) {
-                        console.log('Dữ liệu đã được gửi thành công.');
-                        // Xử lý dữ liệu trả về từ server nếu cần
-                    },
-                    error: function(xhr, status, error) {
-                        console.error('Đã xảy ra lỗi trong quá trình gửi dữ liệu: ' + error);
-                    }
-                });
+                var dataDate = $(this).data('date');
+
+                let method = dataDate !== undefined && dataDate !== "" ? 'method_fulldaydate' :
+                    'method_fullday';
+                if (price !== "") {
+                    sendAjaxRequest(price, dataId, dataDate, method);
+                }
+            });
+
+            // Giá qua đêm
+            $(document).on('blur', '.overnightPrice', function() {
+                var price = $(this).val();
+                var dataId = $(this).data('id');
+                var dataDate = $(this).data('date');
+
+                let method = dataDate !== undefined && dataDate !== "" ? 'method_overnightPricedate' :
+                    'method_overnightPrice';
+                if (price !== "") {
+                    sendAjaxRequest(price, dataId, dataDate, method);
+                }
+
+            });
+
+            // Giá giờ
+            $('#saveButton').on('click', function() {
+                var price = $('#firstHour').val();
+                var dataId = $('#firstHour').data('id');
+                var dataDate = $('#firstHour').data('date');
+                let method = dataDate !== undefined && dataDate !== "" ? 'method_hourlydate' :
+                    'method_hourly';
+                if (price !== "") {
+                    sendAjaxRequest(price, dataId, dataDate, method);
+                }
             });
         });
-
-
 
 
 
@@ -396,6 +441,8 @@
                 const table = document.getElementById("data-table");
                 const tableRows = table.getElementsByTagName('tr');
                 const selectedDate = $('#selectedDates').val();
+                //  const selectedDate = '2024-11-15';
+
                 const selectedDays = Array.from(document.querySelectorAll('input[type=checkbox]:checked'))
                     .map(day => day.value);
 
@@ -403,6 +450,7 @@
                 let columnsAdded = false;
                 let dateColumnAdded = false;
                 if (selectedDate) {
+                    console.log('123');
                     // Kiểm tra xem cột cho ngày đã tồn tại trong bảng chưa
                     let dateColumnExists = false;
                     const headerRow = tableRows[0];
@@ -446,9 +494,10 @@
                                 input.step = "1000";
                                 input.className = "form-control";
                                 input.placeholder = "Nhập giá";
-                                input.id = "input-" + selectedDate + "-pricePerHour";
+                                // input.id = "input-" + selectedDate + "-pricePerHour";
+                                input.id = "pricePerHour";
                                 input.dataset.id = dataId;
-
+                                input.dataset.date = selectedDate;
                                 div.appendChild(p);
                                 div.appendChild(input);
                                 inputCell.appendChild(div);
@@ -460,11 +509,12 @@
                                 input.placeholder = "Nhập giá";
 
                                 if (elseCount % 2 === 0) {
-                                    input.id = "fullDayPrice";
+                                    input.classList.add("fullDayPrice");
                                 } else {
-                                    input.id = "overnightPrice";
+                                    input.classList.add("overnightPrice");
                                 }
                                 input.dataset.id = dataId;
+                                input.dataset.date = selectedDate;
                                 inputCell.appendChild(input);
                                 elseCount++;
 
@@ -523,8 +573,6 @@
                             // Lấy giá trị data-id từ input
                             const dataId = input.dataset.id;
 
-
-
                             const inputCell = document.createElement('td');
                             inputCell.dataset.day = day;
 
@@ -545,8 +593,10 @@
                                 input.step = "1000";
                                 input.className = "form-control";
                                 input.placeholder = "Nhập giá";
-                                input.id = "input-" + day + "-pricePerHour";
+                                // input.id = "input-" + day + "-pricePerHour";
+                                input.id = "pricePerHour";
                                 input.dataset.id = dataId;
+                                input.dataset.date = day;
                                 div.appendChild(p);
                                 div.appendChild(input);
 
@@ -559,11 +609,12 @@
                                 input.placeholder = "Nhập giá";
 
                                 if (count % 2 === 0) {
-                                    input.id = "fullDayPrice";
+                                    input.classList.add("fullDayPrice");
                                 } else {
-                                    input.id = "overnightPrice";
+                                    input.classList.add("overnightPrice");
                                 }
                                 input.dataset.id = dataId;
+                                input.dataset.date = day;
                                 inputCell.appendChild(input);
                                 count++;
                             }
@@ -582,6 +633,93 @@
                 }
             });
 
+            function addDayColumn(selectedDate) {
+                const table = document.getElementById("data-table");
+                const tableRows = table.getElementsByTagName('tr');
+                if (selectedDate) {
+                    console.log('123');
+                    
+                    // Kiểm tra xem cột cho ngày đã tồn tại trong bảng chưa
+                    let dateColumnExists = false;
+                    const headerRow = tableRows[0];
+
+
+                    for (let i = 0; i < headerRow.children.length; i++) {
+                        if (headerRow.children[i].dataset.date === selectedDate) {
+                            dateColumnExists = true;
+                            break;
+                        }
+                    }
+
+                    if (!dateColumnExists) {
+                        const headerCell = document.createElement('th');
+                        headerCell.textContent = selectedDate;
+                        headerCell.dataset.date = selectedDate;
+                        headerRow.appendChild(headerCell);
+
+                        let elseCount = 0;
+                        for (let i = 1; i < tableRows.length; i++) {
+                            const row = tableRows[i];
+                            const inputCell = document.createElement('td');
+                            inputCell.dataset.date = selectedDate;
+                            const input = row.querySelector('input');
+                            // Lấy giá trị data-id từ input
+                            const dataId = input.dataset.id;
+
+                            if (i % 3 === 1) { // Row for "Giá Giờ"
+
+                                const div = document.createElement('div');
+                                div.className = "d-flex price-hour";
+                                div.id = "priceContainerHour";
+
+                                const p = document.createElement('p');
+                                p.className = "d-flex text-end";
+                                p.innerHTML = "Từ giờ đầu tiên: &nbsp;<br>Mỗi giờ:";
+
+                                const input = document.createElement('input');
+
+                                input.type = "number";
+                                input.step = "1000";
+                                input.className = "form-control";
+                                input.placeholder = "Nhập giá";
+                                // input.id = "input-" + selectedDate + "-pricePerHour";
+                                input.id = "pricePerHour";
+                                input.dataset.id = dataId;
+                                input.dataset.date = selectedDate;
+                                div.appendChild(p);
+                                div.appendChild(input);
+                                inputCell.appendChild(div);
+                            } else {
+                                const input = document.createElement('input');
+                                input.type = "number";
+                                input.step = "1000";
+                                input.className = "form-control mf-table";
+                                input.placeholder = "Nhập giá";
+
+                                if (elseCount % 2 === 0) {
+                                    input.classList.add("fullDayPrice");
+                                } else {
+                                    input.classList.add("overnightPrice");
+                                }
+                                input.dataset.id = dataId;
+                                input.dataset.date = selectedDate;
+                                inputCell.appendChild(input);
+                                elseCount++;
+
+                            }
+
+                            row.appendChild(inputCell);
+                        }
+
+                        dateColumnAdded = true;
+                    } else {
+                        console.log('Cột cho ngày đã tồn tại trong bảng.');
+                    }
+                }
+            }
+            $(document).ready(function() {
+                addDayColumn('2024-11-15');
+            });
             document.querySelectorAll('input[type=checkbox]').forEach(checkbox => {
                 checkbox.addEventListener('change', function() {
                     const day = this.value;
@@ -732,10 +870,14 @@
             align-items: center;
         }
 
+        .swal2-popup {
+            font-size: 0.8rem;
+            max-width: 500px;
+        }
+
         .radio-group input[type="radio"] {
             margin-right: 5px;
             accent-color: #007bff;
-            /* Màu xanh cho Hoạt động */
         }
 
         .table-striped>tbody>tr:nth-of-type(odd)>* {
