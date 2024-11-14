@@ -31,7 +31,7 @@
                                         <th>@lang('Mã phòng')</th>
                                         <th>@lang('Loại phòng')</th>
                                         <th>@lang('Số phòng')</th>
-                                        <th>@lang('Cơ sở vật chất')</th>
+                                        <th>@lang('Sản phẩm')</th>
                                         @can('admin.hotel.room.facilities.all')
                                             <th>@lang('Hành động')</th>
                                         @endcan
@@ -72,9 +72,9 @@
                         <input type="hidden" name="id" id="recordId">
                         <div class="row">
                             <div class="form-group mb-3">
-                                <label for="">Phòng</label>
+                                <label for="">Mã Phòng</label>
                                 <select name="room_id" id="room-multiple-choice" class="form-control">
-                                    <option value="" selected>--Chọn phòng--</option>
+                                    <option value="" selected>--Chọn mã phòng--</option>
                                     @foreach ($rooms as $room)
                                         <option value="{{ $room->id }}">{{ $room->code }}</option>
                                     @endforeach
@@ -128,7 +128,7 @@
                         <input type="hidden" name="id" id="recordId">
                         <div class="row">
                             <div class="form-group mb-3">
-                                <label for="">Phòng</label>
+                                <label for="">Mã phòng</label>
                                 <select name="room_id" id="room-choice" class="form-control">
 
                                 </select>

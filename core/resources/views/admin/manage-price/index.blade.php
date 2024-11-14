@@ -305,6 +305,8 @@
     <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/flatpickr/dist/flatpickr.min.css">
 @endpush
 @push('script')
+
+
     <script src="https://cdn.jsdelivr.net/npm/@popperjs/core@2.9.1/dist/umd/popper.min.js"></script>
     <script src="https://stackpath.bootstrapcdn.com/bootstrap/4.5.2/js/bootstrap.min.js"></script>
 
@@ -316,7 +318,16 @@
             mode: "multiple",
             dateFormat: "Y-m-d",
         });
+
+
+
     </script>
+
+
+
+
+
+
     <script>
         $('body').on('click', '#priceContainerHour', function() {
             var dataId = $(this).find('#pricePerHour').data('id');
@@ -786,7 +797,6 @@
             width: 180px;
 
         }
-
         .radio-container {
             display: flex;
             align-items: center;
