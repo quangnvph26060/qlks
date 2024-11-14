@@ -62,6 +62,7 @@ class ManagePriceListController extends Controller
                 'pagination' => view('vendor.pagination.custom', compact('response'))->render(),
             ]);
         }
+        return view('admin.manage-price.index', compact('pageTitle'));
         $rooms = Room::active()->get();
       //  dd($rooms);
         return view('admin.manage-price.index', compact('pageTitle','rooms'));
@@ -99,7 +100,7 @@ class ManagePriceListController extends Controller
                 'specific_date.date'  => 'Ngày đặc biệt không đúng định dạng!',
             ]
         );
-    
+
         if ($validator->fails()) {
             return response()->json([
                 'status' => false,

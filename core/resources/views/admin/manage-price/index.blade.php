@@ -297,6 +297,8 @@
     <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/flatpickr/dist/flatpickr.min.css">
 @endpush
 @push('script')
+
+
     <script src="https://cdn.jsdelivr.net/npm/@popperjs/core@2.9.1/dist/umd/popper.min.js"></script>
     <script src="https://stackpath.bootstrapcdn.com/bootstrap/4.5.2/js/bootstrap.min.js"></script>
 
@@ -308,12 +310,21 @@
             mode: "multiple",
             dateFormat: "Y-m-d",
         });
+
+
+
     </script>
+
+
+
+
+
+
     <script>
         $('body').on('click', '#priceContainerHour', function() {
             $('#priceModal').modal('show');
         });
-        // giá giờ tiếp theo    
+        // giá giờ tiếp theo
         $(document).ready(function() {
             $('#priceModal').on('click', 'svg', function() {
                 var newHtml =
@@ -329,7 +340,7 @@
 
                 $('#priceModal .modal-body').append(newHtml);
                 console.log('123');
-                
+
             });
 
             $('#priceModal').on('click', '.svg-close', function(event) {
@@ -648,7 +659,6 @@
             width: 180px;
 
         }
-
         .radio-container {
             display: flex;
             align-items: center;

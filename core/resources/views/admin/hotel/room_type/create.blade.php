@@ -13,7 +13,7 @@
                     <div class="card-body">
                         @csrf
                         <div class="row">
-                            <div class="col-xl-6 col-md-6 col-sm-12">
+                            <div class="col-xl-4 col-md-4 col-sm-12">
                                 <div class="form-group">
                                     <label>@lang('Loại phòng')</label>
                                     <select class="form-control" name="room_type_id" required>
@@ -25,11 +25,19 @@
                                     </select>
                                 </div>
                             </div>
-                            <div class="col-xl-6 col-md-6 col-sm-12">
+                            <div class="col-xl-4 col-md-4 col-sm-12">
                                 <div class="form-group">
                                     <label>@lang('Mã phòng')</label>
                                     <input class="form-control" name="code" type="text"
                                         value="{{ old('code', @$roomType->code) }}">
+                                </div>
+                            </div>
+
+                            <div class="col-xl-4 col-md-4 col-sm-12">
+                                <div class="form-group">
+                                    <label>@lang('Số phòng')</label>
+                                    <input class="form-control" name="room_number" type="text"
+                                        value="{{ old('room_number', @$roomType->room_number) }}">
                                 </div>
                             </div>
 
@@ -61,7 +69,7 @@
                                                 {{ $name }}
                                             </option>
                                         @endforeach
-                                   
+
                                     </select>
                                 </div>
                             </div> --}}
@@ -100,11 +108,10 @@
 
                         </div>
                         <div class="row">
-                            <div class="col-xl-4 col-md-4 col-sm-12">
+                            {{-- <div class="col-xl-4 col-md-4 col-sm-12">
                                 <div class="form-group">
                                     <label>@lang('Số phòng')</label>
-                                    {{-- <input class="form-control" name="room_number" required type="text"
-                                        value="{{ old('room_number', @$roomType->room_number) }}"> --}}
+
                                     <div class="d-flex align-items-center qty-input">
                                         <button class="btn btn-light qty-count qty-count--minus border-end"
                                             data-action="minus" type="button">-</button>
@@ -116,40 +123,40 @@
                                             data-action="add" type="button">+</button>
                                     </div>
                                 </div>
-                            </div>
+                            </div> --}}
 
-                            <div class="col-xl-4 col-md-4 col-sm-12">
+                            <div class="col-xl-3 col-md-3 col-6">
                                 {{-- <div class="form-group">
                                     <label>@lang('Tổng số người')</label>
                                     <input class="form-control" min="1" name="total_adult" required type="number"
                                         value="{{ old('total_adult', @$roomType->total_adult) }}">
                                 </div> --}}
-                                <label>@lang('Tổng số người')</label>
+                                <label>@lang('Tổng số người lớn')</label>
                                 <div class="d-flex align-items-center qty-input">
-                                    <button class="btn btn-light qty-count qty-count--minus border-end" data-action="minus"
+                                    <button class="btn btn-light qty-count qty-count--minus border-end" data-action="minus" style="padding: 0px !important;"
                                         type="button">-</button>
-                                    <input class="form-control text-center product-qty border-0" type="number"
+                                    <input class="form-control text-center product-qty border-0" type="number" style="height: 30px !important; padding: 0px !important;"
                                         name="total_adult" min="1" max="100"
-                                        value="{{ old('total_adult', @$roomType->total_adult ?? 1) }}" readonly required>
-                                    <button class="btn btn-light qty-count qty-count--add border-start" data-action="add"
+                                        value="{{ old('total_adult', @$roomType->total_adult ?? 1) }}"  required>
+                                    <button class="btn btn-light qty-count qty-count--add border-start" data-action="add" style="padding: 0px !important;"
                                         type="button">+</button>
                                 </div>
 
                             </div>
 
-                            <div class="col-xl-4 col-md-4 col-sm-12">
+                            <div class="col-xl-3 col-md-3 col-6">
                                 <div class="form-group">
                                     <label>@lang('Tống số trẻ em')</label>
                                     {{-- <input class="form-control" min="0" name="total_child" required type="number"
                                         value="{{ old('total_child', @$roomType->total_child) }}"> --}}
                                     <div class="d-flex align-items-center qty-input">
-                                        <button class="btn btn-light qty-count qty-count--minus border-end"
+                                        <button class="btn btn-light qty-count qty-count--minus border-end" style="padding: 0px !important;"
                                             data-action="minus" type="button">-</button>
-                                        <input class="form-control text-center product-qty border-0" type="number"
+                                        <input class="form-control text-center product-qty border-0" type="number" style="height: 30px !important; padding: 0px !important;"
                                             name="total_child" min="1" max="100"
                                             value="{{ old('total_child', @$roomType->total_child ?? 1) }}" readonly
                                             required>
-                                        <button class="btn btn-light qty-count qty-count--add border-start"
+                                        <button class="btn btn-light qty-count qty-count--add border-start" style="padding: 0px !important;"
                                             data-action="add" type="button">+</button>
                                     </div>
 
@@ -162,10 +169,10 @@
                                     <label class="me-2"> @lang('Nổi bật') </label>
                                     {{-- <input @if (@$roomType->is_featured) checked @endif data-bs-toggle="toggle" data-height="50" data-off="@lang('Không có đặc điểm')" data-offstyle="-danger" data-on="@lang('Featured')" data-onstyle="-success" data-size="large" data-width="100%" name="is_featured" type="checkbox"> --}}
                                     <input type="radio" name="is_featured" class="form-check-input" id="is_featured"
-                                        value="1"> <label class="form-check-label me-2"
+                                        value="1"  {{ @$roomType->is_featured  == 1 ? 'checked' : '' }}> <label class="form-check-label me-2"
                                         for="is_featured">@lang('Yes')</label>
                                     <input type="radio" name="is_featured" class="form-check-input" id="is_featured-2"
-                                        value="0" checked> <label class="form-check-label me-2"
+                                        value="0" {{ @$roomType->is_featured  == 0 ? 'checked' : '' }} > <label class="form-check-label me-2"
                                         for="is_featured-2">@lang('No')</label>
                                     <p class="ml-2 mt-2"><code><i class="las la-info-circle"></i>
                                             @lang('Các phòng nổi bật sẽ được hiển thị trong phần phòng nổi bật.')</code></p>
@@ -175,7 +182,7 @@
                     </div>
                 </div>
 
-                <div class="card mt-3">
+                {{-- <div class="card mt-3">
                     <div class="card-header d-flex justify-content-between align-items-center">
                         <h5 class="card-title mb-0">@lang('Thêm Sản Phẩm')</h5>
                         <button type="button" class="btn btn-outline-primary" data-bs-toggle="modal"
@@ -215,8 +222,8 @@
                             @endforeach
                         </div>
                     </div>
-                </div>
-                <div class="card mt-3">
+                </div> --}}
+                {{-- <div class="card mt-3">
                     <div class="card-header">
                         <h5 class="card-title mb-0">
                             @lang('Giường Mỗi Phòng')
@@ -227,10 +234,10 @@
                             <div class="col-sm-4">
                                 <div class="form-group">
                                     <h4 class="mb-1">@lang('Tổng số giường')</h4>
-                                    {{-- <input @isset($roomType) readonly @endisset class="form-control"
+                                    <input @isset($roomType) readonly @endisset class="form-control"
                                         min="1" name="total_bed" required type="number"
-                                        value="{{ @$roomType ? count(@$roomType->beds) : '' }}"> --}}
-                                    {{-- <div class="d-flex align-items-center qty-input">
+                                        value="{{ @$roomType ? count(@$roomType->beds) : '' }}">
+                                    <div class="d-flex align-items-center qty-input">
                                         <button class="btn btn-light qty-count qty-count--minus border-end decrement-bed"
                                             data-action="minus" type="button">-</button>
                                         <input class="form-control text-center product-qty border-0" type="number"
@@ -239,7 +246,7 @@
                                             @isset($roomType) readonly @endisset required>
                                         <button class="btn btn-light qty-count qty-count--add border-start increment-bed"
                                             data-action="add" type="button">+</button>
-                                    </div> --}}
+                                    </div>
                                     <div class="quantity-container-bed d-flex align-items-center qty-input">
                                         <button id="decrease-bed"
                                             class="btn btn-light qty-bed border-end"
@@ -257,7 +264,7 @@
                             </div>
                         </div>
                         <div class="bed d-flex flex-wrap justify-content-start" id="bed">
-                            {{-- @isset($roomType)
+                            @isset($roomType)
                                 <div class="row border-top pt-3">
                                     @foreach ($roomType->beds as $bed)
                                         <div class="col-md-3 number-field-wrapper bed-content">
@@ -283,10 +290,10 @@
                                 </div>
                                 <button class="btn btn--success addMore" type="button"> <i
                                         class="la la-plus"></i>@lang('Add More')</button>
-                            @endisset --}}
+                            @endisset
                         </div>
                     </div>
-                </div>
+                </div> --}}
 
                 <div class="row gy-3 mt-0">
                     <div class="col-xxl-4 col-xl-6">
@@ -349,20 +356,35 @@
                     </div>
                 </div>
                 <div class="card mt-3">
-                    <div class="card-header">
+                    {{-- <div class="card-header">
                         <h5 class="card-title mb-0">
                             @lang('Trạng thái')
                         </h5>
-                    </div>
+                    </div> --}}
                     <div class="card-body">
                         <div class="row">
-                            <div class="radio-container">
+                            {{-- <div class="radio-container">
                                 <label class="toggle">
                                     <input type="checkbox" name="status" class="status-change"
                                         @checked(@$roomType->status == 0)>
                                     <span class="slider"></span>
                                 </label>
+                            </div> --}}
+                            <div class="col-md-2" style=" margin-top: 18px; ">
+                                <h5 class="card-title mb-0">
+                                    @lang('Trạng thái')
+                                </h5>
                             </div>
+                            <div class="col-md-2" style="margin-top: 7px;">
+                                <div class="form-group">
+                                    <input type="checkbox" data-width="80%" data-size="large"
+                                           data-onstyle="-success" data-offstyle="-danger"
+                                           data-bs-toggle="toggle" data-height="35"
+                                           data-on="@lang('Enable')" data-off="@lang('Disable')"
+                                           name="status" @checked(old('status', @$roomType->status) == 1)>
+                                </div>
+                            </div>
+
                         </div>
                     </div>
                 </div>
@@ -546,13 +568,13 @@
         }
 
         .form-check-input {
-            width: 25px;
-            height: 25px;
+            width: 18px;
+            height: 18px;
             margin-right: 10px;
         }
 
         .form-check-label {
-            font-size: 18px;
+            /* font-size: 18px; */
             line-height: 25px;
         }
     </style>
@@ -566,7 +588,7 @@
             width: 60px;
             -moz-appearance: textfield;
             background-color: white;
-            
+
         }
 
         .qty-input .product-qty::-webkit-outer-spin-button,
