@@ -62,9 +62,8 @@ class ManagePriceListController extends Controller
                 'pagination' => view('vendor.pagination.custom', compact('response'))->render(),
             ]);
         }
-        return view('admin.manage-price.index', compact('pageTitle'));
+     //  return view('admin.manage-price.index', compact('pageTitle'));
         $rooms = Room::active()->get();
-         
         return view('admin.manage-price.index', compact('pageTitle','rooms'));
     }
 

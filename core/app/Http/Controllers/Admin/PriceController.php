@@ -11,6 +11,37 @@ class PriceController extends Controller
 {
     public function __construct() {}
 
+    public function updatePriceDate(Request $request){
+
+        $dataDateArray = explode(", ", $request->dataDateValue); // các date được chọn bên client
+
+        $datesFromDB = RoomPricePerDay::pluck('date')->toArray(); // các date hiện đang có trong DB
+        $differentDates = array_diff($dataDateArray, $datesFromDB); // các date trong DB chưa có 
+
+        $id_room = RoomPricePerDay::pluck('room_price_id')->unique()->toArray(); // các id room tròn bảng 
+            foreach($id_room as $item){
+                $result = RoomPricePerDay::where('room_price_id',$item)->where('date',$request->dateCurent)->first();
+                if($result){
+                    foreach($differentDates as $date){
+                        $roomPricePerDay = new RoomPricePerDay();
+                        $roomPricePerDay->room_price_id = $item;
+                        $roomPricePerDay->date = $date;
+                        $roomPricePerDay->hourly_price = $result->hourly_price;
+                        $roomPricePerDay->daily_price = $result->daily_price;
+                        $roomPricePerDay->overnight_price =  $result->overnight_price;
+                        $roomPricePerDay->save();
+                    }
+                }
+            }
+            return response()->json(['status' => 'success', 'message' => 'Cập nhật giá thành công']);
+    }
+
+
+
+    public function roomPricePerDay()  {
+        $data = RoomPricePerDay::all();
+        return response()->json(['status' => 'success', 'data' => $data]);
+    }
     public function switchPrice(Request $request)
     {
         $chose = $request['method'];

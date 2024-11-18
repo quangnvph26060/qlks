@@ -387,6 +387,8 @@ Route::middleware('admin', 'adminPermission')->group(function () {
     // price in room
     Route::prefix('price')->name('price.')->group(function () {
         Route::post('/switchPrice', [PriceController::class, 'switchPrice'])->name('switchPrice');
+        Route::get('/roomPricePerDay', [PriceController::class, 'roomPricePerDay'])->name('roomPricePerDay');
+        Route::post('/updatePriceDate', [PriceController::class, 'updatePriceDate'])->name('updatePriceDate');
         // Route::get('add', [TransactionController::class, 'add'])->name('add');
         // Route::post('store', [TransactionController::class, 'store'])->name('store');
         // Route::get('detail/{id}', [TransactionController::class, 'edit'])->name('edit');

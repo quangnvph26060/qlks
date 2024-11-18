@@ -181,6 +181,30 @@
             </div>
         </div>
     </div>
+    <!-- Modal -->
+    <div class="modal fade" id="myModalDate" tabindex="-1" role="dialog" aria-labelledby="myModalLabel"
+        aria-hidden="true">
+        <div class="modal-dialog" role="document">
+            <div class="modal-content">
+                <div class="modal-header">
+                    <h5 class="modal-title" id="myModalLabel">Thông tin ngày đã chọn</h5>
+                    <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+                        <span aria-hidden="true">&times;</span>
+                    </button>
+                </div>
+                <div class="modal-body">
+
+                    <input type="text" id="modalDateValue" class="form-group" placeholder="Chọn ngày"
+                        style="width: 100%;">
+
+                </div>
+                <div class="modal-footer">
+                    <button type="button" class="btn btn-secondary" data-dismiss="modal">Đóng</button>
+                    <button type="button" class="btn btn-primary btnUpdateDate" data-dismiss="modal">Lưu</button>
+                </div>
+            </div>
+        </div>
+    </div>
 
     <div class="modal fade" id="priceModal" tabindex="-1" aria-labelledby="priceModalLabel" aria-hidden="true">
         <div class="modal-dialog">
@@ -305,28 +329,12 @@
     <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/flatpickr/dist/flatpickr.min.css">
 @endpush
 @push('script')
-
-
     <script src="https://cdn.jsdelivr.net/npm/@popperjs/core@2.9.1/dist/umd/popper.min.js"></script>
     <script src="https://stackpath.bootstrapcdn.com/bootstrap/4.5.2/js/bootstrap.min.js"></script>
 
     <script src="{{ asset('assets/admin/js/vendor/sweetalert2@11.js') }}"></script>
     <script src="{{ asset('assets/admin/js/dataTable.js') }}"></script>
     <script src="https://cdn.jsdelivr.net/npm/flatpickr"></script>
-    <script>
-        flatpickr("#selectedDates", {
-            mode: "multiple",
-            dateFormat: "Y-m-d",
-        });
-
-
-
-    </script>
-
-
-
-
-
 
     <script>
         $('body').on('click', '#priceContainerHour', function() {
@@ -359,7 +367,6 @@
                     '</div>';
 
                 $('#priceModal .modal-body').append(newHtml);
-                console.log('123');
 
             });
 
@@ -452,6 +459,9 @@
                 const table = document.getElementById("data-table");
                 const tableRows = table.getElementsByTagName('tr');
                 const selectedDate = $('#selectedDates').val();
+                const selectedDates = selectedDate.split(',').map(date => date.trim());
+
+                console.log(selectedDates);
                 //  const selectedDate = '2024-11-15';
 
                 const selectedDays = Array.from(document.querySelectorAll('input[type=checkbox]:checked'))
@@ -460,84 +470,87 @@
 
                 let columnsAdded = false;
                 let dateColumnAdded = false;
-                if (selectedDate) {
-                    console.log('123');
+                if (selectedDates.length > 0) {
+
                     // Kiểm tra xem cột cho ngày đã tồn tại trong bảng chưa
-                    let dateColumnExists = false;
+
                     const headerRow = tableRows[0];
+                    selectedDates.forEach(selectedDate => {
+                        let dateColumnExists = false;
 
 
-                    for (let i = 0; i < headerRow.children.length; i++) {
-                        if (headerRow.children[i].dataset.date === selectedDate) {
-                            dateColumnExists = true;
-                            break;
+                        for (let i = 0; i < headerRow.children.length; i++) {
+                            if (headerRow.children[i].dataset.date === selectedDate) {
+                                dateColumnExists = true;
+                                break;
+                            }
                         }
-                    }
 
-                    if (!dateColumnExists) {
-                        const headerCell = document.createElement('th');
-                        headerCell.textContent = selectedDate;
-                        headerCell.dataset.date = selectedDate;
-                        headerRow.appendChild(headerCell);
+                        if (!dateColumnExists) {
+                            const headerCell = document.createElement('th');
+                            headerCell.textContent = selectedDate;
+                            headerCell.dataset.date = selectedDate;
+                            headerRow.appendChild(headerCell);
 
-                        let elseCount = 0;
-                        for (let i = 1; i < tableRows.length; i++) {
-                            const row = tableRows[i];
-                            const inputCell = document.createElement('td');
-                            inputCell.dataset.date = selectedDate;
-                            const input = row.querySelector('input');
-                            // Lấy giá trị data-id từ input
-                            const dataId = input.dataset.id;
+                            let elseCount = 0;
+                            for (let i = 1; i < tableRows.length; i++) {
+                                const row = tableRows[i];
+                                const inputCell = document.createElement('td');
+                                inputCell.dataset.date = selectedDate;
+                                const input = row.querySelector('input');
+                                // Lấy giá trị data-id từ input
+                                const dataId = input.dataset.id;
 
-                            if (i % 3 === 1) { // Row for "Giá Giờ"
+                                if (i % 3 === 1) { // Row for "Giá Giờ"
 
-                                const div = document.createElement('div');
-                                div.className = "d-flex price-hour";
-                                div.id = "priceContainerHour";
+                                    const div = document.createElement('div');
+                                    div.className = "d-flex price-hour";
+                                    div.id = "priceContainerHour";
 
-                                const p = document.createElement('p');
-                                p.className = "d-flex text-end";
-                                p.innerHTML = "Từ giờ đầu tiên: &nbsp;<br>Mỗi giờ:";
+                                    const p = document.createElement('p');
+                                    p.className = "d-flex text-end";
+                                    p.innerHTML = "Từ giờ đầu tiên: &nbsp;<br>Mỗi giờ:";
 
-                                const input = document.createElement('input');
+                                    const input = document.createElement('input');
 
-                                input.type = "number";
-                                input.step = "1000";
-                                input.className = "form-control";
-                                input.placeholder = "Nhập giá";
-                                // input.id = "input-" + selectedDate + "-pricePerHour";
-                                input.id = "pricePerHour";
-                                input.dataset.id = dataId;
-                                input.dataset.date = selectedDate;
-                                div.appendChild(p);
-                                div.appendChild(input);
-                                inputCell.appendChild(div);
-                            } else {
-                                const input = document.createElement('input');
-                                input.type = "number";
-                                input.step = "1000";
-                                input.className = "form-control mf-table";
-                                input.placeholder = "Nhập giá";
-
-                                if (elseCount % 2 === 0) {
-                                    input.classList.add("fullDayPrice");
+                                    input.type = "number";
+                                    input.step = "1000";
+                                    input.className = "form-control";
+                                    input.placeholder = "Nhập giá";
+                                    // input.id = "input-" + selectedDate + "-pricePerHour";
+                                    input.id = "pricePerHour";
+                                    input.dataset.id = dataId;
+                                    input.dataset.date = selectedDate;
+                                    div.appendChild(p);
+                                    div.appendChild(input);
+                                    inputCell.appendChild(div);
                                 } else {
-                                    input.classList.add("overnightPrice");
-                                }
-                                input.dataset.id = dataId;
-                                input.dataset.date = selectedDate;
-                                inputCell.appendChild(input);
-                                elseCount++;
+                                    const input = document.createElement('input');
+                                    input.type = "number";
+                                    input.step = "1000";
+                                    input.className = "form-control mf-table";
+                                    input.placeholder = "Nhập giá";
 
+                                    if (elseCount % 2 === 0) {
+                                        input.classList.add("fullDayPrice");
+                                    } else {
+                                        input.classList.add("overnightPrice");
+                                    }
+                                    input.dataset.id = dataId;
+                                    input.dataset.date = selectedDate;
+                                    inputCell.appendChild(input);
+                                    elseCount++;
+
+                                }
+
+                                row.appendChild(inputCell);
                             }
 
-                            row.appendChild(inputCell);
+                            dateColumnAdded = true;
+                        } else {
+                            console.log('Cột cho ngày đã tồn tại trong bảng.');
                         }
-
-                        dateColumnAdded = true;
-                    } else {
-                        console.log('Cột cho ngày đã tồn tại trong bảng.');
-                    }
+                    });
                 }
                 if (dateColumnAdded) {
                     $('#addDayModal').modal('hide');
@@ -644,19 +657,68 @@
                 }
             });
 
+
+            $(document).on('click', '.selectedDate_th', function() {
+                var dateValue = $(this).data('date');
+                $('#myModalDate').modal('show');
+                $('#modalDateValue').val(dateValue);
+                $('#modalDateValue').attr('data-date', dateValue);
+
+                flatpickr("#modalDateValue", {
+                    mode: "multiple",
+                    dateFormat: "Y-m-d",
+                });
+            });
+            $(document).on('click', '.btnUpdateDate', function() {
+
+                var dateValue = $('#modalDateValue').val();
+                var dataDateValue = $('#modalDateValue').data('date');
+                var url = '{{ route('admin.price.updatePriceDate') }}';
+
+                $.ajax({
+                    url: url,
+                    method: 'POST',
+                    data: {
+                        dateCurent: dataDateValue,
+                        dataDateValue: dateValue,
+                    },
+                    success: function(response) {
+                        if (response.status === "success") {
+                            Swal.fire({
+                                position: "top-end",
+                                icon: "success",
+                                title: response.message,
+                                showConfirmButton: false,
+                                timer: 1500
+                            });
+
+                        }
+                        // Xử lý dữ liệu trả về từ server nếu cần
+                    },
+                    error: function(xhr, status, error) {
+                        console.error('Đã xảy ra lỗi trong quá trình gửi dữ liệu: ' + error);
+                    }
+                });
+                // console.log(dataDateValue); 
+                // console.log(dateValue); // In ra giá trị của input khi click vào nút btnUpdateDate
+
+
+            });
+
             function addDayColumn(selectedDate) {
                 const table = document.getElementById("data-table");
                 const tableRows = table.getElementsByTagName('tr');
+
                 if (selectedDate) {
-                    console.log('123');
-                    
                     // Kiểm tra xem cột cho ngày đã tồn tại trong bảng chưa
                     let dateColumnExists = false;
                     const headerRow = tableRows[0];
 
 
                     for (let i = 0; i < headerRow.children.length; i++) {
-                        if (headerRow.children[i].dataset.date === selectedDate) {
+
+                        if (headerRow.children[i].dataset.date === selectedDate.date) {
+                            // console.log(selectedDate);
                             dateColumnExists = true;
                             break;
                         }
@@ -664,15 +726,16 @@
 
                     if (!dateColumnExists) {
                         const headerCell = document.createElement('th');
-                        headerCell.textContent = selectedDate;
-                        headerCell.dataset.date = selectedDate;
+                        headerCell.textContent = selectedDate.date;
+                        headerCell.dataset.date = selectedDate.date;
+                        headerCell.className = "selectedDate_th";
                         headerRow.appendChild(headerCell);
-
                         let elseCount = 0;
                         for (let i = 1; i < tableRows.length; i++) {
                             const row = tableRows[i];
                             const inputCell = document.createElement('td');
-                            inputCell.dataset.date = selectedDate;
+                            inputCell.dataset.date = selectedDate.date;
+                            //  console.log(selectedDate);
                             const input = row.querySelector('input');
                             // Lấy giá trị data-id từ input
                             const dataId = input.dataset.id;
@@ -693,10 +756,19 @@
                                 input.step = "1000";
                                 input.className = "form-control";
                                 input.placeholder = "Nhập giá";
+
                                 // input.id = "input-" + selectedDate + "-pricePerHour";
                                 input.id = "pricePerHour";
                                 input.dataset.id = dataId;
-                                input.dataset.date = selectedDate;
+                                // console.log(dataId);
+                                // console.log( 'room_id: '. selectedDate);
+
+                                input.dataset.date = selectedDate.date;
+
+
+                                if (dataId == selectedDate.room_price_id) {
+                                    input.value = selectedDate.hourly_price;
+                                }
                                 div.appendChild(p);
                                 div.appendChild(input);
                                 inputCell.appendChild(div);
@@ -708,12 +780,19 @@
                                 input.placeholder = "Nhập giá";
 
                                 if (elseCount % 2 === 0) {
+                                    if (dataId == selectedDate.room_price_id) {
+                                        input.value = selectedDate.daily_price;
+                                    }
                                     input.classList.add("fullDayPrice");
                                 } else {
                                     input.classList.add("overnightPrice");
+                                    if (dataId == selectedDate.room_price_id) {
+                                        input.value = selectedDate.overnight_price;
+                                    }
                                 }
                                 input.dataset.id = dataId;
-                                input.dataset.date = selectedDate;
+
+                                input.dataset.date = selectedDate.date;
                                 inputCell.appendChild(input);
                                 elseCount++;
 
@@ -724,13 +803,73 @@
 
                         dateColumnAdded = true;
                     } else {
-                        console.log('Cột cho ngày đã tồn tại trong bảng.');
+                        const table = document.getElementById("data-table");
+                        const tableRows = table.getElementsByTagName('tr');
+
+                        for (let i = 1; i < tableRows.length; i++) {
+                            const row = tableRows[i];
+                            const inputs = row.getElementsByTagName('input');
+
+                            for (let j = 0; j < inputs.length; j++) {
+                                const input = inputs[j];
+                                const dataId = input.dataset.id;
+                                const dataDate = input.dataset.date;
+
+                                if (dataId == selectedDate.room_price_id && dataDate == selectedDate.date) {
+                                    if (input.id === "pricePerHour") {
+                                        input.value = selectedDate.hourly_price;
+                                    } 
+                                    if (input.classList.contains("fullDayPrice")) {
+                                        input.value = selectedDate.daily_price;
+                                    } 
+                                    if (input.classList.contains("overnightPrice")) {
+                                        input.value = selectedDate.overnight_price;
+                                    }
+                                    
+                                }
+                            }
+                        }
                     }
                 }
             }
             $(document).ready(function() {
-                addDayColumn('2024-11-15');
+
+                var url = '{{ route('admin.price.roomPricePerDay') }}';
+                $.ajax({
+                    url: url,
+                    method: 'GET',
+                    success: function(response) {
+                        if (response.status === "success") {
+                            // console.log(response.data);
+                            let defaultDates = [];
+                            if (typeof addDayColumn === 'function') {
+
+                                // console.log(response.data);
+                                response.data.forEach(function(item) {
+                                    addDayColumn(item);
+                                    const input = document.getElementById(
+                                        'selectedDates');
+                                    defaultDates.push(item.date);
+                                    input.value = defaultDates.join(', ');
+                                    flatpickr("#selectedDates", {
+                                        mode: "multiple",
+                                        dateFormat: "Y-m-d",
+                                    });
+                                });
+                            } else {
+                                console.error("Hàm addDayColumn chưa được định nghĩa!");
+                            }
+                        }
+                    },
+                    error: function(xhr, status, error) {
+                        console.error('Đã xảy ra lỗi trong quá trình gửi dữ liệu: ' + error);
+                    }
+                });
+                // Kiểm tra xem hàm addDayColumn có tồn tại không
+
             });
+
+
             document.querySelectorAll('input[type=checkbox]').forEach(checkbox => {
                 checkbox.addEventListener('change', function() {
                     const day = this.value;
@@ -776,16 +915,18 @@
                 var selectValue = $('#selectOption').val();
                 var customPrice = $('#customPrice').val();
 
-                console.log('Từ giờ đầu tiên: ' + firstHour);
                 $('#priceModal').modal('hide');
             });
-
-
-            // $('#')
-
-
-
-
+        });
+    </script>
+    <script>
+        flatpickr("#selectedDates", {
+            mode: "multiple",
+            dateFormat: "Y-m-d",
+        });
+        flatpickr("#modalDateValue", {
+            mode: "multiple",
+            dateFormat: "Y-m-d",
         });
     </script>
 @endpush
@@ -797,6 +938,7 @@
             width: 180px;
 
         }
+
         .radio-container {
             display: flex;
             align-items: center;
