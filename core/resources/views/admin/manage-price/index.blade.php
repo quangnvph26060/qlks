@@ -1,57 +1,5 @@
 @extends('admin.layouts.app')
 @section('panel')
-    {{-- <div class="row">
-        <!-- Khối bên phải: Danh sách danh mục -->
-        <div class="col-md-12">
-            <div class="border p-2">
-                <div class="d-flex justify-content-between mb-3">
-                    <div class="dt-length">
-                        <select name="example_length" id="perPage" style=" padding: 1px 3px; margin-right: 8px;"
-                            aria-controls="example" class="perPage">
-                            <option value="10">10</option>
-                            <option value="25">25</option>
-                            <option value="50">50</option>
-                            <option value="100">100</option>
-                        </select><label for="perPage"> entries per page</label>
-                    </div>
-                    <div class="search">
-                        <label for="searchInput">Search:</label>
-                        <input class="searchInput"
-                            style="padding: 1px 3px; border: 1px solid rgb(121, 117, 117, 0.5); margin-left: 8px;"
-                            type="search" placeholder="Tìm kiếm...">
-                    </div>
-                </div>
-                <div class="card b-radius--10">
-                    <div class="card-body p-0">
-                        <div class="table-responsive--sm table-responsive">
-                            <table class="table--light style--two table" id="data-table">
-                                <thead>
-                                    <tr>
-                                        <th>@lang('STT')</th>
-                                        <th>@lang('Mã giá')</th>
-                                        <th>@lang('Tên loại giá')</th>
-                                        <th>@lang('Giá trị')</th>
-                                        <th>@lang('Thời gian bắt đầu')</th>
-                                        <th>@lang('Thời gian kết thúc')</th>
-                                        <th>@lang('Trạng thái')</th>
-                                        @can('admin.manage.price.all')
-                                            <th>@lang('Hành động')</th>
-                                        @endcan
-                                    </tr>
-                                </thead>
-                                <tbody>
-
-                                </tbody>
-                            </table>
-                        </div>
-                    </div>
-                </div>
-            </div>
-            <div id="pagination" class="mt-3">
-
-            </div>
-        </div>
-    </div> --}}
     <div class="bodywrapper__inner">
 
         <div class="d-flex justify-content-between">
@@ -192,10 +140,9 @@
                         <span aria-hidden="true">&times;</span>
                     </button>
                 </div>
-                <div class="modal-body">
+                <div class="modal-body" id="updateDate">
 
-                    <input type="text" id="modalDateValue" class="form-group" placeholder="Chọn ngày"
-                        style="width: 100%;">
+
 
                 </div>
                 <div class="modal-footer">
@@ -324,9 +271,23 @@
             </div>
         </div>
     </div> --}}
+    {{-- loading --}}
+    <div id="loading" style="display: none;">
+        <svg xmlns="http://www.w3.org/2000/svg" width="40" height="40" viewBox="0 0 24 24">
+            <path fill="none" stroke="currentColor" stroke-dasharray="15" stroke-dashoffset="15"
+                stroke-linecap="round" stroke-width="2" d="M12 3C16.9706 3 21 7.02944 21 12">
+                <animate fill="freeze" attributeName="stroke-dashoffset" dur="0.3s" values="15;0" />
+                <animateTransform attributeName="transform" dur="1.5s" repeatCount="indefinite" type="rotate"
+                    values="0 12 12;360 12 12" />
+            </path>
+        </svg>
+    </div>
 @endsection
 @push('style-lib')
     <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/flatpickr/dist/flatpickr.min.css">
+@endpush
+@push('style')
+    <link rel="stylesheet" href="{{ asset('assets/global/css/manage-price.css') }}">
 @endpush
 @push('script')
     <script src="https://cdn.jsdelivr.net/npm/@popperjs/core@2.9.1/dist/umd/popper.min.js"></script>
@@ -461,7 +422,7 @@
                 const selectedDate = $('#selectedDates').val();
                 const selectedDates = selectedDate.split(',').map(date => date.trim());
 
-                console.log(selectedDates);
+                //  console.log(selectedDates);
                 //  const selectedDate = '2024-11-15';
 
                 const selectedDays = Array.from(document.querySelectorAll('input[type=checkbox]:checked'))
@@ -547,8 +508,6 @@
                             }
 
                             dateColumnAdded = true;
-                        } else {
-                            console.log('Cột cho ngày đã tồn tại trong bảng.');
                         }
                     });
                 }
@@ -586,7 +545,7 @@
                         const headerRow = tableRows[0];
                         const headerCell = document.createElement('th');
                         headerCell.textContent = dataDay;
-                        headerCell.dataset.label = day;
+                        headerCell.dataset.date = day;
                         headerRow.appendChild(headerCell);
                         let count = 0;
                         for (let i = 1; i < tableRows.length; i++) {
@@ -660,27 +619,112 @@
 
             $(document).on('click', '.selectedDate_th', function() {
                 var dateValue = $(this).data('date');
-                $('#myModalDate').modal('show');
-                $('#modalDateValue').val(dateValue);
-                $('#modalDateValue').attr('data-date', dateValue);
 
-                flatpickr("#modalDateValue", {
-                    mode: "multiple",
-                    dateFormat: "Y-m-d",
+
+                if (!/\d/.test(dateValue)) {
+                    $('#myModalDate').modal('show');
+                    const htmlToAppend = `
+                        <div id="dateSelectionForm" data-date="${dateValue}" class="d-flex flex-wrap">
+                            <div class="form-check me-3">
+                                <input class="form-check-input" type="checkbox" value="Monday"    id="dayMonday" ${dateValue === "Monday" ? "checked" : ""}>
+                                <label class="form-check-label" for="dayMonday">Thứ Hai</label>
+                            </div>
+                            <div class="form-check me-3">
+                                <input class="form-check-input" type="checkbox" value="Tuesday" id="dayTuesday" ${dateValue === "Tuesday" ? "checked" : ""}> 
+                                <label class="form-check-label" for="dayTuesday">Thứ Ba</label>
+                            </div>
+                            <div class="form-check me-3">
+                                <input class="form-check-input" type="checkbox" value="Wednesday" id="dayWednesday" ${dateValue === "Wednesday" ? "checked" : ""}>
+                                <label class="form-check-label" for="dayWednesday">Thứ Tư</label>
+                            </div>
+                            <div class="form-check me-3">
+                                <input class="form-check-input" type="checkbox" value="Thursday" id="dayThursday" ${dateValue === "Thursday" ? "checked" : ""}>
+                                <label class="form-check-label" for="dayThursday">Thứ Năm</label>
+                            </div>
+                            <div class="form-check me-3">
+                                <input class="form-check-input" type="checkbox" value="Friday" id="dayFriday" ${dateValue === "Friday" ? "checked" : ""}>
+                                <label class="form-check-label" for="dayFriday">Thứ Sáu</label>
+                            </div>
+                            <div class="form-check me-3">
+                                <input class="form-check-input" type="checkbox" value="Saturday" id="daySaturday" ${dateValue === "Saturday" ? "checked" : ""}>
+                                <label class="form-check-label" for="daySaturday">Thứ Bảy</label>
+                            </div>
+                            <div class="form-check">
+                                <input class="form-check-input" type="checkbox" value="Sunday" id="daySunday" ${dateValue === "Sunday" ? "checked" : ""}>
+                                <label class="form-check-label" for="daySunday">Chủ Nhật</label>
+                            </div>
+                        </div>
+                    `;
+
+                    const modalBody = document.getElementById('updateDate');
+                    $('.btnUpdateDate').attr('data-date', dateValue);
+                    modalBody.insertAdjacentHTML('beforeend', htmlToAppend);
+
+
+                } else {
+                    $('#myModalDate').modal('show');
+                    const inputElement = document.createElement('input');
+                    inputElement.type = 'text';
+                    inputElement.id = 'modalDateValue';
+                    inputElement.className = 'form-group';
+                    inputElement.placeholder = 'Chọn ngày';
+                    inputElement.style.width = '100%';
+                    const modalBody = document.getElementById('updateDate');
+                    $('.btnUpdateDate').removeAttr('data-date');
+                    modalBody.appendChild(inputElement);
+
+                    $('#modalDateValue').val(dateValue);
+                    $('#modalDateValue').attr('data-date', dateValue);
+
+                    flatpickr("#modalDateValue", {
+                        mode: "multiple",
+                        dateFormat: "Y-m-d",
+                    });
+                }
+                // Xóa modal khi được ẩn
+                $('#myModalDate').on('hidden.bs.modal', function() {
+                    const modalBody = document.getElementById('updateDate');
+                    const inputElement = modalBody.querySelector('#modalDateValue');
+                    const inputElement1 = modalBody.querySelector('#dateSelectionForm');
+                    if (inputElement) {
+                        inputElement.remove();
+                    }
+                    if (inputElement1) {
+                        inputElement1.remove();
+                    }
                 });
-            });
-            $(document).on('click', '.btnUpdateDate', function() {
 
+            });
+
+            $(document).on('click', '.btnUpdateDate', function() {
+                var dataDayValue = $('.btnUpdateDate').data('date');
                 var dateValue = $('#modalDateValue').val();
                 var dataDateValue = $('#modalDateValue').data('date');
-                var url = '{{ route('admin.price.updatePriceDate') }}';
+                var dateCurent = dataDateValue ?? dataDayValue;
+                let method = "";
+                if (!/\d/.test(dateValue)) {
+                    method = "day";
+                } else {
+                    method = "date";
+                }
+                console.log(dateCurent);
 
+                var checkedValues = [];
+                $('#dateSelectionForm input[type="checkbox"]:checked').each(function() {
+                    var value = $(this).val();
+                    if (!checkedValues.includes(value)) {
+                        checkedValues.push(value);
+                    }
+                });
+                var url = '{{ route('admin.price.updatePriceDate') }}';
                 $.ajax({
                     url: url,
                     method: 'POST',
                     data: {
-                        dateCurent: dataDateValue,
+                        method: method,
+                        dateCurent: dateCurent,
                         dataDateValue: dateValue,
+                        checkedValues: checkedValues
                     },
                     success: function(response) {
                         if (response.status === "success") {
@@ -691,7 +735,6 @@
                                 showConfirmButton: false,
                                 timer: 1500
                             });
-
                         }
                         // Xử lý dữ liệu trả về từ server nếu cần
                     },
@@ -699,10 +742,6 @@
                         console.error('Đã xảy ra lỗi trong quá trình gửi dữ liệu: ' + error);
                     }
                 });
-                // console.log(dataDateValue); 
-                // console.log(dateValue); // In ra giá trị của input khi click vào nút btnUpdateDate
-
-
             });
 
             function addDayColumn(selectedDate) {
@@ -713,12 +752,12 @@
                     // Kiểm tra xem cột cho ngày đã tồn tại trong bảng chưa
                     let dateColumnExists = false;
                     const headerRow = tableRows[0];
+                    let date = selectedDate.day_of_week ?? selectedDate.date;
+
 
 
                     for (let i = 0; i < headerRow.children.length; i++) {
-
-                        if (headerRow.children[i].dataset.date === selectedDate.date) {
-                            // console.log(selectedDate);
+                        if (headerRow.children[i].dataset.date === date) {
                             dateColumnExists = true;
                             break;
                         }
@@ -726,15 +765,42 @@
 
                     if (!dateColumnExists) {
                         const headerCell = document.createElement('th');
-                        headerCell.textContent = selectedDate.date;
-                        headerCell.dataset.date = selectedDate.date;
+                        let dataDay = "";
+                        switch (date) {
+                            case "Monday":
+                                dataDay = "Thứ Hai";
+                                break;
+                            case "Tuesday":
+                                dataDay = "Thứ Ba";
+                                break;
+                            case "Wednesday":
+                                dataDay = "Thứ Tư";
+                                break;
+                            case "Thursday":
+                                dataDay = "Thứ Năm";
+                                break;
+                            case "Friday":
+                                dataDay = "Thứ Sáu";
+                                break;
+                            case "Saturday":
+                                dataDay = "Thứ Bảy";
+                                break;
+                            case "Sunday":
+                                dataDay = "Chủ Nhật";
+                                break;
+                            default:
+                                dataDay = date;
+                                break;
+                        }
+                        headerCell.textContent = dataDay;
+                        headerCell.dataset.date = date;
                         headerCell.className = "selectedDate_th";
                         headerRow.appendChild(headerCell);
                         let elseCount = 0;
                         for (let i = 1; i < tableRows.length; i++) {
                             const row = tableRows[i];
                             const inputCell = document.createElement('td');
-                            inputCell.dataset.date = selectedDate.date;
+                            inputCell.dataset.date = date;
                             //  console.log(selectedDate);
                             const input = row.querySelector('input');
                             // Lấy giá trị data-id từ input
@@ -763,7 +829,7 @@
                                 // console.log(dataId);
                                 // console.log( 'room_id: '. selectedDate);
 
-                                input.dataset.date = selectedDate.date;
+                                input.dataset.date = date;
 
 
                                 if (dataId == selectedDate.room_price_id) {
@@ -792,7 +858,7 @@
                                 }
                                 input.dataset.id = dataId;
 
-                                input.dataset.date = selectedDate.date;
+                                input.dataset.date = date;
                                 inputCell.appendChild(input);
                                 elseCount++;
 
@@ -815,17 +881,17 @@
                                 const dataId = input.dataset.id;
                                 const dataDate = input.dataset.date;
 
-                                if (dataId == selectedDate.room_price_id && dataDate == selectedDate.date) {
+                                if (dataId == selectedDate.room_price_id && dataDate == date) {
                                     if (input.id === "pricePerHour") {
                                         input.value = selectedDate.hourly_price;
-                                    } 
+                                    }
                                     if (input.classList.contains("fullDayPrice")) {
                                         input.value = selectedDate.daily_price;
-                                    } 
+                                    }
                                     if (input.classList.contains("overnightPrice")) {
                                         input.value = selectedDate.overnight_price;
                                     }
-                                    
+
                                 }
                             }
                         }
@@ -835,6 +901,7 @@
             $(document).ready(function() {
 
                 var url = '{{ route('admin.price.roomPricePerDay') }}';
+                $('#loading').show();
                 $.ajax({
                     url: url,
                     method: 'GET',
@@ -843,7 +910,7 @@
                             // console.log(response.data);
                             let defaultDates = [];
                             if (typeof addDayColumn === 'function') {
-
+                                $('#loading').hide();
                                 // console.log(response.data);
                                 response.data.forEach(function(item) {
                                     addDayColumn(item);
@@ -856,16 +923,52 @@
                                         dateFormat: "Y-m-d",
                                     });
                                 });
-                            } else {
-                                console.error("Hàm addDayColumn chưa được định nghĩa!");
                             }
+                            // else {
+                            //     console.error("Hàm addDayColumn chưa được định nghĩa!");
+                            // }
                         }
                     },
                     error: function(xhr, status, error) {
+                        $('#loading').hide();
                         console.error('Đã xảy ra lỗi trong quá trình gửi dữ liệu: ' + error);
                     }
                 });
-                // Kiểm tra xem hàm addDayColumn có tồn tại không
+                var url = '{{ route('admin.price.roomPricePerDayOfWeek') }}';
+                $('#loading').show();
+                $.ajax({
+                    url: url,
+                    method: 'GET',
+                    success: function(response) {
+                        if (response.status === "success") {
+                            // console.log(response.data);
+                            let defaultDates = [];
+                            $('#loading').hide();
+                            if (typeof addDayColumn === 'function') {
+
+                                response.data.forEach(function(item) {
+
+                                    addDayColumn(item);
+                                    // const input = document.getElementById(
+                                    //     'selectedDates');
+                                    // defaultDates.push(item.date);
+                                    // input.value = defaultDates.join(', ');
+                                    // flatpickr("#selectedDates", {
+                                    //     mode: "multiple",
+                                    //     dateFormat: "Y-m-d",
+                                    // });
+                                });
+                            }
+                            //  else {
+                            //     console.error("Hàm addDayColumn chưa được định nghĩa!");
+                            // }
+                        }
+                    },
+                    error: function(xhr, status, error) {
+                        $('#loading').hide();
+                        console.error('Đã xảy ra lỗi trong quá trình gửi dữ liệu: ' + error);
+                    }
+                });
 
             });
 
@@ -882,7 +985,7 @@
 
                         for (let i = 0; i < headerCells.length; i++) {
                             const cell = headerCells[i];
-                            if (cell.getAttribute('data-day') === day) {
+                            if (cell.getAttribute('data-date') === day) {
                                 cell.remove();
                                 const index = addedColumns.indexOf(day);
                                 if (index > -1) {
@@ -931,129 +1034,4 @@
     </script>
 @endpush
 
-@push('style')
-    <style>
-        input[type="number"] {
 
-            width: 180px;
-
-        }
-
-        .radio-container {
-            display: flex;
-            align-items: center;
-            justify-content: center;
-        }
-
-        .toggle {
-            position: relative;
-            display: inline-block;
-            width: 52px;
-            height: 29px;
-        }
-
-        .toggle input {
-            display: none;
-        }
-
-        .slider {
-            position: absolute;
-            cursor: pointer;
-            top: 0;
-            left: 0;
-            right: 0;
-            bottom: 0;
-            background-color: #ccc;
-            transition: .4s;
-            border-radius: 34px;
-        }
-
-        .mf-table {
-            margin-left: 112px;
-        }
-
-        .small-column {
-            width: 100px;
-            white-space: nowrap;
-        }
-
-
-        .text-center {
-            text-align: center;
-        }
-
-        .slider:before {
-            position: absolute;
-            content: "";
-            height: 20px;
-            width: 20px;
-            left: 4px;
-            bottom: 4px;
-            background-color: white;
-            transition: .4s;
-            border-radius: 50%;
-        }
-
-        input:checked+.slider {
-            background-color: #4CAF50;
-        }
-
-        input:checked+.slider:before {
-            transform: translateX(24px);
-        }
-
-        .label {
-            margin-left: 20px;
-            font-size: 18px;
-            font-weight: bold;
-        }
-
-        .status-input {
-            margin-bottom: 20px;
-        }
-
-        .status-input label {
-            font-weight: bold;
-            margin-right: 10px;
-        }
-
-        .radio-group {
-            display: flex;
-            align-items: center;
-        }
-
-        .swal2-popup {
-            font-size: 0.8rem;
-            max-width: 500px;
-        }
-
-        .radio-group input[type="radio"] {
-            margin-right: 5px;
-            accent-color: #007bff;
-        }
-
-        .table-striped>tbody>tr:nth-of-type(odd)>* {
-            --bs-table-accent-bg: rgb(255 254 254 / 5%) !important;
-        }
-
-        .radio-group label {
-            margin-right: 20px;
-            font-size: 16px;
-        }
-
-        @media(max-width:768px) {
-            .small-column {
-                width: 100%;
-            }
-
-            .mf-table {
-                margin-left: 0px;
-            }
-
-            .price-hour {
-                white-space: nowrap;
-                margin-left: -107px
-            }
-        }
-    </style>
-@endpush

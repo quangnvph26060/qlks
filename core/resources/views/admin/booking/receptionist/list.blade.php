@@ -986,7 +986,7 @@
                             $('#user_product').empty();
 
                             let rowsHtmlProduct = '';
-                            console.log(response.data.used_product_room);
+                         
 
                             response.data.used_product_room.forEach(function(booked, index) {
                                 rowsHtmlProduct += `
