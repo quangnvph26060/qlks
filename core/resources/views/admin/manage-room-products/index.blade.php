@@ -88,29 +88,34 @@
                         <div class="form-group mb-3">
                             <label for="">Các sản phẩm <code>(Được chọn nhiều)</code></label>
 
-                            <div class="form-check-group mt-3 row">
+                            <div class="form-check-group mt-3 row" style="max-height: 250px; overflow-y: auto;">
                                 @if ($products->isNotEmpty())
-                                    @foreach ($products as $product)
-                                    <div class="col-md-3 mb-4">
-                                        <div class="form-check">
-                                            <input class="form-check-input product-checkbox" type="checkbox"
-                                                value="{{ $product->id }}" name="product_id[]"
-                                                id="checkbox-facility-add-{{ $product->id }}">
-                                            <label class="form-check-label" for="checkbox-facility-add-{{ $product->id }}">
-                                                {{ $product->name }}
-                                            </label>
-                                        </div>
-                                        <div>
-                                            <input type="number" name="stock[]" class="input_number" disabled
-                                                id="stock-{{ $product->id }}">
-                                        </div>
+                                @foreach ($products as $product)
+                                <div class=" mb-4" style="display: flex">
+                                    <!-- Sử dụng col-12 để đảm bảo mỗi item chiếm toàn bộ chiều rộng -->
+                                    <div class="form-check" style="flex: 70%">
+                                        <input class="form-check-input product-checkbox" type="checkbox"
+                                            value="{{ $product->id }}" name="product_id[]"
+                                            id="checkbox-facility-add-{{ $product->id }}">
+                                        <label class="form-check-label limit_name"
+                                            for="checkbox-facility-add-{{ $product->id }}">
+                                            {{ $product->name }}
+                                        </label>
                                     </div>
-                                    @endforeach
-
+                                    <div style="flex: 30%">
+                                        <input type="number" name="stock[]"
+                                            class="input_number form-control form-control-sm" disabled
+                                            style="max-width: 80px" id="stock-{{ $product->id }}"
+                                            max="{{ $product->stock }}" min="1" oninput="validateInput(this)">
+                                    </div>
+                                </div>
+                                @endforeach
                                 @else
-                                <p>Chưa có tiện ích nào!</p>
+                                <p>Chưa có sản phẩm nào!</p>
                                 @endif
                             </div>
+
+
 
                         </div>
                     </div>
@@ -149,13 +154,13 @@
                     <div class="row">
                         <div class="form-group mb-3">
                             <label for="">Các sản phẩm <code>(Được chọn nhiều)</code></label>
-                            <div id="checkbox-facility" class="form-check-group mt-3 row">
-
+                            <div id="checkbox-facility" class="form-check-group mt-3 row"
+                                style="max-height: 250px; overflow-y: auto;">
+                                <!-- Các checkbox sẽ được thêm vào đây -->
                             </div>
-
-
                         </div>
                     </div>
+
                     <div class="modal-footer">
                         <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Đóng</button>
                         @if ($products->isNotEmpty())
@@ -240,26 +245,28 @@
                                 // Tạo danh sách tiện ích (amenities)
                                 let amenitesContainer = $('#checkbox-facility');
                                 amenitesContainer.empty();
-                                console.log(response.selectedproducts);
+                                console.log(response.products);
                                 response.products.forEach(facility => {
                                 let checked = response.selectedproducts.hasOwnProperty(facility.id) ? 'checked' : '';
                                 let disable = !checked ? 'disabled' : '';
                                 let quantity = checked ? response.selectedproducts[facility.id] : '';
 
                                 amenitesContainer.append(`
-                                    <div class="col-md-3 mb-4 edit-checkbox">
-                                        <div class="form-check">
+                                    <div class=" mb-4 edit-checkbox" style="display: flex">
+                                        <div class="form-check" style="flex: 70%" >
                                             <input class="form-check-input product-checkbox-edit" type="checkbox" value="${facility.id}" ${checked}
                                                 name="product_id[]" id="checkbox-facility-${facility.id}">
-                                            <label class="form-check-label" for="checkbox-facility-${facility.id}">
+                                            <label class="form-check-label limit_name" for="checkbox-facility-${facility.id}">
                                                 ${facility.name}
                                             </label>
                                         </div>
-                                        <div>
-                                            <input type="number" name="stock[]" data-stock="${quantity}" class="input_number" ${disable} value="${quantity}"
-                                                id="stock-${facility.id}">
+                                        <div style="flex: 30%">
+                                            <input type="number" name="stock[]" data-stock="${quantity}" class="input_number form-control form-control-sm" style="max-width: 80px" ${disable} value="${quantity}"
+                                                id="stock-${facility.id}" min="1" max="${facility.stock}" oninput="validateInput(this)">
                                         </div>
                                     </div>
+
+
                                 `);
                             });
 
@@ -273,13 +280,13 @@
                                 if (checkbox.is(':checked')) {
 
                                     inputNumber.removeAttr('disabled');
+                                    inputNumber.val(1);
                                 } else {
 
                                     inputNumber.val('');
                                     inputNumber.attr('disabled', 'disabled');
                                 }
                             });
-
 
 
                                 $('#staticBackdropLabel').text('Cập nhật');
@@ -339,6 +346,7 @@
 
                 if (this.checked) {
                     stockInput.disabled = false;
+                    stockInput.value = 1;
                 } else {
                     stockInput.disabled = true;
                     stockInput.value = "";
@@ -346,18 +354,31 @@
             });
         });
     });
+
+    function validateInput(input) {
+        const max = parseInt(input.max, 10); // Lấy giá trị max từ thuộc tính
+        const min = parseInt(input.min, 10); // Lấy giá trị min từ thuộc tính
+        const value = parseInt(input.value, 10);
+
+        if (value > max) {
+            input.value = max; // Đặt lại giá trị nếu vượt quá max
+        } else if (value < min) {
+            input.value = min; // Đặt lại giá trị nếu nhỏ hơn min
+        }
+    }
+
 </script>
 
 @endpush
 
 @push('style')
 <style>
-
     .no-input {
         pointer-events: none;
         background-color: #f0f0f0;
         cursor: not-allowed;
     }
+
     .input_number {
         width: 55%;
         padding: 5px 10px !important;
@@ -463,6 +484,21 @@
     .form-check-label {
         /* font-size: 18px; */
         line-height: 25px;
+    }
+
+    .limit_name {
+        display: inline-block;
+        max-width: 400px;
+        white-space: nowrap;
+        overflow: hidden;
+        text-overflow: ellipsis;
+    }
+    .limitname{
+        display: inline-block;
+        max-width: 120px;
+        white-space: nowrap;
+        overflow: hidden;
+        text-overflow: ellipsis;
     }
 </style>
 @endpush

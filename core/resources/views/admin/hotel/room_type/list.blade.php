@@ -2,8 +2,8 @@
 @section('panel')
     <div class="row">
         <div class="col-lg-12">
-            <div class="d-flex justify-content-between mb-3">
-                <div class="dt-length">
+            <div class="d-flex justify-content-between mb-3 row">
+                <div class="dt-length col-md-6">
                     <select name="example_length" id="perPage" style=" padding: 1px 3px; margin-right: 8px;"
                         aria-controls="example" class="perPage">
                         <option value="10">10</option>
@@ -12,13 +12,14 @@
                         <option value="100">100</option>
                     </select><label for="perPage"> entries per page</label>
                 </div>
-                <div class="search">
+                <div class="search col-md-4" style="text-align: end;">
                     <label for="searchInput">Search:</label>
                     <input class="searchInput"
                         style="padding: 1px 3px; border: 1px solid rgb(121, 117, 117, 0.5); margin-left: 8px;"
                         type="search" placeholder="Tìm kiếm...">
                 </div>
-                <div class="dropdown">
+                <div class="dropdown col-md-2" style="display: flex;
+                justify-content: end">
                     <a class="btn btn-outline-secondary dropdown-toggle" href="#" role="button"
                         data-bs-toggle="dropdown" aria-expanded="false">
                         Thao tác
