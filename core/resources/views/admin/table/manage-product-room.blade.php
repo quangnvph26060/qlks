@@ -9,7 +9,7 @@
                 <td>
                     @if ($room->products->count() > 0)
                         @foreach ($room->products as $item)
-                            <span class="badge {{ getRandomColor() }}">{{ $item->name }}</span>
+                            <span class="badge {{ getRandomColor() }} limitname">{{ $item->name }}</span>
                         @endforeach
                     @else
                         <p>Chưa có sản phẩm nào !</p>
