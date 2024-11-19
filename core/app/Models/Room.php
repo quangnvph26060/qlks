@@ -151,4 +151,8 @@ class Room extends Model
     {
         return $query->where('is_featured', Status::ROOM_TYPE_FEATURED);
     }
+
+   public function roomPriceNow(){
+        return  $this->regularRoom();
+   }
 }

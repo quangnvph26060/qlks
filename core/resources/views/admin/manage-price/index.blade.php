@@ -164,8 +164,8 @@
                     <div class=" d-flex justify-content-start align-items-center gap-4 mb-3">
                         <label for="firstHour" class="form-label mt-2">Từ giờ đầu tiên:</label>
                         <input type="number" class="form-control" id="firstHour" placeholder="Nhập giá giờ đầu tiên">
-                        <svg style="cursor: pointer;" xmlns="http://www.w3.org/2000/svg" width="20" height="20" id="add_hours"
-                            viewBox="0 0 24 24">
+                        <svg style="cursor: pointer;" xmlns="http://www.w3.org/2000/svg" width="20" height="20"
+                            id="add_hours" viewBox="0 0 24 24">
                             <path fill="none" stroke="currentColor" stroke-linecap="square" stroke-linejoin="round"
                                 stroke-width="2" d="M12 6v12m6-6H6" />
                         </svg>
@@ -542,98 +542,111 @@
                 }
 
                 selectedDays.forEach(day => {
-                    if (!addedColumns.includes(day)) {
-                        let dataDay = "";
-                        switch (day) {
-                            case "Monday":
-                                dataDay = "Thứ Hai";
-                                break;
-                            case "Tuesday":
-                                dataDay = "Thứ Ba";
-                                break;
-                            case "Wednesday":
-                                dataDay = "Thứ Tư";
-                                break;
-                            case "Thursday":
-                                dataDay = "Thứ Năm";
-                                break;
-                            case "Friday":
-                                dataDay = "Thứ Sáu";
-                                break;
-                            case "Saturday":
-                                dataDay = "Thứ Bảy";
-                                break;
-                            case "Sunday":
-                                dataDay = "Chủ Nhật";
-                                break;
+                    const headerRow = tableRows[0];
+                 
+                    let dateColumnExists = false;
+                    for (let i = 0; i < headerRow.children.length; i++) {
+                        
+                        if (headerRow.children[i].dataset.date === day) {
+                            
+                            dateColumnExists = true;
+                            break;
                         }
-
-                        const headerRow = tableRows[0];
-                        const headerCell = document.createElement('th');
-                        headerCell.textContent = dataDay;
-                        headerCell.dataset.date = day;
-                        headerRow.appendChild(headerCell);
-                        let count = 0;
-                        for (let i = 1; i < tableRows.length; i++) {
-                            const row = tableRows[i];
-
-                            const input = row.querySelector('input');
-
-                            // Lấy giá trị data-id từ input
-                            const dataId = input.dataset.id;
-
-                            const inputCell = document.createElement('td');
-                            inputCell.dataset.day = day;
-
-                            if (i % 3 === 1) { // Row for "Giá Giờ"
-                                const div = document.createElement('div');
-                                div.className = "d-flex price-hour";
-                                div.id = "priceContainerHour";
-
-                                const p = document.createElement('p');
-                                p.className = "d-flex text-end price-input";
-                                p.innerHTML = "Từ giờ đầu tiên: &nbsp;<br>Mỗi giờ:";
-
-                                // var dataId = document.querySelector('#pricePerHour').dataset.id;
-                                // console.log(dataId);
-
-                                const input = document.createElement('input');
-                                input.type = "number";
-                                input.step = "1000";
-                                input.className = "form-control";
-                                input.placeholder = "Nhập giá";
-                                // input.id = "input-" + day + "-pricePerHour";
-                                input.id = "pricePerHour";
-                                input.dataset.id = dataId;
-                                input.dataset.date = day;
-                                div.appendChild(p);
-                                div.appendChild(input);
-
-                                inputCell.appendChild(div);
-                            } else {
-                                const input = document.createElement('input');
-                                input.type = "number";
-                                input.step = "1000";
-                                input.className = "form-control mf-table";
-                                input.placeholder = "Nhập giá";
-
-                                if (count % 2 === 0) {
-                                    input.classList.add("fullDayPrice");
-                                } else {
-                                    input.classList.add("overnightPrice");
-                                }
-                                input.dataset.id = dataId;
-                                input.dataset.date = day;
-                                inputCell.appendChild(input);
-                                count++;
+                    }
+                    if (!dateColumnExists) {
+                        if (!addedColumns.includes(day)) {
+                            let dataDay = "";
+                            switch (day) {
+                                case "Monday":
+                                    dataDay = "Thứ Hai";
+                                    break;
+                                case "Tuesday":
+                                    dataDay = "Thứ Ba";
+                                    break;
+                                case "Wednesday":
+                                    dataDay = "Thứ Tư";
+                                    break;
+                                case "Thursday":
+                                    dataDay = "Thứ Năm";
+                                    break;
+                                case "Friday":
+                                    dataDay = "Thứ Sáu";
+                                    break;
+                                case "Saturday":
+                                    dataDay = "Thứ Bảy";
+                                    break;
+                                case "Sunday":
+                                    dataDay = "Chủ Nhật";
+                                    break;
                             }
 
-                            row.appendChild(inputCell);
+                            const headerRow = tableRows[0];
+                            const headerCell = document.createElement('th');
+                            headerCell.textContent = dataDay;
+                            headerCell.dataset.date = day;
+                            headerRow.appendChild(headerCell);
+                            let count = 0;
+                            for (let i = 1; i < tableRows.length; i++) {
+                                const row = tableRows[i];
 
+                                const input = row.querySelector('input');
+
+                                // Lấy giá trị data-id từ input
+                                const dataId = input.dataset.id;
+
+                                const inputCell = document.createElement('td');
+                                inputCell.dataset.day = day;
+
+                                if (i % 3 === 1) { // Row for "Giá Giờ"
+                                    const div = document.createElement('div');
+                                    div.className = "d-flex price-hour";
+                                    div.id = "priceContainerHour";
+
+                                    const p = document.createElement('p');
+                                    p.className = "d-flex text-end price-input";
+                                    p.innerHTML = "Từ giờ đầu tiên: &nbsp;<br>Mỗi giờ:";
+
+                                    // var dataId = document.querySelector('#pricePerHour').dataset.id;
+                                    // console.log(dataId);
+
+                                    const input = document.createElement('input');
+                                    input.type = "number";
+                                    input.step = "1000";
+                                    input.className = "form-control";
+                                    input.placeholder = "Nhập giá";
+                                    // input.id = "input-" + day + "-pricePerHour";
+                                    input.id = "pricePerHour";
+                                    input.dataset.id = dataId;
+                                    input.dataset.date = day;
+                                    div.appendChild(p);
+                                    div.appendChild(input);
+
+                                    inputCell.appendChild(div);
+                                } else {
+                                    const input = document.createElement('input');
+                                    input.type = "number";
+                                    input.step = "1000";
+                                    input.className = "form-control mf-table";
+                                    input.placeholder = "Nhập giá";
+
+                                    if (count % 2 === 0) {
+                                        input.classList.add("fullDayPrice");
+                                    } else {
+                                        input.classList.add("overnightPrice");
+                                    }
+                                    input.dataset.id = dataId;
+                                    input.dataset.date = day;
+                                    inputCell.appendChild(input);
+                                    count++;
+                                }
+
+                                row.appendChild(inputCell);
+
+                            }
+
+                            addedColumns.push(day);
+                            columnsAdded = true;
                         }
-
-                        addedColumns.push(day);
-                        columnsAdded = true;
                     }
                 });
 
@@ -1060,5 +1073,3 @@
         });
     </script>
 @endpush
-
-

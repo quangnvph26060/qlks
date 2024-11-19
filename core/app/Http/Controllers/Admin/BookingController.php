@@ -270,16 +270,16 @@ class BookingController extends Controller
 
         $disabledRoomTypeIDs = RoomType::where('status', 0)->pluck('id')->toArray();
         $bookedRooms         = $rooms->pluck('room_id')->toArray();
-        $emptyRooms = Room::active()
-            ->has('roomPricesActive')
-            ->whereNotIn('id', $bookedRooms)
-            ->whereNotIn('room_type_id', $disabledRoomTypeIDs) // Loại trừ những phòng ngưng hoạt động hoặc vô hiệu hóa
-            ->with(['roomType', 'roomPricesActive'])
-            ->select(['id', 'room_type_id', 'room_number', 'is_clean'])
-            ->when(!empty($request->roomType), function ($query) use ($request) {
-                $query->where('room_type_id', 'like', '%' . $request->roomType . '%');
-            })
-            ->get();
+        $emptyRooms          = Room::active()
+                                ->has('roomPricesActive')
+                                ->whereNotIn('id', $bookedRooms)
+                                ->whereNotIn('room_type_id', $disabledRoomTypeIDs) // Loại trừ những phòng ngưng hoạt động hoặc vô hiệu hóa
+                                ->with(['roomType', 'roomPricesActive'])
+                                ->select(['id', 'room_type_id', 'room_number', 'is_clean'])
+                                ->when(!empty($request->roomType), function ($query) use ($request) {
+                                    $query->where('room_type_id', 'like', '%' . $request->roomType . '%');
+                                })
+                                ->get();
         $scope = 'ALL';
         $is_method = 'Receptionist';
 

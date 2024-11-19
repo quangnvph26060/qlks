@@ -18,15 +18,21 @@
                 classSvg="{{ $classSvg }}" cleanText="{{ $cleanText }}"
                 roomNumber="{{ $rooms->room_number }}" />
 
-            <div class="content-booking mt-2 room-booking-{{ $class }} pt-90 " data-hours="{{ $price }}"
+            <div class="content-booking mt-2 room-booking-{{ $class }}  " data-hours="{{ $price }}"
                 data-day="{{ $price }}" data-night="{{ $price }}"
                 data-name="{{ $rooms->roomType->name }}" data-roomNumber="{{ $rooms->room_number }}"
                 data-room-type="{{ $rooms->room_type_id }}" data-room="{{ $rooms->id }}">
-                <h5>{{ $rooms->room_number }} </h5>
+                <h2>{{ $rooms->room_number }} </h2>
                 <p class="single-line">{{ $rooms->roomType->name }}</p>
                 <div class="room-info">
-                    <p>
-                        <i class="fas fa-dollar-sign icon"></i>{{ showAmount($price) }}
+                    <p class="hourly_price">
+                        <i class="fas fa-clock icon"></i> {{  showAmount($rooms->roomPriceNow()->hourly_price) }}
+                    </p>
+                    <p class="daily_price">
+                        <i class="fas fa-sun icon-gray"></i> {{ showAmount($rooms->roomPriceNow()->daily_price)  }}
+                    </p>
+                    <p class="overnight_price">
+                        <i class="fas fa-moon icon-moon"></i> {{showAmount($rooms->roomPriceNow()->overnight_price) }}
                     </p>
                 </div>
             </div>
