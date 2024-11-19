@@ -108,7 +108,7 @@
                                                     @elseif($item->status == status::BOOKED_ROOM_CHECKOUT)
                                                         <div class="bg--dark room-container rounded p-2">
                                                             <span class="f-size--24 text--white">
-                                                                {{ __($item->room->room_number) }}
+                                                                {{ __($item->room->room_number) }} 
                                                             </span>
                                                             <span class="d-block text--white">
                                                                 {{ __($item->room->roomType->name) }}

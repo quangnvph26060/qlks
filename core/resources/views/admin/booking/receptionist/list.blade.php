@@ -81,7 +81,6 @@
 
         @include('admin.booking.partials.booked_rooms', ['bookings' => $bookings ?? []])
 
-
     </div>
     <!-- modal dặt hàng  -->
     <div class="modal fade" id="myModal-booking" tabindex="-1" role="dialog" aria-labelledby="myModalLabel-booking"
@@ -444,6 +443,7 @@
     <script type="text/javascript" src="https://cdn.jsdelivr.net/npm/daterangepicker/daterangepicker.min.js"></script>
     <link rel="stylesheet" type="text/css" href="https://cdn.jsdelivr.net/npm/daterangepicker/daterangepicker.css" />
 @endpush
+
 @push('script')
     <script>
         $(document).ready(function() {
@@ -828,7 +828,6 @@
                     handleLateCheckinClick(id, booking_id);
                 });
             }
-
             // Sử dụng hàm
             handleLateCheckinEvent();
 

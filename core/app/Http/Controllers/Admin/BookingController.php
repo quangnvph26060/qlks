@@ -291,16 +291,16 @@ class BookingController extends Controller
                 'room.roomPricesActive',
                 'usedPremiumService'
             ])
-            // ->when($startDate && $endDate, function ($query) use ($startDate, $endDate) {
-            //     $query->whereBetween('booked_for', [$startDate, $endDate]);
-            // }, function ($query) {
-            //     $query->whereDate('booked_for', now()->toDateString());
-            // })
+            ->whereHas('booking', function ($query) use ($request) {
+                if (!empty($request->codeRoom)) {
+                    $query->where('booking_number', $request->codeRoom);
+                }
+            })
             ->when(!empty($request->roomType), function ($query) use ($request) {
                 $query->where('room_type_id', 'like', '%' . $request->roomType . '%');
             })
             ->get();
-
+        // dd($bookings);
         $userList = User::select('username', 'email', 'mobile', 'address')->get();
         $is_result = false;
         if ($request->ajax()) {
@@ -344,10 +344,10 @@ class BookingController extends Controller
 
     public function writeCccd(Request $request)
     {
-       
+
 
         $fileName = $request->file('image')->getPathname();
-  
+
         $response = writeCccd($fileName);
 
         if (isset($response['error'])) {
