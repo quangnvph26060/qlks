@@ -164,7 +164,7 @@
                     <div class=" d-flex justify-content-start align-items-center gap-4 mb-3">
                         <label for="firstHour" class="form-label mt-2">Từ giờ đầu tiên:</label>
                         <input type="number" class="form-control" id="firstHour" placeholder="Nhập giá giờ đầu tiên">
-                        <svg style="cursor: pointer;" xmlns="http://www.w3.org/2000/svg" width="20" height="20"
+                        <svg style="cursor: pointer;" xmlns="http://www.w3.org/2000/svg" width="20" height="20" id="add_hours"
                             viewBox="0 0 24 24">
                             <path fill="none" stroke="currentColor" stroke-linecap="square" stroke-linejoin="round"
                                 stroke-width="2" d="M12 6v12m6-6H6" />
@@ -302,7 +302,6 @@
             var dataId = $(this).find('#pricePerHour').data('id');
             var dataDate = $(this).find('#pricePerHour').data('date');
             var price = $(this).find('#pricePerHour').val();
-
             $('#priceModal').find('#firstHour').attr('data-date', dataDate);
             $('#priceModal').find('#firstHour').attr('data-id', dataId);
             $('#priceModal').find('#firstHour').val(price);
@@ -312,16 +311,26 @@
         $('#priceModal').on('hidden.bs.modal', function(e) {
             $('#priceModal').find('#firstHour').attr('data-id', '');
             $('#priceModal').find('#firstHour').attr('data-date', '');
+            $('#priceModal .modal-body').html(`<div class=" d-flex justify-content-start align-items-center gap-4 mb-3">
+                        <label for="firstHour" class="form-label mt-2">Từ giờ đầu tiên:</label>
+                        <input type="number" class="form-control" id="firstHour" placeholder="Nhập giá giờ đầu tiên">
+                        <svg style="cursor: pointer;" xmlns="http://www.w3.org/2000/svg" width="20" height="20" id="add_hours"
+                            viewBox="0 0 24 24">
+                            <path fill="none" stroke="currentColor" stroke-linecap="square" stroke-linejoin="round"
+                                stroke-width="2" d="M12 6v12m6-6H6" />
+                        </svg>
+                    </div>`);
         });
-        // giá giờ tiếp theo    
+        // giá giờ tiếp theo
         $(document).ready(function() {
-            $('#priceModal').on('click', 'svg', function() {
+            $('#priceModal').on('click', '#add_hours', function() {
                 var newHtml =
                     '<div class="d-flex justify-content-start align-items-center gap-4 mb-3 added-content">' +
                     '<label for="secondHour" class="form-label mt-2">Từ giờ thứ ' + ($('.added-content')
-                        .length + 1) + ':</label>' +
+                        .length + 2) + ':</label>' +
                     '<input type="number" class="form-control" id="secondHour-' + ($('.added-content')
-                        .length + 1) + '" placeholder="Nhập giá giờ thứ hai">' +
+                        .length + 2) + '" placeholder="Nhập giá giờ thứ ' + ($('.added-content')
+                        .length + 2) + '" >' +
                     '<svg xmlns="http://www.w3.org/2000/svg" class="svg-close"  width="20" height="20" viewBox="0 0 48 48">' +
                     '<g fill="none" stroke="#000" stroke-linecap="round" stroke-linejoin="round" stroke-width="4"><path d="M8 8L40 40"/><path d="M8 40L40 8"/></g>' +
                     '</svg>' +
@@ -334,11 +343,15 @@
             $('#priceModal').on('click', '.svg-close', function(event) {
                 event.stopPropagation(); // Ngăn chặn sự kiện click từ lan rộng đến các phần tử cha
                 $(this).closest('.added-content').remove();
+                $('.added-content').each(function(index) {
+                    $(this).find('label').text('Từ giờ thứ ' + (index + 2) + ':');
+                    $(this).find('input').attr('id', 'secondHour-' + (index + 2));
+                });
             });
         });
 
         $(document).ready(function() {
-            function sendAjaxRequest(price, dataId, dataDate, method) {
+            function sendAjaxRequest(price, dataId, dataDate, method, prices) {
                 var url = '{{ route('admin.price.switchPrice') }}';
 
                 $.ajax({
@@ -349,6 +362,7 @@
                         room_id: dataId,
                         method: method,
                         date: dataDate ?? "",
+                        // pricehours : prices
                     },
                     success: function(response) {
                         if (response.status === "success") {
@@ -401,10 +415,22 @@
                 var price = $('#firstHour').val();
                 var dataId = $('#firstHour').data('id');
                 var dataDate = $('#firstHour').data('date');
+                var prices = [];
+                $('input[id^="secondHour-"]').each(function() {
+                    var hour = $(this).attr('id').split('-')[1];
+                    var pricehour = $(this).val();
+
+                    if (pricehour !== "") {
+                        prices.push([hour, pricehour]);
+                    }
+                });
+                console.log('id = ' + dataDate);
+                console.log(prices);
+
                 let method = dataDate !== undefined && dataDate !== "" ? 'method_hourlydate' :
                     'method_hourly';
                 if (price !== "") {
-                    sendAjaxRequest(price, dataId, dataDate, method);
+                    sendAjaxRequest(price, dataId, dataDate, method, prices);
                 }
             });
         });
@@ -742,6 +768,7 @@
                         console.error('Đã xảy ra lỗi trong quá trình gửi dữ liệu: ' + error);
                     }
                 });
+
             });
 
             function addDayColumn(selectedDate) {
