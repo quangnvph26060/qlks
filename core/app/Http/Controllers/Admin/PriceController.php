@@ -6,13 +6,17 @@ use App\Http\Controllers\Controller;
 use App\Models\RegularRoomPrice;
 use App\Models\RoomPriceDayOfWeek;
 use App\Models\RoomPricePerDay;
+use App\Models\RoomPricesAdditionalHour;
 use Illuminate\Http\Request;
+use Illuminate\Support\Facades\Log;
 
 class PriceController extends Controller
 {
-    public function __construct() {}
+    public function __construct()
+    {
+    }
 
-    private  function addPriceDate($date,$dateCurent)
+    private  function addPriceDate($date, $dateCurent)
     {
         $dataDateValue = $date;
         if (empty($dataDateValue)) {
@@ -21,9 +25,9 @@ class PriceController extends Controller
         $dataDateArray = explode(", ", $dataDateValue); // các date được chọn bên client
 
         $datesFromDB = RoomPricePerDay::pluck('date')->toArray(); // các date hiện đang có trong DB
-        $differentDates = array_diff($dataDateArray, $datesFromDB); // các date trong DB chưa có 
+        $differentDates = array_diff($dataDateArray, $datesFromDB); // các date trong DB chưa có
 
-        $id_room = RoomPricePerDay::pluck('room_price_id')->unique()->toArray(); // các id room tròn bảng 
+        $id_room = RoomPricePerDay::pluck('room_price_id')->unique()->toArray(); // các id room tròn bảng
         foreach ($id_room as $item) {
             $result = RoomPricePerDay::where('room_price_id', $item)->where('date', $dateCurent)->first();
             if ($result) {
@@ -40,15 +44,16 @@ class PriceController extends Controller
         }
         return response()->json(['status' => 'success', 'message' => 'Cập nhật giá thành công']);
     }
-    private function addPriceDay($day,$dateCurent){
-      
+    private function addPriceDay($day, $dateCurent)
+    {
+
         $dataDateValue = $day;
         if (empty($dataDateValue)) {
             return response()->json(['status' => 'success', 'message' => 'Cập nhật giá thành công']);
-        }; 
+        };
         $datesFromDB = RoomPriceDayOfWeek::pluck('day_of_week')->toArray(); // các day hiện đang có trong DB
-        $differentDates = array_diff($dataDateValue, $datesFromDB); // các day trong DB chưa có 
-        $id_room = RoomPriceDayOfWeek::pluck('room_price_id')->unique()->toArray(); // các id room tròn bảng 
+        $differentDates = array_diff($dataDateValue, $datesFromDB); // các day trong DB chưa có
+        $id_room = RoomPriceDayOfWeek::pluck('room_price_id')->unique()->toArray(); // các id room tròn bảng
         foreach ($id_room as $item) {
             $result = RoomPriceDayOfWeek::where('room_price_id', $item)->where('day_of_week', $dateCurent)->first();
             if ($result) {
@@ -64,8 +69,6 @@ class PriceController extends Controller
             }
         }
         return response()->json(['status' => 'success', 'message' => 'Cập nhật giá thành công']);
-
-
     }
     public function updatePriceDate(Request $request)
     {
@@ -105,7 +108,10 @@ class PriceController extends Controller
             'price'   => $request['price'],
             'room_id' => $request['room_id'],
             'date'    => $request['date'] ?? "",
+            'pricehours' => $request['pricehours']
         ];
+        Log::info($chose);
+        Log::info($data);
         $response = null;
         switch ($chose) {
             case 'method_hourly':
@@ -136,6 +142,8 @@ class PriceController extends Controller
         $dates = is_array($data['date']) ? $data['date'] : [$data['date']];
         $dates = array_map('trim', explode(', ', $data['date']));
         $responseMessages = [];
+
+        $this->priceRoomHour($data);
 
         foreach ($dates as $date) {
             if (preg_match('/^\d+$/', str_replace('-', '', $date))) {
@@ -233,5 +241,39 @@ class PriceController extends Controller
     public function priceHourly($data)
     {
         return $this->updateRoomPrice($data, 'hourly');
+    }
+
+
+    public function priceRoomHour($data)
+    {
+        if (isset($data['pricehours'])) {
+            $hours = array_column($data['pricehours'], 0);
+            foreach ($data['pricehours'] as $key => $item) {
+                $check = RoomPricesAdditionalHour::where('date', $data['date'])
+                    ->where('room_price_id', $data['room_id'])
+                    ->where('hour', $item[0])
+                    ->first();
+                if ($check) {
+                    $check->update([
+                        'price' => $item[1],
+                    ]);
+                } else {
+                    RoomPricesAdditionalHour::create([
+                        'date' => $data['date'],
+                        'hour' => $item[0],
+                        'price' => $item[1],
+                        'room_price_id' => $data['room_id']
+                    ]);
+                }
+            }
+            RoomPricesAdditionalHour::where('date', $data['date'])
+                ->where('room_price_id', $data['room_id'])
+                ->whereNotIn('hour', $hours)
+                ->delete();
+        }else{
+            RoomPricesAdditionalHour::where('date', $data['date'])
+            ->where('room_price_id', $data['room_id'])
+            ->delete();
+        }
     }
 }
