@@ -4,6 +4,7 @@ namespace App\Http\Controllers\Admin;
 
 use App\Http\Controllers\Controller;
 use App\Models\RegularRoomPrice;
+use App\Models\RoomPriceDayOfWeek;
 use App\Models\RoomPricePerDay;
 use Illuminate\Http\Request;
 
@@ -11,35 +12,90 @@ class PriceController extends Controller
 {
     public function __construct() {}
 
-    public function updatePriceDate(Request $request){
-
-        $dataDateArray = explode(", ", $request->dataDateValue); // các date được chọn bên client
+    private  function addPriceDate($date,$dateCurent)
+    {
+        $dataDateValue = $date;
+        if (empty($dataDateValue)) {
+            return response()->json(['status' => 'success', 'message' => 'Cập nhật giá thành công']);
+        };
+        $dataDateArray = explode(", ", $dataDateValue); // các date được chọn bên client
 
         $datesFromDB = RoomPricePerDay::pluck('date')->toArray(); // các date hiện đang có trong DB
         $differentDates = array_diff($dataDateArray, $datesFromDB); // các date trong DB chưa có 
 
         $id_room = RoomPricePerDay::pluck('room_price_id')->unique()->toArray(); // các id room tròn bảng 
-            foreach($id_room as $item){
-                $result = RoomPricePerDay::where('room_price_id',$item)->where('date',$request->dateCurent)->first();
-                if($result){
-                    foreach($differentDates as $date){
-                        $roomPricePerDay = new RoomPricePerDay();
-                        $roomPricePerDay->room_price_id = $item;
-                        $roomPricePerDay->date = $date;
-                        $roomPricePerDay->hourly_price = $result->hourly_price;
-                        $roomPricePerDay->daily_price = $result->daily_price;
-                        $roomPricePerDay->overnight_price =  $result->overnight_price;
-                        $roomPricePerDay->save();
-                    }
+        foreach ($id_room as $item) {
+            $result = RoomPricePerDay::where('room_price_id', $item)->where('date', $dateCurent)->first();
+            if ($result) {
+                foreach ($differentDates as $date) {
+                    $roomPricePerDay = new RoomPricePerDay();
+                    $roomPricePerDay->room_price_id   = $item;
+                    $roomPricePerDay->date            = $date;
+                    $roomPricePerDay->hourly_price    = $result->hourly_price;
+                    $roomPricePerDay->daily_price     = $result->daily_price;
+                    $roomPricePerDay->overnight_price = $result->overnight_price;
+                    $roomPricePerDay->save();
                 }
             }
+        }
+        return response()->json(['status' => 'success', 'message' => 'Cập nhật giá thành công']);
+    }
+    private function addPriceDay($day,$dateCurent){
+      
+        $dataDateValue = $day;
+        if (empty($dataDateValue)) {
             return response()->json(['status' => 'success', 'message' => 'Cập nhật giá thành công']);
+        }; 
+        $datesFromDB = RoomPriceDayOfWeek::pluck('day_of_week')->toArray(); // các day hiện đang có trong DB
+        $differentDates = array_diff($dataDateValue, $datesFromDB); // các day trong DB chưa có 
+        $id_room = RoomPriceDayOfWeek::pluck('room_price_id')->unique()->toArray(); // các id room tròn bảng 
+        foreach ($id_room as $item) {
+            $result = RoomPriceDayOfWeek::where('room_price_id', $item)->where('day_of_week', $dateCurent)->first();
+            if ($result) {
+                foreach ($differentDates as $date) {
+                    $roomPricePerDay = new RoomPriceDayOfWeek();
+                    $roomPricePerDay->room_price_id   = $item;
+                    $roomPricePerDay->day_of_week            = $date;
+                    $roomPricePerDay->hourly_price    = $result->hourly_price;
+                    $roomPricePerDay->daily_price     = $result->daily_price;
+                    $roomPricePerDay->overnight_price = $result->overnight_price;
+                    $roomPricePerDay->save();
+                }
+            }
+        }
+        return response()->json(['status' => 'success', 'message' => 'Cập nhật giá thành công']);
+
+
+    }
+    public function updatePriceDate(Request $request)
+    {
+
+        $select = $request->method;
+        $response = null;
+        switch ($select) {
+            case 'date':
+                $response = $this->addPriceDate($request->dataDateValue, $request->dateCurent);
+                break;
+            case 'day':
+                $response = $this->addPriceDay($request->checkedValues, $request->dateCurent);
+                break;
+            default:
+                return response()->json(['status' => 'success', 'message' => 'Cập nhật giá thành công']);
+                break;
+        }
+        return $response;
     }
 
 
 
-    public function roomPricePerDay()  {
+    public function roomPricePerDay()
+    {
         $data = RoomPricePerDay::all();
+        return response()->json(['status' => 'success', 'data' => $data]);
+    }
+    public function roomPricePerDayOfWeek()
+    {
+        $data = RoomPriceDayOfWeek::all();
         return response()->json(['status' => 'success', 'data' => $data]);
     }
     public function switchPrice(Request $request)
@@ -78,39 +134,52 @@ class PriceController extends Controller
     public function updateRoomPriceDate($data, $priceType)
     {
         $dates = is_array($data['date']) ? $data['date'] : [$data['date']];
-
         $dates = array_map('trim', explode(', ', $data['date']));
-
         $responseMessages = [];
 
         foreach ($dates as $date) {
-            $roomPrice = RoomPricePerDay::where('room_price_id', $data['room_id'])->where('date', $date)->first();
+            if (preg_match('/^\d+$/', str_replace('-', '', $date))) {
+                $roomPrice = RoomPricePerDay::where('room_price_id', $data['room_id'])->where('date', $date)->first();
 
-            if (!$roomPrice) {
-                $roomPrice = new RoomPricePerDay();
-                $roomPrice->room_price_id = $data['room_id'];
-                $roomPrice->date = $date;
+                if (!$roomPrice) {
+                    $roomPrice = new RoomPricePerDay();
+                    $roomPrice->room_price_id = $data['room_id'];
+                    $roomPrice->date = $date;
+                }
+
+                $this->updatePrice($roomPrice, $priceType, $data['price']);
+                $responseMessages[] = ['status' => 'success', 'message' => 'Cập nhật giá thành công'];
+            } else {
+                $roomPrice = RoomPriceDayOfWeek::where('room_price_id', $data['room_id'])->where('day_of_week', $date)->first();
+
+                if (!$roomPrice) {
+                    $roomPrice                = new RoomPriceDayOfWeek();
+                    $roomPrice->room_price_id = $data['room_id'];
+                    $roomPrice->day_of_week   = $date;
+                }
+
+                $this->updatePrice($roomPrice, $priceType, $data['price']);
+                $responseMessages[] = ['status' => 'success', 'message' => 'Cập nhật giá thành công'];
             }
-
-            switch ($priceType) {
-                case 'hourly':
-                    $roomPrice->hourly_price = $data['price'];
-                    break;
-                case 'overnight':
-                    $roomPrice->overnight_price = $data['price'];
-                    break;
-                case 'full_day':
-                    $roomPrice->daily_price = $data['price'];
-                    break;
-            }
-
-            $roomPrice->save();
-            $responseMessages[] = ['status' => 'success', 'message' => 'Cập nhật giá thành công'];
         }
 
         return response()->json(['status' => 'success', 'messages' => $responseMessages]);
     }
-
+    private function updatePrice($roomPrice, $priceType, $price)
+    {
+        switch ($priceType) {
+            case 'hourly':
+                $roomPrice->hourly_price = $price;
+                break;
+            case 'overnight':
+                $roomPrice->overnight_price = $price;
+                break;
+            case 'full_day':
+                $roomPrice->daily_price = $price;
+                break;
+        }
+        $roomPrice->save();
+    }
     public function priceHourlyDate($data)
     {
         return $this->updateRoomPriceDate($data, 'hourly');

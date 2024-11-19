@@ -542,3 +542,11 @@ ALTER TABLE regular_room_prices
 MODIFY hourly_price DECIMAL(10, 2) DEFAULT NULL,
 MODIFY daily_price DECIMAL(10, 2) DEFAULT NULL,
 MODIFY overnight_price DECIMAL(10, 2) DEFAULT NULL;
+
+18/11/2024
+
+ALTER TABLE room_prices_per_day_of_week
+MODIFY COLUMN day_of_week VARCHAR(255) CHARACTER SET utf8mb4 COLLATE utf8mb4_unicode_ci;
+
+ALTER TABLE room_prices_additional_hour
+ADD COLUMN hour INT;

@@ -81,7 +81,6 @@
 
         @include('admin.booking.partials.booked_rooms', ['bookings' => $bookings ?? []])
 
-
     </div>
     <!-- modal dặt hàng  -->
     <div class="modal fade" id="myModal-booking" tabindex="-1" role="dialog" aria-labelledby="myModalLabel-booking"
@@ -94,7 +93,7 @@
                 </div>
                 <div class="modal-body">
                     <form>
-                        <div class="d-flex ">
+                        <div class="d-flex justify-content-between">
                             <div class="customer-input-container">
                                 <input id="customer-name" list="customer-names" type="text" class="customer-form-control"
                                     placeholder="Email khách hàng">
@@ -115,16 +114,23 @@
                                         </g>
                                     </svg>
                                 </div>
-
+                              
 
 
 
                             </div>
                             <div class="user-info-customer">
                                 <p class="email-user"></p>
-                                <p class="ms-2 me-2"> | </p>
+                                <p class="ms-2 me-2 clear-main">  </p>
                                 <p class="username-user"></p>
                             </div>
+                            <div>
+                                <select name="" id="" >
+                                    <option value="">Chọn mô hình</option>
+                                    <option value="1">Khách sạn</option>
+                                    <option value="2">Khu nghỉ dưỡng</option>
+                                </select>
+                             </div>
                         </div>
                         <datalist id="customer-names">
                             @forelse ($userList as $user)
@@ -437,6 +443,7 @@
     <script type="text/javascript" src="https://cdn.jsdelivr.net/npm/daterangepicker/daterangepicker.min.js"></script>
     <link rel="stylesheet" type="text/css" href="https://cdn.jsdelivr.net/npm/daterangepicker/daterangepicker.css" />
 @endpush
+
 @push('script')
     <script>
         $(document).ready(function() {
@@ -821,7 +828,6 @@
                     handleLateCheckinClick(id, booking_id);
                 });
             }
-
             // Sử dụng hàm
             handleLateCheckinEvent();
 
@@ -986,7 +992,7 @@
                             $('#user_product').empty();
 
                             let rowsHtmlProduct = '';
-                            console.log(response.data.used_product_room);
+                         
 
                             response.data.used_product_room.forEach(function(booked, index) {
                                 rowsHtmlProduct += `
@@ -1296,6 +1302,7 @@
                 if (isValid && matchedOption) {
                     // Update the user info with the data-* attributes
                     $('.username-user').text(matchedOption.val());
+                    $('.clear-main').text("|");
                     $('.email-user').text(matchedOption.data('user'));
 
 
@@ -1307,6 +1314,7 @@
                     // Clear the user info if no match
                     $('.username-user').text('');
                     $('.email-user').text('');
+                    $('.clear-main').text('');
                 }
             });
             // btn booking
@@ -1421,6 +1429,7 @@
                 let address = $('#address').val();
 
                 $('.email-user').text(email);
+                $('.clear-main').text("|");
 
                 $('.username-user').text(name);
                 $('.guest_type').val(0);

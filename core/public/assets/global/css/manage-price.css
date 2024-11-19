@@ -1,0 +1,135 @@
+input[type="number"] {
+    width: 180px;
+}
+
+.radio-container {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+}
+
+.toggle {
+    position: relative;
+    display: inline-block;
+    width: 52px;
+    height: 29px;
+}
+
+.toggle input {
+    display: none;
+}
+
+.slider {
+    position: absolute;
+    cursor: pointer;
+    top: 0;
+    left: 0;
+    right: 0;
+    bottom: 0;
+    background-color: #ccc;
+    transition: .4s;
+    border-radius: 34px;
+}
+
+.mf-table {
+    margin-left: 112px;
+}
+
+.small-column {
+    width: 100px;
+    white-space: nowrap;
+}
+
+
+.text-center {
+    text-align: center;
+}
+
+.slider:before {
+    position: absolute;
+    content: "";
+    height: 20px;
+    width: 20px;
+    left: 4px;
+    bottom: 4px;
+    background-color: white;
+    transition: .4s;
+    border-radius: 50%;
+}
+
+#loading {
+    position: fixed;
+    top: 50%;
+    left: 50%;
+    transform: translate(-50%, -50%);
+    background: rgba(0, 0, 0, 0.5);
+    color: white;
+    padding: 10px 20px;
+    border-radius: 5px;
+    font-size: 16px;
+    display: none;
+    z-index: 99999;
+    /* Ẩn mặc định */
+}
+
+input:checked+.slider {
+    background-color: #4CAF50;
+}
+
+input:checked+.slider:before {
+    transform: translateX(24px);
+}
+
+.label {
+    margin-left: 20px;
+    font-size: 18px;
+    font-weight: bold;
+}
+
+.status-input {
+    margin-bottom: 20px;
+}
+
+.status-input label {
+    font-weight: bold;
+    margin-right: 10px;
+}
+
+.radio-group {
+    display: flex;
+    align-items: center;
+}
+
+.swal2-popup {
+    font-size: 0.8rem;
+    max-width: 500px;
+}
+
+.radio-group input[type="radio"] {
+    margin-right: 5px;
+    accent-color: #007bff;
+}
+
+.table-striped>tbody>tr:nth-of-type(odd)>* {
+    --bs-table-accent-bg: rgb(255 254 254 / 5%) !important;
+}
+
+.radio-group label {
+    margin-right: 20px;
+    font-size: 16px;
+}
+
+@media(max-width:768px) {
+    .small-column {
+        width: 100%;
+    }
+
+    .mf-table {
+        margin-left: 0px;
+    }
+
+    .price-hour {
+        white-space: nowrap;
+        margin-left: -107px
+    }
+}
