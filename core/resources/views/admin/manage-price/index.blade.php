@@ -362,7 +362,7 @@
                         room_id: dataId,
                         method: method,
                         date: dataDate ?? "",
-                        // pricehours : prices
+                        pricehours : prices
                     },
                     success: function(response) {
                         if (response.status === "success") {
@@ -656,7 +656,7 @@
                                 <label class="form-check-label" for="dayMonday">Thứ Hai</label>
                             </div>
                             <div class="form-check me-3">
-                                <input class="form-check-input" type="checkbox" value="Tuesday" id="dayTuesday" ${dateValue === "Tuesday" ? "checked" : ""}> 
+                                <input class="form-check-input" type="checkbox" value="Tuesday" id="dayTuesday" ${dateValue === "Tuesday" ? "checked" : ""}>
                                 <label class="form-check-label" for="dayTuesday">Thứ Ba</label>
                             </div>
                             <div class="form-check me-3">
