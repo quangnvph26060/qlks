@@ -4,6 +4,7 @@ namespace App\Models;
 
 use App\Constants\Status;
 use App\Traits\GlobalStatus;
+use Carbon\Carbon;
 use Illuminate\Database\Eloquent\Model;
 use Illuminate\Database\Eloquent\Casts\Attribute;
 use Illuminate\Database\Eloquent\SoftDeletes;
@@ -153,6 +154,25 @@ class Room extends Model
     }
 
    public function roomPriceNow(){
+        $day = Carbon::now()->toDateString();
+        $thu = Carbon::now()->locale('en')->isoFormat('dddd');
+
+        if($this->roomPriceDayNow($day)){
+            return  $this->roomPriceDayNow($day);
+        }elseif($this->roomPriceDayOfWeekNow($thu)){
+            return  $this->roomPriceDayOfWeekNow($thu);
+        }
+
         return  $this->regularRoom();
    }
+
+    public function roomPriceDayNow($date)
+    {
+        return RoomPricePerDay::where('room_price_id', $this->id)->where('date', $date)->first();
+    }
+
+    public function roomPriceDayOfWeekNow($dayofweek)
+    {
+        return RoomPriceDayOfWeek::where('room_price_id', $this->id)->where('day_of_week', $dayofweek)->first();
+    }
 }
