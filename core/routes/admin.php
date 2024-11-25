@@ -390,6 +390,10 @@ Route::middleware('admin', 'adminPermission')->group(function () {
         Route::get('/roomPricePerDay', [PriceController::class, 'roomPricePerDay'])->name('roomPricePerDay');
         Route::get('/roomPricePerDayOfWeek', [PriceController::class, 'roomPricePerDayOfWeek'])->name('roomPricePerDayOfWeek');
         Route::post('/updatePriceDate', [PriceController::class, 'updatePriceDate'])->name('updatePriceDate');
+        Route::get('/priceHours', [PriceController::class, 'priceHours'])->name('priceHours');
+        Route::get('/priceweek', [PriceController::class, 'priceweek'])->name('priceweek');
+        Route::get('/roomPricePerDayNew', [PriceController::class, 'roomPricePerDayNew'])->name('roomPricePerDayNew');
+        Route::get('/rooms', [PriceController::class, 'rooms'])->name('rooms');
         // Route::get('add', [TransactionController::class, 'add'])->name('add');
         // Route::post('store', [TransactionController::class, 'store'])->name('store');
         // Route::get('detail/{id}', [TransactionController::class, 'edit'])->name('edit');
