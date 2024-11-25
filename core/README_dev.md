@@ -550,3 +550,13 @@ MODIFY COLUMN day_of_week VARCHAR(255) CHARACTER SET utf8mb4 COLLATE utf8mb4_uni
 
 ALTER TABLE room_prices_additional_hour
 ADD COLUMN hour INT;
+
+#giá mặc định của phòng theo giờ 
+CREATE TABLE room_prices_weekday_hour (
+    id INT AUTO_INCREMENT PRIMARY KEY,
+    room_price_id INT NULL,
+    hour INT NULL,
+    price DECIMAL(10,2) NULL,
+    created_at DATETIME NULL,
+    updated_at DATETIME NULL
+);

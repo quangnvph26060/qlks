@@ -22,7 +22,7 @@
                         <th>Giá</th>
                     </tr>
                 </thead>
-                <tbody>
+                <tbody id="room-table-body">
 
                     @foreach ($rooms as $item)
                         @php
@@ -35,7 +35,7 @@
 
                             <td>
                                 <div class="d-flex price-hour price-input" id="priceContainerHour">
-                                    <p class="d-flex text-end">Từ giờ đầu tiên: &nbsp;<br>Mỗi giờ:</p>
+                                    <p class="d-flex text-end" style="margin-right: 10px">Từ giờ đầu tiên :<br>Mỗi giờ :</p>
                                     <input type="number" step="1000" class="form-control" data-id="{{ $item->id }}"
                                         id="pricePerHour" value="{{ $regularRoom ? $regularRoom->hourly_price : '' }}"
                                         placeholder="Nhập giá">
@@ -136,7 +136,7 @@
             <div class="modal-content">
                 <div class="modal-header">
                     <h5 class="modal-title" id="myModalLabel">Thông tin ngày đã chọn</h5>
-                    <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+                    <button type="button" class="close closeModal" data-dismiss="modal" aria-label="Close">
                         <span aria-hidden="true">&times;</span>
                     </button>
                 </div>
@@ -146,8 +146,8 @@
 
                 </div>
                 <div class="modal-footer">
-                    <button type="button" class="btn btn-secondary" data-dismiss="modal">Đóng</button>
-                    <button type="button" class="btn btn-primary btnUpdateDate" data-dismiss="modal">Lưu</button>
+                    <button type="button" class="btn btn-secondary closeModal" data-dismiss="modal" id="closeModal">Đóng</button>
+                    <button type="button" class="btn btn-primary btnUpdateDate" data-dismiss="modal" id="saveModal">Lưu</button>
                 </div>
             </div>
         </div>
@@ -307,13 +307,58 @@
             $('#priceModal').find('#firstHour').val(price);
 
             $('#priceModal').modal('show');
+            if(dataDate == null){
+                var url = '{{ route('admin.price.priceweek') }}';
+            }else{
+                var url = '{{ route('admin.price.priceHours') }}';
+            }
+
+                $.ajax({
+                    url: url,
+                    method: 'GET',
+                    headers: {
+                        'X-CSRF-TOKEN': $('meta[name="csrf-token"]').attr('content')
+                    },
+                    data: {
+                        room_id: dataId,
+                        date: dataDate || "",
+                    },
+                    success: function(response) {
+                        if (response.data) {
+                            console.log(response.data);
+
+                            response.data.forEach((item, index) => {
+
+                                var newHtml =
+                                    `<div class="d-flex justify-content-start align-items-center gap-4 mb-3 added-content">
+                                        <label for="secondHour" class="form-label mt-2">Từ giờ thứ ${item.hour}:</label>
+                                        <input type="number" class="form-control" value="${item.price}" id="secondHour-${item.hour}" placeholder="Nhập giá giờ thứ ${item.hour}" style="margin-left: 20px">
+                                        <svg xmlns="http://www.w3.org/2000/svg" class="svg-close" width="20" height="20" viewBox="0 0 48 48">
+                                            <g fill="none" stroke="#000" stroke-linecap="round" stroke-linejoin="round" stroke-width="4">
+                                                <path d="M8 8L40 40"/>
+                                                <path d="M8 40L40 8"/>
+                                            </g>
+                                        </svg>
+                                    </div>`;
+
+
+                                $('#priceModal .modal-body').append(newHtml);
+                            });
+
+                        }
+
+                    },
+                    error: function(xhr, status, error) {
+                        console.error('Đã xảy ra lỗi trong quá trình gửi dữ liệu: ' + error);
+                    }
+                });
         });
         $('#priceModal').on('hidden.bs.modal', function(e) {
             $('#priceModal').find('#firstHour').attr('data-id', '');
             $('#priceModal').find('#firstHour').attr('data-date', '');
             $('#priceModal .modal-body').html(`<div class=" d-flex justify-content-start align-items-center gap-4 mb-3">
                         <label for="firstHour" class="form-label mt-2">Từ giờ đầu tiên:</label>
-                        <input type="number" class="form-control" id="firstHour" placeholder="Nhập giá giờ đầu tiên">
+                        <input type="number" class="form-control" id="firstHour" placeholder="Nhập giá giờ đầu tiên" >
                         <svg style="cursor: pointer;" xmlns="http://www.w3.org/2000/svg" width="20" height="20" id="add_hours"
                             viewBox="0 0 24 24">
                             <path fill="none" stroke="currentColor" stroke-linecap="square" stroke-linejoin="round"
@@ -321,7 +366,7 @@
                         </svg>
                     </div>`);
         });
-        // giá giờ tiếp theo
+        // giá giờ tiếp theoh
         $(document).ready(function() {
             $('#priceModal').on('click', '#add_hours', function() {
                 var newHtml =
@@ -330,7 +375,7 @@
                         .length + 2) + ':</label>' +
                     '<input type="number" class="form-control" id="secondHour-' + ($('.added-content')
                         .length + 2) + '" placeholder="Nhập giá giờ thứ ' + ($('.added-content')
-                        .length + 2) + '" >' +
+                        .length + 2) + '"  style="margin-left: 20px">' +
                     '<svg xmlns="http://www.w3.org/2000/svg" class="svg-close"  width="20" height="20" viewBox="0 0 48 48">' +
                     '<g fill="none" stroke="#000" stroke-linecap="round" stroke-linejoin="round" stroke-width="4"><path d="M8 8L40 40"/><path d="M8 40L40 8"/></g>' +
                     '</svg>' +
@@ -352,6 +397,7 @@
 
         $(document).ready(function() {
             function sendAjaxRequest(price, dataId, dataDate, method, prices) {
+                console.log(dataDate);
                 var url = '{{ route('admin.price.switchPrice') }}';
 
                 $.ajax({
@@ -427,12 +473,31 @@
                 console.log('id = ' + dataDate);
                 console.log(prices);
 
-                let method = dataDate !== undefined && dataDate !== "" ? 'method_hourlydate' :
-                    'method_hourly';
+                let method = dataDate !== undefined && dataDate !== "" ? 'method_hourlydate' : 'method_hourly';
                 if (price !== "") {
                     sendAjaxRequest(price, dataId, dataDate, method, prices);
+                    window.location.href = window.location.href;
+                    sendAjaxRequestByRoom();
                 }
             });
+
+            function sendAjaxRequestByRoom() {
+                console.log("Đang gửi yêu cầu lấy danh sách phòng...");
+                var url = '{{ route('admin.price.rooms') }}';
+
+                $.ajax({
+                    url: url,
+                    method: 'GET',
+                    success: function(response) {
+                        console.log(response.data);
+                        // Xử lý dữ liệu trả về từ server nếu cần
+                    },
+                    error: function(xhr, status, error) {
+                        console.error('Đã xảy ra lỗi trong quá trình gửi dữ liệu: ' + error);
+                    }
+                });
+            }
+
         });
 
 
@@ -446,14 +511,15 @@
                 const table = document.getElementById("data-table");
                 const tableRows = table.getElementsByTagName('tr');
                 const selectedDate = $('#selectedDates').val();
+
                 const selectedDates = selectedDate.split(',').map(date => date.trim());
 
                 //  console.log(selectedDates);
                 //  const selectedDate = '2024-11-15';
 
                 const selectedDays = Array.from(document.querySelectorAll('input[type=checkbox]:checked'))
-                    .map(day => day.value);
-
+                    .map(day => day.value).filter(value => value !== "on");;
+                    console.log(selectedDays);
 
                 let columnsAdded = false;
                 let dateColumnAdded = false;
@@ -496,7 +562,7 @@
 
                                     const p = document.createElement('p');
                                     p.className = "d-flex text-end";
-                                    p.innerHTML = "Từ giờ đầu tiên: &nbsp;<br>Mỗi giờ:";
+                                    p.innerHTML = "Từ giờ đầu tiên :<br>Mỗi giờ :";
 
                                     const input = document.createElement('input');
 
@@ -543,12 +609,12 @@
 
                 selectedDays.forEach(day => {
                     const headerRow = tableRows[0];
-                 
+
                     let dateColumnExists = false;
                     for (let i = 0; i < headerRow.children.length; i++) {
-                        
+
                         if (headerRow.children[i].dataset.date === day) {
-                            
+
                             dateColumnExists = true;
                             break;
                         }
@@ -604,7 +670,7 @@
 
                                     const p = document.createElement('p');
                                     p.className = "d-flex text-end price-input";
-                                    p.innerHTML = "Từ giờ đầu tiên: &nbsp;<br>Mỗi giờ:";
+                                    p.innerHTML = "Từ giờ đầu tiên :<br>Mỗi giờ : ";
 
                                     // var dataId = document.querySelector('#pricePerHour').dataset.id;
                                     // console.log(dataId);
@@ -854,7 +920,7 @@
 
                                 const p = document.createElement('p');
                                 p.className = "d-flex text-end";
-                                p.innerHTML = "Từ giờ đầu tiên: &nbsp;<br>Mỗi giờ:";
+                                p.innerHTML = "Từ giờ đầu tiên :<br>Mỗi giờ :";
 
                                 const input = document.createElement('input');
 
@@ -947,7 +1013,7 @@
                     method: 'GET',
                     success: function(response) {
                         if (response.status === "success") {
-                            // console.log(response.data);
+                             console.log(response.data);
                             let defaultDates = [];
                             if (typeof addDayColumn === 'function') {
                                 $('#loading').hide();
@@ -1060,6 +1126,20 @@
 
                 $('#priceModal').modal('hide');
             });
+
+            $(document).ready(function() {
+                // Lắng nghe sự kiện nhấn nút "Đóng"
+                $('.closeModal').on('click', function () {
+                    $('#myModalDate').modal('hide');
+                });
+
+                // Lắng nghe sự kiện nhấn nút "Lưu"
+                $('#saveModal').on('click', function () {
+                    // Đóng modal
+                    $('#myModalDate').modal('hide');
+                });
+            });
+
         });
     </script>
     <script>
@@ -1071,5 +1151,11 @@
             mode: "multiple",
             dateFormat: "Y-m-d",
         });
+
+
+
+
+
     </script>
+
 @endpush

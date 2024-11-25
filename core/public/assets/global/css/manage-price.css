@@ -32,7 +32,7 @@ input[type="number"] {
 }
 
 .mf-table {
-    margin-left: 112px;
+    margin-left: 118px;
 }
 
 .small-column {
@@ -118,6 +118,26 @@ input:checked+.slider:before {
     margin-right: 20px;
     font-size: 16px;
 }
+.modal-body input[type="number"]{
+    width: 200px !important;
+}
+
+#priceContainerHour p{
+   margin-right: 10px;
+}
+
+/* Đối với trình duyệt Chrome, Edge, Safari */
+input[type="number"]::-webkit-inner-spin-button,
+input[type="number"]::-webkit-outer-spin-button {
+    -webkit-appearance: none;
+    margin: 0;
+}
+
+/* Đối với trình duyệt Firefox */
+input[type="number"] {
+    -moz-appearance: textfield;
+}
+
 
 @media(max-width:768px) {
     .small-column {

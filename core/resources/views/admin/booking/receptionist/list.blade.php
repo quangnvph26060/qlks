@@ -114,7 +114,7 @@
                                         </g>
                                     </svg>
                                 </div>
-                              
+
 
 
 
@@ -125,7 +125,7 @@
                                 <p class="username-user"></p>
                             </div>
                             <div>
-                                <select name="" id="" >
+                                <select name="" id="model" >
                                     <option value="">Chọn mô hình</option>
                                     <option value="1">Khách sạn</option>
                                     <option value="2">Khu nghỉ dưỡng</option>
@@ -180,15 +180,15 @@
                                         </td>
                                         <td><input type="text" class="form-control" id="roomNumber" disabled></td>
                                         <td>
-                                            <select id="bookingType" class="form-select">
+                                            <select id="bookingType" class="form-select" style="width: 110px;">
                                                 <option value="gio">Giờ</option>
                                                 <option value="ngay">Ngày</option>
                                                 <option value="dem">Đêm</option>
                                             </select>
                                         </td>
-                                        <td><input type="datetime-local" class="form-control" name="checkInTime"
+                                        <td><input type="datetime-local" class="form-control" name="checkInTime" style="width: 180px;"
                                                 id="checkInTime"></td>
-                                        <td><input type="datetime-local" class="form-control" name="checkOutTime"
+                                        <td><input type="datetime-local" class="form-control" name="checkOutTime" style="width: 180px;"
                                                 id="checkOutTime"></td>
                                         <td>
                                             <p class="d-flex justify-content-between align-items-center">
@@ -448,6 +448,24 @@
     <script>
         $(document).ready(function() {
 
+            $('#model').on('change', function(event) {
+                var model = $(this).val();
+
+                $('#bookingType').html('');
+                if(model == 1){
+                    $('#bookingType').append(`
+                        <option value="gio">Giờ</option>
+                        <option value="ngay">Ngày</option>
+                        <option value="dem">Đêm</option>
+                    `);
+                }else{
+                    $('#bookingType').append(`
+                        <option value="ngay">Ngày</option>
+                        <option value="dem">Đêm</option>
+                    `);
+                }
+            })
+
             $('input[name="dates"]').daterangepicker();
             // choose option  rooms
             var dirtyCount = $('.content-booking.mt-2.room-booking-status-dirty').length;
@@ -494,7 +512,7 @@
                 $('#serviceModal').modal('show');
             });
 
-            // add_product_room 
+            // add_product_room
             $('.add_product_room').on('click', function(event) {
                 event.stopPropagation();
                 $('#productModal').modal('show');
@@ -992,7 +1010,7 @@
                             $('#user_product').empty();
 
                             let rowsHtmlProduct = '';
-                         
+
 
                             response.data.used_product_room.forEach(function(booked, index) {
                                 rowsHtmlProduct += `
@@ -1444,7 +1462,7 @@
             });
             // cccd
             $('.camera-svg-icon-add').on('click', function() {
-              
+
                 $('#fileUpload').click();
             });
 
@@ -1452,13 +1470,13 @@
             $('#fileUpload').on('change', function(event) {
                 const files = event.target.files;
                 const file = files[0]; // Lấy file đầu tiên trong danh sách
-              
+
                 if (file) {
-                 
+
                     const formData = new FormData();
                     formData.append('image', file);
                     formData.append('_token', '{{ csrf_token() }}');
-    
+
                     var url = '{{ route('admin.booking.writeCccd') }}';
                     $('#loading').show();
                     $.ajax({
@@ -1469,14 +1487,14 @@
                         contentType: false, // Để tránh thiết lập header Content-Type
                         success: function(response) {
                             $('#loading').hide();
-                         
+
                             $('.username-user').text(response.data[0]['name']);
-                           
+
                             $('.customer-svg-icon-add').click();
 
                             $('#name').val(response.data[0]['name']);
                            $('#address').val(response.data[0]['address']);
-                          
+
                         },
                         error: function(xhr, status, error) {
                             $('#loading').hide();

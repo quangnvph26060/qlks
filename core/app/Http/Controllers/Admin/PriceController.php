@@ -4,11 +4,15 @@ namespace App\Http\Controllers\Admin;
 
 use App\Http\Controllers\Controller;
 use App\Models\RegularRoomPrice;
+use App\Models\Room;
 use App\Models\RoomPriceDayOfWeek;
 use App\Models\RoomPricePerDay;
 use App\Models\RoomPricesAdditionalHour;
+use App\Models\RoomPricesWeekdayHour;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Log;
+
+use function Illuminate\Log\log;
 
 class PriceController extends Controller
 {
@@ -72,7 +76,6 @@ class PriceController extends Controller
     }
     public function updatePriceDate(Request $request)
     {
-
         $select = $request->method;
         $response = null;
         switch ($select) {
@@ -96,6 +99,16 @@ class PriceController extends Controller
         $data = RoomPricePerDay::all();
         return response()->json(['status' => 'success', 'data' => $data]);
     }
+
+    public function roomPricePerDayNew()
+    {
+        $data = RoomPricePerDay::select('date',  'room_price_id') // Chọn tất cả các cột bạn cần
+            ->groupBy('date') // Nhóm theo 'date'
+            ->get();
+
+        return response()->json(['status' => 'success', 'data' => $data]);
+    }
+
     public function roomPricePerDayOfWeek()
     {
         $data = RoomPriceDayOfWeek::all();
@@ -103,6 +116,7 @@ class PriceController extends Controller
     }
     public function switchPrice(Request $request)
     {
+
         $chose = $request['method'];
         $data = [
             'price'   => $request['price'],
@@ -110,8 +124,6 @@ class PriceController extends Controller
             'date'    => $request['date'] ?? "",
             'pricehours' => $request['pricehours']
         ];
-        Log::info($chose);
-        Log::info($data);
         $response = null;
         switch ($chose) {
             case 'method_hourly':
@@ -139,9 +151,10 @@ class PriceController extends Controller
     }
     public function updateRoomPriceDate($data, $priceType)
     {
+        $responseMessages = [];
         $dates = is_array($data['date']) ? $data['date'] : [$data['date']];
         $dates = array_map('trim', explode(', ', $data['date']));
-        $responseMessages = [];
+
 
         $this->priceRoomHour($data);
 
@@ -205,26 +218,31 @@ class PriceController extends Controller
 
     public function updateRoomPrice($data, $priceType)
     {
-        $roomPrice = RegularRoomPrice::where('room_price_id', $data['room_id'])->first();
+            $roomPrice = RegularRoomPrice::where('room_price_id', $data['room_id'])->first();
 
-        if (!$roomPrice) {
-            $roomPrice = new RegularRoomPrice();
-            $roomPrice->room_price_id = $data['room_id'];
-        }
+            if (!$roomPrice) {
+                $roomPrice = new RegularRoomPrice();
+                $roomPrice->room_price_id = $data['room_id'];
+            }
 
-        switch ($priceType) {
-            case 'hourly':
-                $roomPrice->hourly_price = $data['price'];
-                break;
-            case 'overnight':
-                $roomPrice->overnight_price = $data['price'];
-                break;
-            case 'full_day':
-                $roomPrice->daily_price = $data['price'];
-                break;
-        }
+            switch ($priceType) {
+                case 'hourly':
+                    $roomPrice->hourly_price = $data['price'];
+                    break;
+                case 'overnight':
+                    $roomPrice->overnight_price = $data['price'];
+                    break;
+                case 'full_day':
+                    $roomPrice->daily_price = $data['price'];
+                    break;
+            }
 
-        $roomPrice->save();
+            if($data['date'] == null){
+                $this->priceRoomWeekday($data);
+            }
+            $roomPrice->save();
+
+
         return response()->json(['status' => 'success', 'message' => 'Cập nhật giá thành công']);
     }
 
@@ -275,5 +293,63 @@ class PriceController extends Controller
             ->where('room_price_id', $data['room_id'])
             ->delete();
         }
+    }
+
+    public function priceHours(Request $request)
+    {
+        // Lấy danh sách giá phòng theo giờ
+        $list = RoomPricesAdditionalHour::where('room_price_id', $request->room_id)
+            ->where('date', $request->date)
+            ->get();
+
+        // Log::info($list);
+        // Trả về kết quả dưới dạng JSON
+        return response()->json(['data' => $list], 200);
+
+    }
+
+
+    public function priceRoomWeekday($data)
+    {
+        if (isset($data['pricehours'])) {
+            $hours = array_column($data['pricehours'], 0);
+            foreach ($data['pricehours'] as $key => $item) {
+                $check = RoomPricesWeekdayHour::where('room_price_id', $data['room_id'])
+                    ->where('hour', $item[0])
+                    ->first();
+                if ($check) {
+                    $check->update([
+                        'price' => $item[1],
+                    ]);
+                } else {
+                    RoomPricesWeekdayHour::create([
+                        'hour' => $item[0],
+                        'price' => $item[1],
+                        'room_price_id' => $data['room_id']
+                    ]);
+                }
+            }
+            RoomPricesWeekdayHour::where('room_price_id', $data['room_id'])
+                ->whereNotIn('hour', $hours)
+                ->delete();
+        }else{
+            RoomPricesWeekdayHour::where('room_price_id', $data['room_id'])
+            ->delete();
+        }
+    }
+    public function priceweek(Request $request)
+    {
+        // Lấy danh sách giá phòng theo giờ
+        $list = RoomPricesWeekdayHour::where('room_price_id', $request->room_id)->get();
+        return response()->json(['data' => $list], 200);
+
+    }
+
+
+    public function rooms()
+    {
+        $rooms = Room::active()->get();
+        Log::info($rooms);
+        return response()->json(['status' => 'success', 'data' => $rooms]);
     }
 }
