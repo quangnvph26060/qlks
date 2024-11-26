@@ -9,6 +9,9 @@
             $class = 'status-occupied'; // đang hoạt động; sắp tới
         }
         $price = $rooms->roomPricesActive[0]['price'];
+        $price_hours = showAmount($rooms->roomPriceNow()->hourly_price);
+        $price_day = showAmount($rooms->roomPriceNow()->daily_price);
+        $price_night = showAmount($rooms->roomPriceNow()->overnight_price);
     @endphp
 
     <div class="col-md-2 main-room-card  card-{{ $class }}">
@@ -18,8 +21,8 @@
                 classSvg="{{ $classSvg }}" cleanText="{{ $cleanText }}"
                 roomNumber="{{ $rooms->room_number }}" />
 
-            <div class="content-booking mt-2 room-booking-{{ $class }}  " data-hours="{{ $price }}"
-                data-day="{{ $price }}" data-night="{{ $price }}"
+            <div class="content-booking mt-2 room-booking-{{ $class }}  " data-hours="{{ $price_hours }}"
+                data-day="{{ $price_day }}" data-night="{{ $price_night }}"
                 data-name="{{ $rooms->roomType->name }}" data-roomNumber="{{ $rooms->room_number }}"
                 data-room-type="{{ $rooms->room_type_id }}" data-room="{{ $rooms->id }}">
                 <h2>{{ $rooms->room_number }} </h2>
