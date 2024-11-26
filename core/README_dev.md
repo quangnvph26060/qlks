@@ -560,3 +560,7 @@ CREATE TABLE room_prices_weekday_hour (
     created_at DATETIME NULL,
     updated_at DATETIME NULL
 );
+
+//26/11
+ALTER TABLE room_prices_additional_hour
+ADD COLUMN date VARCHAR(255);

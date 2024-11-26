@@ -146,8 +146,10 @@
 
                 </div>
                 <div class="modal-footer">
-                    <button type="button" class="btn btn-secondary closeModal" data-dismiss="modal" id="closeModal">Đóng</button>
-                    <button type="button" class="btn btn-primary btnUpdateDate" data-dismiss="modal" id="saveModal">Lưu</button>
+                    <button type="button" class="btn btn-danger remoteDatePrice" data-dismiss="modal"
+                        id="closeModal">Xóa</button>
+                    <button type="button" class="btn btn-primary btnUpdateDate" data-dismiss="modal"
+                        id="saveModal">Lưu</button>
                 </div>
             </div>
         </div>
@@ -307,30 +309,30 @@
             $('#priceModal').find('#firstHour').val(price);
 
             $('#priceModal').modal('show');
-            if(dataDate == null){
+            if (dataDate == null) {
                 var url = '{{ route('admin.price.priceweek') }}';
-            }else{
+            } else {
                 var url = '{{ route('admin.price.priceHours') }}';
             }
 
-                $.ajax({
-                    url: url,
-                    method: 'GET',
-                    headers: {
-                        'X-CSRF-TOKEN': $('meta[name="csrf-token"]').attr('content')
-                    },
-                    data: {
-                        room_id: dataId,
-                        date: dataDate || "",
-                    },
-                    success: function(response) {
-                        if (response.data) {
-                            console.log(response.data);
+            $.ajax({
+                url: url,
+                method: 'GET',
+                headers: {
+                    'X-CSRF-TOKEN': $('meta[name="csrf-token"]').attr('content')
+                },
+                data: {
+                    room_id: dataId,
+                    date: dataDate || "",
+                },
+                success: function(response) {
+                    if (response.data) {
+                        // console.log(response.data);
 
-                            response.data.forEach((item, index) => {
+                        response.data.forEach((item, index) => {
 
-                                var newHtml =
-                                    `<div class="d-flex justify-content-start align-items-center gap-4 mb-3 added-content">
+                            var newHtml =
+                                `<div class="d-flex justify-content-start align-items-center gap-4 mb-3 added-content">
                                         <label for="secondHour" class="form-label mt-2">Từ giờ thứ ${item.hour}:</label>
                                         <input type="number" class="form-control" value="${item.price}" id="secondHour-${item.hour}" placeholder="Nhập giá giờ thứ ${item.hour}" style="margin-left: 20px">
                                         <svg xmlns="http://www.w3.org/2000/svg" class="svg-close" width="20" height="20" viewBox="0 0 48 48">
@@ -342,16 +344,16 @@
                                     </div>`;
 
 
-                                $('#priceModal .modal-body').append(newHtml);
-                            });
+                            $('#priceModal .modal-body').append(newHtml);
+                        });
 
-                        }
-
-                    },
-                    error: function(xhr, status, error) {
-                        console.error('Đã xảy ra lỗi trong quá trình gửi dữ liệu: ' + error);
                     }
-                });
+
+                },
+                error: function(xhr, status, error) {
+                    console.error('Đã xảy ra lỗi trong quá trình gửi dữ liệu: ' + error);
+                }
+            });
         });
         $('#priceModal').on('hidden.bs.modal', function(e) {
             $('#priceModal').find('#firstHour').attr('data-id', '');
@@ -395,110 +397,7 @@
             });
         });
 
-        $(document).ready(function() {
-            function sendAjaxRequest(price, dataId, dataDate, method, prices) {
-                console.log(dataDate);
-                var url = '{{ route('admin.price.switchPrice') }}';
 
-                $.ajax({
-                    url: url,
-                    method: 'POST',
-                    data: {
-                        price: price,
-                        room_id: dataId,
-                        method: method,
-                        date: dataDate ?? "",
-                        pricehours : prices
-                    },
-                    success: function(response) {
-                        if (response.status === "success") {
-                            Swal.fire({
-                                position: "top-end",
-                                icon: "success",
-                                title: response.message,
-                                showConfirmButton: false,
-                                timer: 1500
-                            });
-
-                        }
-                        // Xử lý dữ liệu trả về từ server nếu cần
-                    },
-                    error: function(xhr, status, error) {
-                        console.error('Đã xảy ra lỗi trong quá trình gửi dữ liệu: ' + error);
-                    }
-                });
-            }
-
-            // Giá cả ngày
-            $(document).on('blur', '.fullDayPrice', function() {
-                var price = $(this).val();
-                var dataId = $(this).data('id');
-                var dataDate = $(this).data('date');
-
-                let method = dataDate !== undefined && dataDate !== "" ? 'method_fulldaydate' :
-                    'method_fullday';
-                if (price !== "") {
-                    sendAjaxRequest(price, dataId, dataDate, method);
-                }
-            });
-
-            // Giá qua đêm
-            $(document).on('blur', '.overnightPrice', function() {
-                var price = $(this).val();
-                var dataId = $(this).data('id');
-                var dataDate = $(this).data('date');
-
-                let method = dataDate !== undefined && dataDate !== "" ? 'method_overnightPricedate' :
-                    'method_overnightPrice';
-                if (price !== "") {
-                    sendAjaxRequest(price, dataId, dataDate, method);
-                }
-
-            });
-
-            // Giá giờ
-            $('#saveButton').on('click', function() {
-                var price = $('#firstHour').val();
-                var dataId = $('#firstHour').data('id');
-                var dataDate = $('#firstHour').data('date');
-                var prices = [];
-                $('input[id^="secondHour-"]').each(function() {
-                    var hour = $(this).attr('id').split('-')[1];
-                    var pricehour = $(this).val();
-
-                    if (pricehour !== "") {
-                        prices.push([hour, pricehour]);
-                    }
-                });
-                console.log('id = ' + dataDate);
-                console.log(prices);
-
-                let method = dataDate !== undefined && dataDate !== "" ? 'method_hourlydate' : 'method_hourly';
-                if (price !== "") {
-                    sendAjaxRequest(price, dataId, dataDate, method, prices);
-                    window.location.href = window.location.href;
-                    sendAjaxRequestByRoom();
-                }
-            });
-
-            function sendAjaxRequestByRoom() {
-                console.log("Đang gửi yêu cầu lấy danh sách phòng...");
-                var url = '{{ route('admin.price.rooms') }}';
-
-                $.ajax({
-                    url: url,
-                    method: 'GET',
-                    success: function(response) {
-                        console.log(response.data);
-                        // Xử lý dữ liệu trả về từ server nếu cần
-                    },
-                    error: function(xhr, status, error) {
-                        console.error('Đã xảy ra lỗi trong quá trình gửi dữ liệu: ' + error);
-                    }
-                });
-            }
-
-        });
 
 
 
@@ -519,7 +418,6 @@
 
                 const selectedDays = Array.from(document.querySelectorAll('input[type=checkbox]:checked'))
                     .map(day => day.value).filter(value => value !== "on");;
-                    console.log(selectedDays);
 
                 let columnsAdded = false;
                 let dateColumnAdded = false;
@@ -801,54 +699,7 @@
 
             });
 
-            $(document).on('click', '.btnUpdateDate', function() {
-                var dataDayValue = $('.btnUpdateDate').data('date');
-                var dateValue = $('#modalDateValue').val();
-                var dataDateValue = $('#modalDateValue').data('date');
-                var dateCurent = dataDateValue ?? dataDayValue;
-                let method = "";
-                if (!/\d/.test(dateValue)) {
-                    method = "day";
-                } else {
-                    method = "date";
-                }
-                console.log(dateCurent);
 
-                var checkedValues = [];
-                $('#dateSelectionForm input[type="checkbox"]:checked').each(function() {
-                    var value = $(this).val();
-                    if (!checkedValues.includes(value)) {
-                        checkedValues.push(value);
-                    }
-                });
-                var url = '{{ route('admin.price.updatePriceDate') }}';
-                $.ajax({
-                    url: url,
-                    method: 'POST',
-                    data: {
-                        method: method,
-                        dateCurent: dateCurent,
-                        dataDateValue: dateValue,
-                        checkedValues: checkedValues
-                    },
-                    success: function(response) {
-                        if (response.status === "success") {
-                            Swal.fire({
-                                position: "top-end",
-                                icon: "success",
-                                title: response.message,
-                                showConfirmButton: false,
-                                timer: 1500
-                            });
-                        }
-                        // Xử lý dữ liệu trả về từ server nếu cần
-                    },
-                    error: function(xhr, status, error) {
-                        console.error('Đã xảy ra lỗi trong quá trình gửi dữ liệu: ' + error);
-                    }
-                });
-
-            });
 
             function addDayColumn(selectedDate) {
                 const table = document.getElementById("data-table");
@@ -1005,78 +856,242 @@
                 }
             }
             $(document).ready(function() {
-
-                var url = '{{ route('admin.price.roomPricePerDay') }}';
-                $('#loading').show();
-                $.ajax({
-                    url: url,
-                    method: 'GET',
-                    success: function(response) {
-                        if (response.status === "success") {
-                             console.log(response.data);
-                            let defaultDates = [];
-                            if (typeof addDayColumn === 'function') {
-                                $('#loading').hide();
-                                // console.log(response.data);
-                                response.data.forEach(function(item) {
-                                    addDayColumn(item);
-                                    const input = document.getElementById(
-                                        'selectedDates');
-                                    defaultDates.push(item.date);
-                                    input.value = defaultDates.join(', ');
-                                    flatpickr("#selectedDates", {
-                                        mode: "multiple",
-                                        dateFormat: "Y-m-d",
-                                    });
-                                });
-                            }
-                            // else {
-                            //     console.error("Hàm addDayColumn chưa được định nghĩa!");
-                            // }
-                        }
-                    },
-                    error: function(xhr, status, error) {
-                        $('#loading').hide();
-                        console.error('Đã xảy ra lỗi trong quá trình gửi dữ liệu: ' + error);
-                    }
-                });
-                var url = '{{ route('admin.price.roomPricePerDayOfWeek') }}';
-                $('#loading').show();
-                $.ajax({
-                    url: url,
-                    method: 'GET',
-                    success: function(response) {
-                        if (response.status === "success") {
-                            // console.log(response.data);
-                            let defaultDates = [];
+                // Hàm chung để thực hiện ajax request
+                function fetchData(url, successCallback) {
+                    $('#loading').show();
+                    $.ajax({
+                        url: url,
+                        method: 'GET',
+                        success: function(response) {
                             $('#loading').hide();
-                            if (typeof addDayColumn === 'function') {
-
-                                response.data.forEach(function(item) {
-
-                                    addDayColumn(item);
-                                    // const input = document.getElementById(
-                                    //     'selectedDates');
-                                    // defaultDates.push(item.date);
-                                    // input.value = defaultDates.join(', ');
-                                    // flatpickr("#selectedDates", {
-                                    //     mode: "multiple",
-                                    //     dateFormat: "Y-m-d",
-                                    // });
-                                });
+                            if (response.status === "success") {
+                                successCallback(response.data);
+                            } else {
+                                console.error("Dữ liệu không hợp lệ");
                             }
-                            //  else {
-                            //     console.error("Hàm addDayColumn chưa được định nghĩa!");
-                            // }
+                        },
+                        error: function(xhr, status, error) {
+                            $('#loading').hide();
+                            console.error('Đã xảy ra lỗi trong quá trình gửi dữ liệu: ' +
+                                error);
                         }
-                    },
-                    error: function(xhr, status, error) {
-                        $('#loading').hide();
-                        console.error('Đã xảy ra lỗi trong quá trình gửi dữ liệu: ' + error);
+                    });
+                }
+
+                // Xử lý dữ liệu ngày theo phòng
+                function handleRoomPricePerDay(data) {
+                    let defaultDates = [];
+                    if (typeof addDayColumn === 'function') {
+                        data.forEach(function(item) {
+                            // addDayColumn(item);
+                            if (!defaultDates.includes(item.date)) {
+                                addDayColumn(item);
+                                defaultDates.push(item.date);
+                            }
+                        });
+                        const input = document.getElementById('selectedDates');
+                        input.value = defaultDates.join(', ');
+                        flatpickr("#selectedDates", {
+                            mode: "multiple",
+                            dateFormat: "Y-m-d",
+                        });
+                    } else {
+                        console.error("Hàm addDayColumn chưa được định nghĩa!");
+                    }
+                }
+
+                // Xử lý dữ liệu giá theo ngày trong tuần
+                function handleRoomPricePerDayOfWeek(data) {
+                    if (typeof addDayColumn === 'function') {
+                        data.forEach(function(item) {
+                            addDayColumn(item);
+                        });
+                    } else {
+                        console.error("Hàm addDayColumn chưa được định nghĩa!");
+                    }
+                }
+
+                // Gọi API lấy dữ liệu cho giá phòng theo ngày
+                var url1 = '{{ route('admin.price.roomPricePerDay') }}';
+                fetchData(url1, handleRoomPricePerDay);
+
+                // Gọi API lấy dữ liệu cho giá phòng theo ngày trong tuần
+                var url2 = '{{ route('admin.price.roomPricePerDayOfWeek') }}';
+                fetchData(url2, handleRoomPricePerDayOfWeek);
+
+                function sendAjaxRequest(price, dataId, dataDate, method, prices) {
+                    // console.log(dataDate);
+                    var url = '{{ route('admin.price.switchPrice') }}';
+
+                    $.ajax({
+                        url: url,
+                        method: 'POST',
+                        data: {
+                            price: price,
+                            room_id: dataId,
+                            method: method,
+                            date: dataDate ?? "",
+                            pricehours: prices
+                        },
+                        success: function(response) {
+                            if (response.status === "success") {
+                                fetchData(url2, handleRoomPricePerDayOfWeek);
+                                fetchData(url1, handleRoomPricePerDay);
+
+                                Swal.fire({
+                                    position: "top-end",
+                                    icon: "success",
+                                    title: response.message,
+                                    showConfirmButton: false,
+                                    timer: 1500
+                                });
+
+                            }
+                            // Xử lý dữ liệu trả về từ server nếu cần
+                        },
+                        error: function(xhr, status, error) {
+                            console.error('Đã xảy ra lỗi trong quá trình gửi dữ liệu: ' +
+                                error);
+                        }
+                    });
+                }
+
+                // Giá cả ngày
+                $(document).on('blur', '.fullDayPrice', function() {
+                    var price = $(this).val();
+                    var dataId = $(this).data('id');
+                    var dataDate = $(this).data('date');
+
+                    let method = dataDate !== undefined && dataDate !== "" ? 'method_fulldaydate' :
+                        'method_fullday';
+                    if (price !== "") {
+                        sendAjaxRequest(price, dataId, dataDate, method);
                     }
                 });
 
+                // Giá qua đêm
+                $(document).on('blur', '.overnightPrice', function() {
+                    var price = $(this).val();
+                    var dataId = $(this).data('id');
+                    var dataDate = $(this).data('date');
+
+                    let method = dataDate !== undefined && dataDate !== "" ?
+                        'method_overnightPricedate' :
+                        'method_overnightPrice';
+                    if (price !== "") {
+                        sendAjaxRequest(price, dataId, dataDate, method);
+                    }
+
+                });
+
+                // Giá giờ
+                $('#saveButton').on('click', function() {
+                    var price = $('#firstHour').val();
+                    var dataId = $('#firstHour').data('id');
+                    var dataDate = $('#firstHour').data('date');
+                    var prices = [];
+                    $('input[id^="secondHour-"]').each(function() {
+                        var hour = $(this).attr('id').split('-')[1];
+                        var pricehour = $(this).val();
+
+                        if (pricehour !== "") {
+                            prices.push([hour, pricehour]);
+                        }
+                    });
+                    // console.log('id = ' + dataDate);
+                    // console.log(prices);
+
+                    let method = dataDate !== undefined && dataDate !== "" ? 'method_hourlydate' :
+                        'method_hourly';
+                    if (price !== "") {
+                        sendAjaxRequest(price, dataId, dataDate, method, prices);
+                        // window.location.href = window.location.href;
+                        sendAjaxRequestByRoom();
+                    }
+                });
+
+                function sendAjaxRequestByRoom() {
+                    // console.log("Đang gửi yêu cầu lấy danh sách phòng...");
+                    var url = '{{ route('admin.price.rooms') }}';
+
+                    $.ajax({
+                        url: url,
+                        method: 'GET',
+                        success: function(response) {
+                            // console.log(response.data);
+                            // Xử lý dữ liệu trả về từ server nếu cần
+                        },
+                        error: function(xhr, status, error) {
+                            console.error('Đã xảy ra lỗi trong quá trình gửi dữ liệu: ' +
+                                error);
+                        }
+                    });
+                }
+                // Hàm cập nhật giá trị ngày
+                function updatePriceDate(flag) {
+                    var dataDayValue = $('.btnUpdateDate').data('date');
+                    var dateValue = $('#modalDateValue').val();
+                    var dataDateValue = $('#modalDateValue').data('date');
+                    var dateCurent = dataDateValue ?? dataDayValue;
+
+                    // Kiểm tra kiểu của dateValue
+                    let method = "";
+                    if (!/\d/.test(dateValue)) {
+                        method = "day";
+                    } else {
+                        method = "date";
+                    }
+
+                    // Lấy các giá trị checkbox đã chọn
+                    var checkedValues = [];
+                    $('#dateSelectionForm input[type="checkbox"]:checked').each(function() {
+                        var value = $(this).val();
+                        if (!checkedValues.includes(value)) {
+                            checkedValues.push(value);
+                        }
+                    });
+
+                    // Gửi yêu cầu ajax để cập nhật giá trị ngày
+                    var url = '{{ route('admin.price.updatePriceDate') }}';
+                    $.ajax({
+                        url: url,
+                        method: 'POST',
+                        data: {
+                            method: method,
+                            dateCurent: dateCurent,
+                            dataDateValue: dateValue,
+                            checkedValues: checkedValues,
+                            flag: flag,
+                        },
+                        success: function(response) {
+                            if (response.status === "success") {
+                                Swal.fire({
+                                    position: "top-end",
+                                    icon: "success",
+                                    title: response.message[0].message,
+                                    showConfirmButton: false,
+                                    timer: 1500
+                                })
+                                window.location.href = window.location.href;
+                            }
+                        },
+                        error: function(xhr, status, error) {
+                            console.error('Đã xảy ra lỗi trong quá trình gửi dữ liệu: ' +
+                                error);
+                        }
+                    });
+                }
+
+                // add thêm ngày được chọn 
+                $(document).on('click', '.btnUpdateDate', function() {
+                    updatePriceDate('addDate');
+                });
+                // delte ngày được chọn 
+                $(document).on('click', '.remoteDatePrice', function() {
+                    updatePriceDate('delDate');
+                });
             });
+
 
 
             document.querySelectorAll('input[type=checkbox]').forEach(checkbox => {
@@ -1129,12 +1144,12 @@
 
             $(document).ready(function() {
                 // Lắng nghe sự kiện nhấn nút "Đóng"
-                $('.closeModal').on('click', function () {
+                $('.closeModal').on('click', function() {
                     $('#myModalDate').modal('hide');
                 });
 
                 // Lắng nghe sự kiện nhấn nút "Lưu"
-                $('#saveModal').on('click', function () {
+                $('#saveModal').on('click', function() {
                     // Đóng modal
                     $('#myModalDate').modal('hide');
                 });
@@ -1151,11 +1166,5 @@
             mode: "multiple",
             dateFormat: "Y-m-d",
         });
-
-
-
-
-
     </script>
-
 @endpush

@@ -16,63 +16,75 @@ use function Illuminate\Log\log;
 
 class PriceController extends Controller
 {
-    public function __construct()
-    {
-    }
+    public function __construct() {}
 
-    private  function addPriceDate($date, $dateCurent)
+    private  function addPriceDate($date, $dateCurent, $option)
     {
+        $responseMessages = [];
         $dataDateValue = $date;
         if (empty($dataDateValue)) {
             return response()->json(['status' => 'success', 'message' => 'Cập nhật giá thành công']);
         };
         $dataDateArray = explode(", ", $dataDateValue); // các date được chọn bên client
-
-        $datesFromDB = RoomPricePerDay::pluck('date')->toArray(); // các date hiện đang có trong DB
-        $differentDates = array_diff($dataDateArray, $datesFromDB); // các date trong DB chưa có
-
-        $id_room = RoomPricePerDay::pluck('room_price_id')->unique()->toArray(); // các id room tròn bảng
-        foreach ($id_room as $item) {
-            $result = RoomPricePerDay::where('room_price_id', $item)->where('date', $dateCurent)->first();
-            if ($result) {
-                foreach ($differentDates as $date) {
-                    $roomPricePerDay = new RoomPricePerDay();
-                    $roomPricePerDay->room_price_id   = $item;
-                    $roomPricePerDay->date            = $date;
-                    $roomPricePerDay->hourly_price    = $result->hourly_price;
-                    $roomPricePerDay->daily_price     = $result->daily_price;
-                    $roomPricePerDay->overnight_price = $result->overnight_price;
-                    $roomPricePerDay->save();
+        if ($option === "addDate") {
+            $datesFromDB = RoomPricePerDay::pluck('date')->toArray(); // các date hiện đang có trong DB
+            $differentDates = array_diff($dataDateArray, $datesFromDB); // các date trong DB chưa có
+            $id_room = RoomPricePerDay::pluck('room_price_id')->unique()->toArray(); // các id room trong bảng
+            foreach ($id_room as $item) {
+                $result = RoomPricePerDay::where('room_price_id', $item)->where('date', $dateCurent)->first();
+                if ($result) {
+                    foreach ($differentDates as $date) {
+                        $roomPricePerDay = new RoomPricePerDay();
+                        $roomPricePerDay->room_price_id   = $item;
+                        $roomPricePerDay->date            = $date;
+                        $roomPricePerDay->hourly_price    = $result->hourly_price;
+                        $roomPricePerDay->daily_price     = $result->daily_price;
+                        $roomPricePerDay->overnight_price = $result->overnight_price;
+                        $roomPricePerDay->save();
+                    }
                 }
             }
+            $responseMessages[] = ['status' => 'pricedate', 'message' => 'Cập nhật giá thành công'];
+        } else if ($option === "delDate") {
+            RoomPricePerDay::whereIn('date', $dataDateArray)->delete();
+            $responseMessages[] = ['status' => 'pricedate', 'message' => 'Cập nhật giá thành công'];
         }
-        return response()->json(['status' => 'success', 'message' => 'Cập nhật giá thành công']);
-    }
-    private function addPriceDay($day, $dateCurent)
-    {
 
+        return response()->json(['status' => 'success', 'message' => $responseMessages]);
+    }
+
+    private function addPriceDay($day, $dateCurent, $option)
+    {
+        $responseMessages = [];
         $dataDateValue = $day;
         if (empty($dataDateValue)) {
             return response()->json(['status' => 'success', 'message' => 'Cập nhật giá thành công']);
         };
         $datesFromDB = RoomPriceDayOfWeek::pluck('day_of_week')->toArray(); // các day hiện đang có trong DB
         $differentDates = array_diff($dataDateValue, $datesFromDB); // các day trong DB chưa có
-        $id_room = RoomPriceDayOfWeek::pluck('room_price_id')->unique()->toArray(); // các id room tròn bảng
-        foreach ($id_room as $item) {
-            $result = RoomPriceDayOfWeek::where('room_price_id', $item)->where('day_of_week', $dateCurent)->first();
-            if ($result) {
-                foreach ($differentDates as $date) {
-                    $roomPricePerDay = new RoomPriceDayOfWeek();
-                    $roomPricePerDay->room_price_id   = $item;
-                    $roomPricePerDay->day_of_week            = $date;
-                    $roomPricePerDay->hourly_price    = $result->hourly_price;
-                    $roomPricePerDay->daily_price     = $result->daily_price;
-                    $roomPricePerDay->overnight_price = $result->overnight_price;
-                    $roomPricePerDay->save();
+        if ($option === "addDate") {
+            $id_room = RoomPriceDayOfWeek::pluck('room_price_id')->unique()->toArray(); // các id room tròn bảng
+            foreach ($id_room as $item) {
+                $result = RoomPriceDayOfWeek::where('room_price_id', $item)->where('day_of_week', $dateCurent)->first();
+                if ($result) {
+                    foreach ($differentDates as $date) {
+                        $roomPricePerDay = new RoomPriceDayOfWeek();
+                        $roomPricePerDay->room_price_id   = $item;
+                        $roomPricePerDay->day_of_week            = $date;
+                        $roomPricePerDay->hourly_price    = $result->hourly_price;
+                        $roomPricePerDay->daily_price     = $result->daily_price;
+                        $roomPricePerDay->overnight_price = $result->overnight_price;
+                        $roomPricePerDay->save();
+                    }
                 }
             }
+            $responseMessages[] = ['status' => 'priceday', 'message' => 'Cập nhật giá thành công'];
+        } else if ($option === "delDate") {
+            RoomPriceDayOfWeek::whereIn('day_of_week', $dataDateValue)->delete();
+            $responseMessages[] = ['status' => 'priceday', 'message' => 'Cập nhật giá thành công'];
         }
-        return response()->json(['status' => 'success', 'message' => 'Cập nhật giá thành công']);
+
+        return response()->json(['status' => 'success', 'message' => $responseMessages]);
     }
     public function updatePriceDate(Request $request)
     {
@@ -80,10 +92,10 @@ class PriceController extends Controller
         $response = null;
         switch ($select) {
             case 'date':
-                $response = $this->addPriceDate($request->dataDateValue, $request->dateCurent);
+                $response = $this->addPriceDate($request->dataDateValue, $request->dateCurent, $request->flag);
                 break;
             case 'day':
-                $response = $this->addPriceDay($request->checkedValues, $request->dateCurent);
+                $response = $this->addPriceDay($request->checkedValues, $request->dateCurent, $request->flag);
                 break;
             default:
                 return response()->json(['status' => 'success', 'message' => 'Cập nhật giá thành công']);
@@ -218,29 +230,29 @@ class PriceController extends Controller
 
     public function updateRoomPrice($data, $priceType)
     {
-            $roomPrice = RegularRoomPrice::where('room_price_id', $data['room_id'])->first();
+        $roomPrice = RegularRoomPrice::where('room_price_id', $data['room_id'])->first();
 
-            if (!$roomPrice) {
-                $roomPrice = new RegularRoomPrice();
-                $roomPrice->room_price_id = $data['room_id'];
-            }
+        if (!$roomPrice) {
+            $roomPrice = new RegularRoomPrice();
+            $roomPrice->room_price_id = $data['room_id'];
+        }
 
-            switch ($priceType) {
-                case 'hourly':
-                    $roomPrice->hourly_price = $data['price'];
-                    break;
-                case 'overnight':
-                    $roomPrice->overnight_price = $data['price'];
-                    break;
-                case 'full_day':
-                    $roomPrice->daily_price = $data['price'];
-                    break;
-            }
+        switch ($priceType) {
+            case 'hourly':
+                $roomPrice->hourly_price = $data['price'];
+                break;
+            case 'overnight':
+                $roomPrice->overnight_price = $data['price'];
+                break;
+            case 'full_day':
+                $roomPrice->daily_price = $data['price'];
+                break;
+        }
 
-            if($data['date'] == null){
-                $this->priceRoomWeekday($data);
-            }
-            $roomPrice->save();
+        if ($data['date'] == null) {
+            $this->priceRoomWeekday($data);
+        }
+        $roomPrice->save();
 
 
         return response()->json(['status' => 'success', 'message' => 'Cập nhật giá thành công']);
@@ -288,10 +300,10 @@ class PriceController extends Controller
                 ->where('room_price_id', $data['room_id'])
                 ->whereNotIn('hour', $hours)
                 ->delete();
-        }else{
+        } else {
             RoomPricesAdditionalHour::where('date', $data['date'])
-            ->where('room_price_id', $data['room_id'])
-            ->delete();
+                ->where('room_price_id', $data['room_id'])
+                ->delete();
         }
     }
 
@@ -305,7 +317,6 @@ class PriceController extends Controller
         // Log::info($list);
         // Trả về kết quả dưới dạng JSON
         return response()->json(['data' => $list], 200);
-
     }
 
 
@@ -332,9 +343,9 @@ class PriceController extends Controller
             RoomPricesWeekdayHour::where('room_price_id', $data['room_id'])
                 ->whereNotIn('hour', $hours)
                 ->delete();
-        }else{
+        } else {
             RoomPricesWeekdayHour::where('room_price_id', $data['room_id'])
-            ->delete();
+                ->delete();
         }
     }
     public function priceweek(Request $request)
@@ -342,7 +353,6 @@ class PriceController extends Controller
         // Lấy danh sách giá phòng theo giờ
         $list = RoomPricesWeekdayHour::where('room_price_id', $request->room_id)->get();
         return response()->json(['data' => $list], 200);
-
     }
 
 
