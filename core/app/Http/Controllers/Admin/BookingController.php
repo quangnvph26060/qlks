@@ -280,6 +280,7 @@ class BookingController extends Controller
                                     $query->where('room_type_id', 'like', '%' . $request->roomType . '%');
                                 })
                                 ->get();
+                                \Log::info($emptyRooms[0]);
         $scope = 'ALL';
         $is_method = 'Receptionist';
 
