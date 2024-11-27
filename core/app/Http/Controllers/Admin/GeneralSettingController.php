@@ -38,6 +38,8 @@ class GeneralSettingController extends Controller
             'tax_name'                 => 'required|max:40',
             'checkin_time'             => 'required|date_format:H:i',
             'checkout_time'            => 'required|date_format:H:i',
+            'checkin_time_night'       => 'required|date_format:H:i',
+            'checkout_time_night'      => 'required|date_format:H:i',
             'upcoming_checkin_days'    => 'required|numeric|min:1',
             'upcoming_checkout_days'   => 'required|numeric|min:1',
             'deposit'                  => 'numeric|min:1|max:100|nullable',
@@ -58,6 +60,8 @@ class GeneralSettingController extends Controller
         $general->tax_name                 = $request->tax_name;
         $general->checkin_time             = $request->checkin_time;
         $general->checkout_time            = $request->checkout_time;
+        $general->checkin_time_night       = $request->checkin_time_night;
+        $general->checkout_time_night      = $request->checkout_time_night;
         $general->upcoming_checkin_days    = $request->upcoming_checkin_days;
         $general->upcoming_checkout_days   = $request->upcoming_checkout_days;
         $general->deposit                  = $request->deposit;
@@ -303,5 +307,13 @@ class GeneralSettingController extends Controller
 
         $notify[] = ['success', ucfirst($key) . ' credential updated successfully'];
         return back()->withNotify($notify);
+    }
+
+    public function checkhours(){
+        $general = gs();
+        return response()->json([
+            'status' => 'success',
+            'data' => $general
+        ]);
     }
 }

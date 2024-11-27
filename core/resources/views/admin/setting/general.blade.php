@@ -45,18 +45,18 @@
                             <div class="form-group col-md-4 col-sm-6">
                                 <label> @lang('Số bản ghi hiển thị trên mỗi trang')</label>
                                 <select class="select2 form-control" name="paginate_number" data-minimum-results-for-search="-1" required>
-                                    <option value="20" @selected(gs('paginate_number') == 20)>@lang('20 items per page')</option>
-                                    <option value="50" @selected(gs('paginate_number') == 50)>@lang('50 items per page')</option>
-                                    <option value="100" @selected(gs('paginate_number') == 100)>@lang('100 items per page')</option>
+                                    <option value="20" @selected(gs('paginate_number') == 20)>@lang('20 bản ghi một trang')</option>
+                                    <option value="50" @selected(gs('paginate_number') == 50)>@lang('50 bản ghi một trang')</option>
+                                    <option value="100" @selected(gs('paginate_number') == 100)>@lang('100 bản ghi một trang')</option>
                                 </select>
                             </div>
 
                             <div class="form-group col-md-4 col-sm-6 ">
                                 <label> @lang('Định dạng hiển thị tiền tệ')</label>
                                 <select class="select2 form-control" name="currency_format" data-minimum-results-for-search="-1" required>
-                                    <option value="1" @selected(gs('currency_format') == Status::CUR_BOTH)>@lang('Show Currency Text and Symbol Both')</option>
-                                    <option value="2" @selected(gs('currency_format') == Status::CUR_TEXT)>@lang('Show Currency Text Only')</option>
-                                    <option value="3" @selected(gs('currency_format') == Status::CUR_SYM)>@lang('Show Currency Symbol Only')</option>
+                                    <option value="1" @selected(gs('currency_format') == Status::CUR_BOTH)>@lang('Hiển thị cả văn bản và ký hiệu tiền tệ')</option>
+                                    <option value="2" @selected(gs('currency_format') == Status::CUR_TEXT)>@lang('Chỉ hiển thị văn bản tiền tệ')</option>
+                                    <option value="3" @selected(gs('currency_format') == Status::CUR_SYM)>@lang('Chỉ hiển thị ký hiệu tiền tệ')</option>
                                 </select>
                             </div>
 
@@ -79,7 +79,7 @@
 
                             <div class="col-md-4 col-sm-6">
                                 <div class="form-group">
-                                    <label> @lang('Giờ nhận phòng')</label>
+                                    <label> @lang('Giờ nhận phòng ngày')</label>
                                     <div class="input-group">
                                         <input autocomplete="off" class="form-control" name="checkin_time" placeholder="--:--" required type="time" value="{{ showDateTime(gs('checkin_time'), 'H:i') }}">
                                     </div>
@@ -87,7 +87,7 @@
                             </div>
                             <div class="col-md-4 col-sm-6">
                                 <div class="form-group">
-                                    <label> @lang('Checkout Time')</label>
+                                    <label> @lang('Giờ trả phòng ngày')</label>
                                     <div class="input-group">
                                         <input autocomplete="off" class="form-control" name="checkout_time" placeholder="--:--" required type="time" value="{{ showDateTime(gs('checkout_time'), 'H:i') }}">
                                     </div>
@@ -96,7 +96,7 @@
 
                             <div class="col-md-4 col-sm-6">
                                 <div class="form-group">
-                                    <label>@lang('Upcoming Check-In List') <i class="las la-info-circle" title="@lang('The number of days of data you want to see in the upcoming checkin list.')"></i></label>
+                                    <label>@lang('Danh sách Check-in sắp tớ') <i class="las la-info-circle" title="@lang('The number of days of data you want to see in the upcoming checkin list.')"></i></label>
                                     <div class="input-group">
                                         <input class="form-control" name="upcoming_checkin_days" min="1" required type="numeric" value="{{ gs('upcoming_checkin_days') }}">
                                         <span class="input-group-text">@lang('Ngày')</span>
@@ -106,7 +106,24 @@
 
                             <div class="col-md-4 col-sm-6">
                                 <div class="form-group">
-                                    <label>@lang('Upcoming Checkout List') <i class="las la-info-circle" title="@lang('The number of days of data you want to see in the upcoming checkout list.')"></i></label>
+                                    <label> @lang('Giờ nhận phòng đêm')</label>
+                                    <div class="input-group">
+                                        <input autocomplete="off" class="form-control" name="checkin_time_night" placeholder="--:--" required type="time" value="{{ showDateTime(gs('checkin_time_night'), 'H:i') }}">
+                                    </div>
+                                </div>
+                            </div>
+                            <div class="col-md-4 col-sm-6">
+                                <div class="form-group">
+                                    <label> @lang('Giờ trả phòng đêm')</label>
+                                    <div class="input-group">
+                                        <input autocomplete="off" class="form-control" name="checkout_time_night" placeholder="--:--" required type="time" value="{{ showDateTime(gs('checkout_time_night'), 'H:i') }}">
+                                    </div>
+                                </div>
+                            </div>
+
+                            <div class="col-md-4 col-sm-6">
+                                <div class="form-group">
+                                    <label>@lang('Danh sách thanh toán sắp tới') <i class="las la-info-circle" title="@lang('The number of days of data you want to see in the upcoming checkout list.')"></i></label>
                                     <div class="input-group">
                                         <input class="form-control" name="upcoming_checkout_days" min="1" required type="numeric" value="{{ gs('upcoming_checkout_days') }}">
                                         <span class="input-group-text">@lang('Ngày')</span>
