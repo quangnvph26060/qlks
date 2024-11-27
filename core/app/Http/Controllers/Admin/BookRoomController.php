@@ -62,7 +62,7 @@ class BookRoomController extends Controller
 
     public function book(Request $request)
     {
-        // \Log::info($request->all());
+        //  \Log::info($request->all());
         DB::beginTransaction();
         try {
             $validator = Validator::make($request->all(), [
@@ -109,8 +109,14 @@ class BookRoomController extends Controller
                     return response()->json(['error' => 'Phòng đã được đặt']);
                 }
 
-                $room = Room::with('roomType','roomPricesActive')->find($roomId);
+                $room = Room::with('roomType')->find($roomId);
 
+                if($request->is_method === "receptionist"){
+
+                }else{
+
+                }
+                //   \Log::info('room:' .$room->roomPriceNow());
                 if(!$room->is_clean){
                     return response()->json(['error' => 'Phòng chưa dọn dẹp']);
                 }
@@ -126,8 +132,10 @@ class BookRoomController extends Controller
                 $data['room_type_id']     = $room->room_type_id;
                 $data['room_id']          = $room->id;
                 $data['booked_for']       = Carbon::parse($bookedFor)->format('Y-m-d H:i:s');
-                $data['fare']             = $room->roomPricesActive[0]['price'];
-                $data['tax_charge']       = $room->roomPricesActive[0]['price'] * $tax / 100;
+                // $data['fare']             = $room->roomPricesActive[0]['price'];
+                $data['fare']             = $request->total_amount;
+                // $data['tax_charge']       = $room->roomPricesActive[0]['price'] * $tax / 100;
+                $data['tax_charge']       = $request->total_amount * $tax / 100;
                 $data['cancellation_fee'] = $room->cancellation_fee;
                 $data['status']           = Status::ROOM_ACTIVE;
                 $data['created_at']       = now();
@@ -135,7 +143,8 @@ class BookRoomController extends Controller
 
                 $bookedRoomData[] = $data;
 
-                $totalFare += $room->roomPricesActive[0]['price'];
+                // $totalFare += $room->roomPricesActive[0]['price'];
+                $totalFare += $request->total_amount;
             }
 
 

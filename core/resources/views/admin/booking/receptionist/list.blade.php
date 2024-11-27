@@ -121,16 +121,16 @@
                             </div>
                             <div class="user-info-customer">
                                 <p class="email-user"></p>
-                                <p class="ms-2 me-2 clear-main">  </p>
+                                <p class="ms-2 me-2 clear-main"> </p>
                                 <p class="username-user"></p>
                             </div>
                             <div>
-                                <select name="" id="model" >
+                                <select name="" id="model">
                                     <option value="">Chọn mô hình</option>
                                     <option value="1">Khách sạn</option>
                                     <option value="2">Khu nghỉ dưỡng</option>
                                 </select>
-                             </div>
+                            </div>
                         </div>
                         <datalist id="customer-names">
                             @forelse ($userList as $user)
@@ -159,7 +159,8 @@
                                         <th>Hạng phòng</th>
                                         <th>Phòng</th>
                                         <th>Hình thức</th>
-                                        <th>Nhận</th>
+                                        <th class="d-flex">Nhận <span class="main-hour-out" id="hour_current">Hiện
+                                                tại</span> <span class="main-hour-out">Quy định</span></th>
                                         <th>Trả phòng</th>
                                         <th class="d-flex justify-content-between align-items-center">Dự kiến
                                             <span>Thành tiền</span>
@@ -180,16 +181,16 @@
                                         </td>
                                         <td><input type="text" class="form-control" id="roomNumber" disabled></td>
                                         <td>
-                                            <select id="bookingType" class="form-select" style="width: 110px;">
+                                            <select id="bookingType" class="form-select " name="option-room" style="width: 110px;">
                                                 <option value="gio">Giờ</option>
                                                 <option value="ngay">Ngày</option>
                                                 <option value="dem">Đêm</option>
                                             </select>
                                         </td>
-                                        <td><input type="datetime-local" class="form-control" name="checkInTime" style="width: 180px;"
-                                                id="checkInTime"></td>
-                                        <td><input type="datetime-local" class="form-control" name="checkOutTime" style="width: 180px;"
-                                                id="checkOutTime"></td>
+                                        <td><input type="datetime-local" class="form-control" name="checkInTime"
+                                                style="width: 180px;" id="checkInTime"></td>
+                                        <td><input type="datetime-local" class="form-control" name="checkOutTime"
+                                                style="width: 180px;" id="checkOutTime"></td>
                                         <td>
                                             <p class="d-flex justify-content-between align-items-center">
                                                 <span class="inputTime">00:00</span>
@@ -455,7 +456,7 @@
                 var updatedDay = parent.attr('data-day');
                 var updatedNight = parent.attr('data-night');
                 $('#bookingType').html('');
-                if(model == 1 || model == null || model == ''){
+                if (model == 1 || model == null || model == '') {
                     $('.inputTime').text(`1:00`);
                     $('#customer-price-booking, #input-price-booking').val(parseInt(updatedHours, 10));
                     $('#bookingType').append(`
@@ -463,7 +464,7 @@
                         <option value="ngay">Ngày</option>
                         <option value="dem">Đêm</option>
                     `);
-                }else{
+                } else {
                     $('.inputTime').text(`24:00`);
                     $('#customer-price-booking, #input-price-booking').val(parseInt(updatedDay, 10));
                     $('#bookingType').append(`
@@ -645,7 +646,8 @@
                     url: url,
                     type: 'POST',
                     data: {
-                        is_method: "receptionist"
+                        is_method: "receptionist",
+                        // status: "receptionist"
                     },
                     success: function(response) {
                         if (response.status === 'success') {
@@ -802,7 +804,8 @@
                         var checkoutHours = now.getHours().toString().padStart(2, '0');
                         var checkoutMinutes = now.getMinutes().toString().padStart(2, '0');
 
-                        var checkoutDateTime = `${checkoutYear}-${checkoutMonth}-${checkoutDay}T${checkoutHours}:${checkoutMinutes}`;
+                        var checkoutDateTime =
+                            `${checkoutYear}-${checkoutMonth}-${checkoutDay}T${checkoutHours}:${checkoutMinutes}`;
                         var checkOutTime = document.getElementById('checkOutTime');
                         checkOutTime.value = checkoutDateTime;
                         $('.inputTime').text(`1:00`);
@@ -1228,7 +1231,8 @@
             var checkoutHours = now.getHours().toString().padStart(2, '0');
             var checkoutMinutes = now.getMinutes().toString().padStart(2, '0');
 
-            var checkoutDateTime = `${checkoutYear}-${checkoutMonth}-${checkoutDay}T${checkoutHours}:${checkoutMinutes}`;
+            var checkoutDateTime =
+                `${checkoutYear}-${checkoutMonth}-${checkoutDay}T${checkoutHours}:${checkoutMinutes}`;
             var checkOutTime = document.getElementById('checkOutTime');
             checkOutTime.value = checkoutDateTime;
 
@@ -1318,14 +1322,14 @@
                         break;
                     default:
                         const model = $('#model').val();
-                        if(model == 1 || model == null || model == ''){
+                        if (model == 1 || model == null || model == '') {
                             priceTime = parseFloat(window.savedDataHours.replace(',', '')) || 0;
-                        }else{
+                        } else {
                             priceTime = parseFloat(window.savedDataDay.replace(',', '')) || 0;
 
                         }
                         break;
-                    }
+                }
 
                 $('.inputTime').text(`${formattedHours}:${formattedMinutes}`);
 
@@ -1356,7 +1360,7 @@
                 if (bookingType === 'ngay') {
                     updatedPrice = dateTimeDate * priceTime;
                 } else if (bookingType === 'dem') {
-                        updatedPrice += priceTime;
+                    updatedPrice += priceTime;
                     if (dateTimeNight > 1) {
                         console.log(priceTime + '---' + dateTimeDate);
                         updatedPrice += updatedDay * (dateTimeDate - 1);
@@ -1377,8 +1381,23 @@
                 $('#customer-price-booking').val(updatedPrice.toLocaleString());
 
             }
+            $('#hour_current').on('click', function() {
+                // Lấy ngày và giờ hiện tại
+                const now = new Date();
+                const year = now.getFullYear();
+                const month = String(now.getMonth() + 1).padStart(2, '0'); // Tháng bắt đầu từ 0
+                const date = String(now.getDate()).padStart(2, '0');
+                const hours = String(now.getHours()).padStart(2, '0');
+                const minutes = String(now.getMinutes()).padStart(2, '0');
 
-            function reserthoursNow(){
+                // Kết hợp thành giá trị datetime-local
+                const updatedDateTime = `${year}-${month}-${date}T${hours}:${minutes}`;
+
+                // Gán giá trị mới vào input
+                $('#checkInTime').val(updatedDateTime);
+                calculateDuration();
+            });
+            function reserthoursNow() {
                 var now = new Date();
                 var year = now.getFullYear();
                 var month = (now.getMonth() + 1).toString().padStart(2, '0');
@@ -1552,6 +1571,10 @@
                     name: 'is_method',
                     value: 'receptionist',
                 });
+                // formData.push({
+                //     name: '',
+                //     value: 'receptionist',
+                // });
                 let url = $(this).attr('action');
                 $.ajax({
                     type: "POST",
@@ -1632,7 +1655,7 @@
                             $('.customer-svg-icon-add').click();
 
                             $('#name').val(response.data[0]['name']);
-                           $('#address').val(response.data[0]['address']);
+                            $('#address').val(response.data[0]['address']);
 
                         },
                         error: function(xhr, status, error) {

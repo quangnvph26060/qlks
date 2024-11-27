@@ -29,7 +29,7 @@
                 <p class="single-line">{{ $rooms->roomType->name }}</p>
                 <div class="room-info">
                     <p class="hourly_price">
-                        <i class="fas fa-clock icon"></i> {{  showAmount($rooms->roomPriceNow()->hourly_price) }}
+                        <i class="fas fa-clock icon"></i> <span class="price-color">{{  showAmount($rooms->roomPriceNow()->hourly_price) }}</span>
                     </p>
                     <p class="daily_price">
                         <i class="fas fa-sun icon-gray"></i> {{ showAmount($rooms->roomPriceNow()->daily_price)  }}

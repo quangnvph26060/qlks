@@ -127,14 +127,21 @@ hr {
     align-items: center;
     min-height: calc(100% - 1rem);
 }
-
+.main-hour-out{
+    padding-right: 8px;
+    padding-left: 8px;
+    cursor: pointer;
+    color: #337ab7;
+    border: 1px solid #337ab7;
+    border-radius: 8px;
+}
 #serviceModal,
 #productModal {
     background: #3e454552;
 }
 
 .room-info p {
-    color: #7b7777 !important;
+    /* color: #7b7777 !important; */
 }
 
 .removeServiceBtn,
@@ -461,10 +468,12 @@ h5 {
     margin: 0;
     font-size: 24px;
 }
-
+.price-booked{
+    color: white;
+}
 #customer-name {
     padding: 10px;
-    border: 2px solid #007BFF;
+    /* border: 2px solid #007BFF; */
     border-radius: 5px;
     font-size: 16px;
 }

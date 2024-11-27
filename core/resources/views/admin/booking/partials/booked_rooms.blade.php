@@ -89,7 +89,7 @@
                     </p>
                     <p> <i class="fas fa-moon icon"></i>{{ showAmount($booking->roomType->fare) }}
                     </p> --}}
-                        <p>
+                        <p class="price-booked">
                             <i class="fas fa-dollar-sign icon"></i>{{ showAmount($price) }}
                         </p>
                     </div>
