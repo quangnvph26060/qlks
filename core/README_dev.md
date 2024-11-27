@@ -564,3 +564,8 @@ CREATE TABLE room_prices_weekday_hour (
 //26/11
 ALTER TABLE room_prices_additional_hour
 ADD COLUMN date VARCHAR(255);
+
+ALTER TABLE `general_settings`
+ADD COLUMN `checkin_time_night` TIME NULL AFTER `checkout_time`,
+ADD COLUMN `checkout_time_night` TIME NULL AFTER `checkin_time_night`;
+

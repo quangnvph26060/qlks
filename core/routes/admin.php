@@ -1,6 +1,7 @@
 <?php
 
 use App\Http\Controllers\Admin\FeeController;
+use App\Http\Controllers\Admin\GeneralSettingController;
 use App\Http\Controllers\Admin\PriceController;
 use App\Http\Controllers\Admin\TransactionController;
 use Illuminate\Support\Facades\Route;
@@ -585,4 +586,6 @@ Route::middleware('admin', 'adminPermission')->group(function () {
             Route::post('manage-seo/{id}', 'manageSeoStore')->name('manage.pages.seo.store');
         });
     });
+
+    Route::get('/checkhours', [GeneralSettingController::class, 'checkhours'])->name('checkhours');
 });

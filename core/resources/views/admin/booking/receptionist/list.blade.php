@@ -160,7 +160,7 @@
                                         <th>Phòng</th>
                                         <th>Hình thức</th>
                                         <th class="d-flex">Nhận <span class="main-hour-out" id="hour_current">Hiện
-                                                tại</span> <span class="main-hour-out">Quy định</span></th>
+                                                tại</span> <span class="main-hour-out" id="hour_regulatory">Quy định</span></th>
                                         <th>Trả phòng</th>
                                         <th class="d-flex justify-content-between align-items-center">Dự kiến
                                             <span>Thành tiền</span>
@@ -1313,10 +1313,9 @@
                 var formattedMinutes = durationMinutes.toString().padStart(2, '0'); // phút
 
                 var parent = $(this).closest('#myModal-booking');
-                var updatedHours = parent.attr('data-hours');
-                var updatedDay = parent.attr('data-day');
-                var updatedNight = parent.attr('data-night');
-
+                var updatedHours = parseFloat(window.savedDataHours.replace(',', ''));
+                var updatedDay = parseFloat(window.savedDataDay.replace(',', ''));
+                var updatedNight = parseFloat(window.savedDataNight.replace(',', ''));
                 let priceTime = 0;
                 switch (bookingType) {
                     case 'gio':
@@ -1405,6 +1404,80 @@
                 $('#checkInTime').val(updatedDateTime);
                 calculateDuration();
             });
+
+
+            $('#hour_regulatory').on('click', function() {
+                var url = `{{ route('admin.checkhours') }}`;
+                $.ajax({
+                    url: url,
+                    type: "GET",
+                    data: {
+                        _token: '{{ csrf_token() }}',
+                    },
+                    success: function(response) {
+                        if (response.status === 'success') {
+                        const bookingType = $('#bookingType').val();
+
+                           var result = response.data;
+                           var checkin_time = result.checkin_time;
+                           var checkout_time = result.checkout_time;
+                           var checkin_time_night = result.checkin_time_night;
+                           var checkout_time_night = result.checkout_time_night;
+                            if(bookingType == 'ngay'){
+                                var checkInTime = hous_mac_dinh(checkin_time);
+                                var checkOutTime = hous_mac_dinh(checkout_time);
+                            }else if(bookingType == 'dem'){
+                                var checkInTime = hous_mac_dinh(checkin_time_night);
+                                var checkOutTime = hous_mac_dinh_dem(checkout_time_night);
+                            }else{
+                                return 0;
+                            }
+                            console.log(checkInTime);
+
+                            // Gán giá trị mới vào input
+                            $('#checkInTime').val(checkInTime);
+                            $('#checkOutTime').val(checkOutTime);
+                            calculateDuration();
+                        }
+                    },
+                    error: function(xhr, status, error) {
+                        console.error(xhr.responseText);
+                        console.log(xhr.status);
+                        alert("Đã có lỗi xảy ra. Vui lòng thử lại.");
+                    }
+                });
+            });
+
+            function hous_mac_dinh(time) {
+                const [checkinHours, checkinMinutes] = time.split(':');
+                const now = new Date();
+                const year = now.getFullYear();
+                const month = String(now.getMonth() + 1).padStart(2, '0');
+                const date = String(now.getDate()).padStart(2, '0');
+                const updatedDateTime = `${year}-${month}-${date}T${checkinHours}:${checkinMinutes}`;
+                return updatedDateTime;
+            }
+
+            function hous_mac_dinh_dem(time) {
+                // Tách giờ và phút từ chuỗi time
+                const [checkinHours, checkinMinutes] = time.split(':');
+
+                // Lấy ngày hiện tại
+                const now = new Date();
+
+                // Tăng ngày hiện tại thêm 1
+                now.setDate(now.getDate() + 1);
+
+                // Lấy năm, tháng, ngày sau khi tăng
+                const year = now.getFullYear();
+                const month = String(now.getMonth() + 1).padStart(2, '0');
+                const date = String(now.getDate()).padStart(2, '0');
+
+                // Kết hợp thành định dạng datetime-local
+                const updatedDateTime = `${year}-${month}-${date}T${checkinHours}:${checkinMinutes}`;
+                return updatedDateTime;
+            }
+
 
             function reserthoursNow() {
                 var now = new Date();
