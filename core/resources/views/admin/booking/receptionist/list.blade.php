@@ -159,7 +159,7 @@
                                         <th>Hạng phòng</th>
                                         <th>Phòng</th>
                                         <th>Hình thức</th>
-                                        <th class="d-flex">Nhận <span class="main-hour-out" id="hour_current">Hiện
+                                        <th class="d-flex gap-10">Nhận <span class="main-hour-out" id="hour_current">Hiện
                                                 tại</span> <span class="main-hour-out" id="hour_regulatory">Quy định</span></th>
                                         <th>Trả phòng</th>
                                         <th class="d-flex justify-content-between align-items-center">Dự kiến
@@ -1425,7 +1425,7 @@
                            var checkout_time_night = result.checkout_time_night;
                             if(bookingType == 'ngay'){
                                 var checkInTime = hous_mac_dinh(checkin_time);
-                                var checkOutTime = hous_mac_dinh(checkout_time);
+                                var checkOutTime = hous_mac_dinh_dem(checkout_time);
                             }else if(bookingType == 'dem'){
                                 var checkInTime = hous_mac_dinh(checkin_time_night);
                                 var checkOutTime = hous_mac_dinh_dem(checkout_time_night);

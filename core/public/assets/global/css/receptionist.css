@@ -291,7 +291,9 @@ h5 {
 }
 
 
-
+.gap-10{
+    gap:10px;
+}
 .room-info {
     font-size: 14px;
 }
