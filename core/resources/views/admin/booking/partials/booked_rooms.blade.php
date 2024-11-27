@@ -2,10 +2,15 @@
     @php
         $class = 'status-dirty';
         $room = $booking->room;
+    
+     
+        $bookingId = $room->bookedRooms()[0]->booking_id; 
+        $bookingPrice = App\Models\Booking::find($bookingId)->booking_fare;
+       
         $classClean = $room->getCleanStatusClass();
         $classSvg = $room->getCleanStatusSvg();
         $cleanText = $room->getCleanStatusText();
-        $price = $room->roomPricesActive[0]['price'];
+        // $price = $room->roomPricesActive[0]['price'];
 
         // test
         // if($booking->booking->status === 3){
@@ -47,7 +52,7 @@
                 key="{{ $booking->booking->key_status }}" bookingId="{{ $booking->booking_id }}" />
 
             <div class="content-booking mt-2 room-booking-{{ $class }}" data-id="{{ $booking->booking_id }}"
-                data-hours="{{ $price }}" data-day="{{ $price }}" data-night="{{ $price }}"
+                data-hours="{{ $bookingPrice }}" data-day="{{ $bookingPrice }}" data-night="{{ $bookingPrice }}"
                 data-name = "{{ $booking->roomType->name }} " data-roomNumber="{{ $booking->room->room_number }}"
                 data-room-type="{{ $booking->room_type_id }}" data-booking="{{ $booking->id }}">
                 {{-- <p> {{ $booking->booking->booking_number }}</p> --}}
@@ -90,7 +95,7 @@
                     <p> <i class="fas fa-moon icon"></i>{{ showAmount($booking->roomType->fare) }}
                     </p> --}}
                         <p class="price-booked">
-                            <i class="fas fa-dollar-sign icon"></i>{{ showAmount($price) }}
+                            <i class="fas fa-dollar-sign icon"></i>{{ showAmount($bookingPrice) }}
                         </p>
                     </div>
                 @else
@@ -103,5 +108,5 @@
         </div>
     </div>
 @empty
-    <p class="text-center" colspan="100%">{{ __($emptyMessage) }}</p>
+    <p class="text-center" colspan="100%">{{ __($emptyMessage = "") }}</p>
 @endforelse

@@ -46,11 +46,15 @@
 .m-top-10 {
     margin-top: -10px;
 }
-
-.d-flex {
-    gap: 10px;
+.search-main{
+    gap: 14px;
 }
-
+/* .d-flex {
+    gap: 10px;
+} */
+.w-260px{
+    width: 260px;
+}
 .main-booking-modal {
     background: #ddd;
     padding: 8px 10px;
@@ -273,6 +277,9 @@ h5 {
 .status-clean:hover {
     border: 1px solid gray;
     border-radius: 8px;
+}
+.status-dirty{
+    border: 1px solid gray;
 }
 
 .status-occupied *:not(svg),

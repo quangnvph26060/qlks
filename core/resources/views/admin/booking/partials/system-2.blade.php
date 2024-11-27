@@ -39,7 +39,7 @@
                                   
                                         <div class="col-md-6 col-sm-12">
                                             <div class="form-group">
-                                                <select class=" form-control custom-select no-right-radius" name="services[]"
+                                                <select class=" w-260px custom-select no-right-radius" name="services[]"
                                                     required>
                                                 </select>
                                             </div>
@@ -47,7 +47,7 @@
                                         </div>
                                         <div class="col-md-6 col-sm-12">
                                             <div class="form-group">
-                                                <input class="form-control no-left-radius" name="qty[]"
+                                                <input class="form-control no-left-radius w-260px h-40" name="qty[]"
                                                     placeholder="@lang('Số lượng')" required type="text">
                                             </div>
                                         </div>

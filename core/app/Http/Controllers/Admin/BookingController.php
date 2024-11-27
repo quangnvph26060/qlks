@@ -145,14 +145,13 @@ class BookingController extends Controller
             'activeBookedRooms.room:id,room_number',
             'bookedRooms.room:id,room_type_id,room_number',
             'bookedRooms.room.roomType:id,name',
-            'bookedRooms.room.roomPricesActive',
+            // 'bookedRooms.room.roomPricesActive',
             'usedPremiumService.room',
             'usedPremiumService.premiumService',
             'usedProductRoom.room',
             'usedProductRoom.product',
             'payments'
         ])->findOrFail($id);
-
         // BookedRoom::where('booking_id', $id)->with('booking.user', 'room.roomType')->orderBy('booked_for')->get()->groupBy('booked_for');
 
         if ($request->is_method === 'receptionist') {
@@ -280,7 +279,6 @@ class BookingController extends Controller
                                     $query->where('room_type_id', 'like', '%' . $request->roomType . '%');
                                 })
                                 ->get();
-                                \Log::info($emptyRooms[0]);
         $scope = 'ALL';
         $is_method = 'Receptionist';
 
@@ -301,6 +299,10 @@ class BookingController extends Controller
                 $query->where('room_type_id', 'like', '%' . $request->roomType . '%');
             })
             ->get();
+            \Log::info($request->codeRoom);
+            if(!empty($request->codeRoom)){
+                $emptyRooms = [];
+            }
         // dd($bookings);
         $userList = User::select('username', 'email', 'mobile', 'address')->get();
         $is_result = false;
