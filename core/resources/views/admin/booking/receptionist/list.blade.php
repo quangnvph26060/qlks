@@ -878,7 +878,7 @@
                 });
 
             })
-            $('.room-booking-status-occupied').on('click', function() {
+            $(document).on('click', '.room-booking-status-occupied', function() {
                 var id = $(this).data('id');
                 var booking_id = $(this).data('booking');
 
