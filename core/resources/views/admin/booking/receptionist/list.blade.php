@@ -35,10 +35,10 @@
 
             </div>
         </div>
-        <div class="col-lg-2 d-flex flex-column h-45 m-top-10">
+        <div class="col-lg-2 d-flex flex-column h-45 m-top-10 search-main">
 
             <label>&nbsp;</label>
-            <div class="d-flex">
+            <div class="d-flex search-main">
                 <button class="btn-primary-dates" id="search-rooms-dates" style="width: 100px">
                     <svg xmlns="http://www.w3.org/2000/svg" width="15" height="20" viewBox="0 0 20 20">
                         <path fill="currentColor"
@@ -181,7 +181,8 @@
                                         </td>
                                         <td><input type="text" class="form-control" id="roomNumber" disabled></td>
                                         <td>
-                                            <select id="bookingType" class="form-select " name="option-room" style="width: 110px;">
+                                            <select id="bookingType" class="form-select " name="option-room"
+                                                style="width: 110px;">
                                                 <option value="gio">Giờ</option>
                                                 <option value="ngay">Ngày</option>
                                                 <option value="dem">Đêm</option>
@@ -635,7 +636,7 @@
                 $(this).closest('.product-item').remove();
             });
 
-            $('.handoverKeyBtn').on('click', function(event) {
+            $(document).on('click', '.handoverKeyBtn', function(event) {
                 let data = $(this).data();
 
                 event.stopPropagation();
@@ -896,15 +897,22 @@
             //     var booking_id = $(this).data('booking');
             //     handleLateCheckinClick(id, booking_id);
             // });
-            function handleLateCheckinEvent() {
-                $('.room-booking-status-late-checkin').on('click', function() {
-                    var id = $(this).data('id');
-                    var booking_id = $(this).data('booking');
-                    handleLateCheckinClick(id, booking_id);
-                });
-            }
-            // Sử dụng hàm
-            handleLateCheckinEvent();
+
+            $(document).on('click', '.room-booking-status-late-checkin', function() {
+                var id = $(this).data('id');
+                var booking_id = $(this).data('booking');
+                handleLateCheckinClick(id, booking_id);
+            });
+
+            // function handleLateCheckinEvent() {
+            //     $('.room-booking-status-late-checkin').on('click', function() {
+            //         var id = $(this).data('id');
+            //         var booking_id = $(this).data('booking');
+            //         handleLateCheckinClick(id, booking_id);
+            //     });
+            // }
+            // // Sử dụng hàm
+            // handleLateCheckinEvent();
 
 
             $('.room-booking-status-check-out').on('click', function() {
@@ -974,6 +982,7 @@
                             let cancellation_fee, shouldRefund = 0;
 
                             var currentDate = '<?php echo now()->format('Y-m-d H:i:s'); ?>';
+                            console.log(response.data.booked_rooms);
 
                             response.data.booked_rooms.forEach(function(booked, index) {
                                 $('.booking-no').text(booked.room.room_number);
@@ -1010,14 +1019,13 @@
                                             ${booked.status === 'canceled' ? `<span class="text--danger text-sm">(@lang('Đã hủy'))</span>` : ''}
                                         </td>
                                         <td class="text-end" data-label="@lang('Giá')">
-                                            ${formatCurrency(booked.room.room_prices_active[0]['price'])}
+                                            ${formatCurrency(booked.fare)}
                                         </td>
 
                                     </tr>
                                 `;
-                                totalFare += parseFloat(booked.room.room_prices_active[0][
-                                    'price'
-                                ]);
+                                // ${formatCurrency(booked.room.room_prices_active[0]['price'])} ${booked.room}
+                                totalFare += parseFloat(booked.fare);
 
                             });
                             rowsHtml += `
@@ -1397,6 +1405,7 @@
                 $('#checkInTime').val(updatedDateTime);
                 calculateDuration();
             });
+
             function reserthoursNow() {
                 var now = new Date();
                 var year = now.getFullYear();

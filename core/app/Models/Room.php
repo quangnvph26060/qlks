@@ -175,4 +175,8 @@ class Room extends Model
     {
         return RoomPriceDayOfWeek::where('room_price_id', $this->id)->where('day_of_week', $dayofweek)->first();
     }
+
+    public function bookedRooms(){
+         return BookedRoom::where('room_id', $this->id)->get();
+    }
 }

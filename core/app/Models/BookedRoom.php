@@ -61,4 +61,9 @@ class BookedRoom extends Model {
             get: fn () => "<span class='$className'>" . trans($text) . "</span>",
         );
     }
+   
+    public function bookingFare(){
+        \Log::info('123');
+        return Booking::find($this->id);
+    }
 }

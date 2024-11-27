@@ -42,7 +42,7 @@
         </div>
     </div>
 @empty
-    <p class="text-center" colspan="100%">{{ __($emptyMessage) }}</p>
+    <p class="text-center" colspan="100%">{{ __($emptyMessage = "") }}</p>
 @endforelse
 @if($is_result)
     @include('admin.booking.partials.booked_rooms', ['bookings' => $bookings ?? []])

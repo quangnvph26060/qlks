@@ -136,7 +136,7 @@ class BookRoomController extends Controller
                 $data['fare']             = $request->total_amount;
                 // $data['tax_charge']       = $room->roomPricesActive[0]['price'] * $tax / 100;
                 $data['tax_charge']       = $request->total_amount * $tax / 100;
-                $data['cancellation_fee'] = $room->cancellation_fee;
+                $data['cancellation_fee'] = $room->cancellation_fee; // phí hủy bỏ nếu hủy phòng thì: tiền hoàn lại =  fare - cancellation_fee
                 $data['status']           = Status::ROOM_ACTIVE;
                 $data['created_at']       = now();
                 $data['updated_at']       = now();
