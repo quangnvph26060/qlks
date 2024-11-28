@@ -5,14 +5,29 @@ namespace App\Http\Controllers\Admin;
 use App\Http\Controllers\Controller;
 use App\Models\Facility;
 use Illuminate\Http\Request;
+use Illuminate\Support\Facades\Schema;
 
 class FacilityController extends Controller
 {
-    public function index()
+    public function index(Request $request)
     {
-        $pageTitle = 'Danh sách tiện nghi';
-        $facilities = Facility::orderBy('title')->Paginate(getPaginate());
-        return view('admin.hotel.facilities', compact('pageTitle', 'facilities'));
+        $pageTitle = 'Danh sách cơ sở vật chất';
+        // $facilities = Facility::orderBy('title')->Paginate(getPaginate());
+        $keyword = $request->input('keyword');
+
+        $columns = Schema::getColumnListing('amenities');
+
+        $facilities = Facility::query()
+            ->when($keyword, function ($query) use ($keyword, $columns) {
+                $query->where(function ($query) use ($keyword, $columns) {
+                    foreach ($columns as $column) {
+                        $query->orWhere($column, 'like', '%' . $keyword . '%');
+                    }
+                });
+            })
+        ->orderBy('title')
+        ->paginate(getPaginate());
+        return view('admin.hotel.facilities', compact('pageTitle', 'facilities', 'keyword'));
     }
 
     public function save(Request $request, $id = 0)

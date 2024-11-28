@@ -5,14 +5,30 @@ namespace App\Http\Controllers\Admin;
 use App\Http\Controllers\Controller;
 use App\Models\Amenity;
 use Illuminate\Http\Request;
+use Illuminate\Support\Facades\Schema;
 
 class AmenitiesController extends Controller
 {
-    public function index()
+    public function index(Request $request)
     {
         $pageTitle = 'Danh sách tiện nghi';
-        $amenities = Amenity::orderBy('title')->Paginate(getPaginate());
-        return view('admin.hotel.amenities', compact('pageTitle', 'amenities'));
+        $keyword = $request->input('keyword');
+
+        $columns = Schema::getColumnListing('amenities');
+
+        $amenities = Amenity::query()
+            ->when($keyword, function ($query) use ($keyword, $columns) {
+                $query->where(function ($query) use ($keyword, $columns) {
+                    foreach ($columns as $column) {
+                        $query->orWhere($column, 'like', '%' . $keyword . '%');
+                    }
+                });
+            })
+        ->orderBy('title')
+        ->paginate(getPaginate());
+
+    // Trả về view kèm từ khóa và kết quả
+        return view('admin.hotel.amenities', compact('pageTitle', 'amenities', 'keyword'));
     }
 
     public function save(Request $request, $id = 0)
@@ -43,4 +59,7 @@ class AmenitiesController extends Controller
     {
         return Amenity::changeStatus($id);
     }
+
+
+
 }

@@ -156,7 +156,27 @@
         </div>
     @endcan
 
-
+    @can('admin.hotel.room.search')
+    @push('breadcrumb-plugins')
+        <!-- Form tìm kiếm trực tiếp -->
+        <form action="{{ route('admin.hotel.room.all') }}" method="GET" id="searchForm" class="mx-5">
+            <div class="input-group">
+                <input
+                    type="search"
+                    class="form-control"
+                    name="keyword"
+                    id="searchInput"
+                    value="{{ request('keyword') }}"
+                    placeholder="Tìm kiếm theo tiêu đề hoặc mô tả..."
+                    onsearch="handleSearchClear()">
+                <!-- Nút tìm kiếm -->
+                <button type="submit" class="btn btn-primary">
+                    <i class="las la-search"></i>
+                </button>
+            </div>
+        </form>
+    @endpush
+@endcan
 
     @can('admin.hotel.room.status')
         <x-confirmation-modal />
@@ -167,8 +187,9 @@
     <button class="btn btn-outline--primary" data-bs-target="#addModal" data-bs-toggle="modal"><i
             class="las la-plus"></i>
         @lang('Thêm mới')</button>
-    <x-search-form filter='yes' />
+    {{-- <x-search-form filter='yes' /> --}}
 @endpush
+
 
 @push('style')
     <style>
@@ -385,4 +406,13 @@
             }
         });
     </script>
+
+<script>
+    function handleSearchClear() {
+        const searchInput = document.getElementById('searchInput');
+        if (searchInput.value === '') {
+            window.location.href = '{{ route('admin.hotel.room.all') }}';
+        }
+    }
+</script>
 @endpush

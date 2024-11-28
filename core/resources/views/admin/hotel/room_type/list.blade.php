@@ -12,13 +12,18 @@
                         <option value="100">100</option>
                     </select><label for="perPage"> entries per page</label>
                 </div>
-                <div class="search col-md-4" style="text-align: end;">
-                    <label for="searchInput">Search:</label>
-                    <input class="searchInput"
-                       
+                <div class="search col-md-4 " style="text-align: end;">
+                    {{-- <label for="searchInput">Search:</label> --}}
+                    <div class="input-group" style="justify-content: end;">
+                        <input class="searchInput"
+
                         type="search" placeholder="Tìm kiếm...">
+                        <button type="submit" class="btn btn-primary">
+                            <i class="las la-search"></i>
+                        </button>
+                    </div>
                 </div>
-                <div class="dropdown col-md-2" style="display: flex;
+                <div class="dropdown col-md-1" style="display: flex;
                 justify-content: end">
                     <a class="btn btn-outline-secondary dropdown-toggle d-flex justify-content-center
     align-items-center" href="#" role="button"
