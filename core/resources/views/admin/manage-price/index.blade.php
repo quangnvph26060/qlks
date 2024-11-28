@@ -787,8 +787,6 @@
                                 // console.log( 'room_id: '. selectedDate);
 
                                 input.dataset.date = date;
-
-
                                 if (dataId == selectedDate.room_price_id) {
                                     input.value = selectedDate.hourly_price;
                                 }
@@ -883,14 +881,17 @@
                     let defaultDates = [];
                     if (typeof addDayColumn === 'function') {
                         data.forEach(function(item) {
-                            // addDayColumn(item);
-                            if (!defaultDates.includes(item.date)) {
-                                addDayColumn(item);
-                                defaultDates.push(item.date);
-                            }
+                             addDayColumn(item); 
+                             defaultDates.push(item.date);
+                            // if (!defaultDates.includes(item.date)) {
+                            //     addDayColumn(item);
+                              
+                            // }
                         });
                         const input = document.getElementById('selectedDates');
-                        input.value = defaultDates.join(', ');
+                        const uniqueDates = [...new Set(defaultDates)];
+                        input.value = uniqueDates.join(', ');
+
                         flatpickr("#selectedDates", {
                             mode: "multiple",
                             dateFormat: "Y-m-d",

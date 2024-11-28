@@ -173,13 +173,12 @@ class PriceController extends Controller
         foreach ($dates as $date) {
             if (preg_match('/^\d+$/', str_replace('-', '', $date))) {
                 $roomPrice = RoomPricePerDay::where('room_price_id', $data['room_id'])->where('date', $date)->first();
-
+                
                 if (!$roomPrice) {
                     $roomPrice = new RoomPricePerDay();
                     $roomPrice->room_price_id = $data['room_id'];
                     $roomPrice->date = $date;
                 }
-
                 $this->updatePrice($roomPrice, $priceType, $data['price']);
                 $responseMessages[] = ['status' => 'success', 'message' => 'Cập nhật giá thành công'];
             } else {
