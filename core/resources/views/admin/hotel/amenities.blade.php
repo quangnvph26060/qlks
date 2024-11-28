@@ -117,6 +117,30 @@
     @can('admin.hotel.amenity.status')
         <x-confirmation-modal />
     @endcan
+
+    @can('admin.hotel.amenity.search')
+        @push('breadcrumb-plugins')
+            <!-- Form tìm kiếm trực tiếp -->
+            <form action="{{ route('admin.hotel.amenity.all') }}" method="GET" id="searchForm" class="mx-5">
+                <div class="input-group">
+                    <input
+                        type="search"
+                        class="form-control"
+                        name="keyword"
+                        id="searchInput"
+                        value="{{ request('keyword') }}"
+                        placeholder="Tìm kiếm theo tiêu đề hoặc mô tả..."
+                        onsearch="handleSearchClear()">
+                    <!-- Nút tìm kiếm -->
+                    <button type="submit" class="btn btn-primary">
+                        <i class="las la-search"></i>
+                    </button>
+                </div>
+            </form>
+        @endpush
+    @endcan
+
+
 @endsection
 @can('admin.hotel.amenity.save')
     @push('breadcrumb-plugins')
@@ -155,4 +179,15 @@
 
         })(jQuery);
     </script>
+
+    <script>
+        function handleSearchClear() {
+            const searchInput = document.getElementById('searchInput');
+            if (searchInput.value === '') {
+                window.location.href = '{{ route('admin.hotel.facility.all') }}';
+            }
+        }
+    </script>
+
+
 @endpush

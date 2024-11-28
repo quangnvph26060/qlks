@@ -8,31 +8,50 @@ use App\Constants\Status;
 use App\Models\RoomPrice;
 use Illuminate\Http\Request;
 use App\Http\Controllers\Controller;
+use Illuminate\Support\Facades\Schema;
 use Illuminate\Support\Facades\Storage;
 
 class RoomController extends Controller
 {
-    public function index()
+    public function index(Request $request)
     {
 
         $pageTitle = 'Tất cả các loại phòng';
         // $roomTypes = RoomType::get();
-        $rooms     = RoomType::orderByDesc('created_at');
+        // $rooms     = RoomType::orderByDesc('created_at');
         // $prices = RoomPrice::active()->pluck('name', 'id');
 
 
-        if (request()->status == Status::ENABLE || request()->status == Status::DISABLE) {
-            $rooms = $rooms->filter(['status']);
-        }
+        // if (request()->status == Status::ENABLE || request()->status == Status::DISABLE) {
+        //     $rooms = $rooms->filter(['status']);
+        // }
 
 
     //    $rooms =  $rooms->with('images')->orderBy('room_number', 'asc')->paginate(getPaginate());
 
 
-        $rooms =  $rooms->paginate(getPaginate());
+        // $rooms =  $rooms->paginate(getPaginate());
 
 
-        return view('admin.hotel.rooms', compact('pageTitle', 'rooms'));
+        $keyword = $request->input('keyword');
+
+        $columns = Schema::getColumnListing('room_types');
+
+        $rooms = RoomType::query()
+            ->when($keyword, function ($query) use ($keyword, $columns) {
+                $query->where(function ($query) use ($keyword, $columns) {
+                    foreach ($columns as $column) {
+                        $query->orWhere($column, 'like', '%' . $keyword . '%');
+                    }
+                });
+            })->orderBy('created_at');
+            if (request()->status == Status::ENABLE || request()->status == Status::DISABLE) {
+                $rooms = $rooms->filter(['status']);
+            }
+            $rooms = $rooms->paginate(getPaginate());
+
+
+        return view('admin.hotel.rooms', compact('pageTitle', 'rooms', 'keyword'));
     }
 
     public function status($id)
