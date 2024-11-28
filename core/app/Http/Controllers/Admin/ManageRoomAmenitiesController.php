@@ -30,7 +30,7 @@ class ManageRoomAmenitiesController extends Controller
             'code',
             'room_type_id',
             'room_number',
-            'description'
+            'description',
         ];
         $relations = ['amenities', 'roomType'];
         $searchColumns = [

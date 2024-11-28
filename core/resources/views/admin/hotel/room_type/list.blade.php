@@ -14,20 +14,18 @@
                 </div>
                 <div class="search col-md-4" style="text-align: end;">
                     <label for="searchInput">Search:</label>
-                    <input class="searchInput"
-                       
-                        type="search" placeholder="Tìm kiếm...">
+                    <input class="searchInput" type="search" placeholder="Tìm kiếm...">
                 </div>
                 <div class="dropdown col-md-2" style="display: flex;
                 justify-content: end">
                     <a class="btn btn-outline-secondary dropdown-toggle d-flex justify-content-center
-    align-items-center" href="#" role="button"
-                        data-bs-toggle="dropdown" aria-expanded="false">
+                    align-items-center"
+                        href="#" role="button" data-bs-toggle="dropdown" aria-expanded="false">
                         Thao tác
                     </a>
                     <ul class="dropdown-menu">
-                        <li><a class="dropdown-item"
-                                href="{{ route('admin.hotel.room.type.all.deleted') }}">Các phòng đã xóa</a>
+                        <li><a class="dropdown-item" href="{{ route('admin.hotel.room.type.all.deleted') }}">Các phòng đã
+                                xóa</a>
                         </li>
                     </ul>
                 </div>
@@ -223,7 +221,8 @@
             display: block;
             width: 100%;
         }
-        .searchInput{
+
+        .searchInput {
             padding: 1px 3px;
             border: 1px solid rgb(121, 117, 117, 0.5);
             margin-left: 8px;
