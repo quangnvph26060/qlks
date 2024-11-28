@@ -15,9 +15,9 @@
         <td data-label="Mã phòng">
             {{ $type->code }}
         </td>
-        <td>
+        <td data-label="Tiện nghi">
             @if ($type->amenities->count() > 0)
-                <div class="d-flex flex-wrap">
+                <div class="float-inline-end">
                     @foreach ($type->amenities as $amenity)
                         <span class="badge {{ getRandomColor() }} m-1 p-1 rounded-pill text-bg-primary">
                             {{ $amenity->title }}
@@ -28,9 +28,9 @@
                 Chưa có tiện nghi nào
             @endif
         </td>
-        <td>
+        <td data-label="Cơ sở vật chất">
             @if ($type->facilities->count() > 0)
-                <div class="d-flex flex-wrap">
+                <div class="float-inline-end">
                     @foreach ($type->facilities as $facility)
                         <span class="badge {{ getRandomColor() }} m-1 p-1 rounded-pill text-bg-primary">
                             {{ $facility->title }}
@@ -42,8 +42,11 @@
             @endif
         </td>
 
-        <td>---------</td>
-        <td>@php echo $type->statusBadge  @endphp</td>
+        <td data-label="Giá giờ">{{ showAmount($type->roomPriceNow()?->hourly_price) ?? '-----' }}</td>
+        <td data-label="Giá ngày">{{ showAmount($type->roomPriceNow()?->daily_price) ?? '-----' }}</td>
+        <td data-label="Giá đêm">{{ showAmount($type->roomPriceNow()?->overnight_price) ?? '-----' }}</td>
+        
+        <td data-label="Trạng thái">@php echo $type->statusBadge  @endphp</td>
         @can(['admin.hotel.room.type.edit', 'admin.hotel.room.type.status', 'admin.hotel.room.type.destroy'])
             <td>
                 <div class="button--group">

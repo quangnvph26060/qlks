@@ -12,7 +12,7 @@
                             <span class="badge {{ getRandomColor() }}">{{ $item->title }}</span>
                         @endforeach
                     @else
-                        <p>Chưa có cơ sở vật chất nào !</p>
+                        <p>Chưa có cơ sở vật chất nào </p>
                     @endif
 
                 </td>

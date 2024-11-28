@@ -15,12 +15,13 @@
                 <div class="search col-md-4" style="text-align: end;">
                     <label for="searchInput">Search:</label>
                     <input class="searchInput"
-                        style="padding: 1px 3px; border: 1px solid rgb(121, 117, 117, 0.5); margin-left: 8px;"
+                       
                         type="search" placeholder="Tìm kiếm...">
                 </div>
                 <div class="dropdown col-md-2" style="display: flex;
                 justify-content: end">
-                    <a class="btn btn-outline-secondary dropdown-toggle" href="#" role="button"
+                    <a class="btn btn-outline-secondary dropdown-toggle d-flex justify-content-center
+    align-items-center" href="#" role="button"
                         data-bs-toggle="dropdown" aria-expanded="false">
                         Thao tác
                     </a>
@@ -44,7 +45,9 @@
                                     <th>@lang('Mã phòng')</th>
                                     <th>@lang('Tiện nghi')</th>
                                     <th>@lang('Cở sở vật chất')</th>
-                                    <th>@lang('Các loại giá')</th>
+                                    <th>@lang('Giá giờ')</th>
+                                    <th>@lang('Giá ngày')</th>
+                                    <th>@lang('Giá đêm')</th>
                                     <th>@lang('Trạng thái')</th>
                                     @can(['admin.hotel.room.type.edit', 'admin.hotel.room.type.status',
                                         'admin.hotel.room.type.destroy'])
@@ -219,6 +222,11 @@
             /* Clear floats if needed */
             display: block;
             width: 100%;
+        }
+        .searchInput{
+            padding: 1px 3px;
+            border: 1px solid rgb(121, 117, 117, 0.5);
+            margin-left: 8px;
         }
     </style>
 @endpush
