@@ -296,13 +296,19 @@ class BookingController extends Controller
             ])
             ->whereHas('booking', function ($query) use ($request) {
                 if (!empty($request->codeRoom)) {
-                    $query->where('booking_number', $request->codeRoom);
+                    $query->where('booking_number','like', '%' . $request->codeRoom. '%');
+                }
+                if (!empty($request->customer)) {
+                    $query->whereRaw('JSON_UNQUOTE(JSON_EXTRACT(guest_details, "$.name")) LIKE ?', ['%' . $request->customer . '%']);
                 }
             })
             ->when(!empty($request->roomType), function ($query) use ($request) {
                 $query->where('room_type_id', 'like', '%' . $request->roomType . '%');
             })
             ->get();
+
+            \Log::info($bookings);
+
             if(!empty($request->codeRoom)){
                 $emptyRooms = [];
             }
