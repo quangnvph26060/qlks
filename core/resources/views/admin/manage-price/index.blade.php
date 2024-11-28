@@ -2,14 +2,30 @@
 @section('panel')
     <div class="bodywrapper__inner">
 
-        <div class="d-flex justify-content-end">
+        <div class="d-flex justify-content-end mb-3">
             {{-- <h4>Thêm Giá Phòng</h4> --}}
             <div class="d-flex justify-content-center align-items-center" style="gap: 10px;">
-                <form id="search-premium" action="{{ route('admin.manage.price.all') }}" method="GET">
+                {{-- <form id="search-premium" action="{{ route('admin.manage.price.all') }}" method="GET">
                     <label for="searchInput">Search:</label>
                     <input class="searchInput" name="name" value="{{ $input }}"id="searchInput"
                         style="padding: 1px 3px; border: 1px solid rgb(121, 117, 117, 0.5); margin-left: 8px;"
                         type="search" placeholder="Tìm kiếm...">
+                </form> --}}
+                <form action="{{ route('admin.manage.price.all') }}" method="GET" id="search-premium" class="mx-5">
+                    <div class="input-group">
+                        <input
+                            type="search"
+                            class="searchInput"
+                            name="name"
+                            value="{{ $input }}"
+                            id="searchInput"
+                            value="{{ request('keyword') }}"
+                            placeholder="Tìm kiếm ...">
+                        <!-- Nút tìm kiếm -->
+                        <button type="submit" class="btn btn-primary">
+                            <i class="las la-search"></i>
+                        </button>
+                    </div>
                 </form>
                 <button type="button" class="btn btn-primary main-add-day" id="addColumnBtn" data-toggle="modal"
                     data-target="#addDayModal">
@@ -1091,11 +1107,11 @@
                     });
                 }
 
-                // add thêm ngày được chọn 
+                // add thêm ngày được chọn
                 $(document).on('click', '.btnUpdateDate', function() {
                     updatePriceDate('addDate');
                 });
-                // delte ngày được chọn 
+                // delte ngày được chọn
                 $(document).on('click', '.remoteDatePrice', function() {
                     updatePriceDate('delDate');
                 });
@@ -1163,7 +1179,7 @@
                     $('#myModalDate').modal('hide');
                 });
             });
-          
+
             $(document).ready(function() {
                 $('#searchInput').on('blur', function() {
                     const inputValue = $(this).val();

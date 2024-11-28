@@ -18,10 +18,25 @@
                     </select><label for="perPage"> entries per page</label>
                 </div>
                 <div class="search">
-                    <label for="searchInput">Search:</label>
+                    {{-- <label for="searchInput">Search:</label>
                     <input class="searchInput"
                         style="padding: 1px 3px; border: 1px solid rgb(121, 117, 117, 0.5); margin-left: 8px;"
-                        type="search" placeholder="Tìm kiếm...">
+                        type="search" placeholder="Tìm kiếm..."> --}}
+                        <form method="GET" id="searchForm" class="mx-5">
+                            <div class="input-group">
+                                <input
+                                    type="search"
+                                    class="searchInput"
+                                    name="keyword"
+                                    id="searchInput"
+                                    value="{{ request('keyword') }}"
+                                    placeholder="Tìm kiếm ...">
+                                <!-- Nút tìm kiếm -->
+                                <button type="button" class="btn btn-primary">
+                                    <i class="las la-search"></i>
+                                </button>
+                            </div>
+                        </form>
                 </div>
             </div>
             <div class="card b-radius--10">
