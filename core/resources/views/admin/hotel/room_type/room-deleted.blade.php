@@ -135,7 +135,9 @@
         </div>
     </div>
 @endsection
-
+@push('breadcrumb-plugins')
+<a class="btn btn-sm btn-outline--primary" href="{{ route('admin.hotel.room.type.all') }}">@lang('Quay lại')</a>
+@endpush
 @push('script')
     <script src="{{ asset('assets/admin/js/dataTable.js') }}"></script>
 

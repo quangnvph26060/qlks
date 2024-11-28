@@ -8,7 +8,7 @@
         if ($rooms->status == 1) {
             $class = 'status-occupied'; // đang hoạt động; sắp tới
         }
-        $price = $rooms->roomPricesActive[0]['price'];
+        // $price = $rooms->roomPricesActive[0]['price'];
         $price_hours = showAmount($rooms->roomPriceNow()->hourly_price);
         $price_day = showAmount($rooms->roomPriceNow()->daily_price);
         $price_night = showAmount($rooms->roomPriceNow()->overnight_price);

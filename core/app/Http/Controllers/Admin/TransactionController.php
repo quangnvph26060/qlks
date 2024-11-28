@@ -104,7 +104,7 @@ class TransactionController extends Controller
             $transaction->save(); // Lưu lại thay đổi trạng thái
 
             DB::commit(); // Xác nhận transaction nếu không có lỗi
-            return redirect()->route('admin.transaction.index')->with('success', 'Status changed successfully.');
+            return redirect()->route('admin.transaction.index')->with('success', 'Trạng thái đã thay đổi thành công');
         } catch (Exception $e) {
             DB::rollback(); // Hoàn tác transaction nếu có lỗi
             Log::error("Failed to change this transaction's status: " . $e->getMessage());

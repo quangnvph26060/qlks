@@ -63,7 +63,6 @@ class BookedRoom extends Model {
     }
    
     public function bookingFare(){
-        \Log::info('123');
         return Booking::find($this->id);
     }
 }

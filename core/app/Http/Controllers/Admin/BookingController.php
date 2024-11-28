@@ -13,6 +13,7 @@ use App\Constants\Status;
 use App\Http\Responses\ApiResponse;
 use App\Models\PremiumService;
 use App\Models\Product;
+use App\Models\RegularRoomPrice;
 use App\Models\RoomPriceRoom;
 use Carbon\Carbon;
 use Symfony\Component\Console\Helper\Helper;
@@ -268,17 +269,20 @@ class BookingController extends Controller
 
 
         $disabledRoomTypeIDs = RoomType::where('status', 0)->pluck('id')->toArray();
-        $bookedRooms         = $rooms->pluck('room_id')->toArray();
+      
+        
+        $bookedRooms         = $rooms->pluck('room_id')->toArray(); 
+        $idRoomActive        = RegularRoomPrice::pluck('room_price_id'); 
         $emptyRooms          = Room::active()
-                                ->has('roomPricesActive')
                                 ->whereNotIn('id', $bookedRooms)
                                 ->whereNotIn('room_type_id', $disabledRoomTypeIDs) // Loại trừ những phòng ngưng hoạt động hoặc vô hiệu hóa
-                                ->with(['roomType', 'roomPricesActive'])
+                                ->whereIn('id', $idRoomActive)
+                                ->with(['roomType'])
                                 ->select(['id', 'room_type_id', 'room_number', 'is_clean'])
                                 ->when(!empty($request->roomType), function ($query) use ($request) {
                                     $query->where('room_type_id', 'like', '%' . $request->roomType . '%');
                                 })
-                                ->get();
+                                ->get();    
         $scope = 'ALL';
         $is_method = 'Receptionist';
 
@@ -302,7 +306,9 @@ class BookingController extends Controller
                 $query->where('room_type_id', 'like', '%' . $request->roomType . '%');
             })
             ->get();
+
             \Log::info($bookings);
+
             if(!empty($request->codeRoom)){
                 $emptyRooms = [];
             }

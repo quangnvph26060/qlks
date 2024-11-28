@@ -288,7 +288,7 @@ class GeneralSettingController extends Controller
         $general->socialite_credentials = $credentials;
         $general->save();
 
-        $notify[] = ['success', 'Status changed successfully'];
+        $notify[] = ['success', 'Trạng thái đã thay đổi thành công'];
         return back()->withNotify($notify);
     }
 

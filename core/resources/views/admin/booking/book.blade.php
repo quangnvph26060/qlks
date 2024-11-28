@@ -116,7 +116,7 @@
                             <div class="orderList d-none">
                                 <ul class="list-group list-group-flush orderItem">
                                     <li class="list-group-item d-flex justify-content-between align-items-center">
-                                        <h6>@lang('Danh sách phòng 123')</h6>
+                                        <h6>@lang('Danh sách phòng ')</h6>
                                         <h6>@lang('Ngày')</h6>
                                         <span>
                                             <h6>@lang('Giá')</h6>

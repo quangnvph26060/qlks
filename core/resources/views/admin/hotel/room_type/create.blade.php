@@ -17,7 +17,7 @@
                                 <div class="form-group">
                                     <label>@lang('Loại phòng')</label>
                                     <select class="form-control" name="room_type_id" required>
-                                        <option disabled selected value="">@lang('Select One')</option>
+                                        <option disabled selected value="">@lang('Chọn loại phòng')</option>
                                         @foreach ($roomTypes as $id => $name)
                                             <option @selected(old('room_type_id', @$roomType->room_type_id) == $id) value="{{ $id }}">
                                                 {{ __($name) }}</option>
@@ -362,7 +362,7 @@
                         </h5>
                     </div> --}}
                     <div class="card-body">
-                        <div class="row">
+                        <div class="row d-flex     flex-column">
                             {{-- <div class="radio-container">
                                 <label class="toggle">
                                     <input type="checkbox" name="status" class="status-change"
@@ -370,7 +370,7 @@
                                     <span class="slider"></span>
                                 </label>
                             </div> --}}
-                            <div class="col-md-2" style=" margin-top: 18px; ">
+                            <div class="col-md-1" style=" margin-top: 18px; ">
                                 <h5 class="card-title mb-0">
                                     @lang('Trạng thái')
                                 </h5>
