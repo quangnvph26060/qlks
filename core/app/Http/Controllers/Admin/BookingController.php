@@ -298,8 +298,14 @@ class BookingController extends Controller
                 if (!empty($request->codeRoom)) {
                     $query->where('booking_number','like', '%' . $request->codeRoom. '%');
                 }
+                
                 if (!empty($request->customer)) {
-                    $query->whereRaw('JSON_UNQUOTE(JSON_EXTRACT(guest_details, "$.name")) LIKE ?', ['%' . $request->customer . '%']);
+                    $user = User::where('username','like', '%' . $request->customer. '%')->first();
+                    if($user){
+                        $query->where('user_id',$user->id);
+                    }else{
+                        $query->whereRaw('JSON_UNQUOTE(JSON_EXTRACT(guest_details, "$.name")) LIKE ?', ['%' . $request->customer . '%']);
+                    }
                 }
             })
             ->when(!empty($request->roomType), function ($query) use ($request) {
@@ -307,9 +313,7 @@ class BookingController extends Controller
             })
             ->get();
 
-            \Log::info($bookings);
-
-            if(!empty($request->codeRoom)){
+            if(!empty($request->codeRoom) || !empty($request->customer)){
                 $emptyRooms = [];
             }
         // dd($bookings);
