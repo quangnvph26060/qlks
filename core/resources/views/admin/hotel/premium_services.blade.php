@@ -5,12 +5,21 @@
         <div class="col-md-12">
             <div class="">
                 <div class="d-flex justify-content-between mb-3" style="float: right;">
-                    <div class="search">
+                    <div class=" input-group " style="justify-content: end;">
                         <form id="search-premium" action="{{route('admin.hotel.premium.service.all')}}" method="GET">
-                               <label for="searchInput">Search:</label>
-                            <input class="searchInput" name="name"  value="{{$input}}"id="searchInput" style="padding: 1px 3px; border: 1px solid rgb(121, 117, 117, 0.5); margin-left: 8px;" type="search" placeholder="Tìm kiếm...">
+                            <input class="searchInput" name="name"  value="{{$input}}"id="searchInput"  type="search" placeholder="Tìm kiếm...">
+                            <button type="submit" class="btn btn-primary">
+                                <i class="las la-search"></i>
+                            </button>
                         </form>
                     </div>
+                    {{-- <div class="input-group" style="justify-content: end;">
+                        <input class="searchInput"
+                        type="search" placeholder="Tìm kiếm...">
+                        <button type="submit" class="btn btn-primary">
+                            <i class="las la-search"></i>
+                        </button>
+                    </div> --}}
                 </div>
             </div>
             <div id="pagination" class="mt-3">
