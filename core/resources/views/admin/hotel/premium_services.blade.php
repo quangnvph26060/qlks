@@ -5,14 +5,36 @@
         <div class="col-md-12">
             <div class="">
                 <div class="d-flex justify-content-between mb-3" style="float: right;">
-                    <div class=" input-group " style="justify-content: end;">
+                    {{-- <div class=" input-group " style="justify-content: end;">
                         <form id="search-premium" action="{{route('admin.hotel.premium.service.all')}}" method="GET">
                             <input class="searchInput" name="name"  value="{{$input}}"id="searchInput"  type="search" placeholder="Tìm kiếm...">
                             <button type="submit" class="btn btn-primary">
                                 <i class="las la-search"></i>
                             </button>
                         </form>
-                    </div>
+                    </div> --}}
+
+                    @can('admin.hotel.service.search')
+                        @push('breadcrumb-plugins')
+                                <!-- Form tìm kiếm trực tiếp -->
+                                <form action="{{ route('admin.hotel.premium.service.all') }}" method="GET" id="searchForm" class="mx-5">
+                                    <div class="input-group">
+                                        <input
+                                            type="search"
+                                            class="searchInput"
+                                            name="name"
+                                            id="searchInput"
+                                            value="{{$input}}"
+                                            placeholder="Tìm kiếm..."
+                                            onsearch="handleSearchClear()">
+                                        <!-- Nút tìm kiếm -->
+                                        <button type="button" class="btn btn-primary">
+                                            <i class="las la-search"></i>
+                                        </button>
+                                    </div>
+                                </form>
+                            @endpush
+                        @endcan
                     {{-- <div class="input-group" style="justify-content: end;">
                         <input class="searchInput"
                         type="search" placeholder="Tìm kiếm...">
@@ -163,14 +185,23 @@
                 this.value = this.value.toUpperCase();
             });
             $('#searchInput').on('blur', function () {
-                const inputValue = $(this).val(); 
-               
+                const inputValue = $(this).val();
+
                     $('#search-premium').submit();
-             
+
             });
             $('#search-premium').on('submit', function () {
                 console.log('Submitting form with value:', $('#searchInput').val());
             });
         });
+    </script>
+
+    <script>
+        function handleSearchClear() {
+            const searchInput = document.getElementById('searchInput');
+            if (searchInput.value === '') {
+                window.location.href = '{{ route('admin.hotel.premium.service.all') }}';
+            }
+        }
     </script>
 @endpush
