@@ -48,14 +48,7 @@
                 "route_name": "admin.hotel.facility.all",
                 "menu_active": "admin.hotel.facility.all"
             },
-            {
-                "keyword": [
-                    "Loại giường"
-                ],
-                "title": "Loại giường",
-                "route_name": "admin.hotel.bed.all",
-                "menu_active": "admin.hotel.bed.all"
-            },
+           
             {
                 "keyword": [
                     "Phòng"

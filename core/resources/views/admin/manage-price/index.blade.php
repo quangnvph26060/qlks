@@ -2,15 +2,23 @@
 @section('panel')
     <div class="bodywrapper__inner">
 
-        <div class="d-flex justify-content-between">
-            <h2>Thêm Giá Phòng</h2>
-            <button type="button" class="btn btn-primary main-add-day" id="addColumnBtn" data-toggle="modal"
-                data-target="#addDayModal">
-                <svg xmlns="http://www.w3.org/2000/svg" width="20" height="20" viewBox="0 0 24 24">
-                    <path fill="currentColor" d="M13 4v7h7v2h-7v7h-2v-7H4v-2h7V4h2Z" />
-                </svg>
-                Thứ,Ngày
-            </button>
+        <div class="d-flex justify-content-end">
+            {{-- <h4>Thêm Giá Phòng</h4> --}}
+            <div class="d-flex justify-content-center align-items-center" style="gap: 10px;">
+                <form id="search-premium" action="{{ route('admin.manage.price.all') }}" method="GET">
+                    <label for="searchInput">Search:</label>
+                    <input class="searchInput" name="name" value="{{ $input }}"id="searchInput"
+                        style="padding: 1px 3px; border: 1px solid rgb(121, 117, 117, 0.5); margin-left: 8px;"
+                        type="search" placeholder="Tìm kiếm...">
+                </form>
+                <button type="button" class="btn btn-primary main-add-day" id="addColumnBtn" data-toggle="modal"
+                    data-target="#addDayModal">
+                    <svg xmlns="http://www.w3.org/2000/svg" width="20" height="20" viewBox="0 0 24 24">
+                        <path fill="currentColor" d="M13 4v7h7v2h-7v7h-2v-7H4v-2h7V4h2Z" />
+                    </svg>
+                    Thứ,Ngày
+                </button>
+            </div>
         </div>
 
         <div class="table-responsive--md table-responsive">
@@ -296,7 +304,7 @@
     <script src="https://stackpath.bootstrapcdn.com/bootstrap/4.5.2/js/bootstrap.min.js"></script>
 
     <script src="{{ asset('assets/admin/js/vendor/sweetalert2@11.js') }}"></script>
-    <script src="{{ asset('assets/admin/js/dataTable.js') }}"></script>
+    {{-- <script src="{{ asset('assets/admin/js/dataTable.js') }}"></script> --}}
     <script src="https://cdn.jsdelivr.net/npm/flatpickr"></script>
 
     <script>
@@ -881,11 +889,11 @@
                     let defaultDates = [];
                     if (typeof addDayColumn === 'function') {
                         data.forEach(function(item) {
-                             addDayColumn(item); 
-                             defaultDates.push(item.date);
+                            addDayColumn(item);
+                            defaultDates.push(item.date);
                             // if (!defaultDates.includes(item.date)) {
                             //     addDayColumn(item);
-                              
+
                             // }
                         });
                         const input = document.getElementById('selectedDates');
@@ -1155,7 +1163,18 @@
                     $('#myModalDate').modal('hide');
                 });
             });
+          
+            $(document).ready(function() {
+                $('#searchInput').on('blur', function() {
+                    const inputValue = $(this).val();
 
+                    $('#search-premium').submit();
+
+                });
+                $('#search-premium').on('submit', function() {
+                    console.log('Submitting form with value:', $('#searchInput').val());
+                });
+            });
         });
     </script>
     <script>

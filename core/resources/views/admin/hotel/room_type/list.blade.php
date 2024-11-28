@@ -12,6 +12,7 @@
                         <option value="100">100</option>
                     </select><label for="perPage"> entries per page</label>
                 </div>
+
                 <div class="search col-md-4 " style="text-align: end;">
                     {{-- <label for="searchInput">Search:</label> --}}
                     <div class="input-group" style="justify-content: end;">
@@ -35,6 +36,9 @@
                                 href="{{ route('admin.hotel.room.type.all.deleted') }}">Các phòng đã xóa</a>
                         </li>
                     </ul>
+
+                    </div>
+
                 </div>
             </div>
             <div class="card b-radius--10">
@@ -228,8 +232,9 @@
             display: block;
             width: 100%;
         }
-        .searchInput{
-            padding: 1px 3px;
+
+        .searchInput {
+            padding: 1px 3px !important;
             border: 1px solid rgb(121, 117, 117, 0.5);
             margin-left: 8px;
         }

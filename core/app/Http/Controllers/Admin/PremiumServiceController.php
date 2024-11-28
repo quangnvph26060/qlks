@@ -4,15 +4,22 @@ namespace App\Http\Controllers\Admin;
 
 use App\Http\Controllers\Controller;
 use App\Models\PremiumService;
+use App\Repositories\BaseRepository;
 use Illuminate\Http\Request;
 
 class PremiumServiceController extends Controller
 {
-    public function index()
+    public function index(Request $request)
     {
+        $input         = $request->name;
         $pageTitle     = 'Dịch vụ cao cấp';
-        $premiumServices = PremiumService::latest()->paginate(getPaginate());
-        return view('admin.hotel.premium_services', compact('pageTitle', 'premiumServices'));
+        // PremiumService::latest()->paginate(getPaginate());
+        $premiumServices = PremiumService::query();
+        if (!empty($input)) {
+            $premiumServices->where('name','like', '%' . $input . '%');
+        }
+        $premiumServices = $premiumServices->paginate(getPaginate()); 
+        return view('admin.hotel.premium_services', compact('pageTitle', 'premiumServices', 'input'));
     }
 
     public function save(Request $request, $id = 0)

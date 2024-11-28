@@ -101,7 +101,7 @@
             <div class="representatives-container">
                 <span class="representatives-label">Số lượng người:</span>
                 <span class="representatives-list">
-                    {{ $type->total_adult }} người lớn | {{ $type->total_child }} trẻ em
+                    {{ $type->total_adult }} người lớn | {{ $type->total_child }} trẻ em 123123123
                 </span>
             </div>
             <div class="representatives-container">

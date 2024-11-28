@@ -2,7 +2,20 @@
 
 @section('panel')
     <div class="row">
-
+        <div class="col-md-12">
+            <div class="">
+                <div class="d-flex justify-content-between mb-3" style="float: right;">
+                    <div class="search">
+                        <form id="search-premium" action="{{route('admin.hotel.premium.service.all')}}" method="GET">
+                               <label for="searchInput">Search:</label>
+                            <input class="searchInput" name="name"  value="{{$input}}"id="searchInput" style="padding: 1px 3px; border: 1px solid rgb(121, 117, 117, 0.5); margin-left: 8px;" type="search" placeholder="Tìm kiếm...">
+                        </form>
+                    </div>
+                </div>
+            </div>
+            <div id="pagination" class="mt-3">
+            </div>
+        </div>
         <div class="col-lg-12">
             <div class="card b-radius--10">
                 <div class="card-body p-0">
@@ -39,8 +52,8 @@
                                             <td>
                                                 <div class="button--group">
                                                     @can('admin.hotel.premium.service.save')
-                                                        <button class="btn btn-sm btn-outline--primary cuModalBtn" data-has_status="1"
-                                                            data-modal_title="@lang('Update Premium Service')"
+                                                        <button class="btn btn-sm btn-outline--primary cuModalBtn"
+                                                            data-has_status="1" data-modal_title="@lang('Update Premium Service')"
                                                             data-resource="{{ $premiumService }}" type="button">
                                                             <i class="la la-pencil"></i>@lang('Sửa')
                                                         </button>
@@ -70,7 +83,6 @@
                                         <td class="text-muted text-center" colspan="100%">{{ $emptyMessage }}</td>
                                     </tr>
                                 @endforelse
-
                             </tbody>
                         </table><!-- table end -->
                     </div>
@@ -100,8 +112,7 @@
                         <div class="modal-body">
                             <div class="form-group">
                                 <label> @lang('Mã dịch vụ')</label>
-                                <input class="form-control" name="code" required type="text"
-                                    value="{{ old('code') }}">
+                                <input class="form-control" name="code" required type="text" value="{{ old('code') }}">
                             </div>
                             <div class="form-group">
                                 <label> @lang('Tên dịch vụ')</label>
@@ -141,6 +152,15 @@
         $(document).ready(function() {
             $('input[name="code"]').on('input', function() {
                 this.value = this.value.toUpperCase();
+            });
+            $('#searchInput').on('blur', function () {
+                const inputValue = $(this).val(); 
+               
+                    $('#search-premium').submit();
+             
+            });
+            $('#search-premium').on('submit', function () {
+                console.log('Submitting form with value:', $('#searchInput').val());
             });
         });
     </script>

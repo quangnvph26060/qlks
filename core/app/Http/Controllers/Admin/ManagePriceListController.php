@@ -18,53 +18,18 @@ class ManagePriceListController extends Controller
         $this->repository = new BaseRepository(new RoomPrice());
     }
 
-    public function priceList()
+    public function priceList(Request $request)
     {
-
-
+        $input = $request->name;
         $pageTitle = 'Danh sách bảng giá';
-        $search = request()->get('search');
-        $perPage = request()->get('perPage', 10);
-        $orderBy = request()->get('orderBy', 'id');
-        $columns = [
-            'id',
-            'code',
-            'name',
-            'price',
-            'start_date',
-            'end_date',
-            'status',
-        ];
-        $relations = [];
-        $searchColumns = [
-            'code',
-            'name',
-            'status',
-        ];
-        $relationSearchColumns = [];
-
-        $response = $this->repository
-            ->customPaginate(
-                $columns,
-                $relations,
-                $perPage,
-                $orderBy,
-                $search,
-                [],
-                $searchColumns,
-                $relationSearchColumns
-            );
-
-
-        if (request()->ajax()) {
-            return response()->json([
-                'results' => view('admin.table.manage-price', compact('response'))->render(),
-                'pagination' => view('vendor.pagination.custom', compact('response'))->render(),
-            ]);
+      
+        $rooms = Room::query();
+        $rooms = $rooms->active();
+        if (!empty($input)) {
+            $rooms->where('room_number','like', '%' . $input . '%');
         }
-     //  return view('admin.manage-price.index', compact('pageTitle'));
-        $rooms = Room::active()->get();
-        return view('admin.manage-price.index', compact('pageTitle','rooms'));
+        $rooms = $rooms->paginate(getPaginate()); 
+        return view('admin.manage-price.index', compact('pageTitle','rooms','input'));
     }
 
     public function store(Request $request)
