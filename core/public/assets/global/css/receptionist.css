@@ -71,7 +71,7 @@
 
 input:not([type='radio']),
 textarea {
-    padding: 15px 1px !important;
+    padding: 15px 20px !important;
 }
 
 .modal-header h5 {
