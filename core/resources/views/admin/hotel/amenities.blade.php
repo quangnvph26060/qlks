@@ -139,16 +139,17 @@
             </form>
         @endpush
     @endcan
+    @can('admin.hotel.amenity.save')
+        @push('breadcrumb-plugins')
+            <button class="btn btn-sm btn-outline--primary cuModalBtn" data-modal_title="@lang('Thêm tiện ích mới')" type="button">
+                <i class="las la-plus"></i>@lang('Thêm mới')
+            </button>
+        @endpush
+    @endcan
 
 
 @endsection
-@can('admin.hotel.amenity.save')
-    @push('breadcrumb-plugins')
-        <button class="btn btn-sm btn-outline--primary cuModalBtn" data-modal_title="@lang('Thêm tiện ích mới')" type="button">
-            <i class="las la-plus"></i>@lang('Thêm mới')
-        </button>
-    @endpush
-@endcan
+
 
 @push('style-lib')
     <link href="{{ asset('assets/admin/css/fontawesome-iconpicker.min.css') }}" rel="stylesheet">
@@ -190,4 +191,22 @@
     </script>
 
 
+@endpush
+
+@push('style')
+   <style>
+     @media (max-width: 768px) {
+        #searchForm{
+            order: 2;
+            width: 100% !important;
+            margin-top: 15px !important;
+        }
+        .cuModalBtn{
+            order: 1;
+            width: 100%;
+            margin-right: 3rem !important;
+            margin-left: 3rem !important;
+        }
+    }
+   </style>
 @endpush
