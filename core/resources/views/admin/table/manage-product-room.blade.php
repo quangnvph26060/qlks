@@ -2,11 +2,11 @@
     @foreach ($response as $room)
         @if ($room->products->count())
             <tr data-id="{{ $room->id }}">
-                <th>{{ $loop->iteration }}</th>
-                <td>{{ $room->code }}</td>
-                <td>{{ $room->roomType->name }}</td>
-                <td>{{ $room->room_number }}</td>
-                <td>
+                <th data-label="STT">{{ $loop->iteration }}</th>
+                <td data-label="Mã phòng">{{ $room->code }}</td>
+                <td data-label="Loại phòng">{{ $room->roomType->name }}</td>
+                <td data-label="Số phòng">{{ $room->room_number }}</td>
+                <td data-label="Sản phẩm">
                     @if ($room->products->count() > 0)
                         @foreach ($room->products as $item)
                             <span class="badge {{ getRandomColor() }} limitname">{{ $item->name }}</span>

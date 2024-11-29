@@ -19,8 +19,8 @@
                         <input class="searchInput"
                             style="padding: 1px 3px; border: 1px solid rgb(121, 117, 117, 0.5); margin-left: 8px;"
                             type="search" placeholder="Tìm kiếm..."> --}}
-                            <form method="GET" id="searchForm" class="mx-5">
-                                <div class="input-group">
+                            <form method="GET" id="searchForm" >
+                                <div class="input-group flex-nowrap">
                                     <input
                                         type="search"
                                         class="searchInput"
@@ -401,6 +401,11 @@
             font-size: 18px;
             line-height: 25px;
         }
+        @media(max-width:768px){
+        .flex-nowrap{
+            flex-wrap: nowrap !important;
+        }
+    }
     </style>
 @endpush
 

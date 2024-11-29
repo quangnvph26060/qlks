@@ -11,8 +11,8 @@
                         style="padding: 1px 3px; border: 1px solid rgb(121, 117, 117, 0.5); margin-left: 8px;"
                         type="search" placeholder="Tìm kiếm...">
                 </form> --}}
-                <form action="{{ route('admin.manage.price.all') }}" method="GET" id="search-premium" class="mx-5">
-                    <div class="input-group">
+                <form action="{{ route('admin.manage.price.all') }}" method="GET" id="search-premium">
+                    <div class="input-group flex-nowrap">
                         <input
                             type="search"
                             class="searchInput"
@@ -20,15 +20,15 @@
                             value="{{ $input }}"
                             id="searchInput"
                             value="{{ request('keyword') }}"
-                            placeholder="Tìm kiếm ...">
+                            placeholder="Tìm kiếm ..." style="width:100%">
                         <!-- Nút tìm kiếm -->
-                        <button type="submit" class="btn btn-primary">
+                        <button type="submit" class="btn btn-primary" >
                             <i class="las la-search"></i>
                         </button>
                     </div>
                 </form>
                 <button type="button" class="btn btn-primary main-add-day" id="addColumnBtn" data-toggle="modal"
-                    data-target="#addDayModal">
+                    data-target="#addDayModal" style="    white-space: nowrap;">
                     <svg xmlns="http://www.w3.org/2000/svg" width="20" height="20" viewBox="0 0 24 24">
                         <path fill="currentColor" d="M13 4v7h7v2h-7v7h-2v-7H4v-2h7V4h2Z" />
                     </svg>

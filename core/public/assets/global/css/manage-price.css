@@ -153,3 +153,8 @@ input[type="number"] {
         margin-left: -107px
     }
 }
+@media(max-width:768px){
+    .flex-nowrap{
+        flex-wrap: nowrap !important;
+    }
+}

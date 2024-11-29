@@ -7,7 +7,7 @@
     <!-- Khối bên phải: Danh sách danh mục -->
     <div class="col-md-12">
         <div class="border p-2">
-            <div class="d-flex justify-content-between mb-3">
+            <div class="d-flex justify-content-between mb-3 mobi-page">
                 <div class="dt-length">
                     <select name="example_length" id="perPage" style=" padding: 1px 3px; margin-right: 8px;"
                         aria-controls="example" class="perPage">
@@ -22,8 +22,8 @@
                     <input class="searchInput"
                         style="padding: 1px 3px; border: 1px solid rgb(121, 117, 117, 0.5); margin-left: 8px;"
                         type="search" placeholder="Tìm kiếm..."> --}}
-                        <form method="GET" id="searchForm" class="mx-5">
-                            <div class="input-group">
+                        <form method="GET" id="searchForm">
+                            <div class="input-group flex-nowrap">
                                 <input
                                     type="search"
                                     class="searchInput"
@@ -479,7 +479,14 @@
         margin-right: 20px;
         font-size: 16px;
     }
-
+    @media(max-width:768px){
+        .flex-nowrap{
+            flex-wrap: nowrap !important;
+        }
+        .mobi-page{
+            align-content: center !important;
+        }
+    }
     /* .form-check-group {
             display: flex;
             flex-wrap: wrap;
@@ -516,10 +523,4 @@
         text-overflow: ellipsis;
     }
 </style>
-@endpush
-
-@push('style-lib')
-@endpush
-
-@push('script-lib')
 @endpush

@@ -932,7 +932,7 @@
                 fetchDataAndDisplayModal(url, dataToSend);
             }
 
-            function fetchDataAndDisplayModal(url, dataToSend) {
+            function fetchDataAndDisplayModal(url, dataToSend) {               
                 $('#loading').show();
                 $.ajax({
                     url: url,
@@ -982,7 +982,6 @@
                             let cancellation_fee, shouldRefund = 0;
 
                             var currentDate = '<?php echo now()->format('Y-m-d H:i:s'); ?>';
-                            console.log(response.data.booked_rooms);
 
                             response.data.booked_rooms.forEach(function(booked, index) {
                                 $('.booking-no').text(booked.room.room_number);
@@ -1038,7 +1037,7 @@
                                     ${ formatCurrency(totalFare) }
                                 </td>
                             </tr>
-                        `;
+                            `;
                             $('#bookings-table-body').append(rowsHtml);
 
                             $('#user_services').empty();
@@ -1121,6 +1120,8 @@
                             const total_amount = formatCurrency(response.total_amount)
                             $('.total_fare').text("+" + total_amount);
                             const due = formatCurrency(response.due);
+                            console.log(response.due);
+                            
                             if (response.due > 0) {
                                 $('#number_fare').text('Số tiền phải thu: ');
                                 $('#color_payment').addClass('text--success');
@@ -1130,6 +1131,7 @@
 
                                 $('#customer_payment, #customer_payment1').text(due);
                             } else {
+                                // thanh toán
                                 $('#number_fare').text('Số tiền hoàn lại: ');
                                 $('#dueMessage1').text("@lang('Số tiền hoàn lại')");
                                 $('#dueMessage').text("Có thể hoàn trả");
@@ -1885,5 +1887,6 @@
             modal.find('.refundableAmount').text(data.should_refund);
             modal.modal('show');
         });
+
     </script>
 @endpush
