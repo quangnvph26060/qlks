@@ -32,7 +32,8 @@ class CategoryController extends Controller
         $search = request()->get('search');
         $perPage = request()->get('perPage', 10);
         $orderBy = request()->get('orderBy', 'id');
-        $columns = ['id', 'name', 'status', 'category_id'];
+        // $columns = ['id', 'name', 'status', 'category_id'];
+        $columns = ['id', 'name', 'status','code'];
         $relations = ['products'];
         $searchColumns = ['name', 'status'];
 
@@ -77,13 +78,13 @@ class CategoryController extends Controller
             $validated  = Validator::make(
                 $request->all(),
                 [
-                    'category_id' => 'unique:categories,category_id|max:6',
+                    'code' => 'unique:categories,code|max:6',
                     'name' => 'required|unique:categories,name',
                     'description' => 'nullable',
                 ],
                 [
-                    'category_id.max' => 'Mã danh mục không được quá 6 ký tự',
-                    'category_id.unique' => 'Mã danh mục đã tồn tại',
+                    'code.max' => 'Mã danh mục không được quá 6 ký tự',
+                    'code.unique' => 'Mã danh mục đã tồn tại',
                     'name.required' => 'Vui lòng nhập tên danh mục!',
                     'name.unique' => 'Tên danh mục đã tồn tại!'
                 ]

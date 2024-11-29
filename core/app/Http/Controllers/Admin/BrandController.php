@@ -28,7 +28,7 @@ class BrandController extends Controller
         $search = request()->get('search');
         $perPage = request()->get('perPage', 10);
         $orderBy = request()->get('orderBy', 'id');
-        $columns = ['id', 'name', 'is_active', 'brand_id'];
+        $columns = ['id', 'name', 'is_active', 'code'];
         $relations = ['products'];
         $searchColumns = ['name',];
 
@@ -71,13 +71,13 @@ class BrandController extends Controller
             $validated  = Validator::make(
                 $request->all(),
                 [
-                    'brand_id' => 'unique:brands,brand_id|max:6',
+                    'code' => 'unique:brands,code|max:6',
                     'name' => 'required|unique:brands,name',
                     'description' => 'nullable',
                 ],
                 [
-                    'brand_id.max' => 'Mã thương hiệu không được vượt quá 6 ký tự',
-                    'brand_id.unique' => 'Mã thương hiệu đã tồn tại',
+                    'code.max' => 'Mã thương hiệu không được vượt quá 6 ký tự',
+                    'code.unique' => 'Mã thương hiệu đã tồn tại',
                     'name.required' => 'Vui lòng nhập tên thương hiệu!',
                     'name.unique' => 'Tên thương hiệu đã tồn tại!'
                 ]

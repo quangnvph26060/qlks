@@ -13,7 +13,8 @@ class Brand extends Model
         'name',
         'description',
         'is_active',
-        'brand_id',
+        'code'
+        // 'brand_id',
     ];
 
     protected $cats = [

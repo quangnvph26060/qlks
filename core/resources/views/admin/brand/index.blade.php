@@ -9,7 +9,7 @@
                 <form action="" method="POST" id="brandForm">
                     <div class="form-group mb-3">
                         <label for="name">Mã Thương Hiệu </label>
-                        <input type="text" class="form-control" id="brand_id" name="brand_id"
+                        <input type="text" class="form-control" id="brand_id" name="code"
                             placeholder="Nhập mã thương hiệu">
                         <small></small>
                     </div>

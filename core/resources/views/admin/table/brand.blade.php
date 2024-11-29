@@ -2,7 +2,7 @@
     @foreach ($response as $brand)
         <tr data-id="{{ $brand->id }}">
             <td>{{ $loop->iteration }}</td>
-            <td>{{ $brand->brand_id ?? 'Chưa có mã thương hiệu' }}</td>
+            <td>{{ $brand->code ?? 'Chưa có mã thương hiệu' }}</td>
             <td>{{ $brand->name }}</td>
             <td>{{ $brand->products->count() }}</td>
             <td>
