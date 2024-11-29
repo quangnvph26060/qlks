@@ -27,7 +27,8 @@
             <ul class="search-list"></ul>
         </form>
     </div> --}}
-    <div class="navbar__right">
+    <div class="navbar__right" style="display: flex; align-items: baseline;">
+        <button type="button" class="res-sidebar-open-btn me-3"><i class="las la-bars"></i></button>
         <ul class="navbar__action-list">
             {{-- @if (version_compare(gs('available_version'), systemDetails()['version'], '>'))
                 @can('admin.system.update')

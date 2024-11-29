@@ -189,3 +189,20 @@
         }
     </script>
 @endpush
+@push('style')
+   <style>
+     @media (max-width: 768px) {
+        #searchForm{
+            order: 2;
+            width: 100% !important;
+            margin-top: 15px !important;
+        }
+        .cuModalBtn{
+            order: 1;
+            width: 100%;
+            margin-right: 3rem !important;
+            margin-left: 3rem !important;
+        }
+    }
+   </style>
+@endpush

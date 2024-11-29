@@ -2,8 +2,8 @@
 @section('panel')
     <div class="row">
         <div class="col-lg-12">
-            <div class="d-flex justify-content-between mb-3 row">
-                <div class="dt-length col-md-6">
+            <div class="d-flex justify-content-between mb-3 row order-1">
+                <div class="dt-length col-md-6 col-4">
                     <select name="example_length" id="perPage" style=" padding: 1px 3px; margin-right: 8px;"
                         aria-controls="example" class="perPage">
                         <option value="10">10</option>
@@ -13,7 +13,7 @@
                     </select><label for="perPage"> entries per page</label>
                 </div>
 
-                <div class="search col-md-4 " style="text-align: end;">
+                <div class="search col-md-4 col-12" style="text-align: end;">
                     {{-- <label for="searchInput">Search:</label> --}}
                     <div class="input-group" style="justify-content: end;">
                         <input class="searchInput"
@@ -24,7 +24,7 @@
                         </button>
                     </div>
                 </div>
-                <div class="dropdown col-md-1" style="display: flex;
+                <div class="dropdown col-md-1 col-8" style="display: flex;
                 justify-content: end">
                     <a class="btn btn-outline-secondary dropdown-toggle d-flex justify-content-center
     align-items-center" href="#" role="button"
@@ -237,6 +237,20 @@
             padding: 1px 3px !important;
             border: 1px solid rgb(121, 117, 117, 0.5);
             margin-left: 8px;
+        }
+
+        @media (max-width: 768px) {
+            #perPage{
+                width: 100% !important;
+            }
+            .dropdown{
+                order: 2;
+            }
+            .search{
+                order: 3;
+                margin-top: 15px
+            }
+
         }
     </style>
 @endpush

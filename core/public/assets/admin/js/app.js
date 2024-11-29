@@ -1,13 +1,13 @@
 'use strict';
 
-  // responsive sidebar expand js 
+  // responsive sidebar expand js
   $('.res-sidebar-open-btn').on('click', function (){
     $('.sidebar').addClass('open');
-  }); 
+  });
 
   $('.res-sidebar-close-btn').on('click', function (){
     $('.sidebar').removeClass('open');
-  }); 
+  });
 
 
 $('.sidebar-dropdown > a').on('click', function () {
@@ -78,7 +78,7 @@ tooltipTriggerList.map(function (tooltipTriggerEl) {
 });
 
 $.each($('input, select, textarea'), function (i, element) {
-  
+
   if (element.hasAttribute('required')) {
     $(element).closest('.form-group').find('label').first().addClass('required');
   }
@@ -174,7 +174,7 @@ Array.from(document.querySelectorAll('table')).forEach(table => {
       left: left + "px",
     });
   });
-  
+
   if ($('.table-responsive').length) {
     $(window).on('scroll', function (e) {
       $('.table-responsive .dropdown-menu').removeClass('show');
