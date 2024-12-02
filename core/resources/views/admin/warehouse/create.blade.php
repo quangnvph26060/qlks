@@ -92,7 +92,7 @@
             $(document).ready(function() {
                 let debounceTimer;
 
-                let path_url = "http://qlks.test/storage/";
+                let path_url =  window.location.origin + '/storage/';
 
                 $("#warehouseForm").on("submit", function(e) {
                     e.preventDefault();
@@ -447,5 +447,13 @@
             /* Ẩn phần văn bản bị tràn */
             text-overflow: ellipsis;/
         }
+
+        .ellipsis {
+    white-space: nowrap;       /* Ngăn nội dung xuống dòng */
+    overflow: hidden;          /* Ẩn phần nội dung vượt quá chiều rộng */
+    text-overflow: ellipsis;   /* Thêm dấu "..." vào cuối nội dung bị cắt */
+    max-width: 200px;          /* Đặt chiều rộng tối đa cho phần tử */
+    display: inline-block;     /* Đảm bảo thuộc tính hoạt động với phần tử */
+}
     </style>
 @endpush
