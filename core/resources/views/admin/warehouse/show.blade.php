@@ -11,19 +11,19 @@
                         <thead>
                             <tr>
                                 <th class="w-25"><i class="fas fa-user me-2"></i> Tên nhà cung cấp</th>
-                                <td>{{ $warehouse->supplier->name }}</td>
+                                <td>{{ $warehouse->supplier->name ?? "" }}</td>
                             </tr>
                             <tr>
                                 <th><i class="fas fa-phone me-2"></i> Số điện thoại</th>
-                                <td>{{ $warehouse->supplier->phone }}</td>
+                                <td>{{ $warehouse->supplier->phone ?? ""}}</td>
                             </tr>
                             <tr>
                                 <th><i class="fas fa-envelope me-2"></i> Email</th>
-                                <td>{{ $warehouse->supplier->email }}</td>
+                                <td>{{ $warehouse->supplier->email ?? ""}}</td>
                             </tr>
                             <tr>
                                 <th><i class="fas fa-map-marker-alt me-2"></i> Địa chỉ</th>
-                                <td>{{ $warehouse->supplier->address }}</td>
+                                <td>{{ $warehouse->supplier->address ?? "" }}</td>
                             </tr>
                         </thead>
                     </table>
@@ -40,15 +40,15 @@
                         <thead>
                             <tr>
                                 <th class="w-25"><i class="fas fa-receipt me-2"></i> Mã đơn hàng</th>
-                                <td>{{ $warehouse->reference_code }}</td>
+                                <td>{{ $warehouse->reference_code ?? ""}}</td>
                             </tr>
                             <tr>
                                 <th><i class="fas fa-money-bill-wave me-2"></i> Tổng tiền</th>
-                                <td>{{ showAmount($warehouse->total) }}</td>
+                                <td>{{ showAmount($warehouse->total) ?? "" }}</td>
                             </tr>
                             <tr>
                                 <th><i class="fas fa-calendar-alt me-2"></i> Ngày tạo</th>
-                                <td>{{ \Carbon\Carbon::parse($warehouse->date)->format('d/m/Y') }}</td>
+                                <td>{{ \Carbon\Carbon::parse($warehouse->date)->format('d/m/Y') ?? "" }}</td>
                             </tr>
                             <tr>
                                 <th><i class="fas fa-credit-card me-2"></i> Phương thức thanh toán</th>
@@ -60,7 +60,7 @@
                 </div>
             </div>
         </div>
-        <div class="col-md-12 mt-3">
+        {{-- <div class="col-md-12 mt-3">
             <div class="card">
                 @php($sl = 0)
                 @foreach ($warehouse->entries ?? [] as $item)
@@ -125,12 +125,12 @@
                     </div>
                 </div>
             </div>
-        </div>
+        </div> --}}
     </div>
     @push('breadcrumb-plugins')
         @if (!$warehouse->status)
             <div class="action-btn">
-                <a href="{{ route('admin.return.create', $warehouse->id) }}" class="btn btn-sm btn-outline--danger"
+                <a href="{{ route('admin.return.create', $warehouse->id ?? "") }}" class="btn btn-sm btn-outline--danger"
                     id="btn-return"><i class="las la-sync"></i>Trả hàng</a>
                 {{-- <a href="{{ route('admin.return.create', $warehouse->id) }}" class="btn btn-sm btn-outline--danger"
                     id="btn-cancel"><i class="las la-window-close"></i>Hủy đơn hàng</a> --}}

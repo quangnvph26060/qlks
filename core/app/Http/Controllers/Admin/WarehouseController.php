@@ -153,7 +153,8 @@ class WarehouseController extends Controller
     public function show(string $id)
     {
         $pageTitle = "Chi tiết đơn hàng";
-        $warehouse = WarehouseEntry::query()->with('supplier', 'entries.product', 'payments.payment_method', 'return')->find($id);
+        // $warehouse = WarehouseEntry::query()->with('supplier', 'entries.product', 'payments.payment_method', 'return')->find($id);
+        $warehouse = WarehouseEntry::query()->find($id);
         if (!$warehouse) {
             abort(404);
         }

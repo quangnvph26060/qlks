@@ -3,7 +3,7 @@
     <div class="card">
         <div class="card-header">
             <h6 class="card-title">Danh sách hoàn trả của đơn hàng <a
-                    href="{{ route('admin.warehouse.show', $products->warehouse_entry->id) }}"><strong>{{ $products->warehouse_entry->reference_code }}</strong></a>
+                    href="{{ route('admin.warehouse.show', $products->warehouse_entry->id) }}"><strong>{{ $products->warehouse_entry->reference_code ?? "" }}</strong></a>
             </h6>
         </div>
         <div class="card-body">
@@ -19,21 +19,24 @@
                             </tr>
                         </thead>
                         <tbody>
-                            @foreach ($products->return_items as $item)
-                                <tr>
-                                    <td data-label="Sản phẩm">
-                                        <p class="ellipsis">{{ $item->name }}</p>
-                                    </td>
-                                    <td data-label="Giá nhập">{{ showAmount($item->import_price) }}</td>
-                                    <td data-label="Số lượng hoàn"><input disabled type="number" class="form-control p-0"
-                                            value="{{ $item->pivot->quantity }}">
-                                    </td>
-                                    <td data-label="Lý do hủy">
-                                        <input type="text" value="{{ $item->pivot->reason }}"
-                                            class="form-control reason-input" placeholder="Nhập lý do hủy">
-                                    </td>
-                                </tr>
-                            @endforeach
+                            @empty($products->return_items)
+                                @foreach ($products->return_items as $item)
+                                    <tr>
+                                        <td data-label="Sản phẩm">
+                                            <p class="ellipsis">{{ $item->name }}</p>
+                                        </td>
+                                        <td data-label="Giá nhập">{{ showAmount($item->import_price) }}</td>
+                                        <td data-label="Số lượng hoàn"><input disabled type="number" class="form-control p-0"
+                                                value="{{ $item->pivot->quantity }}">
+                                        </td>
+                                        <td data-label="Lý do hủy">
+                                            <input type="text" value="{{ $item->pivot->reason }}"
+                                                class="form-control reason-input" placeholder="Nhập lý do hủy">
+                                        </td>
+                                    </tr>
+                                @endforeach
+                            @endempty
+                           
 
                         </tbody>
                     </table>
