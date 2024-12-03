@@ -24,7 +24,7 @@ class WarehouseEntry extends Model
 
     public function return()
     {
-        return $this->hasOne(ReturnGood::class);
+        return $this->hasMany(ReturnGood::class);
     }
 
     public function entries()

@@ -52,7 +52,7 @@
                             </tr>
                             <tr>
                                 <th><i class="fas fa-credit-card me-2"></i> Phương thức thanh toán</th>
-                                <td>1</td>
+                                <td>Thanh toán khi nhận hàng</td>
                             </tr>
                             {{-- {{ $warehouse->payments->payment_method->name }} --}}
                         </thead>

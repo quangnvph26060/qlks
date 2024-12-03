@@ -2,7 +2,7 @@
     <tr data-id="{{ $return->id }}">
         <td><a href="{{ route('admin.return.show', $return->id) }}">{{ $return->reference_code }}</a></td>
         <td><a
-                href="{{ route('admin.warehouse.show', $return->warehouse_entry_id) }}">{{ $return->warehouse_entry->reference_code }}</a>
+                href="{{ route('admin.warehouse.show', $return->warehouse_entry_id) }}">{{ $return->warehouse_entry ?  $return->warehouse_entry->reference_code : '' }}</a>
         </td>
         <td>{{ $return->return_items->count() }} sản phẩm</td>
         <td>

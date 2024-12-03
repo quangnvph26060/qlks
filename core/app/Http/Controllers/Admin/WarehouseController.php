@@ -106,7 +106,9 @@ class WarehouseController extends Controller
             if (count($request->input('products')) > 0) {
                 foreach ($request->input('products') as $key => $value) {
                     $product = Product::query()->find($key);
-
+                    $product->update([
+                        'stock' => $product->stock - $value
+                    ]);
 
                     $total += $product->import_price * $value;
 
@@ -154,7 +156,8 @@ class WarehouseController extends Controller
     {
         $pageTitle = "Chi tiết đơn hàng";
         // $warehouse = WarehouseEntry::query()->with('supplier', 'entries.product', 'payments.payment_method', 'return')->find($id);
-        $warehouse = WarehouseEntry::query()->find($id);
+        $warehouse = WarehouseEntry::query()->with('return')->find($id);
+        Log::info($warehouse);
         if (!$warehouse) {
             abort(404);
         }
