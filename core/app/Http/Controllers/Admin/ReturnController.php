@@ -10,6 +10,7 @@ use Illuminate\Support\Facades\DB;
 use App\Http\Controllers\Controller;
 use App\Repositories\BaseRepository;
 use App\Http\Requests\ReturnGoods\StoreReturnRequest;
+use Illuminate\Support\Facades\Log;
 
 class ReturnController extends Controller
 {
@@ -73,6 +74,7 @@ class ReturnController extends Controller
      */
     public function store(StoreReturnRequest $request, $id)
     {
+
         DB::beginTransaction();
 
         try {
@@ -86,8 +88,15 @@ class ReturnController extends Controller
             $total = 0;
 
             $products = $return->return_items;
-
+            Log::info( $request->products);
+            $keys = array_keys($request->products);
             foreach ($products as $product) {
+                if (in_array($product->id, $keys)) {
+                     $product->update([
+                        'stock' => $product->stock + $product->pivot->quantity
+                    ]);
+                }
+
                 $total += $product->pivot->quantity * $product->import_price;
                 $return->warehouse_entry->entries->where('product_id', $product->id)->first()->increment('number_of_cancellations', $product->pivot->quantity);
             }

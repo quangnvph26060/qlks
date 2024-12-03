@@ -65,9 +65,9 @@
                         <select class="form-select" id="paymentMethod" name="payment_method_id"
                             aria-label="Chọn phương thức thanh toán">
                             <option selected disabled>Chọn phương thức thanh toán</option>
-                            <option value="credit_card">Thẻ tín dụng</option>
+                            {{-- <option value="credit_card">Thẻ tín dụng</option>
                             <option value="paypal">PayPal</option>
-                            <option value="2">Chuyển khoản ngân hàng</option>
+                            <option value="2">Chuyển khoản ngân hàng</option> --}}
                             <option value="1">Thanh toán khi nhận hàng</option>
                         </select>
 
