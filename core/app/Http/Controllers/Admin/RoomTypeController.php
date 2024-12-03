@@ -48,6 +48,8 @@ class RoomTypeController extends Controller
             'room_number',
             'code',
             'status',
+            'total_adult',
+            'total_child',
             'created_at',
             'updated_at',
         ];

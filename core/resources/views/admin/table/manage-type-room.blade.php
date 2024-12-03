@@ -101,14 +101,49 @@
             <div class="representatives-container">
                 <span class="representatives-label">Số lượng người:</span>
                 <span class="representatives-list">
-                    {{ $type->total_adult }} người lớn | {{ $type->total_child }} trẻ em 123123123
+                    {{ $type->total_adult }} người lớn | {{ $type->total_child }} trẻ em
                 </span>
             </div>
-            <div class="representatives-container">
+            {{-- <div class="representatives-container">
                 <span class="representatives-label">Trạng thái tính năng:</span>
                 <span class="representatives-list">
                     {!! $type->featureBadge !!}
                 </span>
+                
+            </div> --}}
+            <div class="representatives-container">
+                <span class="representatives-label">Tiện nghi:</span>
+                <span class="representatives-list">
+                    @if ($type->amenities->count() > 0)
+                <div class="float-inline-end">
+                    @foreach ($type->amenities as $amenity)
+                        <span class="badge {{ getRandomColor() }} m-1 p-1 rounded-pill text-bg-primary">
+                            {{ $amenity->title }}
+                        </span>
+                    @endforeach
+                </div>
+            @else
+                Chưa có tiện nghi nào
+            @endif
+                </span>
+                
+            </div>
+            <div class="representatives-container">
+                <span class="representatives-label">Cơ sở vật chất</span>
+                <span class="representatives-list">
+                    @if ($type->facilities->count() > 0)
+                        <div class="float-inline-end">
+                            @foreach ($type->facilities as $facility)
+                                <span class="badge {{ getRandomColor() }} m-1 p-1 rounded-pill text-bg-primary">
+                                    {{ $facility->title }}
+                                </span>
+                            @endforeach
+                        </div>
+                    @else
+                        Chưa có cơ sở vật chất
+                    @endif
+                </span>
+                
             </div>
         </td>
     </tr>
