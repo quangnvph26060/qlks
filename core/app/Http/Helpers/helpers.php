@@ -662,7 +662,8 @@ function saveImages($request, string $inputName, string $directory = 'images', $
 
 function getRandomColor()
 {
-    $colors = ['primary', 'secondary', 'success', 'danger', 'warning', 'info','dark'];
+    // $colors = ['primary', 'secondary', 'success', 'danger', 'warning', 'info','dark'];
+    $colors = ['primary'];
     return 'bg-' . $colors[array_rand($colors)];
 }
 

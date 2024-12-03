@@ -105,7 +105,7 @@
 @endsection
 @can('admin.hotel.amenity.save')
     @push('breadcrumb-plugins')
-        <button class="btn btn-sm btn-outline--primary cuModalBtn" data-modal_title="@lang('Thêm tiện ích mới')" type="button">
+        <button class="btn btn-sm btn-outline--primary cuModalBtn" data-modal_title="@lang('Thêm tiện nghi mới')" type="button">
             <i class="las la-plus"></i>@lang('Thêm mới')
         </button>
     @endpush

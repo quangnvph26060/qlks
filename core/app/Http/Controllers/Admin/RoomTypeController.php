@@ -36,7 +36,7 @@ class RoomTypeController extends Controller
     }
     public function index()
     {
-        $pageTitle   = 'Danh sách  phòng';
+        $pageTitle   = 'Danh sách phòng';
         // $typeList    = Room::with('amenities', 'facilities', 'products')->latest()->paginate(getPaginate());
         // return view('admin.hotel.room_type.list', compact('pageTitle', 'typeList'));
         $search = request()->get('search');
@@ -48,6 +48,8 @@ class RoomTypeController extends Controller
             'room_number',
             'code',
             'status',
+            'total_adult',
+            'total_child',
             'created_at',
             'updated_at',
         ];
@@ -123,7 +125,6 @@ class RoomTypeController extends Controller
 
     public function save(Request $request, $id = 0)
     {
-        //  dd($request->all());
         $this->validation($request, $id);
         DB::beginTransaction();
         try {
@@ -151,7 +152,7 @@ class RoomTypeController extends Controller
                         return back()->withNotify($notify);
                     }
                 }
-                $room        = new Room();
+                $room             = new Room();
 
                 $notification     = 'Đã thêm phòng thành công';
             }
@@ -179,21 +180,21 @@ class RoomTypeController extends Controller
 
             $room->save();
 
-            if ($request->prices) {
-                $arr = [];
-                foreach ($request->prices as  $value) {
-                    $data = RoomPrice::find($value);
-                    $arr[$value] = [
-                        'start_date' => $data->start_date,
-                        'end_date' => $data->end_date,
-                        'start_time' => $data->start_time,
-                        'end_time' => $data->end_time,
-                        'specific_date' => $data->specific_date
-                    ];
-                }
+            // if ($request->prices) {
+            //     $arr = [];
+            //     foreach ($request->prices as  $value) {
+            //         $data = RoomPrice::find($value);
+            //         $arr[$value] = [
+            //             'start_date' => $data->start_date,
+            //             'end_date' => $data->end_date,
+            //             'start_time' => $data->start_time,
+            //             'end_time' => $data->end_time,
+            //             'specific_date' => $data->specific_date
+            //         ];
+            //     }
 
-                $room->prices()->sync($arr);
-            }
+            //     $room->prices()->sync($arr);
+            // }
 
 
             // $insertRoomPrice = Room::where('room_number', $room->room_number)->first();
@@ -201,10 +202,10 @@ class RoomTypeController extends Controller
             //     $insertRoomPrice->updatePrices($request->input('prices'));
             // }
 
-            $room->amenities()->sync($request->amenities);
-            $room->facilities()->sync($request->facilities);
+            // $room->amenities()->sync($request->amenities);
+            // $room->facilities()->sync($request->facilities);
 
-            $this->insertProducts($request, $room);
+            // $this->insertProducts($request, $room);
 
             $this->removeImages($request, $room);
 

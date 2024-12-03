@@ -102,7 +102,7 @@ class BookRoomController extends Controller
                 $data      = [];
                 $roomId    = explode('-', $room)[0];
                 $bookedFor = explode('-', $room)[1];
-                $isBooked  = BookedRoom::where('room_id', $roomId)->whereDate('booked_for', Carbon::parse($bookedFor))->exists();
+                $isBooked  = BookedRoom::where('room_id', $roomId)->whereDate('booked_for', Carbon::parse($bookedFor))->where('status',[Status::BOOKED_ROOM_ACTIVE,Status::BOOKED_ROOM_CANCELED])->exists();
 
                 if ($isBooked) {
                     DB::rollBack();

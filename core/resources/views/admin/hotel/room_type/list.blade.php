@@ -49,9 +49,10 @@
                                 <tr>
                                     <th></th>
                                     {{-- <th>@lang('STT')</th> --}}
-                                    <th>@lang('Loại phòng')</th>
-                                    <th>@lang('Tên phòng')</th>
+                                    <th>@lang('Loại phòng')</th> 
                                     <th>@lang('Mã phòng')</th>
+                                    <th>@lang('Tên phòng')</th>
+                                   
                                     <th>@lang('Tiện nghi')</th>
                                     <th>@lang('Cở sở vật chất')</th>
                                     <th>@lang('Giá giờ')</th>

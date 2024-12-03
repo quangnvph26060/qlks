@@ -30,7 +30,7 @@
                                             <span class="fw-bold">{{ showDateTime($service->service_date, 'd M, Y') }}</span>
                                         </td>
 
-                                        <td><span class="fw-bold">{{ $service->room->room_number }}</span></td>
+                                        <td><span class="fw-bold">{{ $service->room->room_number  ?? ""}}</span></td>
 
                                         <td>{{ __($service->premiumService->name) }}</td>
 
