@@ -174,8 +174,7 @@
                                     <input type="radio" name="is_featured" class="form-check-input" id="is_featured-2"
                                         value="0" {{ @$roomType->is_featured  == 0 ? 'checked' : '' }} > <label class="form-check-label me-2"
                                         for="is_featured-2">@lang('No')</label>
-                                    <p class="ml-2 mt-2"><code><i class="las la-info-circle"></i>
-                                            @lang('Các phòng nổi bật sẽ được hiển thị trong phần phòng nổi bật.')</code></p>
+                                    <p class="ml-2 mt-2"><code><i class="las la-info-circle"></i>@lang('Các phòng nổi bật sẽ được hiển thị trong phần phòng nổi bật.')</code></p>
                                 </div>
                             </div>
                         </div>

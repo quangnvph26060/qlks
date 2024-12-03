@@ -8,21 +8,27 @@
 
         <td data-label="Loại phòng">
             {{ $type->roomType->name }}
+        </td>  
+        <td data-label="Mã phòng">
+            {{ $type->code }}
         </td>
         <td data-label="Tên phòng">
             {{ $type->room_number }}
         </td>
-        <td data-label="Mã phòng">
-            {{ $type->code }}
-        </td>
+      
         <td data-label="Tiện nghi">
             @if ($type->amenities->count() > 0)
                 <div class="float-inline-end">
-                    @foreach ($type->amenities as $amenity)
+                    @foreach ($type->amenities->take(3) as $amenity)
                         <span class="badge {{ getRandomColor() }} m-1 p-1 rounded-pill text-bg-primary">
                             {{ $amenity->title }}
                         </span>
                     @endforeach
+                    @if ($type->amenities->count() > 3)
+                    <span class="">
+                        ...
+                    </span>
+                @endif
                 </div>
             @else
                 Chưa có tiện nghi nào

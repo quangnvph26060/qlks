@@ -27,7 +27,7 @@ class RoomController extends Controller
         // }
 
 
-    //    $rooms =  $rooms->with('images')->orderBy('room_number', 'asc')->paginate(getPaginate());
+        //    $rooms =  $rooms->with('images')->orderBy('room_number', 'asc')->paginate(getPaginate());
 
 
         // $rooms =  $rooms->paginate(getPaginate());
@@ -67,11 +67,16 @@ class RoomController extends Controller
     public function addRoom(Request $request, $id = 0)
     {
         $request->validate([
-            'code' => 'max:6|unique:room_types,code,'.$id,
+            // 'code' => 'max:6|unique:room_types,code,'.$id,
             'name' => 'required|unique:room_types,name,'.$id,
             'main_image' => 'mimes:jpg|nullable',
         ]);
 
+        // $room = Room::where('room_type_id',$request)->where('code',$request->code)->first();
+        // if($room){
+        //     $notify[] = ['error', "Mã phòng đã tồn tại"];
+        //     return back()->withNotify($notify);
+        // }
         if ($id) {
             $existsRoom = RoomType::where('name', $request->name)->where('id', '!=', $id)->exists();
         } else {
