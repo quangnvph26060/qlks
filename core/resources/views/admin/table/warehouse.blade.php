@@ -1,9 +1,10 @@
 @if ($response->isNotEmpty())
     @foreach ($response as $warehouse)
         @php
-            $total = $warehouse->return ? $warehouse->total - $warehouse->return->total : $warehouse->total;
+            $total = $warehouse->return ? $warehouse->total - $warehouse->return->sum('total') : $warehouse->total;
+            \Log::info( $warehouse->return->first());
             $statusIcon =
-                $warehouse->return && $warehouse->return->warehouse_entry_id == $warehouse->id
+            $warehouse->return && $warehouse->return->first() && $warehouse->return->first()->warehouse_entry_id == $warehouse->id
                     ? '<i class="fa fa-exclamation-circle"></i>'
                     : ($warehouse->status
                         ? '<i class="fas fa-check-circle" style="color: #63E6BE;"></i>'
@@ -13,7 +14,7 @@
             <td data-label="Mã phiếu">
                 <div class="tooltip1">
                     {!! $statusIcon !!}
-                    @if ($warehouse->return && $warehouse->return->warehouse_entry_id == $warehouse->id)
+                    @if ($warehouse->return && $warehouse->return->first() && $warehouse->return->first()->warehouse_entry_id == $warehouse->id)
                         <span class="tooltiptext">Đơn hàng có sản phẩm bị hoàn trả!</span>
                     @endif
                 </div>
