@@ -281,7 +281,10 @@ h5 {
 .status-dirty{
     border: 1px solid gray;
 }
-
+.text-checkoutlate{
+    color: red !important;
+    font-size: 14px;
+}
 .status-occupied *:not(svg),
 .status-available *:not(svg),
 .status-incoming *:not(svg),
@@ -496,7 +499,7 @@ h5 {
 .custom-box-price {
     background: #ddd;
     border-radius: 8px;
-    padding: 0px 10px 0px 20px;
+    padding: 8px 10px 4px 20px;
 }
 
 /* Popup styles */

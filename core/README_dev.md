@@ -566,3 +566,9 @@ ALTER TABLE `general_settings`
 ADD COLUMN `checkin_time_night` TIME NULL AFTER `checkout_time`,
 ADD COLUMN `checkout_time_night` TIME NULL AFTER `checkin_time_night`;
 
+/04/12           
+ALTER TABLE `bookings`
+ADD COLUMN `last_overtime_calculated_at` INT NULL DEFAULT NULL 
+COMMENT 'Thời gian cuối cùng đã tính giờ vượt' 
+AFTER `booking_fare`;
+

@@ -73,9 +73,16 @@
                         // Tính khoảng cách thời gian giữa check-in và thời gian hiện tại
                         $diffInHours = $currentTime->diffInHours($checkInTime);
                         $diffInDays = $currentTime->diffInDays($checkInTime);
-                        if ($diffInHours < 24) {
+                        if ($diffInHours < 24) {  
+                            $diffMinutes =  $currentTime->diffInMinutes($checkInTime);
+                            $roundedMinutes = floor($diffMinutes);
                             $roundedHours = floor($diffInHours);
-                            $time_check_in = "Còn $roundedHours giờ nữa nhận phòng.";
+                            if($roundedHours < 1){
+                                $time_check_in = "Còn $roundedMinutes phút nữa nhận phòng.";
+                            }else{
+                                $time_check_in = "Còn $roundedHours giờ nữa nhận phòng.";
+                            }
+                            
                         } else {
                             $roundedDays = floor($diffInDays);
                             $time_check_in = "Còn $roundedDays ngày nữa nhận phòng.";

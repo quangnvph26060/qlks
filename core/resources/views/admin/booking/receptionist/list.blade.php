@@ -160,7 +160,8 @@
                                         <th>Phòng</th>
                                         <th>Hình thức</th>
                                         <th class="d-flex gap-10">Nhận <span class="main-hour-out" id="hour_current">Hiện
-                                                tại</span> <span class="main-hour-out" id="hour_regulatory">Quy định</span></th>
+                                                tại</span> <span class="main-hour-out" id="hour_regulatory">Quy
+                                                định</span></th>
                                         <th>Trả phòng</th>
                                         <th class="d-flex justify-content-between align-items-center">Dự kiến
                                             <span>Thành tiền</span>
@@ -181,7 +182,7 @@
                                         </td>
                                         <td><input type="text" class="form-control" id="roomNumber" disabled></td>
                                         <td>
-                                            <select id="bookingType" class="form-select " name="option-room"
+                                            <select id="bookingType" class="form-select " name="optionRoom"
                                                 style="width: 110px;">
                                                 <option value="gio">Giờ</option>
                                                 <option value="ngay">Ngày</option>
@@ -227,13 +228,13 @@
                                                 <label class="fw-bold">Khách cần trả</label>
                                                 <input type="number" name="total_amount" class="custom-input"
                                                     id="customer-price-booking"
-                                                    style="border-bottom: 1px solid #a89191 ; margin-left: 70px;">
+                                                    style="border-bottom: 1px solid #a89191 ; margin-left: 70px; padding: 14px 0px !important;">
                                             </div>
 
                                             <div class="col-12 mt-2 mb-2 d-flex ">
                                                 <label class="fw-bold payment-main">Khách thanh toán</label>
                                                 <input type="number" name="paid_amount" class="custom-input"
-                                                    style="border-bottom: 1px solid #a89191 ; margin-left: 38px;">
+                                                    style="border-bottom: 1px solid #a89191 ; margin-left: 38px; padding: 14px 0px !important;">
                                             </div>
                                         </div>
                                         <button type="button" class=" btn-primary-2 btn-confirm">Đặt phòng</button>
@@ -294,7 +295,14 @@
                                 </div>
                                 <div class="detail-item-checkout">
                                     <strong>Trả phòng</strong>
-                                    <p class="check_out"></p>
+                                    <div class="d-flex">
+                                        <p class="check_out"></p>
+                                        <p class="text-checkoutlate"></p>
+                                    </div>
+                                </div>
+                                <div class="detail-item-checkout">
+                                    <strong>Hình thức</strong>
+                                    <p class="option">Giờ</p>
                                 </div>
                                 {{-- <div class="detail-item-checkout">
                                             <strong>Tổng phí</strong>
@@ -340,9 +348,15 @@
                                         </div>
                                         <div class="list">
                                             <div class="list-item">
+                                                <span>@lang('Trả phòng muộn') <span class="last_overtime"></span> giờ</span>
+                                                <span class="total_last_overtime"> 0 VND</span>
+                                            </div>
+                                            <div class="list-item">
                                                 <span>@lang('Thanh toán')</span>
                                                 <span class="total_fare"></span>
                                             </div>
+
+
 
                                             <div class="list-item">
                                                 <span>@lang('Đã nhận được thanh toán')</span>
@@ -430,7 +444,7 @@
         </svg>
     </div>
 @endsection
-
+<?php $currentTime = date('Y-m-d H:i:s'); ?>
 @push('style')
     <link rel="stylesheet" href="{{ asset('assets/global/css/receptionist.css') }}">
 @endpush
@@ -932,7 +946,7 @@
                 fetchDataAndDisplayModal(url, dataToSend);
             }
 
-            function fetchDataAndDisplayModal(url, dataToSend) {               
+            function fetchDataAndDisplayModal(url, dataToSend) {
                 $('#loading').show();
                 $.ajax({
                     url: url,
@@ -982,7 +996,7 @@
                             let cancellation_fee, shouldRefund = 0;
 
                             var currentDate = '<?php echo now()->format('Y-m-d H:i:s'); ?>';
-
+                            // các phòng  đã đặt 
                             response.data.booked_rooms.forEach(function(booked, index) {
                                 $('.booking-no').text(booked.room.room_number);
                                 $('.room_serive').val(booked.room.room_number);
@@ -1041,7 +1055,7 @@
                             $('#bookings-table-body').append(rowsHtml);
 
                             $('#user_services').empty();
-
+                            // dịch vụ trong phòng
                             let rowsHtml1 = '';
                             response.data.used_premium_service.forEach(function(booked,
                                 index) {
@@ -1075,7 +1089,7 @@
 
                             let rowsHtmlProduct = '';
 
-
+                            // chi tiêt sản phẩm trong phòng
                             response.data.used_product_room.forEach(function(booked, index) {
                                 rowsHtmlProduct += `
                                         <tr>
@@ -1107,12 +1121,41 @@
 
                             //   console.log(response);
                             $('.booking_extra').val(response.data.id);
+                            $('.last_overtime').text(response.data.last_overtime_calculated_at ?? 0);
 
                             $('.customer_type').text(customer_type);
                             $('.booking_number').text(response.data.booking_number);
+
+                            let hinhthuc = '';
+                            switch (response.data.option) {
+                                case 'gio':
+                                    hinhthuc = 'Giờ';
+                                    break;
+                                case 'dem':
+                                    hinhthuc = 'Đêm';
+                                    break;
+                                case 'ngay':
+                                    hinhthuc = 'Ngày';
+                                    break;
+                            }
+                            $('.option').text(hinhthuc);
                             $('.check_in').text(response.data.check_in);
                             $('.check_out').text(response.data.check_out);
                             $('.booking_price').text(response.data.booked_rooms.fare);
+                            const currentTimeStr = '<?php echo $currentTime; ?>';
+
+                            const checkoutTimeStr = response.data.check_out;
+
+                            // Chuyển đổi chuỗi thời gian thành đối tượng Date (thêm 'T' vào giữa ngày và giờ)
+                            const currentTime = new Date(currentTimeStr.replace(' ', 'T'));
+                            const checkoutTime = new Date(checkoutTimeStr.replace(' ', 'T'));
+
+                            // So sánh thời gian hiện tại với thời gian checkout
+                            if (currentTime > checkoutTime) {
+                                $('.text-checkoutlate').text('(Quá giờ trả phòng)')
+                            } else {
+                                $('.text-checkoutlate').text('')
+                            }
 
                             const paid_amount = formatCurrency(response.data.paid_amount);
                             $('.total_received').text("-" + paid_amount);
@@ -1120,8 +1163,18 @@
                             const total_amount = formatCurrency(response.total_amount)
                             $('.total_fare').text("+" + total_amount);
                             const due = formatCurrency(response.due);
-                            console.log(response.due);
-                            
+                            if (response.data.option === 'gio') {
+
+                                const price_overtime = response.data.booked_rooms[0]['fare'] * response
+                                    .data.last_overtime_calculated_at;
+                                const last_over_time = formatCurrency(price_overtime);
+
+                                $('.total_last_overtime').text("+" + last_over_time);
+                            }
+
+
+
+
                             if (response.due > 0) {
                                 $('#number_fare').text('Số tiền phải thu: ');
                                 $('#color_payment').addClass('text--success');
@@ -1418,20 +1471,20 @@
                     },
                     success: function(response) {
                         if (response.status === 'success') {
-                        const bookingType = $('#bookingType').val();
+                            const bookingType = $('#bookingType').val();
 
-                           var result = response.data;
-                           var checkin_time = result.checkin_time;
-                           var checkout_time = result.checkout_time;
-                           var checkin_time_night = result.checkin_time_night;
-                           var checkout_time_night = result.checkout_time_night;
-                            if(bookingType == 'ngay'){
+                            var result = response.data;
+                            var checkin_time = result.checkin_time;
+                            var checkout_time = result.checkout_time;
+                            var checkin_time_night = result.checkin_time_night;
+                            var checkout_time_night = result.checkout_time_night;
+                            if (bookingType == 'ngay') {
                                 var checkInTime = hous_mac_dinh(checkin_time);
                                 var checkOutTime = hous_mac_dinh_dem(checkout_time);
-                            }else if(bookingType == 'dem'){
+                            } else if (bookingType == 'dem') {
                                 var checkInTime = hous_mac_dinh(checkin_time_night);
                                 var checkOutTime = hous_mac_dinh_dem(checkout_time_night);
-                            }else{
+                            } else {
                                 return 0;
                             }
                             console.log(checkInTime);
@@ -1887,6 +1940,5 @@
             modal.find('.refundableAmount').text(data.should_refund);
             modal.modal('show');
         });
-
     </script>
 @endpush

@@ -15,6 +15,7 @@ use App\Models\PremiumService;
 use App\Models\Product;
 use App\Models\RegularRoomPrice;
 use App\Models\RoomPriceRoom;
+use App\Models\RoomPricesWeekdayHour;
 use Carbon\Carbon;
 use Symfony\Component\Console\Helper\Helper;
 use Symfony\Component\HttpKernel\Log\Logger;
@@ -156,11 +157,72 @@ class BookingController extends Controller
         // BookedRoom::where('booking_id', $id)->with('booking.user', 'room.roomType')->orderBy('booked_for')->get()->groupBy('booked_for');
 
         if ($request->is_method === 'receptionist') {
-            $returnedPayments  = $booking->payments->where('type', 'RETURNED');
+            $returnedPayments  = $booking->payments->where('type', 'RETURNED'); // Đã hoàn tiền
             $receivedPayments  = $booking->payments->where('type', 'RECEIVED');
             $total_amount      = $booking->total_amount;
             $due               = $booking->due();
+            $chose = $booking->option;  
+            if ($chose === 'gio') {
+                $timeOutDefault = $booking->timeOutDefault();  // time từ in đến out
+                $timeOutNow     = $booking->timeOutNow();     // time đã quá giờ check out
+                $last_overtime_calculated_at = $booking->last_overtime_calculated_at; // 
 
+               //  \Log::info($timeOutNow);
+                if ( $booking->last_overtime_calculated_at === null || $timeOutNow > $last_overtime_calculated_at ) {
+                    if ($timeOutNow > 0) {
+
+                        $overTime = $timeOutNow;
+
+                        $id_room_price   = $booking->bookedRooms[0]['room_id'];
+                        // $price_hour_room = RoomPricesWeekdayHour::where('room_price_id', $id_room_price)->orderBy('hour', 'asc')->get();
+                        $price_hour_room = RegularRoomPrice::where('room_price_id', $id_room_price)->first();
+                        $extraAmount = 0;  // Tiền phát sinh
+                        $currentHour = $timeOutDefault; 
+
+                        // \Log::info($price_hour_room->hourly_price * $timeOutNow);
+                        // \Log::info($currentHour);
+                        // foreach ($price_hour_room as $price) {
+                            
+                        //     if ($overTime > 0) {
+                        //         if ($currentHour >= $price->hour) {
+                        //             continue;
+                        //         }
+                        //         $applicableHours = min($overTime, $price->hour - $currentHour);  // Tính số giờ trong mức giá hiện tại
+                        //         $extraAmount += $applicableHours * (float)$price->price;  // Cộng thêm tiền vào
+
+                        //         // \Log::info($applicableHours);
+
+                        //         $overTime -= $applicableHours;  // Giảm số giờ vượt đã tính
+                        //         $currentHour = $price->hour;  // Cập nhật giờ hiện tại
+                        //         if ($overTime <= 0) {
+                        //             break;
+                        //         }
+                        //     }
+                           
+                        // }
+                        // \Log::info($overTime);
+                        // if ($overTime > 0) {
+                        //     // Lấy giá cuối cùng trong bảng để tính cho giờ vượt còn lại
+                        //     $lastPrice = $price_hour_room->last();
+                        //     if ($lastPrice) {
+                        //         $extraAmount += $overTime * (float)$lastPrice->price;  // Tính tiền cho giờ vượt còn lại
+                        //     }
+                        // }  
+                        // \Log::info($extraAmount);
+                        // Cộng thêm tiền vào tổng tiền của booking
+                        $flag = $timeOutNow - $last_overtime_calculated_at;
+                        if($flag === 0){
+                            $total_amount = $booking->total_amount + ($timeOutNow * $price_hour_room->hourly_price) ;
+                        }else{
+                            $total_amount = $booking->total_amount +  ($flag * $price_hour_room->hourly_price);
+                        }
+                        // // Cập nhật tổng tiền
+                        $booking->booking_fare = $total_amount;
+                        $booking->last_overtime_calculated_at = $timeOutNow;
+                        $booking->save(); // Lưu thay đổi
+                    }
+                }
+            }
             return response()->json(['status' => 'success', 'data' => $booking, 'returnedPayments' => $returnedPayments, 'receivedPayments' => $receivedPayments, 'total_amount' => $total_amount, 'due' => $due]);
         }
         $pageTitle = 'Chi tiết đặt chỗ';
@@ -269,20 +331,20 @@ class BookingController extends Controller
 
 
         $disabledRoomTypeIDs = RoomType::where('status', 0)->pluck('id')->toArray();
-      
-        
-        $bookedRooms         = $rooms->pluck('room_id')->toArray(); 
-        $idRoomActive        = RegularRoomPrice::pluck('room_price_id'); 
+
+
+        $bookedRooms         = $rooms->pluck('room_id')->toArray();
+        $idRoomActive        = RegularRoomPrice::pluck('room_price_id');
         $emptyRooms          = Room::active()
-                                ->whereNotIn('id', $bookedRooms)
-                                ->whereNotIn('room_type_id', $disabledRoomTypeIDs) // Loại trừ những phòng ngưng hoạt động hoặc vô hiệu hóa
-                                ->whereIn('id', $idRoomActive)
-                                ->with(['roomType'])
-                                ->select(['id', 'room_type_id', 'room_number', 'is_clean'])
-                                ->when(!empty($request->roomType), function ($query) use ($request) {
-                                    $query->where('room_type_id', 'like', '%' . $request->roomType . '%');
-                                })
-                                ->get();    
+            ->whereNotIn('id', $bookedRooms)
+            ->whereNotIn('room_type_id', $disabledRoomTypeIDs) // Loại trừ những phòng ngưng hoạt động hoặc vô hiệu hóa
+            ->whereIn('id', $idRoomActive)
+            ->with(['roomType'])
+            ->select(['id', 'room_type_id', 'room_number', 'is_clean'])
+            ->when(!empty($request->roomType), function ($query) use ($request) {
+                $query->where('room_type_id', 'like', '%' . $request->roomType . '%');
+            })
+            ->get();
         $scope = 'ALL';
         $is_method = 'Receptionist';
 
@@ -296,14 +358,14 @@ class BookingController extends Controller
             ])
             ->whereHas('booking', function ($query) use ($request) {
                 if (!empty($request->codeRoom)) {
-                    $query->where('booking_number','like', '%' . $request->codeRoom. '%');
+                    $query->where('booking_number', 'like', '%' . $request->codeRoom . '%');
                 }
-                
+
                 if (!empty($request->customer)) {
-                    $user = User::where('username','like', '%' . $request->customer. '%')->first();
-                    if($user){
-                        $query->where('user_id',$user->id);
-                    }else{
+                    $user = User::where('username', 'like', '%' . $request->customer . '%')->first();
+                    if ($user) {
+                        $query->where('user_id', $user->id);
+                    } else {
                         $query->whereRaw('JSON_UNQUOTE(JSON_EXTRACT(guest_details, "$.name")) LIKE ?', ['%' . $request->customer . '%']);
                     }
                 }
@@ -313,9 +375,9 @@ class BookingController extends Controller
             })
             ->get();
 
-            if(!empty($request->codeRoom) || !empty($request->customer)){
-                $emptyRooms = [];
-            }
+        if (!empty($request->codeRoom) || !empty($request->customer)) {
+            $emptyRooms = [];
+        }
         // dd($bookings);
         $userList = User::select('username', 'email', 'mobile', 'address')->get();
         $is_result = false;

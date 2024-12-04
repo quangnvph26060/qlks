@@ -3,13 +3,14 @@
 namespace App\Models;
 
 use App\Constants\Status;
+use Carbon\Carbon;
 use Illuminate\Database\Eloquent\Model;
 use Illuminate\Database\Eloquent\Casts\Attribute;
 
 class Booking extends Model
 {
 
-    protected $fillable = ['booking_number', 'user_id', 'check_in', 'check_out', 'guest_details', 'tax_charge', 'booking_fare', 'service_cost', 'extra_charge', 'extra_charge_subtracted', 'paid_amount', 'cancellation_fee', 'refunded_amount', 'key_status', 'status', 'checked_in_at', 'checked_out_at', 'created_at', 'updated_at', 'product_cost'];
+    protected $fillable = ['booking_number', 'user_id', 'check_in', 'check_out', 'guest_details', 'tax_charge', 'booking_fare', 'service_cost', 'extra_charge', 'extra_charge_subtracted', 'paid_amount', 'cancellation_fee', 'refunded_amount', 'key_status', 'status', 'checked_in_at', 'checked_out_at', 'created_at', 'updated_at', 'product_cost', 'option', 'last_overtime_calculated_at'];
 
     protected $casts = [
         'guest_details' => 'object',
@@ -187,6 +188,32 @@ class Booking extends Model
         } else {
             return 0;
         }
+    }
+
+    public function timeOutDefault(){
+        $checkIn = $this->check_in;
+        $checkOut = $this->check_out;
+      
+        $checkInTime = Carbon::parse($checkIn);
+        $checkOutTime = Carbon::parse($checkOut);
+        $hoursDiff = $checkInTime->diffInHours($checkOutTime);
+        if ($hoursDiff < 1) {
+            $minutesDiff = $checkInTime->diffInMinutes($checkOutTime);
+            return $minutesDiff;
+        }
+        return $hoursDiff;
+    }
+
+
+    public function timeOutNow(){ 
+        
+        $timeCurrent = Carbon::now();
+        $checkOut    = Carbon::parse($this->check_out);
+        if ($checkOut > $timeCurrent) {
+            return 0;
+        }
+        $hoursDiff   = $timeCurrent->diffInHours($checkOut);
+        return floor(abs($hoursDiff));
     }
 
     public function extraCharge()

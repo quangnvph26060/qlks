@@ -62,7 +62,7 @@ class BookRoomController extends Controller
 
     public function book(Request $request)
     {
-        //  \Log::info($request->all());
+       //   \Log::info($request->all());
         DB::beginTransaction();
         try {
             $validator = Validator::make($request->all(), [
@@ -127,15 +127,20 @@ class BookRoomController extends Controller
                     DB::rollBack();
                     return response()->json(['error' => 'Loại phòng đã chọn không hợp lệ ']);
                 }
+                
+                $totalAmount = $request->total_amount;
 
+                // Loại bỏ dấu chấm nếu tồn tại và chuyển thành số nguyên
+                $processedAmount = is_numeric($totalAmount) ? intval(floatval(str_replace('.', '', $totalAmount))) : $totalAmount;
+              //  \Log::info($processedAmount);
                 $data['booking_id']       = 0;
                 $data['room_type_id']     = $room->room_type_id;
                 $data['room_id']          = $room->id;
                 $data['booked_for']       = Carbon::parse($bookedFor)->format('Y-m-d H:i:s');
                 // $data['fare']             = $room->roomPricesActive[0]['price'];
-                $data['fare']             = $request->total_amount;
+                $data['fare']             = $processedAmount;
                 // $data['tax_charge']       = $room->roomPricesActive[0]['price'] * $tax / 100;
-                $data['tax_charge']       = $request->total_amount * $tax / 100;
+                $data['tax_charge']       = $processedAmount * $tax / 100;
                 $data['cancellation_fee'] = $room->cancellation_fee; // phí hủy bỏ nếu hủy phòng thì: tiền hoàn lại =  fare - cancellation_fee
                 $data['status']           = Status::ROOM_ACTIVE;
                 $data['created_at']       = now();
@@ -144,7 +149,7 @@ class BookRoomController extends Controller
                 $bookedRoomData[] = $data;
 
                 // $totalFare += $room->roomPricesActive[0]['price'];
-                $totalFare += $request->total_amount;
+                $totalFare += $processedAmount;
             }
 
 
@@ -163,6 +168,7 @@ class BookRoomController extends Controller
             $booking->booking_fare   = $totalFare;
             $booking->paid_amount    = $request->paid_amount ?? 0;
             $booking->status         = Status::BOOKING_ACTIVE;
+            $booking->option         =  $request->optionRoom;
             $booking->save();
 
             if ($request->paid_amount) {
