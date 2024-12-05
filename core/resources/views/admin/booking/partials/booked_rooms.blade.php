@@ -5,8 +5,9 @@
     
      
         $bookingId = $room->bookedRooms()[0]->booking_id; 
-        $bookingPrice = App\Models\Booking::find($bookingId)->booking_fare;
-       
+        $totalPrice = App\Models\Booking::find($bookingId);
+        $booking_fare = App\Models\Booking::find($bookingId)->booking_fare;
+        $bookingPrice = ($booking_fare  + $totalPrice->product_cost + $totalPrice->service_cost + $totalPrice->extra_charge) - $totalPrice->paid_amount;
         $classClean = $room->getCleanStatusClass();
         $classSvg = $room->getCleanStatusSvg();
         $cleanText = $room->getCleanStatusText();

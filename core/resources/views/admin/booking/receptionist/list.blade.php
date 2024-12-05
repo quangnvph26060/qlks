@@ -1172,7 +1172,7 @@
 
                                 $('.total_last_overtime').text("+" + last_over_time);
 
-                                 due = formatCurrency(response.total_amount)
+                                due = formatCurrency( response.total_amount - response.data.paid_amount )
                                 $('#customer_payment, #customer_payment1').text("+" + due);
                                 
                             }else{
