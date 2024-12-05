@@ -1162,19 +1162,23 @@
                             $('.total_refunded').text(response.returnedPayments);
                             const total_amount = formatCurrency(response.total_amount)
                             $('.total_fare').text("+" + total_amount);
-                            const due = formatCurrency(response.due);
+                            let price_overtime = 0;
+                            let due = 0;
                             if (response.data.option === 'gio') {
 
-                                const price_overtime = response.data.booked_rooms[0]['fare'] * response
+                                price_overtime = response.data.booked_rooms[0]['fare'] * response
                                     .data.last_overtime_calculated_at;
                                 const last_over_time = formatCurrency(price_overtime);
 
                                 $('.total_last_overtime').text("+" + last_over_time);
+
+                                 due = formatCurrency(response.total_amount)
+                                $('#customer_payment, #customer_payment1').text("+" + due);
+                                
+                            }else{
+                                due = formatCurrency(response.due);
                             }
-
-
-
-
+                            
                             if (response.due > 0) {
                                 $('#number_fare').text('Số tiền phải thu: ');
                                 $('#color_payment').addClass('text--success');

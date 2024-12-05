@@ -167,10 +167,11 @@ class BookingController extends Controller
                 $timeOutNow     = $booking->timeOutNow();     // time đã quá giờ check out
                 $last_overtime_calculated_at = $booking->last_overtime_calculated_at; // 
 
-               //  \Log::info($timeOutNow);
+                //  \Log::info('time out -> hiện tại '. $timeOutNow);
+                //  \Log::info('time cộng lần trước  '. $last_overtime_calculated_at);
                 if ( $booking->last_overtime_calculated_at === null || $timeOutNow > $last_overtime_calculated_at ) {
                     if ($timeOutNow > 0) {
-
+                     //   \Log::info('123');
                         $overTime = $timeOutNow;
 
                         $id_room_price   = $booking->bookedRooms[0]['room_id'];

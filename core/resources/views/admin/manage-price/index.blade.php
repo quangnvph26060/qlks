@@ -61,7 +61,7 @@
                                 <div class="d-flex price-hour price-input" id="priceContainerHour">
                                     <p class="d-flex text-end" style="margin-right: 10px">Từ giờ đầu tiên :<br>Mỗi giờ :</p>
                                     <input type="number" step="1000" class="form-control" data-id="{{ $item->id }}"
-                                        id="pricePerHour" value="{{ $regularRoom ? $regularRoom->hourly_price : '' }}"
+                                        id="pricePerHour" value="{{ $regularRoom ? floor($regularRoom->hourly_price) : '' }}"
                                         placeholder="Nhập giá">
                                 </div>
                             </td>
@@ -71,7 +71,7 @@
                             <td class="small-column">Giá Cả Ngày</td>
                             <td><input type="number" step="1000"class="form-control mf-table fullDayPrice"
                                     data-id="{{ $item->id }}"
-                                    value="{{ $regularRoom ? $regularRoom->daily_price : '' }}" placeholder="Nhập giá"></td>
+                                    value="{{ $regularRoom ? floor($regularRoom->daily_price) : '' }}" placeholder="Nhập giá"></td>
                         </tr>
 
                         <tr>
@@ -80,7 +80,7 @@
 
                             <td><input type="number" step="1000" class="form-control mf-table overnightPrice"
                                     data-id="{{ $item->id }}"
-                                    value="{{ $regularRoom ? $regularRoom->overnight_price : '' }}" placeholder="Nhập giá">
+                                    value="{{ $regularRoom ? floor($regularRoom->overnight_price) : '' }}" placeholder="Nhập giá">
                             </td>
 
                         </tr>
@@ -392,7 +392,7 @@
                         </svg>
                     </div>`);
         });
-        // giá giờ tiếp theoh
+        // giá giờ tiếp theo
         $(document).ready(function() {
             $('#priceModal').on('click', '#add_hours', function() {
                 var newHtml =
@@ -812,7 +812,7 @@
 
                                 input.dataset.date = date;
                                 if (dataId == selectedDate.room_price_id) {
-                                    input.value = selectedDate.hourly_price;
+                                    input.value = Math.floor(selectedDate.hourly_price);
                                 }
                                 div.appendChild(p);
                                 div.appendChild(input);
@@ -826,13 +826,13 @@
 
                                 if (elseCount % 2 === 0) {
                                     if (dataId == selectedDate.room_price_id) {
-                                        input.value = selectedDate.daily_price;
+                                        input.value = Math.floor(selectedDate.daily_price);
                                     }
                                     input.classList.add("fullDayPrice");
                                 } else {
                                     input.classList.add("overnightPrice");
                                     if (dataId == selectedDate.room_price_id) {
-                                        input.value = selectedDate.overnight_price;
+                                        input.value =  Math.floor(selectedDate.overnight_price);
                                     }
                                 }
                                 input.dataset.id = dataId;
@@ -862,13 +862,13 @@
 
                                 if (dataId == selectedDate.room_price_id && dataDate == date) {
                                     if (input.id === "pricePerHour") {
-                                        input.value = selectedDate.hourly_price;
+                                        input.value = Math.floor(selectedDate.hourly_price);
                                     }
                                     if (input.classList.contains("fullDayPrice")) {
-                                        input.value = selectedDate.daily_price;
+                                        input.value = Math.floor(selectedDate.daily_price);
                                     }
                                     if (input.classList.contains("overnightPrice")) {
-                                        input.value = selectedDate.overnight_price;
+                                        input.value = Math.floor(selectedDate.overnight_price);
                                     }
 
                                 }
@@ -1043,7 +1043,7 @@
                         url: url,
                         method: 'GET',
                         success: function(response) {
-                            // console.log(response.data);
+                             console.log(response.data);
                             // Xử lý dữ liệu trả về từ server nếu cần
                         },
                         error: function(xhr, status, error) {
