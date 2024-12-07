@@ -300,7 +300,6 @@ function menuActive($routeName, $type = null, $param = null)
     } else {
         $class = 'active';
     }
-
     if (is_array($routeName)) {
         foreach ($routeName as $key => $value) {
             if (request()->routeIs($value)) {
@@ -571,7 +570,18 @@ function authAdmin()
 {
     return auth()->guard('admin')->user();
 }
-
+function authCleanRoom()
+{
+    return authAdmin()->role_id ?? null == Status::ROLE_DON_PHONG;
+}
+function authRoleAdmin()
+{
+    return authAdmin()->role_id  == Status::ROLE_ADMIN ? true : false;
+}
+function authRoleLeTan()
+{
+    return authAdmin()->role_id == Status::ROLE_LE_TAN ? true : false;
+}
 function getLanguages($local = false)
 {
     $language = Language::all();

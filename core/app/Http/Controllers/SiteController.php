@@ -216,7 +216,7 @@ class SiteController extends Controller
     public function maintenance()
     {
         $pageTitle = 'Chế độ bảo trì';
-        if (gs('maintenance_mode') == Status::DISABLE) {
+        if (gs('maintenance_mode') == Status::DISABLE) { // 0
             return to_route('home');
         }
         $maintenance = Frontend::where('data_keys', 'maintenance.data')->first();

@@ -1,6 +1,18 @@
+@php
+
+    $authAdmin =  authCleanRoom();
+    $class = "";
+    if($authAdmin && $isClean == 0){
+        $class = "room-icon";
+    }
+
+    if(authRoleLeTan() == 1 || authRoleAdmin() == 1){
+        $class = "room-icon";
+    }
+@endphp
 <div class="d-flex  justify-content-between align-items-center">
     <div data-room="{{ $roomNumber }}" data-clean="{{ $isClean }}" id="badgeChuaDon"
-        class="room-icon badge {{ $classClean }}">
+        class=" {{$class}} badge {{ $classClean }}">
         <img src="{{ asset('assets/svg/' . $classSvg . '.svg') }}" alt="Logo" />
         {{ $cleanText }}
     </div>

@@ -1224,8 +1224,7 @@
 
                 $('#amount_payment_errors').text('');
                 if (amount > 0) {
-                    var url = `{{ route('admin.booking.payment', ['id' => ':id']) }}`.replace(':id',
-                        booking_id);
+                    var url = `{{ route('admin.booking.payment', ['id' => ':id']) }}`.replace(':id',booking_id);
 
                     $.ajax({
                         url: url,

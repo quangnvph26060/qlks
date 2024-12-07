@@ -572,3 +572,12 @@ ADD COLUMN `last_overtime_calculated_at` INT NULL DEFAULT NULL
 COMMENT 'Thời gian cuối cùng đã tính giờ vượt' 
 AFTER `booking_fare`;
 
+06/12
+CREATE TABLE user_cleanroom (
+    id INT AUTO_INCREMENT PRIMARY KEY,
+    room_id INT NOT NULL,
+    clean_date DATE NOT NULL,
+    admin_id INT NOT NULL,
+    created_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
+    updated_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP ON UPDATE CURRENT_TIMESTAMP
+) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_unicode_ci;

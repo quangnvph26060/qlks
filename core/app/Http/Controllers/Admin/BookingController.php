@@ -16,7 +16,9 @@ use App\Models\Product;
 use App\Models\RegularRoomPrice;
 use App\Models\RoomPriceRoom;
 use App\Models\RoomPricesWeekdayHour;
+use App\Models\UserCleanroom;
 use Carbon\Carbon;
+use Illuminate\Support\Facades\Auth;
 use Symfony\Component\Console\Helper\Helper;
 use Symfony\Component\HttpKernel\Log\Logger;
 
@@ -161,7 +163,7 @@ class BookingController extends Controller
             $receivedPayments  = $booking->payments->where('type', 'RECEIVED');
             $total_amount      = $booking->total_amount;
             $due               = $booking->due();
-            $chose = $booking->option;  
+            $chose = $booking->option;
             if ($chose === 'gio') {
                 $timeOutDefault = $booking->timeOutDefault();  // time từ in đến out
                 $timeOutNow     = $booking->timeOutNow();     // time đã quá giờ check out
@@ -169,21 +171,21 @@ class BookingController extends Controller
 
                 //  \Log::info('time out -> hiện tại '. $timeOutNow);
                 //  \Log::info('time cộng lần trước  '. $last_overtime_calculated_at);
-                if ( $booking->last_overtime_calculated_at === null || $timeOutNow > $last_overtime_calculated_at ) {
+                if ($booking->last_overtime_calculated_at === null || $timeOutNow > $last_overtime_calculated_at) {
                     if ($timeOutNow > 0) {
-                     //   \Log::info('123');
+                        //   \Log::info('123');
                         $overTime = $timeOutNow;
 
                         $id_room_price   = $booking->bookedRooms[0]['room_id'];
                         // $price_hour_room = RoomPricesWeekdayHour::where('room_price_id', $id_room_price)->orderBy('hour', 'asc')->get();
                         $price_hour_room = RegularRoomPrice::where('room_price_id', $id_room_price)->first();
                         $extraAmount = 0;  // Tiền phát sinh
-                        $currentHour = $timeOutDefault; 
+                        $currentHour = $timeOutDefault;
 
                         // \Log::info($price_hour_room->hourly_price * $timeOutNow);
                         // \Log::info($currentHour);
                         // foreach ($price_hour_room as $price) {
-                            
+
                         //     if ($overTime > 0) {
                         //         if ($currentHour >= $price->hour) {
                         //             continue;
@@ -199,7 +201,7 @@ class BookingController extends Controller
                         //             break;
                         //         }
                         //     }
-                           
+
                         // }
                         // \Log::info($overTime);
                         // if ($overTime > 0) {
@@ -212,9 +214,9 @@ class BookingController extends Controller
                         // \Log::info($extraAmount);
                         // Cộng thêm tiền vào tổng tiền của booking
                         $flag = $timeOutNow - $last_overtime_calculated_at;
-                        if($flag === 0){
-                            $total_amount = $booking->total_amount + ($timeOutNow * $price_hour_room->hourly_price) ;
-                        }else{
+                        if ($flag === 0) {
+                            $total_amount = $booking->total_amount + ($timeOutNow * $price_hour_room->hourly_price);
+                        } else {
                             $total_amount = $booking->total_amount +  ($flag * $price_hour_room->hourly_price);
                         }
                         // // Cập nhật tổng tiền
@@ -396,9 +398,9 @@ class BookingController extends Controller
 
             $room = Room::where('room_number', $request->roomData)->firstOrFail();
 
-            $newStatus = ($room->is_clean == Status::ROOM_CLEAN_ACTIVE) ? 0 : 1;
-            $room->update(['is_clean' => $newStatus]);
+            $room->update(['is_clean' => $room->is_clean == Status::ROOM_CLEAN_ACTIVE ? 0 : 1]);
 
+            $this->logCleanRoomAction($room->id, authAdmin()->id);
             return ApiResponse::success('', 'success', 200);
         } catch (\Illuminate\Database\Eloquent\ModelNotFoundException $e) {
 
@@ -407,6 +409,34 @@ class BookingController extends Controller
 
             return ApiResponse::error($e->getMessage(), 404);
         }
+    }
+    private function logCleanRoomAction(int $roomId, int $userId): void
+    {
+        try {
+            UserCleanroom::create([
+                'room_id' => $roomId,
+                'admin_id' => $userId,
+                'clean_date' => now(),
+            ]);
+        } catch (\Exception $e) {
+            \Log::error('Error logging clean room action', ['message' => $e->getMessage()]);
+            throw $e; // Re-throw để xử lý lỗi ở cấp cao hơn
+        }
+    }
+
+    public function listUserCleanRoom(Request $request) {
+        $pageTitle = 'Danh sách dọn phòng';
+        $query = UserCleanroom::with('room', 'admin');
+        // Xử lý tìm kiếm theo clean_date nếu có keyword được gửi từ form
+        if ($request->has('keyword')) {
+            $keyword = $request->keyword;
+            $query->where('clean_date', 'like', "%$keyword%");
+        }
+        if(authCleanRoom()){
+            $query->where('admin_id', authAdmin()->id);
+        }
+        $userCleanRoom = $query->paginate(10);
+        return view('admin.booking.cleanroom', compact('pageTitle', 'userCleanRoom'));
     }
 
     public function getPremiumServices()

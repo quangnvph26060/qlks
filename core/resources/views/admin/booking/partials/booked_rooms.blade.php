@@ -4,13 +4,15 @@
         $room = $booking->room;
     
      
-        $bookingId = $room->bookedRooms()[0]->booking_id; 
-        $totalPrice = App\Models\Booking::find($bookingId);
-        $booking_fare = App\Models\Booking::find($bookingId)->booking_fare;
-        $bookingPrice = ($booking_fare  + $totalPrice->product_cost + $totalPrice->service_cost + $totalPrice->extra_charge) - $totalPrice->paid_amount;
-        $classClean = $room->getCleanStatusClass();
-        $classSvg = $room->getCleanStatusSvg();
-        $cleanText = $room->getCleanStatusText();
+        $bookingId    = $room->bookedRooms()[0]->booking_id; 
+        $totalPrice   = App\Models\Booking::find($booking->booking_id);
+        // echo $booking->booking_id;
+        $booking_fare =App\Models\Booking::find($booking->booking_id)->booking_fare; 
+       
+        $bookingPrice =   ($booking_fare  + $totalPrice->product_cost + $totalPrice->service_cost + $totalPrice->extra_charge) - $totalPrice->paid_amount;
+        $classClean   = $room->getCleanStatusClass();
+        $classSvg     = $room->getCleanStatusSvg();
+        $cleanText    = $room->getCleanStatusText();
         // $price = $room->roomPricesActive[0]['price'];
 
         // test
@@ -94,7 +96,7 @@
                 @endphp
 
                 @if ($flag)
-                    <p class="single-line">{{ $booking->roomType->name }}</p>
+                    {{-- <p class="single-line">{{ $booking->roomType->name }}</p> --}}
                     <div class="room-info">
                         {{-- <p> <i class="fas fa-clock icon"></i>{{ showAmount($booking->roomType->hourly_rate) }}
                     </p>

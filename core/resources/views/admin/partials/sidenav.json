@@ -102,18 +102,18 @@
                 "title": "Quản lý sản phẩm",
                 "route_name": "admin.hotel.room.product.all",
                 "menu_active": "admin.hotel.room.product.all"
+            },
+            {
+                "keyword": [
+                    "Quản lý bảng giá"
+                ],
+                "title": "Quản lý bảng giá",
+                "icon": "las la-dollar-sign",
+                "route_name": "admin.manage.price.all",
+                "menu_active": "admin.manage.price.all"
             }
 
         ]
-    },
-    "manage_prices": {
-        "keyword": [
-            "Quản lý bảng giá"
-        ],
-        "title": "Quản lý bảng giá",
-        "icon": "las la-dollar-sign",
-        "route_name": "admin.manage.price.all",
-        "menu_active": "admin.manage.price.all"
     },
 
     "delayed_checkout": {
@@ -464,6 +464,15 @@
         ]
 
     },
+    "clean_room": {
+        "keyword": [
+            "Clean Room"
+        ],
+        "title": "Quản lý dọn phòng",
+        "icon": "fas fa-broom",
+        "route_name":  "admin.listUserCleanRoom.booking.listUserCleanRoom",
+        "menu_active": "admin.listUserCleanRoom.booking.listUserCleanRoom"
+    },
     "manage_users": {
         "title": "Quản lý khách hàng",
         "icon": "las la-users",
@@ -684,8 +693,12 @@
             "Receptionist"
         ],
         "title": "Lễ Tân",
-        "icon": "las la-bug",
+        "icon": "fas fa-user-tie",
         "route_name": "admin.receptionist.booking.receptionist",
-        "menu_active": "admin.receptionist.booking.receptionist"
+        "menu_active": ["admin.receptionist.booking.receptionist",
+                        "admin.delayed.booking.checkout",
+                        "admin.delayed.booking.checkin",
+                        "admin.booking.todays.booked"
+                        ]
     }
 }

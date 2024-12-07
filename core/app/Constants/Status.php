@@ -66,4 +66,7 @@ class Status
     const PRICEROOM_ACTIVE = 1; 
     const PRICEROOM_INACTIVE = 0;
 
+    const ROLE_ADMIN = 0; //id  role admin
+    const ROLE_LE_TAN = 4; // id lễ tân
+    const ROLE_DON_PHONG = 5; // id dọn phòng
 }
