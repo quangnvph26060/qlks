@@ -432,6 +432,7 @@ class BookingController extends Controller
             $keyword = $request->keyword;
             $query->where('clean_date', 'like', "%$keyword%");
         }
+       
         if(authCleanRoom()){
             $query->where('admin_id', authAdmin()->id);
         }

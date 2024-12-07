@@ -572,7 +572,7 @@ function authAdmin()
 }
 function authCleanRoom()
 {
-    return authAdmin()->role_id ?? null == Status::ROLE_DON_PHONG;
+    return authAdmin()->role_id == Status::ROLE_DON_PHONG ? true : false;
 }
 function authRoleAdmin()
 {
