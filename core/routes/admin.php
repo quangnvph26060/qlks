@@ -323,6 +323,7 @@ Route::middleware('admin', 'adminPermission')->group(function () {
         Route::get('delayed/checkout', 'delayedCheckouts')->name('delayed.booking.checkout');
         Route::get('receptionist', 'Receptionist')->name('receptionist.booking.receptionist');
         Route::get('user-clean-room','listUserCleanRoom')->name('listUserCleanRoom.booking.listUserCleanRoom');
+        Route::post('delete-clean-room/{id}','delCleanRoom')->name('delCleanRoom.booking.delCleanRoom');
         Route::get('searchrooms', 'searchRooms')->name('searchrooms.booking.searchrooms');
         Route::post('room-clean', 'changeCleanRoom')->name('roomclean.booking.roomclean');
         Route::get('get-premium-services', 'getPremiumServices')->name('services.booking.services');

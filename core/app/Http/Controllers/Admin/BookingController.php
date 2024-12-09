@@ -19,6 +19,7 @@ use App\Models\RoomPricesWeekdayHour;
 use App\Models\UserCleanroom;
 use Carbon\Carbon;
 use Illuminate\Support\Facades\Auth;
+use Illuminate\Support\Facades\Log;
 use Symfony\Component\Console\Helper\Helper;
 use Symfony\Component\HttpKernel\Log\Logger;
 
@@ -419,7 +420,7 @@ class BookingController extends Controller
                 'clean_date' => now(),
             ]);
         } catch (\Exception $e) {
-            \Log::error('Error logging clean room action', ['message' => $e->getMessage()]);
+            Log::error('Error logging clean room action', ['message' => $e->getMessage()]);
             throw $e; // Re-throw để xử lý lỗi ở cấp cao hơn
         }
     }
@@ -465,5 +466,22 @@ class BookingController extends Controller
         } else {
             return response()->json($response, 200);
         }
+    }
+    public function delCleanRoom($id) {
+        
+        if(!authCleanRoom()){
+            if(!$id){
+                return response()->json(['status' => 'error', 'message' => 'ID không hợp lệ']);
+            }
+            $del = UserCleanroom::find($id);
+        
+            if(!$del){
+                return response()->json(['status' => 'error', 'message' => 'Dữ liệu không tồn tại']);
+            }
+            $del->delete();
+        
+            return response()->json(['status' => 'success', 'message' => 'Xóa thành công']);
+        }
+       
     }
 }

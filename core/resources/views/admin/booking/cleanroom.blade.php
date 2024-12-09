@@ -27,7 +27,9 @@
                                     value="{{ request('keyword') }}" placeholder="Tìm kiếm ...">
                                 <!-- Thay icon bằng bất kỳ icon nào bạn muốn -->
                                 <!-- Nút tìm kiếm -->
-                                <button type="button" id="clearDate" data-url="{{ route('admin.listUserCleanRoom.booking.listUserCleanRoom') }}" class="btn btn-primary">
+                                <button type="button" id="clearDate"
+                                    data-url="{{ route('admin.listUserCleanRoom.booking.listUserCleanRoom') }}"
+                                    class="btn btn-primary">
                                     <i class="las la-sync-alt"></i>
                                 </button>
                             </div>
@@ -51,17 +53,20 @@
                                 </thead>
                                 <tbody>
                                     @forelse($userCleanRoom as $index=>$item)
-                                        <tr>
+                                        <tr data-table="{{ $item->id }}">
                                             <td>{{ $index + 1 }}</td>
                                             <td>{{ $item->room->room_number }}</td>
                                             <td>{{ $item->clean_date }}</td>
                                             <td>{{ $item->admin->name }}</td>
+                                            @php
+                                                $disabled = authCleanRoom() ? 'disabled' : '';
+                                            @endphp
                                             <td>
                                                 <button class="btn btn-sm btn-outline--danger btn-delete"
-                                                    onclick="return confirm('Bạn có chắc chắn muốn xóa không')"
+                                                    onclick="confirmDelete('{{ $item->id }}')"
                                                     data-id="{{ $item->id }}"
-                                                    data-modal_title="@lang('Xóa danh mục')"type="button" data-pro="0">
-
+                                                    data-modal_title="@lang('Xóa danh mục')"type="button" data-pro="0"
+                                                    {{ $disabled }}>
                                                     <i class="fas fa-trash"></i>@lang('Xóa')
                                                 </button>
                                             </td>
@@ -152,14 +157,41 @@
             var name = $('#searchInput').val();
             $('#searchForm').submit();
         })
-        
+
         var originalUrl = $('#clearDate').data('url');
         $('#clearDate').click(function() {
-            $('#searchInput').val(''); 
-            $('#searchForm').submit(); 
-            window.location.href = originalUrl; 
+            $('#searchInput').val('');
+            $('#searchForm').submit();
+            window.location.href = originalUrl;
         });
     });
+
+    function confirmDelete(id) {
+        if (confirm('Bạn có chắc chắn muốn xóa không?')) {
+            var dataTable = document.querySelector('tr[data-table="' + id + '"]');
+            var url = "{{route('admin.delCleanRoom.booking.delCleanRoom',['id'=> ':id' ])}}";
+            url = url.replace(':id', id);
+            $.ajax({
+                type: 'POST',
+                url: url,
+                data: {
+                    id: id
+                },
+                dataType: 'json',
+                success: function(response) {
+                    if (response.status === 'success') {
+                        console.log('Dữ liệu đã được xóa thành công!');
+                        dataTable.remove(); // Xóa dòng trong bảng HTML
+                    } else {
+                        console.error('Đã xảy ra lỗi khi xóa dữ liệu.');
+                    }
+                },
+                error: function() {
+                    console.error('Đã xảy ra lỗi khi gửi yêu cầu.');
+                }
+            });
+        }
+    }
 </script>
 @push('style')
     <style>
