@@ -132,7 +132,7 @@ class BookRoomController extends Controller
 
                 // Loại bỏ dấu chấm nếu tồn tại và chuyển thành số nguyên
                 $processedAmount = is_numeric($totalAmount) ? intval(floatval(str_replace('.', '', $totalAmount))) : $totalAmount;
-              //  \Log::info($processedAmount);
+                //  \Log::info($processedAmount);
                 $data['booking_id']       = 0;
                 $data['room_type_id']     = $room->room_type_id;
                 $data['room_id']          = $room->id;

@@ -197,10 +197,10 @@
                                             {{-- <input type="datetime-local" class="form-control" name="checkInTime"
                                                 style="width: 180px;" id="checkInTime"> --}}
                                             <div class="d-flex" style="gap: 10px">
-                                                <input type="date" name="checkInTime" class="form-control" id="date-book-room"
-                                                    style="width: 165px;">
-                                                <input type="time" class="form-control" id="time-book-room"
-                                                    style="width: 135px;">
+                                                <input type="date" name="checkInDate" class="form-control"
+                                                    id="date-book-room" style="width: 165px;">
+                                                <input type="time" name="checkInTime" class="form-control"
+                                                    id="time-book-room" style="width: 135px;">
                                             </div>
                                         </td>
                                         {{-- <td><input type="datetime-local" class="form-control" name="checkOutTime"
@@ -232,7 +232,7 @@
                                 <div class="row mb-3 justify-content-between">
                                     <div class="col-md-9">
                                         <div class="d-flex" style="flex-direction: column; gap:20px">
-                                            <p class="add-room-booking ">
+                                            <p class="add-room-booking">
                                                 <svg xmlns="http://www.w3.org/2000/svg" width="20" height="20"
                                                     viewBox="0 0 24 24">
                                                     <g fill="currentColor" fill-rule="evenodd" clip-rule="evenodd">
@@ -244,6 +244,38 @@
                                                 </svg>
                                                 Chọn thêm phòng
                                             </p>
+                                            <div class="modal fade" id="addRoomModal" tabindex="-1" aria-hidden="true">
+                                                <div class="modal-dialog modal-dialog-centered">
+                                                    <div class="modal-content">
+                                                        <div class="modal-header">
+                                                            <h5 class="modal-title">Chọn Phòng</h5>
+                                                            <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+                                                        </div>
+                                                        <div class="modal-body">
+                                                            <table class="table table-striped">
+                                                               <thead>
+                                                                    <tr>
+                                                                        <th data-table="Hạng phòng">Hạng phòng</th>
+                                                                        <th data-table="Phòng">Phòng</th>
+                                                                        <th data-table="Giá">Giá</th>
+                                                                        <th data-table="Thao tác">Thao tác</th>
+                                                                        
+                                                                    </tr>
+                                                               </thead>
+                                                               <tbody>
+                                                                    <tr>
+                                                                        <td>Phòng 01 giường đôi cho 2 người</td>
+                                                                        <td>p.7</td>
+                                                                        <td>123 đ</td>
+                                                                        <td>đặt phòng</td>
+                                                                    </tr>
+                                                               </tbody>
+                                                            </table>
+                                                        </div>
+                                                      
+                                                    </div>
+                                                </div>
+                                            </div>
                                             <div class="d-flex justify-content-flex-start align-items-end mt-2"
                                                 style="gap: 10px">
                                                 <label>Ghi chú</label>
@@ -485,7 +517,7 @@
             const yyyy = today.getFullYear();
             const mm = String(today.getMonth() + 1).padStart(2, '0');
             const dd = String(today.getDate()).padStart(2, '0');
-            const hourss  = String(today.getHours()).padStart(2, '0'); // Giờ
+            const hourss = String(today.getHours()).padStart(2, '0'); // Giờ
             const minutess = String(today.getMinutes()).padStart(2, '0'); // Phút
 
             // Định dạng ngày: yyyy-MM-dd
@@ -494,20 +526,23 @@
             const formattedTime = `${hourss}:${minutess}`;
             // Gán giá trị vào input
             $('#date-book-room').val(formattedDate);
-             $('#time-book-room').val(formattedTime);
-           
-            
-           
-         
+            $('#time-book-room').val(formattedTime);
 
-          
+
+
+
+
+
 
             // xóa phòng vừa add vào  roomNumber
             $('#myModal-booking').on('hidden.bs.modal', function() {
                 $('#roomNumber').empty(); // Xóa các phòng vừa add vào 
             });
 
-
+            // modal danh sách sản phẩm
+            $('.add-room-booking').on('click', function() {
+                $('#addRoomModal').modal('show'); // Hiển thị modal
+            });
             $('#model').on('change', function(event) {
                 var model = $(this).val();
                 var parent = $(this).closest('#myModal-booking');
@@ -1123,7 +1158,7 @@
 
                                     </tr>
                                 `;
-                                 // ${formatCurrency(booked.fare)}
+                                // ${formatCurrency(booked.fare)}
                                 // ${formatCurrency(booked.room.room_prices_active[0]['price'])} ${booked.room}
                                 totalFare += parseFloat(booked.fare);
 
@@ -1583,7 +1618,7 @@
                             // Gán giá trị mới vào input
                             $('#checkInTime').val(checkInTime);
                             $('#checkOutTime').val(checkOutTime);
-                         //   calculateDuration();
+                            //   calculateDuration();
                         }
                     },
                     error: function(xhr, status, error) {
@@ -1728,24 +1763,32 @@
             });
 
 
-            function getDatesBetween(startDate, endDate, roomType) {
+            function getDatesBetween(startDate, checkInTime, roomType) {
                 let dates = [];
                 let currentDate = new Date(startDate);
-                
 
-               
 
+                const [checkInHours, checkInMinutes] = checkInTime.split(':').map(Number);
+
+
+                while (currentDate) { 
+                    
+                    currentDate.setHours(checkInHours);
+                    currentDate.setMinutes(checkInMinutes);
+                    currentDate.setSeconds(0); // Đặt giây về 0
 
                     let formattedDate =
                         `${currentDate.getMonth() + 1}/${String(currentDate.getDate()).padStart(2, '0')}/${currentDate.getFullYear()} ` +
                         `${String(currentDate.getHours()).padStart(2, '0')}:${String(currentDate.getMinutes()).padStart(2, '0')}:${String(currentDate.getSeconds()).padStart(2, '0')}`;
-                    console.log(formattedDate);
-                        return;
+
                     dates.push(`${roomType}-${formattedDate}`);
 
+                    break; 
 
-                    currentDate.setDate(currentDate.getDate() + 1);
                 
+                    currentDate.setDate(currentDate.getDate() + 1);
+                }
+
                 return dates;
             }
             $('.booking-form').on('submit', function(e) {
@@ -1762,7 +1805,8 @@
                 let queryString = $.param(formObject);
 
                 const params = new URLSearchParams(queryString);
-                 const checkInTime = params.get('checkInTime');
+                const checkInDate = params.get('checkInDate');
+                const checkInTime = params.get('checkInTime');
                 // const checkOutTime = params.get('checkOutTime');
 
                 // if (!checkInTime || !checkOutTime) {
@@ -1771,10 +1815,11 @@
                 //     return false;
                 // }
 
-                 const startDate = new Date(checkInTime);
+                //const startDate = new Date(checkInTime);
                 // const endDate = new Date(checkOutTime);
 
-                const roomDates = getDatesBetween(startDate, '', params.get('room_type'));
+
+                const roomDates = getDatesBetween(checkInDate, checkInTime, params.get('room_type'));
 
                 roomDates.forEach(function(date, index) {
                     formData.push({
