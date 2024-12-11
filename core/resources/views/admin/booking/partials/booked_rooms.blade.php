@@ -45,6 +45,7 @@
         ) {
             $key_status = true;
         }
+        
     @endphp
     <div class="col-md-2 main-room-card card-{{ $class }}">
         <div class="room-card {{ $class }}">

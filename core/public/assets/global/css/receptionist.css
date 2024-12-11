@@ -10,7 +10,32 @@
 .custom-input:focus {
     outline: none;
 }
-
+.input-ghichu{
+    border-top: none;
+    border-left: none;
+    border-right: none;
+    border-radius: 0px !important;
+    padding: 0px !important;
+    width: 400px;
+}
+.book_name{
+    max-height: 2em;
+    overflow: hidden; 
+    text-overflow: ellipsis; 
+    white-space: nowrap; 
+}
+.add-room-booking{
+    width: 183px;
+    padding: 8px 14px;
+    border: 1px solid #337ab7;
+    border-radius: 8px;
+    cursor: pointer;
+    color: #337ab7;
+}
+.datphong{
+    position: relative;
+    top: 80px;
+}
 .pt-90 {
     padding-top: 90px;
 }
@@ -69,10 +94,10 @@
     max-width: 700px !important;
 }
 
-input:not([type='radio']),
+/* input:not([type='radio']),
 textarea {
     padding: 15px 20px !important;
-}
+} */
 
 .modal-header h5 {
     font-size: 18px;

@@ -14,7 +14,7 @@ class BookedRoom extends Model {
     ];
 
     public function booking() {
-        return $this->belongsTo(Booking::class, 'booking_id');
+        return $this->belongsTo(Booking::class, 'booking_id','id');
     }
 
     public function room() {
@@ -26,7 +26,7 @@ class BookedRoom extends Model {
     public function usedPremiumService() {
         return $this->hasMany(UsedPremiumService::class);
     }
-
+ 
     //scope
     public function scopeActive($query) {
         return $query->where('status', Status::ROOM_ACTIVE);

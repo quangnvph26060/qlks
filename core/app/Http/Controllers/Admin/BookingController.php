@@ -304,6 +304,15 @@ class BookingController extends Controller
             ->select('id', 'room_type_id', 'room_number', 'is_clean')
             ->get();
     }
+
+    public function getRoomType(Request $request) {
+        $rooms = Room::active()->where('room_type_id',$request->id)->select('id', 'room_number')->get();
+        if(!$rooms){
+            return response()->json(['status' => 'errors', 'data'=> []]);
+        }
+        return response()->json(['status' => 'success', 'data'=> $rooms]);
+    }
+
     public function Receptionist(Request $request)
     {
         $emptyMessage   = '';
@@ -340,10 +349,10 @@ class BookingController extends Controller
         $bookedRooms         = $rooms->pluck('room_id')->toArray();
         $idRoomActive        = RegularRoomPrice::pluck('room_price_id');
         $emptyRooms          = Room::active()
-            ->whereNotIn('id', $bookedRooms)
-            ->whereNotIn('room_type_id', $disabledRoomTypeIDs) // Loại trừ những phòng ngưng hoạt động hoặc vô hiệu hóa
-            ->whereIn('id', $idRoomActive)
-            ->with(['roomType'])
+            //  ->whereNotIn('id', $bookedRooms)
+             ->whereNotIn('room_type_id', $disabledRoomTypeIDs)
+             ->whereIn('id', $idRoomActive)
+             ->with(['roomType', 'booked','booked.booking'])
             ->select(['id', 'room_type_id', 'room_number', 'is_clean'])
             ->when(!empty($request->roomType), function ($query) use ($request) {
                 $query->where('room_type_id', 'like', '%' . $request->roomType . '%');

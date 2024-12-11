@@ -56,7 +56,7 @@ class Room extends Model
     }
     public function booked()
     {
-        return $this->hasMany(BookedRoom::class, 'room_id');
+        return $this->hasMany(BookedRoom::class, 'room_id', 'id');
     }
     public function isRoomClean()
     {
