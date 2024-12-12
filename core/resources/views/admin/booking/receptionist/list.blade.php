@@ -168,14 +168,15 @@
                                         </th> --}}
                                     </tr>
                                 </thead>
-                                <tbody>
-                                    <input type="text" class="room_type_id" name="room_type_id"hidden>
-                                    <input type="text" class="room_type" name="room_type"hidden>
-                                    <input type="text" class="username-user1" name="guest_name" hidden>
-                                    <input type="text" class="email-user1" name="email" hidden>
-                                    <input type="text" class="mobile-user" name="mobile" hidden>
-                                    <input type="text" class="address-user" name="address" hidden>
-                                    <input type="text" class="guest_type" name="guest_type" hidden>
+                                <input type="text" class="room_type_id" name="room_type_id"hidden>
+                                <input type="text" class="room_type" name="room_type"hidden>
+                                <input type="text" class="username-user1" name="guest_name" hidden>
+                                <input type="text" class="email-user1" name="email" hidden>
+                                <input type="text" class="mobile-user" name="mobile" hidden>
+                                <input type="text" class="address-user" name="address" hidden>
+                                <input type="text" class="guest_type" name="guest_type" hidden>
+                                <tbody id="list-booking">
+
                                     <tr>
                                         <td>
                                             <p id="book_name" class="book_name"></p>
@@ -183,7 +184,6 @@
                                         <td>
                                             <select name="" id="roomNumber">
                                             </select>
-                                            {{-- <input type="text" class="form-control" id="roomNumber" disabled> --}}
                                         </td>
                                         <td style="display: flex; justify-content: center">
                                             <select id="bookingType" class="form-select " name="optionRoom"
@@ -194,8 +194,6 @@
                                             </select>
                                         </td>
                                         <td>
-                                            {{-- <input type="datetime-local" class="form-control" name="checkInTime"
-                                                style="width: 180px;" id="checkInTime"> --}}
                                             <div class="d-flex" style="gap: 10px">
                                                 <input type="date" name="checkInDate" class="form-control"
                                                     id="date-book-room" style="width: 165px;">
@@ -203,14 +201,6 @@
                                                     id="time-book-room" style="width: 135px;">
                                             </div>
                                         </td>
-                                        {{-- <td><input type="datetime-local" class="form-control" name="checkOutTime"
-                                                style="width: 180px;" id="checkOutTime"></td>
-                                        <td>
-                                            <p class="d-flex justify-content-between align-items-center">
-                                                <span class="inputTime">00:00</span>
-                                                <input type="text" class="custom-input" id="input-price-booking">
-                                            </p>
-                                        </td> --}}
                                     </tr>
                                 </tbody>
                             </table>
@@ -249,30 +239,28 @@
                                                     <div class="modal-content">
                                                         <div class="modal-header">
                                                             <h5 class="modal-title">Chọn Phòng</h5>
-                                                            <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+                                                            <button type="button" class="btn-close"
+                                                                data-bs-dismiss="modal" aria-label="Close"></button>
                                                         </div>
                                                         <div class="modal-body">
                                                             <table class="table table-striped">
-                                                               <thead>
+                                                                <thead>
                                                                     <tr>
                                                                         <th data-table="Hạng phòng">Hạng phòng</th>
                                                                         <th data-table="Phòng">Phòng</th>
                                                                         <th data-table="Giá">Giá</th>
                                                                         <th data-table="Thao tác">Thao tác</th>
-                                                                        
+
                                                                     </tr>
-                                                               </thead>
-                                                               <tbody>
-                                                                    <tr>
-                                                                        <td>Phòng 01 giường đôi cho 2 người</td>
-                                                                        <td>p.7</td>
-                                                                        <td>123 đ</td>
-                                                                        <td>đặt phòng</td>
-                                                                    </tr>
-                                                               </tbody>
+                                                                </thead>
+
+                                                                <tbody id="show-room">
+
+                                                                </tbody>
+
                                                             </table>
                                                         </div>
-                                                      
+
                                                     </div>
                                                 </div>
                                             </div>
@@ -536,13 +524,115 @@
 
             // xóa phòng vừa add vào  roomNumber
             $('#myModal-booking').on('hidden.bs.modal', function() {
-                $('#roomNumber').empty(); // Xóa các phòng vừa add vào 
+                if (!$('#myModal-booking').hasClass('show')) {
+                    $('#roomNumber').empty(); // Xóa các phòng vừa thêm vào
+                    $('#list-booking tr[data-room-id]').remove();
+                    // xóa các phòng thêm vào damh sách booking
+                }
             });
 
             // modal danh sách sản phẩm
             $('.add-room-booking').on('click', function() {
+                showRoom()
                 $('#addRoomModal').modal('show'); // Hiển thị modal
             });
+
+            $(document).on('click', '.add-book-room', function() {
+                var roomId = $(this).data('id');
+                var roomTypeId = $(this).data('room_type_id');
+                addRoomInBooking(roomId, roomTypeId);
+            });
+
+            function addRoomInBooking(roomId, roomTypeId) {
+                $('#loading').show();
+                $.ajax({
+                    url: '{{ route('admin.booking.checkRoomBooking') }}',
+                    type: 'POST',
+                    data: {
+                        room_id: roomId,
+                        room_type_id: roomTypeId
+                    },
+                    success: function(response) {
+                        var tbody = $('#list-booking');
+
+                        if (response.status === 'success') {
+                            //   getRoomType(response.room_type['id'], response.room['room_number'])
+                            const todays = new Date();
+                            const yyyys = todays.getFullYear();
+                            const mms = String(todays.getMonth() + 1).padStart(2, '0');
+                            const dds = String(todays.getDate()).padStart(2, '0');
+                            const hoursss = String(todays.getHours()).padStart(2, '0'); // Giờ
+                            const minutesss = String(todays.getMinutes()).padStart(2, '0'); // Phút
+
+                            const formattedDates = `${yyyys}-${mms}-${dds}`;
+                            const formattedTimes = `${hoursss}:${minutesss}`;
+
+                            var tr = `
+                                    <tr data-room-id="${response.room['id']}"  data-room-type-id="${response.room_type['id']}">
+                                        <td>
+                                            <p id="book_name" class="book_name">${response.room_type['name']}</p>
+                                        </td>
+                                        <td>
+                                            <select name="" id="roomNumber">
+                                                 <option value="${response.room_type['id']}">${response.room['room_number']}</option>
+                                            </select>
+                                        </td>
+                                        <td style="display: flex; justify-content: center">
+                                            <select id="bookingType" class="form-select" name="optionRoom" style="width: 110px;">
+                                                <option value="gio">Giờ</option>
+                                                <option value="ngay">Ngày</option>
+                                                <option value="dem">Đêm</option>
+                                            </select>
+                                        </td>
+                                        <td>
+                                            <div class="d-flex" style="gap: 10px">
+                                                <input type="date" name="checkInDate" class="form-control date-book-room" style="width: 165px;" value="${formattedDates}">
+                                                <input type="time" name="checkInTime" class="form-control time-book-room" style="width: 135px;" value="${formattedTimes}">
+                                            </div>
+                                        </td>
+                                    </tr>
+                                `;
+
+                            $('#loading').hide();
+                            $('#addRoomModal').modal('hide');
+
+                            tbody.append(tr); // Thêm dòng vào bảng
+                        }
+                    },
+                    error: function(error) {
+                        $('#loading').hide();
+                        console.log('Error:', error);
+                    }
+                });
+            }
+
+            function showRoom() {
+                $.ajax({
+                    url: '{{ route('admin.booking.showRoom') }}',
+                    type: 'GET',
+                    success: function(data) {
+                        var tbody = $('#show-room');
+                        data.data.forEach(function(item) {
+                            var tr = `
+                                    <tr>
+                                        <td> ${ item.room_type['name'] } </td>
+                                        <td> ${ item.room_number } </td>
+                                        <td> ${ formatCurrency(item.room_price[0]['hourly_price']) } </td>
+                                        <td> <p data-id="${ item.id }" data-room_type_id="${ item.room_type_id }" class="add-book-room" id="add-book-room">Đặt phòng</p> </td>
+                                    </tr>
+                                `;
+                            tbody.append(tr);
+                        });
+                    },
+                    error: function(error) {
+                        console.log('Error:', error);
+                    }
+                });
+            }
+
+
+
+
             $('#model').on('change', function(event) {
                 var model = $(this).val();
                 var parent = $(this).closest('#myModal-booking');
@@ -1771,8 +1861,8 @@
                 const [checkInHours, checkInMinutes] = checkInTime.split(':').map(Number);
 
 
-                while (currentDate) { 
-                    
+                while (currentDate) {
+
                     currentDate.setHours(checkInHours);
                     currentDate.setMinutes(checkInMinutes);
                     currentDate.setSeconds(0); // Đặt giây về 0
@@ -1783,9 +1873,9 @@
 
                     dates.push(`${roomType}-${formattedDate}`);
 
-                    break; 
+                    break;
 
-                
+
                     currentDate.setDate(currentDate.getDate() + 1);
                 }
 

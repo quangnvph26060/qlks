@@ -269,6 +269,10 @@ Route::middleware('admin', 'adminPermission')->group(function () {
             Route::post('write-cccd', 'writeCccd')->name('writeCccd');
             
             Route::post('get-room-type', 'getRoomType')->name('getRoomType');
+
+            Route::get('show-room', 'showRoom')->name('showRoom');
+
+            Route::post('check-room-booking', 'checkRoomBooking')->name('checkRoomBooking');
         });
     });
 
