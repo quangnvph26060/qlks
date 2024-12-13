@@ -2347,6 +2347,22 @@
                 let parentModal = $(this).closest('.modal');
                 parentModal.modal('hide');
         });
+        $(document).ready(function() {
+            // Đóng modal khi nhấn nút "Close"
+            $('.modal-backdrop .btn-close').click(function() {
+                $('.modal-backdrop').removeClass('show');
+                $('.modal-backdrop').hide();
+            });
+
+            // Đóng modal khi nhấp ra ngoài
+            $(document).click(function(event) {
+                if (!$(event.target).closest('.modal-backdrop .modal-dialog').length) {
+                    $('.modal-backdrop').removeClass('show');
+                    $('.modal-backdrop').hide();
+                }
+            });
+        });
+
 
 
     </script>
