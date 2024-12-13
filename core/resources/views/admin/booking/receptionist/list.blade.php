@@ -159,7 +159,7 @@
                                     <tr class="text-center fw-bold main-booking-modal">
                                         <th>Hạng phòng</th>
                                         <th>Phòng</th>
-                                        <th>Hình thức</th>
+                                        {{-- <th>Hình thức</th> --}}
                                         <th class="d-flex gap-10">Nhận <span class="main-hour-out" id="hour_current">Hiện
                                                 tại</span> <span class="main-hour-out" id="hour_regulatory">Quy
                                                 định</span></th>
@@ -186,14 +186,14 @@
                                             <select name="" id="roomNumber">
                                             </select>
                                         </td>
-                                        <td style="display: flex; justify-content: center">
+                                        {{-- <td style="display: flex; justify-content: center">
                                             <select id="bookingType" class="form-select " name="optionRoom"
                                                 style="width: 110px;">
                                                 <option value="gio">Giờ</option>
                                                 <option value="ngay">Ngày</option>
                                                 <option value="dem">Đêm</option>
                                             </select>
-                                        </td>
+                                        </td> --}}
                                         <td>
                                             <div class="d-flex" style="gap: 10px">
                                                 <input type="date" name="checkInDate" class="form-control"
@@ -291,12 +291,26 @@
     {{-- NHẬN PHÒNG MUỘN  --}}
     <div class="modal fade" id="myModal-booking-status" tabindex="-1" role="dialog"
         aria-labelledby="myModalLabel-booking" aria-hidden="true">
-        <div class="modal-dialog modal-dialog-centered" role="document" style="max-width: 1200px;">
+        <div class="modal-dialog modal-dialog-centered" role="document" style="max-width: 873px;">
             <div class="modal-content">
                 <div class="modal-header">
                     <h5 class="modal-title" id="myModalLabel-booking">Chi tiết phòng <span class="booking-no"></span>
                     </h5>
-                    <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+                    <div class="main-icon-booked">
+                        <div class="dropdown">
+                            <svg class="option-booked" xmlns="http://www.w3.org/2000/svg" width="20" height="20" viewBox="0 0 24 24"><g fill="none" stroke="currentColor" stroke-width="1.5"><circle cx="5" cy="12" r="2"/><circle cx="12" cy="12" r="2"/><circle cx="19" cy="12" r="2"/></g></svg>
+                            <div class="dropdown-menu" style="display: none; position: absolute;">
+                                <a class="dropdown-item" href="#"> <a href="#" class=" btn-primary-service add_premium_service"> <i
+                                    class="las la-plus-circle"></i> Thêm dịch vụ cao cấp</a></a>
+                                <a class="dropdown-item" href="#">  <a href="javascript:void(0)" class=" btn-primary-service add_product_room"> <i
+                                    class="las la-plus-circle"></i> Thêm sản phẩm</a></a>
+                                <a class="dropdown-item" href="#">Option 3</a>
+                            </div>
+                        </div>
+                        <svg xmlns="http://www.w3.org/2000/svg" width="20" height="20" viewBox="0 0 24 24"><path fill="none" stroke="currentColor" stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M3 6h18m-2 0v14a2 2 0 0 1-2 2H7a2 2 0 0 1-2-2V6m3 0V4a2 2 0 0 1 2-2h4a2 2 0 0 1 2 2v2"/></svg>
+                        <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+                    </div>
+                    
                 </div>
                 <div class="modal-body">
 
@@ -310,7 +324,7 @@
                                 </div> --}}
 
                         <div class="room-details-checkout">
-                            <div class="detail-row-checkout">
+                            <div class="detail-row-user">
                                 <div class="detail-item-checkout">
                                     <strong>Khách hàng</strong>
                                     <p class="user_info"></p>
@@ -332,15 +346,15 @@
                                 </div>
                                 <div class="detail-item-checkout">
                                     <strong>Trả phòng</strong>
-                                    <div class="d-flex">
+                                    <div class="d-flex" style="white-space: nowrap">
                                         <p class="check_out"></p>
                                         <p class="text-checkoutlate"></p>
                                     </div>
                                 </div>
-                                <div class="detail-item-checkout">
+                                {{-- <div class="detail-item-checkout">
                                     <strong>Hình thức</strong>
                                     <p class="option">Giờ</p>
-                                </div>
+                                </div> --}}
                                 {{-- <div class="detail-item-checkout">
                                             <strong>Tổng phí</strong>
                                             <p class="booking_price"></p>
@@ -350,19 +364,20 @@
 
                     </div>
                     {{-- danh sách phòng đặt  --}}
-                    @include('admin.booking.partials.table-booking')
+                    {{-- @include('admin.booking.partials.table-booking') --}}
+
                     {{-- danh sách dịch vụ  --}}
-                    <div class="row" id="product_room">
+                    {{-- <div class="row" id="product_room">
                         @include('admin.booking.partials.system-3')
-                    </div>
+                    </div> --}}
 
                     {{-- danh sách sản phẩm  --}}
-                    <div class="row mt-2">
+                    {{-- <div class="row mt-2">
                         @include('admin.booking.partials.system-4')
-                    </div>
+                    </div> --}}
 
-                    <hr>
-                    <div class="card mb-3">
+                    <div><svg xmlns="http://www.w3.org/2000/svg" width="20" height="20" viewBox="0 0 14 14"><path fill="none" stroke="currentColor" stroke-linecap="round" stroke-linejoin="round" d="M.5 13.5h11m-5-3.5l-3 .54L4 7.5L10.73.79a1 1 0 0 1 1.42 0l1.06 1.06a1 1 0 0 1 0 1.42Z"/></svg><p class="note-booking"></p></div>
+                    {{-- <div class="card mb-3">
                         <div class="card-body">
                             <div class="row mb-3 justify-content-between">
                                 <div class="col-md-9">
@@ -372,11 +387,11 @@
                                         <div class="d-flex justify-content-between mt-3 mb-3 coloumn-mobi">
                                             <h5 class="card-title">@lang('Tóm tắt thanh toán')</h5>
                                             <div>
-                                                {{-- data-id="{{ $booking->id }}" --}}
+                                              
                                                 <button class="btn btn--success extraChargeBtn" data-type="add">
                                                     <i class="las la-plus-circle"></i>@lang('Thêm phí bổ sung')
                                                 </button>
-                                                {{-- data-id="{{ $booking->id }}" --}}
+                                              
                                                 <button class="btn btn--danger extraChargeBtn" data-type="subtract">
                                                     <i class="las la-minus-circle"></i>@lang('Trừ Phí Thêm')
                                                 </button>
@@ -452,7 +467,7 @@
 
                             </div>
                         </div>
-                    </div>
+                    </div> --}}
 
 
                 </div>
@@ -504,6 +519,22 @@
 @push('script')
     <script>
         $(document).ready(function() {
+
+            $(document).on('click', '.option-booked', function (e) {
+                e.stopPropagation(); // Ngăn việc click lan sang các thành phần khác
+                const dropdownMenu = $(this).siblings('.dropdown-menu');
+                
+                // Đóng tất cả dropdown đang mở
+                $('.dropdown-menu').not(dropdownMenu).hide();
+
+                // Hiển thị hoặc ẩn dropdown tương ứng
+                dropdownMenu.toggle();
+            });
+
+            // Ẩn dropdown khi click bên ngoài
+            $(document).on('click', function () {
+                $('.dropdown-menu').hide();
+            });
 
             const baseUrl = window.location.origin + '/';
             const today = new Date();

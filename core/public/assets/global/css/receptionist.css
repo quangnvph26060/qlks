@@ -457,14 +457,23 @@ h5 {
     border-radius: 15px;
     font-size: 12px;
 }
-
+.main-icon-booked{
+    gap: 19px;
+    cursor: pointer;
+    display: flex;
+    align-items: center;
+}
 .icon-money-checkout {
     color: green;
     font-size: 16px;
     margin-left: 10px;
 }
-
-.room-details-checkout .detail-row-checkout {
+.detail-row-checkout{
+    display: flex;
+    width: 552px;
+    justify-content: space-between;
+}
+.room-details-checkout .detail-row-user {
     display: flex;
     justify-content: space-between;
     margin-bottom: 10px;
