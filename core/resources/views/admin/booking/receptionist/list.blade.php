@@ -529,6 +529,7 @@
             // xóa phòng vừa add vào  roomNumber
             $('#myModal-booking').on('hidden.bs.modal', function() {
                 $('#roomNumber').empty(); // Xóa các phòng vừa add vào
+            });
 
             $('#time-book-room').val(formattedTime);
 
