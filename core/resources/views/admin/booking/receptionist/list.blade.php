@@ -1,5 +1,6 @@
 @extends('admin.layouts.app')
 @section('panel')
+
     <div class="row">
         <div class="col-lg-2 ">
             <label>@lang('Ngày nhận phòng - Ngày trả phòng')</label>
@@ -426,8 +427,10 @@
                                                     <div class="input-group">
 
                                                         <input class="form-control input_fare_booking" min="0"
-                                                            name="amount" id="amount_payment" required step="any"
-                                                            type="number">
+                                                             id="amount_payment" required step="any"
+                                                            type="text">
+                                                        <input  min="0" name="amount" id="amount_payment_key"  step="any"
+                                                            type="hidden">
                                                         <span class="input-group-text">{{ __(gs()->cur_text) }}</span>
                                                     </div>
                                                     <div class="input-group">
@@ -502,7 +505,7 @@
     <script>
         $(document).ready(function() {
 
-
+            const baseUrl = window.location.origin + '/';
             const today = new Date();
             const yyyy = today.getFullYear();
             const mm = String(today.getMonth() + 1).padStart(2, '0');
@@ -516,6 +519,20 @@
             const formattedTime = `${hourss}:${minutess}`;
             // Gán giá trị vào input
             $('#date-book-room').val(formattedDate);
+
+             $('#time-book-room').val(formattedTime);
+
+
+
+
+
+
+
+            // xóa phòng vừa add vào  roomNumber
+            $('#myModal-booking').on('hidden.bs.modal', function() {
+                $('#roomNumber').empty(); // Xóa các phòng vừa add vào
+            });
+
             $('#time-book-room').val(formattedTime);
 
             // xóa phòng vừa add vào  roomNumber
@@ -545,6 +562,7 @@
                 });
                 showRoom(roomIds)
                 $('#addRoomModal').modal('show'); // Hiển thị modal
+
             });
 
             $(document).on('click', '.add-book-room', function() {
@@ -756,16 +774,104 @@
 
             });
 
+            function fetchlistserviceandproduct(id) {
+                let listservice = '';
+                let listproduct = '';
+                let url = `{{ route('admin.booking.serviceproduct', ['id' => ':id']) }}`.replace(':id', id);
+                $.ajax({
+                    url: url,
+                    type: 'GET',
+                    success: function(response) {
+                        response.service.forEach(function(item, index) {
+
+                            const usedService = response.used_services.find(service => service.premium_service_id === item.id);
+                            const qty = usedService ? usedService.qty : 0;
+                            console.log(item);
+                            listservice += `
+                                <div class="row align-items-center mb-3">
+                                    <!-- Cột cho input tên dịch vụ -->
+                                    <div class="col-md-8 col-sm-12 mb-2 mb-md-0">
+                                        <div style="display: flex" >
+
+                                           <div>
+                                            <p style="margin:0px">${item.name}</p>
+                                            <p style="margin:0px">${formatCurrency(item.cost)}</p>
+                                            </div>
+                                        </div>
+                                        <input type="hidden" class="form-control" placeholder="Tên dịch vụ" value="${item.name}" readonly>
+                                        <input type="hidden" class="form-control" name="services[]" placeholder="Tên sản phẩm" value="${item.id}">
+                                    </div>
+
+                                    <!-- Cột cho input số lượng -->
+                                    <div class="col-md-4 col-sm-12">
+                                        <div class="input-group quantity_new">
+                                            <button class="btn btn-outline-secondary" type="button" onclick="changeQuantity(this, -1)">-</button>
+                                            <input type="number" data-service_id="${item.id}" class="form-control text-center" name="qty[]" value="${qty}" min="0">
+                                            <button class="btn btn-outline-secondary" type="button" onclick="changeQuantity(this, 1)">+</button>
+                                        </div>
+                                    </div>
+                                </div>
+                            `;
+                        });
+                            $('#list-service').empty();
+                            $('#list-service').append(listservice);
+
+                        response.product.forEach(function(item, index) {
+                            // Tìm kiếm thông tin về dịch vụ đã sử dụng
+                            console.log(item);
+                            const usedService = response.used_products.find(service => service.product_id === item.id);
+                            const qty = usedService ? usedService.qty : 0;
+
+                            listproduct += `
+                                <div class="row align-items-center mb-3">
+                                    <!-- Cột cho input tên dịch vụ -->
+                                    <div class="col-md-8 col-sm-12 mb-2 mb-md-0">
+                                        <div style="display: flex" >
+                                            <img src="${baseUrl + 'storage/' + item.image_path}" alt="${item.name}" class="img-fluid" style="width:50px;height:50px; margin-right: 20px">
+                                           <div>
+                                                <p style="margin:0px">${item.name}</p>
+                                                <p style="margin:0px">${formatCurrency(item.import_price)}</p>
+                                            </div>
+                                        </div>
+                                        <input type="hidden" class="form-control" name="product[]" placeholder="Tên sản phẩm" value="${item.id}">
+                                        <input type="hidden" class="form-control" placeholder="Tên dịch vụ" value="${item.name}" >
+                                    </div>
+
+                                    <!-- Cột cho input số lượng -->
+                                    <div class="col-md-4 col-sm-12">
+                                        <div class="input-group quantity_new">
+                                            <button class="btn btn-outline-secondary" type="button" onclick="changeQuantity(this, -1)">-</button>
+                                            <input type="number" data-service_id="${item.id}" class="form-control text-center" name="qty[]" value="${qty}" min="0">
+                                            <button class="btn btn-outline-secondary" type="button" onclick="changeQuantity(this, 1)">+</button>
+                                        </div>
+                                    </div>
+                                </div>
+                            `;
+                        });
+                        $('#list-product').empty();
+                        $('#list-product').append(listproduct);
+                    }
+                });
+            }
+
             // add_premium_service
             $('.add_premium_service').on('click', function(event) {
                 event.stopPropagation();
+                $('#serviceModal').modal('dispose'); // Giải phóng modal hiện tại
+                $('#serviceModal').modal();
                 $('#serviceModal').modal('show');
+                var roomId  = $(this).data('id');
+                fetchlistserviceandproduct(roomId)
             });
 
             // add_product_room
             $('.add_product_room').on('click', function(event) {
                 event.stopPropagation();
+                $('#productModal').modal('dispose'); // Giải phóng modal hiện tại
+                $('#productModal').modal();
                 $('#productModal').modal('show');
+                var roomId  = $(this).data('id');
+                fetchlistserviceandproduct(roomId)
             });
 
             $('.addServiceBtn').on('click', function() {
@@ -1249,13 +1355,18 @@
 
                             $('#bookings-table-body').empty();
                             let rowsHtml = '';
+
                             let totalFare = 0;
                             let total_fare = 0;
                             let cancellation_fee, shouldRefund = 0;
 
                             var currentDate = '<?php echo now()->format('Y-m-d H:i:s'); ?>';
-                            // các phòng  đã đặt 
+
+
+                            // các phòng  đã đặt
                             response.data.booked_rooms.forEach(function(booked, index) {
+                                $('.add_premium_service').attr('data-id', booked.room.id);
+                                $('.add_product_room').attr('data-id', booked.room.id);
                                 $('.booking-no').text(booked.room.room_number);
                                 $('.room_serive').val(booked.room.room_number);
                                 let is_flag = false;
@@ -1280,7 +1391,16 @@
                                             </button>
                                         </td>
                                         <td class="bg--date text-center" data-label="@lang('Đã đặt chỗ')">
-                                            ${booked.booked_for}
+                                            ${(() => {
+                                                const bookedDate = new Date(booked.booked_for);
+                                                const day = String(bookedDate.getDate()).padStart(2, '0');
+                                                const month = String(bookedDate.getMonth() + 1).padStart(2, '0'); // Tháng bắt đầu từ 0
+                                                const year = bookedDate.getFullYear();
+                                                const hours = String(bookedDate.getHours()).padStart(2, '0');
+                                                const minutes = String(bookedDate.getMinutes()).padStart(2, '0');
+                                                return `${day}-${month}-${year} ${hours}:${minutes}`;
+                                            })()}
+
                                         </td>
                                         <td class="text-center" data-label="@lang('Loại phòng')">
                                             ${booked.room.room_type.name}
@@ -1290,7 +1410,7 @@
                                             ${booked.status === 'canceled' ? `<span class="text--danger text-sm">(@lang('Đã hủy'))</span>` : ''}
                                         </td>
                                         <td class="text-end" data-label="@lang('Giá')">
-                                           
+
                                         </td>
 
                                     </tr>
@@ -1321,7 +1441,14 @@
                                 rowsHtml1 += `
                                         <tr>
                                             <td class="bg--date text-center" data-label="@lang('Ngày')">
-                                                ${booked.service_date}
+
+                                                ${(() => {
+                                                    const date = new Date(booked.service_date);
+                                                    const day = String(date.getDate()).padStart(2, '0');
+                                                    const month = String(date.getMonth() + 1).padStart(2, '0');
+                                                    const year = date.getFullYear();
+                                                    return `${day}-${month}-${year}`;
+                                                })()}
                                             </td>
                                              <td data-label="@lang('Phòng số')">
                                                  ${booked.room.room_number}
@@ -1333,10 +1460,10 @@
                                                 ${booked.qty}
                                             </td>
 
-                                            <td class="text-end" data-label="@lang('Giá')">
+                                            <td class="text-center" data-label="@lang('Giá')">
                                                 ${formatCurrency(booked.premium_service.cost)}
                                             </td>
-                                            <td class="text-end" data-label="@lang('Tổng giá')">
+                                            <td class="text-center" data-label="@lang('Tổng giá')">
                                                   ${formatCurrency( booked.qty * booked.premium_service.cost)}
                                             </td>
                                         </tr>
@@ -1353,7 +1480,13 @@
                                 rowsHtmlProduct += `
                                         <tr>
                                             <td class="bg--date text-center" data-label="@lang('Ngày')">
-                                                ${booked.product_date}
+                                                ${(() => {
+                                                    const date = new Date(booked.product_date);
+                                                    const day = String(date.getDate()).padStart(2, '0');
+                                                    const month = String(date.getMonth() + 1).padStart(2, '0');
+                                                    const year = date.getFullYear();
+                                                    return `${day}-${month}-${year}`;
+                                                })()}
                                             </td>
                                             <td data-label="@lang('Phòng số')">
                                                 ${booked.room.room_number}
@@ -1365,14 +1498,14 @@
                                                 ${booked.qty}
                                             </td>
 
-                                            <td class="text-end" data-label="@lang('Giá')">
+                                            <td class="text-center" data-label="@lang('Giá')">
                                                 ${formatCurrency(booked.unit_price)}
                                             </td>
-                                            <td class="text-end" data-label="@lang('Tổng giá')">
+                                            <td class="text-center" data-label="@lang('Tổng giá')">
                                                 ${formatCurrency( booked.qty * booked.unit_price)}
                                             </td>
                                         </tr>
-                                    `;
+                                `;
                             });
                             $('#user_product').append(rowsHtmlProduct);
 
@@ -1905,6 +2038,7 @@
                 let currentDate = new Date(startDate);
 
 
+
                 const [checkInHours, checkInMinutes] = checkInTime.split(':').map(Number);
 
 
@@ -1918,13 +2052,18 @@
                         `${currentDate.getMonth() + 1}/${String(currentDate.getDate()).padStart(2, '0')}/${currentDate.getFullYear()} ` +
                         `${String(currentDate.getHours()).padStart(2, '0')}:${String(currentDate.getMinutes()).padStart(2, '0')}:${String(currentDate.getSeconds()).padStart(2, '0')}`;
 
+
                     dates.push(`${roomType}-${room}-${formattedDate}`);
 
-                    break;
+                  
+                 //   break;
 
 
-                    currentDate.setDate(currentDate.getDate() + 1);
+                   currentDate.setDate(currentDate.getDate() + 1);
+
+
                 }
+
 
                 return dates;
             }
@@ -2149,6 +2288,7 @@
                 e.preventDefault();
 
                 let formData = $(this).serialize();
+                console.log(formData);
                 let url = $(this).attr('action');
                 $.ajax({
                     type: "POST",
@@ -2162,6 +2302,7 @@
 
                             serviceForm.trigger("reset");
                             $('#serviceModal').hide();
+                            $('#productModal').hide();
 
                             handleLateCheckinClick(response.data['booking_id'], response.data[
                                 'booked_room_id']);
@@ -2224,5 +2365,60 @@
             modal.find('.refundableAmount').text(data.should_refund);
             modal.modal('show');
         });
+
+        function formatCurrency(amount) {
+            amount = parseFloat(amount);
+
+            return amount.toString().replace(/\B(?=(\d{3})+(?!\d))/g, '.') + ' đ';
+        }
+
+        function bindFormattedInput(displaySelector, hiddenSelector) {
+            $(document).on('input', displaySelector, function () {
+                let displayInput = $(this);
+                let hiddenInput = $(hiddenSelector);
+                let rawValue = displayInput.val().replace(/,/g, ''); // Loại bỏ dấu phẩy cũ
+
+                if ($.isNumeric(rawValue)) {
+                    // Định dạng giá trị với dấu phẩy
+                    let formattedValue = parseInt(rawValue).toLocaleString('en-US');
+                    displayInput.val(formattedValue);
+
+                    // Lưu giá trị không định dạng vào input hidden
+                    hiddenInput.val(rawValue);
+                } else {
+                    // Xóa cả hai giá trị nếu nhập không hợp lệ
+                    displayInput.val('');
+                    hiddenInput.val('');
+                }
+            });
+        }
+
+        $(document).ready(function () {
+            bindFormattedInput('#amount_payment', '#amount_payment_key');
+            bindFormattedInput('#minus_fee', '#minus_fee_key');
+        });
+
+        $(document).on('click', '.close_model', function () {
+                let parentModal = $(this).closest('.modal');
+                parentModal.modal('hide');
+        });
+        $(document).ready(function() {
+            // Đóng modal khi nhấn nút "Close"
+            $('.modal-backdrop .btn-close').click(function() {
+                $('.modal-backdrop').removeClass('show');
+                $('.modal-backdrop').hide();
+            });
+
+            // Đóng modal khi nhấp ra ngoài
+            $(document).click(function(event) {
+                if (!$(event.target).closest('.modal-backdrop .modal-dialog').length) {
+                    $('.modal-backdrop').removeClass('show');
+                    $('.modal-backdrop').hide();
+                }
+            });
+        });
+
+
+
     </script>
 @endpush

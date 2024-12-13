@@ -43,6 +43,7 @@ class GeneralSettingController extends Controller
             'upcoming_checkin_days'    => 'required|numeric|min:1',
             'upcoming_checkout_days'   => 'required|numeric|min:1',
             'deposit'                  => 'numeric|min:1|max:100|nullable',
+            'type'                  => 'required',
         ]);
 
         $timezones = timezone_identifiers_list();
@@ -65,6 +66,7 @@ class GeneralSettingController extends Controller
         $general->upcoming_checkin_days    = $request->upcoming_checkin_days;
         $general->upcoming_checkout_days   = $request->upcoming_checkout_days;
         $general->deposit                  = $request->deposit;
+        $general->type                  = $request->type;
         $general->save();
 
         $timezoneFile = config_path('timezone.php');

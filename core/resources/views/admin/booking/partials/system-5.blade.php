@@ -4,7 +4,7 @@ aria-hidden="true">
     <div class="modal-content add-serve-mobi">
         <div class="modal-header">
             <h5 class="modal-title" id="productModalLabel">Thêm sản phẩm </h5>
-            <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+            <button type="button" class="close close_model" data-dismiss="modal" aria-label="Close" >
                 <span aria-hidden="true">&times;</span>
             </button>
         </div>
@@ -29,16 +29,16 @@ aria-hidden="true">
                     </div>
                 </div>
 
-                
-                    <div class="form-group d-flex justify-content-end">
+
+                    {{-- <div class="form-group d-flex justify-content-end">
                         <button type="button" class="btn btn-success addProductBtn"><i
                                 class="las la-plus"></i> Thêm</button>
-                    </div>
+                    </div> --}}
                     <label for="services">Danh sách sản phẩm</label>
                     <div class="row product-wrapper">
                         <div class="first-product-wrapper">
-                            <div class="d-flex service-item position-relative mb-3 flex-wrap-mobi">
-                                <div class="row">
+                            <div class="service-item position-relative mb-3 flex-wrap-mobi" id="list-product">
+                                {{-- <div class="row">
                                     <div class="col-md-6 col-sm-12">
                                       <div class="form-group">
                                             <select class="w-260px custom-select no-right-radius" name="product[]"
@@ -52,17 +52,17 @@ aria-hidden="true">
                                             placeholder="@lang('Số lượng')" required type="text">
                                         </div>
                                     </div>
-                                </div>
+                                </div> --}}
                             </div>
                         </div>
                     </div>
-               
 
-                
+
+
                     <div class="form-group">
                         <button type="submit" class=" btn-primary-1 w-100">Xác nhận</button>
                     </div>
-                
+
             </form>
         </div>
 

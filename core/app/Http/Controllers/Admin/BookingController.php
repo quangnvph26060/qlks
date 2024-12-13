@@ -7,7 +7,9 @@ use App\Models\Booking;
 use App\Models\BookedRoom;
 use App\Models\RoomType;
 use App\Models\Room;
+use App\Models\UsedPremiumService;
 use App\Models\User;
+use App\Models\UserdProductRoom;
 use Illuminate\Http\Request;
 use App\Constants\Status;
 use App\Http\Responses\ApiResponse;
@@ -158,7 +160,6 @@ class BookingController extends Controller
             'payments'
         ])->findOrFail($id);
         // BookedRoom::where('booking_id', $id)->with('booking.user', 'room.roomType')->orderBy('booked_for')->get()->groupBy('booked_for');
-
         if ($request->is_method === 'receptionist') {
             $returnedPayments  = $booking->payments->where('type', 'RETURNED'); // Đã hoàn tiền
             $receivedPayments  = $booking->payments->where('type', 'RECEIVED');
@@ -168,7 +169,7 @@ class BookingController extends Controller
             if ($chose === 'gio') {
                 $timeOutDefault = $booking->timeOutDefault();  // time từ in đến out
                 $timeOutNow     = $booking->timeOutNow();     // time đã quá giờ check out
-                $last_overtime_calculated_at = $booking->last_overtime_calculated_at; // 
+                $last_overtime_calculated_at = $booking->last_overtime_calculated_at; //
 
                 //  \Log::info('time out -> hiện tại '. $timeOutNow);
                 //  \Log::info('time cộng lần trước  '. $last_overtime_calculated_at);
@@ -211,7 +212,7 @@ class BookingController extends Controller
                         //     if ($lastPrice) {
                         //         $extraAmount += $overTime * (float)$lastPrice->price;  // Tính tiền cho giờ vượt còn lại
                         //     }
-                        // }  
+                        // }
                         // \Log::info($extraAmount);
                         // Cộng thêm tiền vào tổng tiền của booking
                         $flag = $timeOutNow - $last_overtime_calculated_at;
@@ -227,10 +228,44 @@ class BookingController extends Controller
                     }
                 }
             }
-            return response()->json(['status' => 'success', 'data' => $booking, 'returnedPayments' => $returnedPayments, 'receivedPayments' => $receivedPayments, 'total_amount' => $total_amount, 'due' => $due]);
+            $service = PremiumService::get();
+            $product = Product::get();
+            $room_id = $booking->bookedRooms[0]->room_id;
+            $currentDate = Carbon::now()->format('Y-m-d');
+
+            // Lấy danh sách dịch vụ đã sử dụng
+            $used_services = UsedPremiumService::whereDate('service_date', $currentDate)
+                ->where('room_id', $room_id)
+                ->select('premium_service_id', 'qty')
+                ->get();
+
+            $used_products = UserdProductRoom::whereDate('product_date', $currentDate)
+                ->where('room_id', $room_id)
+                ->select('product_id', 'qty')
+                ->get();
+
+            return response()->json(['status' => 'success', 'data' => $booking, 'returnedPayments' => $returnedPayments, 'receivedPayments' => $receivedPayments, 'total_amount' => $total_amount, 'due' => $due, 'service' => $service, 'product' => $product, 'used_services' => $used_services, 'used_products' => $used_products]);
         }
         $pageTitle = 'Chi tiết đặt chỗ';
         return view('admin.booking.details', compact('pageTitle', 'booking'));
+    }
+
+    public function bookingserviceproduct($id){
+        Log::info($id);
+        $service = PremiumService::get();
+        $product = Product::get();
+        $currentDate = Carbon::now()->format('Y-m-d');
+        $used_services = UsedPremiumService::whereDate('service_date', $currentDate)
+        ->where('room_id', $id)
+        ->select('premium_service_id', 'qty')
+        ->get();
+
+        $used_products = UserdProductRoom::whereDate('product_date', $currentDate)
+            ->where('room_id', $id)
+            ->select('product_id', 'qty')
+            ->get();
+
+        return response()->json(['status' => 'success','service' => $service, 'product' => $product, 'used_services' => $used_services, 'used_products' => $used_products]);
     }
 
     public function bookedRooms(Request $request, $id)
