@@ -348,6 +348,36 @@ class BookingController extends Controller
         return response()->json(['status' => 'success', 'data'=> $rooms]);
     }
 
+    public function showRoom(){
+        $disabledRoomTypeIDs = RoomType::where('status', 0)->pluck('id')->toArray();
+
+
+        $idRoomActive        = RegularRoomPrice::pluck('room_price_id');
+        $emptyRooms          = Room::active()
+            //  ->whereNotIn('id', $bookedRooms)
+             ->whereNotIn('room_type_id', $disabledRoomTypeIDs)
+             ->whereIn('id', $idRoomActive)
+             ->with(['roomType', 'booked','booked.booking','roomPrice'])
+            ->select(['id', 'room_type_id', 'room_number', 'is_clean'])->get();
+            return response()->json([
+                'status' => 'success',
+                'data'   =>  $emptyRooms,
+            ]);
+    }
+    public function checkRoomBooking(Request $request){
+      
+            // "room_id" => "35"
+            // "room_type_id" => "4"
+          
+            $room_type = RoomType::find($request->room_type_id);
+            return response()->json([
+                'status'    => 'success',
+                'room_type' => $room_type,
+                'room'      =>  Room::active()->where('id',$request->room_id)->first(),
+            ]);
+    }
+
+
     public function Receptionist(Request $request)
     {
         $emptyMessage   = '';
@@ -392,7 +422,7 @@ class BookingController extends Controller
             ->when(!empty($request->roomType), function ($query) use ($request) {
                 $query->where('room_type_id', 'like', '%' . $request->roomType . '%');
             })
-            ->get();
+            ->get();        
         $scope = 'ALL';
         $is_method = 'Receptionist';
 
