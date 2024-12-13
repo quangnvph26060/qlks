@@ -34,8 +34,11 @@
                         </div> --}}
                         <label for="services">Dịch vụ</label>
                         <div class="row service-wrapper">
-                            <div class="first-service-wrapper">
-                                <div class="service-item position-relative mb-3 flex-wrap-mobi" id="list-service">
+                            <div class="first-service-wrapper row">
+                                <div id="services" class="col-md-6 mb-3">
+
+                                </div>
+                                <div class="service-item position-relative mb-3 flex-wrap-mobi col-md-6" id="list-service">
 
                                     {{-- <div class="row align-items-center mb-3">
                                         <!-- Cột cho input tên dịch vụ -->

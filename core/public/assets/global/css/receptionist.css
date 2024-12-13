@@ -20,9 +20,9 @@
 }
 .book_name{
     max-height: 2em;
-    overflow: hidden; 
-    text-overflow: ellipsis; 
-    white-space: nowrap; 
+    overflow: hidden;
+    text-overflow: ellipsis;
+    white-space: nowrap;
 }
 .add-room-booking{
     width: 183px;
@@ -106,6 +106,14 @@
 
 .modal-dialog1 {
     max-width: 700px !important;
+}
+#productModal .modal-dialog, #serviceModal .modal-dialog{
+    max-width: none !important;
+}
+@media (min-width: 576px) {
+    #productModal .modal-dialog, #serviceModal .modal-dialog{
+        max-width: none !important;
+    }
 }
 
 /* input:not([type='radio']),
