@@ -267,8 +267,10 @@ Route::middleware('admin', 'adminPermission')->group(function () {
             Route::post('key/handover/{id}', 'handoverKey')->name('key.handover');
 
             Route::post('write-cccd', 'writeCccd')->name('writeCccd');
-            
+
             Route::post('get-room-type', 'getRoomType')->name('getRoomType');
+
+            Route::get('serviceproduct/{id}', 'bookingserviceproduct')->name('serviceproduct');
         });
     });
 

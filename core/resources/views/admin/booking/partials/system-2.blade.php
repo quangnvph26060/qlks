@@ -3,7 +3,7 @@
         <div class="modal-content add-serve-mobi">
             <div class="modal-header">
                 <h5 class="modal-title" id="serviceModalLabel">Thêm dịch vụ cao cấp </h5>
-                <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+                <button type="button" class="close close_model" data-dismiss="modal" aria-label="Close">
                     <span aria-hidden="true">&times;</span>
                 </button>
             </div>
@@ -27,35 +27,36 @@
                         </div>
                     </div>
 
-                   
-                        <div class="form-group d-flex justify-content-end">
+
+                        {{-- <div class="form-group d-flex justify-content-end">
                             <button type="button" class="btn btn-success addServiceBtn"><i class="las la-plus"></i>
                                 Thêm</button>
-                        </div>
+                        </div> --}}
                         <label for="services">Dịch vụ</label>
                         <div class="row service-wrapper">
                             <div class="first-service-wrapper">
-                                <div class="d-flex service-item position-relative mb-3 flex-wrap-mobi">
-                                  
-                                        <div class="col-md-6 col-sm-12">
-                                            <div class="form-group">
-                                                <select class=" w-260px custom-select no-right-radius" name="services[]"
-                                                    required>
-                                                </select>
-                                            </div>
+                                <div class="service-item position-relative mb-3 flex-wrap-mobi" id="list-service">
 
+                                    {{-- <div class="row align-items-center mb-3">
+                                        <!-- Cột cho input tên dịch vụ -->
+                                        <div class="col-md-8 col-sm-12 mb-2 mb-md-0">
+                                            <input type="text" class="form-control" name="services[]" placeholder="Tên dịch vụ" required>
                                         </div>
-                                        <div class="col-md-6 col-sm-12">
-                                            <div class="form-group">
-                                                <input class="form-control no-left-radius w-260px h-40" name="qty[]"
-                                                    placeholder="@lang('Số lượng')" required type="text">
+
+                                        <!-- Cột cho input số lượng -->
+                                        <div class="col-md-4 col-sm-12">
+                                            <div class="input-group">
+                                                <button class="btn btn-outline-secondary" type="button" onclick="changeQuantity(this, -1)">-</button>
+                                                <input type="number" class="form-control text-center" name="qty[]" value="1" min="1" required>
+                                                <button class="btn btn-outline-secondary" type="button" onclick="changeQuantity(this, 1)">+</button>
                                             </div>
                                         </div>
-                                   
+                                    </div> --}}
+
                                 </div>
                             </div>
                         </div>
-                  
+
 
 
                     <div class="form-group">
@@ -68,3 +69,34 @@
         </div>
     </div>
 </div>
+
+<script>
+    function changeQuantity(button, delta) {
+        const input = button.parentElement.querySelector('input[type="number"]');
+        const currentValue = parseInt(input.value, 10);
+        const newValue = currentValue + delta;
+        input.value = newValue >= 0 ? newValue : 0; // Không cho phép giá trị âm
+    }
+
+</script>
+
+<style>
+    .d-flex {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    }
+    .w-50 {
+        width: 50%;
+    }
+    .w-auto {
+        width: auto;
+    }
+    .me-2 {
+        margin-right: 0.5rem;
+    }
+    .input-group button {
+        width: 40px;
+    }
+
+</style>
