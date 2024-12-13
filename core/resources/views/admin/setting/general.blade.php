@@ -139,6 +139,16 @@
                                     </div>
                                 </div>
                             </div>
+
+                            <div class="form-group col-md-4 col-sm-6">
+                                <label>@lang('Mô hình')</label>
+                                <select class="select2 form-control" name="type" data-minimum-results-for-search="-1" required>
+                                    <option value="Nhà nghỉ" @selected(gs('type') == 'Nhà nghỉ')>@lang('Nhà nghỉ')</option>
+                                    <option value="Khách sạn" @selected(gs('type') == 'Khách sạn')>@lang('Khách sạn')</option>
+                                    <option value="Resort" @selected(gs('type') == 'Resort')>@lang('Resort')</option>
+                                </select>
+                            </div>
+
                         </div>
 
                         @can('admin.setting.update')

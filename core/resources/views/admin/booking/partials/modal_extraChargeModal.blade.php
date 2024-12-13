@@ -14,8 +14,9 @@
                     <div class="form-group">
                         <label>@lang('Tổng')</label>
                         <div class="input-group">
-                            <input class="form-control" min="0" name="amount" required step="any"
-                                type="number">
+                            <input class="form-control" id="minus_fee" required step="any" type="text">
+                                <input class="form-control" min="0" id="minus_fee_key"  name="amount" required step="any"
+                                type="hidden">
                             <span class="input-group-text">{{ __(gs()->cur_text) }}</span>
                         </div>
                     </div>
