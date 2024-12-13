@@ -81,11 +81,11 @@
 </script>
 
 <style>
-    .d-flex {
+    /* .d-flex {
     display: flex;
     justify-content: space-between;
     align-items: center;
-    }
+    } */
     .w-50 {
         width: 50%;
     }

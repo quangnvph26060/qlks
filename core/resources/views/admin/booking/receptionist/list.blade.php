@@ -527,14 +527,6 @@
 
 
 
-
-            // xóa phòng vừa add vào  roomNumber
-            $('#myModal-booking').on('hidden.bs.modal', function() {
-                $('#roomNumber').empty(); // Xóa các phòng vừa add vào
-            });
-
-            $('#time-book-room').val(formattedTime);
-
             // xóa phòng vừa add vào  roomNumber
             $('#myModal-booking').on('hidden.bs.modal', function() {
                 if (!$('#myModal-booking').hasClass('show')) {
@@ -2033,7 +2025,7 @@
             });
 
 
-            function getDatesBetween(startDate, checkInTime, room, roomType) {
+            function getDatesBetween(startDate, checkInTime, room, roomType, optionRoom) {
                 let dates = [];
                 let currentDate = new Date(startDate);
 
@@ -2053,7 +2045,7 @@
                         `${String(currentDate.getHours()).padStart(2, '0')}:${String(currentDate.getMinutes()).padStart(2, '0')}:${String(currentDate.getSeconds()).padStart(2, '0')}`;
 
 
-                    dates.push(`${roomType}-${room}-${formattedDate}`);
+                    dates.push(`${roomType}-${room}-${formattedDate}-${optionRoom}`);
 
                   
                     break;
@@ -2094,17 +2086,21 @@
                         .val(); // Lấy giá trị ngày
                     var checkInTime = $(this).find('input[name="checkInTime"]')
                         .val(); // Lấy giá trị giờ
+                    var optionRoom = $(this).find('select[name="optionRoom"]').val(); // lấy giá trị option gio/ngay/dem
 
                     // Thêm thông tin của phòng vào mảng
                     roomData.push({
                         roomId: roomId,
                         roomTypeId: roomTypeId,
                         checkInDate: checkInDate,
-                        checkInTime: checkInTime
+                        checkInTime: checkInTime,
+                        optionRoom: optionRoom
                     });
                 });
+                console.log(roomData);
+                
                 roomData.forEach(function(item) {
-                    const roomDates = getDatesBetween(item['checkInDate'], item['checkInTime'], item['roomId'],item['roomTypeId']);
+                    const roomDates = getDatesBetween(item['checkInDate'], item['checkInTime'], item['roomId'], item['roomTypeId'], item['optionRoom']);
                        
                     roomDates.forEach(function(date, index) {
                         formData.push({

@@ -157,7 +157,7 @@ class Room extends Model
         return $query->where('is_featured', Status::ROOM_TYPE_FEATURED);
     }
 
-   public function roomPriceNow(){
+    public function roomPriceNow(){
         $day = Carbon::now()->toDateString();
         $thu = Carbon::now()->locale('en')->isoFormat('dddd');
 
@@ -168,7 +168,7 @@ class Room extends Model
         }
 
         return  $this->regularRoom();
-   }
+    }
 
     public function roomPriceDayNow($date)
     {

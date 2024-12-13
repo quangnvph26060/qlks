@@ -10,7 +10,7 @@ class BookedRoom extends Model {
     protected $guarded = ['id'];
 
     protected $fillable = [
-        'booking_id', 'room_id', 'booked_for', 'status','key_status'
+        'booking_id', 'room_id', 'booked_for', 'status', 'key_status', 'option_room'
     ];
 
     public function booking() {

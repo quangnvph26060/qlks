@@ -62,7 +62,7 @@ class BookRoomController extends Controller
 
     public function book(Request $request)
     {
-         \Log::info($request->all());
+        \Log::info($request->all());
         DB::beginTransaction();
         try {
             $validator = Validator::make($request->all(), [
@@ -97,13 +97,14 @@ class BookRoomController extends Controller
             $bookedRoomData = [];
             $totalFare      = 0;
             $tax            = gs('tax'); // thuế
-          
+
             foreach ($request->room as $room) {
                 $data      = [];
-                $roomTypeId    = explode('-', $room)[0];
-                $roomId    = explode('-', $room)[1];
-                $bookedFor = explode('-', $room)[2];
-                $isBooked  = BookedRoom::where('room_id', $roomId)->whereDate('booked_for', Carbon::parse($bookedFor))->where('status',[Status::BOOKED_ROOM_ACTIVE,Status::BOOKED_ROOM_CANCELED])->exists();
+                $roomTypeId    = explode('-', $room)[0]; // loai phong
+                $roomId    = explode('-', $room)[1];  // phong
+                $bookedFor = explode('-', $room)[2]; // thoi gian dat phong
+                $optionRoom = explode('-', $room)[3]; // option gio ngay dem 
+                $isBooked  = BookedRoom::where('room_id', $roomId)->whereDate('booked_for', Carbon::parse($bookedFor))->where('status', [Status::BOOKED_ROOM_ACTIVE, Status::BOOKED_ROOM_CANCELED])->exists();
 
                 if ($isBooked) {
                     DB::rollBack();
@@ -111,14 +112,7 @@ class BookRoomController extends Controller
                 }
 
                 $room = Room::with('roomType')->find($roomId);
-
-                // if($request->is_method === "receptionist"){
-
-                // }else{
-
-                // }
-                //   \Log::info('room:' .$room->roomPriceNow());
-                if(!$room->is_clean){
+                if (!$room->is_clean) {
                     return response()->json(['error' => 'Phòng chưa dọn dẹp']);
                 }
                 //  \Log::info( '$room->is_clean: '.  @$room->is_clean);
@@ -128,49 +122,62 @@ class BookRoomController extends Controller
                     DB::rollBack();
                     return response()->json(['error' => 'Loại phòng đã chọn không hợp lệ ']);
                 }
-                
-                $totalAmount = $request->total_amount;
+                $price = 0;
+                switch ($optionRoom) {
+                    case 'gio':
+                        $price  = $room->roomPriceNow()->hourly_price;
+                        break;
+                    case 'ngay':
+                        $price  = $room->roomPriceNow()->daily_price;
+                        break;
+                    case 'dem':
+                        $price  = $room->roomPriceNow()->overnight_price;
+                        break;
+                }
+                //  $totalAmount = $request->total_amount;
 
                 // Loại bỏ dấu chấm nếu tồn tại và chuyển thành số nguyên
-                $processedAmount = is_numeric($totalAmount) ? intval(floatval(str_replace('.', '', $totalAmount))) : $totalAmount;
+                //  $processedAmount = is_numeric($totalAmount) ? intval(floatval(str_replace('.', '', $totalAmount))) : $totalAmount;
                 //  \Log::info($processedAmount);
                 $data['booking_id']       = 0;
                 $data['room_type_id']     = $room->room_type_id;
                 $data['room_id']          = $room->id;
                 $data['booked_for']       = Carbon::parse($bookedFor)->format('Y-m-d H:i:s');
                 // $data['fare']             = $room->roomPricesActive[0]['price'];
-                $data['fare']             = $processedAmount;
+                $data['fare']             = $price;
                 // $data['tax_charge']       = $room->roomPricesActive[0]['price'] * $tax / 100;
-                $data['tax_charge']       = $processedAmount * $tax / 100;
+                // $data['tax_charge']       = $processedAmount * $tax / 100;
                 $data['cancellation_fee'] = $room->cancellation_fee; // phí hủy bỏ nếu hủy phòng thì: tiền hoàn lại =  fare - cancellation_fee
                 $data['status']           = Status::ROOM_ACTIVE;
-                $data['key_status']           = Status::KEY_NOT_GIVEN;
+                $data['key_status']       = Status::KEY_NOT_GIVEN;
+                $data['option_room']      = $optionRoom;
                 $data['created_at']       = now();
                 $data['updated_at']       = now();
 
                 $bookedRoomData[] = $data;
 
                 // $totalFare += $room->roomPricesActive[0]['price'];
-                $totalFare += $processedAmount;
+                // $totalFare += $processedAmount;
+                $totalFare = 0;
             }
 
 
-            $taxCharge = $totalFare * $tax / 100;
+            // $taxCharge = $totalFare * $tax / 100;
 
-            if ($request->paid_amount && $request->paid_amount > $totalFare + $taxCharge) {
-                DB::rollBack();
-                return response()->json(['error' => 'Số tiền thanh toán không được lớn hơn tổng số tiền']);
-            }
+            // if ($request->paid_amount && $request->paid_amount > $totalFare + $taxCharge) {
+            //     DB::rollBack();
+            //     return response()->json(['error' => 'Số tiền thanh toán không được lớn hơn tổng số tiền']);
+            // }
 
             $booking                 = new Booking();
             $booking->booking_number = getTrx();
             $booking->user_id        = @$user->id ?? 0;
             $booking->guest_details  = $guest;
-            $booking->tax_charge     = $taxCharge;
+            //  $booking->tax_charge     = $taxCharge; // thuế
             $booking->booking_fare   = $totalFare;
             $booking->paid_amount    = $request->paid_amount ?? 0;
             $booking->status         = Status::BOOKING_ACTIVE;
-            $booking->option         = $request->optionRoom;
+            // $booking->option         = $request->optionRoom;
             $booking->note           = $request->ghichu;
             $booking->save();
 
@@ -187,12 +194,12 @@ class BookRoomController extends Controller
             BookedRoom::insert($bookedRoomData);
             $checkIn  = BookedRoom::where('booking_id', $booking->id)->min('booked_for');
             $checkout = BookedRoom::where('booking_id', $booking->id)->max('booked_for');
-           
+
             $booking->check_in = $checkIn;
 
-            if($request->is_method === "receptionist"){
+            if ($request->is_method === "receptionist") {
                 $booking->check_out = Carbon::parse($request->checkOutTime)->format('Y-m-d H:i:s');
-            }else{
+            } else {
                 $booking->check_out = Carbon::parse($checkout)->addDay()->toDateString();
             }
             $booking->save();
@@ -201,7 +208,7 @@ class BookRoomController extends Controller
 
             return response()->json(['success' => 'Đặt phòng thành công']);
         } catch (\Exception $e) {
-           \Log::info('Error booking : '. $e->getMessage());
+            \Log::info('Error booking : ' . $e->getMessage());
             DB::rollBack();
             return response()->json(['error' => 'Đã xảy ra lỗi, không đặt phòng thành công ']);
         }
