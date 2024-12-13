@@ -66,7 +66,7 @@ class BookRoomController extends Controller
         DB::beginTransaction();
         try {
             $validator = Validator::make($request->all(), [
-                'room_type_id'    => 'required|integer|gt:0',
+                // 'room_type_id'    => 'required|integer|gt:0',
                 'guest_type'      => 'required|in:1,0',
                 'guest_name'      => 'nullable|required_if:guest_type,0',
                 'email'           => 'required|email',
@@ -100,8 +100,9 @@ class BookRoomController extends Controller
           
             foreach ($request->room as $room) {
                 $data      = [];
-                $roomId    = explode('-', $room)[0];
-                $bookedFor = explode('-', $room)[1];
+                $roomTypeId    = explode('-', $room)[0];
+                $roomId    = explode('-', $room)[1];
+                $bookedFor = explode('-', $room)[2];
                 $isBooked  = BookedRoom::where('room_id', $roomId)->whereDate('booked_for', Carbon::parse($bookedFor))->where('status',[Status::BOOKED_ROOM_ACTIVE,Status::BOOKED_ROOM_CANCELED])->exists();
 
                 if ($isBooked) {
@@ -111,19 +112,19 @@ class BookRoomController extends Controller
 
                 $room = Room::with('roomType')->find($roomId);
 
-                if($request->is_method === "receptionist"){
+                // if($request->is_method === "receptionist"){
 
-                }else{
+                // }else{
 
-                }
+                // }
                 //   \Log::info('room:' .$room->roomPriceNow());
                 if(!$room->is_clean){
                     return response()->json(['error' => 'Phòng chưa dọn dẹp']);
                 }
                 //  \Log::info( '$room->is_clean: '.  @$room->is_clean);
-                //  \Log::info( '$room->roomType->id: '.  @$room->roomType->id);
+                // \Log::info( '$room->roomType->id: '.  @$room->roomType->id);
                 //  \Log::info('$request->room_type_id: '. $request->room_type_id);
-                if ($request->room_type_id != @$room->roomType->id) {
+                if ($roomTypeId != @$room->roomType->id) {
                     DB::rollBack();
                     return response()->json(['error' => 'Loại phòng đã chọn không hợp lệ ']);
                 }
@@ -143,6 +144,7 @@ class BookRoomController extends Controller
                 $data['tax_charge']       = $processedAmount * $tax / 100;
                 $data['cancellation_fee'] = $room->cancellation_fee; // phí hủy bỏ nếu hủy phòng thì: tiền hoàn lại =  fare - cancellation_fee
                 $data['status']           = Status::ROOM_ACTIVE;
+                $data['key_status']           = Status::KEY_NOT_GIVEN;
                 $data['created_at']       = now();
                 $data['updated_at']       = now();
 
@@ -168,7 +170,8 @@ class BookRoomController extends Controller
             $booking->booking_fare   = $totalFare;
             $booking->paid_amount    = $request->paid_amount ?? 0;
             $booking->status         = Status::BOOKING_ACTIVE;
-            $booking->option         =  $request->optionRoom;
+            $booking->option         = $request->optionRoom;
+            $booking->note           = $request->ghichu;
             $booking->save();
 
             if ($request->paid_amount) {
