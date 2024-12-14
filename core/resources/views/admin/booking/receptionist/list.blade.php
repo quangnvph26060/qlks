@@ -310,7 +310,7 @@
                         <svg xmlns="http://www.w3.org/2000/svg" width="20" height="20" viewBox="0 0 24 24"><path fill="none" stroke="currentColor" stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M3 6h18m-2 0v14a2 2 0 0 1-2 2H7a2 2 0 0 1-2-2V6m3 0V4a2 2 0 0 1 2-2h4a2 2 0 0 1 2 2v2"/></svg>
                         <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
                     </div>
-                    
+
                 </div>
                 <div class="modal-body">
 
@@ -387,11 +387,11 @@
                                         <div class="d-flex justify-content-between mt-3 mb-3 coloumn-mobi">
                                             <h5 class="card-title">@lang('Tóm tắt thanh toán')</h5>
                                             <div>
-                                              
+
                                                 <button class="btn btn--success extraChargeBtn" data-type="add">
                                                     <i class="las la-plus-circle"></i>@lang('Thêm phí bổ sung')
                                                 </button>
-                                              
+
                                                 <button class="btn btn--danger extraChargeBtn" data-type="subtract">
                                                     <i class="las la-minus-circle"></i>@lang('Trừ Phí Thêm')
                                                 </button>
@@ -523,7 +523,7 @@
             $(document).on('click', '.option-booked', function (e) {
                 e.stopPropagation(); // Ngăn việc click lan sang các thành phần khác
                 const dropdownMenu = $(this).siblings('.dropdown-menu');
-                
+
                 // Đóng tất cả dropdown đang mở
                 $('.dropdown-menu').not(dropdownMenu).hide();
 
@@ -543,6 +543,8 @@
             const dd = String(today.getDate()).padStart(2, '0');
             const hourss = String(today.getHours()).padStart(2, '0'); // Giờ
             const minutess = String(today.getMinutes()).padStart(2, '0'); // Phút
+            let data_service = [];
+            let data_product = [];
 
             // Định dạng ngày: yyyy-MM-dd
             // Định dạng thời gian: HH:mm
@@ -638,15 +640,15 @@
                                         <td>
                                             <div class="d-flex align-items-center justify-content-start" style="gap: 10px">
                                                 <input type="date" name="checkInDate" class="form-control date-book-room" style="width: 165px;" value="${formattedDates}">
-                                                
+
                                                 <input type="time" name="checkInTime" class="form-control time-book-room" style="width: 135px;" value="${formattedTimes}">
                                                 <svg  class="icon-delete-room" xmlns="http://www.w3.org/2000/svg" width="20" height="20" viewBox="0 0 24 24"><path fill="none" stroke="currentColor" stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M3 6h18m-2 0v14a2 2 0 0 1-2 2H7a2 2 0 0 1-2-2V6m3 0V4a2 2 0 0 1 2-2h4a2 2 0 0 1 2 2v2"/></svg>
                                             </div>
                                         </td>
-                                       
-                                           
 
-                                        
+
+
+
                                     </tr>
                                 `;
 
@@ -798,84 +800,213 @@
             });
 
             function fetchlistserviceandproduct(id) {
-                let listservice = '';
-                let listproduct = '';
+                let services =  '';
+                let products =  '';
+                $('#list-service').empty();
+                $('#list-product').empty();
+                $('#services').empty();
+                $('#products').empty();
                 let url = `{{ route('admin.booking.serviceproduct', ['id' => ':id']) }}`.replace(':id', id);
                 $.ajax({
                     url: url,
                     type: 'GET',
                     success: function(response) {
                         response.service.forEach(function(item, index) {
-
+                            console.log(response.service);
                             const usedService = response.used_services.find(service => service.premium_service_id === item.id);
                             const qty = usedService ? usedService.qty : 0;
-                            console.log(item);
-                            listservice += `
-                                <div class="row align-items-center mb-3">
-                                    <!-- Cột cho input tên dịch vụ -->
-                                    <div class="col-md-8 col-sm-12 mb-2 mb-md-0">
-                                        <div style="display: flex" >
-
-                                           <div>
-                                            <p style="margin:0px">${item.name}</p>
-                                            <p style="margin:0px">${formatCurrency(item.cost)}</p>
-                                            </div>
-                                        </div>
-                                        <input type="hidden" class="form-control" placeholder="Tên dịch vụ" value="${item.name}" readonly>
-                                        <input type="hidden" class="form-control" name="services[]" placeholder="Tên sản phẩm" value="${item.id}">
-                                    </div>
-
-                                    <!-- Cột cho input số lượng -->
-                                    <div class="col-md-4 col-sm-12">
-                                        <div class="input-group quantity_new">
-                                            <button class="btn btn-outline-secondary" type="button" onclick="changeQuantity(this, -1)">-</button>
-                                            <input type="number" data-service_id="${item.id}" class="form-control text-center" name="qty[]" value="${qty}" min="0">
-                                            <button class="btn btn-outline-secondary" type="button" onclick="changeQuantity(this, 1)">+</button>
-                                        </div>
+                            services +=  `
+                                <div style="display: flex" class='mb-2 item_service' data-id="${item.id}" data-name="${item.name}" data-price="${item.cost}">
+                                    <div class='mb-2'>
+                                        <p style="margin:0px">${item.name}</p>
+                                        <p style="margin:0px">${formatCurrency(item.cost)}</p>
                                     </div>
                                 </div>
                             `;
+                            // listservice += `
+                            //     <div class="row align-items-center mb-3">
+                            //         <!-- Cột cho input tên dịch vụ -->
+                            //         <div class="col-md-6 col-sm-12 mb-2 mb-md-0">
+                            //             <div style="display: flex" >
+
+                            //                <div>
+                            //                 <p style="margin:0px">${item.name}</p>
+                            //                 <p style="margin:0px">${formatCurrency(item.cost)}</p>
+                            //                 </div>
+                            //             </div>
+                            //             <input type="hidden" class="form-control" placeholder="Tên dịch vụ" value="${item.name}" readonly>
+                            //             <input type="hidden" class="form-control" name="services[]" placeholder="Tên sản phẩm" value="${item.id}">
+                            //         </div>
+
+                            //         <!-- Cột cho input số lượng -->
+                            //         <div class="col-md-6 col-sm-12">
+                            //             <div class="input-group quantity_new">
+                            //                 <button class="btn btn-outline-secondary" type="button" onclick="changeQuantity(this, -1)">-</button>
+                            //                 <input type="number" data-service_id="${item.id}" class="form-control text-center" name="qty[]" value="${qty}" min="0">
+                            //                 <button class="btn btn-outline-secondary" type="button" onclick="changeQuantity(this, 1)">+</button>
+                            //             </div>
+                            //         </div>
+                            //     </div>
+                            // `;
                         });
-                            $('#list-service').empty();
-                            $('#list-service').append(listservice);
+
+
+                            $('#services').append(services);
 
                         response.product.forEach(function(item, index) {
                             // Tìm kiếm thông tin về dịch vụ đã sử dụng
-                            console.log(item);
                             const usedService = response.used_products.find(service => service.product_id === item.id);
                             const qty = usedService ? usedService.qty : 0;
-
-                            listproduct += `
-                                <div class="row align-items-center mb-3">
-                                    <!-- Cột cho input tên dịch vụ -->
-                                    <div class="col-md-8 col-sm-12 mb-2 mb-md-0">
-                                        <div style="display: flex" >
+                            products +=  `
+                                        <div style="display: flex" class='mb-2 item_product col-md-6' data-id="${item.id}" data-name="${item.name}" data-price="${item.import_price}" data-image="${baseUrl + 'storage/' + item.image_path}">
                                             <img src="${baseUrl + 'storage/' + item.image_path}" alt="${item.name}" class="img-fluid" style="width:50px;height:50px; margin-right: 20px">
-                                           <div>
+                                           <div class='mb-2' >
                                                 <p style="margin:0px">${item.name}</p>
                                                 <p style="margin:0px">${formatCurrency(item.import_price)}</p>
                                             </div>
                                         </div>
-                                        <input type="hidden" class="form-control" name="product[]" placeholder="Tên sản phẩm" value="${item.id}">
-                                        <input type="hidden" class="form-control" placeholder="Tên dịch vụ" value="${item.name}" >
-                                    </div>
-
-                                    <!-- Cột cho input số lượng -->
-                                    <div class="col-md-4 col-sm-12">
-                                        <div class="input-group quantity_new">
-                                            <button class="btn btn-outline-secondary" type="button" onclick="changeQuantity(this, -1)">-</button>
-                                            <input type="number" data-service_id="${item.id}" class="form-control text-center" name="qty[]" value="${qty}" min="0">
-                                            <button class="btn btn-outline-secondary" type="button" onclick="changeQuantity(this, 1)">+</button>
-                                        </div>
-                                    </div>
-                                </div>
                             `;
+                            // listproduct += `
+                            //     <div class="row align-items-center mb-3">
+                            //         <!-- Cột cho input tên dịch vụ -->
+                            //         <div class="col-md-6 col-sm-12 mb-2 mb-md-0">
+                            //             <div style="display: flex" >
+                            //                 <img src="${baseUrl + 'storage/' + item.image_path}" alt="${item.name}" class="img-fluid" style="width:50px;height:50px; margin-right: 20px">
+                            //                <div>
+                            //                     <p style="margin:0px">${item.name}</p>
+                            //                     <p style="margin:0px">${formatCurrency(item.import_price)}</p>
+                            //                 </div>
+                            //             </div>
+                            //             <input type="hidden" class="form-control" name="product[]" placeholder="Tên sản phẩm" value="${item.id}">
+                            //             <input type="hidden" class="form-control" placeholder="Tên dịch vụ" value="${item.name}" >
+                            //         </div>
+
+                            //         <!-- Cột cho input số lượng -->
+                            //         <div class="col-md-6 col-sm-12">
+                            //             <div class="input-group quantity_new">
+                            //                 <button class="btn btn-outline-secondary" type="button" onclick="changeQuantity(this, -1)">-</button>
+                            //                 <input type="number" data-service_id="${item.id}" class="form-control text-center" name="qty[]" value="${qty}" min="0">
+                            //                 <button class="btn btn-outline-secondary" type="button" onclick="changeQuantity(this, 1)">+</button>
+                            //             </div>
+                            //         </div>
+                            //     </div>
+                            // `;
                         });
-                        $('#list-product').empty();
-                        $('#list-product').append(listproduct);
+                        // $('#list-product').empty();
+                        // $('#list-product').append(listproduct);
+
+                        $('#products').append(products);
                     }
                 });
             }
+            let listservice = '';
+            let listproduct = '';
+            $('#list-service').empty();
+            $('#list-product').empty();
+            data_service = [];
+            data_product = [];
+
+            $(document).on('click', '.item_service', function () {
+                var service_id = $(this).data('id');
+                var name = $(this).data('name');
+                var price = $(this).data('price');
+
+                // Kiểm tra nếu service_id đã tồn tại trong data_service
+                if (data_service.includes(service_id)) {
+                    // Tăng số lượng của dịch vụ nếu đã tồn tại
+                    let quantityInput = $(`input[data-service_id="${service_id}"]`);
+                    let currentQty = parseInt(quantityInput.val());
+                    quantityInput.val(currentQty + 1); // Tăng giá trị số lượng
+                } else {
+                    // Thêm service_id vào mảng và tạo dòng mới
+                    data_service.push(service_id);
+                    $('#list-service').append(`
+                        <div class="row align-items-center mb-3" data-service-row="${service_id}">
+                            <!-- Cột cho input tên dịch vụ -->
+                            <div class="col-md-7 col-sm-12 mb-2 mb-md-0">
+                                <div style="display: flex">
+                                    <div>
+                                        <p style="margin:0px">${name}</p>
+                                        <p style="margin:0px">${formatCurrency(price)}</p>
+                                    </div>
+                                </div>
+                                <input type="hidden" class="form-control" placeholder="Tên dịch vụ" value="${name}" readonly>
+                                <input type="hidden" class="form-control" name="services[]" placeholder="Tên sản phẩm" value="${service_id}">
+                            </div>
+
+                            <!-- Cột cho input số lượng -->
+                            <div class="col-md-4 col-sm-8">
+                                <div class="input-group quantity_new">
+                                    <button class="btn btn-outline-secondary" type="button" onclick="changeQuantity(this, -1)">-</button>
+                                    <input type="number" data-service_id="${service_id}" class="form-control text-center" name="qty[]" value="1" min="1" oninput="this.value = this.value < 1 ? 1 : this.value">
+                                    <button class="btn btn-outline-secondary" type="button" onclick="changeQuantity(this, 1)">+</button>
+                                </div>
+                            </div>
+
+                            <div class="col-md-1 col-sm-4">
+                                <span  class="btn btn-danger btn-remove" data-product-id="${service_id}">x</span>
+                            </div>
+                        </div>
+                    `);
+                }
+
+            });
+            $(document).on('click', '.btn-remove', function () {
+                // Xác định thẻ cha cần xóa (ở đây là thẻ div chứa class 'row align-items-center mb-3')
+                $(this).closest('.row.align-items-center.mb-3').remove();
+            });
+
+
+
+            $(document).on('click', '.item_product', function() {
+                var product_id = $(this).data('id');
+                var name = $(this).data('name');
+                var price = $(this).data('price');
+                var image = $(this).data('image');
+
+                if (data_product.includes(product_id)) {
+                    let quantityInput = $(`input[data-product_id="${product_id}"]`);
+                    let currentQty = parseInt(quantityInput.val());
+                    quantityInput.val(currentQty + 1);
+                } else {
+                    data_product.push(product_id);
+                    $('#list-product').append(`
+                                <div class="row align-items-center mb-3">
+                                    <!-- Cột cho input tên dịch vụ -->
+                                    <div class="col-md-7 col-sm-12 mb-2 mb-md-0">
+                                        <div style="display: flex" >
+                                            <img src="${image}" class="img-fluid" style="width:50px;height:50px; margin-right: 20px">
+                                           <div>
+                                                <p style="margin:0px">${name}</p>
+                                                <p style="margin:0px">${formatCurrency(price)}</p>
+                                            </div>
+                                        </div>
+                                        <input type="hidden" class="form-control" name="product[]" placeholder="Tên sản phẩm" value="${product_id}">
+                                        <input type="hidden" class="form-control" placeholder="Tên dịch vụ" value="${name}" >
+                                    </div>
+
+                                    <!-- Cột cho input số lượng -->
+                                    <div class="col-md-4 col-sm-8">
+                                        <div class="input-group quantity_new">
+                                            <button class="btn btn-outline-secondary" type="button" onclick="changeQuantity(this, -1)">-</button>
+                                            <input type="number" data-product_id="${product_id}" class="form-control text-center" name="qty[]" value="1" min="1" oninput="this.value = this.value < 1 ? 1 : this.value">
+                                            <button class="btn btn-outline-secondary" type="button" onclick="changeQuantity(this, 1)">+</button>
+                                        </div>
+                                    </div>
+                                    <div class="col-md-1 col-sm-4">
+                                        <span  class="btn btn-danger btn-remove" data-product-id="${product_id}">x</span>
+                                    </div>
+                                </div>
+                    `);
+                }
+            });
+
+            $(document).on('click', '.btn-remove', function () {
+                // Xác định thẻ cha cần xóa (ở đây là thẻ div chứa class 'row align-items-center mb-3')
+                $(this).closest('.row.align-items-center.mb-3').remove();
+            });
+
+
 
             // add_premium_service
             $('.add_premium_service').on('click', function(event) {
@@ -884,6 +1015,7 @@
                 $('#serviceModal').modal();
                 $('#serviceModal').modal('show');
                 var roomId  = $(this).data('id');
+                data_service = [];
                 fetchlistserviceandproduct(roomId)
             });
 
@@ -894,6 +1026,7 @@
                 $('#productModal').modal();
                 $('#productModal').modal('show');
                 var roomId  = $(this).data('id');
+                 data_product = [];
                 fetchlistserviceandproduct(roomId)
             });
 
@@ -1163,7 +1296,7 @@
                     //   $('.inputTime').text(`1:00`);
                     // const modal = new bootstrap.Modal(modalElement);
                     // modal.show();
-                    //  } 
+                    //  }
                     // else {
                     //     console.error("Modal element not found");
                     // }
@@ -2078,7 +2211,7 @@
 
                     dates.push(`${roomType}-${room}-${formattedDate}-${optionRoom}`);
 
-                  
+
                     break;
 
 
@@ -2129,10 +2262,10 @@
                     });
                 });
                 console.log(roomData);
-                
+
                 roomData.forEach(function(item) {
                     const roomDates = getDatesBetween(item['checkInDate'], item['checkInTime'], item['roomId'], item['roomTypeId'], item['optionRoom']);
-                       
+
                     roomDates.forEach(function(date, index) {
                         formData.push({
                             name: 'room[]',
@@ -2434,6 +2567,8 @@
             $('.modal-backdrop .btn-close').click(function() {
                 $('.modal-backdrop').removeClass('show');
                 $('.modal-backdrop').hide();
+                data_service = [];
+                data_product = [];
             });
 
             // Đóng modal khi nhấp ra ngoài
@@ -2441,6 +2576,8 @@
                 if (!$(event.target).closest('.modal-backdrop .modal-dialog').length) {
                     $('.modal-backdrop').removeClass('show');
                     $('.modal-backdrop').hide();
+                    data_service = [];
+                    data_product = [];
                 }
             });
         });
