@@ -93,7 +93,7 @@ class BookingPremiumServiceController extends Controller
         // $action->save();
         $data = [];
         $totalServiceAmount = 0;
-
+            \Log::info($request->services);
         foreach ($request->services as $key => $service) {
             $serviceDetails = PremiumService::find($service);
             if($request->qty[$key] > 0){
@@ -106,8 +106,9 @@ class BookingPremiumServiceController extends Controller
                     ->first();
 
                 if ($existingService) {
-                    $existingService->qty = $request->qty[$key];
-                    $existingService->total_amount = $newTotalAmount;
+                    \Log::info($existingService);
+                    $existingService->qty += $request->qty[$key];
+                    $existingService->total_amount += $newTotalAmount;
                     $existingService->updated_at = now();
                     $existingService->save();
 
@@ -226,8 +227,8 @@ class BookingPremiumServiceController extends Controller
 
                 if ($existingProduct) {
                     // Update the existing record
-                    $existingProduct->qty = $request->qty[$key]; // Update quantity
-                    $existingProduct->total_amount = $newTotalAmount; // Set new total amount
+                    $existingProduct->qty += $request->qty[$key]; // Update quantity
+                    $existingProduct->total_amount = +$newTotalAmount; // Set new total amount
                     $existingProduct->updated_at = now();
                     $existingProduct->save(); // Save the updated record
 

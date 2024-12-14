@@ -34,8 +34,11 @@
                         </div> --}}
                         <label for="services">Dịch vụ</label>
                         <div class="row service-wrapper">
-                            <div class="first-service-wrapper">
-                                <div class="service-item position-relative mb-3 flex-wrap-mobi" id="list-service">
+                            <div class="first-service-wrapper row">
+                                <div id="services" class="col-md-5 mb-3 row">
+
+                                </div>
+                                <div class="service-item position-relative mb-3 flex-wrap-mobi col-md-7" id="list-service">
 
                                     {{-- <div class="row align-items-center mb-3">
                                         <!-- Cột cho input tên dịch vụ -->
@@ -75,7 +78,7 @@
         const input = button.parentElement.querySelector('input[type="number"]');
         const currentValue = parseInt(input.value, 10);
         const newValue = currentValue + delta;
-        input.value = newValue >= 0 ? newValue : 0; // Không cho phép giá trị âm
+        input.value = newValue > 0 ? newValue : 1; // Không cho phép giá trị âm
     }
 
 </script>

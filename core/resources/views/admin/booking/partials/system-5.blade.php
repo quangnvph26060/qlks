@@ -36,8 +36,11 @@ aria-hidden="true">
                     </div> --}}
                     <label for="services">Danh sách sản phẩm</label>
                     <div class="row product-wrapper">
-                        <div class="first-product-wrapper">
-                            <div class="service-item position-relative mb-3 flex-wrap-mobi" id="list-product">
+                        <div class="first-product-wrapper row">
+                            <div id="products" class="col-md-5 mb-3 row">
+
+                            </div>
+                            <div class="service-item col-md-7 position-relative mb-3 flex-wrap-mobi" id="list-product">
                                 {{-- <div class="row">
                                     <div class="col-md-6 col-sm-12">
                                       <div class="form-group">
