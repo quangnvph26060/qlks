@@ -944,17 +944,27 @@
                             </div>
 
                             <div class="col-md-2 col-sm-4">
-                                <span  class="btn btn-danger btn-remove" data-product-id="${service_id}">x</span>
+                                <span  class="btn btn-danger btn-remove" data-id="${service_id}">x</span>
                             </div>
                         </div>
                     `);
                 }
+                console.log(data_service);
+                $(document).on('click', '.btn-remove', function () {
+                    let service_id = $(this).data('id');
+                    let index = data_service.indexOf(service_id);
 
+                    if (index !== -1) {
+                        data_service.splice(index, 1);
+                    }
+
+                    $(this).closest('.row.align-items-center.mb-3').remove();
+                });
             });
-            $(document).on('click', '.btn-remove', function () {
-                // Xác định thẻ cha cần xóa (ở đây là thẻ div chứa class 'row align-items-center mb-3')
-                $(this).closest('.row.align-items-center.mb-3').remove();
-            });
+            // $(document).on('click', '.btn-remove', function () {
+            //     // Xác định thẻ cha cần xóa (ở đây là thẻ div chứa class 'row align-items-center mb-3')
+            //     $(this).closest('.row.align-items-center.mb-3').remove();
+            // });
 
 
 
@@ -994,17 +1004,29 @@
                                         </div>
                                     </div>
                                     <div class="col-md-2 col-sm-4">
-                                        <span  class="btn btn-danger btn-remove" data-product-id="${product_id}">x</span>
+                                        <span  class="btn btn-danger btn-remove" data-id="${product_id}">x</span>
                                     </div>
                                 </div>
                     `);
                 }
+
+                $(document).on('click', '.btn-remove', function () {
+
+                    let product_id = $(this).data('id');
+                    let index = data_product.indexOf(product_id);
+
+                    if (index !== -1) {
+                        data_product.splice(index, 1);
+                    }
+
+                    $(this).closest('.row.align-items-center.mb-3').remove();
+                });
             });
 
-            $(document).on('click', '.btn-remove', function () {
-                // Xác định thẻ cha cần xóa (ở đây là thẻ div chứa class 'row align-items-center mb-3')
-                $(this).closest('.row.align-items-center.mb-3').remove();
-            });
+            // $(document).on('click', '.btn-remove', function () {
+            //     // Xác định thẻ cha cần xóa (ở đây là thẻ div chứa class 'row align-items-center mb-3')
+            //     $(this).closest('.row.align-items-center.mb-3').remove();
+            // });
 
 
 
