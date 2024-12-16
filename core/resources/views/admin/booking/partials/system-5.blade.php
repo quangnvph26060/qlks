@@ -62,8 +62,8 @@ aria-hidden="true">
 
 
 
-                    <div class="form-group">
-                        <button type="submit" class=" btn-primary-1 w-100">Xác nhận</button>
+                    <div class="form-group" style="float: inline-end">
+                        <button type="submit" class=" btn-primary-1 w-10">Xác nhận</button>
                     </div>
 
             </form>

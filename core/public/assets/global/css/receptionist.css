@@ -450,6 +450,15 @@ h5 {
     font-weight: bold;
 }
 
+.add_premium_service,.add_product_room{
+    white-space: nowrap;
+    color: black;
+}
+.dropdown-main-booked{
+    display: none;
+    position: absolute;
+    padding: 10px
+}
 .status-label-checkout {
     background-color: #d1f5d3;
     color: #2d884d;
@@ -676,9 +685,12 @@ h5 {
 .serviceModal {}
 
 .add-serve-mobi {
-    width: 70%;
+    width: 50%;
 }
-
+.flex-wrap-mobi{
+    overflow-y: scroll;
+    max-height: 200px;
+}
 @media (max-width:768px) {
     .mobi-table td {
         padding: 10px !important;

@@ -299,12 +299,12 @@
                     <div class="main-icon-booked">
                         <div class="dropdown">
                             <svg class="option-booked" xmlns="http://www.w3.org/2000/svg" width="20" height="20" viewBox="0 0 24 24"><g fill="none" stroke="currentColor" stroke-width="1.5"><circle cx="5" cy="12" r="2"/><circle cx="12" cy="12" r="2"/><circle cx="19" cy="12" r="2"/></g></svg>
-                            <div class="dropdown-menu" style="display: none; position: absolute;">
-                                <a class="dropdown-item" href="#"> <a href="#" class=" btn-primary-service add_premium_service"> <i
+                            <div class="dropdown-menu dropdown-main-booked">
+                                <a class="dropdown-item" href="#"> <a href="#" class=" add_premium_service"> <i
                                     class="las la-plus-circle"></i> Thêm dịch vụ cao cấp</a></a>
-                                <a class="dropdown-item" href="#">  <a href="javascript:void(0)" class=" btn-primary-service add_product_room"> <i
+                                <a class="dropdown-item" href="#">  <a href="javascript:void(0)" class="  add_product_room"> <i
                                     class="las la-plus-circle"></i> Thêm sản phẩm</a></a>
-                                <a class="dropdown-item" href="#">Option 3</a>
+                                {{-- <a class="dropdown-item" href="#">Option 3</a> --}}
                             </div>
                         </div>
                         <svg xmlns="http://www.w3.org/2000/svg" width="20" height="20" viewBox="0 0 24 24"><path fill="none" stroke="currentColor" stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M3 6h18m-2 0v14a2 2 0 0 1-2 2H7a2 2 0 0 1-2-2V6m3 0V4a2 2 0 0 1 2-2h4a2 2 0 0 1 2 2v2"/></svg>
@@ -923,7 +923,7 @@
                     $('#list-service').append(`
                         <div class="row align-items-center mb-3" data-service-row="${service_id}">
                             <!-- Cột cho input tên dịch vụ -->
-                            <div class="col-md-7 col-sm-12 mb-2 mb-md-0">
+                            <div class="col-md-5 col-sm-12 mb-2 mb-md-0">
                                 <div style="display: flex">
                                     <div>
                                         <p style="margin:0px">${name}</p>
@@ -935,7 +935,7 @@
                             </div>
 
                             <!-- Cột cho input số lượng -->
-                            <div class="col-md-4 col-sm-8">
+                            <div class="col-md-5 col-sm-8">
                                 <div class="input-group quantity_new">
                                     <button class="btn btn-outline-secondary" type="button" onclick="changeQuantity(this, -1)">-</button>
                                     <input type="number" data-service_id="${service_id}" class="form-control text-center" name="qty[]" value="1" min="1" oninput="this.value = this.value < 1 ? 1 : this.value">
@@ -943,7 +943,7 @@
                                 </div>
                             </div>
 
-                            <div class="col-md-1 col-sm-4">
+                            <div class="col-md-2 col-sm-4">
                                 <span  class="btn btn-danger btn-remove" data-product-id="${service_id}">x</span>
                             </div>
                         </div>
@@ -973,7 +973,7 @@
                     $('#list-product').append(`
                                 <div class="row align-items-center mb-3">
                                     <!-- Cột cho input tên dịch vụ -->
-                                    <div class="col-md-7 col-sm-12 mb-2 mb-md-0">
+                                    <div class="col-md-5 col-sm-12 mb-2 mb-md-0">
                                         <div style="display: flex" >
                                             <img src="${image}" class="img-fluid" style="width:50px;height:50px; margin-right: 20px">
                                            <div>
@@ -986,14 +986,14 @@
                                     </div>
 
                                     <!-- Cột cho input số lượng -->
-                                    <div class="col-md-4 col-sm-8">
+                                    <div class="col-md-5 col-sm-8">
                                         <div class="input-group quantity_new">
                                             <button class="btn btn-outline-secondary" type="button" onclick="changeQuantity(this, -1)">-</button>
                                             <input type="number" data-product_id="${product_id}" class="form-control text-center" name="qty[]" value="1" min="1" oninput="this.value = this.value < 1 ? 1 : this.value">
                                             <button class="btn btn-outline-secondary" type="button" onclick="changeQuantity(this, 1)">+</button>
                                         </div>
                                     </div>
-                                    <div class="col-md-1 col-sm-4">
+                                    <div class="col-md-2 col-sm-4">
                                         <span  class="btn btn-danger btn-remove" data-product-id="${product_id}">x</span>
                                     </div>
                                 </div>
