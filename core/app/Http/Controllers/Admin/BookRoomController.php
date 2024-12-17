@@ -103,7 +103,7 @@ class BookRoomController extends Controller
                 $roomTypeId    = explode('-', $room)[0]; // loai phong
                 $roomId    = explode('-', $room)[1];  // phong
                 $bookedFor = explode('-', $room)[2]; // thoi gian dat phong
-                $optionRoom = explode('-', $room)[3]; // option gio ngay dem 
+                $optionRoom = explode('-', $room)[3]; // option gio ngay dem
                 $isBooked  = BookedRoom::where('room_id', $roomId)->whereDate('booked_for', Carbon::parse($bookedFor))->where('status', [Status::BOOKED_ROOM_ACTIVE, Status::BOOKED_ROOM_CANCELED])->exists();
 
                 if ($isBooked) {
@@ -203,6 +203,7 @@ class BookRoomController extends Controller
                 $booking->check_out = Carbon::parse($checkout)->addDay()->toDateString();
             }
             $booking->save();
+            $this->add_guest($request->all());
 
             DB::commit();
 
@@ -213,4 +214,33 @@ class BookRoomController extends Controller
             return response()->json(['error' => 'Đã xảy ra lỗi, không đặt phòng thành công ']);
         }
     }
+
+    public function add_guest($data){
+        // Kiểm tra nếu email đã tồn tại
+        $existingUser = User::where('email', $data['email'])->first();
+
+        if (!$existingUser) {
+            // Tách họ và tên
+            $nameParts = explode(' ', $data['guest_name']);
+            $lastName = array_shift($nameParts);
+            $firstName = implode(' ', $nameParts);
+            $username = preg_replace('/[^a-z0-9]/', '', iconv('UTF-8', 'ASCII//TRANSLIT', $data['guest_name']));
+
+            // Tạo user mới
+            User::create([
+                'firstname' => $firstName,
+                'lastname' => $lastName,
+                'username' => $username,
+                'email' => $data['email'],
+                'password' => bcrypt('123456'),
+                'mobile' => $data['mobile'],
+                'address' => $data['address'],
+                'country_code' => 'VN',
+                'country_name' => 'Vietnam',
+                'created_at' => now(),
+                'updated_at' => now()
+            ]);
+        }
+    }
+
 }
