@@ -7,6 +7,7 @@ use App\Traits\UserNotify;
 use Illuminate\Database\Eloquent\Casts\Attribute;
 use Illuminate\Foundation\Auth\User as Authenticatable;
 use Laravel\Sanctum\HasApiTokens;
+use Twilio\Jwt\Grants\Grant;
 
 class User extends Authenticatable
 {
@@ -17,6 +18,7 @@ class User extends Authenticatable
      *
      * @var array
      */
+    protected $guarded = [];
     protected $hidden = [
         'password', 'remember_token','ver_code','balance',
     ];
