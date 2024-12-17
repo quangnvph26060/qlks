@@ -243,4 +243,12 @@ class BookRoomController extends Controller
         }
     }
 
+
+    public function updatenote(Request $request){
+        $booking = Booking::find($request->id);
+        $booking->note = $request->note;
+        $booking->save();
+        return response()->json(['success' => 'Cập nhật ghi chú thành công']);
+    }
+
 }

@@ -595,6 +595,10 @@
 
             $('.note-booked-room').on('click', function() {
                 $('#noteModal').modal('show');
+                console.log($('.note-booking').html());
+
+                $('#note-input').val('');
+                $('#note-input').val($('.note-booking').text());
             });
 
             $('.add-room-booking').on('click', function() {
@@ -1524,7 +1528,6 @@
                             var customer_type = response.data.user_id ?
                                 "Khách hàng đã đăng ký" : " Khách hàng lưu trú"
 
-                            // console.log(response.data);
 
 
                             $('.room-details-checkout').empty();
@@ -1550,7 +1553,7 @@
                                             <strong>Nhận phòng</strong>
                                             <p class="check_in">${response.data.check_in}</p>
                                         </div>
-                                   
+
                                     `
                             $('.room-details-checkout').append(row);
 
@@ -1565,6 +1568,8 @@
                             let rowNote = '';
                             rowNote += ` ${response.data.note ?? "Nhập ghi chú..."}`;
                             $('.note-booking').append(rowNote);
+
+                            $('#note-input').attr('data-id', response.data.id);
 
 
                             $('.info-room').empty();
@@ -2692,6 +2697,35 @@
                     data_product = [];
                 }
             });
+        });
+
+
+         $('#save-note').on('click', function() {
+            var note = $('#note-input').val();
+            var noteid = $('#note-input').data('id');
+
+            if(note.trim() !== '') {
+                $.ajax({
+                    url: '{{ route('admin.room.note') }}',
+                    type: 'POST',
+                    data: {
+                        note: note,
+                        id: noteid,
+                        _token: '{{ csrf_token() }}'
+                    },
+                    success: function(response) {
+                        notify('success', response.success);
+                        $('.note-booking').html(note);
+                        $('#noteModal').modal('hide');
+                    },
+                    error: function(xhr, status, error) {
+
+                        alert('Có lỗi xảy ra khi lưu ghi chú!');
+                    }
+                });
+            } else {
+                alert('Vui lòng nhập ghi chú trước khi lưu!');
+            }
         });
     </script>
 @endpush

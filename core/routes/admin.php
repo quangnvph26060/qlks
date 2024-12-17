@@ -246,6 +246,8 @@ Route::middleware('admin', 'adminPermission')->group(function () {
         Route::get('book-room', 'room')->name('book.room');
         Route::post('room-book', 'book')->name('room.book');
         Route::get('room/search', 'searchRoom')->name('room.search');
+
+        Route::post('room-note', 'updatenote')->name('room.note');
     });
 
     //Manage Reservation
