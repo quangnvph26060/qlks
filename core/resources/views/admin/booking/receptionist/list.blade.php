@@ -336,7 +336,7 @@
                                 </div> --}}
 
                         <div class="room-details-checkout">
-                           
+
                         </div>
 
                     </div>
@@ -356,7 +356,7 @@
                     <div class="d-flex justify-content-between">
                         <div class="d-flex flex-column">
                             <span class="d-flex  flex-column group-booked-room">
-                             
+
                             </span>
                             <span class="d-flex note-booked-room">
                                 <svg xmlns="http://www.w3.org/2000/svg" width="20" height="20" viewBox="0 0 14 14">
@@ -369,7 +369,7 @@
                         </div>
                         <div class="d-flex flex-column">
                             <div class="info-room">
-                               
+
                             </div>
                             <div>
                                 <button type="submit" class="w-10 sua_dat_phong">Sửa đặt phòng</button>
@@ -571,7 +571,7 @@
             });
 
             $('.option-cancel-room').on('click',function(){
-                $('#cancelroom').modal('show'); 
+                $('#cancelroom').modal('show');
             })
 
 
@@ -593,6 +593,10 @@
 
             $('.note-booked-room').on('click', function() {
                 $('#noteModal').modal('show');
+                console.log($('.note-booking').html());
+
+                $('#note-input').val('');
+                $('#note-input').val($('.note-booking').text());
             });
 
             $('.add-room-booking').on('click', function() {
@@ -987,7 +991,7 @@
                     $(this).closest('.row.align-items-center.mb-3').remove();
                 });
             });
-         
+
 
 
 
@@ -1521,8 +1525,8 @@
 
                             var customer_type = response.data.user_id ?
                                 "Khách hàng đã đăng ký" : " Khách hàng lưu trú"
-                            
-                            
+
+
 
                             $('.room-details-checkout').empty();
                             let row = '';
@@ -1547,8 +1551,8 @@
                                             <strong>Nhận phòng</strong>
                                             <p class="check_in">${response.data.check_in}</p>
                                         </div>
-                                   
-                                    ` 
+
+                                    `
                             $('.room-details-checkout').append(row);
 
 
@@ -1563,10 +1567,12 @@
                             rowNote += ` ${response.data.note ?? "Nhập ghi chú..."}`;
                             $('.note-booking').append(rowNote);
 
+                            $('#note-input').attr('data-id', response.data.id);
+
 
                             $('.info-room').empty();
                             let rowInfoBooked = '';
-                            rowInfoBooked += 
+                            rowInfoBooked +=
                             `<div class="border rounded p-2 mb-2" style="width: 250px;">
                                 <div class="d-flex justify-content-between">
                                     <span>${response.room['room_number']}</span>
@@ -1578,22 +1584,22 @@
                                 </div>
                             </div>`
                             $('.info-room').append(rowInfoBooked);
-                            
+
                             // các phòng trong đoàn
-                         
+
                             if(response.data.booked_rooms.length > 2){
                                 $('.group-booked-room').empty();
                                 let rowGroup = '';
-                                rowGroup += 
+                                rowGroup +=
                                 `
-                                    <span  class="group-booked-room">Các phòng trong đoàn: </span> 
+                                    <span  class="group-booked-room">Các phòng trong đoàn: </span>
                                     <div class="d-flex" style="gap:10px">
                                         <p>P.1</p> <p>P.1</p> <p>P.1</p> <p>P.1</p> <p>P.1</p>
                                     </div>
                                 `;
                                 $('.group-booked-room').append(rowGroup);
                             }
-                         
+
                             // $('#bookings-table-body').empty();
                             // let rowsHtml = '';
 
@@ -2667,6 +2673,35 @@
                     data_product = [];
                 }
             });
+        });
+
+
+         $('#save-note').on('click', function() {
+            var note = $('#note-input').val();
+            var noteid = $('#note-input').data('id');
+
+            if(note.trim() !== '') {
+                $.ajax({
+                    url: '{{ route('admin.room.note') }}',
+                    type: 'POST',
+                    data: {
+                        note: note,
+                        id: noteid,
+                        _token: '{{ csrf_token() }}'
+                    },
+                    success: function(response) {
+                        notify('success', response.success);
+                        $('.note-booking').html(note);
+                        $('#noteModal').modal('hide');
+                    },
+                    error: function(xhr, status, error) {
+
+                        alert('Có lỗi xảy ra khi lưu ghi chú!');
+                    }
+                });
+            } else {
+                alert('Vui lòng nhập ghi chú trước khi lưu!');
+            }
         });
     </script>
 @endpush

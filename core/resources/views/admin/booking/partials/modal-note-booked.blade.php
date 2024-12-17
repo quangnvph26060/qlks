@@ -6,12 +6,13 @@
                 <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
             </div>
             <div class="modal-body">
-                <textarea class="form-control" rows="5" placeholder="Nhập ghi chú..."></textarea>
+                <textarea class="form-control" rows="5" id="note-input" placeholder="Nhập ghi chú..."></textarea>
             </div>
             <div class="modal-footer">
                 <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Bỏ qua</button>
-                <button type="button" class="btn btn-success">Lưu</button>
-            </div>  
+                <button type="button" class="btn btn-success" id="save-note">Lưu</button>
+            </div>
         </div>
     </div>
 </div>
+
