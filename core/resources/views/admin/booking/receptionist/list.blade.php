@@ -375,7 +375,7 @@
                             </div>
                             <div>
                                 <button type="submit" class="w-10 sua_dat_phong">Sửa đặt phòng</button>
-                                <button type="submit" class="w-10 btn-primary-1">Nhận phòng</button>
+                                <button type="submit" class="w-10 btn-primary-1 modal-checkin" >Nhận phòng</button>
                             </div>
                         </div>
                     </div>
@@ -478,6 +478,8 @@
     </div>
     <!-- Modal Xác Nhận -->
     <!-- Modal -->
+    @include('admin.booking.partials.modal-check-in-room')
+    @include('admin.booking.partials.modal-check-in')
     @include('admin.booking.partials.cancel-room')
     @include('admin.booking.partials.modal-note-booked')
     @include('admin.booking.partials.confirm-room')
@@ -576,6 +578,73 @@
                 $('#cancelroom').modal('show');
             })
 
+            $('.modal-check-in-room').on('click', function() {
+                $('#checkInRoom').modal('show');
+            });
+
+            $('#all-check-box').change(function() {
+                $('#list-room-booking input[type="checkbox"]').prop('checked', $(this).prop('checked'));
+            });
+            $('.modal-checkin').on('click', function(){
+                var booking_id = $('.booking_number').text();
+                var nameroom = $('.name-room').text();
+                
+                $('#loading').show();
+                $.ajax({
+                    url: '{{ route('admin.booking.listRoomBooking') }}',
+                    type: 'POST',
+                    data: {
+                        booking_id: booking_id,
+                        _token: '{{ csrf_token() }}'
+                    },
+                    success: function(response) {
+                        console.log(response);
+                        if(response.status === 'success'){
+                            const todays = new Date();
+                            const yyyys = todays.getFullYear();
+                            const mms = String(todays.getMonth() + 1).padStart(2, '0');
+                            const dds = String(todays.getDate()).padStart(2, '0');
+                            const hoursss = String(todays.getHours()).padStart(2, '0'); // Giờ
+                            const minutesss = String(todays.getMinutes()).padStart(2, '0'); // Phút
+                            const formattedDates = `${yyyys}-${mms}-${dds}`;
+                            const formattedTimes = `${hoursss}:${minutesss}`;
+                            $('#list-room-booking').empty();  
+                            let rowlistRoom = '';
+                            response.data.forEach(item=>{
+                                rowlistRoom += `
+                                        <tr data-id="${item.booked[0]['id']}">
+                                            <td ><input type="checkbox" ${nameroom === item.room_number ? "checked" :""}></td>
+                                            <td>${item.room_type['name']}</td>
+                                            <td>${item.room_number}</td>
+                                            <td>${item.is_clean === 1 ? "Sạch" : "Chưa dọn"}</td>
+                                            <td>
+                                                <div class="d-flex" style="gap: 10px;    position: relative;    left: 60px;">
+                                                    <input type="date" name="checkInDate" class="form-control date-book-room" style="width: 165px;height: 35px;" value="${formattedDates}">
+                                                    <input type="time" name="checkInTime" class="form-control time-book-room" style="width: 135px;height: 35px;" value="${formattedTimes}">
+                                                </div>
+                                            </td>
+                                        </tr>
+                                    `;
+                            })
+
+                            $('#list-room-booking').append(rowlistRoom);
+
+                            $('#loading').hide();
+                            $('#modalCheckIn').modal('show');
+
+                        }
+                       
+                        // notify('success', response.success);
+                        // $('.note-booking').html(note);
+                        // $('#noteModal').modal('hide');
+                    },
+                    error: function(xhr, status, error) {
+                        $('#loading').hide();
+                        alert('Có lỗi xảy ra khi lưu ghi chú!');
+                    }
+                });
+                
+            })
 
             // xóa phòng vừa add vào  roomNumber
             $('#myModal-booking').on('hidden.bs.modal', function() {
@@ -1571,12 +1640,13 @@
 
                             $('#note-input').attr('data-id', response.data.id);
 
-
+                            
                             $('.info-room').empty();
-                            let rowInfoBooked = '';
+                            let rowPeople = '';
+
                              let rowGroupPrice =   `<div class="border rounded p-2 mb-2" style="width: 250px;">
                                 <div class="d-flex justify-content-between">
-                                    <span class="fz-13">${response.room['room_number']}</span>
+                                    <span class="fz-13 name-room">${response.room['room_number']}</span>
                                     <span>${formatCurrency(response.room.booked[0]['fare'])}</span>
                                 </div>`;
                                 if (response.data.booked_rooms.length >= 2) {

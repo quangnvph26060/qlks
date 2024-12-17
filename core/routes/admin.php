@@ -308,6 +308,7 @@ Route::middleware('admin', 'adminPermission')->group(function () {
             Route::get('checkout/delayed', 'delayedCheckout')->name('checkout.delayed');
             Route::get('details/{id}', 'bookingDetails')->name('details');
             Route::get('booked-rooms/{id}', 'bookedRooms')->name('booked.rooms');
+            Route::post('list-room-booking', 'listRoomBooking')->name('listRoomBooking');
         });
 
         Route::controller('ManageBookingController')->group(function () {

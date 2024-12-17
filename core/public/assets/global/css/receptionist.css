@@ -692,6 +692,31 @@ h5 {
 .fz-13{
     font-size: 13px;
 }
+.table-fz-13,
+.table-fz-13 th,
+.table-fz-13 td {
+    font-size: 13px;
+}
+.btn-receive {
+    display: inline-block;
+    padding: 0px 10px;
+    border: 1px solid #337ab7;
+    color: #337ab7; 
+    border-radius: 15px; 
+    font-size: 13px; 
+    text-align: center;
+    cursor: pointer;
+}
+#checkInRoom.modal {
+    z-index: 1056; /* Cao hơn modal mặc định (1055) */
+}
+
+
+.nhan-phong{
+    background: #337ab7;
+    color: white; 
+    height: 35px;
+}
 .text-green{
     color: #279656;
 }

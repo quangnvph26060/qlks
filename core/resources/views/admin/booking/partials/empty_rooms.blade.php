@@ -159,7 +159,10 @@
                     data-roomNumber="{{ $rooms->room_number }}" data-room-type="{{ $rooms->room_type_id }}"
                     data-room="{{ $rooms->id }}">
 
-                    <h2>{{ $rooms->room_number }} </h2>
+                    <h2>{{ $rooms->room_number }}  
+                        <div class="group-people">
+                        </div>
+                    </h2>
                     <p class="single-line">{{ $rooms->roomType->name }}</p>
                     <div class="room-info">
                         <p class="hourly_price">

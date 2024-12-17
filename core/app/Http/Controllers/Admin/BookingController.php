@@ -569,4 +569,19 @@ class BookingController extends Controller
             return response()->json(['status' => 'success', 'message' => 'Xóa thành công']);
         }
     }
+    public function listRoomBooking(Request $request){
+        $booking = Booking::where('booking_number', $request->booking_id)->first();
+        if(!$booking){
+            return response()->json(['status' => 'error', 'message' => 'Booking number không tồn tại']);
+        }
+        $room = Room::active()
+        ->with(['roomType','booked' => function ($query) use ($booking) {
+            $query->where('booking_id', $booking->id);
+        }])
+        ->whereHas('booked', function ($query) use ($booking) {
+            $query->where('booking_id', $booking->id);
+        })
+        ->get(); 
+        return response()->json(['status' => 'success', 'data'=>$room]);
+    }
 }
