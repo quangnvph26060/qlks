@@ -315,7 +315,8 @@
                                 {{-- <a class="dropdown-item" href="#">Option 3</a> --}}
                             </div>
                         </div>
-                        <svg class="option-cancel-room" xmlns="http://www.w3.org/2000/svg" width="20" height="20" viewBox="0 0 24 24">
+                        <svg class="option-cancel-room" xmlns="http://www.w3.org/2000/svg" width="20" height="20"
+                            viewBox="0 0 24 24">
                             <path fill="none" stroke="currentColor" stroke-linecap="round" stroke-linejoin="round"
                                 stroke-width="2"
                                 d="M3 6h18m-2 0v14a2 2 0 0 1-2 2H7a2 2 0 0 1-2-2V6m3 0V4a2 2 0 0 1 2-2h4a2 2 0 0 1 2 2v2" />
@@ -336,7 +337,7 @@
                                 </div> --}}
 
                         <div class="room-details-checkout">
-                           
+
                         </div>
 
                     </div>
@@ -356,10 +357,11 @@
                     <div class="d-flex justify-content-between">
                         <div class="d-flex flex-column">
                             <span class="d-flex  flex-column group-booked-room">
-                             
+
                             </span>
                             <span class="d-flex note-booked-room">
-                                <svg xmlns="http://www.w3.org/2000/svg" width="20" height="20" viewBox="0 0 14 14">
+                                <svg xmlns="http://www.w3.org/2000/svg" width="20" height="20"
+                                    viewBox="0 0 14 14">
                                     <path fill="none" stroke="currentColor" stroke-linecap="round"
                                         stroke-linejoin="round"
                                         d="M.5 13.5h11m-5-3.5l-3 .54L4 7.5L10.73.79a1 1 0 0 1 1.42 0l1.06 1.06a1 1 0 0 1 0 1.42Z" />
@@ -369,7 +371,7 @@
                         </div>
                         <div class="d-flex flex-column">
                             <div class="info-room">
-                               
+
                             </div>
                             <div>
                                 <button type="submit" class="w-10 sua_dat_phong">Sửa đặt phòng</button>
@@ -570,8 +572,8 @@
                 }
             });
 
-            $('.option-cancel-room').on('click',function(){
-                $('#cancelroom').modal('show'); 
+            $('.option-cancel-room').on('click', function() {
+                $('#cancelroom').modal('show');
             })
 
 
@@ -836,7 +838,7 @@
                     type: 'GET',
                     success: function(response) {
                         response.service.forEach(function(item, index) {
-                            console.log(response.service);
+                            // console.log(response.service);
                             const usedService = response.used_services.find(service => service
                                 .premium_service_id === item.id);
                             const qty = usedService ? usedService.qty : 0;
@@ -975,8 +977,8 @@
                         </div>
                     `);
                 }
-                console.log(data_service);
-                $(document).on('click', '.btn-remove', function () {
+                //  console.log(data_service);
+                $(document).on('click', '.btn-remove', function() {
                     let service_id = $(this).data('id');
                     let index = data_service.indexOf(service_id);
 
@@ -987,7 +989,7 @@
                     $(this).closest('.row.align-items-center.mb-3').remove();
                 });
             });
-         
+
 
 
 
@@ -1033,7 +1035,7 @@
                     `);
                 }
 
-                $(document).on('click', '.btn-remove', function () {
+                $(document).on('click', '.btn-remove', function() {
 
                     let product_id = $(this).data('id');
                     let index = data_product.indexOf(product_id);
@@ -1504,7 +1506,7 @@
                 $('#booking_id').val(id);
                 var dataToSend = {
                     is_method: 'receptionist',
-                    room_id:    booking_id,
+                    room_id: booking_id,
                 };
                 fetchDataAndDisplayModal(url, dataToSend);
             }
@@ -1521,8 +1523,9 @@
 
                             var customer_type = response.data.user_id ?
                                 "Khách hàng đã đăng ký" : " Khách hàng lưu trú"
-                            
-                            
+
+                            // console.log(response.data);
+
 
                             $('.room-details-checkout').empty();
                             let row = '';
@@ -1530,7 +1533,7 @@
                                     <div class="detail-row-user">
                                         <div class="detail-item-checkout">
                                             <strong>Khách hàng</strong>
-                                            <p class="user_info">${response.data.user_booking['username'] ?? "N/A"}-${response.data.user_booking['mobile'] ?? "N/A"}</p>
+                                            <p class="user_info">${response.data.user_booking?.['username'] ?? response.data.guest_details['name']}-${response.data.user_booking?.['mobile'] ?? response.data.guest_details['mobile']}</p>
                                         </div>
                                         <div class="detail-item-checkout">
                                             <strong>Loại khách hàng</strong>
@@ -1548,7 +1551,7 @@
                                             <p class="check_in">${response.data.check_in}</p>
                                         </div>
                                    
-                                    ` 
+                                    `
                             $('.room-details-checkout').append(row);
 
 
@@ -1566,34 +1569,56 @@
 
                             $('.info-room').empty();
                             let rowInfoBooked = '';
-                            rowInfoBooked += 
-                            `<div class="border rounded p-2 mb-2" style="width: 250px;">
+                             let rowGroupPrice =   `<div class="border rounded p-2 mb-2" style="width: 250px;">
                                 <div class="d-flex justify-content-between">
-                                    <span>${response.room['room_number']}</span>
+                                    <span class="fz-13">${response.room['room_number']}</span>
                                     <span>${formatCurrency(response.room.booked[0]['fare'])}</span>
-                                </div>
-                                <div class="d-flex justify-content-between mt-1">
-                                    <span>Khách đã trả</span>
+                                </div>`;
+                                if (response.data.booked_rooms.length >= 2) {
+                                    let priceGroup = 0;
+                                    rowGroupPrice +=   ` <div class="d-flex justify-content-between mt-1">
+                                        <span class="fz-13">Cả đoàn</span>`
+                                        response.data.booked_rooms.forEach(room => {
+                                            let fareInt = parseInt(room.fare); 
+                                            priceGroup += fareInt;
+                                          
+                                        });
+                                        
+                                            rowGroupPrice +=     `<span class="fw-bold">${formatCurrency(priceGroup)}</span>`
+                                            rowGroupPrice +=    `</div>`
+                                }else{
+                                    $('.group-booked-room').empty();
+                                }
+
+                                rowGroupPrice +=  ` <div class="d-flex justify-content-between mt-1">
+                                    <span class="fz-13">Khách đã trả</span>
                                     <span class="fw-bold">0</span>
-                                </div>
-                            </div>`
-                            $('.info-room').append(rowInfoBooked);
-                            
+                                </div>`
+
+                                rowGroupPrice +=  ` </div>`
+                            $('.info-room').append(rowGroupPrice);
+
                             // các phòng trong đoàn
-                         
-                            if(response.data.booked_rooms.length > 2){
+                           // console.log(response.data.booked_rooms);
+
+                            if (response.data.booked_rooms.length >= 2) {
                                 $('.group-booked-room').empty();
-                                let rowGroup = '';
-                                rowGroup += 
-                                `
-                                    <span  class="group-booked-room">Các phòng trong đoàn: </span> 
-                                    <div class="d-flex" style="gap:10px">
-                                        <p>P.1</p> <p>P.1</p> <p>P.1</p> <p>P.1</p> <p>P.1</p>
-                                    </div>
-                                `;
+                                let rowGroup =
+                                    '<span class="group-booked-room">Các phòng trong đoàn:</span><div class="d-flex" style="gap:10px">';
+
+                                response.data.booked_rooms.forEach(room => {
+                                    let classText = room.key_status === 0 ? 'text-origin' :
+                                        'text-green';
+                                    rowGroup +=
+                                        `<p class="${classText}">${room.room['room_number']}</p>`;
+                                });
+
+                                rowGroup += '</div>';
                                 $('.group-booked-room').append(rowGroup);
+                            }else{
+                                $('.group-booked-room').empty();
                             }
-                         
+
                             // $('#bookings-table-body').empty();
                             // let rowsHtml = '';
 
@@ -1618,137 +1643,137 @@
                             //         is_flag = true;
                             //     }
                             //     rowsHtml += `
-                            //         <tr>
-                            //             <td  class="text-center " data-label="@lang('Hành động')">
-                            //                <button
-                            //                     ${is_flag ? "disabled" : ""}
-                            //                     data-id="${booked.booking_id}"
-                            //                     data-booked_for="${booked.booked_for}"
-                            //                     data-fare="${ formatCurrency(total_fare) }"
-                            //                     data-should_refund="${ formatCurrency(total_fare  - cancellation_fee) }"
-                            //                     class="btn btn--danger cancelBookingBtn"
-                            //                     type="button">
-                            //                     @lang('Hủy đặt phòng')
-                            //                 </button>
-                            //             </td>
-                            //             <td class="bg--date text-center" data-label="@lang('Đã đặt chỗ')">
-                            //                 ${(() => {
-                            //                     const bookedDate = new Date(booked.booked_for);
-                            //                     const day = String(bookedDate.getDate()).padStart(2, '0');
-                            //                     const month = String(bookedDate.getMonth() + 1).padStart(2, '0'); // Tháng bắt đầu từ 0
-                            //                     const year = bookedDate.getFullYear();
-                            //                     const hours = String(bookedDate.getHours()).padStart(2, '0');
-                            //                     const minutes = String(bookedDate.getMinutes()).padStart(2, '0');
-                            //                     return `${day}-${month}-${year} ${hours}:${minutes}`;
-                            //                 })()}
+                        //         <tr>
+                        //             <td  class="text-center " data-label="@lang('Hành động')">
+                        //                <button
+                        //                     ${is_flag ? "disabled" : ""}
+                        //                     data-id="${booked.booking_id}"
+                        //                     data-booked_for="${booked.booked_for}"
+                        //                     data-fare="${ formatCurrency(total_fare) }"
+                        //                     data-should_refund="${ formatCurrency(total_fare  - cancellation_fee) }"
+                        //                     class="btn btn--danger cancelBookingBtn"
+                        //                     type="button">
+                        //                     @lang('Hủy đặt phòng')
+                        //                 </button>
+                        //             </td>
+                        //             <td class="bg--date text-center" data-label="@lang('Đã đặt chỗ')">
+                        //                 ${(() => {
+                        //                     const bookedDate = new Date(booked.booked_for);
+                        //                     const day = String(bookedDate.getDate()).padStart(2, '0');
+                        //                     const month = String(bookedDate.getMonth() + 1).padStart(2, '0'); // Tháng bắt đầu từ 0
+                        //                     const year = bookedDate.getFullYear();
+                        //                     const hours = String(bookedDate.getHours()).padStart(2, '0');
+                        //                     const minutes = String(bookedDate.getMinutes()).padStart(2, '0');
+                        //                     return `${day}-${month}-${year} ${hours}:${minutes}`;
+                        //                 })()}
 
-                            //             </td>
-                            //             <td class="text-center" data-label="@lang('Loại phòng')">
-                            //                 ${booked.room.room_type.name}
-                            //             </td>
-                            //             <td data-label="@lang('Số phòng.')">
-                            //                 ${booked.room.room_number}
-                            //                 ${booked.status === 'canceled' ? `<span class="text--danger text-sm">(@lang('Đã hủy'))</span>` : ''}
-                            //             </td>
-                            //             <td class="text-end" data-label="@lang('Giá')">
+                        //             </td>
+                        //             <td class="text-center" data-label="@lang('Loại phòng')">
+                        //                 ${booked.room.room_type.name}
+                        //             </td>
+                        //             <td data-label="@lang('Số phòng.')">
+                        //                 ${booked.room.room_number}
+                        //                 ${booked.status === 'canceled' ? `<span class="text--danger text-sm">(@lang('Đã hủy'))</span>` : ''}
+                        //             </td>
+                        //             <td class="text-end" data-label="@lang('Giá')">
 
-                            //             </td>
+                        //             </td>
 
-                            //         </tr>
-                            //     `;
+                        //         </tr>
+                        //     `;
                             //     // ${formatCurrency(booked.fare)}
                             //     // ${formatCurrency(booked.room.room_prices_active[0]['price'])} ${booked.room}
                             //     totalFare += parseFloat(booked.fare);
 
                             // });
                             // rowsHtml += `
-                            // <tr>
-                            //     <td class="text-end" colspan="4">
-                            //         <span class="fw-bold">@lang('Tổng giá')</span>
-                            //     </td>
+                        // <tr>
+                        //     <td class="text-end" colspan="4">
+                        //         <span class="fw-bold">@lang('Tổng giá')</span>
+                        //     </td>
 
-                            //     <td class="fw-bold text-end">
-                            //         ${ formatCurrency(totalFare) }
-                            //     </td>
-                            // </tr>
-                            // `;
+                        //     <td class="fw-bold text-end">
+                        //         ${ formatCurrency(totalFare) }
+                        //     </td>
+                        // </tr>
+                        // `;
                             // $('#bookings-table-body').append(rowsHtml);
 
-                          //  $('#user_services').empty();
+                            //  $('#user_services').empty();
                             // dịch vụ trong phòng
-                          //  let rowsHtml1 = '';
+                            //  let rowsHtml1 = '';
                             // response.data.used_premium_service.forEach(function(booked,
                             //     index) {
                             //     rowsHtml1 += `
-                            //             <tr>
-                            //                 <td class="bg--date text-center" data-label="@lang('Ngày')">
+                        //             <tr>
+                        //                 <td class="bg--date text-center" data-label="@lang('Ngày')">
 
-                            //                     ${(() => {
-                            //                         const date = new Date(booked.service_date);
-                            //                         const day = String(date.getDate()).padStart(2, '0');
-                            //                         const month = String(date.getMonth() + 1).padStart(2, '0');
-                            //                         const year = date.getFullYear();
-                            //                         return `${day}-${month}-${year}`;
-                            //                     })()}
-                            //                 </td>
-                            //                  <td data-label="@lang('Phòng số')">
-                            //                      ${booked.room.room_number}
-                            //                 </td>
-                            //                 <td class="text-center" data-label="@lang('Dịch vụ')">
-                            //                     ${booked.premium_service.name}
-                            //                 </td>
-                            //                   <td class="text-center" data-label="@lang('Số lượng')">
-                            //                     ${booked.qty}
-                            //                 </td>
+                        //                     ${(() => {
+                        //                         const date = new Date(booked.service_date);
+                        //                         const day = String(date.getDate()).padStart(2, '0');
+                        //                         const month = String(date.getMonth() + 1).padStart(2, '0');
+                        //                         const year = date.getFullYear();
+                        //                         return `${day}-${month}-${year}`;
+                        //                     })()}
+                        //                 </td>
+                        //                  <td data-label="@lang('Phòng số')">
+                        //                      ${booked.room.room_number}
+                        //                 </td>
+                        //                 <td class="text-center" data-label="@lang('Dịch vụ')">
+                        //                     ${booked.premium_service.name}
+                        //                 </td>
+                        //                   <td class="text-center" data-label="@lang('Số lượng')">
+                        //                     ${booked.qty}
+                        //                 </td>
 
-                            //                 <td class="text-center" data-label="@lang('Giá')">
-                            //                     ${formatCurrency(booked.premium_service.cost)}
-                            //                 </td>
-                            //                 <td class="text-center" data-label="@lang('Tổng giá')">
-                            //                       ${formatCurrency( booked.qty * booked.premium_service.cost)}
-                            //                 </td>
-                            //             </tr>
-                            //         `;
+                        //                 <td class="text-center" data-label="@lang('Giá')">
+                        //                     ${formatCurrency(booked.premium_service.cost)}
+                        //                 </td>
+                        //                 <td class="text-center" data-label="@lang('Tổng giá')">
+                        //                       ${formatCurrency( booked.qty * booked.premium_service.cost)}
+                        //                 </td>
+                        //             </tr>
+                        //         `;
                             // });
-                          //  $('#user_services').append(rowsHtml1);
+                            //  $('#user_services').append(rowsHtml1);
 
-                       //     $('#user_product').empty();
+                            //     $('#user_product').empty();
 
-                         //   let rowsHtmlProduct = '';
+                            //   let rowsHtmlProduct = '';
 
                             // chi tiêt sản phẩm trong phòng
                             // response.data.used_product_room.forEach(function(booked, index) {
                             //     rowsHtmlProduct += `
-                            //             <tr>
-                            //                 <td class="bg--date text-center" data-label="@lang('Ngày')">
-                            //                     ${(() => {
-                            //                         const date = new Date(booked.product_date);
-                            //                         const day = String(date.getDate()).padStart(2, '0');
-                            //                         const month = String(date.getMonth() + 1).padStart(2, '0');
-                            //                         const year = date.getFullYear();
-                            //                         return `${day}-${month}-${year}`;
-                            //                     })()}
-                            //                 </td>
-                            //                 <td data-label="@lang('Phòng số')">
-                            //                     ${booked.room.room_number}
-                            //                 </td>
-                            //                 <td class="text-center" data-label="@lang('Dịch vụ')">
-                            //                     ${booked.product.name}
-                            //                 </td>
-                            //                 <td class="text-center" data-label="@lang('Số lượng')">
-                            //                     ${booked.qty}
-                            //                 </td>
+                        //             <tr>
+                        //                 <td class="bg--date text-center" data-label="@lang('Ngày')">
+                        //                     ${(() => {
+                        //                         const date = new Date(booked.product_date);
+                        //                         const day = String(date.getDate()).padStart(2, '0');
+                        //                         const month = String(date.getMonth() + 1).padStart(2, '0');
+                        //                         const year = date.getFullYear();
+                        //                         return `${day}-${month}-${year}`;
+                        //                     })()}
+                        //                 </td>
+                        //                 <td data-label="@lang('Phòng số')">
+                        //                     ${booked.room.room_number}
+                        //                 </td>
+                        //                 <td class="text-center" data-label="@lang('Dịch vụ')">
+                        //                     ${booked.product.name}
+                        //                 </td>
+                        //                 <td class="text-center" data-label="@lang('Số lượng')">
+                        //                     ${booked.qty}
+                        //                 </td>
 
-                            //                 <td class="text-center" data-label="@lang('Giá')">
-                            //                     ${formatCurrency(booked.unit_price)}
-                            //                 </td>
-                            //                 <td class="text-center" data-label="@lang('Tổng giá')">
-                            //                     ${formatCurrency( booked.qty * booked.unit_price)}
-                            //                 </td>
-                            //             </tr>
-                            //     `;
+                        //                 <td class="text-center" data-label="@lang('Giá')">
+                        //                     ${formatCurrency(booked.unit_price)}
+                        //                 </td>
+                        //                 <td class="text-center" data-label="@lang('Tổng giá')">
+                        //                     ${formatCurrency( booked.qty * booked.unit_price)}
+                        //                 </td>
+                        //             </tr>
+                        //     `;
                             // });
-                         //   $('#user_product').append(rowsHtmlProduct);
+                            //   $('#user_product').append(rowsHtmlProduct);
 
 
 
@@ -1907,7 +1932,7 @@
                     },
                     error: function(xhr, status, error) {
                         console.error(xhr.responseText);
-                        console.log(xhr.status);
+                        //  console.log(xhr.status);
                         alert("Đã có lỗi xảy ra. Vui lòng thử lại.");
                     }
                 });
@@ -2124,7 +2149,7 @@
                             } else {
                                 return 0;
                             }
-                            console.log(checkInTime);
+                            //  console.log(checkInTime);
 
                             // Gán giá trị mới vào input
                             $('#checkInTime').val(checkInTime);
@@ -2347,7 +2372,7 @@
                         optionRoom: optionRoom
                     });
                 });
-                console.log(roomData);
+                //  console.log(roomData);
 
                 roomData.forEach(function(item) {
                     const roomDates = getDatesBetween(item['checkInDate'], item['checkInTime'],
@@ -2535,7 +2560,7 @@
                 e.preventDefault();
 
                 let formData = $(this).serialize();
-                console.log(formData);
+                //  console.log(formData);
                 let url = $(this).attr('action');
                 $.ajax({
                     type: "POST",
@@ -2571,7 +2596,7 @@
             const integerPart = parts[0];
             const formattedInteger = integerPart.replace(/\B(?=(\d{3})+(?!\d))/g, '.');
 
-            return formattedInteger + ' ' + '';
+            return formattedInteger + ' VND'; 
         }
         const showSwalMessage = (icon, title, timer = 2000) => {
             const Toast = Swal.mixin({
