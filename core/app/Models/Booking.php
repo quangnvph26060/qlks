@@ -43,6 +43,10 @@ class Booking extends Model
         return $this->hasOne(BookingActionHistory::class)->where('remark', 'approve_booking_request');
     }
 
+    public function userBooking()
+    {
+        return $this->hasOne(User::class,'id','user_id');
+    }
     public function bookedBy()
     {
         return $this->hasOne(BookingActionHistory::class)->where('remark', 'book_room');

@@ -1,3 +1,8 @@
+html.modal-open, 
+body.modal-open {
+    overflow: hidden !important;
+}
+
 .custom-input {
     width: 82px;
     border: none;
@@ -6,7 +11,10 @@
     padding: 0;
     height: 20px;
 }
-
+.overflow-add-room{
+    overflow-y: scroll;
+    height: 500px;
+}
 .custom-input:focus {
     outline: none;
 }
@@ -678,6 +686,47 @@ h5 {
     padding: 8px 12px;
     color: #fff;
     background-color: #337ab7;
+    border-color: #2e6da4;
+    border-radius: 5px;
+}
+.select-cancel-room{
+    border-radius: 8px;
+    color: #5b6e88;
+}
+.btn-qua-gio-nhan {
+    border:  1px solid white;
+    background-color: #6c757d; 
+    border-radius: 20px; 
+    padding: 8px 10px; 
+    font-size: 11px; 
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    cursor: pointer;
+    transition: background-color 0.3s ease;
+}
+
+.btn-qua-gio-nhan i {
+    margin-right: 8px; 
+}
+.note-booked-room{
+    gap: 5px;
+    cursor: pointer;
+}
+.modal-content {
+    border-radius: 8px;
+    box-shadow: 0 4px 10px rgba(0, 0, 0, 0.2);
+}
+
+textarea.form-control {
+    border-color: #337ab7; /* Màu viền cho textarea */
+}
+
+.sua_dat_phong{
+    text-wrap: nowrap;
+    padding: 5px 12px;
+    color: #2e6da4;
+    border:1px solid #2e6da4;
     border-color: #2e6da4;
     border-radius: 5px;
 }

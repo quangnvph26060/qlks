@@ -148,15 +148,16 @@ class BookingController extends Controller
     {
         $booking = Booking::with([
             'bookedRooms',
-            'activeBookedRooms:id,booking_id,room_id',
-            'activeBookedRooms.room:id,room_number',
+            // 'activeBookedRooms:id,booking_id,room_id',
+            // 'activeBookedRooms.room:id,room_number',
             'bookedRooms.room:id,room_type_id,room_number',
             'bookedRooms.room.roomType:id,name',
+            'userBooking',
             // 'bookedRooms.room.roomPricesActive',
-            'usedPremiumService.room',
-            'usedPremiumService.premiumService',
-            'usedProductRoom.room',
-            'usedProductRoom.product',
+            // 'usedPremiumService.room',
+            // 'usedPremiumService.premiumService',
+            // 'usedProductRoom.room',
+            // 'usedProductRoom.product',
             'payments'
         ])->findOrFail($id);
         // BookedRoom::where('booking_id', $id)->with('booking.user', 'room.roomType')->orderBy('booked_for')->get()->groupBy('booked_for');
@@ -228,23 +229,23 @@ class BookingController extends Controller
                     }
                 }
             }
-            $service = PremiumService::get();
-            $product = Product::get();
-            $room_id = $booking->bookedRooms[0]->room_id;
-            $currentDate = Carbon::now()->format('Y-m-d');
+           // $service = PremiumService::get();
+         //   $product = Product::get();
+          //  $room_id = $booking->bookedRooms[0]->room_id;
+         //  $currentDate = Carbon::now()->format('Y-m-d');
 
             // Lấy danh sách dịch vụ đã sử dụng
-            $used_services = UsedPremiumService::whereDate('service_date', $currentDate)
-                ->where('room_id', $room_id)
-                ->select('premium_service_id', 'qty')
-                ->get();
+            // $used_services = UsedPremiumService::whereDate('service_date', $currentDate)
+            //     ->where('room_id', $room_id)
+            //     ->select('premium_service_id', 'qty')
+            //     ->get();
 
-            $used_products = UserdProductRoom::whereDate('product_date', $currentDate)
-                ->where('room_id', $room_id)
-                ->select('product_id', 'qty')
-                ->get();
-
-            return response()->json(['status' => 'success', 'data' => $booking, 'returnedPayments' => $returnedPayments, 'receivedPayments' => $receivedPayments, 'total_amount' => $total_amount, 'due' => $due, 'service' => $service, 'product' => $product, 'used_services' => $used_services, 'used_products' => $used_products]);
+            // $used_products = UserdProductRoom::whereDate('product_date', $currentDate)
+            //     ->where('room_id', $room_id)
+            //     ->select('product_id', 'qty')
+            //     ->get();
+            $room = Room::with('booked')->find($request->room_id);
+            return response()->json(['status' => 'success', 'data' => $booking, 'returnedPayments' => $returnedPayments, 'receivedPayments' => $receivedPayments, 'total_amount' => $total_amount, 'due' => $due,'room'=>$room]);
         }
         $pageTitle = 'Chi tiết đặt chỗ';
         return view('admin.booking.details', compact('pageTitle', 'booking'));
@@ -422,13 +423,17 @@ class BookingController extends Controller
             //  ->whereNotIn('id', $bookedRooms)
             ->whereNotIn('room_type_id', $disabledRoomTypeIDs)
             ->whereIn('id', $idRoomActive)
-            ->with(['roomType', 'booked', 'booked.booking'])
+            ->with(['roomType', 'booked'=> function($query){
+                $query->where('status',1)->whereDate('booked_for', now()->toDateString());
+            }, 'booked.booking','booked.booking.userBooking'])
             ->select(['id', 'room_type_id', 'room_number', 'is_clean'])
             ->when(!empty($request->roomType), function ($query) use ($request) {
                 $query->where('room_type_id', 'like', '%' . $request->roomType . '%');
             })
             ->get();
         $scope = 'ALL';
+        // \Log::info($emptyRooms);
+        // dd($emptyRooms);
         $is_method = 'Receptionist';
 
         $bookings = BookedRoom::active()
