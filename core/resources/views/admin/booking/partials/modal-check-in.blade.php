@@ -21,19 +21,19 @@
                     </tr>
                   </thead>
                  <tbody id="list-room-booking">
-                    <tr>
+                    {{-- <tr>
                         <td ><input type="checkbox"></td>
                         <td>Phòng 01 giường đôi và 1 giường đơn cho 3 người</td>
                         <td>P.01</td>
                         <td>Sạch</td>
                         <td><input type="date" name="checkInDate" class="form-control" id="date-book-room" style="width: 165px;"></td>
-                    </tr>
+                    </tr> --}}
                  </tbody>
                 </table>
             </div>
             <div class="modal-footer">
                 <button type="button" class="btn btn-secondary">Sửa đặt phòng</button>
-                <button type="button" class="btn nhan-phong modal-check-in-room" data-bs-toggle="modal" data-bs-target="#checkInRoom">Nhận phòng</button>
+                <button type="button" class=" nhan-phong modal-check-in-room" data-bs-toggle="modal" data-bs-target="#checkInRoom">Nhận phòng</button>
             </div>
         </div>
     </div>

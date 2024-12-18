@@ -309,6 +309,7 @@ Route::middleware('admin', 'adminPermission')->group(function () {
             Route::get('details/{id}', 'bookingDetails')->name('details');
             Route::get('booked-rooms/{id}', 'bookedRooms')->name('booked.rooms');
             Route::post('list-room-booking', 'listRoomBooking')->name('listRoomBooking');
+            Route::post('get-room-check-in', 'getRoomCheckIn')->name('getRoomCheckIn');
         });
 
         Route::controller('ManageBookingController')->group(function () {

@@ -168,7 +168,7 @@ class Booking extends Model
             }
         );
     }
-
+    // tính tổng booking
     public function totalAmount(): Attribute
     {
         return new Attribute(
@@ -177,7 +177,7 @@ class Booking extends Model
             }
         );
     }
-
+      // tính tổng booking
     public function due()
     {
         return $this->total_amount - $this->paid_amount;

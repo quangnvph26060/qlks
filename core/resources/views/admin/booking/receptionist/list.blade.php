@@ -93,7 +93,7 @@
                 </div>
                 <div class="modal-body">
                     <form>
-                        <div class="d-flex justify-content-between">
+                        <div class="d-flex justify-content-between align-items-center">
                             <div class="customer-input-container">
                                 <input id="customer-name" list="customer-names" type="text" class="customer-form-control"
                                     placeholder="Email khách hàng">
@@ -119,10 +119,27 @@
 
 
                             </div>
-                            <div class="user-info-customer">
+                            {{-- <div class="user-info-customer">
                                 <p class="email-user"></p>
                                 <p class="ms-2 me-2 clear-main"> </p>
                                 <p class="username-user"></p>
+                            </div> --}}
+                            <div class="d-flex">
+                                <div class="col-md-6 button-reduce">
+                                    <span>Người lớn</span>
+                                    <span class="icon reduce" data-target="adults">-</span>
+                                    <input type="number" class="input-field" id="adults" value="1" readonly>
+                                    <span class="icon increase" data-target="adults">+</span>
+                                </div>
+                                <div class=" col-md-6 button-reduce">
+                                    <span>Trẻ em</span>
+                                    <span class="icon reduce" data-target="children">-</span>
+                                    <input type="number" class="input-field" id="children" value="0" readonly>
+                                    <span class="icon increase" data-target="children">+</span>
+                                </div>
+                            </div>
+                            <div>
+                                <p>Đã đặt trước</p>
                             </div>
                             {{-- <div>
                                 <select name="" id="model">
@@ -373,9 +390,10 @@
                             <div class="info-room">
 
                             </div>
-                            <div>
+                            <div class="d-flex align-items-center justify-content-around">
                                 <button type="submit" class="w-10 sua_dat_phong">Sửa đặt phòng</button>
-                                <button type="submit" class="w-10 btn-primary-1 modal-checkin" >Nhận phòng</button>
+                                <button type="submit" class="w-10 btn-primary-1 modal-checkin"
+                                    style="height: 31px;">Nhận phòng</button>
                             </div>
                         </div>
                     </div>
@@ -527,6 +545,22 @@
     <script>
         $(document).ready(function() {
 
+            $('.increase').on('click', function() {
+                let target = $(this).data('target');
+                let inputField = $('#' + target);
+                let value = parseInt(inputField.val(), 10) || 0;
+                inputField.val(value + 1);
+            });
+
+            // Xử lý giảm số lượng
+            $('.reduce').on('click', function() {
+                let target = $(this).data('target');
+                let inputField = $('#' + target);
+                let value = parseInt(inputField.val(), 10) || 0;
+                inputField.val(Math.max(value - 1, 0)); // Không cho giảm xuống dưới 0
+            });
+
+
             $(document).on('click', '.option-booked', function(e) {
                 e.stopPropagation(); // Ngăn việc click lan sang các thành phần khác
                 const dropdownMenu = $(this).siblings('.dropdown-menu');
@@ -579,16 +613,139 @@
             })
 
             $('.modal-check-in-room').on('click', function() {
-                $('#checkInRoom').modal('show');
+                var selectedRooms = [];
+                $('#list-room-booking input[type="checkbox"]:checked').each(function() {
+                    // Lấy data-id của từng phòng được chọn
+                    var roomId = $(this).closest('tr').data('id');
+                    selectedRooms.push(roomId);
+                });
+
+                $.ajax({
+                    url: '{{ route('admin.booking.getRoomCheckIn') }}',
+                    type: 'POST',
+                    data: {
+                        selectedRooms: selectedRooms,
+                        _token: '{{ csrf_token() }}'
+                    },
+                    success: function(response) {
+                        $('#loading').show();
+                        if (response.status === 'success') {
+                            var currentDate = new Date();
+                            var formattedDate = currentDate.toLocaleDateString('vi-VN') + ' ' +
+                                currentDate.toLocaleTimeString('vi-VN');
+                            // $('#checkInRoom').modal('hide');
+                            $('.main-room-booking').empty();
+                            let row_booking = '';
+                            row_booking = `
+                                    <div class="modal-body">
+                                        <!-- Thông tin chung -->
+                                        <div class="row mb-3">
+                                            <div class="col-md-4">
+                                                <strong>Khách hàng</strong><br>${response.users['username']} - ${response.users['mobile']}
+                                            </div>
+                                            <div class="col-md-4">
+                                                <strong>Khách lưu trú</strong><br>2 người lớn
+                                            </div>
+                                            <div class="col-md-4">
+                                                <strong>Phòng nhận</strong><br> ${ response.rooms.length } phòng (
+                                                ${ response.roomNumbers }
+                                                )
+                                            </div>
+                                        </div>
+                                        <div class="row mb-3">
+                                            <div class="col-md-6">
+                                                <strong>Nhận phòng</strong><br>${formattedDate}
+                                            </div>
+                                        </div>
+
+                                        <!-- Tab Menu -->
+                                        {{-- <ul class="nav nav-tabs" id="myTab" role="tablist">
+                                            <li class="nav-item" role="presentation">
+                                                <button class="nav-link active" id="info-tab" data-bs-toggle="tab" data-bs-target="#info" type="button" role="tab">Họ và tên</button>
+                                            </li>
+                                            <li class="nav-item" role="presentation">
+                                                <button class="nav-link" id="personal-tab" data-bs-toggle="tab" data-bs-target="#personal" type="button" role="tab">Thông tin cá nhân</button>
+                                            </li>
+                                            <li class="nav-item" role="presentation">
+                                                <button class="nav-link" id="documents-tab" data-bs-toggle="tab" data-bs-target="#documents" type="button" role="tab">Giấy tờ</button>
+                                            </li>
+                                            <li class="nav-item" role="presentation">
+                                                <button class="nav-link" id="room-tab" data-bs-toggle="tab" data-bs-target="#room" type="button" role="tab">Phòng</button>
+                                            </li>
+                                        </ul> --}}
+
+                                        <div class="row">
+                                            <div class=" col-md-6 d-flex align-items-end">
+                                                <label for="note" class="form-label"><strong style="white-space: nowrap;">Ghi chú</strong></label>
+                                                <input type="text" value="${response.booking['note']}" class="form-control custom-input-note" id="note" placeholder="Nhập ghi chú đặt phòng">
+                                            </div>
+                                        </div>
+
+                                        <div class="tab-content" id="myTabContent">
+                                        
+                                            
+                                            {{-- <div class="tab-pane fade" id="personal" role="tabpanel">
+                                                <p class="mt-3">Thông tin cá nhân chưa cập nhật</p>
+                                            </div>
+                                            <div class="tab-pane fade" id="documents" role="tabpanel">
+                                                <p class="mt-3">Chưa có giấy tờ liên quan</p>
+                                            </div>
+                                            <div class="tab-pane fade" id="room" role="tabpanel">
+                                                <p class="mt-3">Phòng nhận: P.302</p>
+                                            </div> --}}
+                                        </div>
+
+                                        <!-- Thanh toán -->
+                                        <div class="payment-box">
+                                            <div class=" align-items-center">
+                                                <div class="d-flex justify-content-between">
+                                                    <span><strong>Khách cần trả</strong></span>
+                                                    <span class="fw-bold">${formatCurrency(response.totalFare)}</span>
+                                                </div>
+                                                
+                                                <div class="d-flex justify-content-between">
+                                                    <span>Khách đã trả</span>
+                                                    <span class="text-secondary">0</span>
+                                                </div>
+                                                
+                                                <div class="d-flex justify-content-between">
+                                                    <span><strong>Còn cần trả</strong></span>
+                                                    <span class="fw-bold">720,000</span>
+                                                </div>
+
+                                                <div class=" d-flex justify-content-between align-items-center mt-1">
+                                                    <span>Khách thanh toán</span>
+                                                    <div class="d-flex align-items-center">
+                                                        <svg xmlns="http://www.w3.org/2000/svg" width="20" height="20" viewBox="0 0 256 256"><path fill="currentColor" d="M224 48H32a16 16 0 0 0-16 16v128a16 16 0 0 0 16 16h192a16 16 0 0 0 16-16V64a16 16 0 0 0-16-16Zm-88 128h-16a8 8 0 0 1 0-16h16a8 8 0 0 1 0 16Zm64 0h-32a8 8 0 0 1 0-16h32a8 8 0 0 1 0 16ZM32 88V64h192v24Z"/></svg>
+                                                        <input type="text" class="form-control form-control-sm custom-input"  placeholder="0">
+                                                    </div>
+                                                </div>
+                                            </div>
+                                        </div>
+                                        
+                                    </div>
+                                    `
+                            $('.main-room-booking').append(row_booking);
+                            $('#loading').hide();
+                            $('#checkInRoom').modal('show');
+                        }
+
+                    },
+                    error: function(xhr, status, error) {
+                        $('#loading').hide();
+                        alert('Có lỗi xảy ra khi lưu ghi chú!');
+                    }
+                });
+
             });
 
             $('#all-check-box').change(function() {
                 $('#list-room-booking input[type="checkbox"]').prop('checked', $(this).prop('checked'));
             });
-            $('.modal-checkin').on('click', function(){
+            $('.modal-checkin').on('click', function() {
                 var booking_id = $('.booking_number').text();
                 var nameroom = $('.name-room').text();
-                
+
                 $('#loading').show();
                 $.ajax({
                     url: '{{ route('admin.booking.listRoomBooking') }}',
@@ -598,19 +755,19 @@
                         _token: '{{ csrf_token() }}'
                     },
                     success: function(response) {
-                        console.log(response);
-                        if(response.status === 'success'){
+                        if (response.status === 'success') {
                             const todays = new Date();
                             const yyyys = todays.getFullYear();
                             const mms = String(todays.getMonth() + 1).padStart(2, '0');
                             const dds = String(todays.getDate()).padStart(2, '0');
                             const hoursss = String(todays.getHours()).padStart(2, '0'); // Giờ
-                            const minutesss = String(todays.getMinutes()).padStart(2, '0'); // Phút
+                            const minutesss = String(todays.getMinutes()).padStart(2,
+                                '0'); // Phút
                             const formattedDates = `${yyyys}-${mms}-${dds}`;
                             const formattedTimes = `${hoursss}:${minutesss}`;
-                            $('#list-room-booking').empty();  
+                            $('#list-room-booking').empty();
                             let rowlistRoom = '';
-                            response.data.forEach(item=>{
+                            response.data.forEach(item => {
                                 rowlistRoom += `
                                         <tr data-id="${item.booked[0]['id']}">
                                             <td ><input type="checkbox" ${nameroom === item.room_number ? "checked" :""}></td>
@@ -618,7 +775,7 @@
                                             <td>${item.room_number}</td>
                                             <td>${item.is_clean === 1 ? "Sạch" : "Chưa dọn"}</td>
                                             <td>
-                                                <div class="d-flex" style="gap: 10px;    position: relative;    left: 60px;">
+                                                <div class="d-flex" style="gap: 10px;position: relative;left: 60px;margin-top:5px">
                                                     <input type="date" name="checkInDate" class="form-control date-book-room" style="width: 165px;height: 35px;" value="${formattedDates}">
                                                     <input type="time" name="checkInTime" class="form-control time-book-room" style="width: 135px;height: 35px;" value="${formattedTimes}">
                                                 </div>
@@ -633,7 +790,7 @@
                             $('#modalCheckIn').modal('show');
 
                         }
-                       
+
                         // notify('success', response.success);
                         // $('.note-booking').html(note);
                         // $('#noteModal').modal('hide');
@@ -643,7 +800,7 @@
                         alert('Có lỗi xảy ra khi lưu ghi chú!');
                     }
                 });
-                
+
             })
 
             // xóa phòng vừa add vào  roomNumber
@@ -1640,41 +1797,42 @@
 
                             $('#note-input').attr('data-id', response.data.id);
 
-                            
+
                             $('.info-room').empty();
                             let rowPeople = '';
 
-                             let rowGroupPrice =   `<div class="border rounded p-2 mb-2" style="width: 250px;">
+                            let rowGroupPrice = `<div class="border rounded p-2 mb-2" style="width: 250px;">
                                 <div class="d-flex justify-content-between">
                                     <span class="fz-13 name-room">${response.room['room_number']}</span>
                                     <span>${formatCurrency(response.room.booked[0]['fare'])}</span>
                                 </div>`;
-                                if (response.data.booked_rooms.length >= 2) {
-                                    let priceGroup = 0;
-                                    rowGroupPrice +=   ` <div class="d-flex justify-content-between mt-1">
+                            if (response.data.booked_rooms.length >= 2) {
+                                let priceGroup = 0;
+                                rowGroupPrice += ` <div class="d-flex justify-content-between mt-1">
                                         <span class="fz-13">Cả đoàn</span>`
-                                        response.data.booked_rooms.forEach(room => {
-                                            let fareInt = parseInt(room.fare); 
-                                            priceGroup += fareInt;
-                                          
-                                        });
-                                        
-                                            rowGroupPrice +=     `<span class="fw-bold">${formatCurrency(priceGroup)}</span>`
-                                            rowGroupPrice +=    `</div>`
-                                }else{
-                                    $('.group-booked-room').empty();
-                                }
+                                response.data.booked_rooms.forEach(room => {
+                                    let fareInt = parseInt(room.fare);
+                                    priceGroup += fareInt;
 
-                                rowGroupPrice +=  ` <div class="d-flex justify-content-between mt-1">
+                                });
+
+                                rowGroupPrice +=
+                                    `<span class="fw-bold">${formatCurrency(priceGroup)}</span>`
+                                rowGroupPrice += `</div>`
+                            } else {
+                                $('.group-booked-room').empty();
+                            }
+
+                            rowGroupPrice += ` <div class="d-flex justify-content-between mt-1">
                                     <span class="fz-13">Khách đã trả</span>
                                     <span class="fw-bold">0</span>
                                 </div>`
 
-                                rowGroupPrice +=  ` </div>`
+                            rowGroupPrice += ` </div>`
                             $('.info-room').append(rowGroupPrice);
 
                             // các phòng trong đoàn
-                           // console.log(response.data.booked_rooms);
+                            // console.log(response.data.booked_rooms);
 
                             if (response.data.booked_rooms.length >= 2) {
                                 $('.group-booked-room').empty();
@@ -1690,7 +1848,7 @@
 
                                 rowGroup += '</div>';
                                 $('.group-booked-room').append(rowGroup);
-                            }else{
+                            } else {
                                 $('.group-booked-room').empty();
                             }
 
@@ -2312,26 +2470,24 @@
             // });
 
             // validate nếu nhập không có tên khách hàng
-            $('#customer-name').on('input', function() {
+            $('#customer-name').on('blur', function() {
                 const inputValue = $(this).val().toLowerCase();
                 const options = $('#customer-names option');
                 let isValid = false;
-
-
-                options.each(function() {
-                    if ($(this).val().toLowerCase() === inputValue) {
-                        isValid = true;
-
-                        return false; // Break the loop
+                const values = options.map(function() {
+                    return $(this).val()
+                .toLowerCase();
+                }).get(); 
+                if (values.includes(inputValue)) {
+                    isValid = true;
+                }
+                
+                if(inputValue !== ''){
+                    if (isValid) {
+                        $('#error-message').hide();
+                    } else {
+                        $('#error-message').show();
                     }
-                });
-
-                if (isValid) {
-                    $('#error-message').hide();
-
-
-                } else {
-                    $('#error-message').show();
                 }
             });
             // thông tin khách hàng
@@ -2506,6 +2662,7 @@
 
 
             $('.btn-user-info').on('click', function(event) {
+
                 // Lấy giá trị của guest_type
                 //    let guestType = $('#guest_type').val();
                 event.stopPropagation();
@@ -2514,11 +2671,17 @@
                 let email = $('#email').val();
                 let phone = $('#phone').val();
                 let address = $('#address').val();
+                //    123123
+                $('#customer-name').val(email);
+                // {{-- <div class="user-info-customer">
+                //                 <p class="email-user"></p>
+                //                 <p class="ms-2 me-2 clear-main"> </p>
+                //                 <p class="username-user"></p>
+                //             </div> --}}
+                // $('.email-user').text(email);
+                // $('.clear-main').text("|");
 
-                $('.email-user').text(email);
-                $('.clear-main').text("|");
-
-                $('.username-user').text(name);
+                // $('.username-user').text(name);
                 $('.guest_type').val(0);
 
                 $('.username-user1').val(name);
@@ -2671,7 +2834,7 @@
             const integerPart = parts[0];
             const formattedInteger = integerPart.replace(/\B(?=(\d{3})+(?!\d))/g, '.');
 
-            return formattedInteger + ' VND'; 
+            return formattedInteger + ' VND';
         }
         const showSwalMessage = (icon, title, timer = 2000) => {
             const Toast = Swal.mixin({
@@ -2770,11 +2933,11 @@
         });
 
 
-         $('#save-note').on('click', function() {
+        $('#save-note').on('click', function() {
             var note = $('#note-input').val();
             var noteid = $('#note-input').data('id');
 
-            if(note.trim() !== '') {
+            if (note.trim() !== '') {
                 $.ajax({
                     url: '{{ route('admin.room.note') }}',
                     type: 'POST',

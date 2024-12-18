@@ -423,8 +423,8 @@ class BookingController extends Controller
             //  ->whereNotIn('id', $bookedRooms)
             ->whereNotIn('room_type_id', $disabledRoomTypeIDs)
             ->whereIn('id', $idRoomActive)
-            ->with(['roomType', 'booked'=> function($query){
-                $query->where('status',1)->whereDate('booked_for', now()->toDateString());
+            ->with(['roomType', 'booked' => function($query){
+                $query->where('status',1)->whereDate('booked_for', '<=', now())->limit(1);
             }, 'booked.booking','booked.booking.userBooking'])
             ->select(['id', 'room_type_id', 'room_number', 'is_clean'])
             ->when(!empty($request->roomType), function ($query) use ($request) {
@@ -569,6 +569,7 @@ class BookingController extends Controller
             return response()->json(['status' => 'success', 'message' => 'Xóa thành công']);
         }
     }
+
     public function listRoomBooking(Request $request){
         $booking = Booking::where('booking_number', $request->booking_id)->first();
         if(!$booking){
@@ -583,5 +584,33 @@ class BookingController extends Controller
         })
         ->get(); 
         return response()->json(['status' => 'success', 'data'=>$room]);
+    }
+
+    public function getRoomCheckIn(Request $request){
+       $getRoomCheckIn = $request->selectedRooms;
+       $roomCheckIn    = BookedRoom::whereIn('id', $getRoomCheckIn)->select('room_id', 'booking_id', 'fare')->get();
+       $totalFare = $roomCheckIn->sum('fare');
+       $groupedData = $roomCheckIn->groupBy('booking_id')->map(function ($items, $bookingId) {
+                return [
+                    'booking_id' => $bookingId,
+                    'room_ids' => $items->pluck('room_id')->toArray()
+                ];
+            });
+            
+            // Kết quả là một Collection hoặc bạn có thể chuyển đổi thành mảng
+            $result = $groupedData->values()->toArray();
+            
+
+        $booking = Booking::find($result[0]['booking_id']);
+        Log::info($booking->due());
+        $rooms  = Room::whereIn('id', $result[0]['room_ids'])->select('room_number')->get();
+        $roomNumbers = $rooms->pluck('room_number')->implode(', ');
+        if($booking['user_id']){
+            $user_booking = User::where('id', $booking['user_id'])
+                ->select('username', 'mobile')
+                ->first();
+            }
+           
+       return response()->json(['status' => 'success', 'booking' => $booking, 'users'=>$user_booking, 'rooms'=>$rooms, 'totalFare'=>$totalFare,'roomNumbers'=>$roomNumbers]);
     }
 }

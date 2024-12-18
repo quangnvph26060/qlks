@@ -710,9 +710,31 @@ h5 {
 #checkInRoom.modal {
     z-index: 1056; /* Cao hơn modal mặc định (1055) */
 }
-
-
+.increase,.reduce{
+    padding: 0px 5px;
+    cursor: pointer;
+    border: 1px solid ;
+    border-radius: 50%;
+}
+.button-reduce{
+        gap: 14px;
+        display: flex;
+        align-items: center;
+        padding: 10px 20px;
+        margin: 5px;
+        border-radius: 5px;
+      
+}
+.button-reduce input{
+    width: 54px;
+    padding: 0px 0px 0px 0px;
+    text-align: center;
+    border: none;
+    border-bottom: 1px solid #ccc;
+    border-radius: 0px;
+}
 .nhan-phong{
+    border-radius: 3.2px;
     background: #337ab7;
     color: white; 
     height: 35px;
