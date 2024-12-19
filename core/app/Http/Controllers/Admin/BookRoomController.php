@@ -178,6 +178,7 @@ class BookRoomController extends Controller
             $booking->paid_amount    = $request->paid_amount ?? 0;
             $booking->status         = Status::BOOKING_ACTIVE;
             // $booking->option         = $request->optionRoom;
+            $booking->total_people   = $request->total_people;
             $booking->note           = $request->ghichu;
             $booking->save();
 

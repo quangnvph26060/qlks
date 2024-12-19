@@ -716,6 +716,17 @@ h5 {
     border: 1px solid ;
     border-radius: 50%;
 }
+.input-css-main{
+    direction: ltr;
+    padding: 0px !important;
+    width: 170px;
+    text-align: right;
+    border: none;
+    border-bottom: 1px solid #ddd;
+}
+.input-css-main:focus {
+    border-bottom: 1px solid #ddd; /* Đổi màu đường viền dưới khi input được focus */
+}
 .button-reduce{
         gap: 14px;
         display: flex;

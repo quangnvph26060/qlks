@@ -545,6 +545,24 @@
     <script>
         $(document).ready(function() {
 
+
+            // định dạng tiền input
+            function formatNumber(input) {
+                var value = input.value;
+                // Loại bỏ tất cả các ký tự không phải số và dấu phân cách
+                var numericValue = value.replace(/[^0-9,]/g, '');
+                // Loại bỏ tất cả dấu phân cách thừa (nếu có)
+                var parts = numericValue.split(',');
+                var integerPart = parts[0].replace(/\./g, ''); // Loại bỏ tất cả dấu phân cách ngàn
+                // Định dạng số tiền theo định dạng tiền tệ của Việt Nam
+                var formattedValue = integerPart.replace(/\B(?=(\d{3})+(?!\d))/g, ".");
+                // Nếu có phần thập phân, thêm vào sau số nguyên
+                if (parts.length > 1) {
+                    formattedValue += ',' + parts[1];
+                }
+                input.value = formattedValue;
+            }
+
             $('.increase').on('click', function() {
                 let target = $(this).data('target');
                 let inputField = $('#' + target);
@@ -635,13 +653,15 @@
                                 currentDate.toLocaleTimeString('vi-VN');
                             // $('#checkInRoom').modal('hide');
                             $('.main-room-booking').empty();
+                           
+                            
                             let row_booking = '';
                             row_booking = `
                                     <div class="modal-body">
                                         <!-- Thông tin chung -->
                                         <div class="row mb-3">
                                             <div class="col-md-4">
-                                                <strong>Khách hàng</strong><br>${response.users['username']} - ${response.users['mobile']}
+                                                <strong>Khách hàng</strong><br>${response.users['username']} - ${response.users['mobile'] }
                                             </div>
                                             <div class="col-md-4">
                                                 <strong>Khách lưu trú</strong><br>2 người lớn
@@ -677,7 +697,7 @@
                                         <div class="row">
                                             <div class=" col-md-6 d-flex align-items-end">
                                                 <label for="note" class="form-label"><strong style="white-space: nowrap;">Ghi chú</strong></label>
-                                                <input type="text" value="${response.booking['note']}" class="form-control custom-input-note" id="note" placeholder="Nhập ghi chú đặt phòng">
+                                                <input type="text" data-id="${response.booking['id']}" value="${response.booking['note'] === null ? "" : response.booking['note'] }" class="form-control custom-input-note" id="note" placeholder="Nhập ghi chú đặt phòng">
                                             </div>
                                         </div>
 
@@ -716,8 +736,8 @@
                                                 <div class=" d-flex justify-content-between align-items-center mt-1">
                                                     <span>Khách thanh toán</span>
                                                     <div class="d-flex align-items-center">
-                                                        <svg xmlns="http://www.w3.org/2000/svg" width="20" height="20" viewBox="0 0 256 256"><path fill="currentColor" d="M224 48H32a16 16 0 0 0-16 16v128a16 16 0 0 0 16 16h192a16 16 0 0 0 16-16V64a16 16 0 0 0-16-16Zm-88 128h-16a8 8 0 0 1 0-16h16a8 8 0 0 1 0 16Zm64 0h-32a8 8 0 0 1 0-16h32a8 8 0 0 1 0 16ZM32 88V64h192v24Z"/></svg>
-                                                        <input type="text" class="form-control form-control-sm custom-input"  placeholder="0">
+                                                        <svg xmlns="http://www.w3.org/2000/svg"  class="cardRoom" width="20" height="20" viewBox="0 0 256 256"><path fill="currentColor" d="M224 48H32a16 16 0 0 0-16 16v128a16 16 0 0 0 16 16h192a16 16 0 0 0 16-16V64a16 16 0 0 0-16-16Zm-88 128h-16a8 8 0 0 1 0-16h16a8 8 0 0 1 0 16Zm64 0h-32a8 8 0 0 1 0-16h32a8 8 0 0 1 0 16ZM32 88V64h192v24Z"/></svg>
+                                                    <input type="text" class="  input-css-main" id="number-input" placeholder="0" oninput="this.value = this.value.slice(0, 16)">
                                                     </div>
                                                 </div>
                                             </div>
@@ -726,6 +746,19 @@
                                     </div>
                                     `
                             $('.main-room-booking').append(row_booking);
+
+
+                            $('#number-input').on('input', function() {
+                                formatNumber(this);
+                            });
+
+                            $('.custom-input-note').on('blur', function(){
+                                const note = $(this).val();
+                                const noteId = $(this).data('id');
+                                noteUpdate(note,noteId)
+
+                            });
+
                             $('#loading').hide();
                             $('#checkInRoom').modal('show');
                         }
@@ -797,7 +830,7 @@
                     },
                     error: function(xhr, status, error) {
                         $('#loading').hide();
-                        alert('Có lỗi xảy ra khi lưu ghi chú!');
+                       // alert('Có lỗi xảy ra khi lưu ghi chú!');
                     }
                 });
 
@@ -821,7 +854,7 @@
 
             $('.note-booked-room').on('click', function() {
                 $('#noteModal').modal('show');
-                console.log($('.note-booking').html());
+              //  console.log($('.note-booking').html());
 
                 $('#note-input').val('');
                 $('#note-input').val($('.note-booking').text());
@@ -1688,7 +1721,7 @@
             })
             $(document).on('click', '.room-booking-status-occupied', function() {
                 var id = $(this).data('id');
-                var booking_id = $(this).data('booking');
+                var booking_id = $(this).data('room');
 
 
                 handleLateCheckinClick(id, booking_id);
@@ -1750,6 +1783,7 @@
                     success: function(response) {
                         $('#loading').hide();
                         if (response.status === 'success') {
+                            // console.log(response.data['total_people']);
 
                             var customer_type = response.data.user_id ?
                                 "Khách hàng đã đăng ký" : " Khách hàng lưu trú"
@@ -1767,6 +1801,10 @@
                                         <div class="detail-item-checkout">
                                             <strong>Loại khách hàng</strong>
                                             <p class="customer_type">${customer_type}</p>
+                                        </div>
+                                          <div class="detail-item-checkout">
+                                            <strong>Khách lưu trú</strong>
+                                            <p class="customer_type">${response.data['total_people']} người</p>
                                         </div>
                                         <div class="detail-item-checkout">
                                             <strong>Mã đặt phòng</strong>
@@ -2476,13 +2514,13 @@
                 let isValid = false;
                 const values = options.map(function() {
                     return $(this).val()
-                .toLowerCase();
-                }).get(); 
+                        .toLowerCase();
+                }).get();
                 if (values.includes(inputValue)) {
                     isValid = true;
                 }
-                
-                if(inputValue !== ''){
+
+                if (inputValue !== '') {
                     if (isValid) {
                         $('#error-message').hide();
                     } else {
@@ -2569,7 +2607,10 @@
                 e.preventDefault();
 
                 let formData = $(this).serializeArray();
+                var adultsValue = parseInt($('#adults').val(), 10) || 0;
+                var childrenValue = parseInt($('#children').val(), 10) || 0;
 
+                var totalPeople = adultsValue + childrenValue;
 
                 let formObject = {};
                 formData.forEach(function(field) {
@@ -2630,6 +2671,10 @@
                         value: 0
                     })
                 }
+                formData.push({
+                    name: 'total_people',
+                    value: totalPeople
+                })
                 formData.push({
                     name: 'is_method',
                     value: 'receptionist',
@@ -2936,7 +2981,10 @@
         $('#save-note').on('click', function() {
             var note = $('#note-input').val();
             var noteid = $('#note-input').data('id');
-
+            noteUpdate(note,noteid);
+        });
+        // Thay đ��i ghi chú
+        function noteUpdate(note,noteid){
             if (note.trim() !== '') {
                 $.ajax({
                     url: '{{ route('admin.room.note') }}',
@@ -2956,9 +3004,9 @@
                         alert('Có lỗi xảy ra khi lưu ghi chú!');
                     }
                 });
-            } else {
-                alert('Vui lòng nhập ghi chú trước khi lưu!');
+            }else{
+                $('#noteModal').modal('hide');
             }
-        });
+        }
     </script>
 @endpush

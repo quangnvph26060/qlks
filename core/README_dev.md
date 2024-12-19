@@ -594,3 +594,6 @@ ALTER TABLE booked_rooms
 ADD COLUMN option_room VARCHAR(10) DEFAULT NULL;
 
 ALTER TABLE `bookings` DROP `option`
+
+ALTER TABLE booking
+ADD total_people INT DEFAULT 0;
