@@ -580,7 +580,7 @@ class BookingController extends Controller
             $query->where('booking_id', $booking->id);
         }])
         ->whereHas('booked', function ($query) use ($booking) {
-            $query->where('booking_id', $booking->id);
+            $query->where('booking_id', $booking->id)->where('key_status', Status::KEY_NOT_GIVEN);
         })
         ->get(); 
         return response()->json(['status' => 'success', 'data'=>$room]);

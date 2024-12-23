@@ -315,10 +315,10 @@ Route::middleware('admin', 'adminPermission')->group(function () {
         Route::controller('ManageBookingController')->group(function () {
             Route::post('key/handover/{id}', 'handoverKey')->name('key.handover');
             Route::post('booking-merge/{id}', 'mergeBooking')->name('merge');
-            Route::get('bill-payment/{id}', 'paymentView')->name('payment');
-            Route::post('bill-payment/{id}', 'payment')->name('payment');
-            Route::post('add-charge/{id}', 'addExtraCharge')->name('extra.charge.add');
-            Route::post('subtract-charge/{id}', 'subtractExtraCharge')->name('extra.charge.subtract');
+            Route::get('bill-payment/{id}', 'paymentView')->name('payment'); 
+            Route::post('bill-payment/{id}', 'payment')->name('payment');// thanh toán trước 
+            Route::post('add-charge/{id}', 'addExtraCharge')->name('extra.charge.add'); // thêm phụ phí
+            Route::post('subtract-charge/{id}', 'subtractExtraCharge')->name('extra.charge.subtract'); // trừ chi phí
             Route::get('booking-checkout/{id}', 'checkOutPreview')->name('checkout');
             Route::post('booking-checkout/{id}', 'checkOut')->name('checkout');
             Route::get('premium-service/details/{id}', 'premiumServiceDetail')->name('service.details');
