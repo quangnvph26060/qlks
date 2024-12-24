@@ -85,7 +85,7 @@ class Booking extends Model
     {
         return $this->hasMany(PaymentLog::class);
     }
-
+    
     //scope
     public function scopeActive($query)
     {

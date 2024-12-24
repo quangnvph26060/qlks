@@ -1,21 +1,21 @@
-<div class="modal fade" id="checkInRoom" tabindex="-1" aria-labelledby="checkInRoomLabel" aria-hidden="true">
+<div class="modal fade" id="checkOutRoom" tabindex="-1" aria-labelledby="checkOutRoomLabel" aria-hidden="true">
     <div class="modal-dialog modal-lg">
         <div class="modal-content">
             <!-- Header -->
             <div class="modal-header">
-                <h5 class="modal-title" id="checkInRoomLabel">Thông tin nhận phòng</h5>
+                <h5 class="modal-title" id="checkOutRoomLabel">Thông tin trả phòng</h5>
                 <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
             </div>
 
             <!-- Body -->
-            <div class="main-room-booking">
+            <div class="main-room-booked">
 
             </div>
 
             <!-- Footer -->
             <div class="modal-footer">
-                <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Sửa đặt phòng</button>
-                <button type="button" class="btn-primary-1 btn-check-in" style="height: 35px">Xong </button>
+                {{-- <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Sửa đặt phòng</button> --}}
+                <button type="button" class="btn-primary-1 btn-check-out" style="height: 35px">Trả phòng</button>
             </div>
         </div>
     </div>

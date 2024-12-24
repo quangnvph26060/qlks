@@ -670,6 +670,9 @@ h5 {
     width: 50%;
 }
 
+.message-error{
+    display: none;
+}
 .btn--danger-service {
     color: #fff;
     cursor: pointer;
@@ -683,10 +686,18 @@ h5 {
 .btn-primary-2,
 .btn-primary-dates {
     text-wrap: nowrap;
-    padding: 8px 12px;
+    padding: 5px 12px;
     color: #fff;
     background-color: #337ab7;
     border-color: #2e6da4;
+    border-radius: 5px;
+}
+.btn-dat-truoc{
+    text-wrap: nowrap;
+    padding: 5px 12px;
+    color: #fff;
+    background-color: #ffc107;
+    border-color: #ffc107;
     border-radius: 5px;
 }
 .fz-13{
@@ -707,7 +718,7 @@ h5 {
     text-align: center;
     cursor: pointer;
 }
-#checkInRoom.modal {
+#checkInRoom.modal, #checkOutRoom.modal {
     z-index: 1056; /* Cao hơn modal mặc định (1055) */
 }
 .increase,.reduce{

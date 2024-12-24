@@ -580,17 +580,36 @@ class BookingController extends Controller
             $query->where('booking_id', $booking->id);
         }])
         ->whereHas('booked', function ($query) use ($booking) {
-            $query->where('booking_id', $booking->id)->where('key_status', Status::KEY_NOT_GIVEN);
+            $query->where('booking_id', $booking->id)->where('key_status', Status::KEY_NOT_GIVEN); // 0
         })
         ->get(); 
         return response()->json(['status' => 'success', 'data'=>$room]);
     }
 
+
+    public function listRoomBooked(Request $request){
+        $booking = Booking::where('booking_number', $request->booking_id)->first();
+        if(!$booking){
+            return response()->json(['status' => 'error', 'message' => 'Booking number không tồn tại']);
+        }
+        $room = Room::active()
+        ->with(['roomType','booked' => function ($query) use ($booking) {
+            $query->where('booking_id', $booking->id);
+        }])
+        ->whereHas('booked', function ($query) use ($booking) {
+            $query->where('booking_id', $booking->id)->where('key_status', Status::KEY_GIVEN);
+        })
+        ->get(); 
+        return response()->json(['status' => 'success', 'data'=> $room, 'booking' => $booking]);
+    }
+
+
     public function getRoomCheckIn(Request $request){
        $getRoomCheckIn = $request->selectedRooms;
-       $roomCheckIn    = BookedRoom::whereIn('id', $getRoomCheckIn)->select('room_id', 'booking_id', 'fare')->get();
-       $totalFare = $roomCheckIn->sum('fare');
-       $groupedData = $roomCheckIn->groupBy('booking_id')->map(function ($items, $bookingId) {
+       $roomCheckIn    = BookedRoom::whereIn('id', $getRoomCheckIn)->select('booking_id', 'room_id', 'room_type_id', 'fare', 'check_in_at')->get();
+     
+       $totalFare      = $roomCheckIn->sum('fare');
+       $groupedData    = $roomCheckIn->groupBy('booking_id')->map(function ($items, $bookingId) {
                 return [
                     'booking_id' => $bookingId,
                     'room_ids' => $items->pluck('room_id')->toArray()
@@ -602,7 +621,8 @@ class BookingController extends Controller
             
 
         $booking = Booking::find($result[0]['booking_id']);
-        Log::info($booking->due());
+        $due = $booking->due();
+         
         $rooms  = Room::whereIn('id', $result[0]['room_ids'])->select('room_number')->get();
         $roomNumbers = $rooms->pluck('room_number')->implode(', ');
         if($booking['user_id']){
@@ -611,6 +631,15 @@ class BookingController extends Controller
                 ->first();
             }
            
-       return response()->json(['status' => 'success', 'booking' => $booking, 'users'=>$user_booking, 'rooms'=>$rooms, 'totalFare'=>$totalFare,'roomNumbers'=>$roomNumbers]);
+       return response()->json([
+            'status'      => 'success', 
+            'booking'     => $booking, 
+            'users'       => $user_booking, 
+            'rooms'       => $rooms,
+            'totalFare'   => $totalFare, 
+            'roomNumbers' => $roomNumbers, 
+            'roomCheckIn' => $roomCheckIn,
+            'due'         => $due
+        ]);
     }
 }

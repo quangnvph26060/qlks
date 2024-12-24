@@ -597,3 +597,8 @@ ALTER TABLE `bookings` DROP `option`
 
 ALTER TABLE booking
 ADD total_people INT DEFAULT 0;
+
+-- 12/23
+
+ALTER TABLE booked_rooms
+ADD check_in_at DATETIME DEFAULT NULL;

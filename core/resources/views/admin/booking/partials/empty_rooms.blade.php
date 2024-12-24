@@ -1,5 +1,6 @@
 @forelse($dataRooms as $rooms)
     @php
+        
         $key_status = true;
         $class = 'status-dirty';
         $classClean = $rooms->getCleanStatusClass();
@@ -13,10 +14,9 @@
         if (isset($rooms->booked) && $rooms->booked->isNotEmpty()) {
             foreach ($rooms->booked as $item) {
                 if (
-                    now() > $item->booking['check_in'] &&
-                    // now() <= $item->check_out &&
-                    $item->status == 1 &&
-                    $item->key_status == 1
+                    // now() > $item->booking['check_in'] &&
+                    // // now() <= $item->check_out &&
+                    $item->status == 1 && $item->key_status == 1  && $item->check_in_at !== "" 
                 ) {
                     $class = 'status-occupied'; // đang hoạt động;
                 } elseif (now() < $item->booking['check_in'] && $item->status == 1) {

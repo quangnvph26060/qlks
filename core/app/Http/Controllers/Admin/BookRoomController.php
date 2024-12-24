@@ -59,10 +59,18 @@ class BookRoomController extends Controller
 
         return response()->json(['html' => $view]);
     }
-
+    private function check_btn_validation($check_btn)
+    {
+        if ($check_btn === 'checkin') {
+            return true;
+        }
+        
+        return false;
+    }
     public function book(Request $request)
     {
         \Log::info($request->all());
+       
         DB::beginTransaction();
         try {
             $validator = Validator::make($request->all(), [
@@ -154,11 +162,16 @@ class BookRoomController extends Controller
                 $data['created_at']       = now();
                 $data['updated_at']       = now();
 
+                $check_key_status = $this->check_btn_validation($request->check_btn);
+                if($check_key_status){
+                    $data['key_status']    =  Status::KEY_GIVEN;
+                    $data['check_in_at']   =  now();
+                }
                 $bookedRoomData[] = $data;
 
-                // $totalFare += $room->roomPricesActive[0]['price'];
+                 $totalFare += $price;
                 // $totalFare += $processedAmount;
-                $totalFare = 0;
+               // $totalFare = 0;
             }
 
 

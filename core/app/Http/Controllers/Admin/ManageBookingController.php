@@ -14,38 +14,54 @@ use App\Traits\BookingActions;
 use Illuminate\Support\Carbon;
 use PDF;
 use App\Http\Responses\ApiResponse;
+use App\Models\BookedRoom;
 
 class ManageBookingController extends Controller
 {
     use BookingActions;
 
-    public function handoverKey(Request $request,  $id)
+    public function handoverKey(Request $request,  $id) // bàn giao chìa khóa
     {
        
         $booking = Booking::active()->findOrFail($id);
-
-        if ($booking->key_status == Status::ENABLE) {
+        if(!$booking){
+            $notify[] = ['error', 'Không tìm thấy thông tin phòng'];
+        }
+        $bookedRoom = BookedRoom::where('booking_id',$booking->id)->where('room_id',$request->room_id)->where('room_type_id',$request->room_type_id)->first();
+       
+        if ($bookedRoom->key_status == Status::ENABLE) {
             $notify[] = ['error', 'Chìa khóa đã được trao cho khách'];
             return back()->withNotify($notify);
         }
-        if (now()->format('Y-m-d H:i:s') < $booking->check_in) {
+        if (now()->format('Y-m-d H:i:s') < $booking->booked_for) {
             $notify[] = ['error', 'Bạn không thể giao chìa khóa trước ngày nhận phòng'];
             return back()->withNotify($notify);
         }
+        // if (now()->format('Y-m-d H:i:s') < $booking->check_in) {
+        //     $notify[] = ['error', 'Bạn không thể giao chìa khóa trước ngày nhận phòng'];
+        //     return back()->withNotify($notify);
+        // }
 
-        if (now()->format('Y-m-d H:i:s') >= $booking->check_out) {
-            $notify[] = ['error', 'Bạn không thể giao chìa khóa sau ngày trả phòng'];
-            return back()->withNotify($notify);
+        // if (now()->format('Y-m-d H:i:s') >= $booking->check_out) {
+        //     $notify[] = ['error', 'Bạn không thể giao chìa khóa sau ngày trả phòng'];
+        //     return back()->withNotify($notify);
+        // }
+        if($request->price_booked > 0){
+            $this->processPayment($request->price_booked, $id);
         }
+        $bookedRoom->key_status     = Status::ENABLE;
+        $bookedRoom->check_in_at    = now();
+        $bookedRoom->save();
 
-        $booking->key_status = Status::ENABLE;
-        $booking->checked_in_at = now();
+        $booking->checked_in_at     = now();
         $booking->save();
 
-        $booking->createActionHistory('key_handover');
-        if($request->is_method === "receptionist"){
-            return ApiResponse::success("","",200);
-        }
+        $booking->createActionHistory('key_handover'); // lịch sử bàn giao chìa khóa 
+
+        // if($request->is_method === "receptionist"){
+        //     return ApiResponse::success("","",200);
+        // }
+        return ApiResponse::success("","",200);
         $notify[] = ['success', 'Bàn giao chìa khóa thành công'];
         return back()->withNotify($notify);
     }
@@ -122,8 +138,26 @@ class ManageBookingController extends Controller
         $pageTitle         = "Thanh toán hóa đơn";
         return view('admin.booking.payment', compact('pageTitle', 'booking', 'totalFare', 'totalTaxCharge', 'canceledFare', 'canceledTaxCharge', 'returnedPayments', 'receivedPayments'));
     }
+    public function processPayment($price, $id) { 
+       
+        $booking = Booking::findOrFail($id);
+        $due     = $booking->total_amount - $booking->paid_amount;
+       
+        if ($price > abs($due)) {
+            $message = $due <= 0 ? 'Số tiền không thể lớn hơn số tiền phải thu' : 'Số tiền không được lớn hơn số tiền phải trả';
+            $notify[] = ['error', $message];
+            return back()->withNotify($notify);
+        }
 
-    public function payment(Request $request, $id)
+        $is_method = 'receptionist';
+        if ($due > 0) {
+            return $this->receivePayment($booking, $price, $is_method);
+        }
+      
+        return $this->returnPayment($booking, $price);
+    }
+
+    public function payment(Request $request, $id) // thanh toán
     {
         $request->validate([
             'amount' => 'required|numeric|gt:0'
@@ -269,21 +303,38 @@ class ManageBookingController extends Controller
 
         return $pdf->stream($booking->booking_number . '.pdf');
     }
-
-    protected function receivePayment($booking, $receivingAmount, $is_method)
+ 
+    protected function receivePayment($booking, $receivingAmount, $is_method) // nhận thanh toán
     {
         $this->deposit($booking, $receivingAmount);
         $booking->createPaymentLog($receivingAmount, 'RECEIVED');
         $booking->createActionHistory('payment_received');
         $booking->paid_amount += $receivingAmount;
         $booking->save();
+         \Log::info('123123 '. $is_method);
         if($is_method === 'receptionist'){
-           
-            return response()->json(['status'=>'success','booking_id'=>$booking->getId(),'id'=>$booking->id]);
+            $notify[] = ['success', 'Đã nhận thanh toán thành công'];
+          // return response()->json(['status'=>'success', 'booking_id'=> $booking->getId(), 'id'=>$booking->id]);
         }
-        $notify[] = ['success', 'Đã nhận thanh toán thành công'];
-        return back()->withNotify($notify);
+        // $notify[] = ['success', 'Đã nhận thanh toán thành công'];
+        // return back()->withNotify($notify);
     }
+
+    // protected function receivePayment($booking, $receivingAmount, $is_method) // nhận thanh toán
+    // {
+    //     $this->deposit($booking, $receivingAmount);
+    //     $booking->createPaymentLog($receivingAmount, 'RECEIVED');
+    //     $booking->createActionHistory('payment_received');
+    //     $booking->paid_amount += $receivingAmount;
+    //     $booking->save();
+    //      \Log::info('123123 '. $is_method);
+    //     if($is_method === 'receptionist'){
+          
+    //         return response()->json(['status'=>'success', 'booking_id'=> $booking->getId(), 'id'=>$booking->id]);
+    //     }
+    //     $notify[] = ['success', 'Đã nhận thanh toán thành công'];
+    //     return back()->withNotify($notify);
+    // }
 
     protected function returnPayment($booking, $receivingAmount)
     {
@@ -293,8 +344,8 @@ class ManageBookingController extends Controller
         $booking->paid_amount -= $receivingAmount;
         $booking->save();
 
-        $notify[] = ['success', 'Thanh toán đã hoàn tất thành công'];
-        return back()->withNotify($notify);
+        // $notify[] = ['success', 'Thanh toán đã hoàn tất thành công'];
+        // return back()->withNotify($notify);
     }
 
     protected function deposit($booking, $payableAmount)
