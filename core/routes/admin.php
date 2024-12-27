@@ -522,6 +522,12 @@ Route::middleware('admin', 'adminPermission')->group(function () {
         //maintenance_mode
         Route::get('maintenance-mode', 'maintenanceMode')->name('maintenance.mode');
         Route::post('maintenance-mode-submit', 'maintenanceModeSubmit')->name('maintenance.mode.submit');
+
+
+        Route::get('setup-hotel', 'setupHotel')->name('setting.setup.hotel');
+        Route::post('setup-hotel', 'addHotel')->name('setting.setup.add.hotel');
+        Route::post('edit-setup-hotel/{id}', 'editHotel')->name('setting.setup.edit.hotel');
+        Route::post('delete-setup-hotel/{id}', 'deleteHotel')->name('setting.setup.delete.hotel');
     });
 
     //Notification Setting

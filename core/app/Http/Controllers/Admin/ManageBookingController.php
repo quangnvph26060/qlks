@@ -235,43 +235,41 @@ class ManageBookingController extends Controller
         return view('admin.booking.check_out', compact('pageTitle', 'booking', 'totalFare', 'totalTaxCharge', 'canceledFare', 'canceledTaxCharge', 'returnedPayments', 'receivedPayments'));
     }
 
-    public function checkOut(Request $request, $id)
-    {
-       
+    public function checkOut(Request $request, $id){
         $booking = Booking::active()->with('payments')->withSum('usedPremiumService', 'total_amount')->findOrFail($id);
-        
-        
-        // if ($booking->check_out > now()->toDateString()) {
-        //     $notify[] = ['error', 'Ngày thanh toán cho đặt phòng này lớn hơn hiện tại'];
-        //     return back()->withNotify($notify);
-        // }
-        $due = getAmount($booking->total_amount - $booking->paid_amount);
-
-        if ($due > 0) {
-            $notify[] = ['error', 'Khách hàng phải thanh toán số tiền phải trả trước'];
-            return back()->withNotify($notify);
-        }
-
-        if ($due < 0) {
-            $notify[] = ['error', 'Hoàn trả số tiền được hoàn lại cho khách trước'];
-            return back()->withNotify($notify);
-        }
-
-        $booking->createActionHistory('checked_out');
-
-        $booking->activeBookedRooms()->update(['status' => Status::BOOKING_CHECKOUT]);
-        $booking->status = Status::BOOKING_CHECKOUT;
-        $booking->checked_out_at = now();
-
-        $booking->save();
-
-        if($request->is_method === 'receptionist')
-        {
-            return response()->json(['status'=>'success']);
-        }
-        $notify[] = ['success', 'Đặt phòng đã được thanh toán thành công'];
-        return redirect()->route('admin.booking.all')->withNotify($notify);
     }
+
+
+
+    // public function checkOut(Request $request, $id) // trả phòng
+    // {
+    //     $booking = Booking::active()->with('payments')->withSum('usedPremiumService', 'total_amount')->findOrFail($id);
+    //     // if ($booking->check_out > now()->toDateString()) {
+    //     //     $notify[] = ['error', 'Ngày thanh toán cho đặt phòng này lớn hơn hiện tại'];
+    //     //     return back()->withNotify($notify);
+    //     // }
+    //     $due = getAmount($booking->total_amount - $booking->paid_amount);
+
+    //     if ($due > 0) {
+    //         $notify[] = ['error', 'Khách hàng phải thanh toán số tiền phải trả trước'];
+    //         return back()->withNotify($notify);
+    //     }
+    //     if ($due < 0) {
+    //         $notify[] = ['error', 'Hoàn trả số tiền được hoàn lại cho khách trước'];
+    //         return back()->withNotify($notify);
+    //     }
+    //     $booking->createActionHistory('checked_out');
+    //     $booking->activeBookedRooms()->update(['status' => Status::BOOKING_CHECKOUT]); 
+    //     $booking->status = Status::BOOKING_CHECKOUT;
+    //     $booking->checked_out_at = now();
+    //     $booking->save();
+    //     if($request->is_method === 'receptionist')
+    //     {
+    //         return response()->json(['status'=>'success']);
+    //     }
+    //     $notify[] = ['success', 'Đặt phòng đã được thanh toán thành công'];
+    //     return redirect()->route('admin.booking.all')->withNotify($notify);
+    // }
 
     public function premiumServiceDetail(Request $request, $id)
     {

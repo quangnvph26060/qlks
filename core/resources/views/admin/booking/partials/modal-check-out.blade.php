@@ -10,7 +10,7 @@
                 <table class="w3-table table-fz-13">
                   <thead>
                     <tr>
-                        <th><input type="checkbox" id="all-check-box"></th>
+                        <th><input type="checkbox" id="all-check-boxs"></th>
                         <th>Hạng phòng</th>
                         <th>Phòng</th>
                         <th>Nhận</th>
@@ -32,9 +32,10 @@
                  </tbody>
                 </table>
             </div>
-            <div class="modal-footer">
+            <div class="modal-footer btn-modalCheckOut">
                 {{-- <button type="button" class="btn btn-secondary">Sửa đặt phòng</button> --}}
-                <button type="button" class=" nhan-phong modal-check-out-room" data-bs-toggle="modal" data-bs-target="#checkInRoom">Trả phòng</button>
+                <button type="button" class=" nhan-phong check-out-room-detail" >Trả phòng</button>
+                <button type="button" class=" nhan-phong modal-check-out-room" data-bs-toggle="modal" data-bs-target="#checkOutRoom">Trả phòng và thanh toán</button>
             </div>
         </div>
     </div>

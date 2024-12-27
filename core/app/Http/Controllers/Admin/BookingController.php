@@ -605,9 +605,20 @@ class BookingController extends Controller
 
 
     public function getRoomCheckIn(Request $request){
-       $getRoomCheckIn = $request->selectedRooms;
-       $roomCheckIn    = BookedRoom::whereIn('id', $getRoomCheckIn)->select('booking_id', 'room_id', 'room_type_id', 'fare', 'check_in_at')->get();
-     
+        $getRoomCheckIn = $request->selectedRooms;
+        $roomCheckIn    = BookedRoom::whereIn('id', $getRoomCheckIn)->select('booking_id', 'room_id', 'room_type_id', 'fare', 'check_in_at', 'option_room')->get();
+       
+        $checkInDate    = $roomCheckIn[0]['check_in_at'];
+        if( $checkInDate  !== null && $roomCheckIn[0]['option_room'] === 'gio'){
+
+            $currentDate    = now();
+            $checkInDate    = Carbon::parse($checkInDate);
+
+            $timeDiffInHours = abs($currentDate->floatDiffInHours($checkInDate));
+            $periodOfTime    = ceil($timeDiffInHours); // khoảng thời gian;
+          
+        }
+       
        $totalFare      = $roomCheckIn->sum('fare');
        $groupedData    = $roomCheckIn->groupBy('booking_id')->map(function ($items, $bookingId) {
                 return [

@@ -11,6 +11,7 @@ use App\Models\EmailTemplate;
 use App\Models\Extension;
 use App\Models\Frontend;
 use App\Models\GeneralSetting;
+use App\Models\HotelFacility;
 use App\Models\Language;
 use App\Models\Role;
 use App\Notify\Notify;
@@ -461,7 +462,7 @@ function dateSorting($arr)
     usort($arr, "dateSort");
     return $arr;
 }
-
+// setting and setup hotels
 function gs($key = null)
 {
     $general = Cache::get('GeneralSetting');
@@ -475,6 +476,20 @@ function gs($key = null)
 
     return $general;
 }
+function hf($key = null) // hotel_facilities
+{
+    $general = Cache::get('HotelFacility');
+    if (!$general) {
+        $general = HotelFacility::first();
+        Cache::put('HotelFacility', $general);
+    }
+    if ($key) {
+        return @$general->$key;
+    }
+
+    return $general;
+}
+// end setting and setup hotels
 function isImage($string)
 {
     $allowedExtensions = array('jpg', 'jpeg', 'png', 'gif');

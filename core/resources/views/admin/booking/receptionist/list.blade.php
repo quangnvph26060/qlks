@@ -547,7 +547,19 @@
 
             $('#all-check-box').change(function() {
                 $('#list-room-booking input[type="checkbox"]').prop('checked', $(this).prop('checked'));
+               
             });
+
+            $('#all-check-boxs').change(function() {
+                // Thay đổi trạng thái của tất cả các checkbox trong danh sách
+                $('#list-room-booked input[type="checkbox"]').prop('checked', $(this).prop('checked'));
+                
+                // Kiểm tra nếu tất cả các checkbox đã được chọn
+                if ($(this).prop('checked')) {
+                    alert('Tất cả các phòng đã được chọn!');
+                }
+            });
+
 
             $(document).on('click', '.modal-checkout', function() {
                 var booking_id = $('.booking_number').text();
@@ -575,15 +587,29 @@
                             const formattedTimes = `${hoursss}:${minutesss}`;
                             $('#list-room-booked').empty();
                             let rowlistRoom = '';
+                            let rowbtnCheckOut = '';
+                            console.log(response.data.length);
+                            $('.btn-modalCheckOut').empty();
+                            if(response.data.length === 1){
+                                rowbtnCheckOut += `
+                                 <button type="button" class=" nhan-phong modal-check-out-room" data-bs-toggle="modal" data-bs-target="#checkOutRoom">Trả phòng và thanh toán</button>
+                                `;
+                            }else{
+                                rowbtnCheckOut += `
+                                    <button type="button" class=" nhan-phong check-out-room-detail" >Trả phòng</button>
+                                    <button type="button" class=" nhan-phong modal-check-out-room" data-bs-toggle="modal" data-bs-target="#checkOutRoom">Trả phòng và thanh toán</button>
+                                `;
+                            }
+
                             response.data.forEach(item => {
                                 const dateTimeCurrent = item.booked[0]['check_in_at'];
                                 const parts = dateTimeCurrent.split(' ');
                                 const formattedDatesCurrent = parts[0];
                                 const formattedTimesCurrent = parts[1];
 
-
+                                // item.booked[0]['id'] id của bảng booked_rooms
                                 rowlistRoom += `
-                                        <tr data-id="${item.booked[0]['id']}">
+                                        <tr data-id="${item.booked[0]['id']}" data-booking-id="${item.booked[0]['booking_id']}">
                                             <td ><input type="checkbox" ${nameroom === item.room_number ? "checked" :""}></td>
                                             <td>${item.room_type['name']}</td>
                                             <td>${item.room_number}</td>
@@ -604,7 +630,7 @@
                             })
 
                             $('#list-room-booked').append(rowlistRoom);
-
+                            $('.btn-modalCheckOut').append(rowbtnCheckOut);
                             $('#loading').hide();
                             $('#modalCheckOut').modal('show');
 
@@ -620,7 +646,30 @@
                     }
                 });
             });
-            $('.modal-check-out-room').on('click', function() {
+
+            $(document).on('click', '.check-out-room-detail', function() {
+          
+                var selectedRooms = [];
+                if ($('#list-room-booking input[type="checkbox"]:checked').length === 0) {
+
+                    $('#list-room-booked input[type="checkbox"]:checked').each(function() {
+                        var roomId = $(this).closest('tr').data('id');
+                        selectedRooms.push(roomId);
+                    });
+                } else {
+
+                    $('#list-room-booking input[type="checkbox"]:checked').each(function() {
+                        var roomId = $(this).closest('tr').data('id');
+                        selectedRooms.push(roomId);
+                    });
+                }
+                console.log(selectedRooms);
+                
+
+            });
+
+            $(document).on('click', '.modal-check-out-room', function() {
+          
                 var selectedRooms = [];
 
                 var checkInDate = $('#list-room-booked input[type="date"]:last').val();
@@ -634,8 +683,7 @@
                 // Kết hợp ngày và giờ thành định dạng cuối cùng
                 var formattedDateTime = formattedDate + ' ' + formattedTime;
 
-                // In ra định dạng cuối cùng
-                console.log('Ngày và giờ check-in:', formattedDateTime);
+
 
                 if ($('#list-room-booking input[type="checkbox"]:checked').length === 0) {
 
@@ -694,11 +742,12 @@
                             <div class="col-md-6">
                                 <strong>Trả phòng</strong><br>${formattedDateTime}
                             </div>
+                             <div class="col-md-6">
+                                <strong> Thời gian sử dụng</strong><br>${formattedDateTime}
+                            </div>
                         </div>
                       
                         <!-- Tab Menu -->
-                        
-
                         <div class="row">
                             <div class=" col-md-6 d-flex align-items-end">
                                 <label for="note" class="form-label"><strong style="white-space: nowrap;">Ghi chú</strong></label>
@@ -738,12 +787,12 @@
                                     </div>
                                 </div>
                             </div>
-                        </div>
-                        <input type="text" data-booking-id="${response.roomCheckIn[0]['booking_id']}" 
+                            </div>
+                            <input type="text" data-booking-id="${response.roomCheckIn[0]['booking_id']}" 
                                                 data-room-id="${response.roomCheckIn[0]['room_id']}" 
                                                 data-room-type-id="${response.roomCheckIn[0]['room_type_id']}"    class="form-control data-booked" hidden>
-                    </div>
-                    `
+                            </div>
+                            `
                             $('.main-room-booked').append(row_booking);
 
 
@@ -1551,7 +1600,33 @@
             });
             $(document).on('click', '.btn-check-out', function(event) {
                 alert('chưa làm xong');
+                var bookingId = $('.data-booked').data('booking-id'); // mã booking
+                var roomId = $('.data-booked').data('room-id'); // phòng
+                var roomTypeId = $('.data-booked').data('room-type-id'); // loại phòng
+                var inputValue = $('#number-input').val();
+                var sanitizedValue = inputValue.replace(/\./g, ''); // giá
+                var url = `{{ route('admin.booking.key.handover', ['id' => ':id']) }}`.replace(':id', bookingId); 
+
+                $.ajax({
+                    url: url,
+                    type: 'POST',
+                    data: {
+                        is_method: "receptionist",
+                        room_id: roomId,
+                        room_type_id: roomTypeId,
+                        price_booked: sanitizedValue
+                    },
+                    success: function(response) {
+                        if (response.status === 'success') {
+                            window.location.reload();
+                        }
+                    },
+                    error: function(xhr, status, error) {
+                        console.error('Lỗi:', error);
+                    }
+                });
             });
+
             $(document).on('click', '.btn-check-in', function(event) {
                 var bookingId = $('.data-booked').data('booking-id');
                 var roomId = $('.data-booked').data('room-id');
@@ -2043,33 +2118,7 @@
                 }
             });
 
-            $('#submitBtnCheckOut').click(function(e) {
-                var booking_id = $('#booking_id').val();
-                var url = `{{ route('admin.booking.checkout', ['id' => ':id']) }}`.replace(':id',
-                    booking_id);
-
-                $.ajax({
-                    url: url,
-                    type: "POST",
-                    data: {
-                        _token: '{{ csrf_token() }}',
-                        is_method: "receptionist"
-                    },
-                    success: function(response) {
-                        if (response.status === 'success') {
-                            handleLateCheckinClick(response.id, response.booking_id)
-                            notify('success', `Đặt phòng đã được thanh toán thành công`);
-                            window.location.reload();
-                        }
-                    },
-                    error: function(xhr, status, error) {
-                        console.error(xhr.responseText);
-                        //  console.log(xhr.status);
-                        alert("Đã có lỗi xảy ra. Vui lòng thử lại.");
-                    }
-                });
-            })
-
+            
             $('#hour_current').on('click', function() {
                 // Lấy ngày và giờ hiện tại
                 const now = new Date();

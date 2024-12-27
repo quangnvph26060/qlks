@@ -5,6 +5,7 @@ namespace App\Http\Controllers\Admin;
 use App\Constants\Status;
 use App\Http\Controllers\Controller;
 use App\Models\Frontend;
+use App\Models\HotelFacility;
 use App\Rules\FileTypeValidate;
 use Illuminate\Http\Request;
 
@@ -43,7 +44,7 @@ class GeneralSettingController extends Controller
             'upcoming_checkin_days'    => 'required|numeric|min:1',
             'upcoming_checkout_days'   => 'required|numeric|min:1',
             'deposit'                  => 'numeric|min:1|max:100|nullable',
-            'type'                  => 'required',
+            'type'                     => 'required',
         ]);
 
         $timezones = timezone_identifiers_list();
@@ -66,7 +67,7 @@ class GeneralSettingController extends Controller
         $general->upcoming_checkin_days    = $request->upcoming_checkin_days;
         $general->upcoming_checkout_days   = $request->upcoming_checkout_days;
         $general->deposit                  = $request->deposit;
-        $general->type                  = $request->type;
+        $general->type                     = $request->type;
         $general->save();
 
         $timezoneFile = config_path('timezone.php');
@@ -317,5 +318,52 @@ class GeneralSettingController extends Controller
             'status' => 'success',
             'data' => $general
         ]);
+    }
+
+    // cấu hình cơ sở 
+    public function setupHotel(){
+        $pageTitle = 'Cấu hình cơ sở';
+        $hotels = HotelFacility::all();
+        $emptyMessage = 'Không tìm thấy dữ liệu';
+        return view('admin.setting.setup_hotel', compact('pageTitle', 'hotels','emptyMessage'));
+    }
+
+    public function addHotel(Request $request){
+        $request->validate([
+            'ma_coso' =>'required|string',
+            'ten_coso' =>'required|string',
+        ]);
+
+        $hotel = new HotelFacility();
+        $hotel->ma_coso = $request->ma_coso;
+        $hotel->ten_coso = $request->ten_coso;
+        $hotel->trang_thai =  $request->hotelStatus;
+        // save
+        $hotel->save();
+
+        $notify[] = ['success', 'Thêm cơ sở thành công'];
+        return back()->withNotify($notify);
+    }
+    public function editHotel($id, Request $request){
+        $request->validate([
+            'ma_coso' =>'required|string',
+            'ten_coso' =>'required|string',
+        ]);
+
+        $hotel = HotelFacility::find($id);
+        $hotel->ma_coso = $request->ma_coso;
+        $hotel->ten_coso = $request->ten_coso;
+        $hotel->trang_thai =  $request->hotelStatus;
+        // save
+        $hotel->save();
+
+        $notify[] = ['success', 'Cập nhật cơ sở thành công'];
+        return back()->withNotify($notify);
+    }
+    
+    public function deleteHotel($id){
+        HotelFacility::destroy($id);
+        $notify[] = ['success', 'Xóa cơ sở thành công'];
+        return back()->withNotify($notify);
     }
 }

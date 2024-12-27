@@ -548,7 +548,7 @@ MODIFY COLUMN day_of_week VARCHAR(255) CHARACTER SET utf8mb4 COLLATE utf8mb4_uni
 ALTER TABLE room_prices_additional_hour
 ADD COLUMN hour INT;
 
-#giá mặc định của phòng theo giờ 
+# giá mặc định của phòng theo giờ 
 CREATE TABLE room_prices_weekday_hour (
     id INT AUTO_INCREMENT PRIMARY KEY,
     room_price_id INT NULL,
@@ -602,3 +602,97 @@ ADD total_people INT DEFAULT 0;
 
 ALTER TABLE booked_rooms
 ADD check_in_at DATETIME DEFAULT NULL;
+
+
+
+# chỉnh sửa các bảng giá 
+-- Create the regular_room_prices table
+CREATE TABLE regular_room_prices (
+    id INT AUTO_INCREMENT PRIMARY KEY,
+    room_type_id INT,
+    hourly_price DECIMAL(10, 2) DEFAULT NULL,
+    daily_price DECIMAL(10, 2) DEFAULT NULL,
+    overnight_price DECIMAL(10, 2) DEFAULT NULL,
+    created_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
+    updated_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP ON UPDATE CURRENT_TIMESTAMP
+);
+
+INSERT INTO regular_room_prices (room_type_id, hourly_price, daily_price, overnight_price) VALUES
+(1, 100.00, 800.00, 500.00),
+(2, 150.00, 1000.00, 600.00);
+
+-- Create the room_prices_per_day_of_week table
+CREATE TABLE room_prices_per_day_of_week (
+    id INT AUTO_INCREMENT PRIMARY KEY,
+    room_type_id INT,
+    day_of_week VARCHAR(255) CHARACTER SET utf8mb4 COLLATE utf8mb4_unicode_ci,
+    hourly_price DECIMAL(10, 2) DEFAULT NULL,
+    daily_price DECIMAL(10, 2) DEFAULT NULL,
+    overnight_price DECIMAL(10, 2) DEFAULT NULL,
+    created_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
+    updated_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP ON UPDATE CURRENT_TIMESTAMP
+);
+
+INSERT INTO room_prices_per_day_of_week (room_type_id, day_of_week, hourly_price, daily_price, overnight_price) VALUES
+(1, 'Monday', 120.00, 850.00, 550.00),
+(1, 'Friday', 130.00, 900.00, 600.00),
+(2, 'Sunday', 180.00, 1100.00, 700.00);
+
+-- Create the room_prices_per_day table
+CREATE TABLE room_prices_per_day (
+    id INT AUTO_INCREMENT PRIMARY KEY,
+    room_type_id INT,
+    date DATE,
+    hourly_price DECIMAL(10, 2) DEFAULT NULL,
+    daily_price DECIMAL(10, 2) DEFAULT NULL,
+    overnight_price DECIMAL(10, 2) DEFAULT NULL,
+    created_at DATETIME DEFAULT CURRENT_TIMESTAMP,
+    updated_at DATETIME DEFAULT CURRENT_TIMESTAMP ON UPDATE CURRENT_TIMESTAMP
+);
+
+INSERT INTO room_prices_per_day (room_type_id, date, hourly_price, daily_price, overnight_price) VALUES
+(1, '2024-01-01', 200.00, 1000.00, 700.00),
+(2, '2024-01-02', 250.00, 1200.00, 800.00);
+
+-- Create the room_prices_weekday_hour table
+CREATE TABLE room_prices_weekday_hour (
+    id INT AUTO_INCREMENT PRIMARY KEY,
+    room_type_id INT,
+    hour INT,
+    price DECIMAL(10, 2),
+    created_at DATETIME DEFAULT CURRENT_TIMESTAMP,
+    updated_at DATETIME DEFAULT CURRENT_TIMESTAMP ON UPDATE CURRENT_TIMESTAMP
+);
+
+INSERT INTO room_prices_weekday_hour (room_type_id, hour, price) VALUES
+(1, 2, 50.00),
+(1, 3, 75.00),
+(2, 2, 60.00),
+(2, 4, 90.00);
+
+12/27/2024
+
+
+CREATE TABLE hotel_facilities (
+    id INT AUTO_INCREMENT PRIMARY KEY,
+    ma_coso VARCHAR(10) CHARACTER SET utf8mb4 COLLATE utf8mb4_unicode_ci,
+    ten_coso VARCHAR(255) CHARACTER SET utf8mb4 COLLATE utf8mb4_unicode_ci,
+    trang_thai VARCHAR(50) CHARACTER SET utf8mb4 COLLATE utf8mb4_unicode_ci
+) CHARACTER SET utf8mb4 COLLATE utf8mb4_unicode_ci;
+ALTER TABLE hotel_facilities
+MODIFY trang_thai VARCHAR(50) CHARACTER SET utf8mb4 COLLATE utf8mb4_unicode_ci DEFAULT '0';
+ALTER TABLE hotel_facilities
+ADD COLUMN created_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
+ADD COLUMN updated_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP ON UPDATE CURRENT_TIMESTAMP;
+
+
+
+
+SELECT CONCAT('ALTER TABLE ', table_name, ' ADD COLUMN base_code VARCHAR(10);')
+FROM information_schema.tables
+WHERE table_schema = 'quanlykhachsan';
+
+SELECT CONCAT('UPDATE ', table_name, ' SET base_code = 1;')
+FROM information_schema.tables
+WHERE table_schema = 'quanlykhachsan';
+

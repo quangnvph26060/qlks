@@ -161,5 +161,11 @@
         "subtitle": "Cấu hình tiêu đề meta, mô tả meta, từ khóa meta, v.v. phù hợp để làm cho hệ thống thân thiện với SEO.",
         "icon": "las la-globe",
         "route_name": "admin.seo"
+    },
+    "base_configuration": {
+        "title": "Cấu hình cơ sở",
+        "subtitle": "Cấu hình cơ sở cho từng cơ sở .",
+        "icon": "las la-globe",
+        "route_name": "admin.setting.setup.hotel"
     }
 }
