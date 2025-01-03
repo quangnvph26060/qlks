@@ -7,7 +7,7 @@
             <div class="card-body">
                 <div class="row">
                     <div class="col-md-12 col-sm-12">
-                        <div class="form-group position-relative mb-0" style="float: inline-end;">
+                        <div class="form-group position-relative mb-0" style="float: inline-end;" id="btn-add-hotel">
                             <button class="btn btn-sm btn-outline--primary" data-modal_title="Thêm mới cơ sở" type="button"
                                 data-bs-toggle="modal" data-bs-target="#setup-hotel">
                                 <i class="las la-plus"></i>Thêm mới
@@ -18,46 +18,8 @@
             </div>
 
             <div class="modal fade" id="setup-hotel" tabindex="-1" aria-labelledby="exampleModalLabel" aria-hidden="true">
-                <div class="modal-dialog">
-                    <div class="modal-content">
-                        <div class="modal-header">
-                            <h1 class="modal-title fs-5" id="exampleModalLabel">Thêm mới cơ sở</h1>
-                            <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
-                        </div>
-                        <div class="modal-body">
-                            <form id="btn-submit-hotel" action="{{ route('admin.setting.setup.add.hotel') }}"
-                                method="POST">
-                                @csrf
-                                <!-- Input 1 -->
-                                <div class="mb-3">
-                                    <label for="hotelName" class="form-label">Mã cơ sở</label>
-                                    <input type="text" class="form-control " name="ma_coso" id="ma_coso"
-                                        placeholder="Nhập mã cơ sở">
-                                    <span class="invalid-feedback d-block" style="font-weight: 500"
-                                        id="ma_coso_error"></span>
-                                </div>
-                                <!-- Input 2 -->
-                                <div class="mb-3">
-                                    <label for="hotelLocation" class="form-label">Tên khách sạn</label>
-                                    <input type="text" class="form-control " name="ten_coso" id="ten_coso"
-                                        placeholder="Nhập tên khách sạn">
-                                    <span class="invalid-feedback d-block" style="font-weight: 500"
-                                        id="ten_coso_error"></span>
-                                </div>
-                                <div class="mb-3">
-                                    <label for="hotelStatus" class="form-label">Trạng thái</label><br>
-                                    <input type="radio" name="hotelStatus" value="1" id="statusActive"> Hoạt động
-                                    <input type="radio" name="hotelStatus" value="0" id="statusInactive" checked>
-                                    Không hoạt
-                                    động
-                                </div>
-                                <div class="modal-footer">
-                                    <button type="button" class="btn btn-primary" id="click-btn-hotel">Lưu</button>
-                                </div>
-                            </form>
-                        </div>
+                <div class="modal-dialog" id="modal-dialog">
 
-                    </div>
                 </div>
             </div>
 
@@ -75,7 +37,7 @@
                                 <th>Hành động</th>
                             </tr>
                         </thead>
-                        <tbody>
+                        <tbody id="main-table-hotel">
                             @forelse($hotels as $key => $item)
                                 <tr data-id="{{ $item->id }}">
                                     <td>
@@ -85,23 +47,30 @@
                                     <td>
                                         {{ $item->ten_coso }}
                                     </td>
-                                    <td>
-                                        {{ $item->trang_thai }}
+                                    <td class="status-hotel">
+                                        {!! $item->styleStatus() !!}
                                     </td>
                                     <td>
-
-                                        <a class="btn btn-sm btn-outline--primary"
-                                            href="{{ route('admin.setting.setup.edit.hotel', $item->id) }}">
+                                        {{-- href="{{ route('admin.setting.setup.edit.hotel', $item->id) }}" --}}
+                                        <a class="btn btn-sm btn-outline--primary btn-edit-hotel"
+                                            data-id="{{ $item->id }}" data-bs-toggle="modal" data-bs-target="#setup-hotel">
                                             <i class="la la-pencil"></i>@lang('Sửa')
                                         </a>
-
-                                        <button class="btn btn-sm btn-outline--danger confirmationBtn"
-                                            data-action="{{ route('admin.hotel.amenity.status', $item->id) }}"
+                                        @if($item->trang_thai == 1)
+                                           
+                                            <button class="btn btn-sm btn-outline--danger confirmationBtn"
+                                            data-action="{{ route('admin.setting.setup.status.hotel', $item->id) }}"   data-id="{{ $item->id }}" 
                                             data-question="@lang('Bạn có chắc chắn muốn tắt tiện ích này không?')" type="button">
                                             <i class="la la-eye-slash"></i> @lang('Ngưng hoạt động')
                                         </button>
-
-                                        <button class="btn btn-sm btn-outline--danger btn-delete icon-delete-room" 
+                                        @else
+                                        <button class="btn btn-sm btn-outline--success confirmationBtn"
+                                            data-action="{{ route('admin.setting.setup.status.hotel', $item->id) }}"   data-id="{{ $item->id }}" 
+                                            data-question="@lang('Bạn có chắc chắn muốn tắt tiện ích này không?')" type="button">
+                                            <i class="la la-eye-slash"></i> @lang('Hoạt động')
+                                        </button>
+                                        @endif
+                                        <button class="btn btn-sm btn-outline--danger btn-delete icon-delete-room"
                                             data-id="{{ $item->id }}" data-modal_title="@lang('Xóa danh mục')"type="button"
                                             data-pro="0">
                                             <i class="fas fa-trash"></i>@lang('Xóa')
@@ -169,18 +138,137 @@
                     ]
                 },
             }
-
-            $('#click-btn-hotel').on('click', function() {
+            $(document).on('click', '#click-btn-hotel', function() {
                 if (validateAllFields(formEconomyEdit)) {
                     document.getElementById('btn-submit-hotel').submit(); // là id trong form
                 }
             });
+            $(document).on('click', '#click-btn-hotel-update', function() {
+                if (validateAllFields(formEconomyEdit)) {
+                    document.getElementById('btn-submit-hotel-update').submit(); // là id trong form
+                }
+            });
+            // add 
+            $('#btn-add-hotel').on('click', function() {
+                $('#modal-dialog').empty();
+                let row = '';
+                row += `
+                        <div class="modal-content">
+                            <div class="modal-header">
+                                <h1 class="modal-title fs-5" id="exampleModalLabel">Thêm mới cơ sở</h1>
+                                <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+                            </div>
+                            <div class="modal-body">
+                                <form id="btn-submit-hotel" action="{{ route('admin.setting.setup.add.hotel') }}"
+                                    method="POST">
+                                    @csrf
+                                    <!-- Input 1 -->
+                                    <div class="mb-3">
+                                        <label for="hotelName" class="form-label">Mã cơ sở</label>
+                                        <input type="text" class="form-control " name="ma_coso" id="ma_coso"
+                                            placeholder="Nhập mã cơ sở">
+                                        <span class="invalid-feedback d-block" style="font-weight: 500"
+                                            id="ma_coso_error"></span>
+                                    </div>
+                                    <!-- Input 2 -->
+                                    <div class="mb-3">
+                                        <label for="hotelLocation" class="form-label">Tên khách sạn</label>
+                                        <input type="text" class="form-control " name="ten_coso" id="ten_coso"
+                                            placeholder="Nhập tên khách sạn">
+                                        <span class="invalid-feedback d-block" style="font-weight: 500"
+                                            id="ten_coso_error"></span>
+                                    </div>
+                                    <div class="mb-3">
+                                        <label for="hotelStatus" class="form-label">Trạng thái</label><br>
+                                        <input type="radio" name="hotelStatus" value="1" id="statusActive"> Hoạt động
+                                        <input type="radio" name="hotelStatus" value="0" id="statusInactive" checked>
+                                        Không hoạt
+                                        động
+                                    </div>
+                                    <div class="modal-footer">
+                                        <button type="button" class="btn btn-primary" id="click-btn-hotel">Lưu</button>
+                                    </div>
+                                </form>
+                            </div>
+                        </div>
+                    `;
+                $('#modal-dialog').append(row);
+
+                formEconomyEdit.ma_coso.element = document.getElementById('ma_coso');
+                formEconomyEdit.ma_coso.error = document.getElementById('ma_coso_error');
+                formEconomyEdit.ten_coso.element = document.getElementById('ten_coso');
+                formEconomyEdit.ten_coso.error = document.getElementById('ten_coso_error');
+            });
+            // sửa
+            $('.btn-edit-hotel').on('click', function() {
+                var dataId = $(this).data('id');
+                // ajax request
+                $.ajax({
+                    url: `{{ route('admin.setting.setup.edit.hotel', '') }}/${dataId}`,
+                    type: 'POST',
+                    success: function(data) {
+                        if (data.status === 'success') {
+                          
+                            let rowEdit = '';
+                            $('#modal-dialog').empty();
+                            rowEdit += `
+                            <div class="modal-content">
+                                <div class="modal-header">
+                                    <h1 class="modal-title fs-5" id="exampleModalLabel">Chỉnh sửa cơ sở</h1>
+                                    <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+                                </div>
+                                <div class="modal-body">
+                                    <form id="btn-submit-hotel-update" action="{{ route('admin.setting.setup.update.hotel', '') }}/${data.data['id']}"
+                                        method="POST">
+                                        @csrf
+                                        <!-- Input 1 -->
+                                        <div class="mb-3">
+                                            <label for="hotelName" class="form-label">Mã cơ sở</label>
+                                            <input type="text" class="form-control " name="ma_coso" id="ma_coso"
+                                                placeholder="Nhập mã cơ sở" value="${data.data['ma_coso']}">
+                                            <span class="invalid-feedback d-block" style="font-weight: 500"
+                                                id="ma_coso_error"></span>
+                                        </div>
+                                        <!-- Input 2 -->
+                                        <div class="mb-3">
+                                            <label for="hotelLocation" class="form-label">Tên khách sạn</label>
+                                            <input type="text" class="form-control " name="ten_coso" id="ten_coso"
+                                                placeholder="Nhập tên khách sạn" value="${data.data['ten_coso']}">
+                                            <span class="invalid-feedback d-block" style="font-weight: 500"
+                                                id="ten_coso_error"></span>
+                                        </div>
+                                        <div class="mb-3">
+                                            <label for="hotelStatus" class="form-label">Trạng thái</label><br>
+                                            <input type="radio" name="hotelStatus" value="1" id="statusActive" ${data.data['trang_thai'] == 1 ? 'checked' : ''}> Hoạt động
+                                            <input type="radio" name="hotelStatus" value="0" id="statusInactive" ${data.data['trang_thai'] == 0 ? 'checked' : ''}> Không hoạt động
+                                        </div>
+                                        <div class="modal-footer">
+                                            <button type="button" class="btn btn-primary" id="click-btn-hotel-update">Lưu</button>
+                                        </div>
+                                    </form>
+                                </div>
+                            </div>
+                            `;
+                            $('#modal-dialog').append(rowEdit);
+                            formEconomyEdit.ma_coso.element = document.getElementById('ma_coso');
+                            formEconomyEdit.ma_coso.error = document.getElementById('ma_coso_error');
+                            formEconomyEdit.ten_coso.element = document.getElementById('ten_coso');
+                            formEconomyEdit.ten_coso.error = document.getElementById('ten_coso_error');
+                        }
+                    },
+                    error: function(xhr, status, error) {
+                        console.log(xhr.responseText);
+                    }
+                });
+
+            });
             // xóa 
             $('.icon-delete-room').on('click', function() {
-                var dataId = $(this).data('id');    
+                var dataId = $(this).data('id');
+                var rowToDelete = $(`tr[data-id="${dataId}"]`);
                 Swal.fire({
-                    title: 'Xác nhận xóa phòng?',
-                    text: 'Bạn có chắc chắn muốn xóa phòng này không?',
+                    title: 'Xác nhận xóa cơ sở?',
+                    text: 'Bạn có chắc chắn muốn xóa cơ sở này không?',
                     icon: 'warning',
                     showCancelButton: true,
                     confirmButtonText: 'Đồng ý',
@@ -189,27 +277,44 @@
                 }).then((result) => {
                     if (result.isConfirmed) {
                         // ajax   
-                       
                         $.ajax({
                             url: `{{ route('admin.setting.setup.delete.hotel', '') }}/${dataId}`,
                             type: 'POST',
                             success: function(data) {
-                                Swal.fire(
-                                    'Xóa thành công!',
-                                    'Phòng đã được xóa.',
-                                    'success'
-                                ).then(function() {
-                                    location.reload();
-                                });
+                                if (data.status ==='success') {
+                                    rowToDelete.remove();
+                                    
+                                   
+                                }
                             },
                             error: function(xhr, status, error) {
                                 console.log(xhr.responseText);
                             }
                         });
 
-                      
+
                     }
                 });
+            });
+            // chỉnh sửa trạng thái
+            $('.confirmationBtn').on('click', function(){
+                var action =  $(this).data('action');
+                var dataId = $(this).data('id');
+                // ajax request
+                $.ajax({
+                    url: action,
+                    type: 'POST',
+                    success: function(data) {
+                        if (data.status ==='success') {
+                            let statusCell = $(`tr[data-id="${dataId}"] .status-hotel`);
+                            statusCell.html(data.status_html);
+                        }
+                    },
+                    error: function(xhr, status, error) {
+                        console.log(xhr.responseText);
+                    }
+                });
+                
             });
             $('input[name="hotelStatus"]').on('change', function() {
                 const selectedStatus = $('input[name="hotelStatus"]:checked').val();

@@ -288,6 +288,17 @@ Route::middleware('admin', 'adminPermission')->group(function () {
 
     Route::controller('ManagePriceListController')->group(function () {
         Route::get('priceList', 'priceList')->name('manage.price.all');
+        Route::get('priceListRoomType', 'priceListRoomType')->name('manage.priceroomtype.all');
+        Route::get('modalAdd', 'modalAdd')->name('manage.modalAdd');
+        Route::post('modalEdit/{id}', 'modalEdit')->name('manage.modalEdit');
+        Route::post('addPriceRoomType', 'addPriceRoomType')->name('manage.addPriceRoomType');
+        Route::post('addPrice', 'addPrice')->name('manage.addPrice');
+        Route::post('editPriceRoomType/{id}', 'editPriceRoomType')->name('manage.editPriceRoomType');
+        Route::get('setupPriceRoomType', 'setupPriceRoomType')->name('manage.setupPriceRoomType');
+        Route::post('updateRoomTypePrice', 'updateRoomTypePrice')->name('manage.updateRoomTypePrice');
+        Route::post('deleteRoomTypePrice/{id}', 'deleteRoomTypePrice')->name('manage.deleteRoomTypePrice');
+        Route::get('showRoomTypePrice', 'showRoomTypePrice')->name('manage.showRoomTypePrice');
+        Route::post('deletePriceRoomType/{id}', 'deletePriceRoomType')->name('manage.deletePriceRoomType');
         Route::post('priceList', 'store')->name('manage.price.store');
         Route::get('priceList/{id}', 'edit')->name('manage.price.edit');
         Route::put('priceList/{id}/update', 'update')->name('manage.price.update');
@@ -527,6 +538,8 @@ Route::middleware('admin', 'adminPermission')->group(function () {
         Route::get('setup-hotel', 'setupHotel')->name('setting.setup.hotel');
         Route::post('setup-hotel', 'addHotel')->name('setting.setup.add.hotel');
         Route::post('edit-setup-hotel/{id}', 'editHotel')->name('setting.setup.edit.hotel');
+        Route::post('update-setup-hotel/{id}', 'updateHotel')->name('setting.setup.update.hotel');
+        Route::post('status-setup-hotel/{id}', 'statusHotel')->name('setting.setup.status.hotel');
         Route::post('delete-setup-hotel/{id}', 'deleteHotel')->name('setting.setup.delete.hotel');
     });
 

@@ -28,15 +28,15 @@
                             <div class="col-xl-4 col-md-4 col-sm-12">
                                 <div class="form-group">
                                     <label>@lang('Mã phòng')</label>
-                                    <input class="form-control" name="code" type="text"
+                                    <input class="form-control" name="code"  placeholder="Mã phòng" type="text"
                                         value="{{ old('code', @$roomType->code) }}">
                                 </div>
                             </div>
 
                             <div class="col-xl-4 col-md-4 col-sm-12">
                                 <div class="form-group">
-                                    <label>@lang('Số phòng')</label>
-                                    <input class="form-control" name="room_number" type="text"
+                                    <label>@lang('Tên phòng')</label>
+                                    <input class="form-control" placeholder="Tên phòng" name="room_number" type="text"
                                         value="{{ old('room_number', @$roomType->room_number) }}">
                                 </div>
                             </div>
@@ -131,7 +131,7 @@
                                     <input class="form-control" min="1" name="total_adult" required type="number"
                                         value="{{ old('total_adult', @$roomType->total_adult) }}">
                                 </div> --}}
-                                <label>@lang('Tổng số người lớn')</label>
+                                <label>@lang('Tổng số người')</label>
                                 <div class="d-flex align-items-center qty-input">
                                     <button class="btn btn-light qty-count qty-count--minus border-end" data-action="minus" style="padding: 0px !important;"
                                         type="button">-</button>
@@ -146,15 +146,15 @@
 
                             <div class="col-xl-3 col-md-3 col-6">
                                 <div class="form-group">
-                                    <label>@lang('Tống số trẻ em')</label>
+                                    <label>@lang('Tống số giường')</label>
                                     {{-- <input class="form-control" min="0" name="total_child" required type="number"
                                         value="{{ old('total_child', @$roomType->total_child) }}"> --}}
                                     <div class="d-flex align-items-center qty-input">
                                         <button class="btn btn-light qty-count qty-count--minus border-end" style="padding: 0px !important;"
                                             data-action="minus" type="button">-</button>
                                         <input class="form-control text-center product-qty border-0" type="number" style="height: 30px !important; padding: 0px !important;"
-                                            name="total_child" min="1" max="100"
-                                            value="{{ old('total_child', @$roomType->total_child ?? 1) }}" readonly
+                                            name="beds" min="1" max="100"
+                                            value="{{ old('beds', @$roomType->beds ?? 1) }}" readonly
                                             required>
                                         <button class="btn btn-light qty-count qty-count--add border-start" style="padding: 0px !important;"
                                             data-action="add" type="button">+</button>
@@ -163,11 +163,11 @@
                                 </div>
                             </div>
                         </div>
-                        <div class="row">
+                        {{-- <div class="row">
                             <div class="col-xl-6 col-md-12">
                                 <div class="form-group">
                                     <label class="me-2"> @lang('Nổi bật') </label>
-                                    {{-- <input @if (@$roomType->is_featured) checked @endif data-bs-toggle="toggle" data-height="50" data-off="@lang('Không có đặc điểm')" data-offstyle="-danger" data-on="@lang('Featured')" data-onstyle="-success" data-size="large" data-width="100%" name="is_featured" type="checkbox"> --}}
+                                    <input @if (@$roomType->is_featured) checked @endif data-bs-toggle="toggle" data-height="50" data-off="@lang('Không có đặc điểm')" data-offstyle="-danger" data-on="@lang('Featured')" data-onstyle="-success" data-size="large" data-width="100%" name="is_featured" type="checkbox">
                                     <input type="radio" name="is_featured" class="form-check-input" id="is_featured"
                                         value="1"  {{ @$roomType->is_featured  == 1 ? 'checked' : '' }}> <label class="form-check-label me-2"
                                         for="is_featured">@lang('Yes')</label>
@@ -177,7 +177,7 @@
                                     <p class="ml-2 mt-2"><code><i class="las la-info-circle"></i>@lang('Các phòng nổi bật sẽ được hiển thị trong phần phòng nổi bật.')</code></p>
                                 </div>
                             </div>
-                        </div>
+                        </div> --}}
                     </div>
                 </div>
 
@@ -323,7 +323,7 @@
                     </div>
                 </div>
 
-                <div class="card mt-3">
+                {{-- <div class="card mt-3">
                     <div class="card-header">
                         <h5 class="card-title mb-0">
                             @lang('Hình ảnh')
@@ -335,9 +335,9 @@
                     <div class="card-body">
                         <div class="input-images pb-3"></div>
                     </div>
-                </div>
+                </div> --}}
 
-                <div class="card mt-3">
+                {{-- <div class="card mt-3">
                     <div class="card-header">
                         <h5 class="card-title mb-0">
                             @lang('Chính sách hủy bỏ')
@@ -353,7 +353,7 @@
                             </div>
                         </div>
                     </div>
-                </div>
+                </div> --}}
                 <div class="card mt-3">
                     {{-- <div class="card-header">
                         <h5 class="card-title mb-0">

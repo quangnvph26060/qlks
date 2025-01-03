@@ -696,3 +696,35 @@ SELECT CONCAT('UPDATE ', table_name, ' SET base_code = 1;')
 FROM information_schema.tables
 WHERE table_schema = 'quanlykhachsan';
 
+
+
+CREATE TABLE `setup_pricing` (
+    id INT AUTO_INCREMENT PRIMARY KEY,
+    price_code VARCHAR(50),
+    price_name VARCHAR(100),
+    price_requirement VARCHAR(255),
+    check_in_time TIME,
+    check_out_time TIME,
+    round_time INT,
+    description TEXT,
+    unit_code VARCHAR(50)
+);
+ALTER TABLE  `setup_pricing`
+ADD created_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
+ADD updated_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP ON UPDATE CURRENT_TIMESTAMP;
+
+
+CREATE TABLE room_type_price (
+    id INT AUTO_INCREMENT PRIMARY KEY,
+    room_type_id INT NOT NULL,
+    setup_pricing_id INT NOT NULL,
+    unit_price DECIMAL(10,2) DEFAULT NULL,
+    overtime_price DECIMAL(10,2) DEFAULT NULL,
+    extra_person_price DECIMAL(10,2) DEFAULT NULL,
+    auto_calculate TINYINT(1) DEFAULT NULL,
+    unit_code VARCHAR(50) DEFAULT NULL,
+    created_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
+    updated_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP ON UPDATE CURRENT_TIMESTAMP
+);
+ALTER TABLE room_type_price 
+ADD COLUMN price_validity_period DATE DEFAULT NULL;

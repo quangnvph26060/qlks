@@ -52,6 +52,7 @@ class RoomTypeController extends Controller
             'total_child',
             'created_at',
             'updated_at',
+            'beds',
         ];
         $relations = [
             'amenities',
@@ -94,7 +95,7 @@ class RoomTypeController extends Controller
         $facilities  = Facility::active()->get();
         $bedTypes    = BedType::all();
         $roomTypes   = RoomType::pluck('name', 'id');
-        $prices = RoomPrice::active()->pluck('name', 'id');
+        $prices      = RoomPrice::active()->pluck('name', 'id');
 
         return view('admin.hotel.room_type.create', compact('pageTitle', 'amenities', 'facilities', 'bedTypes', 'roomTypes', 'prices'));
     }
@@ -161,9 +162,9 @@ class RoomTypeController extends Controller
             $room->room_type_id        = $request->room_type_id;
             $room->room_number         = $request->room_number;
             $room->total_adult         = $request->total_adult;
-            $room->total_child         = $request->total_child;
+            // $room->total_child         = $request->total_child;
             $room->description         = htmlspecialchars_decode($purifier->purify($request->description));
-            // $room->beds                = $bedArray;
+            $room->beds                = $request->beds;
             $room->is_featured         = $request->is_featured ? 1 : 0;
             //$room->cancellation_fee    = $request->cancellation_fee ?? 0;
             $room->cancellation_policy = htmlspecialchars_decode($purifier->purify($request->cancellation_policy));
@@ -279,7 +280,7 @@ class RoomTypeController extends Controller
             'code'                => 'string|max:6|unique:rooms,code,' . $id,
             'room_number'         => 'required|string|max:255',
             'total_adult'         => 'required|integer|gte:0',
-            'total_child'         => 'required|integer|gte:0',
+            // 'total_child'         => 'required|integer|gte:0',
             'amenities'           => 'nullable|array',
             'amenities.*'         => 'integer|exists:amenities,id',
             'keywords'            => 'nullable|array',
@@ -288,7 +289,7 @@ class RoomTypeController extends Controller
             'facilities.*'        => 'integer|exists:facilities,id',
             // 'total_bed'           => 'required|gt:0',
             'main_image'          => $imgValidation,
-            // 'bed'                 => 'required|array',
+            'beds'                 => 'required',
             // 'bed.*'               => 'exists:bed_types,name',
             'cancellation_policy' => 'nullable|string',
             'cancellation_fee'    => 'nullable|numeric',

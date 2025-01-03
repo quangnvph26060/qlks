@@ -480,7 +480,7 @@ function hf($key = null) // hotel_facilities
 {
     $general = Cache::get('HotelFacility');
     if (!$general) {
-        $general = HotelFacility::first();
+        $general = HotelFacility::active()->first();
         Cache::put('HotelFacility', $general);
     }
     if ($key) {

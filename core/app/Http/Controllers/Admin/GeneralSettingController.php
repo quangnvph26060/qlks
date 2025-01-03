@@ -312,7 +312,8 @@ class GeneralSettingController extends Controller
         return back()->withNotify($notify);
     }
 
-    public function checkhours(){
+    public function checkhours()
+    {
         $general = gs();
         return response()->json([
             'status' => 'success',
@@ -321,17 +322,19 @@ class GeneralSettingController extends Controller
     }
 
     // cấu hình cơ sở 
-    public function setupHotel(){
+    public function setupHotel()
+    {
         $pageTitle = 'Cấu hình cơ sở';
         $hotels = HotelFacility::all();
         $emptyMessage = 'Không tìm thấy dữ liệu';
-        return view('admin.setting.setup_hotel', compact('pageTitle', 'hotels','emptyMessage'));
+        return view('admin.setting.setup_hotel', compact('pageTitle', 'hotels', 'emptyMessage'));
     }
 
-    public function addHotel(Request $request){
+    public function addHotel(Request $request)
+    {
         $request->validate([
-            'ma_coso' =>'required|string',
-            'ten_coso' =>'required|string',
+            'ma_coso' => 'required|string',
+            'ten_coso' => 'required|string',
         ]);
 
         $hotel = new HotelFacility();
@@ -344,10 +347,24 @@ class GeneralSettingController extends Controller
         $notify[] = ['success', 'Thêm cơ sở thành công'];
         return back()->withNotify($notify);
     }
-    public function editHotel($id, Request $request){
+    public function editHotel($id)
+    {
+        if (!$id) {
+            $notify[] = ['error', 'Không tìm thấy cơ sở'];
+            return back()->withNotify($notify);
+        }
+        $hotel = HotelFacility::find($id);
+        return response()->json([
+            'status' => 'success',
+            'data' => $hotel,
+        ]);
+    }
+
+    public function updateHotel($id, Request $request)
+    {
         $request->validate([
-            'ma_coso' =>'required|string',
-            'ten_coso' =>'required|string',
+            'ma_coso' => 'required|string',
+            'ten_coso' => 'required|string',
         ]);
 
         $hotel = HotelFacility::find($id);
@@ -360,10 +377,35 @@ class GeneralSettingController extends Controller
         $notify[] = ['success', 'Cập nhật cơ sở thành công'];
         return back()->withNotify($notify);
     }
-    
-    public function deleteHotel($id){
+    public function deleteHotel($id)
+    {
         HotelFacility::destroy($id);
-        $notify[] = ['success', 'Xóa cơ sở thành công'];
-        return back()->withNotify($notify);
+        return response()->json([
+            'status' => 'success',
+            'message' => 'Xóa cơ sở thành công',
+        ]);
+    }
+    // status
+    public function statusHotel($id)
+    {
+        $hotel = HotelFacility::find($id);
+
+        if (!$hotel) {
+            return response()->json([
+                'status' => 'error',
+                'message' => 'Không tìm thấy cơ sở khách sạn',
+            ], 404);
+        }
+
+        // Đảo ngược trạng thái của khách sạn
+        $newStatus = $hotel->trang_thai == 1 ? 0 : 1;
+
+        $hotel->update(['trang_thai' => $newStatus]);
+        $statusHtml = $newStatus == 1 ? '<span class="badge badge--success">Hoạt động</span>' : '<span class="badge badge--danger">Không hoạt động</span>';
+        return response()->json([
+            'status' => 'success',
+            'message' => 'Cập nhật trạng thái thành công',
+            'status_html' => $statusHtml,
+        ]);
     }
 }

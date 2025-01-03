@@ -21,14 +21,14 @@
 
                             <div class="col-xl-4 col-lg-6 col-md-4">
                                 <div class="form-group">
-                                    <label>@lang('Tổng số người lớn')</label>
+                                    <label>@lang('Tổng số người')</label>
                                     <input class="form-control" min="1" name="total_adult" required type="number" value="{{ old('total_adult', @$roomType->total_adult) }}">
                                 </div>
                             </div>
 
                             <div class="col-xl-4 col-lg-6 col-md-4">
                                 <div class="form-group">
-                                    <label>@lang('Tổng số trẻ em')</label>
+                                    <label>@lang('Tổng số giường')</label>
                                     <input class="form-control" min="0" name="total_child" required type="number" value="{{ old('total_child', @$roomType->total_child) }}">
                                 </div>
                             </div>

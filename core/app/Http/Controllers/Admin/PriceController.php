@@ -361,4 +361,6 @@ class PriceController extends Controller
         Log::info($rooms);
         return response()->json(['status' => 'success', 'data' => $rooms]);
     }
+
+    
 }

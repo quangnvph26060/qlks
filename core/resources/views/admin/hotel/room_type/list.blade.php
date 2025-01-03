@@ -52,12 +52,13 @@
                                     <th>@lang('Loại phòng')</th> 
                                     <th>@lang('Mã phòng')</th>
                                     <th>@lang('Tên phòng')</th>
-                                   
-                                    <th>@lang('Tiện nghi')</th>
+                                    <th>@lang('Số người')</th>
+                                    <th>@lang('Số giường')</th>
+                                    {{-- <th>@lang('Tiện nghi')</th>
                                     <th>@lang('Cở sở vật chất')</th>
                                     <th>@lang('Giá giờ')</th>
                                     <th>@lang('Giá ngày')</th>
-                                    <th>@lang('Giá đêm')</th>
+                                    <th>@lang('Giá đêm')</th> --}}
                                     <th>@lang('Trạng thái')</th>
                                     @can(['admin.hotel.room.type.edit', 'admin.hotel.room.type.status',
                                         'admin.hotel.room.type.destroy'])

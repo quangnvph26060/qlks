@@ -15,8 +15,13 @@
         <td data-label="Tên phòng">
             {{ $type->room_number }}
         </td>
-      
-        <td data-label="Tiện nghi">
+        <td data-label="Số người">
+            {{ $type->total_adult }}
+        </td>
+        <td data-label="Số giường">
+            {{ $type->beds }}
+        </td>
+        {{-- <td data-label="Tiện nghi">
             @if ($type->amenities->count() > 0)
                 <div class="float-inline-end">
                     @foreach ($type->amenities->take(3) as $amenity)
@@ -33,8 +38,8 @@
             @else
                 Chưa có tiện nghi nào
             @endif
-        </td>
-        <td data-label="Cơ sở vật chất">
+        </td> --}}
+        {{-- <td data-label="Cơ sở vật chất">
             @if ($type->facilities->count() > 0)
                 <div class="float-inline-end">
                     @foreach ($type->facilities as $facility)
@@ -46,11 +51,11 @@
             @else
                 Chưa có cơ sở vật chất
             @endif
-        </td>
+        </td> --}}
 
-        <td data-label="Giá giờ">{{ showAmount($type->roomPriceNow()?->hourly_price) ?? '-----' }}</td>
+        {{-- <td data-label="Giá giờ">{{ showAmount($type->roomPriceNow()?->hourly_price) ?? '-----' }}</td>
         <td data-label="Giá ngày">{{ showAmount($type->roomPriceNow()?->daily_price) ?? '-----' }}</td>
-        <td data-label="Giá đêm">{{ showAmount($type->roomPriceNow()?->overnight_price) ?? '-----' }}</td>
+        <td data-label="Giá đêm">{{ showAmount($type->roomPriceNow()?->overnight_price) ?? '-----' }}</td> --}}
         
         <td data-label="Trạng thái">@php echo $type->statusBadge  @endphp</td>
         @can(['admin.hotel.room.type.edit', 'admin.hotel.room.type.status', 'admin.hotel.room.type.destroy'])
@@ -91,7 +96,7 @@
 
     <tr class="collapse" id="rep-{{ $type->id }}">
         <td colspan="8">
-            @if ($type->products->count() > 0)
+            {{-- @if ($type->products->count() > 0)
                 <div class="representatives-container">
                     <span class="representatives-label">Sản phẩm:</span>
                     <span class="representatives-list">
@@ -103,11 +108,11 @@
                         @endforeach
                     </span>
                 </div>
-            @endif
+            @endif --}}
             <div class="representatives-container">
                 <span class="representatives-label">Số lượng người:</span>
                 <span class="representatives-list">
-                    {{ $type->total_adult }} người lớn | {{ $type->total_child }} trẻ em
+                    {{ $type->total_adult }}
                 </span>
             </div>
             {{-- <div class="representatives-container">

@@ -105,6 +105,15 @@
             },
             {
                 "keyword": [
+                    "Cài đặt tính giá"
+                ],
+                "title": "Cài đặt tính giá",
+                "icon": "las la-dollar-sign",
+                "route_name": "admin.manage.priceroomtype.all",
+                "menu_active": "admin.manage.priceroomtype.all"
+            },
+            {
+                "keyword": [
                     "Quản lý bảng giá"
                 ],
                 "title": "Quản lý bảng giá",
@@ -112,7 +121,6 @@
                 "route_name": "admin.manage.price.all",
                 "menu_active": "admin.manage.price.all"
             }
-
         ]
     },
 

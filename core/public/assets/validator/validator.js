@@ -93,6 +93,8 @@ function generateErrorMessage(code, values = []) {
         E001: 'Mật khẩu không để trống',
         TKS001: 'Tên khách sạn không được để trống',
         MS001: 'Mã code không được để trống',
+        P001: `${values} không được để trống`,
+        P002: `${values} phải là số`,
         // khai báo thêm các message vào đây ... 
     };
     const errorMessage = errorMessages[code];
