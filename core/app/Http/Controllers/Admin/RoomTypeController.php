@@ -170,7 +170,7 @@ class RoomTypeController extends Controller
             $room->cancellation_policy = htmlspecialchars_decode($purifier->purify($request->cancellation_policy));
             $room->is_clean            = Status::ROOM_CLEAN_ACTIVE;
             $room->status              = $request->status ? 1 : 0;
-
+            $room->unit_code           = hf('ma_coso');
             if ($request->hasFile('main_image')) {
                 $main_images = saveImages($request, 'main_image', 'roomImage', 600, 600);
                 if ($room->main_image && Storage::disk('public')->exists($room->main_image)) {

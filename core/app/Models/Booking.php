@@ -10,7 +10,7 @@ use Illuminate\Database\Eloquent\Casts\Attribute;
 class Booking extends Model
 {
 
-    protected $fillable = ['booking_number', 'user_id', 'check_in', 'check_out', 'guest_details', 'tax_charge', 'booking_fare', 'service_cost', 'extra_charge', 'extra_charge_subtracted', 'paid_amount', 'cancellation_fee', 'refunded_amount', 'key_status', 'status', 'checked_in_at', 'checked_out_at', 'created_at', 'updated_at', 'product_cost', 'last_overtime_calculated_at', 'note', 'total_people'];
+    protected $fillable = ['booking_number', 'user_id', 'check_in', 'check_out', 'guest_details', 'tax_charge', 'booking_fare', 'service_cost', 'extra_charge', 'extra_charge_subtracted', 'paid_amount', 'cancellation_fee', 'refunded_amount', 'key_status', 'status', 'checked_in_at', 'checked_out_at', 'created_at', 'updated_at', 'product_cost', 'last_overtime_calculated_at', 'note', 'total_people','document_date', 'unit_code'];
 
     protected $casts = [
         'guest_details' => 'object',

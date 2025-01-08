@@ -18,6 +18,7 @@ use App\Models\Product;
 use App\Models\RegularRoomPrice;
 use App\Models\RoomPriceRoom;
 use App\Models\RoomPricesWeekdayHour;
+use App\Models\RoomTypePrice;
 use App\Models\UserCleanroom;
 use Carbon\Carbon;
 use Illuminate\Support\Facades\Auth;
@@ -244,7 +245,20 @@ class BookingController extends Controller
             //     ->where('room_id', $room_id)
             //     ->select('product_id', 'qty')
             //     ->get();
-            $room = Room::with('booked')->find($request->room_id);
+            // 123 
+            $room = Room::with('booked', 'checkins')->find($request->room_id);
+            if($room->booked->isEmpty()){
+                $room->room_status = $room->checkins;
+            }else if($room->checkins->isEmpty()){
+                $room->room_status = $room->booked;
+            }else {
+                $room->room_status = $room->checkins;
+            }
+            // $room->room_status = $room->booked->merge($room->checkins);
+
+            // Xóa các mối quan hệ riêng biệt (nếu không cần thiết nữa)
+            unset($room->booked);
+            unset($room->checkins);
             return response()->json(['status' => 'success', 'data' => $booking, 'returnedPayments' => $returnedPayments, 'receivedPayments' => $receivedPayments, 'total_amount' => $total_amount, 'due' => $due,'room'=>$room]);
         }
         $pageTitle = 'Chi tiết đặt chỗ';
@@ -422,18 +436,21 @@ class BookingController extends Controller
         $emptyRooms          = Room::active()
             //  ->whereNotIn('id', $bookedRooms)
             ->whereNotIn('room_type_id', $disabledRoomTypeIDs)
-            ->whereIn('id', $idRoomActive)
-            ->with(['roomType', 'booked' => function($query){
-                $query->where('status',1)->whereDate('booked_for', '<=', now())->limit(1);
-            }, 'booked.booking','booked.booking.userBooking'])
+            // ->whereIn('id', $idRoomActive)
+            
+            // 'booked' => function($query){
+            //                 $query->where('status',1)->whereDate('booked_for', '<=', now())->limit(1);
+            //             }
+
+            ->with(['roomType','roomType.roomTypePrice', 'booked', 'checkins', 'checkins.booking', 'checkins.booking.userBooking', 'booked.booking','booked.booking.userBooking'])
             ->select(['id', 'room_type_id', 'room_number', 'is_clean'])
             ->when(!empty($request->roomType), function ($query) use ($request) {
                 $query->where('room_type_id', 'like', '%' . $request->roomType . '%');
             })
             ->get();
         $scope = 'ALL';
+       // dd($emptyRooms);
         // \Log::info($emptyRooms);
-        // dd($emptyRooms);
         $is_method = 'Receptionist';
 
         $bookings = BookedRoom::active()
@@ -592,27 +609,35 @@ class BookingController extends Controller
         if(!$booking){
             return response()->json(['status' => 'error', 'message' => 'Booking number không tồn tại']);
         }
+
         $room = Room::active()
-        ->with(['roomType','booked' => function ($query) use ($booking) {
-            $query->where('booking_id', $booking->id);
-        }])
-        ->whereHas('booked', function ($query) use ($booking) {
-            $query->where('booking_id', $booking->id)->where('key_status', Status::KEY_GIVEN);
-        })
-        ->get(); 
-        return response()->json(['status' => 'success', 'data'=> $room, 'booking' => $booking]);
+            ->with([
+                'roomType',
+              
+                'checkins' => function ($query) use ($booking) {
+                    $query->where('booking_id', $booking->id);  // Điều kiện cho checkins nếu cần
+                }
+            ])
+       
+            ->whereHas('checkins', function ($query) use ($booking) {
+                $query->where('booking_id', $booking->id)->where('key_status', Status::KEY_GIVEN);  // Điều kiện cho checkins nếu cần
+            })
+            ->get();
+
+        return response()->json(['status' => 'success', 'data'=> $room, 'data1'=> $booking->id, 'booking' => $booking]);
     }
 
 
     public function getRoomCheckIn(Request $request){
         $getRoomCheckIn = $request->selectedRooms;
-        $roomCheckIn    = BookedRoom::whereIn('id', $getRoomCheckIn)->select('booking_id', 'room_id', 'room_type_id', 'fare', 'check_in_at', 'option_room')->get();
-       
-        $checkInDate    = $roomCheckIn[0]['check_in_at'];
+      
+        $roomCheckIn    = BookedRoom::whereIn('id', $getRoomCheckIn)->select('id', 'booking_id', 'room_id', 'room_type_id', 'fare', 'check_in_at', 'option_room')->get();
+        $arrCheckIn     = $roomCheckIn->pluck('id');
+        $checkInDate       = $roomCheckIn[0]['check_in_at'];
         if( $checkInDate  !== null && $roomCheckIn[0]['option_room'] === 'gio'){
 
-            $currentDate    = now();
-            $checkInDate    = Carbon::parse($checkInDate);
+            $currentDate     = now();
+            $checkInDate     = Carbon::parse($checkInDate);
 
             $timeDiffInHours = abs($currentDate->floatDiffInHours($checkInDate));
             $periodOfTime    = ceil($timeDiffInHours); // khoảng thời gian;
@@ -650,7 +675,8 @@ class BookingController extends Controller
             'totalFare'   => $totalFare, 
             'roomNumbers' => $roomNumbers, 
             'roomCheckIn' => $roomCheckIn,
-            'due'         => $due
+            'due'         => $due,
+            'ArrCheckIn'  => $arrCheckIn,
         ]);
     }
 }

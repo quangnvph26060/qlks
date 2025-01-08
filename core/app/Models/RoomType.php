@@ -61,4 +61,7 @@ class RoomType extends Model
             }
         );
     }
+    public function roomTypePrice(){
+       return $this->hasOne(RoomTypePrice::class, 'room_type_id', 'id')->orderByDesc('price_validity_period');
+    }   
 }

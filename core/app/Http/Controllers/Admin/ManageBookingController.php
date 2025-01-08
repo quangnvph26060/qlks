@@ -15,6 +15,7 @@ use Illuminate\Support\Carbon;
 use PDF;
 use App\Http\Responses\ApiResponse;
 use App\Models\BookedRoom;
+use App\Models\CheckInRoom;
 
 class ManageBookingController extends Controller
 {
@@ -23,20 +24,64 @@ class ManageBookingController extends Controller
     public function handoverKey(Request $request,  $id) // bàn giao chìa khóa
     {
        
+        // [2025-01-06 17:18:27] local.INFO: array (
+        //     'is_method' => 'receptionist',
+        //     'room_id' => '38',
+        //     'room_type_id' => '5',
+        //     'price_booked' => NULL,
+        //     'booked_arr' => 
+        //     array (
+        //       0 => '268',
+        //     ),
+        //   )  
+        \Log::info($request->all());
         $booking = Booking::active()->findOrFail($id);
         if(!$booking){
             $notify[] = ['error', 'Không tìm thấy thông tin phòng'];
         }
-        $bookedRoom = BookedRoom::where('booking_id',$booking->id)->where('room_id',$request->room_id)->where('room_type_id',$request->room_type_id)->first();
+        $booked_arr = $request->booked_arr;
+        foreach($booked_arr as $bookroom){
+            $data      = [];
+            $bookedRoom = BookedRoom::find($bookroom);
+          //  \Log::info($bookedRoom['room_type_id']);
+            if (!$bookedRoom) {
+                continue;
+            }
+            $data['booking_id']       = $bookedRoom['booking_id'];
+            $data['room_type_id']     = $bookedRoom['room_type_id'];
+            $data['room_id']          = $bookedRoom['room_id'];
+            $data['booked_for']       = now();
+            // $data['fare']             = $room->roomPricesActive[0]['price'];
+            $data['fare']             = $bookedRoom['fare'];
+            // $data['tax_charge']       = $room->roomPricesActive[0]['price'] * $tax / 100;
+            // $data['tax_charge']       = $processedAmount * $tax / 100;
+            $data['cancellation_fee'] = $bookedRoom['cancellation_fee']; // phí hủy bỏ nếu hủy phòng thì: tiền hoàn lại =  fare - cancellation_fee
+            $data['status']           = Status::ROOM_ACTIVE;
+            $data['key_status']       = Status::KEY_NOT_GIVEN;
+            $data['option_room']      = $bookedRoom['option_room'];
+            $data['check_in']         = now();
+            $data['check_out']        = Carbon::parse($bookedRoom['check_out'])->format('Y-m-d H:i:s');
+            $data['unit_code']        = hf('ma_coso');
+            $data['key_status']       =  Status::KEY_GIVEN;
+            $data['book_room_id']     =  $bookedRoom['id'];
+            $data['check_in_at']      = now();
+            $data['created_at']       = now();
+            $data['updated_at']       = now();
+
+            $bookedRoomData[] = $data;
+        }
+        CheckInRoom::insert($bookedRoomData);
+        // $bookedRoom = BookedRoom::where('booking_id',$booking->id)->where('room_id',$request->room_id)->where('room_type_id',$request->room_type_id)->first();
        
-        if ($bookedRoom->key_status == Status::ENABLE) {
-            $notify[] = ['error', 'Chìa khóa đã được trao cho khách'];
-            return back()->withNotify($notify);
-        }
-        if (now()->format('Y-m-d H:i:s') < $booking->booked_for) {
-            $notify[] = ['error', 'Bạn không thể giao chìa khóa trước ngày nhận phòng'];
-            return back()->withNotify($notify);
-        }
+        // if ($bookedRoom->key_status == Status::ENABLE) {
+        //     $notify[] = ['error', 'Chìa khóa đã được trao cho khách'];
+        //     return back()->withNotify($notify);
+        // }
+        // if (now()->format('Y-m-d H:i:s') < $booking->booked_for) {
+        //     $notify[] = ['error', 'Bạn không thể giao chìa khóa trước ngày nhận phòng'];
+        //     return back()->withNotify($notify);
+        // }
+
         // if (now()->format('Y-m-d H:i:s') < $booking->check_in) {
         //     $notify[] = ['error', 'Bạn không thể giao chìa khóa trước ngày nhận phòng'];
         //     return back()->withNotify($notify);

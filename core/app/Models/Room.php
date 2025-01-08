@@ -13,7 +13,7 @@ class Room extends Model
 {
     use GlobalStatus, SoftDeletes;
 
-    protected $fillable = ['id', 'is_clean'];
+    protected $fillable = ['id', 'is_clean','unit_code'];
     protected $casts = [
         'keywords' => 'array',
         'beds'     => 'array'
@@ -54,9 +54,26 @@ class Room extends Model
     {
         return $this->hasMany(RoomImage::class);
     }
+    public function checkroom()
+    {
+        // Kiểm tra nếu có bản ghi trong checkins
+        if ($this->checkins()->exists()) {
+            return $this->checkins;
+        }
+    
+        // Nếu không, trả về booked
+        return $this->booked;
+    }
+    
+    
+
     public function booked()
     {
         return $this->hasMany(BookedRoom::class, 'room_id', 'id');
+    }
+    public function checkins()
+    {
+        return $this->hasMany(CheckInRoom::class, 'room_id', 'id');
     }
     public function roomPrice()
     {
@@ -168,6 +185,7 @@ class Room extends Model
         }
 
         return  $this->regularRoom();
+        //return $this->code;
     }
 
     public function roomPriceDayNow($date)

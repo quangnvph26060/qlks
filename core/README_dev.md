@@ -728,3 +728,42 @@ CREATE TABLE room_type_price (
 );
 ALTER TABLE room_type_price 
 ADD COLUMN price_validity_period DATE DEFAULT NULL;
+
+06/01/2025
+
+ALTER TABLE `booked_rooms`
+ADD COLUMN `check_in` DATETIME NULL,
+ADD COLUMN `check_out` DATETIME NULL 
+
+ALTER TABLE `bookings`
+ADD COLUMN `document_date` DATETIME NULL;
+
+ALTER TABLE `booked_rooms`
+ADD COLUMN `unit_code` VARCHAR(50) NULL;
+ALTER TABLE `bookings`
+ADD COLUMN `unit_code` VARCHAR(50) NULL;
+
+
+
+CREATE TABLE check_in_rooms (
+    id BIGINT UNSIGNED AUTO_INCREMENT PRIMARY KEY,
+    booking_id INT UNSIGNED NOT NULL DEFAULT 0,
+    room_type_id INT UNSIGNED NOT NULL DEFAULT 0,
+    room_id INT UNSIGNED NOT NULL DEFAULT 0,
+    booked_for DATETIME NULL,
+    fare DECIMAL(10,2) NULL,
+    check_in DATETIME NULL,
+    check_out DATETIME NULL,
+    check_in_at DATETIME NULL,
+    cancellation_fee DECIMAL(28,8) NOT NULL DEFAULT 0.00000000,
+    status TINYINT UNSIGNED NOT NULL DEFAULT 0 COMMENT '1= success/active; 3 = cancelled; 9 = checked Out',
+    key_status TINYINT(1) NULL DEFAULT 0,
+    option_room VARCHAR(10) CHARACTER SET utf8mb4 COLLATE utf8mb4_unicode_ci NULL,
+    tax_charge DECIMAL(28,8) NOT NULL DEFAULT 0.00000000,
+    created_at TIMESTAMP NULL,
+    updated_at TIMESTAMP NULL,
+    unit_code VARCHAR(50) CHARACTER SET utf8mb4 COLLATE utf8mb4_unicode_ci NULL
+);
+
+ALTER TABLE check_in_rooms
+ADD COLUMN book_room_id INT UNSIGNED NOT NULL DEFAULT 0;
