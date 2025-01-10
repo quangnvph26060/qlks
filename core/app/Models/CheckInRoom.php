@@ -35,4 +35,7 @@ class CheckInRoom extends Model
     {
         return $this->hasOne(User::class,'id','user_id');
     }
+    public function room() {
+        return $this->belongsTo(Room::class);
+    }
 }

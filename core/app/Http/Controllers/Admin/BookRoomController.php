@@ -113,11 +113,35 @@ class BookRoomController extends Controller
                 $bookedFor      = explode('-', $room)[2]; // thoi gian dat phong
                 $timeCheckOut   = explode('-', $room)[3]; // thoi gian tra phong
                 $optionRoom     = explode('-', $room)[4]; // option gio ngay dem
-                $isBooked       = BookedRoom::where('room_id', $roomId)->whereDate('booked_for', Carbon::parse($bookedFor))->where('status', [Status::BOOKED_ROOM_ACTIVE, Status::BOOKED_ROOM_CANCELED])->exists();
+                $isBookedRoom = BookedRoom::where('room_id', $roomId)
+                    ->whereDate('booked_for', Carbon::parse($bookedFor))
+                    ->whereIn('status', [Status::BOOKED_ROOM_ACTIVE, Status::BOOKED_ROOM_CANCELED])
+                    ->where(function ($query) use ($bookedFor) {
+                        $query->whereRaw('? between check_in and check_out', [Carbon::parse($bookedFor)]);
+                    })
+                    ->first();
 
-                if ($isBooked) {
-                    DB::rollBack();
-                    return response()->json(['error' => 'Phòng đã được đặt']);
+                $isBookedCheckInRoom     = CheckInRoom::where('room_id', $roomId)
+                    ->whereDate('booked_for', Carbon::parse($bookedFor))
+                    ->where('status', [Status::BOOKED_ROOM_ACTIVE, Status::BOOKED_ROOM_CANCELED])
+                    ->where(function ($query) use ($bookedFor) {
+                        $query->whereRaw('? between check_in and check_out', [Carbon::parse($bookedFor)]);
+                    })
+                    ->first();  
+                if ($isBookedRoom || $isBookedCheckInRoom) {
+                    $errorDetails = [];
+                    if ($isBookedRoom) {
+                        $errorDetails['bookedRoom'] = $isBookedRoom;
+                    }
+                    if ($isBookedCheckInRoom) {
+                        $errorDetails['checkInRoom'] = $isBookedCheckInRoom;
+                    }
+                   //    DB::rollBack();
+                   //\Log::info($errorDetails['checkInRoom']['room_id']);
+                    return response()->json([
+                        'error' => 'Phòng đã được đặt',
+                        'details' => $errorDetails, // Trả thông tin bản ghi
+                    ]);
                 }
 
                 $room = Room::with('roomType','roomType.roomTypePrice')->find($roomId);

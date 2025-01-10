@@ -75,10 +75,10 @@ class Room extends Model
     {
         return $this->hasMany(CheckInRoom::class, 'room_id', 'id');
     }
-    public function roomPrice()
-    {
-        return $this->hasMany(RegularRoomPrice::class, 'room_price_id', 'id');
-    }
+    // public function roomPrice()
+    // {
+    //     return $this->hasMany(RegularRoomPrice::class, 'room_price_id', 'id');
+    // }
     public function isRoomClean()
     {
         return $this->is_clean === 1;

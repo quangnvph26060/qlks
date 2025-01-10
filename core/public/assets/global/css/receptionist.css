@@ -465,7 +465,8 @@ h5 {
 .dropdown-main-booked{
     display: none;
     position: absolute;
-    padding: 10px
+    padding: 10px;
+    line-height: 30px;
 }
 .status-label-checkout {
     background-color: #d1f5d3;

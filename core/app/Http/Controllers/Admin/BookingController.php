@@ -149,11 +149,14 @@ class BookingController extends Controller
     {
         $booking = Booking::with([
             'bookedRooms',
+            'checkinRooms',
             // 'activeBookedRooms:id,booking_id,room_id',
             // 'activeBookedRooms.room:id,room_number',
             'bookedRooms.room:id,room_type_id,room_number',
             'bookedRooms.room.roomType:id,name',
             'userBooking',
+            'checkinRooms.room:id,room_type_id,room_number',
+            'checkinRooms.room.roomType:id,name',
             // 'bookedRooms.room.roomPricesActive',
             // 'usedPremiumService.room',
             // 'usedPremiumService.premiumService',
@@ -161,6 +164,15 @@ class BookingController extends Controller
             // 'usedProductRoom.product',
             'payments'
         ])->findOrFail($id);
+        $booking->room_status = $booking->bookedRooms->merge($booking->checkinRooms)->unique();
+        // $room->room_status = $room->booked->merge($room->checkins);
+
+        // Xóa các mối quan hệ riêng biệt (nếu không cần thiết nữa)
+        unset($booking->bookedRooms);
+        unset($booking->checkinRooms);
+        // \Log::info($booking->bookedRooms);
+        // \Log::info($booking->checkinRooms);
+
         // BookedRoom::where('booking_id', $id)->with('booking.user', 'room.roomType')->orderBy('booked_for')->get()->groupBy('booked_for');
         if ($request->is_method === 'receptionist') {
             $returnedPayments  = $booking->payments->where('type', 'RETURNED'); // Đã hoàn tiền
@@ -363,18 +375,17 @@ class BookingController extends Controller
         }
         return response()->json(['status' => 'success', 'data' => $rooms]);
     }
-
+//123123
     public function showRoom(Request $request) {
         $disabledRoomTypeIDs = RoomType::where('status', 0)->pluck('id')->toArray();
     
         // Kiểm tra xem $roomIds có phải là mảng hay không
         $roomIds = is_array($request->roomIds) ? $request->roomIds : explode(',', $request->roomIds);
-        $idRoomActive = RegularRoomPrice::pluck('room_price_id');
+        
         $emptyRooms = Room::active()
             ->whereNotIn('id', $roomIds)
             ->whereNotIn('room_type_id', $disabledRoomTypeIDs)
-            ->whereIn('id', $idRoomActive)
-            ->with(['roomType', 'booked', 'booked.booking', 'roomPrice'])
+            ->with(['roomType', 'booked', 'booked.booking', 'roomType.roomTypePrice'])
             ->select(['id', 'room_type_id', 'room_number', 'is_clean'])->get();
     
         return response()->json([

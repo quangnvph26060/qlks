@@ -66,7 +66,10 @@ class Booking extends Model
     {
         return $this->hasMany(BookedRoom::class, 'booking_id');
     }
-
+    public function checkinRooms()
+    {
+        return $this->hasMany(CheckInRoom::class, 'booking_id');
+    }
     public function activeBookedRooms()
     {
         return $this->hasMany(BookedRoom::class, 'booking_id')->where('status', Status::ROOM_ACTIVE);
