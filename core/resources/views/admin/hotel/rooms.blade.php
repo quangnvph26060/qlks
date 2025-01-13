@@ -48,6 +48,9 @@
                                                             <i class="la la-eye"></i> @lang('Cho phép')
                                                         </button>
                                                     @endif
+                                                    <button class="btn btn-sm btn-outline--danger btn-delete" data-id="{{$room->id}}" data-modal_title="Xóa" type="button">
+                                                        <i class="fas fa-trash"></i>Xóa
+                                                    </button>
                                                 </div>
                                             </td>
                                         @endcan
@@ -405,6 +408,35 @@
                 labelText.style.display = 'block'; // Hiện văn bản
             }
         });
+        $(document).on('click', '.btn-delete', function() {
+                let id = $(this).data('id');
+                Swal.fire({
+                    title: 'Xóa loại phòng',
+                    text: 'Bạn có chắc chắn không?',
+                    icon: 'warning',
+                    showCancelButton: true,
+                    confirmButtonColor: '#3085d6',
+                    cancelButtonColor: '#d33',
+                    confirmButtonText: 'Đồng ý',
+                    cancelButtonText: 'Huỷ'
+                }).then((result) => {
+                    if (result.isConfirmed) {
+                        $.ajax({
+                            type: "POST",
+                            url: "{{ route('admin.hotel.room.delete', ':id') }}"
+                                .replace(':id', id),
+                            success: function(response) {
+                                if (response.status === 'success') {
+                                    notify('success', response.message);
+                                    location.reload();
+                                } else {
+
+                                }
+                            }
+                        });
+                    }
+                })
+            })
     </script>
 
 <script>

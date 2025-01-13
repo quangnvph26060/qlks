@@ -16,7 +16,7 @@
                         <th>Nhận</th>
                         <th>
                             Trả 
-                            <span class="btn-receive">Hiện tại</span> 
+                            <span class="btn-receive" id="hour_current">Hiện tại</span> 
                             <span class="btn-receive time-booked">Giờ đặt</span>
                         </th>
                     </tr>

@@ -211,6 +211,8 @@ Route::middleware('admin', 'adminPermission')->group(function () {
             Route::post('add', 'addRoom')->name('add');
             Route::post('update/{id}', 'addRoom')->name('update');
             Route::post('update/status/{id}', 'status')->name('status');
+            //delete
+            Route::post('delete/{id}', 'delete')->name('delete');
         });
 
         //Premium Services
@@ -246,7 +248,7 @@ Route::middleware('admin', 'adminPermission')->group(function () {
         Route::get('book-room', 'room')->name('book.room');
         Route::post('room-book', 'book')->name('room.book');
         Route::get('room/search', 'searchRoom')->name('room.search');
-
+       
         Route::post('room-note', 'updatenote')->name('room.note');
     });
 

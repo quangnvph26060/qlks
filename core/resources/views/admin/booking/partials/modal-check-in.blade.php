@@ -15,7 +15,7 @@
                         <th>Phòng</th>
                         <th>Trình trạng phòng</th>
                         <th>Nhận 
-                            <span class="btn-receive">Hiện tại</span> 
+                            <span class="btn-receive" id="hour_current">Hiện tại</span> 
                             <span class="btn-receive time-booked">Giờ đặt</span>
                         </th>
                     </tr>

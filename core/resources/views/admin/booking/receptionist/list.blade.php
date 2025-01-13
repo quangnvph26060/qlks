@@ -396,8 +396,8 @@
                                             <td>${item.room_number}</td>
                                             <td>
                                                 <div class="d-flex" style="gap: 10px;position: relative;left: 60px;margin-top:5px">
-                                                    <input type="date" name="checkInDate" class="form-control date-book-room" id="date-book-room" style="width: 165px;height: 35px;" value="${formattedDatesCurrent}" disabled>
-                                                    <input type="time" name="checkInTime" id="time-book-room" class="form-control time-book-room" style="width: 135px;height: 35px;" value="${formattedTimesCurrent.slice(0, 5)}" disabled>
+                                                    <input type="date" name="checkInDate" class="form-control date-book-room"  style="width: 165px;height: 35px;" value="${formattedDatesCurrent}" disabled>
+                                                    <input type="time" name="checkInTime"  class="form-control time-book-room" style="width: 135px;height: 35px;" value="${formattedTimesCurrent.slice(0, 5)}" disabled>
                                                 </div>
                                             </td>
                                             <td>
@@ -702,10 +702,11 @@
                                                 </div>
                                             </div>
                                         </div>
-                                        <input type="text" data-booking-id="${response.roomCheckIn[0]['booking_id']}" 
-                                                                data-room-id="${response.roomCheckIn[0]['room_id']}" 
-                                                                data-room-type-id="${response.roomCheckIn[0]['room_type_id']}"  
-                                                              id="arrCheckInInput"  data-arr="${JSON.stringify(response.ArrCheckIn)}"  class="form-control data-booked" hidden>
+                                        <input type="text"  data-booking-id="${response.roomCheckIn[0]['booking_id']}" 
+                                                            data-room-id="${response.roomCheckIn[0]['room_id']}" 
+                                                            data-room-type-id="${response.roomCheckIn[0]['room_type_id']}"  
+                                                            data-arr="${JSON.stringify(response.ArrCheckIn)}"
+                                                            id="arrCheckInInput" class="form-control data-booked" hidden>
                                     </div>
                                     `
                             $('.main-room-booking').append(row_booking);
@@ -1804,11 +1805,11 @@
                                         <div class="detail-row-checkout">
                                         <div class="detail-item-checkout">
                                             <strong>Nhận phòng</strong>
-                                            <p class="check_in">${response.room['room_status'][0]['check_in'] ?? ""}</p>
+                                            <p class="check_in">${ moment(response.room['room_status'][0]['check_in']).format('DD/MM/YYYY HH:mm:ss') ?? ""}</p>
                                         </div>
                                          <div class="detail-item-checkout">
                                             <strong>Trả phòng</strong>
-                                            <p class="check_in">${response.room['room_status'][0]['check_out'] ?? ""}</p>
+                                            <p class="check_in">${ moment(response.room['room_status'][0]['check_out']).format('DD/MM/YYYY HH:mm:ss') ?? ""}</p>
                                         </div>
 
                                     `
@@ -1964,9 +1965,7 @@
                 }
             });
 
-
-            $('#hour_current').on('click', function() {
-
+            $(document).on('click', '[id="hour_current"]', function() {
                 // Lấy ngày và giờ hiện tại
                 const now = new Date();
                 const year = now.getFullYear();

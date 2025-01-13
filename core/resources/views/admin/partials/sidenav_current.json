@@ -101,9 +101,105 @@
                     "Danh mục Khách hàng"
                 ],
                 "title": "Danh mục Khách hàng",
-                "route_name": "admin.users.active",
-              
-                "menu_active": "admin.users.active"
+                "route_name": "admin.hotel.room.product.all",
+                "menu_active": "admin.hotel.room.product.all"
+            },
+            {
+                "keyword": [
+                    "Cài đặt tính giá"
+                ],
+                "title": "Cài đặt tính giá",
+                "icon": "las la-dollar-sign",
+                "route_name": "admin.manage.priceroomtype.all",
+                "menu_active": "admin.manage.priceroomtype.all"
+            },
+            {
+                "keyword": [
+                    "Quản lý bảng giá"
+                ],
+                "title": "Quản lý bảng giá",
+                "icon": "las la-dollar-sign",
+                "route_name": "admin.manage.price.all",
+                "menu_active": "admin.manage.price.all"
+            }
+        ]
+    },
+    "manage_hotels": {
+        "title": "Quản lý hệ thống phòng",
+        "icon": "las la-city",
+        "menu_active": "admin.hotel*",
+        "submenu": [
+            {
+                "keyword": [
+                    "Tiện nghi phòng",
+                    "Amenity"
+                ],
+                "title": "Tiện nghi phòng",
+                "route_name": "admin.hotel.amenity.all",
+                "menu_active": "admin.hotel.amenity.all"
+            },
+            {
+                "keyword": [
+                    "Cơ sở vật chất"
+                ],
+                "title": "Cơ sở vật chất",
+                "route_name": "admin.hotel.facility.all",
+                "menu_active": "admin.hotel.facility.all"
+            },
+           
+            {
+                "keyword": [
+                    "Phòng"
+                ],
+                "title": "Phòng",
+                "route_name": "admin.hotel.room.type.all",
+                "menu_active": [
+                    "admin.hotel.room.type.all",
+                    "admin.hotel.room.type.create",
+                    "admin.hotel.room.type.edit"
+                ]
+            },
+            {
+                "keyword": [
+                    "Hạng phòng"
+                ],
+                "title": "Hạng phòng",
+                "route_name": "admin.hotel.room.all",
+                "menu_active": "admin.hotel.room.all"
+            },
+            {
+                "keyword": [
+                    "Dịch vụ cao cấp",
+                    "Dịch vụ cao cấp",
+                    "Services"
+                ],
+                "title": "Dịch vụ cao cấp",
+                "route_name": "admin.hotel.premium.service.all",
+                "menu_active": "admin.hotel.premium.service.all"
+            },
+            {
+                "keyword": [
+                    "Quản lý tiện nghi "
+                ],
+                "title": "Quản lý tiện nghi ",
+                "route_name": "admin.hotel.room.amenities.all",
+                "menu_active": "admin.hotel.room.amenities.all"
+            },
+            {
+                "keyword": [
+                    "Quản lý cơ sở vật chất "
+                ],
+                "title": "Quản lý cơ sở vật chất ",
+                "route_name": "admin.hotel.room.facilities.all",
+                "menu_active": "admin.hotel.room.facilities.all"
+            },
+            {
+                "keyword": [
+                    "Quản lý sản phẩm"
+                ],
+                "title": "Quản lý sản phẩm",
+                "route_name": "admin.hotel.room.product.all",
+                "menu_active": "admin.hotel.room.product.all"
             },
             {
                 "keyword": [

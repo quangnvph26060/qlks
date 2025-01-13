@@ -127,7 +127,7 @@ class RoomController extends Controller
             // dd($roomType);
             $roomType->save();
 
-            $message = 'Phòng đã được thêm thành công';
+            $message = 'Hạng phòng đã được thêm thành công';
         }
 
         // Đồng bộ hóa giá
@@ -152,5 +152,14 @@ class RoomController extends Controller
 
         $notify[] = ['success', $message];
         return back()->withNotify($notify);
+    }
+    public function delete($id){
+        $roomType = RoomType::findOrFail($id);
+        if($roomType->main_image && Storage::disk('public')->exists($roomType->main_image)){
+            Storage::disk('public')->delete($roomType->main_image);
+        }
+        $roomType->delete();
+        // response
+        return   response()->json(['status' => 'success', 'message' => 'Loại phòng đã được xóa thành công']);
     }
 }
