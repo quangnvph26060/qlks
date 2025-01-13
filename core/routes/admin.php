@@ -176,7 +176,14 @@ Route::middleware('admin', 'adminPermission')->group(function () {
             Route::post('save/{id?}', 'save')->name('save');
             Route::post('status/{id}', 'status')->name('status');
         });
-
+        Route::controller('GeneralSettingController')->group(function () {
+            Route::get('setup-hotel', 'setupHotel')->name('setting.setup.hotel');
+            Route::post('setup-hotel', 'addHotel')->name('setting.setup.add.hotel');
+            Route::post('edit-setup-hotel/{id}', 'editHotel')->name('setting.setup.edit.hotel');
+            Route::post('update-setup-hotel/{id}', 'updateHotel')->name('setting.setup.update.hotel');
+            Route::post('status-setup-hotel/{id}', 'statusHotel')->name('setting.setup.status.hotel');
+            Route::post('delete-setup-hotel/{id}', 'deleteHotel')->name('setting.setup.delete.hotel');
+        });
         //Bed Type
         Route::controller('BedTypeController')->name('bed.')->prefix('bed-list')->group(function () {
             Route::get('', 'index')->name('all');
@@ -537,12 +544,12 @@ Route::middleware('admin', 'adminPermission')->group(function () {
         Route::post('maintenance-mode-submit', 'maintenanceModeSubmit')->name('maintenance.mode.submit');
 
 
-        Route::get('setup-hotel', 'setupHotel')->name('setting.setup.hotel');
-        Route::post('setup-hotel', 'addHotel')->name('setting.setup.add.hotel');
-        Route::post('edit-setup-hotel/{id}', 'editHotel')->name('setting.setup.edit.hotel');
-        Route::post('update-setup-hotel/{id}', 'updateHotel')->name('setting.setup.update.hotel');
-        Route::post('status-setup-hotel/{id}', 'statusHotel')->name('setting.setup.status.hotel');
-        Route::post('delete-setup-hotel/{id}', 'deleteHotel')->name('setting.setup.delete.hotel');
+        // Route::get('setup-hotel', 'setupHotel')->name('setting.setup.hotel');
+        // Route::post('setup-hotel', 'addHotel')->name('setting.setup.add.hotel');
+        // Route::post('edit-setup-hotel/{id}', 'editHotel')->name('setting.setup.edit.hotel');
+        // Route::post('update-setup-hotel/{id}', 'updateHotel')->name('setting.setup.update.hotel');
+        // Route::post('status-setup-hotel/{id}', 'statusHotel')->name('setting.setup.status.hotel');
+        // Route::post('delete-setup-hotel/{id}', 'deleteHotel')->name('setting.setup.delete.hotel');
     });
 
     //Notification Setting

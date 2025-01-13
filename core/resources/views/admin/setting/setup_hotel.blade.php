@@ -59,13 +59,13 @@
                                         @if($item->trang_thai == 1)
                                            
                                             <button class="btn btn-sm btn-outline--danger confirmationBtn"
-                                            data-action="{{ route('admin.setting.setup.status.hotel', $item->id) }}"   data-id="{{ $item->id }}" 
+                                            data-action="{{ route('admin.hotel.setting.setup.status.hotel', $item->id) }}"   data-id="{{ $item->id }}" 
                                             data-question="@lang('Bạn có chắc chắn muốn tắt tiện ích này không?')" type="button">
                                             <i class="la la-eye-slash"></i> @lang('Ngưng hoạt động')
                                         </button>
                                         @else
                                         <button class="btn btn-sm btn-outline--success confirmationBtn"
-                                            data-action="{{ route('admin.setting.setup.status.hotel', $item->id) }}"   data-id="{{ $item->id }}" 
+                                            data-action="{{ route('admin.hotel.setting.setup.status.hotel', $item->id) }}"   data-id="{{ $item->id }}" 
                                             data-question="@lang('Bạn có chắc chắn muốn tắt tiện ích này không?')" type="button">
                                             <i class="la la-eye-slash"></i> @lang('Hoạt động')
                                         </button>
@@ -159,7 +159,7 @@
                                 <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
                             </div>
                             <div class="modal-body">
-                                <form id="btn-submit-hotel" action="{{ route('admin.setting.setup.add.hotel') }}"
+                                <form id="btn-submit-hotel" action="{{ route('admin.hotel.setting.setup.add.hotel') }}"
                                     method="POST">
                                     @csrf
                                     <!-- Input 1 -->
@@ -204,7 +204,7 @@
                 var dataId = $(this).data('id');
                 // ajax request
                 $.ajax({
-                    url: `{{ route('admin.setting.setup.edit.hotel', '') }}/${dataId}`,
+                    url: `{{ route('admin.hotel.setting.setup.edit.hotel', '') }}/${dataId}`,
                     type: 'POST',
                     success: function(data) {
                         if (data.status === 'success') {
@@ -218,7 +218,7 @@
                                     <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
                                 </div>
                                 <div class="modal-body">
-                                    <form id="btn-submit-hotel-update" action="{{ route('admin.setting.setup.update.hotel', '') }}/${data.data['id']}"
+                                    <form id="btn-submit-hotel-update" action="{{ route('admin.hotel.setting.setup.update.hotel', '') }}/${data.data['id']}"
                                         method="POST">
                                         @csrf
                                         <!-- Input 1 -->
@@ -278,7 +278,7 @@
                     if (result.isConfirmed) {
                         // ajax   
                         $.ajax({
-                            url: `{{ route('admin.setting.setup.delete.hotel', '') }}/${dataId}`,
+                            url: `{{ route('admin.hotel.setting.setup.delete.hotel', '') }}/${dataId}`,
                             type: 'POST',
                             success: function(data) {
                                 if (data.status ==='success') {

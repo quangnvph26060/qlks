@@ -37,8 +37,14 @@
                     "Amenity"
                 ],
                 "title": "Danh mục cơ sở",
-                "route_name": "admin.hotel.amenity.all",
-                "menu_active": "admin.hotel.amenity.all"
+                "route_name": "admin.hotel.setting.setup.hotel",
+                "menu_active": [
+                    "admin.hotel.setting.setup.hotel",
+                    "admin.hotel.setting.setup.status.hotel",
+                    "admin.hotel.setting.setup.add.hotel",
+                    "admin.hotel.setting.setup.edit.hotel",
+                    "admin.hotel.setting.setup.delete.hotel"
+                ]
             },
             {
                 "keyword": [
@@ -104,7 +110,90 @@
                 "route_name": "admin.users.active",
               
                 "menu_active": "admin.users.active"
+            }
+        ]
+    },
+    "manage_booked": {
+        "title": "Cập nhật phát sinh",
+        "icon": "las la-list",
+        "menu_active": "admin.book*",
+        "submenu": [
+            {
+                "keyword": [
+                    "Đặt phòng"
+                ],
+                "title": "Đặt phòng",
+                "icon": "la la-hand-o-right",
+                "route_name": "admin.book.room",
+                "menu_active": "admin.book.room"
             },
+            {
+                "keyword": [
+                 
+                    "Nhận phòng"
+                ],
+                "title": "Nhận phòng",
+                "route_name": "admin.booking.todays.checkin",
+                "menu_active": "admin.booking.todays.checkin"
+            },
+            {
+                "keyword": [
+                    "Đổi phòng"
+                ],
+                "title": "Đổi phòng",
+                "route_name": "admin.booking.todays.checkin",
+                "menu_active": "admin.booking.todays.checkin"
+            },
+            {
+                "keyword": [
+                    "Thanh toán"
+                ],
+                "title": "Thanh toán",
+                "icon": "la la-sign-out transform-rotate-180",
+                "route_name": "admin.upcoming.booking.checkout",
+                "menu_active": "admin.upcoming.booking.checkout"
+            },
+            {
+                "keyword": [
+                    "Chi phí"
+                ],
+                "title": "Chi phí",
+                "route_name": "admin.deposit.list",
+                "menu_active": "admin.deposit.list"
+            }
+        ]
+    },
+    "manage_report": {
+        "title": "Báo cáo",
+        "icon": "las la-clipboard-list",
+        "menu_active": "admin.booking*",
+        "submenu": [
+            {
+                "keyword": [
+                    "Báo cáo tình trạng phòng"
+                ],
+                "title": "Báo cáo tình trạng phòng",
+                "icon": "la la-hand-o-right",
+                "route_name": "admin.book.room",
+                "menu_active": "admin.book.room"
+            },
+            {
+                "keyword": [
+                    
+                    "Báo cáo doanh số"
+                ],
+                "title": "Báo cáo doanh số",
+                "route_name": "admin.booking.todays.checkin",
+                "menu_active": "admin.booking.todays.checkin"
+            }
+           
+        ]
+    },
+    "general_settings": {
+        "title": "Cài đặt chung",
+        "icon": "las la-life-ring",
+        "menu_active": "admin.manage*",
+        "submenu": [
             {
                 "keyword": [
                     "Cài đặt tính giá"
@@ -116,13 +205,38 @@
             },
             {
                 "keyword": [
-                    "Quản lý bảng giá"
+                    "Bảng giá"
                 ],
-                "title": "Quản lý bảng giá",
+                "title": "Bảng giá",
                 "icon": "las la-dollar-sign",
                 "route_name": "admin.manage.price.all",
                 "menu_active": "admin.manage.price.all"
+            },
+            {
+                "keyword": [
+                    "Vai trò"
+                ],
+                "title": "Vai trò",
+                "route_name": "admin.roles.index",
+                "menu_active": "admin.roles.index"
+            },
+            {
+                "keyword": [
+                    "Cài đặt gia hạn"
+                ],
+                "title": "Cài đặt gia hạn",
+                "route_name": "admin.roles.index",
+                "menu_active": "admin.roles.index"
+            },
+            {
+                "keyword": [
+                    "Danh mục nhân viên"
+                ],
+                "title": "Danh mục nhân viên",
+                "route_name": "admin.staff.index",
+                "menu_active": "admin.staff.index"
             }
+           
         ]
     },
 

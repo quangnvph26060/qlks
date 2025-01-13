@@ -45,7 +45,7 @@ class BookingController extends Controller
 
         $disabledRoomTypeIDs = RoomType::where('status', 0)->pluck('id')->toArray(); // Lấy danh sách các ID của loại phòng bị vô hiệu hóa
         $bookedRooms         = $rooms->pluck('room_id')->toArray(); // Lấy danh sách các ID của phòng đã được đặt hôm nay.
-        $emptyRooms          = Room::active()->has('roomPricesActive')->whereNotIn('id', $bookedRooms)->whereNotIn('room_type_id', $disabledRoomTypeIDs)->with('roomType:id,name', 'roomPrices')->select('id', 'room_type_id', 'room_number')->get();
+        $emptyRooms          = Room::active()->whereNotIn('id', $bookedRooms)->whereNotIn('room_type_id', $disabledRoomTypeIDs)->with('roomType:id,name')->select('id', 'room_type_id', 'room_number')->get();
         return view('admin.booking.todays_booked', compact('pageTitle', 'rooms', 'emptyRooms'));
     }
 

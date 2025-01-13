@@ -767,3 +767,165 @@ CREATE TABLE check_in_rooms (
 
 ALTER TABLE check_in_rooms
 ADD COLUMN book_room_id INT UNSIGNED NOT NULL DEFAULT 0;
+
+
+13/1
+CREATE TABLE customer (
+    id INT AUTO_INCREMENT PRIMARY KEY,      -- Khóa chính tự tăng
+    name VARCHAR(255) NOT NULL,             -- Tên khách hàng
+    phone VARCHAR(15) NOT NULL,             -- Số điện thoại
+    address TEXT,                           -- Địa chỉ
+    email VARCHAR(255) UNIQUE,              -- Email (không trùng lặp)
+    unit_code VARCHAR(50) CHARACTER SET utf8mb4 COLLATE utf8mb4_unicode_ci, -- Mã đơn vị
+    status TINYINT DEFAULT 1,               -- Trạng thái (1: Hoạt động, 0: Không hoạt động)
+    created_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP, -- Thời gian tạo
+    updated_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP ON UPDATE CURRENT_TIMESTAMP -- Thời gian cập nhật
+);
+CREATE TABLE room_status (
+    id INT AUTO_INCREMENT PRIMARY KEY,      -- Khóa chính tự tăng
+    status_code VARCHAR(50) NOT NULL,       -- Mã tình trạng
+    status_name VARCHAR(255) NOT NULL,      -- Tên tình trạng
+    unit_code VARCHAR(50) CHARACTER SET utf8mb4 COLLATE utf8mb4_unicode_ci, -- Mã đơn vị
+    created_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP, -- Thời gian tạo
+    updated_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP ON UPDATE CURRENT_TIMESTAMP -- Thời gian cập nhật
+);
+CREATE TABLE room_status_history (
+    id INT AUTO_INCREMENT PRIMARY KEY,          -- Khóa chính tự tăng
+    room_id VARCHAR(50) NOT NULL,             -- Mã phòng
+    status_code VARCHAR(50) NOT NULL,           -- Trạng thái (liên kết với room_status)
+    start_date DATE NOT NULL,                   -- Từ ngày
+    end_date DATE NOT NULL,                     -- Đến ngày
+    unit_code VARCHAR(50) CHARACTER SET utf8mb4 COLLATE utf8mb4_unicode_ci -- Mã đơn vị 
+    created_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP, -- Thời gian tạo
+    updated_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP ON UPDATE CURRENT_TIMESTAMP, -- Thời gian cập nhật
+);
+CREATE TABLE room_booking (
+    id INT AUTO_INCREMENT PRIMARY KEY,              -- Khóa chính tự động tăng
+    booking_id VARCHAR(50) NOT NULL,                -- ID Đặt phòng
+    room_code VARCHAR(50) NOT NULL,                 -- Mã phòng
+    document_date DATE NOT NULL,                    -- Ngày chứng từ
+    checkin_date DATE NOT NULL,                     -- Ngày nhận
+    checkout_date DATE NOT NULL,                    -- Ngày trả
+    customer_code VARCHAR(50) NULL,                     -- Mã khách hàng (có thể NULL)
+    customer_name VARCHAR(255) NULL,                    -- Tên khách hàng (có thể NULL)
+    phone_number VARCHAR(20) NULL,                  -- Số điện thoại (có thể NULL)
+    email VARCHAR(255) NULL,                        -- Email (có thể NULL)
+    price_group INT NULL,                           -- Nhóm giá (có thể NULL)
+    guest_count INT NULL,                           -- Số người (có thể NULL)
+    total_amount DECIMAL(15, 2) NULL,               -- Thành tiền (có thể NULL)
+    deposit_amount DECIMAL(15, 2) NULL,             -- Đặt cọc (có thể NULL)
+    note TEXT NULL,                                 -- Ghi chú (có thể NULL)
+    user_source VARCHAR(50) NULL,                   -- Nguồn khách (có thể NULL)
+    unit_code VARCHAR(50) CHARACTER SET utf8mb4 COLLATE utf8mb4_unicode_ci NULL, -- Mã đơn vị (có thể NULL)
+    created_by VARCHAR(50) NULL,                    -- Người tạo (có thể NULL)
+    created_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP,  -- Ngày tạo (mặc định là thời điểm hiện tại)
+    updated_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP ON UPDATE CURRENT_TIMESTAMP
+);
+CREATE TABLE check_in (
+    id INT AUTO_INCREMENT PRIMARY KEY,              -- Khóa chính tự động tăng
+    check_in_id VARCHAR(50) NOT NULL,                -- ID Đặt phòng 
+    id_room_booking INT NULL,                       -- ID phòng đặt (có thể NULL)
+    room_code VARCHAR(50) NOT NULL,                 -- Mã phòng
+    document_date DATE NOT NULL,                    -- Ngày chứng từ
+    checkin_date DATE NOT NULL,                     -- Ngày nhận
+    checkout_date DATE NOT NULL,                    -- Ngày trả
+    customer_code VARCHAR(50) NULL,                     -- Mã khách hàng (có thể NULL)
+    customer_name VARCHAR(255) NULL,                    -- Tên khách hàng (có thể NULL)
+    phone_number VARCHAR(20) NULL,                  -- Số điện thoại (có thể NULL)
+    email VARCHAR(255) NULL,                        -- Email (có thể NULL)
+    price_group INT NULL,                           -- Nhóm giá (có thể NULL)
+    guest_count INT NULL,                           -- Số người (có thể NULL)
+    total_amount DECIMAL(15, 2) NULL,               -- Thành tiền (có thể NULL)
+    deposit_amount DECIMAL(15, 2) NULL,             -- Đặt cọc (có thể NULL)
+    note TEXT NULL,                                 -- Ghi chú (có thể NULL)
+    user_source VARCHAR(50) NULL,                   -- Nguồn khách (có thể NULL)
+    unit_code VARCHAR(50) CHARACTER SET utf8mb4 COLLATE utf8mb4_unicode_ci NULL, -- Mã đơn vị (có thể NULL)
+    created_by VARCHAR(50) NULL,                    -- Người tạo (có thể NULL)
+    created_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP,  -- Ngày tạo (mặc định là thời điểm hiện tại)
+    updated_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP ON UPDATE CURRENT_TIMESTAMP, -- Ngày cập nhật
+);
+CREATE TABLE room_change (
+    id INT AUTO_INCREMENT PRIMARY KEY,              -- Khóa chính tự động tăng
+    room_change_id VARCHAR(50) NOT NULL,                -- ID Đặt phòng
+     id_room_booking INT NULL,                       -- ID phòng đặt (có thể NULL)
+    id_check_in INT NULL,                     		-- ID nhận phòng (có thể NULL, tham chiếu từ bảng check_in)
+    old_room_code VARCHAR(50) NOT NULL,             -- Mã phòng cũ
+    new_room_code VARCHAR(50) NOT NULL,             -- Mã phòng mới
+    document_date TIMESTAMP DEFAULT CURRENT_TIMESTAMP, -- Ngày đổi phòng (mặc định là thời điểm hiện tại)
+    checkin_date DATE NOT NULL,                     -- Ngày nhận
+    checkout_date DATE NOT NULL,                    -- Ngày trả
+    customer_code VARCHAR(50) NULL,                     -- Mã khách hàng (có thể NULL)
+    customer_name VARCHAR(255) NULL,                    -- Tên khách hàng (có thể NULL)
+    phone_number VARCHAR(20) NULL,                  -- Số điện thoại (có thể NULL)
+    email VARCHAR(255) NULL,                        -- Email (có thể NULL)
+    price_group INT NULL,                           -- Nhóm giá (có thể NULL)
+    guest_count INT NULL,                           -- Số người (có thể NULL)
+    total_amount DECIMAL(15, 2) NULL,               -- Thành tiền (có thể NULL)
+    deposit_amount DECIMAL(15, 2) NULL,             -- Đặt cọc (có thể NULL)
+    note TEXT NULL,                                 -- Ghi chú (có thể NULL)
+    created_by VARCHAR(50) NULL,                    -- Người tạo (có thể NULL)
+    created_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP,  -- Ngày tạo (mặc định là thời điểm hiện tại)
+    updated_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP ON UPDATE CURRENT_TIMESTAMP -- Ngày cập nhật
+);
+
+CREATE TABLE check_out (
+    id INT AUTO_INCREMENT PRIMARY KEY,              -- Khóa chính tự động tăng
+    check_out_id VARCHAR(50) NOT NULL,             -- ID trả phòng
+    id_check_in INT NOT NULL,                      -- ID nhận phòng (tham chiếu từ bảng check_in)
+    room_code VARCHAR(50) NOT NULL,                -- Mã phòng
+    document_date DATE NOT NULL,                   -- Ngày chứng từ
+    checkin_date DATE NOT NULL,                    -- Ngày nhận
+    checkout_date DATE NOT NULL,                   -- Ngày trả
+    actual_checkin_date DATE NULL,                 -- Ngày thực nhận (có thể NULL)
+    checkin_time TIME NULL,                        -- Giờ nhận (có thể NULL)
+    actual_checkout_date DATE NULL,                -- Ngày thực trả (có thể NULL)
+    checkout_time TIME NULL,                       -- Giờ trả (có thể NULL)
+    customer_code VARCHAR(50) NULL,                -- Mã khách hàng (có thể NULL)
+    customer_name VARCHAR(255) NULL,               -- Tên khách hàng (có thể NULL)
+    phone_number VARCHAR(20) NULL,                 -- Số điện thoại (có thể NULL)
+    email VARCHAR(255) NULL,                       -- Email (có thể NULL)
+    price_group INT NULL,                          -- Nhóm giá (có thể NULL)
+    guest_count INT NULL,                          -- Số người (có thể NULL)
+    total_amount DECIMAL(15, 2) NULL,              -- Thành tiền (có thể NULL)
+    deposit_amount DECIMAL(15, 2) NULL,            -- Đặt cọc (có thể NULL)
+    discount_amount DECIMAL(15, 2) NULL,           -- Giảm giá (có thể NULL)
+    payment_amount DECIMAL(15, 2) NULL,            -- Thanh toán (có thể NULL)
+    remaining_amount DECIMAL(15, 2) NULL,          -- Còn lại (có thể NULL)
+    status VARCHAR(20) NULL,                       -- Trạng thái (có thể NULL)
+    note TEXT NULL,                                -- Ghi chú (có thể NULL)
+    user_source VARCHAR(50) NULL,                  -- Nguồn khách (có thể NULL)
+    created_by VARCHAR(50) NULL,                   -- Người tạo (có thể NULL)
+    unit_code VARCHAR(50) CHARACTER SET utf8mb4 COLLATE utf8mb4_unicode_ci NULL, -- Mã đơn vị (có thể NULL)
+    created_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP, -- Ngày tạo (mặc định là thời điểm hiện tại)
+    updated_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP ON UPDATE CURRENT_TIMESTAMP -- Ngày cập nhật
+   
+);
+
+CREATE TABLE check_out_details (
+    id INT AUTO_INCREMENT PRIMARY KEY,              -- Khóa chính tự động tăng
+    check_out_id INT NOT NULL,                      -- ID trả phòng (tham chiếu từ bảng check_out)
+    room_code VARCHAR(50) NOT NULL,                -- Mã phòng
+    document_date DATE NOT NULL,                   -- Ngày tạo đơn
+    product_code VARCHAR(50) NOT NULL,             -- Mã sản phẩm
+    quantity INT NOT NULL,                         -- Số lượng
+    unit_price DECIMAL(15, 2) NOT NULL,            -- Đơn giá
+    total_amount DECIMAL(15, 2) NOT NULL,          -- Thành tiền
+    note TEXT NULL,                                -- Ghi chú (có thể NULL)
+    unit_code VARCHAR(50) CHARACTER SET utf8mb4 COLLATE utf8mb4_unicode_ci NULL, -- Mã đơn vị (có thể NULL)
+    created_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP, -- Ngày tạo (mặc định là thời điểm hiện tại)
+    updated_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP ON UPDATE CURRENT_TIMESTAMP  -- Ngày cập nhật
+   
+);
+
+CREATE TABLE status_codes (
+    id INT AUTO_INCREMENT PRIMARY KEY,               -- Khóa chính tự động tăng
+    status_code VARCHAR(50) NOT NULL UNIQUE,         -- Mã trạng thái (duy nhất)
+    status_name VARCHAR(255) NOT NULL,               -- Tên trạng thái
+    note TEXT NULL,                                  -- Ghi chú (có thể NULL)
+    created_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP,  -- Ngày tạo (mặc định là thời điểm hiện tại)
+    updated_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP ON UPDATE CURRENT_TIMESTAMP -- Ngày cập nhật
+);
+
+
+
+
