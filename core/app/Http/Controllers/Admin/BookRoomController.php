@@ -7,6 +7,7 @@ use App\Http\Controllers\Controller;
 use App\Models\Booking;
 use App\Models\BookedRoom;
 use App\Models\CheckInRoom;
+use App\Models\Customer;
 use App\Models\RoomType;
 use App\Models\Room;
 use App\Models\User;
@@ -25,7 +26,8 @@ class BookRoomController extends Controller
         $pageTitle = 'Đặt phòng';
         $roomTypes = RoomType::active()->get(['id', 'name']);
         $countries = json_decode(file_get_contents(resource_path('views/partials/country.json')));
-        return view('admin.booking.book', compact('pageTitle', 'roomTypes', 'countries'));
+        $userList = Customer::select('customer_code')->get();
+        return view('admin.booking.book', compact('pageTitle', 'roomTypes', 'countries', 'userList'));
     }
 
     function searchRoom(Request $request)
