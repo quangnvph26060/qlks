@@ -295,4 +295,11 @@ class BookRoomController extends Controller
         return response()->json(['success' => 'Cập nhật ghi chú thành công']);
     }
 
+    public function searchCustomer(Request $request){
+        $data = Customer::where('name', $request->name)->first();
+        return response()->json([
+            'status' => 'success',
+            'data'   => $data
+        ]);
+    }
 }

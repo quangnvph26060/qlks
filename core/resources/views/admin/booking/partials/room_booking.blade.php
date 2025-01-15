@@ -98,6 +98,9 @@
 
                         </table>
                     </div>
+                    <div class="alert-danger message-error" role="alert">
+
+                    </div>
                     <hr>
                     <p class="add-room-booking" style="width: 185px;">
                         <svg xmlns="http://www.w3.org/2000/svg" width="20" height="20"
@@ -110,12 +113,11 @@
                             </g>
                         </svg>
                         Chọn thêm phòng
-                    </p>
+                    </p> 
+                    
                   </div>
 
-                    {{-- <div class="alert alert-danger message-error" role="alert" style="padding: 5px 10px">
-
-                    </div> --}}
+                  
                    
 
                     <div class="col-md-4">
@@ -127,8 +129,8 @@
                             <div class="customer-input-container mt-2">
                                 <label for="phone" class="form-label required">Tên khách hàng</label>
                                <div class="d-flex" style="gap: 10px">
-                                <input id="customer-name" type="text" class="form-control" placeholder="Tên khách hàng">
-                                <button class="btn btn--primary " style="white-space: nowrap; font-size: 13px" id="btn-search">Tìm kiếm</button>
+                                <input id="customer-name" type="text" name="name" class="form-control" placeholder="Tên khách hàng">
+                                <p class="btn btn--primary " style="white-space: nowrap; font-size: 13px" id="btn-search">Tìm kiếm</p>
                                </div>
     
                                 {{-- <div class="d-flex customer-svg-icon" style="gap: 5px">
@@ -150,7 +152,7 @@
                             </div>
                             <div class="mb-3 mt-2">
                                 <label for="phone" class="form-label">Số điện thoại</label>
-                                <input type="text" id="phone" class="form-control" placeholder="Số điện thoại">
+                                <input type="text" id="phone" name="phone" class="form-control" placeholder="Số điện thoại">
                             </div>
                             {{-- <div class="mb-3">
                                 <label for="address" class="form-label required">Địa chỉ</label>

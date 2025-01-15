@@ -723,6 +723,8 @@ h5 {
 
 .message-error{
     display: none;
+    padding: 5px 10px;
+    font-size: 13px
 }
 .btn--danger-service {
     color: #fff;
@@ -751,9 +753,14 @@ h5 {
     border-color: #4634ff;
     border-radius: 5px;
 }
+.deposit{
+    padding: 0px 3px !important;
+    text-align: end;
+
+}
 .time-book-room{
     width: 109px;
-    padding: 2px 8px !important;
+    padding: 2px 7px !important;
 }
 .date-book-room{
     width: 115px;

@@ -249,13 +249,19 @@ Route::middleware('admin', 'adminPermission')->group(function () {
             Route::get('room/edit-product/{id}', 'edit')->name('edit');
             Route::post('/rooms/update-product', 'update')->name('update');
         });
+        Route::controller('CustomerSourceController')->name('room.customer_customer.')->prefix('CustomerSource')->group(function () {
+            Route::get('', 'index')->name('all');
+        });
+        Route::controller('CustomerController')->name('room.product.')->prefix('Customer')->group(function () {
+            Route::get('', 'index')->name('all');
+        });
     });
 
     Route::controller('BookRoomController')->group(function () {
         Route::get('book-room', 'room')->name('book.room');
         Route::post('room-book', 'book')->name('room.book');
         Route::get('room/search', 'searchRoom')->name('room.search');
-       
+        Route::get('search/customer', 'searchCustomer')->name('search.customer');
         Route::post('room-note', 'updatenote')->name('room.note');
     });
 
