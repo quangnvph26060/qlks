@@ -13,6 +13,7 @@ use App\Models\UserdProductRoom;
 use Illuminate\Http\Request;
 use App\Constants\Status;
 use App\Http\Responses\ApiResponse;
+use App\Models\CheckIn;
 use App\Models\PremiumService;
 use App\Models\Product;
 use App\Models\RegularRoomPrice;
@@ -87,9 +88,23 @@ class BookingController extends Controller
 
     public function todayCheckInBooking()
     {
-        $pageTitle = 'Kiểm tra hôm nay';
-        $bookings = $this->bookingData('todayCheckIn');
-        return view('admin.booking.list', compact('pageTitle', 'bookings'));
+        $pageTitle = 'Danh sách nhận phòng';
+        return view('admin.booking.list', compact('pageTitle'));
+    }
+    public function getBooking(Request $request)
+    {
+        $perPage = 10;
+        $roomBookings = CheckIn::with('room', 'admin')->orderBy('created_at', 'asc')->paginate($perPage);
+        return response([
+            'status' => 'success',
+            'data' => $roomBookings->items(),
+            'pagination' => [
+                'total' => $roomBookings->total(),
+                'current_page' => $roomBookings->currentPage(),
+                'last_page' => $roomBookings->lastPage(),
+                'per_page' => $roomBookings->perPage(),
+            ]
+        ]);
     }
 
     public function todayCheckoutBooking()

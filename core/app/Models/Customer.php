@@ -8,9 +8,7 @@ use Illuminate\Database\Eloquent\Model;
 class Customer extends Model
 {
     use HasFactory;
-
     protected $table = 'customer';
-
     protected $fillable = [
         'customer_code',
         'name',
@@ -24,7 +22,6 @@ class Customer extends Model
         'created_at',
         'updated_at',
     ];
-
     public function styleStatus(){
         return $this->status == 1 ? '<span class="badge badge--success">Hoạt động</span>' : '<span class="badge badge--danger">Không hoạt động</span>';
     }

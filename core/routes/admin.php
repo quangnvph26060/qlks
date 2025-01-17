@@ -266,6 +266,9 @@ Route::middleware('admin', 'adminPermission')->group(function () {
             Route::get('edit-customer/{id}', 'edit')->name('edit');
             Route::put('/update-customer/{id}', 'update')->name('update');
             Route::post('delete-customer/{id}', 'delete')->name('delete');
+            Route::post('status/{id}', 'status')->name('status');
+            Route::get('search', 'search')->name('search');
+
         });
 
         Route::controller('StatusCodeController')->name('status.code.')->prefix('status-code')->group(function () {
@@ -283,6 +286,12 @@ Route::middleware('admin', 'adminPermission')->group(function () {
             Route::get('room/edit-product/{id}', 'edit')->name('edit');
             Route::post('/rooms/update-product', 'update')->name('update');
         });
+        Route::controller('CustomerSourceController')->name('room.customer_customer.')->prefix('CustomerSource')->group(function () {
+            Route::get('', 'index')->name('all');
+        });
+        Route::controller('CustomerController')->name('customer.')->prefix('Customer')->group(function () {
+            Route::get('', 'index')->name('all');
+        });
     });
 
     Route::controller('BookRoomController')->group(function () {
@@ -290,7 +299,10 @@ Route::middleware('admin', 'adminPermission')->group(function () {
         Route::post('room-book', 'book')->name('room.book');
         Route::get('room/search', 'searchRoom')->name('room.search');
 
+        Route::get('search/customer', 'searchCustomer')->name('search.customer');
         Route::post('room-note', 'updatenote')->name('room.note');
+        Route::post('room-check-in/{id}', 'checkIn')->name('room.check.in');
+        Route::get('room-booking', 'getBooking')->name('room.booking');
     });
 
     //Manage Reservation
@@ -365,6 +377,8 @@ Route::middleware('admin', 'adminPermission')->group(function () {
             Route::post('list-room-booking', 'listRoomBooking')->name('listRoomBooking');
             Route::post('list-room-booked', 'listRoomBooked')->name('listRoomBooked');
             Route::post('get-room-check-in', 'getRoomCheckIn')->name('getRoomCheckIn');
+
+            Route::get('all-check-in', 'getBooking')->name('all.check.in');
         });
 
         Route::controller('ManageBookingController')->group(function () {

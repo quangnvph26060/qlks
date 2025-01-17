@@ -12,7 +12,8 @@ class StatusCodeController extends Controller
     public function index()
     {
         $pageTitle = 'Trạng thái chức năng';
-        $status_codes = StatusCode::all();
+        $status_codes = StatusCode::orderBy('id', 'desc')->get();
+        ;
         $emptyMessage = 'Không tìm thấy dữ liệu';
         return view('admin.hotel.status_code.list', compact('pageTitle', 'status_codes', 'emptyMessage'));
     }

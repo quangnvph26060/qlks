@@ -929,12 +929,12 @@
                 });
             }
 
-            // Sử dụng delegate event để đảm bảo sự kiện click hoạt động với các phần tử động
+          
             $(document).on('click', '.icon-delete-room', function() {
                 // Lấy data-room-id và data-room-type-id của dòng tr chứa icon
-                const row = $(this).closest('tr'); // Lấy thẻ <tr> chứa icon
-                const roomId = row.data('room-id'); // Lấy data-room-id
-                const roomTypeId = row.data('room-type-id'); // Lấy data-room-type-id
+                const row = $(this).closest('tr');
+                const roomId = row.data('room-id'); 
+                const roomTypeId = row.data('room-type-id');
 
 
                 $('#confirmDeleteModal').modal('show');
@@ -942,8 +942,8 @@
                 // Lưu thông tin phòng để xóa vào modal
                 $('#confirmDeleteButton').off('click').on('click', function() {
                     // Xử lý xóa
-                    row.remove(); // Xóa dòng tr khỏi bảng
-                    $('#confirmDeleteModal').modal('hide'); // Ẩn modal
+                    row.remove();
+                    $('#confirmDeleteModal').modal('hide');
                     // console.log('Xóa phòng với roomId:', roomId, 'và roomTypeId:',
                     //     roomTypeId); // In ra thông tin xóa
                 });

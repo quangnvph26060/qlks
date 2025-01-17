@@ -8,9 +8,7 @@ use Illuminate\Database\Eloquent\Model;
 class CustomerSource extends Model
 {
     use HasFactory;
-
     protected $table = 'customer_sources';
-
     protected $fillable = [
         'source_code',
         'source_name',
