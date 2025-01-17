@@ -136,7 +136,7 @@ class BookRoomController extends Controller
     public function book(Request $request)
     {
 
-        // \Log::info(gettype($request->room));
+         \Log::info($request->all());
         DB::beginTransaction();
         try {
             $validator = Validator::make($request->all(), [
@@ -157,41 +157,53 @@ class BookRoomController extends Controller
             $guest = [];
 
             // check thông tin  user đã đăng ký tài khoản chưa
-            if ($request->guest_type == 1) {
-                $user = User::where('email', $request->email)->first();
-                if (!$user) {
-                    return response()->json(['error' => 'Không có khách đã đăng ký nào được tìm thấy với email này']); // No registered guest found with this email
-                }
-            } else {
-                $guest['name'] = $request->guest_name;
-                $guest['email'] = $request->email;
-                $guest['mobile'] = $request->mobile;
-                $guest['address'] = $request->address;
-            }
+            // if ($request->guest_type == 1) {
+            //     $user = User::where('email', $request->email)->first();
+            //     if (!$user) {
+            //         return response()->json(['error' => 'Không có khách đã đăng ký nào được tìm thấy với email này']); // No registered guest found with this email
+            //     }
+            // } else {
+            //     $guest['name'] = $request->guest_name;
+            //     $guest['email'] = $request->email;
+            //     $guest['mobile'] = $request->mobile;
+            //     $guest['address'] = $request->address;
+            // }
             $bookingId = null;
-            $bookedRoomData = [];
-            $totalFare      = 0;
+            // $bookedRoomData = [];
+            // $totalFare      = 0;
             $tax            = gs('tax'); // thuế
             foreach ($request->room as $index => $item) {
                 $room = json_decode($item, true);
-                \Log::info($room);
                 // kiểm tra khách hàng 
                 $customer = $this->add_guest($request->name, $request->phone);
                 // đặt cọc của từng phòng
                 $depositAmount = is_numeric($room['deposit']) ? intval(floatval(str_replace('.', '', $room['deposit']))) : $room['deposit'];
 
                 $roomPice = RoomTypePrice::where('room_type_id', $room['roomType'])->orderByDesc('price_validity_period')->first();
-                $check_in                 =  new RoomBooking();
+
+                $check_in = $request->method == 'check_in' ? new CheckIn() : new RoomBooking();
+
                 if ($index == 0) {
-                    $check_in->booking_id = getCode('DP', 12);
-                    $bookingId = $check_in->booking_id;
+                    if($request->method == 'check_in') {
+                        $check_in->check_in_id      = getCode('NP', 12);
+                        $bookingId = $check_in->check_in_id;
+                    }else{
+                        $check_in->booking_id       = getCode('DP', 12);
+                        $bookingId = $check_in->booking_id;
+                    }
                 } else {
-                    $check_in->booking_id = $bookingId;
+                    if($request->method == 'check_in') {
+                        $check_in->check_in_id   = $bookingId;
+                    }else{
+                        $check_in->booking_id = $bookingId;
+                    }
+                  
                 }
+              
                 $check_in->room_code      = $room['room'];
                 $check_in->document_date  = now();
                 $check_in->checkin_date   = Carbon::parse($room['dateIn']);
-                $check_in->checkout_date  =  Carbon::parse($room['dateOut']);
+                $check_in->checkout_date  = Carbon::parse($room['dateOut']);
                 $check_in->customer_code  = $customer['customer_code'];
                 $check_in->customer_name  = $customer['name'];
                 $check_in->phone_number   = $customer['phone'];

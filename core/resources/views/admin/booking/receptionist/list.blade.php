@@ -1707,19 +1707,25 @@
             })
             $(document).on('click', '.room-booking-status-occupied', function() {
                 var id = $(this).data('id');
-                var booking_id = $(this).data('room');
+                var booking_id = $(this).data('action');
                 // console.log(id);
                 // console.log(booking_id);
+                var url = `{{ route('admin.booking.check.in.details', ['id' => ':id']) }}`.replace(':id',
+                id);
+                window.location.href = url;
 
-
-
-                handleLateCheckinClick(id, booking_id);
+               // handleLateCheckinClick(id, booking_id);
             });
 
             $('.room-booking-status-incoming').on('click', function() {
                 var id = $(this).data('id');
-                var booking_id = $(this).data('room');
-                handleLateCheckinClick(id, booking_id);
+                var booking_id = $(this).data('action');
+                // console.log(id);
+                // console.log(booking_id);
+                   var url = `{{ route('admin.booking.details', ['id' => ':id']) }}`.replace(':id',
+                id);
+                window.location.href = url;
+                // handleLateCheckinClick(id, booking_id);
             });
 
             // $('.room-booking-status-late-checkin').on('click', function() {

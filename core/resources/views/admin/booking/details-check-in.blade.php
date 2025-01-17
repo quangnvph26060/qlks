@@ -74,18 +74,18 @@
         <div class="col-md-8">
             <div class="card position-relative">
                 <div class="card-body">
-                    <div class="custom-badge position-absolute badge--warning">
+                    <div class="custom-badge position-absolute badge--success">
                         {{-- @php
                             echo $booking->status_badge;
                         @endphp --}}
-                        Đặt phòng
+                        Nhận phòng
                     </div>
 
                     <div class="d-flex flex-wrap justify-content-between gap-3">
                         <div class="d-flex flex-column gap-3">
                             <div>
                                 <small class="fw-500">@lang('Số đặt chỗ')</small> <br>
-                                <span>{{ $booking['booking_id'] ?? '' }}</span>
+                                <span>{{ $booking['check_in_id'] ?? '' }}</span>
 
                             </div>
 
@@ -135,6 +135,7 @@
                                 <small class="fw-500">@lang('Trả phòng')</small> <br>
                                 <small> <em class="text-muted">{{ showDateTime($booking->checkout_date, 'd M, Y h:i A') }}</em></small>
                             </div>
+
                             <div>
                                 <small class="fw-500">@lang('Ghi chú')</small> <br>
                               <textarea name="" id="" cols="30" rows="2">{{$booking['note']}}</textarea>
@@ -226,7 +227,7 @@
                         </div>
                     </div>
                 </div> --}}
-                {{-- <div class="accordion-item">
+                <div class="accordion-item">
                     <h2 class="accordion-header" id="premiumServiceHeading">
                         <button aria-controls="premiumService" aria-expanded="false" class="accordion-button"
                             data-bs-target="#premiumService" data-bs-toggle="collapse" type="button">
@@ -250,7 +251,7 @@
 
                                         <tbody>
                                             dich jvuj cao caaps
-                                            @foreach ($booking->usedPremiumService->groupBy('service_date') as $services)
+                                            {{-- @foreach ($booking->usedPremiumService->groupBy('service_date') as $services)
                                                 @foreach ($services as $service)
                                                     <tr>
                                                         @if ($loop->first)
@@ -276,14 +277,14 @@
                                                         </td>
                                                     </tr>
                                                 @endforeach
-                                            @endforeach
+                                            @endforeach --}}
 
                                             <tr>
                                                 <td class="text-end" colspan="3">
                                                     <span class="fw-bold">@lang('Tổng')</span>
                                                 </td>
                                                 <td class="fw-bold text-end">
-                                                    {{ showAmount($booking->service_cost) }}
+                                                    {{-- {{ showAmount($booking->service_cost) }} --}}
                                                     34543
                                                 </td>
                                             </tr>
@@ -297,7 +298,7 @@
                             @endif
                         </div>
                     </div>
-                </div> --}}
+                </div>
 
                 @php
                     // $receivedPyaments = $booking->payments->where('type', 'RECEIVED');

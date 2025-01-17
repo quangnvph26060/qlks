@@ -45,4 +45,8 @@ class CheckIn extends Model
     public function admin() {
         return $this->belongsTo(Admin::class,'created_by');
     }
+    public function due()
+    {
+        return $this->total_amount - $this->deposit_amount;
+    }
 }

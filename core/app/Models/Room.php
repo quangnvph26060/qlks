@@ -201,4 +201,12 @@ class Room extends Model
     public function bookedRooms(){
          return BookedRoom::where('room_id', $this->id)->get();
     }
+    public function roomBooking()
+    {
+        return $this->hasMany(RoomBooking::class, 'room_code')->where('status',0);
+    }
+    public function roomCheckIn()
+    {
+        return $this->hasMany(CheckIn::class, 'room_code');
+    }
 }

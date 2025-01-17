@@ -28,16 +28,14 @@
                                 <th>@lang('Ngày chứng từ')</th>
                                 <th>@lang('Ngày nhận')</th>
                                 <th>@lang('Ngày trả')</th>
-                                <th>@lang('Mã khách')</th>
+                            
                                 <th>@lang('Tên khách hàng')</th>
                                 <th>@lang('Số điện thoại')</th>
 
                                 <th>@lang('Số người')</th>
                                 <th>@lang('Thành tiền')</th>
                                 <th>@lang('Đặt cọc')</th>
-                                <th>@lang('Ghi chú')</th>
-                                <th>@lang('Nguồn khách')</th>
-                                <th>@lang('User tạo')</th>
+                               
                                 @can(['admin.hotel.room.type.edit', 'admin.hotel.room.type.status',
                                     'admin.hotel.room.type.destroy'])
                                     <th>@lang('Hành động')</th>
@@ -59,6 +57,7 @@
         </div>
         <div class="pagination-container"></div>
         @include('admin.booking.partials.room_booking')
+        @include('admin.booking.partials.confirm-room')
     </div>
     @include('admin.booking.partials.modals')
     <x-confirmation-modal />
@@ -168,7 +167,17 @@
             });
         }
 
-
+        function formatNumber(input) {
+            var value = input.value;
+            var numericValue = value.replace(/[^0-9,]/g, '');
+            var parts = numericValue.split(',');
+            var integerPart = parts[0].replace(/\./g, '');
+            var formattedValue = integerPart.replace(/\B(?=(\d{3})+(?!\d))/g, ".");
+            if (parts.length > 1) {
+                formattedValue += ',' + parts[1];
+            }
+            input.value = formattedValue;
+        }
         function addRoomInBooking(roomId, roomTypeId) {
             $('#loading').show();
             $.ajax({
@@ -238,7 +247,7 @@
                                             </div>
                                         </td>
                                         <td>
-                                              <input type="text" class="form-control deposit" id="number-input" oninput="this.value = this.value.slice(0, 16)"  name="deposit"  placeholder="0">
+                                              <input type="text" class="form-control deposit number-input"  oninput="this.value = this.value.slice(0, 16)"  name="deposit"  placeholder="0">
                                            
                                         </td>
                                         <td>
@@ -282,7 +291,9 @@
 
                         $('#loading').hide();
                         tbody.append(tr);
-                        $('#number-input').on('input', function() {
+
+                    
+                        $('.number-input').on('input', function() {
                             formatNumber(this);
                         });
 
@@ -296,6 +307,7 @@
                 }
             });
         }
+
         function formatCurrency(amount) {
             const parts = amount.toString().split('.');
             const integerPart = parts[0];
@@ -303,6 +315,7 @@
 
             return formattedInteger + ' VND';
         }
+
         function validator(checkInDate, checkOutDate, dataRowValue) {
             const checkInDateTimeString = `${checkInDate}`;
             const checkInDateTimeStringOut = `${checkOutDate}`;
@@ -338,6 +351,7 @@
                 return true;
             }
         }
+
         function getDatesBetween(checkInDate, checkInTime, checkOutDate, checkOutTime, room, roomType, adult, note,
             deposit) {
 
@@ -382,6 +396,7 @@
             }
             return dates;
         }
+
         function loadRoomBookings(page = 1) {
             $.ajax({
                 url: '{{ route('admin.booking.all.check.in') }}', // Adjust this to your route
@@ -396,32 +411,32 @@
                         var pagination = response.pagination;
 
                         $('.data-table').html('');
-
+                        // <td>${data['admin']['name']}</td> user tạo
                         data.forEach(function(data, index) {
                             var html = `
                                 <tr data-id="${data['id']}">
-                                     <td>${index + 1  }</td>
-                                      <td>${data['check_in_id']}</td>
-                                    <td>${data['id_room_booking']}</td>
+                                    <td>${index + 1  }</td>
+                                    <td>${data['check_in_id']}</td>
+                                    <td>${data['id_room_booking'] ? data['id_room_booking'] : ''}</td>
                                     <td>${data['room']['room_number']}</td>
                                     <td>${data['document_date']}</td>
                                     <td>${data['checkin_date']}</td>
                                     <td>${data['checkout_date']}</td>
-                                    <td>${data['customer_code'] ? data['customer_code'] : 'N/A'}</td>
+                                 
                                     <td>${data['customer_name'] ? data['customer_name'] : 'N/A'}</td>
                                     <td>${data['phone_number'] ? data['phone_number'] : 'N/A'}</td>
                                
                                     <td>${data['guest_count']}</td>
                                     <td>${ formatCurrency( data['total_amount'])}</td>
                                     <td>${formatCurrency(data['deposit_amount'])}</td>
-                                    <td>${data['note']}</td>
-                                    <td>${data['user_source']}</td>
-                                    <td>${data['admin']['name']}</td>
+                                
+                                   
                                     <td>
                                         <svg class="svg_menu_check_in" xmlns="http://www.w3.org/2000/svg" width="30" height="30" viewBox="0 0 21 21"><g fill="currentColor" fill-rule="evenodd"><circle cx="10.5" cy="10.5" r="1"/><circle cx="10.5" cy="5.5" r="1"/><circle cx="10.5" cy="15.5" r="1"/></g></svg>    
                                         <div class="dropdown menu_dropdown_check_in" id="dropdown-menu">
-                                            <div class="dropdown-item booked_room" data-room-id="${data['id']}">Trả phòng</div>
+                                            <div class="dropdown-item booked_room_caned" data-room-id="${data['id']}">Trả phòng</div>
                                             <div class="dropdown-item booked_room" data-room-id="${data['id']}">Đổi phòng</div>
+                                            <div class="dropdown-item booked_room_detail" data-room-id="${data['id']}">Chi tiết</div>
                                             <div class="dropdown-item delete-booked-room"  data-room-id="${data['id']}" >Xóa phòng</div>
                                         </div>
                                     </td>
@@ -444,6 +459,33 @@
                 $('.booking-form').submit(); // Gửi form
             }
 
+        });
+        $(document).on('click', '.note-booked-room', function() {
+            var roomId = $(this).data('room-id');
+            var note = $(this).closest('tr').find('input[name="note"]').val();
+            $('#noteModal').modal('show');
+            $('#note-input').val(note);
+            $('#note-input').data('room-id', roomId);
+        });
+        $(document).on('click', '.booked_room_detail', function() {
+            var roomId = $(this).data('room-id');
+            var url = `{{ route('admin.booking.check.in.details', ['id' => ':id']) }}`.replace(':id',
+                roomId);
+                window.location.href = url;
+        });
+        $(document).on('click', '.save-note', function() {
+            var newNote = $('#note-input').val();
+            var roomId = $('#note-input').data('room-id');
+
+            $('#list-booking tr[data-room-id="' + roomId + '"]')
+                .find('input[name="note"]')
+                .val(newNote);
+
+            $('#list-booking tr[data-room-id="' + roomId + '"]')
+                .find('input[name="note_room"]')
+                .val(newNote);
+
+            $('#noteModal').modal('hide');
         });
         $('.booking-form').on('submit', function(e) {
             e.preventDefault();
@@ -516,7 +558,10 @@
                         });
                     });
                 })
-
+                formData.push({
+                    name: 'method',
+                    value: 'check_in',
+                });
 
                 // formData.push({
                 //     name: 'is_method',
@@ -527,7 +572,7 @@
                     if (item.name === 'room[]') {
                         const data = item.value;
                         let dataArray = JSON.parse(data);
-                        const timeCheckIn =  dataArray['dateIn'];
+                        const timeCheckIn = dataArray['dateIn'];
                         const timeCheckOut = dataArray['dateOut'];
                         const resultData = validator(timeCheckIn, timeCheckOut, dataRowValue);
                         if (!resultData) {
@@ -563,6 +608,23 @@
                 }
             }
 
+        });
+        $(document).on('click', '.icon-delete-room', function() {
+            const row = $(this).closest('tr');
+            const roomId = row.data('room-id');
+            const roomTypeId = row.data('room-type-id');
+
+
+            $('#confirmDeleteModal').modal('show');
+
+            // Lưu thông tin phòng để xóa vào modal
+            $('#confirmDeleteButton').off('click').on('click', function() {
+                // Xử lý xóa
+                row.remove();
+                $('#confirmDeleteModal').modal('hide');
+                // console.log('Xóa phòng với roomId:', roomId, 'và roomTypeId:',
+                //     roomTypeId); // In ra thông tin xóa
+            });
         });
         $(document).ready(function() {
             loadRoomBookings(); // Function to load the room bookings
@@ -613,6 +675,23 @@
             $(document).on('click', function() {
                 $('.menu_dropdown_check_in').removeClass('show');
             });
+        });
+        $(document).on('click', '[id="hour_current"]', function() {
+            // Lấy ngày và giờ hiện tại
+            const now = new Date();
+            const year = now.getFullYear();
+            const month = String(now.getMonth() + 1).padStart(2, '0'); // Tháng bắt đầu từ 0
+            const date = String(now.getDate()).padStart(2, '0');
+            const hours = String(now.getHours()).padStart(2, '0');
+            const minutes = String(now.getMinutes()).padStart(2, '0');
+
+            // Kết hợp thành giá trị datetime-local
+            const currentDate = `${year}-${month}-${date}`; // Format YYYY-MM-DD
+            const currentTime = `${hours}:${minutes}`; // Format HH:mm
+
+            // Gán giá trị vào các input
+            $('[id="date-book-room"]').val(currentDate);
+            $('[id="time-book-room"]').val(currentTime);
         });
         $(document).on('click', '#btn-search', function() {
             var customerName = $('#name').val();
