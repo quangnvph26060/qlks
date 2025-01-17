@@ -67,5 +67,8 @@ class RoomBooking extends Model
     public function scopeActive() {
         return $this->where('status', 0);
     }
-
+    public function due()
+    {
+        return $this->total_amount - $this->deposit_amount;
+    }
 }

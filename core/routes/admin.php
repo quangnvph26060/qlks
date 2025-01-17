@@ -319,6 +319,7 @@ Route::middleware('admin', 'adminPermission')->group(function () {
             Route::get('booked-rooms/{id}', 'bookedRooms')->name('booked.rooms');
 
             Route::get('details/{id}', 'bookingDetails')->name('details');
+            Route::get('check-in-details/{id}', 'CheckInDetails')->name('check.in.details');
             Route::get('booking-invoice/{id}', 'generateInvoice')->name('invoice');
 
             Route::post('key/handover/{id}', 'handoverKey')->name('key.handover');

@@ -17,6 +17,7 @@ use App\Models\CheckIn;
 use App\Models\PremiumService;
 use App\Models\Product;
 use App\Models\RegularRoomPrice;
+use App\Models\RoomBooking;
 use App\Models\RoomPriceRoom;
 use App\Models\RoomPricesWeekdayHour;
 use App\Models\RoomTypePrice;
@@ -159,139 +160,25 @@ class BookingController extends Controller
 
         return view('admin.booking.upcoming_checkin_checkout', compact('pageTitle', 'bookings', 'emptyMessage'));
     }
-
+    // chi tiết đặt phòng
     public function bookingDetails(Request $request,  $id)
     {
-        $booking = Booking::with([
-            'bookedRooms',
-            'checkinRooms',
-            // 'activeBookedRooms:id,booking_id,room_id',
-            // 'activeBookedRooms.room:id,room_number',
-            'bookedRooms.room:id,room_type_id,room_number',
-            'bookedRooms.room.roomType:id,name',
-            'userBooking',
-            'checkinRooms.room:id,room_type_id,room_number',
-            'checkinRooms.room.roomType:id,name',
-            // 'bookedRooms.room.roomPricesActive',
-            // 'usedPremiumService.room',
-            // 'usedPremiumService.premiumService',
-            // 'usedProductRoom.room',
-            // 'usedProductRoom.product',
-            'payments'
-        ])->findOrFail($id);
-        $booking->room_status = $booking->bookedRooms->merge($booking->checkinRooms)->unique();
-        // $room->room_status = $room->booked->merge($room->checkins);
-
-        // Xóa các mối quan hệ riêng biệt (nếu không cần thiết nữa)
-        unset($booking->bookedRooms);
-        unset($booking->checkinRooms);
-        // \Log::info($booking->bookedRooms);
-        // \Log::info($booking->checkinRooms);
-
-        // BookedRoom::where('booking_id', $id)->with('booking.user', 'room.roomType')->orderBy('booked_for')->get()->groupBy('booked_for');
-        if ($request->is_method === 'receptionist') {
-            $returnedPayments  = $booking->payments->where('type', 'RETURNED'); // Đã hoàn tiền
-            $receivedPayments  = $booking->payments->where('type', 'RECEIVED');
-            $total_amount      = $booking->total_amount;
-            $due               = $booking->due();
-            $chose = $booking->option;
-            if ($chose === 'gio') {
-                $timeOutDefault = $booking->timeOutDefault();  // time từ in đến out
-                $timeOutNow     = $booking->timeOutNow();     // time đã quá giờ check out
-                $last_overtime_calculated_at = $booking->last_overtime_calculated_at; //
-
-                //  \Log::info('time out -> hiện tại '. $timeOutNow);
-                //  \Log::info('time cộng lần trước  '. $last_overtime_calculated_at);
-                if ($booking->last_overtime_calculated_at === null || $timeOutNow > $last_overtime_calculated_at) {
-                    if ($timeOutNow > 0) {
-                        //   \Log::info('123');
-                        $overTime = $timeOutNow;
-
-                        $id_room_price   = $booking->bookedRooms[0]['room_id'];
-                        // $price_hour_room = RoomPricesWeekdayHour::where('room_price_id', $id_room_price)->orderBy('hour', 'asc')->get();
-                        $price_hour_room = RegularRoomPrice::where('room_price_id', $id_room_price)->first();
-                        $extraAmount = 0;  // Tiền phát sinh
-                        $currentHour = $timeOutDefault;
-
-                        // \Log::info($price_hour_room->hourly_price * $timeOutNow);
-                        // \Log::info($currentHour);
-                        // foreach ($price_hour_room as $price) {
-
-                        //     if ($overTime > 0) {
-                        //         if ($currentHour >= $price->hour) {
-                        //             continue;
-                        //         }
-                        //         $applicableHours = min($overTime, $price->hour - $currentHour);  // Tính số giờ trong mức giá hiện tại
-                        //         $extraAmount += $applicableHours * (float)$price->price;  // Cộng thêm tiền vào
-
-                        //         // \Log::info($applicableHours);
-
-                        //         $overTime -= $applicableHours;  // Giảm số giờ vượt đã tính
-                        //         $currentHour = $price->hour;  // Cập nhật giờ hiện tại
-                        //         if ($overTime <= 0) {
-                        //             break;
-                        //         }
-                        //     }
-
-                        // }
-                        // \Log::info($overTime);
-                        // if ($overTime > 0) {
-                        //     // Lấy giá cuối cùng trong bảng để tính cho giờ vượt còn lại
-                        //     $lastPrice = $price_hour_room->last();
-                        //     if ($lastPrice) {
-                        //         $extraAmount += $overTime * (float)$lastPrice->price;  // Tính tiền cho giờ vượt còn lại
-                        //     }
-                        // }
-                        // \Log::info($extraAmount);
-                        // Cộng thêm tiền vào tổng tiền của booking
-                        $flag = $timeOutNow - $last_overtime_calculated_at;
-                        if ($flag === 0) {
-                            $total_amount = $booking->total_amount + ($timeOutNow * $price_hour_room->hourly_price);
-                        } else {
-                            $total_amount = $booking->total_amount +  ($flag * $price_hour_room->hourly_price);
-                        }
-                        // // Cập nhật tổng tiền
-                        $booking->booking_fare = $total_amount;
-                        $booking->last_overtime_calculated_at = $timeOutNow;
-                        $booking->save(); // Lưu thay đổi
-                    }
-                }
-            }
-           // $service = PremiumService::get();
-         //   $product = Product::get();
-          //  $room_id = $booking->bookedRooms[0]->room_id;
-         //  $currentDate = Carbon::now()->format('Y-m-d');
-
-            // Lấy danh sách dịch vụ đã sử dụng
-            // $used_services = UsedPremiumService::whereDate('service_date', $currentDate)
-            //     ->where('room_id', $room_id)
-            //     ->select('premium_service_id', 'qty')
-            //     ->get();
-
-            // $used_products = UserdProductRoom::whereDate('product_date', $currentDate)
-            //     ->where('room_id', $room_id)
-            //     ->select('product_id', 'qty')
-            //     ->get();
-            // 123 
-            $room = Room::with('booked', 'checkins')->find($request->room_id);
-            if($room->booked->isEmpty()){
-                $room->room_status = $room->checkins;
-            }else if($room->checkins->isEmpty()){
-                $room->room_status = $room->booked;
-            }else {
-                $room->room_status = $room->checkins;
-            }
-            // $room->room_status = $room->booked->merge($room->checkins);
-
-            // Xóa các mối quan hệ riêng biệt (nếu không cần thiết nữa)
-            unset($room->booked);
-            unset($room->checkins);
-            return response()->json(['status' => 'success', 'data' => $booking, 'returnedPayments' => $returnedPayments, 'receivedPayments' => $receivedPayments, 'total_amount' => $total_amount, 'due' => $due,'room'=>$room]);
-        }
-        $pageTitle = 'Chi tiết đặt chỗ';
-        return view('admin.booking.details', compact('pageTitle', 'booking'));
+        $pageTitle = 'Chi tiết đặt phòng';
+        $booking = RoomBooking::with('room')->findOrFail($id);
+        $due = $booking->due();
+    
+       
+        return view('admin.booking.details', compact('pageTitle','booking', 'due'));
     }
-
+    public function CheckInDetails(Request $request,  $id)
+    {
+        $pageTitle = 'Chi tiết nhận phòng';
+        $booking = CheckIn::with('room')->findOrFail($id);
+        $due = $booking->due();
+    
+       
+        return view('admin.booking.details-check-in', compact('pageTitle','booking', 'due'));
+    }
     public function bookingserviceproduct($id){
         Log::info($id);
         $service = PremiumService::get();
@@ -468,11 +355,11 @@ class BookingController extends Controller
             //                 $query->where('status',1)->whereDate('booked_for', '<=', now())->limit(1);
             //             }
 
-            ->with(['roomType','roomType.roomTypePrice', 'booked', 'checkins', 'checkins.booking', 'checkins.booking.userBooking', 'booked.booking','booked.booking.userBooking'])
+            ->with(['roomType','roomType.roomTypePrice','roomCheckIn','roomBooking'])
             ->select(['id', 'room_type_id', 'room_number', 'is_clean'])
-            ->when(!empty($request->roomType), function ($query) use ($request) {
-                $query->where('room_type_id', 'like', '%' . $request->roomType . '%');
-            })
+            // ->when(!empty($request->roomType), function ($query) use ($request) {
+            //     $query->where('room_type_id', 'like', '%' . $request->roomType . '%');
+            // })
             ->get();
         $scope = 'ALL';
        // dd($emptyRooms);

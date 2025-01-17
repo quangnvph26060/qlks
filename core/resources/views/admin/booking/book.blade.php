@@ -27,16 +27,11 @@
                                 <th>@lang('Ngày chứng từ')</th>
                                 <th>@lang('Ngày nhận')</th>
                                 <th>@lang('Ngày trả')</th>
-                                <th>@lang('Mã khách')</th>
                                 <th>@lang('Tên khách hàng')</th>
                                 <th>@lang('Số điện thoại')</th>
-                              
                                 <th>@lang('Số người')</th>
                                 <th>@lang('Thành tiền')</th>
                                 <th>@lang('Đặt cọc')</th>
-                                <th>@lang('Ghi chú')</th>
-                                <th>@lang('Nguồn khách')</th>
-                                <th>@lang('User tạo')</th>
                                 @can(['admin.hotel.room.type.edit', 'admin.hotel.room.type.status',
                                     'admin.hotel.room.type.destroy'])
                                     <th>@lang('Hành động')</th>
@@ -483,7 +478,7 @@
                                             </div>
                                         </td>
                                         <td>
-                                              <input type="text" class="form-control deposit" id="number-input" oninput="this.value = this.value.slice(0, 16)"  name="deposit"  placeholder="0">
+                                              <input type="text" class="form-control deposit number-input" oninput="this.value = this.value.slice(0, 16)"  name="deposit"  placeholder="0">
                                            
                                         </td>
                                         <td>
@@ -527,10 +522,10 @@
 
                         $('#loading').hide();
                         tbody.append(tr);
-                        $('#number-input').on('input', function() {
+                      
+                        $('.number-input').on('input', function() {
                             formatNumber(this);
                         });
-
                         $('#addRoomModal').modal('hide');
                         document.body.classList.remove("modal-open");
                     }
@@ -563,6 +558,13 @@
             var roomId = $(this).data('room-id');
             console.log(roomId);
 
+        });
+        // chi tiết 
+        $(document).on('click', '.booked_room_detail', function() {
+            var roomId = $(this).data('room-id');
+            var url = `{{ route('admin.booking.details', ['id' => ':id']) }}`.replace(':id',
+                roomId);
+                window.location.href = url;
         });
         // nhận phòng
         $(document).on('click', '.booked_room', function() {
@@ -649,6 +651,9 @@
                 const $dropdown = $(this).siblings('.menu_dropdown');
                 $('.menu_dropdown').not($dropdown).removeClass('show');
                 $dropdown.toggleClass('show');
+            });
+            $(document).on('click', function() {
+                $('.menu_dropdown').removeClass('show');
             });
             $(document).on('click', '.svg_menu_check_in', function(e) {
                 e.stopPropagation();
@@ -829,7 +834,10 @@
                         });
                     });
                 })
-
+                formData.push({
+                    name: 'method',
+                    value: 'booked_room',
+                });
 
                 // formData.push({
                 //     name: 'is_method',
@@ -941,7 +949,7 @@
                         var pagination = response.pagination;
 
                         $('.data-table').html('');
-
+                        // <td>${data['admin']['name']}</td> user tạo
                         data.forEach(function(data, index) {
                             var html = `
                                 <tr data-id="${data['id']}">
@@ -951,21 +959,20 @@
                                     <td>${data['document_date']}</td>
                                     <td>${data['checkin_date']}</td>
                                     <td>${data['checkout_date']}</td>
-                                    <td>${data['customer_code'] ? data['customer_code'] : 'N/A'}</td>
                                     <td>${data['customer_name'] ? data['customer_name'] : 'N/A'}</td>
                                     <td>${data['phone_number'] ? data['phone_number'] : 'N/A'}</td>
                                   
                                     <td>${data['guest_count']}</td>
                                     <td>${ formatCurrency( data['total_amount'])}</td>
                                     <td>${formatCurrency(data['deposit_amount'])}</td>
-                                    <td>${data['note']}</td>
-                                    <td>${data['user_source']}</td>
-                                    <td>${data['admin']['name']}</td>
+                                 
+                                  
                                     <td>
                                         <svg class="svg_menu_check_in" xmlns="http://www.w3.org/2000/svg" width="30" height="30" viewBox="0 0 21 21"><g fill="currentColor" fill-rule="evenodd"><circle cx="10.5" cy="10.5" r="1"/><circle cx="10.5" cy="5.5" r="1"/><circle cx="10.5" cy="15.5" r="1"/></g></svg>    
                                         <div class="dropdown menu_dropdown_check_in" id="dropdown-menu">
                                             <div class="dropdown-item booked_room" data-room-id="${data['id']}">Nhận phòng</div>
                                             <div class="dropdown-item booked_room" data-room-id="${data['id']}">Đổi phòng</div>
+                                              <div class="dropdown-item booked_room_detail" data-room-id="${data['id']}">Chi tiết</div>
                                             <div class="dropdown-item delete-booked-room"  data-room-id="${data['id']}" >Xóa phòng</div>
                                            
                                         </div>
