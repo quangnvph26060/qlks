@@ -115,7 +115,23 @@ function getTrx($length = 12)
     }
     return $randomString;
 }
+function getCode($prefix, $length = 12)
+{
+    $characters       = 'ABCDEFGHIJKLMNOPQRSTUVWXYZ123456789';
+    $charactersLength = strlen($characters);
+    
+    $randomLength = $length - strlen($prefix);
+    if ($randomLength <= 0) {
+        return substr($prefix, 0, $length); 
+    }
 
+    $randomString = '';
+    for ($i = 0; $i < $randomLength; $i++) {
+        $randomString .= $characters[rand(0, $charactersLength - 1)];
+    }
+    
+    return $prefix . $randomString;
+}
 function getAmount($amount, $length = 2)
 {
     $amount = round($amount ?? 0, $length);

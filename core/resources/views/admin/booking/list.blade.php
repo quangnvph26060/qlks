@@ -2,202 +2,63 @@
 @section('panel')
     <div class="row">
         <div class="col-lg-12">
-            <div class="show-filter mb-3 text-end">
-                <button class="btn btn-outline--primary showFilterBtn btn-sm" type="button"><i class="las la-filter"></i> @lang('Lọc')</button>
-            </div>
-            <div class="card responsive-filter-card mb-4">
-                <div class="card-body">
-                    <form action="">
-                        <div class="d-flex flex-wrap gap-4">
-                            <div class="flex-grow-1">
-                                <label>@lang('Từ khóa') <i class="las la-info-circle text--info" title="@lang('Tìm kiếm bằng mã đặt phòng, tên người dùng hoặc email')"></i></label>
-                                <input class="form-control" name="search" type="text" value="{{ request()->search }}">
-                            </div>
-
-                            <div class="flex-grow-1">
-                                <label>@lang('Nhận phòng')</label>
-                                <input autocomplete="off" class="datePicker form-control" name="check_in" type="text" value="{{ request()->check_in }}">
-                            </div>
-
-                            <div class="flex-grow-1">
-                                <label>@lang('Trả phòng')</label>
-                                <input autocomplete="off" class="datePicker1 form-control" name="check_out" type="text" value="{{ request()->check_out }}">
-                            </div>
-
-                            <div class="flex-grow-1 align-self-end">
-                                <button class="btn btn--primary w-100 h-45"><i class="fas fa-filter"></i> @lang('Lọc')</button>
-                            </div>
-                        </div>
-                    </form>
+            <div class="d-flex justify-content-between mb-3 row order-1">
+                <div class="dt-length col-md-6 col-4">
+                    <select name="example_length" id="perPage" style=" padding: 1px 3px; margin-right: 8px;"
+                        aria-controls="example" class="perPage">
+                        <option value="10">10</option>
+                        <option value="25">25</option>
+                        <option value="50">50</option>
+                        <option value="100">100</option>
+                    </select><label for="perPage"> entries per page</label>
                 </div>
-            </div>
-
-            <div class="card bg--transparent b-radius--10">
-                <div class="card-body p-0">
-                    <div class="table-responsive--md table-responsive">
-                        <table class="table--light style--two table bg-white">
-                            <thead>
-                                <tr>
-                                    <th>@lang('Số đặt chỗ')</th>
-                                    <th>@lang('Khách hàng')</th>
-                                    <th>@lang('Ngày vào') | @lang('Ngày ra')</th>
-                                    <th>@lang('Tổng số tiền')</th>
-                                    <th>@lang('Tổng số tiền đã trả')</th>
-                                    <th>@lang('Quá hạn')</th>
-                                    @if (request()->routeIs('admin.booking.all') || request()->routeIs('admin.booking.active'))
-                                        <th>@lang('Trạng thái')</th>
-                                    @endif
-
-                                    @can(['admin.booking.details', 'admin.booking.booked.rooms', 'admin.booking.service.details', 'admin.booking.payment', 'admin.booking.key.handover', 'admin.booking.merge', 'admin.booking.cancel', 'admin.booking.extra.charge', 'admin.booking.checkout', 'admin.booking.invoice'])
-                                        <th>@lang('Hành động')</th>
-                                    @endcan
-                                </tr>
-                            </thead>
-                            <tbody>
-                                @forelse($bookings as $booking)
-                                    <tr class="@if ($booking->isDelayed() && !request()->routeIs('admin.booking.checkout.delayed')) delayed-checkout @endif">
-
-                                        <td>
-                                            @if ($booking->key_status)
-                                                <span class="text--warning ">
-                                                    <i class="las la-key f-size--24"></i>
-                                                </span>
-                                            @endif
-
-                                            <span class="fw-bold">#{{ $booking->booking_number }}</span><br>
-                                            <em class="text-muted text--small">{{ showDateTime($booking->created_at, 'd M, Y h:i A') }}</em>
-                                        </td>
-
-                                        <td>
-                                            @if ($booking->user_id)
-                                                <span class="small">
-                                                    @can('admin.users.detail')
-                                                        <a href="{{ route('admin.users.detail', $booking->user_id) }}"><span>@</span>{{ $booking->user->username }}</a>
-                                                    @else
-                                                        {{ $booking->user->username }}
-                                                    @endcan
-                                                </span>
-                                                <br>
-                                                <a class="fw-bold text--primary" href="tel:{{ $booking->user->email }}">+{{ $booking->user->mobile }}</a>
-                                            @else
-                                                <span class="small">{{ $booking->guest_details->name }}</span>
-                                                <br>
-                                                <span class="fw-bold">{{ $booking->guest_details->email }}</span>
-                                            @endif
-                                        </td>
-
-                                        <td>
-                                            {{ showDateTime($booking->check_in, 'd M, Y') }}
-                                            <br>
-                                            {{ showDateTime($booking->check_out, 'd M, Y') }}
-                                        </td>
-
-                                        <td>{{ showAmount($booking->total_amount) }}</td>
-
-                                        <td>{{ showAmount($booking->paid_amount) }}</td>
-
-                                        @php
-                                            $due = $booking->total_amount - $booking->paid_amount;
-                                        @endphp
-
-                                        <td class="@if ($due < 0) text--danger @elseif($due > 0) text--warning @endif">
-                                            {{ showAmount($due) }}
-                                        </td>
-
-                                        @if (request()->routeIs('admin.booking.all') || request()->routeIs('admin.booking.active'))
-                                            <td>
-                                                @php echo $booking->statusBadge; @endphp
-                                            </td>
-                                        @endif
-                                        @can(['admin.booking.details', 'admin.booking.booked.rooms', 'admin.booking.service.details', 'admin.booking.payment', 'admin.booking.key.handover', 'admin.booking.merge', 'admin.booking.cancel', 'admin.booking.extra.charge', 'admin.booking.checkout', 'admin.booking.invoice'])
-                                            <td>
-                                                <div class="d-flex justify-content-end flex-wrap gap-1">
-                                                    @can('admin.booking.details')
-                                                        <a class="btn btn-sm btn-outline--primary" href="{{ route('admin.booking.details', $booking->id) }}">
-                                                            <i class="las la-desktop"></i>@lang('Chi tiết')
-                                                        </a>
-                                                    @endcan
-
-                                                    <button aria-expanded="false" class="btn btn-sm btn-outline--info" data-bs-toggle="dropdown" type="button">
-                                                        <i class="las la-ellipsis-v"></i>@lang('Thêm')
-                                                    </button>
-
-                                                    <div class="dropdown-menu">
-                                                        @can('admin.booking.booked.rooms')
-                                                            <a class="dropdown-item" href="{{ route('admin.booking.booked.rooms', $booking->id) }}">
-                                                                <i class="las la-desktop"></i> @lang('Phòng đã đặt')
-                                                            </a>
-                                                        @endcan
-
-                                                        @can('admin.booking.service.details')
-                                                            <a class="dropdown-item" href="{{ route('admin.booking.service.details', $booking->id) }}">
-                                                                <i class="las la-server"></i> @lang('Dịch vụ cao cấp')
-                                                            </a>
-                                                        @endcan
-
-                                                        @can('admin.booking.payment')
-                                                            <a class="dropdown-item" href="{{ route('admin.booking.payment', $booking->id) }}">
-                                                                <i class="la la-money-bill"></i> @lang('Thanh toán')
-                                                            </a>
-                                                        @endcan
-
-                                                        @if ($booking->status == Status::BOOKING_ACTIVE)
-                                                            @can('admin.booking.key.handover')
-                                                            
-
-
-                                                                @if (now()->format('Y-m-d H:i:s') >= $booking->check_in && now()->format('Y-m-d H:i:s') < $booking->check_out && $booking->key_status == Status::DISABLE)
-                                                                    <a class="dropdown-item handoverKeyBtn" data-booked_rooms="{{ $booking->activeBookedRooms->unique('room_id') }}" data-id="{{ $booking->id }}" href="javascript:void(0)">
-                                                                        <i class="las la-key"></i> @lang('Bàn giao chìa khóa')
-                                                                    </a>
-                                                                @endif
-                                                            @endcan
-
-                                                            {{-- @can('admin.booking.merge')
-                                                                <a class="dropdown-item mergeBookingBtn" data-booking_number="{{ $booking->booking_number }}" data-id="{{ $booking->id }}" href="javascript:void(0)">
-                                                                    <i class="las la-object-group"></i> @lang('Hợp nhất Đặt chỗ')
-                                                                </a>
-                                                            @endcan --}}
-
-                                                            @can('admin.booking.cancel')
-                                                                <a class="dropdown-item" href="{{ route('admin.booking.cancel', $booking->id) }}">
-                                                                    <i class="las la-times-circle"></i> @lang('Hủy đặt phòng')
-                                                                </a>
-                                                            @endcan
-
-                                                            @can('admin.booking.checkout')
-                                                                {{-- @if (now() >= $booking->check_out) --}}
-                                                                    <a class="dropdown-item" href="{{ route('admin.booking.checkout', $booking->id) }}">
-                                                                        <i class="la la-sign-out"></i> @lang('Trả phòng')
-                                                                    </a>
-                                                                {{-- @endif --}}
-                                                            @endcan
-                                                        @endif
-                                                        {{-- @can('admin.booking.invoice')
-                                                            <a class="dropdown-item" href="{{ route('admin.booking.invoice', $booking->id) }}" target="_blank"><i class="las la-print"></i> @lang('Print Invoice')</a>
-                                                        @endcan --}}
-                                                    </div>
-                                                </div>
-                                            </td>
-                                        @endcan
-                                    </tr>
-                                @empty
-                                    <tr>
-                                        <td class="text-center" colspan="100%">{{ __($emptyMessage) }}</td>
-                                    </tr>
-                                @endforelse
-
-                            </tbody>
-                        </table>
-                    </div>
-                </div>
-                @if ($bookings->hasPages())
-                    <div class="card-footer py-4">
-                        {{ paginateLinks($bookings) }}
-                    </div>
-                @endif
             </div>
         </div>
+        <div class="card b-radius--10">
+            <div class="card-body p-0">
+                <div class="table-responsive--md">
+                    <table class="table--light style--two table table-striped" id="data-table">
+                        <thead>
+                            <tr>
+
+                                <th>@lang('STT')</th>
+                                <th>@lang('Mã nhận hàng')</th>
+                                <th>@lang('Mã đặt hàng')</th>
+                                <th>@lang('Mã phòng')</th>
+                                <th>@lang('Ngày chứng từ')</th>
+                                <th>@lang('Ngày nhận')</th>
+                                <th>@lang('Ngày trả')</th>
+                                <th>@lang('Mã khách')</th>
+                                <th>@lang('Tên khách hàng')</th>
+                                <th>@lang('Số điện thoại')</th>
+
+                                <th>@lang('Số người')</th>
+                                <th>@lang('Thành tiền')</th>
+                                <th>@lang('Đặt cọc')</th>
+                                <th>@lang('Ghi chú')</th>
+                                <th>@lang('Nguồn khách')</th>
+                                <th>@lang('User tạo')</th>
+                                @can(['admin.hotel.room.type.edit', 'admin.hotel.room.type.status',
+                                    'admin.hotel.room.type.destroy'])
+                                    <th>@lang('Hành động')</th>
+                                @endcan
+                            </tr>
+                        </thead>
+                        <tbody>
+                            <thead class="data-table">
+
+                            </thead>
+                        </tbody>
+                    </table>
+
+                </div>
+            </div>
+            <div id="pagination" class="m-3">
+
+            </div>
+        </div>
+        <div class="pagination-container"></div>
+        @include('admin.booking.partials.room_booking')
     </div>
     @include('admin.booking.partials.modals')
     <x-confirmation-modal />
@@ -205,74 +66,686 @@
 
 @can('admin.book.room')
     @push('breadcrumb-plugins')
-        <a class="btn btn-sm btn--primary" href="{{ route('admin.book.room') }}">
+        {{-- <a class="btn btn-sm btn--primary" href="{{ route('admin.book.room') }}">
             <i class="la la-hand-o-right"></i>@lang('Thêm phòng mới')
+        </a> --}}
+        <a class="btn btn-sm btn--primary add-room-booking">
+            <i class="la la-plus"></i>@lang('Đặt phòng')
         </a>
+        <div class="modal fade" id="addRoomModal" tabindex="-1" aria-hidden="true" style="overflow: unset">
+            <div class="modal-dialog modal-dialog-centered" style="top: 4px">
+                <div class="modal-content">
+                    <div class="modal-header">
+                        <h5 class="modal-title">Chọn Phòng</h5>
+                        <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+                    </div>
+                    <div class="modal-body overflow-add-room">
+                        <table class="table table-striped">
+                            <thead>
+                                <tr>
+                                    <th data-table="Hạng phòng">Hạng phòng</th>
+                                    <th data-table="Phòng">Phòng</th>
+                                    <th data-table="Giá">Giá</th>
+                                    <th data-table="Thao tác">Thao tác</th>
+
+                                </tr>
+                            </thead>
+
+                            <tbody id="show-room">
+
+                            </tbody>
+
+                        </table>
+                    </div>
+
+                </div>
+            </div>
+        </div>
     @endpush
 @endcan
 
 @push('script-lib')
+    <script src="{{ asset('assets/validator/validator.js') }}"></script>
     <script src="{{ asset('assets/admin/js/moment.min.js') }}"></script>
     <script src="{{ asset('assets/admin/js/daterangepicker.min.js') }}"></script>
 @endpush
 
 @push('style-lib')
     <link rel="stylesheet" type="text/css" href="{{ asset('assets/admin/css/daterangepicker.css') }}">
+    <link rel="stylesheet" href="{{ asset('assets/global/css/book.css') }}">
 @endpush
 
 @push('script')
     <script>
-        (function($) {
-            "use strict";
+        "use strict";
+        $.ajaxSetup({
+            headers: {
+                'X-CSRF-TOKEN': $('meta[name="csrf-token"]').attr('content')
+            }
+        });
+        var formEconomyEdit = {
+            'name': { // passwword thì nên đặt là name trong input đó 
+                'element': document.getElementById('name'), // id trong input đó 
+                'error': document.getElementById('name_error'), // thẻ hiển thị lỗi 
+                'validations': [{
+                        'func': function(value) {
+                            return checkRequired(value); // check trống
+                        },
+                        'message': generateErrorMessage('P001', 'Tên')
+                    }, // viết tiếp điều kiện validate vào đây (validations)
+                ]
+            },
 
-            const start = moment();
+        }
 
-            const dateRangeOptions = {
-                startDate: start,
-                singleDatePicker: true,
-                autoUpdateInput: false,
-                locale: {
-                    format: 'YYYY-DD-MM'
+        function showRoom(data) {
+            $('#loading').show();
+            $.ajax({
+                url: '{{ route('admin.booking.showRoom') }}',
+                type: 'POST',
+                data: {
+                    roomIds: data
+                },
+                success: function(data) {
+                    var tbody = $('#show-room');
+                    data.data.forEach(function(item) {
+                        var tr = `
+                                    <tr>
+                                        <td> ${ item.room_type['name'] } </td>
+                                        <td> ${ item.room_number } </td>
+                                        <td> ${ formatCurrency(item.room_type.room_type_price['unit_price']) } </td>
+                                        <td> <p data-id="${ item.id }" data-room_type_id="${ item.room_type_id }" class="add-book-room" id="add-book-room">Đặt phòng</p> </td>
+                                    </tr>
+                                `;
+                        tbody.append(tr);
+                        $('#loading').hide();
+                    });
+                },
+                error: function(error) {
+                    $('#loading').hide();
+                    console.log('Error:', error);
+                }
+            });
+        }
+
+
+        function addRoomInBooking(roomId, roomTypeId) {
+            $('#loading').show();
+            $.ajax({
+                url: '{{ route('admin.booking.checkRoomBooking') }}',
+                type: 'POST',
+                data: {
+                    room_id: roomId,
+                    room_type_id: roomTypeId
+                },
+                success: function(response) {
+                    var tbody = $('#list-booking');
+
+                    if (response.status === 'success') {
+                        //   getRoomType(response.room_type['id'], response.room['room_number'])
+                        const todays = new Date();
+                        const yyyys = todays.getFullYear();
+                        const mms = String(todays.getMonth() + 1).padStart(2, '0');
+                        const dds = String(todays.getDate()).padStart(2, '0');
+                        const hoursss = String(todays.getHours()).padStart(2, '0'); // Giờ
+                        const minutesss = String(todays.getMinutes()).padStart(2, '0'); // Phút
+
+                        const formattedDates = `${yyyys}-${mms}-${dds}`;
+                        let date = new Date(formattedDates);
+                        date.setDate(date.getDate() + 1);
+                        let yyyy2 = date.getFullYear();
+                        let mm2 = String(date.getMonth() + 1).padStart(2, '0');
+                        let dd2 = String(date.getDate()).padStart(2, '0');
+
+                        const nextDay = `${yyyy2}-${mm2}-${dd2}`;
+
+
+                        const formattedTimes = `${hoursss}:${minutesss}`;
+                        // <td>
+                        //      <p id="book_name" class="book_name">${response.room_type['name']}</p>
+                        // </td>
+                        var tr = `
+                                    <tr data-room-id="${response.room['id']}"  data-room-type-id="${response.room_type['id']}">
+                                    
+                                        <td>
+                                            <p class="room__name"> ${response.room['room_number']}</p>
+                                        </td>
+                                         <td>
+                                             <input type="number" min="1" name="adult" class="form-control adult"  value="1"  style="margin-left: 16px;">
+                                             
+                                        </td>
+                                        <td style="display: flex; justify-content: center">
+                                            <select id="bookingType" class="form-select" name="optionRoom" style="width: 93px; font-size:15px">
+                                                 <option value="ngay">Ngày</option> 
+                                                 <option value="gio">Giờ</option>
+                                              
+                                                
+                                            </select>
+                                        </td>
+                                         <td>
+                                            <div class="d-flex align-items-center justify-content-start" style="gap: 10px">
+                                                <input type="date" name="checkInDate" id="date-book-room" class="form-control date-book-room"  value="${formattedDates}">
+
+                                                <input type="time" name="checkInTime" id="time-book-room" class="form-control time-book-room"  value="${formattedTimes}">
+                                            </div>
+                                        </td>
+                                        <td>
+                                            <div class="d-flex align-items-center justify-content-start" style="gap: 10px">
+                                                <input type="date" name="checkOutDate"  class="form-control date-book-room"  value="${nextDay}">
+
+                                                <input type="time" name="checkOutTime" id="time-book-room" class="form-control time-book-room"  value="${formattedTimes}">
+                                               
+                                            </div>
+                                        </td>
+                                        <td>
+                                              <input type="text" class="form-control deposit" id="number-input" oninput="this.value = this.value.slice(0, 16)"  name="deposit"  placeholder="0">
+                                           
+                                        </td>
+                                        <td>
+                                             
+                                                <div class="modal fade" id="noteModal" tabindex="-1" aria-labelledby="noteModalLabel" aria-hidden="true">
+                                                    <div class="modal-dialog modal-dialog-centered" style="width: 420px;">
+                                                        <div class="modal-content">
+                                                            <div class="modal-header">
+                                                                <h5 class="modal-title" id="noteModalLabel">Ghi chú</h5>
+                                                                <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+                                                            </div>
+                                                            <div class="modal-body">
+                                                                <input class="form-control" type="text" name="note" id="note-input" placeholder="Nhập ghi chú...">
+                                                            </div>
+                                                            <div class="modal-footer">
+                                                                <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Bỏ qua</button>
+                                                                <button type="button" class="btn btn-success save-note" id="save-note">Lưu</button>
+                                                            </div>
+                                                        </div>
+                                                    </div>
+                                                </div>
+                                                <div style="position: relative; display: inline-block;">
+                                                    <svg xmlns="http://www.w3.org/2000/svg" width="20" height="20" viewBox="0 0 21 21" class="svg-icon">
+                                                        <g fill="currentColor" fill-rule="evenodd">
+                                                            <circle cx="10.5" cy="10.5" r="1" />
+                                                            <circle cx="10.5" cy="5.5" r="1" />
+                                                            <circle cx="10.5" cy="15.5" r="1" />
+                                                        </g>
+                                                    </svg>
+                                                    <div class="dropdown menu_dropdown" id="dropdown-menu">
+                                                        <div class="dropdown-item note-booked-room" data-note="" data-room-id="${response.room['id']}" >Ghi chú</div>
+                                                        <div class="dropdown-item icon-delete-room">Xóa phòng</div>
+                                                    </div>
+                                                </div>
+                                                   <input type="hidden" name="note_room" value="" id="hidden_note">
+                                        </td>
+
+
+                                    </tr>
+                                `;
+
+                        $('#loading').hide();
+                        tbody.append(tr);
+                        $('#number-input').on('input', function() {
+                            formatNumber(this);
+                        });
+
+                        $('#addRoomModal').modal('hide');
+                        document.body.classList.remove("modal-open");
+                    }
+                },
+                error: function(error) {
+                    $('#loading').hide();
+                    console.log('Error:', error);
+                }
+            });
+        }
+        function formatCurrency(amount) {
+            const parts = amount.toString().split('.');
+            const integerPart = parts[0];
+            const formattedInteger = integerPart.replace(/\B(?=(\d{3})+(?!\d))/g, '.');
+
+            return formattedInteger + ' VND';
+        }
+        function validator(checkInDate, checkOutDate, dataRowValue) {
+            const checkInDateTimeString = `${checkInDate}`;
+            const checkInDateTimeStringOut = `${checkOutDate}`;
+            // Chuyển đổi chuỗi ngày và giờ thành đối tượng Date
+            const checkInDateTimeObj = new Date(checkInDateTimeString);
+            const checkInDateTimeObjOut = new Date(checkInDateTimeStringOut);
+            // Lấy thời gian hiện tại
+            const currentDateTime = new Date();
+            currentDateTime.setSeconds(0);
+
+            const errorDiv = document.querySelector('.message-error');
+            const checkInTimeInt = Math.floor(checkInDateTimeObj.getTime() / 1000);
+            const checkInTimeIntOut = Math.floor(checkInDateTimeObjOut.getTime() / 1000);
+            const currentTimeInt = Math.floor(currentDateTime.getTime() / 1000);
+            // So sánh thời gian check-in với thời gian hiện tại
+            if (checkInTimeInt > currentTimeInt && dataRowValue === 'checkin') {
+                errorDiv.textContent =
+                    `Không thể nhận phòng trong tương lai. Bạn có thể Đặt trước hoặc cập nhật giờ nhận về giờ hiện tại để nhận phòng.`;
+                errorDiv.classList.add('alert', 'alert-danger');
+                errorDiv.style.display = 'block';
+                return false;
+            } else if (checkInTimeInt > currentTimeInt && dataRowValue === 'booked') {
+                errorDiv.style.display = 'none'; // Ẩn div thông báo lỗi
+                return true;
+            } else if (checkInTimeInt < currentTimeInt) {
+                errorDiv.textContent =
+                    `Không thể nhận phòng trong quá khứ. Bạn có thể Đặt trước hoặc cập nhật giờ nhận về giờ hiện tại để nhận phòng.`;
+                errorDiv.classList.add('alert', 'alert-danger');
+                errorDiv.style.display = 'block';
+                return false;
+            } else {
+                errorDiv.style.display = 'none'; // Ẩn div thông báo lỗi
+                return true;
+            }
+        }
+        function getDatesBetween(checkInDate, checkInTime, checkOutDate, checkOutTime, room, roomType, adult, note,
+            deposit) {
+
+            let dates = [];
+            let currentDate = new Date(checkInDate);
+            let currentDateOut = new Date(checkOutDate);
+
+            const [checkOutHours, checkOutMinutes] = checkOutTime.split(':').map(Number);
+            const [checkInHours, checkInMinutes] = checkInTime.split(':').map(Number);
+
+            while (currentDate && currentDateOut) {
+                currentDate.setHours(checkInHours);
+                currentDate.setMinutes(checkInMinutes);
+                currentDate.setSeconds(0); // Đặt giây về 0
+
+                currentDateOut.setHours(checkOutHours);
+                currentDateOut.setMinutes(checkOutMinutes);
+                currentDateOut.setSeconds(0); // Đặt giây về 0
+
+                let formattedDate =
+                    `${currentDate.getMonth() + 1}/${String(currentDate.getDate()).padStart(2, '0')}/${currentDate.getFullYear()} ` +
+                    `${String(currentDate.getHours()).padStart(2, '0')}:${String(currentDate.getMinutes()).padStart(2, '0')}:${String(currentDate.getSeconds()).padStart(2, '0')}`;
+
+                let formattedDateOut =
+                    `${currentDateOut.getMonth() + 1}/${String(currentDateOut.getDate()).padStart(2, '0')}/${currentDateOut.getFullYear()} ` +
+                    `${String(currentDateOut.getHours()).padStart(2, '0')}:${String(currentDateOut.getMinutes()).padStart(2, '0')}:${String(currentDateOut.getSeconds()).padStart(2, '0')}`;
+                //  dates.push(`${roomType}-${room}-${formattedDate}-${formattedDateOut}`);
+                dates.push({
+                    roomType: roomType,
+                    room: room,
+                    dateIn: formattedDate,
+                    dateOut: formattedDateOut,
+                    adult: adult,
+                    note: note,
+                    deposit: deposit
+                });
+
+                break;
+                currentDate.setDate(currentDate.getDate() + 1);
+
+
+            }
+            return dates;
+        }
+        function loadRoomBookings(page = 1) {
+            $.ajax({
+                url: '{{ route('admin.booking.all.check.in') }}', // Adjust this to your route
+                type: 'GET',
+                data: {
+                    page: page
+                },
+                success: function(response) {
+
+                    if (response.status === 'success') {
+                        var data = response.data;
+                        var pagination = response.pagination;
+
+                        $('.data-table').html('');
+
+                        data.forEach(function(data, index) {
+                            var html = `
+                                <tr data-id="${data['id']}">
+                                     <td>${index + 1  }</td>
+                                      <td>${data['check_in_id']}</td>
+                                    <td>${data['id_room_booking']}</td>
+                                    <td>${data['room']['room_number']}</td>
+                                    <td>${data['document_date']}</td>
+                                    <td>${data['checkin_date']}</td>
+                                    <td>${data['checkout_date']}</td>
+                                    <td>${data['customer_code'] ? data['customer_code'] : 'N/A'}</td>
+                                    <td>${data['customer_name'] ? data['customer_name'] : 'N/A'}</td>
+                                    <td>${data['phone_number'] ? data['phone_number'] : 'N/A'}</td>
+                               
+                                    <td>${data['guest_count']}</td>
+                                    <td>${ formatCurrency( data['total_amount'])}</td>
+                                    <td>${formatCurrency(data['deposit_amount'])}</td>
+                                    <td>${data['note']}</td>
+                                    <td>${data['user_source']}</td>
+                                    <td>${data['admin']['name']}</td>
+                                    <td>
+                                        <svg class="svg_menu_check_in" xmlns="http://www.w3.org/2000/svg" width="30" height="30" viewBox="0 0 21 21"><g fill="currentColor" fill-rule="evenodd"><circle cx="10.5" cy="10.5" r="1"/><circle cx="10.5" cy="5.5" r="1"/><circle cx="10.5" cy="15.5" r="1"/></g></svg>    
+                                        <div class="dropdown menu_dropdown_check_in" id="dropdown-menu">
+                                            <div class="dropdown-item booked_room" data-room-id="${data['id']}">Trả phòng</div>
+                                            <div class="dropdown-item booked_room" data-room-id="${data['id']}">Đổi phòng</div>
+                                            <div class="dropdown-item delete-booked-room"  data-room-id="${data['id']}" >Xóa phòng</div>
+                                        </div>
+                                    </td>
+                                </tr>
+                            `
+                            $('.data-table').append(html);
+                        })
+                        updatePagination(pagination);
+                    }
+                },
+                error: function(xhr, status, error) {
+                    console.error("AJAX request failed: " + error);
+                }
+            });
+        }
+        $('.btn-confirm, .btn-book').on('click', function() {
+            const dataRowValue = $(this).data('row');
+            $('.booking-form').data('row', dataRowValue);
+            if (validateAllFields(formEconomyEdit)) {
+                $('.booking-form').submit(); // Gửi form
+            }
+
+        });
+        $('.booking-form').on('submit', function(e) {
+            e.preventDefault();
+            let formData = $(this).serializeArray();
+            // var adultsValue = parseInt($('#adults').val(), 10) || 0;
+            // var childrenValue = parseInt($('#children').val(), 10) || 0;
+
+            // var totalPeople = adultsValue + childrenValue;
+
+            let formObject = {};
+            formData.forEach(function(field) {
+                formObject[field.name] = field.value;
+            });
+
+            let queryString = $.param(formObject);
+
+            const params = new URLSearchParams(queryString);
+            const checkInDate = params.get('checkInDate');
+            const checkInTime = params.get('checkInTime');
+            var roomData = []; // Mảng để chứa thông tin các phòng
+            const dataRowValue = $(this).data('row'); // Lấy giá trị data-row đã thiết lập trước đó
+
+
+
+            let hasError = true;
+            // Duyệt qua từng dòng trong bảng
+            $('#list-booking tr').each(function() {
+                var roomId = $(this).data('room-id');
+                var roomTypeId = $(this).data('room-type-id');
+                var checkInDate = $(this).find('input[name="checkInDate"]').val();
+                var checkInTime = $(this).find('input[name="checkInTime"]').val();
+                var checkOutDate = $(this).find('input[name="checkOutDate"]').val();
+                var checkOutTime = $(this).find('input[name="checkOutTime"]').val();
+                var adult = $(this).find('input[name="adult"]').val();
+                var note = $(this).closest('tr').find('input[name="note_room"]').val();
+                var deposit = $(this).closest('tr').find('input[name="deposit"]').val();
+                // console.log(roomId, roomTypeId, checkInDate, checkInTime, checkOutDate, checkOutTime, adult, note);
+                const errorDiv = document.querySelector('.message-error');
+                if (new Date(checkOutDate) <= new Date(checkInDate)) {
+                    errorDiv.textContent = `Ngày trả phòng phải lớn hơn ngày nhận phòng`;
+                    errorDiv.classList.add('alert', 'alert-danger');
+                    errorDiv.style.display = 'block';
+                    hasError = false;
+                    return false;
+                }
+                // Thêm thông tin của phòng vào mảng
+                roomData.push({
+                    roomId: roomId,
+                    roomTypeId: roomTypeId,
+                    checkInDate: checkInDate,
+                    checkInTime: checkInTime,
+                    checkOutDate: checkOutDate,
+                    checkOutTime: checkOutTime,
+                    adult: adult,
+                    note: note,
+                    deposit: deposit,
+                });
+            });
+
+            if (hasError) {
+                roomData.forEach(function(item) {
+                    const roomDates = getDatesBetween(item['checkInDate'], item['checkInTime'],
+                        item['checkOutDate'], item['checkOutTime'], item['roomId'], item['roomTypeId'],
+                        item['adult'], item['note'], item['deposit']);
+
+                    roomDates.forEach(function(date, index) {
+                        formData.push({
+                            name: 'room[]',
+                            value: JSON.stringify(date)
+                        });
+                    });
+                })
+
+
+                // formData.push({
+                //     name: 'is_method',
+                //     value: 'receptionist',
+                // });
+                let shouldSubmit = true;
+                formData.some(function(item) {
+                    if (item.name === 'room[]') {
+                        const data = item.value;
+                        let dataArray = JSON.parse(data);
+                        const timeCheckIn =  dataArray['dateIn'];
+                        const timeCheckOut = dataArray['dateOut'];
+                        const resultData = validator(timeCheckIn, timeCheckOut, dataRowValue);
+                        if (!resultData) {
+                            shouldSubmit = false;
+                            return true;
+                        }
+                    }
+
+                });
+                // Kiểm tra th��i gian check-in với th��i gian hiện tại
+
+                let url = $(this).attr('action');
+                if (shouldSubmit) {
+                    $.ajax({
+                        type: "POST",
+                        url: url,
+                        data: formData,
+                        success: function(response) {
+                            if (response.success) {
+                                notify('success', response.success);
+                                $('.bookingInfo').html('');
+                                $('.booking-wrapper').addClass('d-none');
+                                $(document).find('.orderListItem').remove();
+                                $('.orderList').addClass('d-none');
+                                $('.formRoomSearch').trigger('reset');
+                                $('#myModal-booking').hide();
+                                window.location.reload();
+                            } else {
+                                notify('error', response.error);
+                            }
+                        },
+                    });
                 }
             }
 
-            const changeDatePickerText = (element, startDate, endDate) => {
-                $(element).val(startDate.format('YYYY-MM-DD'));
+        });
+        $(document).ready(function() {
+            loadRoomBookings(); // Function to load the room bookings
+        });
+        $('.add-room-booking').on('click', function() {
+
+            const roomIds = [];
+            $('#list-booking tr').each(function() {
+                const roomId = $(this).attr('data-room-id');
+
+                if (roomId) {
+                    roomIds.push(roomId);
+                }
+            });
+            showRoom(roomIds)
+            $('#addRoomModal').modal('show');
+
+            $('#addRoomModal').on('shown.bs.modal', function() {
+                document.body.classList.add('modal-open');
+                $('#addRoomModal').addClass('z__index-mod');
+            });
+
+        });
+        $(document).on('click', '.add-book-room', function() {
+            var roomId = $(this).data('id');
+            var roomTypeId = $(this).data('room_type_id');
+            $('#myModal-booking').modal('show');
+            addRoomInBooking(roomId, roomTypeId);
+        });
+
+        $(document).ready(function() {
+            $(document).on('click', '.svg-icon', function(e) {
+                e.stopPropagation();
+                const $dropdown = $(this).siblings('.menu_dropdown');
+                $('.menu_dropdown').not($dropdown).removeClass('show');
+                $dropdown.toggleClass('show');
+            });
+
+            $(document).on('click', '.svg_menu_check_in', function(e) {
+                e.stopPropagation();
+                const $dropdown = $(this).siblings('.menu_dropdown_check_in');
+                $('.menu_dropdown_check_in').not($dropdown).removeClass('show');
+                $dropdown.toggleClass('show');
+            });
+            $(document).on('click', function() {
+                $('.menu_dropdown').removeClass('show');
+            });
+            $(document).on('click', function() {
+                $('.menu_dropdown_check_in').removeClass('show');
+            });
+        });
+        $(document).on('click', '#btn-search', function() {
+            var customerName = $('#name').val();
+            let flag = true;
+            if (customerName == '') {
+                flag = false;
+            }
+            if (flag) {
+                // ajax request
+                $.ajax({
+                    url: '{{ route('admin.search.customer') }}',
+                    type: 'GET',
+                    data: {
+                        name: customerName,
+                    },
+                    success: function(response) {
+                        // notify('success', response.success);
+                        // $('.note-booking').html(note);
+                        // $('#noteModal').modal('hide');
+                        if (response.status == 'success') {
+                            if (response.data !== null) {
+                                $('#phone').val(response.data['phone']);
+                            } else {
+                                $('#phone').val('');
+                            }
+
+                        }
+                    },
+                    error: function(xhr, status, error) {
+
+                        // alert('Có lỗi xảy ra khi lưu ghi chú!');
+                    }
+                });
             }
 
-            $('.datePicker').daterangepicker(dateRangeOptions, (start, end) => changeDatePickerText('.datePicker', start));
-            $('.datePicker1').daterangepicker(dateRangeOptions, (start, end) => changeDatePickerText('.datePicker1', start));
+        });
 
-
-
-            $('.datePicker').on('apply.daterangepicker', (event, picker) => changeDatePickerText(picker.startDate));
-            $('.datePicker1').on('apply.daterangepicker', (event, picker) => changeDatePickerText(picker.startDate));
-
-            if ($('.datePicker').val()) {
-                $('.datePicker').data('daterangepicker').setStartDate(new Date($('.datePicker').val()));
+        function updatePagination(pagination) {
+            var paginationHtml = '';
+            if (pagination.current_page > 1) {
+                paginationHtml += `<button onclick="loadRoomBookings(${pagination.current_page - 1})">Trước</button>`;
             }
-
-            if ($('.datePicker1').val()) {
-                $('.datePicker').data('daterangepicker').setStartDate(new Date($('.datePicker1').val()));
+            for (var i = 1; i <= pagination.last_page; i++) {
+                paginationHtml += `
+            <button onclick="loadRoomBookings(${i})">${i}</button>
+            `;
             }
-
-        })(jQuery);
+            if (pagination.current_page < pagination.last_page) {
+                paginationHtml += `<button onclick="loadRoomBookings(${pagination.current_page + 1})">Tiếp theo</button>`;
+            }
+            $('.pagination-container').html(paginationHtml);
+        }
     </script>
 @endpush
 
 @push('style')
-    <style>
+    <style scoped>
+        .table-responsive--md {
+            overflow-x: auto;
+            /* Enable horizontal scrolling if the table overflows */
+        }
+
+        /* Optional: Adjust the font size and padding for smaller screens */
+        @media (max-width: 768px) {
+            .table--light {
+                font-size: 12px;
+                /* Reduce font size on smaller screens */
+            }
+
+            .table td,
+            .table th {
+                padding: 5px;
+                /* Reduce padding for more compact view */
+            }
+        }
+
+        .booking-table td {
+            white-space: unset;
+        }
+
+        .modal-open .select2-container {
+            z-index: 9 !important;
+        }
+
         .delayed-checkout {
             background-color: #ffefd640;
         }
 
-        .table-responsive {
-            min-height: 600px;
-            background: transparent
-        }
+
 
         .card {
             box-shadow: none;
+        }
+
+        .pagination-container {
+            display: flex;
+            justify-content: center;
+            margin-top: 20px;
+        }
+
+        .pagination-container button {
+            background-color: #4634ff;
+            color: white;
+            border: 1px solid #ddd;
+            padding: 10px 15px;
+            margin: 0 5px;
+            border-radius: 5px;
+            cursor: pointer;
+            font-size: 14px;
+            transition: background-color 0.3s, transform 0.3s;
+        }
+
+        .pagination-container button:hover {
+            background-color: #4634ff;
+            transform: scale(1.05);
+        }
+
+        .pagination-container button:disabled {
+            background-color: #ddd;
+            cursor: not-allowed;
+        }
+
+        .pagination-container button.active {
+            background-color: #4634ff;
+            border-color: #4634ff;
+        }
+
+        .pagination-container button:first-child {
+            border-radius: 5px 0 0 5px;
+        }
+
+        .pagination-container button:last-child {
+            border-radius: 0 5px 5px 0;
         }
     </style>
 @endpush

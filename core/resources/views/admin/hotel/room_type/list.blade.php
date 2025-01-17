@@ -27,7 +27,7 @@
                 <div class="dropdown col-md-1 col-8" style="display: flex;
                 justify-content: end">
                     <a class="btn btn-outline-secondary dropdown-toggle d-flex justify-content-center
-    align-items-center" href="#" role="button"
+                align-items-center" href="#" role="button"
                         data-bs-toggle="dropdown" aria-expanded="false">
                         Thao tác
                     </a>

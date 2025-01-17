@@ -241,8 +241,8 @@ class Booking extends Model
         $bookingActionHistory->details    = $details;
         $bookingActionHistory->admin_id   = authAdmin()->id;
         $bookingActionHistory->save();
-    }
-
+    }   
+    // thanh toán
     public function createPaymentLog($amount, $type, $isUser = false)
     {
         $paymentLog             = new PaymentLog();

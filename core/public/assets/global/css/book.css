@@ -753,9 +753,53 @@ h5 {
     border-color: #4634ff;
     border-radius: 5px;
 }
+.menu_dropdown {
+    display: none;
+    position: absolute;
+    background-color: #fff;
+    border: 1px solid #ccc;
+    border-radius: 4px;
+    box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
+    padding: 8px 0;
+    z-index: 1000;
+    right: 18px;
+  }
+  .menu_dropdown_check_in {
+    display: none;
+    position: absolute;
+    background-color: #fff;
+    border: 1px solid #ccc;
+    border-radius: 4px;
+    box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
+    padding: 8px 0;
+    z-index: 1000;
+    right: 18px;
+  }
+  .menu_dropdown_check_in.show {
+    display: block;
+  }
+
+  .menu_dropdown.show {
+    display: block;
+  }
+
+  .dropdown-item {
+    padding: 8px 16px;
+    cursor: pointer;
+    font-size: 14px;
+  }
+
+  .dropdown-item:hover {
+    background-color: #f0f0f0;
+  }
+
+  svg {
+    cursor: pointer;
+  }
 .deposit{
     padding: 0px 3px !important;
     text-align: end;
+    width: 135px !important;
 
 }
 .time-book-room{
