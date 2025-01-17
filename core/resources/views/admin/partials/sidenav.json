@@ -54,7 +54,7 @@
                 "route_name": "admin.hotel.room.all",
                 "menu_active": "admin.hotel.room.all"
             },
-           
+
             {
                 "keyword": [
                     "Danh mục phòng"
@@ -67,7 +67,7 @@
                     "admin.hotel.room.type.edit"
                 ]
             },
-           
+
             {
                 "keyword": [
                     "Danh mục dịch vụ cao cấp",
@@ -104,12 +104,36 @@
             },
             {
                 "keyword": [
-                    "Danh mục Khách hàng"
+                    "Danh mục người dùng"
                 ],
-                "title": "Danh mục Khách hàng",
+                "title": "Danh mục người dùng",
                 "route_name": "admin.users.active",
-              
+
                 "menu_active": "admin.users.active"
+            },
+            {
+                "keyword": [
+                    "Danh mục khách hàng"
+                ],
+                "title": "Danh mục khách hàng",
+                "route_name": "admin.hotel.customer.all",
+                "menu_active": "admin.hotel.customer.all"
+            },
+            {
+                "keyword": [
+                    "Danh mục nguồn khách"
+                ],
+                "title": "Danh mục nguồn khách",
+                "route_name": "admin.hotel.customer.source.all",
+                "menu_active": "admin.hotel.customer.source.all"
+            },
+            {
+                "keyword": [
+                    "Danh mục trạng thái"
+                ],
+                "title": "Danh mục trạng thái",
+                "route_name": "admin.hotel.status.code.all",
+                "menu_active": "admin.hotel.status.code.all"
             }
         ]
     },
@@ -129,7 +153,7 @@
             },
             {
                 "keyword": [
-                 
+
                     "Nhận phòng"
                 ],
                 "title": "Nhận phòng",
@@ -179,14 +203,14 @@
             },
             {
                 "keyword": [
-                    
+
                     "Báo cáo doanh số"
                 ],
                 "title": "Báo cáo doanh số",
                 "route_name": "admin.booking.todays.checkin",
                 "menu_active": "admin.booking.todays.checkin"
             }
-           
+
         ]
     },
     "general_settings": {
@@ -236,7 +260,7 @@
                 "route_name": "admin.staff.index",
                 "menu_active": "admin.staff.index"
             }
-           
+
         ]
     },
 

@@ -95,7 +95,11 @@ function generateErrorMessage(code, values = []) {
         MS001: 'Mã code không được để trống',
         P001: `${values} không được để trống`,
         P002: `${values} phải là số`,
-        // khai báo thêm các message vào đây ... 
+        TTT001: 'Tên trạng thái không được để trống',
+        MN001: 'Mã nguồn không được để trống',
+        TN001: 'Tên nguồn không được để trống',
+
+        // khai báo thêm các message vào đây ...
     };
     const errorMessage = errorMessages[code];
     if (typeof errorMessage === 'function') {
