@@ -4,6 +4,38 @@
     cursor: pointer;
     color: #337ab7;
 }
+
+.custom-input-giam-gia {
+    width: 50% !important;
+    padding: 0px 0px 0px 0px !important;
+    outline: none;
+    border: none;
+    border-bottom: 1px solid #ccc; /* Border ở dưới cùng */
+    text-align: right; /* Hiển thị giá trị từ bên trái input */
+}
+.custom-input:focus {
+    outline: none;
+    border: none;
+    border-bottom: 1px solid #ccc; /* Border ở dưới cùng */
+    text-align: right; /* Hiển thị giá trị từ bên trái input */
+}
+.financial-list {
+    width: 30%;
+    list-style-type: none;
+    padding: 0;
+}
+.financial-item {
+    display: flex;
+    justify-content: space-between;
+    padding: 5px;
+}
+.delete-room-booking{
+    border: 1px solid #f03514;
+    border-radius: 8px;
+    cursor: pointer;
+    color: #f03514;
+    padding: 0px 10px 0px 10px;
+}
 .modal-content {
     border-radius: 8px;
     box-shadow: 0 4px 10px rgba(0, 0, 0, 0.2);
@@ -745,14 +777,30 @@ h5 {
     border-color: #2e6da4;
     border-radius: 5px;
 }
+.alert-paragraph {
+    display: inline-block;
+    padding: 3px 20px;
+    background-color: #f44336; /* Màu đỏ */
+    color: white;
+    border-radius: 5px;
+    text-align: center;
+    cursor: pointer;
+}
+
+.alert-paragraph:hover {
+    background-color: #d32f2f; /* Màu đỏ sáng khi hover */
+}
 .btn-dat-truoc{
     text-wrap: nowrap;
-    padding: 5px 12px;
     color: #fff;
     background-color: #4634ff;
     border-color: #4634ff;
     border-radius: 5px;
+    display: inline-block;
+    padding: 3px 20px;
+
 }
+
 .menu_dropdown {
     display: none;
     position: absolute;
@@ -788,7 +836,12 @@ h5 {
     cursor: pointer;
     font-size: 14px;
   }
-
+  .mobi-table th {
+    padding: 12px 3px !important;
+}
+.note_room{
+    padding: 0px 0px 0px 3px !important; 
+}
   .dropdown-item:hover {
     background-color: #f0f0f0;
   }
@@ -799,7 +852,7 @@ h5 {
 .deposit{
     padding: 0px 3px !important;
     text-align: end;
-    width: 135px !important;
+    /* width: 135px !important; */
 
 }
 .time-book-room{

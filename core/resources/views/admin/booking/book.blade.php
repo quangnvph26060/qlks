@@ -64,7 +64,7 @@
         {{-- <a class="btn btn-sm btn--primary" href="{{ route('admin.booking.all') }}">
             <i class="la la-list"></i>@lang('Tất cả các đặt phòng')
         </a> --}}
-        <a class="btn btn-sm btn--primary add-room-booking">
+        <a class="btn btn-sm btn--primary add-book-room">
             <i class="la la-plus"></i>@lang('Đặt phòng')
         </a>
         <div class="modal fade" id="addRoomModal" tabindex="-1" aria-hidden="true" style="overflow: unset">
@@ -74,15 +74,54 @@
                         <h5 class="modal-title">Chọn Phòng</h5>
                         <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
                     </div>
+                    <div class=" mt-2 d-flex mb-2" style="gap: 10px;justify-content: space-around;">
+                        <div class=""> 
+                             <label for="">Chọn hạng phòng</label>
+                            <select class="form-select">
+                              
+                                <option selected>Chọn hạng phòng</option>
+                                <option value="1">One</option>
+                                <option value="2">Two</option>
+                                <option value="3">Three</option>
+                              </select>
+                        </div>
+                        <div class="">
+                            <label for="">Chọn tên phòng</label>
+                            <select class="form-select">
+                                <option selected>Chọn tên phòng</option>
+                                <option value="1">One</option>
+                                <option value="2">Two</option>
+                                <option value="3">Three</option>
+                              </select>
+                        </div>
+                        <div class="">
+                            <label for="">Từ ngày</label>
+                         <input type="date" class="form-control " id="date-chon-phong-in" style="height: 38px">
+                        </div>  
+                        <div class="">
+                            <label for="">Đến ngày</label>
+                         <input type="date" class="form-control" id="date-chon-phong-out" style="height: 38px">
+                        </div>  
+                        <div class="">
+                            <label for="">Trạng thái phòng</label>
+                            <select class="form-select">
+                                <option selected>Trạng tên phòng</option>
+                                <option value="1">One</option>
+                                <option value="2">Two</option>
+                                <option value="3">Three</option>
+                              </select>
+                        </div>
+                    </div>
                     <div class="modal-body overflow-add-room">
                         <table class="table table-striped">
                             <thead>
                                 <tr>
                                     <th data-table="Hạng phòng">Hạng phòng</th>
-                                    <th data-table="Phòng">Phòng</th>
+                                    <th data-table="Phòng">Tên phòng</th>
+                                    <th data-table="Ngày">NGày</th>
+                                    <th data-table="Trạng thái phòng">Trạng thái phòng</th>
                                     <th data-table="Giá">Giá</th>
                                     <th data-table="Thao tác">Thao tác</th>
-
                                 </tr>
                             </thead>
 
@@ -92,7 +131,10 @@
 
                         </table>
                     </div>
-
+                    <div class="d-flex justify-content-end" style="gap: 10px;padding: 7px 31px">
+                        <button type="button" data-row="booked" class=" btn-dat-truoc btn-book">Lưu</button>
+                        <p type="button" data-row="booked" class="alert-paragraph close_modal_booked_room">Hủy</p>
+                    </div>
                 </div>
             </div>
         </div>
@@ -113,19 +155,25 @@
 
 @push('style')
     <style scoped>
-    .table-responsive--md {
-        overflow-x: auto; /* Enable horizontal scrolling if the table overflows */
-    }
+        .table-responsive--md {
+            overflow-x: auto;
+            /* Enable horizontal scrolling if the table overflows */
+        }
 
-    /* Optional: Adjust the font size and padding for smaller screens */
-    @media (max-width: 768px) {
-        .table--light {
-            font-size: 12px; /* Reduce font size on smaller screens */
+        /* Optional: Adjust the font size and padding for smaller screens */
+        @media (max-width: 768px) {
+            .table--light {
+                font-size: 12px;
+                /* Reduce font size on smaller screens */
+            }
+
+            .table td,
+            .table th {
+                padding: 5px;
+                /* Reduce padding for more compact view */
+            }
         }
-        .table td, .table th {
-            padding: 5px; /* Reduce padding for more compact view */
-        }
-    }
+
         .booking-table td {
             white-space: unset;
         }
@@ -189,6 +237,31 @@
 
         const start = moment();
         const end = moment().add(1, 'days');
+
+        const date_booking = new Date();
+        const date_yyyy = date_booking.getFullYear();
+        const date_mm = String(date_booking.getMonth() + 1).padStart(2, '0');
+        const date_dd = String(date_booking.getDate()).padStart(2, '0');
+        const date_hour = String(date_booking.getHours()).padStart(2, '0'); // Giờ
+        const date_minutes = String(date_booking.getMinutes()).padStart(2, '0'); // Phút
+
+        const formattedDates = `${date_yyyy}-${date_mm}-${date_dd}`;
+        const formattedTimes = `${date_hour}:${date_minutes}`;
+
+        $('[id="date-book-room-booking"]').val(formattedDates);
+        $('[id="time-book-room-booking"]').val(formattedTimes);
+
+        // Tạo một đối tượng Date mới và cộng thêm 1 ngày
+        const nextDay = new Date(date_booking);
+        nextDay.setDate(date_booking.getDate() + 1);
+
+        const nextDay_yyyy = nextDay.getFullYear();
+        const nextDay_mm = String(nextDay.getMonth() + 1).padStart(2, '0');
+        const nextDay_dd = String(nextDay.getDate()).padStart(2, '0');
+
+        const formattedNextDay = `${nextDay_yyyy}-${nextDay_mm}-${nextDay_dd}`;
+        $('[id="date-book-room-date"]').val(formattedNextDay);
+        $('[id="time-book-room-date"]').val(formattedTimes);
 
         function formatCurrency(amount) {
             const parts = amount.toString().split('.');
@@ -346,23 +419,32 @@
         });
 
         ///////////////////
-        function showRoom(data) {
+        function showRoom(data, checkInDateValue ,checkOutDateValue) {
             $('#loading').show();
+            $('[id="date-chon-phong-in"]').val(checkInDateValue);
+            $('[id="date-chon-phong-out"]').val(checkOutDateValue);
             $.ajax({
                 url: '{{ route('admin.booking.showRoom') }}',
                 type: 'POST',
                 data: {
-                    roomIds: data
+                    roomIds: data,
+                    checkInDate: checkInDateValue,
+                    checkOutDate: checkOutDateValue,
                 },
                 success: function(data) {
+                    // <p data-id="${ item.id }" data-room_type_id="${ item.room_type_id }" class="add-book-room" id="add-book-room">Đặt phòng</p>
                     var tbody = $('#show-room');
                     data.data.forEach(function(item) {
                         var tr = `
                                     <tr>
                                         <td> ${ item.room_type['name'] } </td>
                                         <td> ${ item.room_number } </td>
+                                           <td>${ item.date} </td>
+                                             <td>${item.check_booked}</td>
                                         <td> ${ formatCurrency(item.room_type.room_type_price['unit_price']) } </td>
-                                        <td> <p data-id="${ item.id }" data-room_type_id="${ item.room_type_id }" class="add-book-room" id="add-book-room">Đặt phòng</p> </td>
+                                        <td> 
+                                            <input type="checkbox">
+                                        </td>
                                     </tr>
                                 `;
                         tbody.append(tr);
@@ -385,7 +467,11 @@
                     roomIds.push(roomId);
                 }
             });
-            showRoom(roomIds)
+            const checkInDateValue = $('#date-book-room-booking').val();
+
+            // Lấy giá trị của input checkOutDate
+            const checkOutDateValue = $('#date-book-room-date').val();
+            showRoom(roomIds,checkInDateValue,checkOutDateValue)
             $('#addRoomModal').modal('show');
 
             $('#addRoomModal').on('shown.bs.modal', function() {
@@ -402,13 +488,19 @@
                 // xóa các phòng thêm vào damh sách booking
             }
         });
+
         $(document).on('click', '.add-book-room', function() {
             var roomId = $(this).data('id');
             var roomTypeId = $(this).data('room_type_id');
             $('#myModal-booking').modal('show');
             addRoomInBooking(roomId, roomTypeId);
         });
-
+        $(document).on('click', '.close_modal', function() {
+            $('#myModal-booking').modal('hide');
+        });
+        $(document).on('click', '.close_modal_booked_room', function() {
+            $('#addRoomModal').modal('hide');
+        });
         function addRoomInBooking(roomId, roomTypeId) {
             $('#loading').show();
             $.ajax({
@@ -421,6 +513,7 @@
                 success: function(response) {
                     var tbody = $('#list-booking');
 
+
                     if (response.status === 'success') {
                         //   getRoomType(response.room_type['id'], response.room['room_number'])
                         const todays = new Date();
@@ -431,6 +524,7 @@
                         const minutesss = String(todays.getMinutes()).padStart(2, '0'); // Phút
 
                         const formattedDates = `${yyyys}-${mms}-${dds}`;
+                        const formattedTimes = `${hoursss}:${minutesss}`;
                         let date = new Date(formattedDates);
                         date.setDate(date.getDate() + 1);
                         let yyyy2 = date.getFullYear();
@@ -440,13 +534,16 @@
                         const nextDay = `${yyyy2}-${mm2}-${dd2}`;
 
 
-                        const formattedTimes = `${hoursss}:${minutesss}`;
+
                         // <td>
                         //      <p id="book_name" class="book_name">${response.room_type['name']}</p>
                         // </td>
                         var tr = `
                                     <tr data-room-id="${response.room['id']}"  data-room-type-id="${response.room_type['id']}">
-                                    
+                                        <td>
+                                            <input type="checkbox"> 
+                                        </td>
+
                                         <td>
                                             <p class="room__name"> ${response.room['room_number']}</p>
                                         </td>
@@ -478,42 +575,16 @@
                                             </div>
                                         </td>
                                         <td>
+                                             <p>${formatCurrency(response.room['room_type']['room_type_price']['unit_price'])}</p>
+                                        </td>
+                                        <td>
                                               <input type="text" class="form-control deposit number-input" oninput="this.value = this.value.slice(0, 16)"  name="deposit"  placeholder="0">
                                            
                                         </td>
                                         <td>
                                              
-                                                <div class="modal fade" id="noteModal" tabindex="-1" aria-labelledby="noteModalLabel" aria-hidden="true">
-                                                    <div class="modal-dialog modal-dialog-centered" style="width: 420px;">
-                                                        <div class="modal-content">
-                                                            <div class="modal-header">
-                                                                <h5 class="modal-title" id="noteModalLabel">Ghi chú</h5>
-                                                                <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
-                                                            </div>
-                                                            <div class="modal-body">
-                                                                <input class="form-control" type="text" name="note" id="note-input" placeholder="Nhập ghi chú...">
-                                                            </div>
-                                                            <div class="modal-footer">
-                                                                <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Bỏ qua</button>
-                                                                <button type="button" class="btn btn-success save-note" id="save-note">Lưu</button>
-                                                            </div>
-                                                        </div>
-                                                    </div>
-                                                </div>
-                                                <div style="position: relative; display: inline-block;">
-                                                    <svg xmlns="http://www.w3.org/2000/svg" width="20" height="20" viewBox="0 0 21 21" class="svg-icon">
-                                                        <g fill="currentColor" fill-rule="evenodd">
-                                                            <circle cx="10.5" cy="10.5" r="1" />
-                                                            <circle cx="10.5" cy="5.5" r="1" />
-                                                            <circle cx="10.5" cy="15.5" r="1" />
-                                                        </g>
-                                                    </svg>
-                                                    <div class="dropdown menu_dropdown" id="dropdown-menu">
-                                                        <div class="dropdown-item note-booked-room" data-note="" data-room-id="${response.room['id']}" >Ghi chú</div>
-                                                        <div class="dropdown-item icon-delete-room">Xóa phòng</div>
-                                                    </div>
-                                                </div>
-                                                   <input type="hidden" name="note_room" value="" id="hidden_note">
+                                        
+                                            <input type="text" name="note_room" class="form-control note_room" value="" id="note">
                                         </td>
 
 
@@ -522,7 +593,7 @@
 
                         $('#loading').hide();
                         tbody.append(tr);
-                      
+
                         $('.number-input').on('input', function() {
                             formatNumber(this);
                         });
@@ -552,6 +623,9 @@
             // Gán giá trị vào các input
             $('[id="date-book-room"]').val(currentDate);
             $('[id="time-book-room"]').val(currentTime);
+            // Gán giá trị vào các input
+            $('[id="date-book-room"]').val(currentDate);
+            $('[id="time-book-room"]').val(currentTime);
         });
         // xóa phòng
         $(document).on('click', '.delete-booked-room', function() {
@@ -564,12 +638,12 @@
             var roomId = $(this).data('room-id');
             var url = `{{ route('admin.booking.details', ['id' => ':id']) }}`.replace(':id',
                 roomId);
-                window.location.href = url;
+            window.location.href = url;
         });
         // nhận phòng
         $(document).on('click', '.booked_room', function() {
             var roomId = $(this).data('room-id');
-        
+
             // ajax request
             var url = `{{ route('admin.room.check.in', ['id' => ':id']) }}`.replace(':id',
                 roomId);
@@ -848,7 +922,7 @@
                     if (item.name === 'room[]') {
                         const data = item.value;
                         let dataArray = JSON.parse(data);
-                        const timeCheckIn =  dataArray['dateIn'];
+                        const timeCheckIn = dataArray['dateIn'];
                         const timeCheckOut = dataArray['dateOut'];
                         const resultData = validator(timeCheckIn, timeCheckOut, dataRowValue);
                         if (!resultData) {
