@@ -13,21 +13,22 @@ class Room extends Model
 {
     use GlobalStatus, SoftDeletes;
 
-    protected $fillable = ['id', 'is_clean','unit_code'];
+    protected $fillable = [ 'is_clean','unit_code'];
     protected $casts = [
         'keywords' => 'array',
         'beds'     => 'array'
     ];
+    protected $primaryKey = 'id';
     // price
     // Trong model Room
-    public function regularRoom()
-    {
-        return RegularRoomPrice::where('room_price_id', $this->id)->first();
-    }
-    public function roomPricePerDay()
-    {
-        return RoomPricePerDay::where('room_price_id', $this->id)->first();
-    }
+    // public function regularRoom()
+    // {
+    //     return RegularRoomPrice::where('room_price_id', $this->id)->first();
+    // }
+    // public function roomPricePerDay()
+    // {
+    //     return RoomPricePerDay::where('room_price_id', $this->id)->first();
+    // }
     // public function regularRoom()
     // {
     //     return $this->hasOne(RegularRoomPrice::class, 'id', 'id');

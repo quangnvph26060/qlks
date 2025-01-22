@@ -77,22 +77,16 @@
                     <div class=" mt-2 d-flex mb-2" style="gap: 10px;justify-content: space-around;">
                         <div class=""> 
                              <label for="">Chọn hạng phòng</label>
-                            <select class="form-select">
+                            <select class="form-select" id="selected-hang-phong">
                               
-                                <option selected>Chọn hạng phòng</option>
-                                <option value="1">One</option>
-                                <option value="2">Two</option>
-                                <option value="3">Three</option>
-                              </select>
+                               
+                            </select>
                         </div>
                         <div class="">
                             <label for="">Chọn tên phòng</label>
-                            <select class="form-select">
-                                <option selected>Chọn tên phòng</option>
-                                <option value="1">One</option>
-                                <option value="2">Two</option>
-                                <option value="3">Three</option>
-                              </select>
+                            <select class="form-select" id="selected-name-phong">
+                              
+                            </select>
                         </div>
                         <div class="">
                             <label for="">Từ ngày</label>
@@ -132,7 +126,7 @@
                         </table>
                     </div>
                     <div class="d-flex justify-content-end" style="gap: 10px;padding: 7px 31px">
-                        <button type="button" data-row="booked" class=" btn-dat-truoc btn-book">Lưu</button>
+                        <button type="button" data-row="booked" class=" btn-dat-truoc btn-book add-book-room" id="add-book-room">Lưu</button>
                         <p type="button" data-row="booked" class="alert-paragraph close_modal_booked_room">Hủy</p>
                     </div>
                 </div>
@@ -419,7 +413,7 @@
         });
 
         ///////////////////
-        function showRoom(data, checkInDateValue ,checkOutDateValue) {
+        function showRoom(data = "", checkInDateValue = "", checkOutDateValue = "", selectedOptionHangPhong = "" ,selectedOptionNamePhong = "") {
             $('#loading').show();
             $('[id="date-chon-phong-in"]').val(checkInDateValue);
             $('[id="date-chon-phong-out"]').val(checkOutDateValue);
@@ -430,26 +424,58 @@
                     roomIds: data,
                     checkInDate: checkInDateValue,
                     checkOutDate: checkOutDateValue,
+                    optionHangPhong: selectedOptionHangPhong,
+                    optionNamePhong: selectedOptionNamePhong,
                 },
                 success: function(data) {
                     // <p data-id="${ item.id }" data-room_type_id="${ item.room_type_id }" class="add-book-room" id="add-book-room">Đặt phòng</p>
                     var tbody = $('#show-room');
+                    tbody.empty();
                     data.data.forEach(function(item) {
                         var tr = `
                                     <tr>
                                         <td> ${ item.room_type['name'] } </td>
                                         <td> ${ item.room_number } </td>
-                                           <td>${ item.date} </td>
-                                             <td>${item.check_booked}</td>
+                                        <td>${ item.date} </td>
+                                        <td>${item.check_booked}</td>
                                         <td> ${ formatCurrency(item.room_type.room_type_price['unit_price']) } </td>
                                         <td> 
-                                            <input type="checkbox">
+                                            <input type="checkbox"   data-id="${ item.id }" data-room_type_id="${ item.room_type_id }" id="checkbox-${item.id}">
                                         </td>
                                     </tr>
                                 `;
                         tbody.append(tr);
-                        $('#loading').hide();
+                      
                     });
+                    // hạng phòng 
+                    var selected_hang = $('#selected-hang-phong');  
+                    selected_hang.empty();
+                     let option = `<option value="">Chọn hạng phòng</option>`;
+                    data.roomType.forEach(function(item) {
+                        if (item.id == data.option_hang_phong) {
+                                option += `<option value="${item.id}" selected>${item.name}</option>`;
+                            } else {
+                                option += `<option value="${item.id}">${item.name}</option>`;
+                            }
+                    }); 
+                    selected_hang.append(option);
+
+                    // tên phòng    
+                    var selected_name = $('#selected-name-phong');   
+                    selected_name.empty();
+                    let options = `<option value="">Chọn tên phòng</option>`;
+                   
+
+                    data.room.forEach(function(item) {
+                        if (item.id == data.option_name_phong) {
+                                options += `<option value="${item.id}" selected>${item.room_number}</option>`;
+                            } else {
+                                options += `<option value="${item.id}">${item.room_number}</option>`;
+                            }
+                    }); 
+
+                    selected_name.append(options);
+                    $('#loading').hide();
                 },
                 error: function(error) {
                     $('#loading').hide();
@@ -457,6 +483,21 @@
                 }
             });
         }
+        $('#selected-name-phong, #selected-hang-phong, #date-chon-phong-out, #date-chon-phong-in').on('change', function() {
+            var selectedOptionHangPhong = $('#selected-hang-phong').val();
+            var selectedOptionNamePhong = $('#selected-name-phong').val();
+                   const roomIds = [];
+            $('#list-booking tr').each(function() {
+                const roomId = $(this).attr('data-room-id');
+
+                if (roomId) {
+                    roomIds.push(roomId);
+                }
+            });
+            const checkInDateValue  = $('#date-chon-phong-in').val();
+            const checkOutDateValue = $('#date-chon-phong-out').val();
+            showRoom(roomIds ,checkInDateValue, checkOutDateValue, selectedOptionHangPhong, selectedOptionNamePhong)
+        });
         $('.add-room-booking').on('click', function() {
 
             const roomIds = [];
@@ -471,7 +512,7 @@
 
             // Lấy giá trị của input checkOutDate
             const checkOutDateValue = $('#date-book-room-date').val();
-            showRoom(roomIds,checkInDateValue,checkOutDateValue)
+            showRoom(roomIds, checkInDateValue, checkOutDateValue,'','')
             $('#addRoomModal').modal('show');
 
             $('#addRoomModal').on('shown.bs.modal', function() {

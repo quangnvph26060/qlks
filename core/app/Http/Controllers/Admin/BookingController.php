@@ -288,10 +288,32 @@ class BookingController extends Controller
         $roomIds = is_array($request->roomIds) ? $request->roomIds : explode(',', $request->roomIds);
 
         $emptyRooms = Room::active()
+           
             ->whereNotIn('id', $roomIds)
             ->whereNotIn('room_type_id', $disabledRoomTypeIDs)
+            ->where(function ($query) use ($request) {
+                if ($request->optionHangPhong) {
+                    $query->where(function ($query) use ($request) {
+                        $query->whereExists(function ($subquery) use ($request) {
+                            $subquery->from('room_types')
+                                ->whereRaw('rooms.room_type_id = room_types.id')
+                                ->where('room_types.id', $request->optionHangPhong);
+                        });
+                    })->orWhere('rooms.id', $request->optionHangPhong);
+                } else {
+                    $query->whereExists(function ($subquery) {
+                        $subquery->from('room_types');
+                    });
+                }
+            })
+            ->where(function($query) use ($request) {
+                if (!empty($request->optionNamePhong)) {
+                    $query->where('id', $request->optionNamePhong);
+                } 
+            })
             ->with(['roomType', 'roomType.roomTypePrice', 'roomCheckIn', 'roomBooking'])
-            ->select(['id', 'room_type_id', 'room_number', 'is_clean'])->get();
+            ->select(['id', 'room_type_id', 'room_number'])
+            ->get();
         $newRecords = [];
         foreach ($emptyRooms as $room) {
             foreach ($dates as $date) {
@@ -322,11 +344,18 @@ class BookingController extends Controller
                 $newRecords[] = $newRecord;
             }
         }
-
+        // hạng phòng 
+        $roomType = RoomType::active()->get();
+        // tên phòng
+        $room = Room::active()->get();
         return response()->json([
             'status' => 'success',
             // 'data'   => $emptyRooms,
+            'roomType'=>$roomType,
+            'room'  => $room,
             'data'   => $newRecords,
+            'option_hang_phong' => $request->optionHangPhong,
+            'option_name_phong' => $request->optionNamePhong,
         ]);
     }
     public function getDates($startDate, $endDate)
