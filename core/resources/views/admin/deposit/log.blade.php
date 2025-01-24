@@ -1,4 +1,4 @@
-@extends('admin.layouts.app')
+@extends('admin.layouts.master_iframe')
 @section('panel')
     <div class="row justify-content-center">
         @if (request()->routeIs('admin.deposit.list') || request()->routeIs('admin.deposit.method'))

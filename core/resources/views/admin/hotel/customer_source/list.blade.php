@@ -58,7 +58,7 @@
                 <div class="row">
                     <div class="col-md-12 col-sm-12">
                         <div class="form-group position-relative mb-0" id="btn-add-source">
-                            <button class="btn btn-sm mt-1 btn-outline--primary" data-modal_title="Thêm mới nguồn khách hàng" type="button"
+                            <button class="btn btn-sm mt-1 p-2 btn-outline--primary" data-modal_title="Thêm mới nguồn khách hàng" type="button"
                                     data-bs-toggle="modal" data-bs-target="#customer-source">
                                 <i class="las la-plus"></i>
                             </button>

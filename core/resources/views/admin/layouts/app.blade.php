@@ -22,17 +22,19 @@
 {{--                            </button>--}}
 {{--                        </div>--}}
                     </div>
-                    <li class="menu-toggle p-globalNavi__item" id="menu-toggle" style="float: right;background: white !important;color: black;cursor: pointer">
+                    <li class="menu-toggle p-globalNavi__item" id="dropdownButton" style="right: 0;z-index: 11000;display:none;background: white !important;color: black;cursor: pointer">
                         &#9776;
                     </li>
-{{--                    <nav class="navbar" style="float:right">--}}
-{{--                        <ul class="menu" style="display: none;">--}}
-{{--                            <li><a href="#">Trang chủ</a></li>--}}
-{{--                            <li><a href="#">Giới thiệu</a></li>--}}
-{{--                            <li><a href="#">Dịch vụ</a></li>--}}
-{{--                            <li><a href="#">Liên hệ</a></li>--}}
-{{--                        </ul>--}}
-{{--                    </nav>--}}
+                    <nav class="navbar" style="margin-top: 20px;position: fixed;right: 0;">
+                        <ul class="menu" style="display: none;" id="dropdownMenu">
+                            <li><a href="#">Yêu cầu đặt phòng</a></li>
+                            <li><a href="#">Visit Website</a></li>
+                            <li><a href="#">Thiết lập hệ thống</a></li>
+                            <li><a href="#">Hồ sơ</a></li>
+                            <li><a href="#">Đổi mật khẩu</a></li>
+
+                        </ul>
+                    </nav>
                 </div>
             </div>
 
@@ -96,3 +98,23 @@
     }
 
 </style>
+@push('script')
+    <script>
+        document.getElementById('dropdownButton').addEventListener('click', function() {
+            var dropdownMenu = document.getElementById('dropdownMenu');
+            dropdownMenu.style.display = dropdownMenu.style.display === 'block' ? 'none' : 'block';
+        });
+
+        window.onclick = function(event) {
+            if (!event.target.matches('#dropdownButton')) {
+                var dropdowns = document.getElementsByClassName('dropdown-content');
+                for (var i = 0; i < dropdowns.length; i++) {
+                    var openDropdown = dropdowns[i];
+                    if (openDropdown.style.display === 'block') {
+                        openDropdown.style.display = 'none';
+                    }
+                }
+            }
+        };
+    </script>
+@endpush

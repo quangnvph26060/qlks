@@ -494,14 +494,6 @@ Route::middleware('admin', 'adminPermission')->group(function () {
     });
 
 
-
-
-
-
-
-
-
-
     // DEPOSIT SYSTEM
     Route::controller('DepositController')->prefix('payment')->name('deposit.')->group(function () {
         Route::get('all/{user_id?}', 'deposit')->name('list');

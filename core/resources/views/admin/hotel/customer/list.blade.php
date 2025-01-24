@@ -125,7 +125,7 @@
                     </form>
                 </div>
                 <div class="col-md-2">
-                    <button class="btn mt-1 btn-sm btn-outline--primary" data-modal_title="Thêm mới khách hàng" type="button"
+                    <button class="btn mt-1 p-2 btn-sm btn-outline--primary" data-modal_title="Thêm mới khách hàng" type="button"
                                                 data-bs-toggle="modal" data-bs-target="#customer">
                         <i class="las la-plus"></i>
                     </button>

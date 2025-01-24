@@ -1,4 +1,4 @@
-@extends('admin.layouts.app')
+@extends('admin.layouts.master_iframe')
 @section('panel')
     <div class="row">
         <div class="col-lg-2 ">
@@ -521,7 +521,7 @@
                                     <div class="row mb-3">
                                         <div class="col-md-2">
                                             <strong>Nhận phòng</strong><br>${response.roomCheckIn[0]['check_in_at']}
-                                        </div>  
+                                        </div>
                                         <div class="col-md-6">
                                             <strong>Trả phòng</strong><br>${formattedDateTime}
                                         </div>
@@ -529,7 +529,7 @@
                                             <strong>Thời gian sử dụng</strong><br>${formattedDateTime}
                                         </div>
                                     </div>
-                                
+
                                     <!-- Tab Menu -->
                                     <div class="row">
                                         <div class=" col-md-6 d-flex align-items-end">
@@ -539,9 +539,9 @@
                                     </div>
 
                                     <div class="tab-content" id="myTabContent">
-                                    
-                                        
-                                    
+
+
+
                                     </div>
 
                                     <!-- Thanh toán -->
@@ -551,12 +551,12 @@
                                                 <span><strong>Khách cần trả</strong></span>
                                                 <span class="fw-bold">${formatCurrency(response.totalFare)}</span>
                                             </div>
-                                            
+
                                             <div class="d-flex justify-content-between">
                                                 <span>Khách đã trả</span>
                                                 <span class="fw-bold">${formatCurrency(response.booking['paid_amount'])}</span>
                                             </div>
-                                            
+
                                             <div class="d-flex justify-content-between">
                                                 <span><strong>Còn cần trả</strong></span>
                                                 <span class="fw-bold">${formatCurrency(response.due)}</span>
@@ -571,8 +571,8 @@
                                             </div>
                                         </div>
                                         </div>
-                                        <input type="text" data-booking-id="${response.roomCheckIn[0]['booking_id']}" 
-                                                            data-room-id="${response.roomCheckIn[0]['room_id']}" 
+                                        <input type="text" data-booking-id="${response.roomCheckIn[0]['booking_id']}"
+                                                            data-room-id="${response.roomCheckIn[0]['room_id']}"
                                                             data-room-type-id="${response.roomCheckIn[0]['room_type_id']}"
                                                             data-array=""
                                                                 class="form-control data-booked" hidden>
@@ -660,7 +660,7 @@
                                         </div>
 
                                         <!-- Tab Menu -->
-                                        
+
 
                                         <div class="row">
                                             <div class=" col-md-6 d-flex align-items-end">
@@ -670,9 +670,9 @@
                                         </div>
 
                                         <div class="tab-content" id="myTabContent">
-                                        
-                                            
-                                          
+
+
+
                                         </div>
 
                                         <!-- Thanh toán -->
@@ -682,12 +682,12 @@
                                                     <span><strong>Khách cần trả</strong></span>
                                                     <span class="fw-bold">${formatCurrency(response.totalFare)}</span>
                                                 </div>
-                                                
+
                                                 <div class="d-flex justify-content-between">
                                                     <span>Khách đã trả</span>
                                                     <span class="fw-bold">${formatCurrency(response.booking['paid_amount'])}</span>
                                                 </div>
-                                                
+
                                                 <div class="d-flex justify-content-between">
                                                     <span><strong>Còn cần trả</strong></span>
                                                     <span class="fw-bold">${formatCurrency(response.due)}</span>
@@ -702,9 +702,9 @@
                                                 </div>
                                             </div>
                                         </div>
-                                        <input type="text"  data-booking-id="${response.roomCheckIn[0]['booking_id']}" 
-                                                            data-room-id="${response.roomCheckIn[0]['room_id']}" 
-                                                            data-room-type-id="${response.roomCheckIn[0]['room_type_id']}"  
+                                        <input type="text"  data-booking-id="${response.roomCheckIn[0]['booking_id']}"
+                                                            data-room-id="${response.roomCheckIn[0]['room_id']}"
+                                                            data-room-type-id="${response.roomCheckIn[0]['room_type_id']}"
                                                             data-arr="${JSON.stringify(response.ArrCheckIn)}"
                                                             id="arrCheckInInput" class="form-control data-booked" hidden>
                                     </div>
@@ -888,10 +888,10 @@
                                         </td>
                                         <td style="display: flex; justify-content: center">
                                             <select id="bookingType" class="form-select" name="optionRoom" style="width: 110px;">
-                                                 <option value="ngay">Ngày</option> 
+                                                 <option value="ngay">Ngày</option>
                                                  <option value="gio">Giờ</option>
-                                              
-                                                
+
+
                                             </select>
                                         </td>
                                          <td>
@@ -929,11 +929,11 @@
                 });
             }
 
-          
+
             $(document).on('click', '.icon-delete-room', function() {
                 // Lấy data-room-id và data-room-type-id của dòng tr chứa icon
                 const row = $(this).closest('tr');
-                const roomId = row.data('room-id'); 
+                const roomId = row.data('room-id');
                 const roomTypeId = row.data('room-type-id');
 
 
@@ -1851,7 +1851,7 @@
 
                             if (response.data.room_status.length >= 2) {
                                 let priceGroup = 0;
-                                // 123123 
+                                // 123123
                                 rowGroupPrice += ` <div class="d-flex justify-content-between mt-1">
                                         <span class="fz-13">Cả đoàn</span>`
                                 let uniqueRooms = [...new Map(response.data.room_status.map(room => [
@@ -2292,7 +2292,7 @@
                         optionRoom: optionRoom
                     });
                 });
-               
+
                 if (hasError) {
                     roomData.forEach(function(item) {
                         const roomDates = getDatesBetween(item['checkInDate'], item['checkInTime'],
