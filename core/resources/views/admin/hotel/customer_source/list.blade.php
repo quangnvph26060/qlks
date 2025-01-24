@@ -1,9 +1,8 @@
-@extends('admin.layouts.app')
+@extends('admin.layouts.master_iframe')
 @section('panel')
     <div class="row">
         <div class="col-12">
-
-            <div class="row gy-4">
+            <div class="row">
                 <div class="col-12">
                     <div class="emptyArea"></div>
                 </div>
@@ -33,12 +32,12 @@
                                 <td>
                                     <a class="btn btn-sm btn-outline--primary btn-edit-source"
                                        data-id="{{ $item->id }}" data-bs-toggle="modal" data-bs-target="#edit-customer-source">
-                                        <i class="la la-pencil"></i>@lang('Sửa')
+                                        <i class="la la-pencil"></i>
                                     </a>
                                     <button class="btn btn-sm btn-outline--danger btn-delete icon-delete-room"
                                             data-id="{{ $item->id }}" data-modal_title="@lang('Xóa nguồn khách hàng')"type="button"
                                             data-pro="0">
-                                        <i class="fas fa-trash"></i>@lang('Xóa')
+                                        <i class="fas fa-trash"></i>
                                     </button>
                                 </td>
                             </tr>
@@ -58,10 +57,10 @@
             <div class="card-body">
                 <div class="row">
                     <div class="col-md-12 col-sm-12">
-                        <div class="form-group position-relative mb-0" style="float: inline-end;" id="btn-add-source">
-                            <button class="btn btn-sm btn-outline--primary" data-modal_title="Thêm mới nguồn khách hàng" type="button"
+                        <div class="form-group position-relative mb-0" id="btn-add-source">
+                            <button class="btn btn-sm mt-1 btn-outline--primary" data-modal_title="Thêm mới nguồn khách hàng" type="button"
                                     data-bs-toggle="modal" data-bs-target="#customer-source">
-                                <i class="las la-plus"></i>Thêm mới
+                                <i class="las la-plus"></i>
                             </button>
                         </div>
                     </div>

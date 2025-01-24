@@ -18,7 +18,7 @@
 @endphp
 
 <!-- navbar-wrapper start -->
-<nav class="navbar-wrapper bg--dark d-flex flex-wrap">
+<nav class="navbar-wrapper bg--dark d-flex flex-wrap top-menu">
     {{-- <div class="navbar__left">
         <button type="button" class="res-sidebar-open-btn me-3"><i class="las la-bars"></i></button>
         <form class="navbar-search">
@@ -129,6 +129,7 @@
         </ul>
     </div>
 </nav>
+
 <!-- navbar-wrapper end -->
 
 @push('script')

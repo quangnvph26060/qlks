@@ -1,4 +1,4 @@
-@extends('admin.layouts.app')
+@extends('admin.layouts.master_iframe')
 
 @section('panel')
     <div class="row">
@@ -18,7 +18,7 @@
                         @push('breadcrumb-plugins')
                                 <!-- Form tìm kiếm trực tiếp -->
                                 <form action="{{ route('admin.hotel.premium.service.all') }}" method="GET" id="searchForm" class="mx-5">
-                                    <div class="input-group">
+                                    <div class="input-group mt-1">
                                         <input
                                             type="search"
                                             class="searchInput"
@@ -26,7 +26,7 @@
                                             id="searchInput"
                                             value="{{$input}}"
                                             placeholder="Tìm kiếm..."
-                                            onsearch="handleSearchClear()">
+                                            onsearch="handleSearchClear()" style="padding: .375rem .75rem;height:auto">
                                         <!-- Nút tìm kiếm -->
                                         <button type="button" class="btn btn-primary">
                                             <i class="las la-search"></i>
@@ -86,7 +86,7 @@
                                                         <button class="btn btn-sm btn-outline--primary cuModalBtn"
                                                             data-has_status="1" data-modal_title="@lang('Update Premium Service')"
                                                             data-resource="{{ $premiumService }}" type="button">
-                                                            <i class="la la-pencil"></i>@lang('Sửa')
+                                                            <i class="la la-pencil"></i>
                                                         </button>
                                                     @endcan
 
@@ -95,13 +95,13 @@
                                                             <button class="btn btn-sm btn-outline--success me-1 confirmationBtn"
                                                                 data-action="{{ route('admin.hotel.premium.service.status', $premiumService->id) }}"
                                                                 data-question="@lang('Are you sure to enable this premium service?')" type="button">
-                                                                <i class="la la-eye"></i> @lang('Cho phép')
+                                                                <i class="la la-eye"></i>
                                                             </button>
                                                         @else
                                                             <button class="btn btn-sm btn-outline--danger confirmationBtn"
                                                                 data-action="{{ route('admin.hotel.premium.service.status', $premiumService->id) }}"
                                                                 data-question="@lang('Are you sure to disable this premium service?')" type="button">
-                                                                <i class="la la-eye-slash"></i> @lang('Ngưng hoạt động')
+                                                                <i class="la la-eye-slash"></i>
                                                             </button>
                                                         @endif
                                                     @endcan
@@ -173,8 +173,8 @@
 
 @can('admin.hotel.premium.service.save')
     @push('breadcrumb-plugins')
-        <button class="btn btn-sm btn-outline--primary cuModalBtn" data-modal_title="@lang('Thêm mới dịch vụ cao cấp')" type="button">
-            <i class="las la-plus"></i>@lang('Thêm mới')
+        <button class="btn btn-sm btn-outline--primary p-2 cuModalBtn" data-modal_title="@lang('Thêm mới dịch vụ cao cấp')" type="button">
+            <i class="las la-plus"></i>
         </button>
     @endpush
 @endcan

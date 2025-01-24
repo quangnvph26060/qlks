@@ -592,7 +592,6 @@ Route::middleware('admin', 'adminPermission')->group(function () {
         Route::get('maintenance-mode', 'maintenanceMode')->name('maintenance.mode');
         Route::post('maintenance-mode-submit', 'maintenanceModeSubmit')->name('maintenance.mode.submit');
 
-
         // Route::get('setup-hotel', 'setupHotel')->name('setting.setup.hotel');
         // Route::post('setup-hotel', 'addHotel')->name('setting.setup.add.hotel');
         // Route::post('edit-setup-hotel/{id}', 'editHotel')->name('setting.setup.edit.hotel');

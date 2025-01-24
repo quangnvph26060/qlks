@@ -19,7 +19,7 @@
                     @if (@$data->submenu)
                         @can(array_column($data->submenu, 'route_name'))
                             <li class="sidebar-menu-item sidebar-dropdown">
-                                <a href="javascript:void(0)" class="{{ menuActive(@$data->menu_active, 3) }}">
+                                <a href="javascript:void(0)" onclick="return loadIframe(this.href);" class="{{ menuActive(@$data->menu_active, 3) }}" >
                                     <i class="menu-icon {{ @$data->icon }}"></i>
                                     <span class="menu-title">{{ __(@$data->title) }}</span>
                                     @foreach (@$data->counters ?? [] as $counter)
@@ -45,7 +45,7 @@
 
                                         @can($menu->route_name)
                                             <li class="sidebar-menu-item {{ menuActive(@$menu->menu_active) }} ">
-                                                <a href="{{ route(@$menu->route_name, $submenuParams) }}" class="nav-link">
+                                                <a href="{{ route(@$menu->route_name, $submenuParams) }}" onclick="return loadIframe(this.href);" class="nav-link">
                                                     <i class="menu-icon las la-dot-circle"></i>
                                                     <span class="menu-title">{{ __($menu->title) }}</span>
                                                     @php $counter = @$menu->counter; @endphp
@@ -72,7 +72,7 @@
                     @endphp
                     @can(@$data->route_name)
                         <li class="sidebar-menu-item {{ menuActive(@$data->menu_active) }}">
-                            <a href="{{ route(@$data->route_name, $mainParams) }}" class="nav-link ">
+                            <a href="{{ route(@$data->route_name, $mainParams) }}" onclick="return loadIframe(this.href);" class="nav-link ">
                                 <i class="menu-icon {{ $data->icon }}"></i>
                                 <span class="menu-title">{{ __(@$data->title) }}</span>
                                 @php $counter = @$data->counter; @endphp
@@ -101,5 +101,67 @@
             scrollTop: eval($(".active").offset().top - 320)
         }, 500);
     }
+</script>
+<script>
+    $('ul > li > a.nav-link').click(function (e) {
+            e.preventDefault();
+            var seen = {};
+            var getItem = $(this).text();
+            var getURL = $(this).attr('href');
+            if (seen[getURL]) {
+                ($this).empty();
+            } else {
+                $('.p-globalNavi__item >a').removeClass('active');
+                var myEle = document.getElementById(getURL);
+                var parts = getURL.split('/');
+                var lastSegment = parts.pop() || parts.pop();
+                if (myEle == null) {
+                    $("#home").after(" <li class=\"p-globalNavi__item\"><a class=\"p-globalNavi__link text-white tabs active\" id=" + getURL + " >" + getItem + "<i class=\"close-b fa fa-close\" style=\"padding-left: 5px\"></i><span class=\"sr-only\">(current)<\/span><\/a><\/li> ");
+                } else {
+                    document.getElementById(getURL).click();
+                }
+            }
+            $('.top-menu').css('display','none');
+            $('.top-menu').removeClass('d-flex');
+        });
+    function loadIframe(url) {
+        var myEle = document.getElementById(url);
+        $('iframe').css('z-index', '999');
+        var parts = url.split('/');
+        var lastSegment = parts.pop() || parts.pop();
+        if (myEle == null) {
+            $("#frame").append('<iframe name="main" id="' + lastSegment + '" class="frame" src="' + url + '" style="width:85%;position: fixed;z-index: 999; height: 90%;margin-top: 1px;border: none"></iframe>');
+        } else {
+            $('iframe#' + lastSegment + '').css('z-index', '10000');
+        }
+    }
+    // $(document).on('click', '.p-globalNavi__item', function () {
+    //     $('.p-globalNavi__item').removeClass('m-active');
+    //     $(this).addClass('m-active');
+    //     var id = $(this).attr('id');
+    //     $('iframe').css({'z-index': '999', 'display': 'none'});
+    //     var parts = id.split('/');
+    //     var lastSegment = parts.pop() || parts.pop();
+    //     $('iframe#' + lastSegment + '').css({'z-index': '10000', 'display': 'block'});
+    // });
+    $(document).on('click', '.close-b', function () {
+        var parent = $(this).parent().prop('id');
+        var parts = parent.split('/');
+        var lastSegment = parts.pop() || parts.pop();
+        $('iframe#' + lastSegment + '').remove();
+        document.getElementById(parent).parentElement.remove();
+    });
+    $(".sidebar-submenu li").on("click", function () {
+        if ($(this).hasClass('m-active')) {
+            $(this).removeClass('m-active');
+            $('.has-arrow').removeClass('active');
+        } else {
+            $('.has-arrow').removeClass('active');
+            $(".sidebar-submenu li").removeClass('m-active');
+            $(this).addClass('m-active');
+            $(this).find('.has-arrow').addClass('active');
+
+        }
+    });
 </script>
 @endpush

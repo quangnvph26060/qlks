@@ -1,4 +1,4 @@
-@extends('admin.layouts.app')
+@extends('admin.layouts.master_iframe')
 @section('panel')
     <div class="row">
         <div class="col-lg-12">
@@ -32,24 +32,24 @@
                                                     @can('admin.hotel.room.add')
                                                         <button class="btn btn-sm btn-outline--primary editBtn"
                                                             data-resource="{{ $room }}"><i class="las la-pencil-alt"></i>
-                                                            @lang('Edit')</button>
+                                                            </button>
                                                     @endcan
 
                                                     @if ($room->status == Status::ENABLE)
                                                         <button class="btn btn-sm btn-outline--danger confirmationBtn"
                                                             data-action="{{ route('admin.hotel.room.status', $room->id) }}"
                                                             data-question="@lang('Bạn có chắc chắn ngưng hoạt động không ?')" type="button">
-                                                            <i class="la la-eye-slash"></i> @lang('Ngưng hoạt động')
+                                                            <i class="la la-eye-slash"></i>
                                                         </button>
                                                     @else
                                                         <button class="btn btn-sm btn-outline--success confirmationBtn"
                                                             data-action="{{ route('admin.hotel.room.status', $room->id) }}"
                                                             data-question="@lang('Bạn có muốn kích hoạt không ?')" type="button">
-                                                            <i class="la la-eye"></i> @lang('Cho phép')
+                                                            <i class="la la-eye"></i>
                                                         </button>
                                                     @endif
                                                     <button class="btn btn-sm btn-outline--danger btn-delete" data-id="{{$room->id}}" data-modal_title="Xóa" type="button">
-                                                        <i class="fas fa-trash"></i>Xóa
+                                                        <i class="fas fa-trash"></i>
                                                     </button>
                                                 </div>
                                             </td>
@@ -163,7 +163,7 @@
     @push('breadcrumb-plugins')
         <!-- Form tìm kiếm trực tiếp -->
         <form action="{{ route('admin.hotel.room.all') }}" method="GET" id="searchForm" class="mx-5">
-            <div class="input-group">
+            <div class="input-group mt-1">
                 <input
                     type="search"
                     class="form-control"
@@ -171,7 +171,7 @@
                     id="searchInput"
                     value="{{ request('keyword') }}"
                     placeholder="Tìm kiếm theo tiêu đề hoặc mô tả..."
-                    onsearch="handleSearchClear()">
+                    onsearch="handleSearchClear()" style="padding: .375rem .75rem;height:auto">
                 <!-- Nút tìm kiếm -->
                 <button type="submit" class="btn btn-primary">
                     <i class="las la-search"></i>
@@ -187,9 +187,9 @@
 @endsection
 
 @push('breadcrumb-plugins')
-    <button class="btn btn-outline--primary" data-bs-target="#addModal" data-bs-toggle="modal"><i
-            class="las la-plus"></i>
-        @lang('Thêm mới')</button>
+    <button class="btn btn-outline--primary" data-bs-target="#addModal" data-bs-toggle="modal">
+        <i class="las la-plus"></i>
+    </button>
     {{-- <x-search-form filter='yes' /> --}}
 @endpush
 

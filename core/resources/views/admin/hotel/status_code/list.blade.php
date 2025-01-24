@@ -1,4 +1,4 @@
-@extends('admin.layouts.app')
+@extends('admin.layouts.master_iframe')
 @section('panel')
     <div class="row">
         <div class="col-12">
@@ -6,10 +6,10 @@
             <div class="card-body">
                 <div class="row">
                     <div class="col-md-12 col-sm-12">
-                        <div class="form-group position-relative mb-0" style="float: inline-end;" id="btn-add-status">
+                        <div class="form-group position-relative mb-0" id="btn-add-status">
                             <button class="btn btn-sm btn-outline--primary" data-modal_title="Thêm mới trạng thái chức năng" type="button"
                                     data-bs-toggle="modal" data-bs-target="#status-code">
-                                <i class="las la-plus"></i>Thêm mới
+                                <i class="las la-plus"></i>
                             </button>
                         </div>
                     </div>
@@ -41,7 +41,6 @@
                                 <td>
                                     {{ $item->status_code }}
                                 </td>
-
                                 <td>
                                     {{ $item->status_name }}
                                 </td>
@@ -55,26 +54,26 @@
                                     {{-- href="{{ route('admin.setting.setup.edit.hotel', $item->id) }}" --}}
                                     <a class="btn btn-sm btn-outline--primary btn-edit-status"
                                        data-id="{{ $item->id }}" data-bs-toggle="modal" data-bs-target="#status-code">
-                                        <i class="la la-pencil"></i>@lang('Sửa')
+                                        <i class="la la-pencil"></i>
                                     </a>
                                     @if($item->status_status == 1)
 
                                         <button class="btn btn-sm btn-outline--danger confirmationBtn"
                                                 data-action="{{ route('admin.hotel.status.code.status', $item->id) }}"   data-id="{{ $item->id }}"
                                                 data-question="@lang('Bạn có chắc chắn muốn tắt trạng thái này không?')" type="button">
-                                            <i class="la la-eye-slash"></i> @lang('Ngưng hoạt động')
+                                            <i class="la la-eye-slash"></i>
                                         </button>
                                     @else
                                         <button class="btn btn-sm btn-outline--success confirmationBtn"
                                                 data-action="{{ route('admin.hotel.status.code.status', $item->id) }}"   data-id="{{ $item->id }}"
                                                 data-question="@lang('Bạn có chắc chắn muốn tắt trạng thái này không?')" type="button">
-                                            <i class="la la-eye-slash"></i> @lang('Hoạt động')
+                                            <i class="la la-eye-slash"></i>
                                         </button>
                                     @endif
                                     <button class="btn btn-sm btn-outline--danger btn-delete icon-delete-room"
                                             data-id="{{ $item->id }}" data-modal_title="@lang('Xóa trạng thái')"type="button"
                                             data-pro="0">
-                                        <i class="fas fa-trash"></i>@lang('Xóa')
+                                        <i class="fas fa-trash"></i>
                                     </button>
                                 </td>
                             </tr>
