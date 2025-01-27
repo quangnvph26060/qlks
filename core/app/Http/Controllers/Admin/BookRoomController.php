@@ -61,7 +61,7 @@ class BookRoomController extends Controller
             $roomBooking->save();
 
 
-            $check_in =  new CheckIn();
+            $check_in                     =  new CheckIn();
             $check_in->check_in_id        = getCode('NP', 12); // ID đặt phòng
             $check_in->id_room_booking    = $roomBooking->booking_id;               // ID phòng đặt (nếu có)
             $check_in->room_code          = $roomBooking->room_code;                // Mã phòng

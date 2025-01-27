@@ -13,7 +13,10 @@ class Room extends Model
 {
     use GlobalStatus, SoftDeletes;
 
-    protected $fillable = [ 'is_clean','unit_code'];
+    protected $table = 'rooms';
+    // protected $fillable = [ 'is_clean','unit_code'];
+
+    // insert hay get ra đều trả ra đúng mảng 
     protected $casts = [
         'keywords' => 'array',
         'beds'     => 'array'
