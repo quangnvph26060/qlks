@@ -64,7 +64,7 @@
         {{-- <a class="btn btn-sm btn--primary" href="{{ route('admin.booking.all') }}">
             <i class="la la-list"></i>@lang('Tất cả các đặt phòng')
         </a> --}}
-        <a class="btn btn-sm btn--primary add-room-booking">
+        <a class="btn btn-sm btn--primary add-book-room">
             <i class="la la-plus"></i>@lang('Đặt phòng')
         </a>
         <div class="modal fade" id="addRoomModal" tabindex="-1" aria-hidden="true" style="overflow: unset">
@@ -74,15 +74,48 @@
                         <h5 class="modal-title">Chọn Phòng</h5>
                         <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
                     </div>
+                    <div class=" mt-2 d-flex mb-2" style="gap: 10px;justify-content: space-around;">
+                        <div class="">
+                            <label for="">Chọn hạng phòng</label>
+                            <select class="form-select" id="selected-hang-phong">
+
+
+                            </select>
+                        </div>
+                        <div class="">
+                            <label for="">Chọn tên phòng</label>
+                            <select class="form-select" id="selected-name-phong">
+
+                            </select>
+                        </div>
+                        <div class="">
+                            <label for="">Từ ngày</label>
+                            <input type="date" class="form-control " id="date-chon-phong-in" style="height: 38px">
+                        </div>
+                        <div class="">
+                            <label for="">Đến ngày</label>
+                            <input type="date" class="form-control" id="date-chon-phong-out" style="height: 38px">
+                        </div>
+                        <div class="">
+                            <label for="">Trạng thái phòng</label>
+                            <select class="form-select">
+                                <option selected>Trạng tên phòng</option>
+                                <option value="1">One</option>
+                                <option value="2">Two</option>
+                                <option value="3">Three</option>
+                            </select>
+                        </div>
+                    </div>
                     <div class="modal-body overflow-add-room">
                         <table class="table table-striped">
                             <thead>
                                 <tr>
                                     <th data-table="Hạng phòng">Hạng phòng</th>
-                                    <th data-table="Phòng">Phòng</th>
+                                    <th data-table="Phòng">Tên phòng</th>
+                                    <th data-table="Ngày">NGày</th>
+                                    <th data-table="Trạng thái phòng">Trạng thái phòng</th>
                                     <th data-table="Giá">Giá</th>
                                     <th data-table="Thao tác">Thao tác</th>
-
                                 </tr>
                             </thead>
 
@@ -92,7 +125,11 @@
 
                         </table>
                     </div>
-
+                    <div class="d-flex justify-content-end" style="gap: 10px;padding: 7px 31px">
+                        <p type="button" data-row="booked" class=" btn-dat-truoc btn-book add-room-list" id="add-book-room">Lưu
+                        </p>
+                        <p type="button" data-row="booked" class="alert-paragraph close_modal_booked_room">Hủy</p>
+                    </div>
                 </div>
             </div>
         </div>
@@ -113,19 +150,25 @@
 
 @push('style')
     <style scoped>
-    .table-responsive--md {
-        overflow-x: auto; /* Enable horizontal scrolling if the table overflows */
-    }
+        .table-responsive--md {
+            overflow-x: auto;
+            /* Enable horizontal scrolling if the table overflows */
+        }
 
-    /* Optional: Adjust the font size and padding for smaller screens */
-    @media (max-width: 768px) {
-        .table--light {
-            font-size: 12px; /* Reduce font size on smaller screens */
+        /* Optional: Adjust the font size and padding for smaller screens */
+        @media (max-width: 768px) {
+            .table--light {
+                font-size: 12px;
+                /* Reduce font size on smaller screens */
+            }
+
+            .table td,
+            .table th {
+                padding: 5px;
+                /* Reduce padding for more compact view */
+            }
         }
-        .table td, .table th {
-            padding: 5px; /* Reduce padding for more compact view */
-        }
-    }
+
         .booking-table td {
             white-space: unset;
         }
@@ -189,6 +232,31 @@
 
         const start = moment();
         const end = moment().add(1, 'days');
+
+        const date_booking = new Date();
+        const date_yyyy = date_booking.getFullYear();
+        const date_mm = String(date_booking.getMonth() + 1).padStart(2, '0');
+        const date_dd = String(date_booking.getDate()).padStart(2, '0');
+        const date_hour = String(date_booking.getHours()).padStart(2, '0'); // Giờ
+        const date_minutes = String(date_booking.getMinutes()).padStart(2, '0'); // Phút
+
+        const formattedDates = `${date_yyyy}-${date_mm}-${date_dd}`;
+        const formattedTimes = `${date_hour}:${date_minutes}`;
+
+        $('[id="date-book-room-booking"]').val(formattedDates);
+        $('[id="time-book-room-booking"]').val(formattedTimes);
+
+        // Tạo một đối tượng Date mới và cộng thêm 1 ngày
+        const nextDay = new Date(date_booking);
+        nextDay.setDate(date_booking.getDate() + 1);
+
+        const nextDay_yyyy = nextDay.getFullYear();
+        const nextDay_mm = String(nextDay.getMonth() + 1).padStart(2, '0');
+        const nextDay_dd = String(nextDay.getDate()).padStart(2, '0');
+
+        const formattedNextDay = `${nextDay_yyyy}-${nextDay_mm}-${nextDay_dd}`;
+        $('[id="date-book-room-date"]').val(formattedNextDay);
+        $('[id="time-book-room-date"]').val(formattedTimes);
 
         function formatCurrency(amount) {
             const parts = amount.toString().split('.');
@@ -346,28 +414,71 @@
         });
 
         ///////////////////
-        function showRoom(data) {
+        function showRoom(data = "", checkInDateValue = "", checkOutDateValue = "", selectedOptionHangPhong = "",
+            selectedOptionNamePhong = "") {
             $('#loading').show();
+            $('[id="date-chon-phong-in"]').val(checkInDateValue);
+            $('[id="date-chon-phong-out"]').val(checkOutDateValue);
             $.ajax({
                 url: '{{ route('admin.booking.showRoom') }}',
                 type: 'POST',
                 data: {
-                    roomIds: data
+                    roomIds: data,
+                    checkInDate: checkInDateValue,
+                    checkOutDate: checkOutDateValue,
+                    optionHangPhong: selectedOptionHangPhong,
+                    optionNamePhong: selectedOptionNamePhong,
                 },
                 success: function(data) {
+                    // <p data-id="${ item.id }" data-room_type_id="${ item.room_type_id }" class="add-book-room" id="add-book-room">Đặt phòng</p>
                     var tbody = $('#show-room');
+                    tbody.empty();
                     data.data.forEach(function(item) {
                         var tr = `
                                     <tr>
                                         <td> ${ item.room_type['name'] } </td>
                                         <td> ${ item.room_number } </td>
+                                        <td> ${ item.date } </td>
+                                        <td> ${item.check_booked }</td>
                                         <td> ${ formatCurrency(item.room_type.room_type_price['unit_price']) } </td>
-                                        <td> <p data-id="${ item.id }" data-room_type_id="${ item.room_type_id }" class="add-book-room" id="add-book-room">Đặt phòng</p> </td>
+                                        <td> 
+                                            <input type="checkbox" ${item.status == 1 ? 'disabled' : ''} data-date="${ item.date }"  data-id="${ item.id }" data-room_type_id="${ item.room_type_id }" id="checkbox-${item.id}">
+                                        </td>
                                     </tr>
                                 `;
                         tbody.append(tr);
-                        $('#loading').hide();
+
                     });
+                    // hạng phòng 
+                    var selected_hang = $('#selected-hang-phong');
+                    selected_hang.empty();
+                    let option = `<option value="">Chọn hạng phòng</option>`;
+                    data.roomType.forEach(function(item) {
+                        if (item.id == data.option_hang_phong) {
+                            option += `<option value="${item.id}" selected>${item.name}</option>`;
+                        } else {
+                            option += `<option value="${item.id}">${item.name}</option>`;
+                        }
+                    });
+                    selected_hang.append(option);
+
+                    // tên phòng    
+                    var selected_name = $('#selected-name-phong');
+                    selected_name.empty();
+                    let options = `<option value="">Chọn tên phòng</option>`;
+
+
+                    data.room.forEach(function(item) {
+                        if (item.id == data.option_name_phong) {
+                            options +=
+                                `<option value="${item.id}" selected>${item.room_number}</option>`;
+                        } else {
+                            options += `<option value="${item.id}">${item.room_number}</option>`;
+                        }
+                    });
+
+                    selected_name.append(options);
+                    $('#loading').hide();
                 },
                 error: function(error) {
                     $('#loading').hide();
@@ -375,6 +486,44 @@
                 }
             });
         }
+        $('#selected-name-phong, #selected-hang-phong, #date-chon-phong-out, #date-chon-phong-in').on('change', function() {
+            var selectedOptionHangPhong = $('#selected-hang-phong').val();
+            var selectedOptionNamePhong = $('#selected-name-phong').val();
+            const roomIds = [];
+            $('#list-booking tr').each(function() {
+                const roomId = $(this).attr('data-room-id');
+
+                if (roomId) {
+                    roomIds.push(roomId);
+                }
+            });
+            const checkInDateValue = $('#date-chon-phong-in').val();
+            const checkOutDateValue = $('#date-chon-phong-out').val();
+            showRoom(roomIds, checkInDateValue, checkOutDateValue, selectedOptionHangPhong, selectedOptionNamePhong)
+        });
+        // xóa phòng
+        $('.delete-room-booking').on('click', function() {
+            $('#list-booking tr').each(function() {
+                var checkbox = $(this).find('input[type="checkbox"]');
+                if (checkbox.prop('checked')) {
+                    $(this).remove();
+                }
+            });
+        });
+        // add phòng vào booked
+        $('.add-room-list').on('click', function() {
+            const selectedCheckboxes = [];
+            $('#show-room input[type="checkbox"]:checked').each(function() {
+                const checkboxData = {
+                    room: $(this).data('id'),
+                    room_type: $(this).data('room_type_id'),
+                    date: $(this).data('date')
+                };
+                selectedCheckboxes.push(checkboxData);
+            });
+            addRoomInBooking(selectedCheckboxes)
+        });
+
         $('.add-room-booking').on('click', function() {
 
             const roomIds = [];
@@ -385,7 +534,11 @@
                     roomIds.push(roomId);
                 }
             });
-            showRoom(roomIds)
+            const checkInDateValue = $('#date-book-room-booking').val();
+
+            // Lấy giá trị của input checkOutDate
+            const checkOutDateValue = $('#date-book-room-date').val();
+            showRoom(roomIds, checkInDateValue, checkOutDateValue, '', '')
             $('#addRoomModal').modal('show');
 
             $('#addRoomModal').on('shown.bs.modal', function() {
@@ -402,24 +555,36 @@
                 // xóa các phòng thêm vào damh sách booking
             }
         });
+
         $(document).on('click', '.add-book-room', function() {
             var roomId = $(this).data('id');
             var roomTypeId = $(this).data('room_type_id');
             $('#myModal-booking').modal('show');
-            addRoomInBooking(roomId, roomTypeId);
+
+
+            // addRoomInBooking(roomId, roomTypeId);
+            var selectedCheckboxes = [];
+
+        });
+        $(document).on('click', '.close_modal', function() {
+            $('#myModal-booking').modal('hide');
+        });
+        $(document).on('click', '.close_modal_booked_room', function() {
+            $('#addRoomModal').modal('hide');
         });
 
-        function addRoomInBooking(roomId, roomTypeId) {
+        function addRoomInBooking(data) {
             $('#loading').show();
             $.ajax({
                 url: '{{ route('admin.booking.checkRoomBooking') }}',
                 type: 'POST',
                 data: {
-                    room_id: roomId,
-                    room_type_id: roomTypeId
+                    data: JSON.stringify(data)
                 },
                 success: function(response) {
                     var tbody = $('#list-booking');
+
+                   
 
                     if (response.status === 'success') {
                         //   getRoomType(response.room_type['id'], response.room['room_number'])
@@ -431,6 +596,7 @@
                         const minutesss = String(todays.getMinutes()).padStart(2, '0'); // Phút
 
                         const formattedDates = `${yyyys}-${mms}-${dds}`;
+                        const formattedTimes = `${hoursss}:${minutesss}`;
                         let date = new Date(formattedDates);
                         date.setDate(date.getDate() + 1);
                         let yyyy2 = date.getFullYear();
@@ -438,6 +604,14 @@
                         let dd2 = String(date.getDate()).padStart(2, '0');
 
                         const nextDay = `${yyyy2}-${mm2}-${dd2}`;
+                        // nextDay đang là time lớn hơn formattedDates 1 ngày
+                        response.data.forEach(item => {
+
+                            var tr = `
+                                    <tr data-room-id="${item.room['id']}"  data-room-type-id="${item.room_type['id']}">
+                                        <td>
+                                            <input type="checkbox"> 
+                                        </td>
 
 
                         const formattedTimes = `${hoursss}:${minutesss}`;
@@ -447,8 +621,9 @@
                         var tr = `
                                     <tr data-room-id="${response.room['id']}"  data-room-type-id="${response.room_type['id']}">
 
+
                                         <td>
-                                            <p class="room__name"> ${response.room['room_number']}</p>
+                                            <p class="room__name"> ${item.room['room_number']}</p>
                                         </td>
                                          <td>
                                              <input type="number" min="1" name="adult" class="form-control adult"  value="1"  style="margin-left: 16px;">
@@ -464,18 +639,21 @@
                                         </td>
                                          <td>
                                             <div class="d-flex align-items-center justify-content-start" style="gap: 10px">
-                                                <input type="date" name="checkInDate" id="date-book-room" class="form-control date-book-room"  value="${formattedDates}">
+                                                <input type="date" name="checkInDate" id="date-book-room" class="form-control date-book-room"  value="${item.date}">
 
                                                 <input type="time" name="checkInTime" id="time-book-room" class="form-control time-book-room"  value="${formattedTimes}">
                                             </div>
                                         </td>
                                         <td>
                                             <div class="d-flex align-items-center justify-content-start" style="gap: 10px">
-                                                <input type="date" name="checkOutDate"  class="form-control date-book-room"  value="${nextDay}">
+                                                <input type="date" name="checkOutDate"  class="form-control date-book-room"  value="${item.date}">
 
                                                 <input type="time" name="checkOutTime" id="time-book-room" class="form-control time-book-room"  value="${formattedTimes}">
 
                                             </div>
+                                        </td>
+                                        <td>
+                                             <p>${formatCurrency(item.room['room_type']['room_type_price']['unit_price'])}</p>
                                         </td>
                                         <td>
                                               <input type="text" class="form-control deposit number-input" oninput="this.value = this.value.slice(0, 16)"  name="deposit"  placeholder="0">
@@ -514,14 +692,28 @@
                                                     </div>
                                                 </div>
                                                    <input type="hidden" name="note_room" value="" id="hidden_note">
+
+                                            <input type="text" name="note_room" class="form-control note_room" value="" id="note">
+
                                         </td>
 
 
                                     </tr>
                                 `;
+                            tbody.append(tr);
+                        })
+
+                        // <td>
+                        //      <p id="book_name" class="book_name">${response.room_type['name']}</p>
+                        // </td>
+
 
                         $('#loading').hide();
+
                         tbody.append(tr);
+
+
+
 
                         $('.number-input').on('input', function() {
                             formatNumber(this);
@@ -552,6 +744,9 @@
             // Gán giá trị vào các input
             $('[id="date-book-room"]').val(currentDate);
             $('[id="time-book-room"]').val(currentTime);
+            // Gán giá trị vào các input
+            $('[id="date-book-room"]').val(currentDate);
+            $('[id="time-book-room"]').val(currentTime);
         });
         // xóa phòng
         $(document).on('click', '.delete-booked-room', function() {
@@ -564,7 +759,7 @@
             var roomId = $(this).data('room-id');
             var url = `{{ route('admin.booking.details', ['id' => ':id']) }}`.replace(':id',
                 roomId);
-                window.location.href = url;
+            window.location.href = url;
         });
         // nhận phòng
         $(document).on('click', '.booked_room', function() {
@@ -848,7 +1043,7 @@
                     if (item.name === 'room[]') {
                         const data = item.value;
                         let dataArray = JSON.parse(data);
-                        const timeCheckIn =  dataArray['dateIn'];
+                        const timeCheckIn = dataArray['dateIn'];
                         const timeCheckOut = dataArray['dateOut'];
                         const resultData = validator(timeCheckIn, timeCheckOut, dataRowValue);
                         if (!resultData) {
