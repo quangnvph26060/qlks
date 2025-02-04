@@ -59,7 +59,7 @@
 
 .table-responsive{
     overflow-y: scroll;
-    height: 250px;
+    height: auto;
     /* scrollbar-width: none; */
 }
 
