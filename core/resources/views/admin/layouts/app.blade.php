@@ -25,14 +25,13 @@
                     <li class="menu-toggle p-globalNavi__item" id="dropdownButton" style="right: 0;z-index: 11000;display:none;background: white !important;color: black;cursor: pointer">
                         &#9776;
                     </li>
-                    <nav class="navbar" style="margin-top: 20px;position: fixed;right: 0;">
+                    <nav class="navbar" style="margin-top: 25px;position: fixed;right: 0;z-index: 100000;background: currentColor;">
                         <ul class="menu" style="display: none;" id="dropdownMenu">
-                            <li><a href="#">Yêu cầu đặt phòng</a></li>
-                            <li><a href="#">Visit Website</a></li>
-                            <li><a href="#">Thiết lập hệ thống</a></li>
-                            <li><a href="#">Hồ sơ</a></li>
+                            <li class="border-bottom"><a href="#">Yêu cầu đặt phòng</a></li>
+                            <li class="border-bottom"><a href="#">Visit Website</a></li>
+                            <li class="border-bottom"><a href="#">Thiết lập hệ thống</a></li>
+                            <li class="border-bottom"><a href="#">Hồ sơ</a></li>
                             <li><a href="#">Đổi mật khẩu</a></li>
-
                         </ul>
                     </nav>
                 </div>
