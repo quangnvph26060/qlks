@@ -126,7 +126,7 @@
                         </table>
                     </div>
                     <div class="d-flex justify-content-end" style="gap: 10px;padding: 7px 31px">
-                        <p type="button" data-row="booked" class=" btn-dat-truoc btn-book add-room-list" id="add-book-room">Lưu
+                        <p  data-row="booked" class=" btn-dat-truoc  add-room-list">Lưu
                         </p>
                         <p type="button" data-row="booked" class="alert-paragraph close_modal_booked_room">Hủy</p>
                     </div>
@@ -442,7 +442,7 @@
                                     <tr>
                                         <td> ${ item.room_type['name'] } </td>
                                         <td> ${ item.room_number } </td>
-                                        <td> ${ item.date } </td>
+                                        <td> ${ formatDate(item.date) } </td>
                                         <td> ${item.check_booked }</td>
                                         <td> ${ formatCurrency(item.room_type.room_type_price['unit_price']) } </td>
                                         <td> 
@@ -588,6 +588,31 @@
             var selectedCheckboxes = [];
 
         });
+        function formatDate(inputDate) {
+            // Chia chuỗi ngày thành các phần tử: năm, tháng, ngày
+            var parts = inputDate.split('-');
+
+            // Định dạng lại chuỗi ngày
+            var formattedDate = parts[2] + '/' + parts[1] + '/' + parts[0];
+
+            return formattedDate;
+        }
+
+        function formatDateTime(inputDateTime) {
+            // Chia chuỗi ngày và giờ thành các phần tử
+            var dateTimeParts = inputDateTime.split(' ');
+
+            // Chia phần ngày thành các phần tử: năm, tháng, ngày
+            var dateParts = dateTimeParts[0].split('-');
+
+            // Định dạng lại chuỗi ngày
+            var formattedDate = dateParts[2] + '-' + dateParts[1] + '-' + dateParts[0];
+
+            // Nối lại chuỗi ngày và giờ
+            var formattedDateTime = formattedDate + ' ' + dateTimeParts[1];
+
+            return formattedDateTime;
+        }
         $(document).on('click', '.close_modal', function() {
             $('#myModal-booking').modal('hide');
         });
@@ -1204,9 +1229,9 @@
                                      <td>${index + 1  }</td>
                                     <td>${data['booking_id']}</td>
                                     <td>${data['room']['room_number']}</td>
-                                    <td>${data['document_date']}</td>
-                                    <td>${data['checkin_date']}</td>
-                                    <td>${data['checkout_date']}</td>
+                                    <td>${formatDateTime(data['document_date'])}</td>
+                                    <td>${formatDateTime(data['checkin_date'])}</td>
+                                    <td>${formatDateTime(data['checkout_date'])}</td>
                                     <td>${data['customer_name'] ? data['customer_name'] : 'N/A'}</td>
                                     <td>${data['phone_number'] ? data['phone_number'] : 'N/A'}</td>
                                   
