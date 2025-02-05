@@ -898,7 +898,7 @@
                                 $('.orderList').addClass('d-none');
                                 $('.formRoomSearch').trigger('reset');
                                 $('#myModal-booking').hide();
-                                window.location.reload();
+                                 window.location.reload();
                             } else {
                                 notify('error', response.error);
                             }

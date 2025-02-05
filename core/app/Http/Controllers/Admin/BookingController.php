@@ -325,15 +325,16 @@ class BookingController extends Controller
                 // Chuyển đổi chuỗi JSON thành mảng PHP
                 $roomBookingArray = json_decode($room->roomBooking, true);
                 $roomCheckInArray = json_decode($room->roomCheckIn, true);
-               //   \Log::info($room);
+                //   \Log::info($room);
                 if (empty($roomBookingArray) && empty($roomCheckInArray)) {
                     $newRecord->check_booked = 'Trống';
                     $newRecord->status = 0;
                 } elseif (!empty($roomBookingArray) && !empty($roomCheckInArray)) {
-                   
+
                     foreach ($roomBookingArray as $roomBooking) {
 
                         $dateRoomCheckIn = $this->getDates($roomBooking['checkin_date'], $roomBooking['checkout_date']);
+                        // \Log::info( $roomBooking);
                         if (in_array($date, $dateRoomCheckIn) && $roomBooking['status'] == Status::ENABLE) {
                             $newRecord->check_booked = 'Đã nhận';
                             $newRecord->status = 1;
@@ -343,18 +344,18 @@ class BookingController extends Controller
                             $newRecord->status = 1;
                             break;
                         } else {
-                                foreach ($roomCheckInArray as $roomCheckIn) {
-                                    
-                                    $dateroomCheckInArray = $this->getDates($roomCheckIn['checkin_date'], $roomCheckIn['checkout_date']);
-                                    if (in_array($date, $dateroomCheckInArray) ) {
-                                        $newRecord->check_booked = 'Đã nhận';
-                                        $newRecord->status = 1;
-                                        break;
-                                    }else{
-                                        $newRecord->check_booked = 'Trống';
-                                        $newRecord->status = 0;
-                                    }
+                            foreach ($roomCheckInArray as $roomCheckIn) {
+                                $dateroomCheckInArray = $this->getDatesInRange($roomCheckIn['checkin_date'], $roomCheckIn['checkout_date']);
+                                if (in_array($date, $dateroomCheckInArray)) {
+                                    $newRecord->check_booked = 'Đã nhận';
+                                    $newRecord->status = 1;
+                                    break;
+                                } else {
+                                  
+                                    $newRecord->check_booked = 'Trống';
+                                    $newRecord->status = 0;
                                 }
+                            }
                         }
                     }
                     // foreach ($roomCheckInArray as $roomCheckIn) {
@@ -371,7 +372,7 @@ class BookingController extends Controller
                     //         $newRecord->status = 0;
                     //     }
                     // }
-                }  else if (empty($roomBookingArray)) {
+                } else if (empty($roomBookingArray)) {
 
                     foreach ($roomCheckInArray as $roomCheckIn) {
                         // if($roomBooking['status'] == Status::ENABLE) {
@@ -389,8 +390,7 @@ class BookingController extends Controller
                             $newRecord->status = 0;
                         }
                     }
-                }
-                 else if (empty($roomCheckInArray)) {
+                } else if (empty($roomCheckInArray)) {
 
                     foreach ($roomBookingArray as $roomBooking) {
                         // if($roomBooking['status'] == Status::ENABLE) {
@@ -421,8 +421,8 @@ class BookingController extends Controller
         // tên phòng
         $room = Room::active()->get();
         // find check_booked 
-          
-        if($request->optionStatusPhong !== null) {
+
+        if ($request->optionStatusPhong !== null) {
             $newRecords = array_filter($newRecords, function ($record) use ($request) {
                 return $record->check_booked == $request->optionStatusPhong;
             });
@@ -450,16 +450,30 @@ class BookingController extends Controller
 
         return $dates;
     }
+    public function getDatesInRange($checkinDate, $checkoutDate) {
+        $dates = [];
+        $currentDate = Carbon::parse($checkinDate)->startOfDay();
+        $endDate = Carbon::parse($checkoutDate)->startOfDay();
+    
+        while ($currentDate->lte($endDate)) {
+            $dates[] = $currentDate->toDateString();
+            $currentDate->addDay();
+        }
+    
+        return $dates;
+    }
+    
     public function checkRoomBooking(Request $request)
     {
         $roomData = json_decode($request->data, true);
-        $result = []; $totalPrice = 0;
+        $result = [];
+        $totalPrice = 0;
         foreach ($roomData as $data) {
             $room_type = RoomType::find($data['room_type']);
 
-            $room = Room::active()->with('roomType', 'roomType.roomTypePrice','roomType.roomTypePrice.setupPricing')
+            $room = Room::active()->with('roomType', 'roomType.roomTypePrice', 'roomType.roomTypePrice.setupPricing')
                 ->where('id', $data['room'])->first();
-           
+
             $roomBooking = RoomBooking::where('room_code', $data['room'])->whereDate('checkin_date', $data['date'])->first();
             $checkIn = CheckIn::where('room_code', $data['room'])->whereDate('checkin_date', $data['date'])->first();
             if ($roomBooking || $checkIn) {
@@ -483,11 +497,11 @@ class BookingController extends Controller
                     'room_type' => $room_type,
                     'room'      => $room,
                     'date'      => $data['date'],
-                  
+
                 ];
             }
         }
-        return response()->json(['data' => $result, 'status' => $flag ]);
+        return response()->json(['data' => $result, 'status' => $flag]);
     }
 
 
