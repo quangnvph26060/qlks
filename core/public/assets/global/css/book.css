@@ -58,7 +58,7 @@
 }
 
 .table-responsive{
-    overflow-y: scroll;
+    /* overflow-y: scroll; */
     height: auto;
     /* scrollbar-width: none; */
 }

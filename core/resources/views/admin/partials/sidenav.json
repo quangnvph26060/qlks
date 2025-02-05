@@ -166,8 +166,8 @@
                     "Đổi phòng"
                 ],
                 "title": "Đổi phòng",
-                "route_name": "admin.booking.todays.checkin",
-                "menu_active": "admin.booking.todays.checkin"
+                "route_name": "admin.upcoming.booking.checkout",
+                "menu_active": "admin.upcoming.booking.checkout"
             },
             {
                 "keyword": [
@@ -205,7 +205,7 @@
     "manage_report": {
         "title": "Báo cáo",
         "icon": "las la-clipboard-list",
-        "menu_active": "admin.booking*",
+        "menu_active": "admin.manage*",
         "submenu": [
             {
                 "keyword": [
@@ -222,8 +222,8 @@
                     "Báo cáo doanh số"
                 ],
                 "title": "Báo cáo doanh số",
-                "route_name": "admin.booking.todays.checkin",
-                "menu_active": "admin.booking.todays.checkin"
+                "route_name": "admin.manage.priceroomtype.all",
+                "menu_active": "admin.manage.priceroomtype.all"
             }
 
         ]
