@@ -45,17 +45,17 @@
                                         @can(['admin.hotel.room.type.edit', 'admin.hotel.room.type.status'])
                                             <td>
                                                 @can('admin.hotel.room.type.edit')
-                                                    <a class="btn btn-sm btn-outline--primary" href="{{ route('admin.hotel.room.type.edit', $type->id) }}">  <i class="la la-pencil"></i>@lang('Sửa')
+                                                    <a class="btn btn-sm btn-outline--primary" href="{{ route('admin.hotel.room.type.edit', $type->id) }}">  <i class="la la-pencil"></i>
                                                     </a>
                                                 @endcan
                                                 @can('admin.hotel.room.type.status')
                                                     @if ($type->status == 0)
                                                         <button class="btn btn-sm btn-outline--success ms-1 confirmationBtn" data-action="{{ route('admin.hotel.room.type.status', $type->id) }}" data-question="@lang('Are you sure to enable this room type?')">
-                                                            <i class="la la-eye"></i> @lang('Cho phép')
+                                                            <i class="la la-eye"></i>
                                                         </button>
                                                     @else
                                                         <button class="btn btn-sm btn-outline--danger ms-1 confirmationBtn" data-action="{{ route('admin.hotel.room.type.status', $type->id) }}" data-question="@lang('Are you sure to disable this room type?')">
-                                                            <i class="la la-eye-slash"></i> @lang('Ngưng hoạt động')
+                                                            <i class="la la-eye-slash"></i>
                                                         </button>
                                                     @endif
                                                 @endcan
@@ -87,6 +87,6 @@
 @endsection
 @can('admin.hotel.room.type.create')
     @push('breadcrumb-plugins')
-        <a class="btn btn-sm btn-outline--primary" href="{{ route('admin.hotel.room.type.create') }}"><i class="las la-plus"></i>@lang('Thêm mới')</a>
+        <a class="btn btn-sm p-2 btn-outline--primary" href="{{ route('admin.hotel.room.type.create') }}"><i class="las la-plus"></i></a>
     @endpush
 @endcan

@@ -1,11 +1,11 @@
-@extends('admin.layouts.app')
+@extends('admin.layouts.master_iframe')
 @section('panel')
     <div class="bodywrapper__inner">
 
         <div class="d-flex justify-content-end mb-3">
             {{-- <h4>Thêm Giá Phòng</h4> --}}
             {{-- <div class="d-flex justify-content-center align-items-center" style="gap: 10px;">
-               
+
                 <form action="{{ route('admin.manage.price.all') }}" method="GET" id="search-premium">
                     <div class="input-group flex-nowrap">
                         <input
@@ -121,7 +121,7 @@
     @can('')
         @push('breadcrumb-plugins')
             <button type="button" class="btn btn-outline--primary btn-add">
-                Thêm cài đặt tính giá
+                <i class="las la-plus"></i>
             </button>
         @endpush
     @endcan
@@ -231,12 +231,12 @@
                 var priceRequirementInput = document.querySelector('.price_requirement_value');
                 price_requirement_value(selectedValue, checkboxList, priceRequirementInput)
             });
-           
+
           //  price_requirement_value(selectedValue, checkboxList, priceRequirementInput)
             function price_requirement_value(selectedValue, checkboxList, priceRequirementInput){
                 if (selectedValue === 'holiday') {
                     checkboxList.innerHTML = `
-                       
+
                         <label for="selectedDates" class="form-label">Chọn ngày:</label>
                         <input type="text" id="selectedDates" class="form-group" placeholder="Chọn ngày" name="price_requirement[]" style="width: 100%; height: 35px;">
                     `;
@@ -285,9 +285,9 @@
                 }
             }
             var formEconomyEdit = {
-                'priceCode': { // passwword thì nên đặt là name trong input đó 
-                    'element': document.getElementById('priceCode'), // id trong input đó 
-                    'error': document.getElementById('priceCode_error'), // thẻ hiển thị lỗi 
+                'priceCode': { // passwword thì nên đặt là name trong input đó
+                    'element': document.getElementById('priceCode'), // id trong input đó
+                    'error': document.getElementById('priceCode_error'), // thẻ hiển thị lỗi
                     'validations': [{
                             'func': function(value) {
                                 return checkRequired(value); // check trống
@@ -296,9 +296,9 @@
                         }, // viết tiếp điều kiện validate vào đây (validations)
                     ]
                 },
-                'priceName': { // passwword thì nên đặt là name trong input đó 
-                    'element': document.getElementById('priceName'), // id trong input đó 
-                    'error': document.getElementById('priceName_error'), // thẻ hiển thị lỗi 
+                'priceName': { // passwword thì nên đặt là name trong input đó
+                    'element': document.getElementById('priceName'), // id trong input đó
+                    'error': document.getElementById('priceName_error'), // thẻ hiển thị lỗi
                     'validations': [{
                             'func': function(value) {
                                 return checkRequired(value); // check trống
@@ -307,9 +307,9 @@
                         }, // viết tiếp điều kiện validate vào đây (validations)
                     ]
                 },
-                'priceNote': { // passwword thì nên đặt là name trong input đó 
-                    'element': document.getElementById('priceNote'), // id trong input đó 
-                    'error': document.getElementById('priceNote_error'), // thẻ hiển thị lỗi 
+                'priceNote': { // passwword thì nên đặt là name trong input đó
+                    'element': document.getElementById('priceNote'), // id trong input đó
+                    'error': document.getElementById('priceNote_error'), // thẻ hiển thị lỗi
                     'validations': [{
                             'func': function(value) {
                                 return checkRequired(value); // check trống
@@ -318,9 +318,9 @@
                         }, // viết tiếp điều kiện validate vào đây (validations)
                     ]
                 },
-                'checkInTime': { // passwword thì nên đặt là name trong input đó 
-                    'element': document.getElementById('checkInTime'), // id trong input đó 
-                    'error': document.getElementById('checkInTime_error'), // thẻ hiển thị lỗi 
+                'checkInTime': { // passwword thì nên đặt là name trong input đó
+                    'element': document.getElementById('checkInTime'), // id trong input đó
+                    'error': document.getElementById('checkInTime_error'), // thẻ hiển thị lỗi
                     'validations': [{
                             'func': function(value) {
                                 return checkRequired(value); // check trống
@@ -329,9 +329,9 @@
                         }, // viết tiếp điều kiện validate vào đây (validations)
                     ]
                 },
-                'checkOutTime': { // passwword thì nên đặt là name trong input đó 
-                    'element': document.getElementById('checkOutTime'), // id trong input đó 
-                    'error': document.getElementById('checkOutTime_error'), // thẻ hiển thị lỗi 
+                'checkOutTime': { // passwword thì nên đặt là name trong input đó
+                    'element': document.getElementById('checkOutTime'), // id trong input đó
+                    'error': document.getElementById('checkOutTime_error'), // thẻ hiển thị lỗi
                     'validations': [{
                             'func': function(value) {
                                 return checkRequired(value); // check trống
@@ -340,9 +340,9 @@
                         }, // viết tiếp điều kiện validate vào đây (validations)
                     ]
                 },
-                'dayType': { // passwword thì nên đặt là name trong input đó 
-                    'element': document.getElementById('dayType'), // id trong input đó 
-                    'error': document.getElementById('dayType_error'), // thẻ hiển thị lỗi 
+                'dayType': { // passwword thì nên đặt là name trong input đó
+                    'element': document.getElementById('dayType'), // id trong input đó
+                    'error': document.getElementById('dayType_error'), // thẻ hiển thị lỗi
                     'validations': [{
                             'func': function(value) {
                                 return checkRequired(value); // check trống
@@ -351,9 +351,9 @@
                         }, // viết tiếp điều kiện validate vào đây (validations)
                     ]
                 },
-                'roundTime': { // passwword thì nên đặt là name trong input đó 
-                    'element': document.getElementById('roundTime'), // id trong input đó 
-                    'error': document.getElementById('roundTime_error'), // thẻ hiển thị lỗi 
+                'roundTime': { // passwword thì nên đặt là name trong input đó
+                    'element': document.getElementById('roundTime'), // id trong input đó
+                    'error': document.getElementById('roundTime_error'), // thẻ hiển thị lỗi
                     'validations': [{
                             'func': function(value) {
                                 return checkRequired(value); // check trống
@@ -394,7 +394,7 @@
             // btn-setupPrice
             $(document).on('click', '.btn-setupPrice', function() {
                 if ( validateAllFields(formEconomyEdit)) {
-                    document.getElementById('btn-setupPrice-submit').submit();    
+                    document.getElementById('btn-setupPrice-submit').submit();
                 }
             });
              // btn-setupPrice
@@ -403,7 +403,7 @@
                     document.getElementById('btn-setupPrice-submit-edit').submit();
                 }
             });
-            // thêm 
+            // thêm
             $('.btn-add').on('click', function() {
                 $('#pricingModal').modal('show');
                 $('.add-pricing').empty();
@@ -440,13 +440,13 @@
                         console.log('Error:', error);
                     }
                 });
-              
-              
+
+
             });
-            
-            // sửa 
+
+            // sửa
             $(document).on('click', '.btn-edit-setup-pricing', function() {
-              
+
                 var dataId = $(this).data('id');
                 $('#pricingModal').modal('show');
                 $('.add-pricing').empty();
@@ -475,7 +475,7 @@
                         formEconomyEdit.roundTime.error = document.getElementById('roundTime_error');
                         formEconomyEdit.dayType.element = document.getElementById('dayType');
                         formEconomyEdit.dayType.error = document.getElementById('dayType_error');
-                        
+
                     },
                     error: function(xhr, status, error) {
                         $('#loading').hide();
@@ -484,7 +484,7 @@
                 });
 
             });
-            // xóa 
+            // xóa
             $(document).on('click', '.icon-delete-room', function() {
                 var dataId = $(this).data('id');
                 var rowToDelete = $(`tr[data-id="${dataId}"]`);
@@ -498,7 +498,7 @@
                     reverseButtons: true
                 }).then((result) => {
                     if (result.isConfirmed) {
-                        // ajax   
+                        // ajax
                         $.ajax({
                             url: `{{ route('admin.manage.deletePriceRoomType', '') }}/${dataId}`,
                             type: 'POST',
@@ -589,29 +589,29 @@
 
                             // const startDate = new Date(`${element.effective_start_date}`);
                             // const endDate = new Date(`${element.effective_end_date}`);
-                            // <td>${formatDate(startDate)} - ${ formatDate(endDate) 	}</td>  
+                            // <td>${formatDate(startDate)} - ${ formatDate(endDate) 	}</td>
                             html += `
                                 <tr data-id="${element.id}">
                                     <td>${element.price_code}</td>
                                     <td>${element.price_name}</td>
                                     <td>${formattedData}</td>
-                                  
+
                                     <td>${element.check_in_time} / ${element.check_out_time}</td>
-                                    <td>${element.round_time	}</td> 
+                                    <td>${element.round_time	}</td>
                                     <td>${element.description	}</td>
-                                  
+
                                     <td>${element.unit_code	}</td>
                                     <td>
                                         <a class="btn btn-sm btn-outline--primary btn-edit-setup-pricing"
                                             data-id="${element.id}">
-                                            <i class="la la-pencil"></i>@lang('Sửa')
+                                            <i class="la la-pencil"></i>
                                         </a>
 
                                         <button class="btn btn-sm btn-outline--danger btn-delete icon-delete-room"
                                             data-id="${element.id}" data-modal_title="@lang('Xóa cài đặt tính giá ')"type="button"
                                             data-pro="0">
-                                            <i class="fas fa-trash"></i>@lang('Xóa')
-                                        </button>    
+                                            <i class="fas fa-trash"></i>
+                                        </button>
                                     </td>
                                 </tr>
                             `;

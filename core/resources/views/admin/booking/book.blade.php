@@ -1,4 +1,4 @@
-@extends('admin.layouts.app')
+@extends('admin.layouts.master_iframe')
 @section('panel')
     <div class="row">
         <div class="col-lg-12">
@@ -291,9 +291,9 @@
             }
         }
         var formEconomyEdit = {
-            'name': { // passwword thì nên đặt là name trong input đó 
-                'element': document.getElementById('name'), // id trong input đó 
-                'error': document.getElementById('name_error'), // thẻ hiển thị lỗi 
+            'name': { // passwword thì nên đặt là name trong input đó
+                'element': document.getElementById('name'), // id trong input đó
+                'error': document.getElementById('name_error'), // thẻ hiển thị lỗi
                 'validations': [{
                         'func': function(value) {
                             return checkRequired(value); // check trống
@@ -678,19 +678,28 @@
                                             <input type="checkbox"> 
                                         </td>
 
+
+                        const formattedTimes = `${hoursss}:${minutesss}`;
+                        // <td>
+                        //      <p id="book_name" class="book_name">${response.room_type['name']}</p>
+                        // </td>
+                        var tr = `
+                                    <tr data-room-id="${response.room['id']}"  data-room-type-id="${response.room_type['id']}">
+
+
                                         <td>
                                             <p class="room__name"> ${item.room['room_number']}</p>
                                         </td>
                                          <td>
                                              <input type="number" min="1" name="adult" class="form-control adult"  value="1"  style="margin-left: 16px;">
-                                             
+
                                         </td>
                                         <td style="display: flex; justify-content: center">
                                             <select id="bookingType" class="form-select" name="optionRoom" style="width: 93px; font-size:15px">
-                                                 <option value="ngay">Ngày</option> 
+                                                 <option value="ngay">Ngày</option>
                                                  <option value="gio">Giờ</option>
-                                              
-                                                
+
+
                                             </select>
                                         </td>
                                          <td>
@@ -704,8 +713,10 @@
                                             <div class="d-flex align-items-center justify-content-start" style="gap: 10px">
                                                 <input type="date" name="checkOutDate"  class="form-control date-book-room"  value="${item.date}">
 
+
                                                 <input type="time" name="checkOutTime" id="time-book-room" class="form-control time-book-room"  value="${item.room['room_type']['room_type_price']['setup_pricing']['check_out_time']}">
                                                
+
                                             </div>
                                         </td>
                                         <td>
@@ -713,10 +724,44 @@
                                         </td>
                                         <td>
                                               <input type="text" class="form-control deposit number-input" oninput="this.value = this.value.slice(0, 16)"  name="deposit"  placeholder="0">
-                                           
+
                                         </td>
                                         <td>
+
+                                                <div class="modal fade" id="noteModal" tabindex="-1" aria-labelledby="noteModalLabel" aria-hidden="true">
+                                                    <div class="modal-dialog modal-dialog-centered" style="width: 420px;">
+                                                        <div class="modal-content">
+                                                            <div class="modal-header">
+                                                                <h5 class="modal-title" id="noteModalLabel">Ghi chú</h5>
+                                                                <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+                                                            </div>
+                                                            <div class="modal-body">
+                                                                <input class="form-control" type="text" name="note" id="note-input" placeholder="Nhập ghi chú...">
+                                                            </div>
+                                                            <div class="modal-footer">
+                                                                <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Bỏ qua</button>
+                                                                <button type="button" class="btn btn-success save-note" id="save-note">Lưu</button>
+                                                            </div>
+                                                        </div>
+                                                    </div>
+                                                </div>
+                                                <div style="position: relative; display: inline-block;">
+                                                    <svg xmlns="http://www.w3.org/2000/svg" width="20" height="20" viewBox="0 0 21 21" class="svg-icon">
+                                                        <g fill="currentColor" fill-rule="evenodd">
+                                                            <circle cx="10.5" cy="10.5" r="1" />
+                                                            <circle cx="10.5" cy="5.5" r="1" />
+                                                            <circle cx="10.5" cy="15.5" r="1" />
+                                                        </g>
+                                                    </svg>
+                                                    <div class="dropdown menu_dropdown" id="dropdown-menu">
+                                                        <div class="dropdown-item note-booked-room" data-note="" data-room-id="${response.room['id']}" >Ghi chú</div>
+                                                        <div class="dropdown-item icon-delete-room">Xóa phòng</div>
+                                                    </div>
+                                                </div>
+                                                   <input type="hidden" name="note_room" value="" id="hidden_note">
+
                                             <input type="text" name="note_room" class="form-control note_room" value="" id="note">
+
                                         </td>
 
 
@@ -752,9 +797,11 @@
                             $('#total_balance').text(formatCurrency(totalBalance));
                         });
 
+
                         $('.number-input').on('blur', function() {
                             formatNumber(this);
                         });
+
 
                         $('.custom-input-giam-gia').on('blur', function() {
                             // Lấy giá trị từ trường nhập liệu
@@ -830,7 +877,7 @@
                 });
             }
         });
-        // chi tiết 
+        // chi tiết
         $(document).on('click', '.booked_room_detail', function() {
             var roomId = $(this).data('room-id');
             var url = `{{ route('admin.booking.details', ['id' => ':id']) }}`.replace(':id',
@@ -1234,20 +1281,20 @@
                                     <td>${formatDateTime(data['checkout_date'])}</td>
                                     <td>${data['customer_name'] ? data['customer_name'] : 'N/A'}</td>
                                     <td>${data['phone_number'] ? data['phone_number'] : 'N/A'}</td>
-                                  
+
                                     <td>${data['guest_count']}</td>
                                     <td>${ formatCurrency( data['total_amount'])}</td>
                                     <td>${formatCurrency(data['deposit_amount'])}</td>
-                                 
-                                  
+
+
                                     <td>
-                                        <svg class="svg_menu_check_in" xmlns="http://www.w3.org/2000/svg" width="30" height="30" viewBox="0 0 21 21"><g fill="currentColor" fill-rule="evenodd"><circle cx="10.5" cy="10.5" r="1"/><circle cx="10.5" cy="5.5" r="1"/><circle cx="10.5" cy="15.5" r="1"/></g></svg>    
+                                        <svg class="svg_menu_check_in" xmlns="http://www.w3.org/2000/svg" width="30" height="30" viewBox="0 0 21 21"><g fill="currentColor" fill-rule="evenodd"><circle cx="10.5" cy="10.5" r="1"/><circle cx="10.5" cy="5.5" r="1"/><circle cx="10.5" cy="15.5" r="1"/></g></svg>
                                         <div class="dropdown menu_dropdown_check_in" id="dropdown-menu">
                                             <div class="dropdown-item booked_room" data-room-id="${data['id']}">Nhận phòng</div>
                                             <div class="dropdown-item booked_room" data-room-id="${data['id']}">Đổi phòng</div>
                                               <div class="dropdown-item booked_room_detail" data-room-id="${data['id']}">Chi tiết</div>
                                             <div class="dropdown-item delete-booked-room"  data-room-id="${data['id']}" >Xóa phòng</div>
-                                           
+
                                         </div>
                                     </td>
                                 </tr>

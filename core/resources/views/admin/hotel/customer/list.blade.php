@@ -1,4 +1,4 @@
-@extends('admin.layouts.app')
+@extends('admin.layouts.master_iframe')
 
 @section('panel')
     <div class="row">
@@ -55,25 +55,25 @@
                                     <td>
                                         <a class="btn btn-sm btn-outline--primary btn-edit-customer"
                                            data-id="{{ $customer->id }}" data-bs-toggle="modal" data-bs-target="#edit-customer">
-                                            <i class="la la-pencil"></i>@lang('Sửa')
+                                            <i class="la la-pencil"></i>
                                         </a>
                                         @if($customer->status == 1)
                                             <button class="btn btn-sm btn-outline--danger confirmationBtn"
                                                     data-action="{{ route('admin.hotel.customer.status', $customer->id) }}"   data-id="{{ $customer->id }}"
                                                     data-question="@lang('Bạn có chắc chắn muốn tắt trạng thái này không?')" type="button">
-                                                <i class="la la-eye-slash"></i> @lang('Ngưng hoạt động')
+                                                <i class="la la-eye-slash"></i>
                                             </button>
                                         @else
                                             <button class="btn btn-sm btn-outline--success confirmationBtn"
                                                     data-action="{{ route('admin.hotel.customer.status', $customer->id) }}"   data-id="{{ $customer->id }}"
                                                     data-question="@lang('Bạn có chắc chắn muốn tắt trạng thái này không?')" type="button">
-                                                <i class="la la-eye-slash"></i> @lang('Hoạt động')
+                                                <i class="la la-eye-slash"></i>
                                             </button>
                                         @endif
                                         <button class="btn btn-sm btn-outline--danger btn-delete icon-delete-room"
                                                 data-id="{{ $customer->id }}" data-modal_title="@lang('Xóa khách hàng')" type="button"
                                                 data-pro="0">
-                                            <i class="fas fa-trash"></i>@lang('Xóa')
+                                            <i class="fas fa-trash"></i>
                                         </button>
                                     </td>
                                 </tr>
@@ -97,10 +97,11 @@
 
     </div>
     @push('breadcrumb-plugins')
-        <div class="card-body">
+        <div class="card-body mt-1">
             <div class="row">
                 <div class="col-md-12 col-sm-12">
-                    <form role="form" enctype="multipart/form-data" action="{{route('admin.hotel.customer.search')}}">                        <div class="form-group position-relative mb-0" style="float: inline-end;width:100%" id="btn-add-customer">
+                    <form role="form" enctype="multipart/form-data" action="{{route('admin.hotel.customer.search')}}">
+                        <div class="form-group position-relative mb-0" id="btn-add-customer">
                             <input class="searchInput" name="customer_code"
                                    style="height: 35px;width:18%;border: 1px solid rgb(121, 117, 117, 0.5);"
                                     placeholder="Mã khách hàng">
@@ -116,7 +117,7 @@
                             <input class="searchInput" name="unit_code"
                                    style="height: 35px;width:18%;border: 1px solid rgb(121, 117, 117, 0.5); margin-left: 8px;"
                                    type="search" placeholder="Mã đơn vị">
-                            <button type="submit" class="btn btn-primary">
+                            <button type="submit" class="btn btn-primary" style="padding:10px">
                                 <i class="las la-search"></i>
                             </button>
 
@@ -124,9 +125,9 @@
                     </form>
                 </div>
                 <div class="col-md-2">
-                    <button class="btn mt-2 btn-sm btn-outline--primary" data-modal_title="Thêm mới khách hàng" type="button"
+                    <button class="btn mt-1 p-2 btn-sm btn-outline--primary" data-modal_title="Thêm mới khách hàng" type="button"
                                                 data-bs-toggle="modal" data-bs-target="#customer">
-                        <i class="las la-plus"></i>Thêm mới
+                        <i class="las la-plus"></i>
                     </button>
                 </div>
             </div>

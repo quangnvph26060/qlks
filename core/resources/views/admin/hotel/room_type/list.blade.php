@@ -1,46 +1,31 @@
-@extends('admin.layouts.app')
+@extends('admin.layouts.master_iframe')
 @section('panel')
     <div class="row">
         <div class="col-lg-12">
-            <div class="d-flex justify-content-between mb-3 row order-1">
-                <div class="dt-length col-md-6 col-4">
-                    <select name="example_length" id="perPage" style=" padding: 1px 3px; margin-right: 8px;"
-                        aria-controls="example" class="perPage">
-                        <option value="10">10</option>
-                        <option value="25">25</option>
-                        <option value="50">50</option>
-                        <option value="100">100</option>
-                    </select><label for="perPage"> entries per page</label>
-                </div>
+{{--            <div class="d-flex justify-content-between mb-3 row order-1">--}}
+{{--                <div class="dt-length col-md-6 col-4">--}}
+{{--                    <select name="example_length" id="perPage" style=" padding: 1px 3px; margin-right: 8px;"--}}
+{{--                        aria-controls="example" class="perPage">--}}
+{{--                        <option value="10">10</option>--}}
+{{--                        <option value="25">25</option>--}}
+{{--                        <option value="50">50</option>--}}
+{{--                        <option value="100">100</option>--}}
+{{--                    </select><label for="perPage"> entries per page</label>--}}
+{{--                </div>--}}
 
-                <div class="search col-md-4 col-12" style="text-align: end;">
-                    {{-- <label for="searchInput">Search:</label> --}}
-                    <div class="input-group" style="justify-content: end;">
-                        <input class="searchInput"
+{{--                <div class="search col-md-4 col-12" style="text-align: end;">--}}
+{{--                    --}}{{-- <label for="searchInput">Search:</label> --}}
+{{--                    <div class="input-group" style="justify-content: end;">--}}
+{{--                        <input class="searchInput"--}}
 
-                        type="search" placeholder="Tìm kiếm...">
-                        <button type="submit" class="btn btn-primary">
-                            <i class="las la-search"></i>
-                        </button>
-                    </div>
-                </div>
-                <div class="dropdown col-md-1 col-8" style="display: flex;
-                justify-content: end">
-                    <a class="btn btn-outline-secondary dropdown-toggle d-flex justify-content-center
-                align-items-center" href="#" role="button"
-                        data-bs-toggle="dropdown" aria-expanded="false">
-                        Thao tác
-                    </a>
-                    <ul class="dropdown-menu">
-                        <li><a class="dropdown-item"
-                                href="{{ route('admin.hotel.room.type.all.deleted') }}">Các phòng đã xóa</a>
-                        </li>
-                    </ul>
+{{--                        type="search" placeholder="Tìm kiếm...">--}}
+{{--                        <button type="submit" class="btn btn-primary">--}}
+{{--                            <i class="las la-search"></i>--}}
+{{--                        </button>--}}
+{{--                    </div>--}}
+{{--                </div>--}}
 
-                    </div>
-
-                </div>
-            </div>
+{{--            </div>--}}
             <div class="card b-radius--10">
                 <div class="card-body p-0">
                     <div class="table-responsive--md table-responsive">
@@ -49,7 +34,7 @@
                                 <tr>
                                     <th></th>
                                     {{-- <th>@lang('STT')</th> --}}
-                                    <th>@lang('Loại phòng')</th> 
+                                    <th>@lang('Loại phòng')</th>
                                     <th>@lang('Mã phòng')</th>
                                     <th>@lang('Tên phòng')</th>
                                     <th>@lang('Số người')</th>
@@ -86,8 +71,22 @@
 @endsection
 @can('admin.hotel.room.type.create')
     @push('breadcrumb-plugins')
-        <a class="btn btn-sm btn-outline--primary" href="{{ route('admin.hotel.room.type.create') }}"><i
-                class="las la-plus"></i>@lang('Thêm mới')</a>
+        <a class="btn btn-sm btn-outline--primary mt-1" href="{{ route('admin.hotel.room.type.create') }}"><i
+                class="las la-plus"></i></a>
+{{--        <div class="dropdown col-md-1 col-8" style="display: flex;--}}
+{{--                justify-content: end">--}}
+{{--            <a class="btn btn-outline-secondary dropdown-toggle d-flex justify-content-center--}}
+{{--                align-items-center" href="#" role="button"--}}
+{{--               data-bs-toggle="dropdown" aria-expanded="false">--}}
+{{--                Thao tác--}}
+{{--            </a>--}}
+{{--            <ul class="dropdown-menu">--}}
+{{--                <li><a class="dropdown-item"--}}
+{{--                       href="{{ route('admin.hotel.room.type.all.deleted') }}">Các phòng đã xóa</a>--}}
+{{--                </li>--}}
+{{--            </ul>--}}
+{{--        </div>--}}
+        </div>
     @endpush
 @endcan
 
