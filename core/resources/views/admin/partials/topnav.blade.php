@@ -160,7 +160,7 @@
 
     .nav-tabss {
         position: relative;
-        bottom: -16px;
+        bottom:  -16px;
     }
 
     .nav-link-tabs {
