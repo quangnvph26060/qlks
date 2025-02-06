@@ -338,6 +338,9 @@ Route::middleware('admin', 'adminPermission')->group(function () {
 
 
             Route::post('check-room-booking', 'checkRoomBooking')->name('checkRoomBooking');
+            // xóa đặt phòng 
+            Route::post('delete-booked-room/{id}', 'deleteRoomBooking')->name('delete-booked-room');
+
 
         });
     });

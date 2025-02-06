@@ -17,6 +17,11 @@
                                 <form action="{{ route('admin.login') }}" method="POST"
                                     class="cmn-form mt-30 verify-gcaptcha login-form">
                                     @csrf
+                                    {{-- <div class="form-group">
+                                        <label>@lang('Mã cơ sở')</label>
+                                        <input type="text" class="form-control" value="{{ old('username') }}"
+                                            name="unit_code" required>
+                                    </div> --}}
                                     <div class="form-group">
                                         <label>@lang('Tài khoản')</label>
                                         <input type="text" class="form-control" value="{{ old('username') }}"
