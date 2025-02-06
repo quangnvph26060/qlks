@@ -45,7 +45,6 @@ class BookRoomController extends Controller
             ]
         ]);
     }
-
     // check in
     public function checkIn(Request $request, $id)
     {
@@ -85,7 +84,7 @@ class BookRoomController extends Controller
 
             // response
             DB::commit();
-            return response()->json(['status'=>'success','success' => 'Nhận phòng thành công']);
+            return response()->json(['status' => 'success', 'success' => 'Nhận phòng thành công']);
         } catch (\Exception $e) {
             \Log::info('Error booking : ' . $e->getMessage());
             DB::rollBack();
@@ -183,22 +182,21 @@ class BookRoomController extends Controller
                 $check_in = $request->method == 'check_in' ? new CheckIn() : new RoomBooking();
 
                 if ($index == 0) {
-                    if($request->method == 'check_in') {
+                    if ($request->method == 'check_in') {
                         $check_in->check_in_id      = getCode('NP', 12);
                         $bookingId = $check_in->check_in_id;
-                    }else{
+                    } else {
                         $check_in->booking_id       = getCode('DP', 12);
                         $bookingId = $check_in->booking_id;
                     }
                 } else {
-                    if($request->method == 'check_in') {
+                    if ($request->method == 'check_in') {
                         $check_in->check_in_id   = $bookingId;
-                    }else{
+                    } else {
                         $check_in->booking_id = $bookingId;
                     }
-                  
                 }
-              
+
                 $check_in->room_code      = $room['room'];
                 $check_in->document_date  = now();
                 $check_in->checkin_date   = Carbon::parse($room['dateIn']);
@@ -410,5 +408,11 @@ class BookRoomController extends Controller
             'status' => 'success',
             'data'   => $data
         ]);
+    }
+    // sửa phòng
+    public function roomBookingEdit($id)
+    {
+        $roomBooking = RoomBooking::with('room')->where('booking_id',$id)->get();
+        return response()->json(['status' => 'success', 'data' => $roomBooking]);
     }
 }

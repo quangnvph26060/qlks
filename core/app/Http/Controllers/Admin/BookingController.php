@@ -171,6 +171,10 @@ class BookingController extends Controller
 
         return view('admin.booking.details', compact('pageTitle', 'booking', 'due'));
     }
+
+   
+
+    // chi tiết nhận phòng
     public function CheckInDetails(Request $request,  $id)
     {
         $pageTitle = 'Chi tiết nhận phòng';

@@ -44,7 +44,9 @@
                                         @endphp
 
                                         @can($menu->route_name)
-                                            <li class="sidebar-menu-item {{ menuActive(@$menu->menu_active) }} ">
+                                            <li class="sidebar-menu-item {{ menuActive(@$menu->menu_active) }} "
+                                                data-route="{{ $menu->route_name }}">
+                                                
                                                 <a href="{{ route(@$menu->route_name, $submenuParams) }}" class="nav-link">
                                                     <i class="menu-icon las la-dot-circle"></i>
                                                     <span class="menu-title">{{ __($menu->title) }}</span>
@@ -72,7 +74,7 @@
                     @endphp
                     @can(@$data->route_name)
                         <li class="sidebar-menu-item {{ menuActive(@$data->menu_active) }}">
-                            <a href="{{ route(@$data->route_name, $mainParams) }}" class="nav-link ">
+                            <a href="{{ route(@$data->route_name, $mainParams) }}" class="nav-link">
                                 <i class="menu-icon {{ $data->icon }}"></i>
                                 <span class="menu-title">{{ __(@$data->title) }}</span>
                                 @php $counter = @$data->counter; @endphp
@@ -96,10 +98,33 @@
 
 @push('script')
 <script>
-    if ($('li').hasClass('active')) {
-        $('.sidebar__menu-wrapper').animate({
-            scrollTop: eval($(".active").offset().top - 320)
-        }, 500);
+    let activeDataIds = [];
+
+    // Lấy mảng activeDataIds từ Local Storage khi trang được tải lại
+    if (localStorage.getItem('activeDataIds')) {
+        activeDataIds = JSON.parse(localStorage.getItem('activeDataIds'));
+        // console.log(activeDataIds); // In ra các activeDataId đã được lưu
     }
+
+    $('li').each(function() {
+        if ($(this).hasClass('active')) {
+            const activeDataId = $(this).find('span').text(); // Lấy nội dung text trong thẻ span
+            const activeDataValue = $(this).data('route');
+
+            // Kiểm tra xem cặp activeDataValue và activeDataId đã tồn tại trong mảng activeDataIds hay không
+            const existingIndex = activeDataIds.findIndex(item => Object.keys(item)[0] === activeDataValue &&
+                item[activeDataValue] === activeDataId);
+
+            if (existingIndex === -1) {
+                activeDataIds.push({
+                    [activeDataValue]: activeDataId
+                });
+            }
+            localStorage.setItem('activeDataIds', JSON.stringify(activeDataIds));
+            $('.sidebar__menu-wrapper').animate({
+                scrollTop: eval($(this).offset().top - 320)
+            }, 500);
+        }
+    });
 </script>
 @endpush

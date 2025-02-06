@@ -166,8 +166,8 @@
                     "Đổi phòng"
                 ],
                 "title": "Đổi phòng",
-                "route_name": "admin.upcoming.booking.checkout",
-                "menu_active": "admin.upcoming.booking.checkout"
+                "route_name": "admin.booking.refundable",
+                "menu_active": "admin.booking.refundable"
             },
             {
                 "keyword": [
@@ -175,16 +175,16 @@
                 ],
                 "title": "Thanh toán",
                 "icon": "la la-sign-out transform-rotate-180",
-                "route_name": "admin.upcoming.booking.checkout",
-                "menu_active": "admin.upcoming.booking.checkout"
+                "route_name": "admin.booking.canceled.list",
+                "menu_active": "admin.booking.canceled.list"
             },
             {
                 "keyword": [
                     "Chi phí"
                 ],
                 "title": "Chi phí",
-                "route_name": "admin.deposit.list",
-                "menu_active": "admin.deposit.list"
+                "route_name": "admin.booking.checked.out.list",
+                "menu_active": "admin.booking.checked.out.list"
             },
             {
                 "keyword": [
@@ -214,7 +214,7 @@
                 "title": "Báo cáo tình trạng phòng",
                 "icon": "la la-hand-o-right",
                 "route_name": "admin.book.room",
-                "menu_active": "admin.book.room"
+                "menu_active": "room.amenities.all"
             },
             {
                 "keyword": [
