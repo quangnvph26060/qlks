@@ -35,7 +35,7 @@
                                 <ul>
                                     @foreach ($data->submenu as $menu)
                                         @php
-                                            $submenuParams = null;
+                                                $submenuParams = null;
                                             if (@$menu->params) {
                                                 foreach ($menu->params as $submenuParamVal) {
                                                     $submenuParams[] = array_values((array) $submenuParamVal)[0];
