@@ -18,7 +18,7 @@ class ManageReportController extends Controller
 
     // Truy vấn kết hợp bảng rooms và room_status
     $roomStatusHistory = RoomStatusHistory::query()
-    ->where('unit_code', unitCode())
+    ->where('room_status_history.unit_code', unitCode())
         ->join('rooms', 'room_status_history.room_id', '=', 'rooms.id')
         ->join('room_status', 'room_status_history.status_code', '=', 'room_status.id')
         ->when($keyword, function ($query) use ($keyword) {
