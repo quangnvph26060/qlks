@@ -12,6 +12,7 @@ use App\Models\Customer;
 use App\Models\RoomType;
 use App\Models\Room;
 use App\Models\RoomBooking;
+use App\Models\RoomStatusHistory;
 use App\Models\RoomTypePrice;
 use App\Models\User;
 use App\Traits\BookingActions;
@@ -172,7 +173,7 @@ class BookRoomController extends Controller
             $tax            = gs('tax'); // thuế
             foreach ($request->room as $index => $item) {
                 $room = json_decode($item, true);
-                // kiểm tra khách hàng 
+                // kiểm tra khách hàng
                 $customer = $this->add_guest($request->name, $request->phone);
                 // đặt cọc của từng phòng
                 $depositAmount = is_numeric($room['deposit']) ? intval(floatval(str_replace('.', '', $room['deposit']))) : $room['deposit'];
@@ -196,6 +197,21 @@ class BookRoomController extends Controller
                         $check_in->booking_id = $bookingId;
                     }
                 }
+
+                $roomstatus = new RoomStatusHistory();
+                $roomstatus->room_id  = $room['room'];
+                $roomstatus->start_date   = Carbon::parse($room['dateIn']);
+                $roomstatus->end_date  = Carbon::parse($room['dateOut']);
+                $roomstatus->unit_code  = hf('ma_coso');
+                $roomstatus->created_at = now();
+
+                if($request->method == 'check_in'){
+                    $roomstatus->status_code  = 3;
+
+                }else{
+                    $roomstatus->status_code  = 2;
+                }
+                $roomstatus->save();
 
                 $check_in->room_code      = $room['room'];
                 $check_in->document_date  = now();
@@ -235,7 +251,7 @@ class BookRoomController extends Controller
                 //     ->where(function ($query) use ($bookedFor) {
                 //         $query->whereRaw('? between check_in and check_out', [Carbon::parse($bookedFor)]);
                 //     })
-                //     ->first();  
+                //     ->first();
                 // if ($isBookedRoom || $isBookedCheckInRoom) {
                 //     $errorDetails = [];
                 //     if ($isBookedRoom) {
