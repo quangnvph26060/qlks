@@ -339,7 +339,7 @@ Route::middleware('admin', 'adminPermission')->group(function () {
 
 
             Route::post('check-room-booking', 'checkRoomBooking')->name('checkRoomBooking');
-            // xóa đặt phòng 
+            // xóa đặt phòng
             Route::post('delete-booked-room/{id}', 'deleteRoomBooking')->name('delete-booked-room');
 
 
@@ -690,4 +690,10 @@ Route::middleware('admin', 'adminPermission')->group(function () {
     });
 
     Route::get('/checkhours', [GeneralSettingController::class, 'checkhours'])->name('checkhours');
+
+    // Report room status
+    Route::controller('ManageReportController')->prefix('manage')->name('manage.')->group(function () {
+
+            Route::get('room-status', 'rommStatus')->name('room.status');
+    });
 });

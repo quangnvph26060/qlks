@@ -213,8 +213,8 @@
                 ],
                 "title": "Báo cáo tình trạng phòng",
                 "icon": "la la-hand-o-right",
-                "route_name": "admin.book.room",
-                "menu_active": "room.amenities.all"
+                "route_name": "admin.manage.room.status",
+                "menu_active": "admin.manage.room.status"
             },
             {
                 "keyword": [
@@ -231,7 +231,7 @@
     "general_settings": {
         "title": "Cài đặt chung",
         "icon": "las la-life-ring",
-        "menu_active": "admin.manage*",
+        "menu_active": "admin.premium.service*",
         "submenu": [
             {
                 "keyword": [
