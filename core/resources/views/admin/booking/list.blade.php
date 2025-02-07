@@ -241,15 +241,30 @@
                 success: function(data) {
                     // <p data-id="${ item.id }" data-room_type_id="${ item.room_type_id }" class="add-book-room" id="add-book-room">Đặt phòng</p>
                     var tbody = $('#show-room');
-                    let seenRooms = new Set();
                     const dataNew = Object.values(data.data);
-
+                    let seenRooms = new Set();
                     tbody.empty();
                     dataNew.forEach(function(item) {
+                        let rowClass = '';
                         let isFirst = !seenRooms.has(item.room_number);
                         seenRooms.add(item.room_number);
+                        if (!isFirst) {
+                            if (item.check_booked === 'Đã nhận') {
+                                rowClass = "background-primary";
+                            } else if (item.check_booked === 'Đã đặt') {
+                                rowClass = 'background-yellow';
+                            }
+                        } else {
+                            if (item.check_booked === 'Đã nhận') {
+                                rowClass = "background-primary";
+                            } else if (item.check_booked === 'Đã đặt') {
+                                rowClass = 'background-yellow';
+                            } else {
+                                rowClass = "background-white";
+                            }
+                        }
                         var tr = `
-                                    <tr style="${isFirst ? 'background: #f0f1f1;' : ''}">
+                                    <tr class="${rowClass}">
                                         <td style="${isFirst ? 'font-weight: bold;' : ''}"> ${ item.room_type['name'] } </td>
                                         <td style="${isFirst ? 'font-weight: bold;' : ''}"> ${ item.room_number } </td>
                                         <td style="${isFirst ? 'font-weight: bold;' : ''}"> ${ formatDate(item.date) } </td>
@@ -900,7 +915,7 @@
                                 $('.orderList').addClass('d-none');
                                 $('.formRoomSearch').trigger('reset');
                                 $('#myModal-booking').hide();
-                                 window.location.reload();
+                                window.location.reload();
                             } else {
                                 notify('error', response.error);
                             }
@@ -1052,7 +1067,23 @@
             font-size: 14px;
             transition: background-color 0.3s, transform 0.3s;
         }
+        .background-primary {
+            background: #0b138d;
+        }
 
+        .background-yellow {
+            background-color: #eeddaa;
+        }
+
+        .background-white {
+            color: #5b6e88;
+            background-color: #f0f1f1;
+        }
+
+        .background-yellow td,
+        .background-primary td {
+            color: white !important;
+        }
         .pagination-container button:hover {
             background-color: #4634ff;
             transform: scale(1.05);

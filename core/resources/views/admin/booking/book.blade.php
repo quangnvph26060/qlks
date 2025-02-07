@@ -217,6 +217,24 @@
         .pagination-container button:last-child {
             border-radius: 0 5px 5px 0;
         }
+
+        .background-primary {
+            background: #0b138d;
+        }
+
+        .background-yellow {
+            background-color: #eeddaa;
+        }
+
+        .background-white {
+            color: #5b6e88;
+            background-color: #f0f1f1;
+        }
+
+        .background-yellow td,
+        .background-primary td {
+            color: white !important;
+        }
     </style>
 @endpush
 
@@ -438,11 +456,29 @@
                     let seenRooms = new Set();
                     tbody.empty();
                     dataNew.forEach(function(item) {
+                        let rowClass = '';
                         let isFirst = !seenRooms.has(item.room_number);
                         seenRooms.add(item.room_number);
-                        // background: #f0f1f1;
+                        // Nếu không phải bản ghi đầu tiên, đặt class theo trạng thái
+                        if (!isFirst) {
+                            if (item.check_booked === 'Đã nhận') {
+                                rowClass = "background-primary";
+                            } else if (item.check_booked === 'Đã đặt') {
+                                rowClass = 'background-yellow';
+                            }
+                        } else {
+                            if (item.check_booked === 'Đã nhận') {
+                                rowClass = "background-primary";
+                            } else if (item.check_booked === 'Đã đặt') {
+                                rowClass = 'background-yellow';
+                            }
+                            else {
+                                rowClass = "background-white"; 
+                            }
+                        }
+
                         var tr = `
-                                <tr style="${isFirst ? 'background: #f0f1f1;' : ''}">
+                                <tr class="${rowClass}">
                                     <td style="${isFirst ? 'font-weight: bold;' : ''}"> ${ item.room_type['name'] } </td>
                                     <td style="${isFirst ? 'font-weight: bold;' : ''}"> ${ item.room_number } </td>
                                     <td style="${isFirst ? 'font-weight: bold;' : ''}"> ${ formatDate(item.date) } </td>
@@ -861,7 +897,7 @@
                 success: function(response) {
                     if (response.status == 'success') {
                         console.log(response.data);
-                        
+
                         // notify('success', response.success);
                         // loadRoomBookings();
                         $('#myModal-booking').modal('show');
@@ -1274,7 +1310,6 @@
                                     <td>${formatDateTime(data['checkout_date'])}</td>
                                     <td>${data['customer_name'] ? data['customer_name'] : 'N/A'}</td>
                                     <td>${data['phone_number'] ? data['phone_number'] : 'N/A'}</td>
-                                  
                                     <td>${data['guest_count']}</td>
                                     <td>${ formatCurrency( data['total_amount'])}</td>
                                     <td>${formatCurrency(data['deposit_amount'])}</td>
