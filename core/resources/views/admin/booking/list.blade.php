@@ -110,12 +110,12 @@
                         </div>
                     </div>
                     <div class="modal-body overflow-add-room">
-                        <table class="table table-striped">
+                        <table class="table">
                             <thead>
                                 <tr>
                                     <th data-table="Hạng phòng">Hạng phòng</th>
                                     <th data-table="Phòng">Tên phòng</th>
-                                    <th data-table="Ngày">NGày</th>
+                                    <th data-table="Ngày">Ngày</th>
                                     <th data-table="Trạng thái phòng">Trạng thái phòng</th>
                                     <th data-table="Giá">Giá</th>
                                     <th data-table="Thao tác">Thao tác</th>
@@ -241,18 +241,20 @@
                 success: function(data) {
                     // <p data-id="${ item.id }" data-room_type_id="${ item.room_type_id }" class="add-book-room" id="add-book-room">Đặt phòng</p>
                     var tbody = $('#show-room');
-
+                    let seenRooms = new Set();
                     const dataNew = Object.values(data.data);
 
                     tbody.empty();
                     dataNew.forEach(function(item) {
+                        let isFirst = !seenRooms.has(item.room_number);
+                        seenRooms.add(item.room_number);
                         var tr = `
-                                    <tr>
-                                        <td> ${ item.room_type['name'] } </td>
-                                        <td> ${ item.room_number } </td>
-                                        <td> ${ formatDate(item.date) } </td>
-                                        <td> ${item.check_booked }</td>
-                                        <td> ${ formatCurrency(item.room_type.room_type_price['unit_price']) } </td>
+                                    <tr style="${isFirst ? 'background: #f0f1f1;' : ''}">
+                                        <td style="${isFirst ? 'font-weight: bold;' : ''}"> ${ item.room_type['name'] } </td>
+                                        <td style="${isFirst ? 'font-weight: bold;' : ''}"> ${ item.room_number } </td>
+                                        <td style="${isFirst ? 'font-weight: bold;' : ''}"> ${ formatDate(item.date) } </td>
+                                        <td style="${isFirst ? 'font-weight: bold;' : ''}"> ${item.check_booked }</td>
+                                        <td style="${isFirst ? 'font-weight: bold;' : ''}"> ${ formatCurrency(item.room_type.room_type_price['unit_price']) } </td>
                                         <td> 
                                             <input type="checkbox" ${item.status == 1 ? 'disabled' : ''} data-date="${ item.date }"  data-id="${ item.id }" data-room_type_id="${ item.room_type_id }" id="checkbox-${item.id}">
                                         </td>
