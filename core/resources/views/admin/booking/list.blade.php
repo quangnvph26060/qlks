@@ -112,12 +112,12 @@
                         </div>
                     </div>
                     <div class="modal-body overflow-add-room">
-                        <table class="table table-striped">
+                        <table class="table">
                             <thead>
                                 <tr>
                                     <th data-table="Hạng phòng">Hạng phòng</th>
                                     <th data-table="Phòng">Tên phòng</th>
-                                    <th data-table="Ngày">NGày</th>
+                                    <th data-table="Ngày">Ngày</th>
                                     <th data-table="Trạng thái phòng">Trạng thái phòng</th>
                                     <th data-table="Giá">Giá</th>
                                     <th data-table="Thao tác">Thao tác</th>
@@ -243,18 +243,35 @@
                 success: function(data) {
                     // <p data-id="${ item.id }" data-room_type_id="${ item.room_type_id }" class="add-book-room" id="add-book-room">Đặt phòng</p>
                     var tbody = $('#show-room');
-
                     const dataNew = Object.values(data.data);
-
+                    let seenRooms = new Set();
                     tbody.empty();
                     dataNew.forEach(function(item) {
+                        let rowClass = '';
+                        let isFirst = !seenRooms.has(item.room_number);
+                        seenRooms.add(item.room_number);
+                        if (!isFirst) {
+                            if (item.check_booked === 'Đã nhận') {
+                                rowClass = "background-primary";
+                            } else if (item.check_booked === 'Đã đặt') {
+                                rowClass = 'background-yellow';
+                            }
+                        } else {
+                            if (item.check_booked === 'Đã nhận') {
+                                rowClass = "background-primary";
+                            } else if (item.check_booked === 'Đã đặt') {
+                                rowClass = 'background-yellow';
+                            } else {
+                                rowClass = "background-white";
+                            }
+                        }
                         var tr = `
-                                    <tr>
-                                        <td> ${ item.room_type['name'] } </td>
-                                        <td> ${ item.room_number } </td>
-                                        <td> ${ formatDate(item.date) } </td>
-                                        <td> ${item.check_booked }</td>
-                                        <td> ${ formatCurrency(item.room_type.room_type_price['unit_price']) } </td>
+                                    <tr class="${rowClass}">
+                                        <td style="${isFirst ? 'font-weight: bold;' : ''}"> ${ item.room_type['name'] } </td>
+                                        <td style="${isFirst ? 'font-weight: bold;' : ''}"> ${ item.room_number } </td>
+                                        <td style="${isFirst ? 'font-weight: bold;' : ''}"> ${ formatDate(item.date) } </td>
+                                        <td style="${isFirst ? 'font-weight: bold;' : ''}"> ${item.check_booked }</td>
+                                        <td style="${isFirst ? 'font-weight: bold;' : ''}"> ${ formatCurrency(item.room_type.room_type_price['unit_price']) } </td>
                                         <td> 
                                             <input type="checkbox" ${item.status == 1 ? 'disabled' : ''} data-date="${ item.date }"  data-id="${ item.id }" data-room_type_id="${ item.room_type_id }" id="checkbox-${item.id}">
                                         </td>
@@ -915,7 +932,7 @@
                                 $('.orderList').addClass('d-none');
                                 $('.formRoomSearch').trigger('reset');
                                 $('#myModal-booking').hide();
-                                 window.location.reload();
+                                window.location.reload();
                             } else {
                                 notify('error', response.error);
                             }
@@ -1067,7 +1084,23 @@
             font-size: 14px;
             transition: background-color 0.3s, transform 0.3s;
         }
+        .background-primary {
+            background: #0b138d;
+        }
 
+        .background-yellow {
+            background-color: #eeddaa;
+        }
+
+        .background-white {
+            color: #5b6e88;
+            background-color: #f0f1f1;
+        }
+
+        .background-yellow td,
+        .background-primary td {
+            color: white !important;
+        }
         .pagination-container button:hover {
             background-color: #4634ff;
             transform: scale(1.05);

@@ -27,11 +27,11 @@
                     </li>
                     <nav class="navbar" style="margin-top: 25px;position: fixed;right: 0;z-index: 100000;background: currentColor;">
                         <ul class="menu" style="display: none;" id="dropdownMenu">
-                            <li class="border-bottom"><a href="#">Yêu cầu đặt phòng</a></li>
-                            <li class="border-bottom"><a href="#">Visit Website</a></li>
-                            <li class="border-bottom"><a href="#">Thiết lập hệ thống</a></li>
-                            <li class="border-bottom"><a href="#">Hồ sơ</a></li>
-                            <li><a href="#">Đổi mật khẩu</a></li>
+                            <li class="border-bottom p-2"><a href="{{ route('admin.notifications') }}">Yêu cầu đặt phòng</a></li>
+                            <li class="border-bottom p-2"><a href="{{ route('home') }}">Visit Website</a></li>
+                            <li class="border-bottom p-2"><a href="{{ route('admin.setting.system') }}">Thiết lập hệ thống</a></li>
+                            <li class="border-bottom p-2"><a href="{{ route('admin.profile') }}">Hồ sơ</a></li>
+                            <li class="p-2"><a href="#">Đổi mật khẩu</a></li>
                         </ul>
                     </nav>
                 </div>

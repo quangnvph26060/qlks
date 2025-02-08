@@ -22,7 +22,7 @@ use Intervention\Image\Drivers\Gd\Driver;
 use Intervention\Image\ImageManager;
 use Illuminate\Support\Facades\Storage;
 
-
+use Illuminate\Support\Facades\Auth;
 
 // function systemDetails() {
 //     $system['name']          = 'viserhotel';
@@ -504,6 +504,17 @@ function hf($key = null) // hotel_facilities
     }
 
     return $general;
+}
+// ma cơ sở 
+function unitCode(){
+    $unit = Cache::get('Unit_code');
+    if (!$unit) {
+        $admin = Auth::guard('admin')->user(); 
+            $unit_code = $admin->unit_code;
+        Cache::put('Unit_code', $unit_code);
+        $unit = $unit_code;
+    }
+    return $unit; 
 }
 // end setting and setup hotels
 function isImage($string)

@@ -302,6 +302,7 @@ Route::middleware('admin', 'adminPermission')->group(function () {
         Route::get('search/customer', 'searchCustomer')->name('search.customer');
         Route::post('room-note', 'updatenote')->name('room.note');
         Route::post('room-check-in/{id}', 'checkIn')->name('room.check.in');
+        Route::post('room-booking/{id}', 'roomBookingEdit')->name('room.booking.edit');
         Route::get('room-booking', 'getBooking')->name('room.booking');
     });
 
@@ -338,7 +339,7 @@ Route::middleware('admin', 'adminPermission')->group(function () {
 
 
             Route::post('check-room-booking', 'checkRoomBooking')->name('checkRoomBooking');
-            // xóa đặt phòng 
+            // xóa đặt phòng
             Route::post('delete-booked-room/{id}', 'deleteRoomBooking')->name('delete-booked-room');
 
 
@@ -680,4 +681,10 @@ Route::middleware('admin', 'adminPermission')->group(function () {
     });
 
     Route::get('/checkhours', [GeneralSettingController::class, 'checkhours'])->name('checkhours');
+
+    // Report room status
+    Route::controller('ManageReportController')->prefix('manage')->name('manage.')->group(function () {
+
+            Route::get('room-status', 'rommStatus')->name('room.status');
+    });
 });

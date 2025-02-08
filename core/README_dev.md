@@ -936,3 +936,4 @@ CREATE TABLE customer_sources (
 );
 
 
+ALTER TABLE admins ADD COLUMN unit_code VARCHAR(255) NOT NULL DEFAULT 'coso1';
