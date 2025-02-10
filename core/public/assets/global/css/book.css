@@ -752,7 +752,11 @@ h5 {
 .cancel-booking {
     width: 50%;
 }
-
+.message-error-edit{
+    display: none;
+    padding: 5px 10px;
+    font-size: 13px
+}
 .message-error{
     display: none;
     padding: 5px 10px;

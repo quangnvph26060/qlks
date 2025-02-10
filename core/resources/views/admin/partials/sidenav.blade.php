@@ -35,7 +35,7 @@
                                 <ul>
                                     @foreach ($data->submenu as $menu)
                                         @php
-                                                $submenuParams = null;
+                                            $submenuParams = null;
                                             if (@$menu->params) {
                                                 foreach ($menu->params as $submenuParamVal) {
                                                     $submenuParams[] = array_values((array) $submenuParamVal)[0];
@@ -46,7 +46,7 @@
                                         @can($menu->route_name)
                                             <li class="sidebar-menu-item {{ menuActive(@$menu->menu_active) }} "
                                                 data-route="{{ $menu->route_name }}">
-                                                
+
                                                 <a href="{{ route(@$menu->route_name, $submenuParams) }}" class="nav-link">
                                                     <i class="menu-icon las la-dot-circle"></i>
                                                     <span class="menu-title">{{ __($menu->title) }}</span>
@@ -111,16 +111,21 @@
             const activeDataId = $(this).find('span').text(); // Lấy nội dung text trong thẻ span
             const activeDataValue = $(this).data('route');
 
-            // Kiểm tra xem cặp activeDataValue và activeDataId đã tồn tại trong mảng activeDataIds hay không
-            const existingIndex = activeDataIds.findIndex(item => Object.keys(item)[0] === activeDataValue &&
-                item[activeDataValue] === activeDataId);
+            if (activeDataValue !== undefined) {
+                // Kiểm tra xem cặp activeDataValue và activeDataId đã tồn tại trong mảng activeDataIds hay không
+                const existingIndex = activeDataIds.findIndex(item =>
+                    Object.keys(item)[0] === activeDataValue && item[activeDataValue] === activeDataId
+                );
 
-            if (existingIndex === -1) {
-                activeDataIds.push({
-                    [activeDataValue]: activeDataId
-                });
+                if (existingIndex === -1) {
+                    activeDataIds.push({
+                        [activeDataValue]: activeDataId
+                    });
+                }
+
+                // Lưu vào localStorage
+                localStorage.setItem('activeDataIds', JSON.stringify(activeDataIds));
             }
-            localStorage.setItem('activeDataIds', JSON.stringify(activeDataIds));
             $('.sidebar__menu-wrapper').animate({
                 scrollTop: eval($(this).offset().top - 320)
             }, 500);
