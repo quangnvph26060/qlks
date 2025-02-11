@@ -1038,16 +1038,16 @@ $('.btn-book').on('click', function() {
 $('.btn-book-edit').on('click', function() {
     const dataRowValue = $(this).data('row');
     $('.booking-form-edit').data('row', dataRowValue);
-    var name = $('.name-edit').val();
-    if (name !== "" && name.trim()) {
-        $('.name_error').text('');
-        $('input[name="name"]').removeClass('is-invalid');
-        $('.booking-form-edit').submit(); // Gửi form
-    } else {
-
-        $('input[name="name"]').addClass('is-invalid');
-        $('.name_error').text('Tên không được bỏ trống');
-    }
+    var name = $('.name-edit').val();  
+     $('.booking-form-edit').submit(); // Gửi form
+    // if (name !== "" && name.trim()) {
+    //     $('.name_error').text('');
+    //     $('input[name="name"]').removeClass('is-invalid');
+     
+    // } else {
+    //     $('input[name="name"]').addClass('is-invalid');
+    //     $('.name_error').text('Tên không được bỏ trống');
+    // }
 });
 $('.booking-form').on('submit', function(e) {
     e.preventDefault();
@@ -1194,7 +1194,8 @@ $('.booking-form-edit').on('submit', function(e) {
         if (status !== 0) {
             return;
         }
-
+      
+        
         var roomBookingId = $(this).data('room-booking-id');
         var roomId = $(this).data('room-id');
         var roomTypeId = $(this).data('room-type-id');
@@ -1258,17 +1259,19 @@ $('.booking-form-edit').on('submit', function(e) {
                 let dataArray = JSON.parse(data);
                 const timeCheckIn = dataArray['dateIn'];
                 const timeCheckOut = dataArray['dateOut'];
-                const resultData = validator(timeCheckIn, timeCheckOut, dataRowValue);
-                if (!resultData) {
-                    shouldSubmit = false;
-                    return true;
-                }
+                // const resultData = validator(timeCheckIn, timeCheckOut, dataRowValue);
+                // if (!resultData) {
+                //     shouldSubmit = false;
+                //     return true;
+                // }
             }
 
         });
+      
         // Kiểm tra th��i gian check-in với th��i gian hiện tại
         let url = $(this).attr('action');
-        if (shouldSubmit) {
+        if (shouldSubmit) { 
+             console.log(123);
             $.ajax({
                 type: "POST",
                 url: url,
