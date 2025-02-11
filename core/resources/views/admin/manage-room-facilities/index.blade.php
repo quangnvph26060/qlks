@@ -1,4 +1,4 @@
-@extends('admin.layouts.master_iframe')
+@extends('admin.layouts.app')
 @section('panel')
     <div class="row">
         <!-- Khối bên phải: Danh sách danh mục -->

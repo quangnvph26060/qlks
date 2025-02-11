@@ -1,4 +1,4 @@
-@extends('admin.layouts.master_iframe')
+@extends('admin.layouts.app')
 @section('panel')
 <link href="https://cdn.jsdelivr.net/npm/select2@4.1.0/dist/css/select2.min.css" rel="stylesheet" />
 <!-- Select2 JS -->

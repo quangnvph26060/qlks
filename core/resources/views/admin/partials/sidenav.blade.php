@@ -132,7 +132,6 @@
         if ($(this).hasClass('active')) {
             const activeDataId = $(this).find('span').text(); // Lấy nội dung text trong thẻ span
             const activeDataValue = $(this).data('route');
-
             // Kiểm tra xem cặp activeDataValue và activeDataId đã tồn tại trong mảng activeDataIds hay không
             const existingIndex = activeDataIds.findIndex(item => Object.keys(item)[0] === activeDataValue &&
                 item[activeDataValue] === activeDataId);

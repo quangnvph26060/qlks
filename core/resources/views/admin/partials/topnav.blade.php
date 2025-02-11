@@ -252,13 +252,13 @@
 */    overflow-x: auto;
 /*    white-space: nowrap; 
 */    padding-bottom: 5px;
-    scrollbar-width: thin; 
-    scrollbar-color: #071251 transparent;
-}
+        scrollbar-width: thin; 
+        scrollbar-color: #071251 transparent;
+    }
 
-.nav-item {
-    flex: 0 0 auto; /* Đảm bảo các <li> không bị co lại */
-}
+    .nav-item {
+        flex: 0 0 auto; /* Đảm bảo các <li> không bị co lại */
+    }
 
 </style>
 @push('script')
@@ -416,14 +416,12 @@
     });
 
 // Kiểm tra lại khi trang được tải và khi cửa sổ thay đổi kích thước
-window.addEventListener('load', () => {
-  checkScrollButtons();
-  checkArrowVisibility();
-});
-window.addEventListener('resize', () => {
-  checkScrollButtons();
-  checkArrowVisibility();
-});
+    window.addEventListener('load', () => {
+    checkScrollButtons();
+    });
+    window.addEventListener('resize', () => {
+    checkScrollButtons();
+    });
     </script>
 
  
