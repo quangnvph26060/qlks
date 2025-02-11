@@ -210,6 +210,9 @@ Route::middleware('admin', 'adminPermission')->group(function () {
             Route::delete('delete/{id}', 'destroy')->name('destroy');
             Route::get('/deleted', 'roomDeleted')->name('all.deleted');
             Route::get('/restore/{id}', 'restore')->name('restore');
+            Route::get('search', 'search')->name('search');
+            Route::get('ajax', 'ajax')->name('ajax');
+
         });
 
         //Room
@@ -499,14 +502,6 @@ Route::middleware('admin', 'adminPermission')->group(function () {
     });
 
 
-
-
-
-
-
-
-
-
     // DEPOSIT SYSTEM
     Route::controller('DepositController')->prefix('payment')->name('deposit.')->group(function () {
         Route::get('all/{user_id?}', 'deposit')->name('list');
@@ -596,7 +591,6 @@ Route::middleware('admin', 'adminPermission')->group(function () {
         //maintenance_mode
         Route::get('maintenance-mode', 'maintenanceMode')->name('maintenance.mode');
         Route::post('maintenance-mode-submit', 'maintenanceModeSubmit')->name('maintenance.mode.submit');
-
 
         // Route::get('setup-hotel', 'setupHotel')->name('setting.setup.hotel');
         // Route::post('setup-hotel', 'addHotel')->name('setting.setup.add.hotel');

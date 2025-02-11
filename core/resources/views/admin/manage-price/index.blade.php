@@ -5,7 +5,7 @@
         <div class="d-flex justify-content-end mb-3">
             {{-- <h4>Thêm Giá Phòng</h4> --}}
             {{-- <div class="d-flex justify-content-center align-items-center" style="gap: 10px;">
-               
+
                 <form action="{{ route('admin.manage.price.all') }}" method="GET" id="search-premium">
                     <div class="input-group flex-nowrap">
                         <input
@@ -64,7 +64,8 @@
     @can('')
         @push('breadcrumb-plugins')
             <button type="button" class="btn btn-outline--primary btn-add" data-bs-toggle="modal" data-bs-target="#pricingModal">
-                Thêm giá loại phòng
+                <i class="las la-plus"></i>
+
             </button>
         @endpush
     @endcan
@@ -146,9 +147,9 @@
         <script>
             $(document).ready(function() {
                 var formEconomyEdit = {
-                    'setup_pricing_id': { // passwword thì nên đặt là name trong input đó 
-                        'element': document.getElementById('setup_pricing_id'), // id trong input đó 
-                        'error': document.getElementById('setup_pricing_id_error'), // thẻ hiển thị lỗi 
+                    'setup_pricing_id': { // passwword thì nên đặt là name trong input đó
+                        'element': document.getElementById('setup_pricing_id'), // id trong input đó
+                        'error': document.getElementById('setup_pricing_id_error'), // thẻ hiển thị lỗi
                         'validations': [{
                                 'func': function(value) {
                                     return checkRequired(value); // check trống
@@ -157,9 +158,9 @@
                             }, // viết tiếp điều kiện validate vào đây (validations)
                         ]
                     },
-                    'room_type_id': { // passwword thì nên đặt là name trong input đó 
-                        'element': document.getElementById('room_type_id'), // id trong input đó 
-                        'error': document.getElementById('room_type_id_error'), // thẻ hiển thị lỗi 
+                    'room_type_id': { // passwword thì nên đặt là name trong input đó
+                        'element': document.getElementById('room_type_id'), // id trong input đó
+                        'error': document.getElementById('room_type_id_error'), // thẻ hiển thị lỗi
                         'validations': [{
                                 'func': function(value) {
                                     return checkRequired(value); // check trống
@@ -220,7 +221,7 @@
                                     <tr data-id="${element.id}">
                                         <td> ${element.room_type['code']} </td>
                                         <td> ${element.setup_pricing['price_code']} </td>
-                                        <td>  <input type="date" class="form-control moneyInputDate" data-id="${element.id}" data-name="price_validity_period" value="${element.price_validity_period === null ? '' : element.price_validity_period}" name="price_validity_period"> </td>  
+                                        <td>  <input type="date" class="form-control moneyInputDate" data-id="${element.id}" data-name="price_validity_period" value="${element.price_validity_period === null ? '' : element.price_validity_period}" name="price_validity_period"> </td>
                                         <td>
                                             <input type="text" class="form-control moneyInput"  placeholder="0" data-id="${element.id}" data-name="unit_price" value="${element.unit_price === null ? '' : element.unit_price}" name="unit_price">
                                         </td>
@@ -230,16 +231,16 @@
                                         <td>
                                             <input type="text" class="form-control moneyInput"  placeholder="0" data-id="${element.id}"  data-name="extra_person_price"  value="${element.extra_person_price === null ? '' : element.extra_person_price }" name="extra_person_price">
                                         </td>
-                                     
+
                                         <td> ${ element.unit_code } </td>
                                         <td>
-                                          
+
 
                                             <button class="btn btn-sm btn-outline--danger btn-delete icon-delete-room"
                                                 data-id="${element.id}" data-modal_title="@lang('Xóa cài đặt tính giá ')"type="button"
                                                 data-pro="0">
-                                                <i class="fas fa-trash"></i>@lang('Xóa')
-                                            </button>    
+                                                <i class="fas fa-trash"></i>
+                                            </button>
                                         </td>
                                     </tr>
                                 `;
@@ -310,7 +311,7 @@
                         }
                     });
                 });
-                 // xóa 
+                 // xóa
                 $(document).on('click', '.icon-delete-room', function() {
                     var dataId = $(this).data('id');
                     var rowToDelete = $(`tr[data-id="${dataId}"]`);
@@ -324,7 +325,7 @@
                         reverseButtons: true
                     }).then((result) => {
                         if (result.isConfirmed) {
-                            // ajax   
+                            // ajax
                             $.ajax({
                                 url: `{{ route('admin.manage.deleteRoomTypePrice', '') }}/${dataId}`,
                                 type: 'POST',

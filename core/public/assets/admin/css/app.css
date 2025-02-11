@@ -3,9 +3,18 @@
 .text--shadow {
     text-shadow: 1px 2px 5px rgba(0, 0, 0, 0.35);
 }
-
+.menu-active
+{
+    transform: rotate(90deg);
+}
+.page-wrapper{
+    overflow: hidden;
+}
 .box--shadow1 {
     box-shadow: 0px 5px 26px -5px #cdd4e7 !important;
+}
+.m-active{
+    background: mediumslateblue !important;
 }
 
 .box--shadow2 {
@@ -1511,9 +1520,9 @@ a {
     color: var(--btn-color) !important;
 }
 
-.btn i {
-    margin-right: 5px;
-}
+/*.btn i {*/
+/*    margin-right: 5px;*/
+/*}*/
 
 .btn.focus,
 .btn:focus {
@@ -5748,7 +5757,16 @@ th.w-85 {
     text-shadow: 1px 2px 5px rgba(0, 0, 0, 0.15);
     font-size: 1.5rem;
 }
-
+.p-globalNavi__item
+{
+    list-style-type: none; /* Bỏ dấu chấm */
+    padding: 5px;
+    display: inline-block;
+    margin-right: 1px;
+    --color: #071251;
+    background-color: var(--color);
+    cursor: pointer;
+}
 @media (max-width: 420px) {
     .navbar__right .dropdown-menu {
         position: fixed;
@@ -7934,10 +7952,10 @@ label.required:after {
     line-height: 2.3;
 }
 
-.breadcrumb-plugins:has(form) .btn {
-    height: 45px;
-    line-height: 2.5;
-}
+/*.breadcrumb-plugins:has(form) .btn {*/
+/*    height: 45px;*/
+/*    line-height: 2.5;*/
+/*}*/
 
 .search-list .bg--dark a {
     color: #fff !important;

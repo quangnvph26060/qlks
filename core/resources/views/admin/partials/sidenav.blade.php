@@ -2,7 +2,8 @@
     $sideBarLinks = json_decode($sidenav);
 @endphp
 
-<div class="sidebar bg--dark">
+<div class="sidebar bg--dark" id="sidebar">
+     <button class="toggle-btn" id="toggle-btn">&#8592;</button>
     <button class="res-sidebar-close-btn"><i class="las la-times"></i></button>
     <div class="sidebar__inner">
         <div class="sidebar__logo">
@@ -94,7 +95,28 @@
     </div>
 </div>
 </div>
-<!-- sidebar end -->
+<style type="text/css">
+    .sidebar .toggle-btn {
+  position: absolute;
+  right: 0px; /* Vị trí của mũi tên */
+  font-size: 30px;
+  background: none;
+  border: none;
+  color: white;
+  cursor: pointer;
+  z-index: 999999;
+}
+.navbar-wrapper.shifted {
+  margin-left: 0 !important; /* Di chuyển nội dung chính khi sidebar bị ẩn */
+}
+.body-wrapper.shifted {
+  margin-left: 0 !important; /* Di chuyển nội dung chính khi sidebar bị ẩn */
+}
+.sidebar.closed {
+  transform: translateX(-250px); /* Ẩn sidebar bằng cách dịch chuyển nó sang trái */
+}
+
+</style>
 
 @push('script')
 <script>
@@ -105,7 +127,7 @@
         activeDataIds = JSON.parse(localStorage.getItem('activeDataIds'));
         // console.log(activeDataIds); // In ra các activeDataId đã được lưu
     }
-
+ 
     $('li').each(function() {
         if ($(this).hasClass('active')) {
             const activeDataId = $(this).find('span').text(); // Lấy nội dung text trong thẻ span
@@ -129,7 +151,12 @@
             $('.sidebar__menu-wrapper').animate({
                 scrollTop: eval($(this).offset().top - 320)
             }, 500);
+            $('.navbar__action-list').css('display','none');
+            $('.navbar-wrapper').css('padding','0px 30px 20px 30px');
         }
+       
     });
+       
 </script>
+
 @endpush

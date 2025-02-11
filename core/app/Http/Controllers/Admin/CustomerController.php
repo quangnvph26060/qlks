@@ -3,6 +3,7 @@
 namespace App\Http\Controllers\Admin;
 
 use App\Http\Controllers\Controller;
+use App\Http\Helpers\helpers;
 use App\Models\Customer;
 use App\Models\HotelFacility;
 use Illuminate\Http\Request;
@@ -37,7 +38,7 @@ class CustomerController extends Controller
         $customer->address = $request->address;
         $customer->note = $request->note;
         $customer->status = $request->status;
-        $customer->unit_code =  $request->unit_code;
+        $customer->unit_code =  unitCode();
         $customer->save();
         $notify[] = ['success', 'Thêm khách hàng thành công'];
         return back()->withNotify($notify);
@@ -67,7 +68,7 @@ class CustomerController extends Controller
         $customer->address = $request->address;
         $customer->note = $request->note;
         $customer->status = $request->status;
-        $customer->unit_code =  $request->unit_code;
+        // $customer->unit_code =  $request->unit_code;
         $customer->save();
         $notify[] = ['success', 'Cập nhật khách hàng thành công'];
         return back()->withNotify($notify);

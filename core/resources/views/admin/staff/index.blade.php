@@ -149,10 +149,10 @@
 @endsection
 
 @push('breadcrumb-plugins')
-    <x-search-form placeholder="Username" />
+{{--    <x-search-form placeholder="Username" style="padding: .375rem .75rem;height:auto"/>--}}
     <!-- Modal Trigger Button -->
     @can('admin.staff.save')
-        <button class="btn btn-sm btn-outline--primary cuModalBtn" data-modal_title="@lang('Thêm mới nhân viên')" type="button">
+        <button class="btn btn-sm mt-1 btn-outline--primary cuModalBtn" data-modal_title="@lang('Thêm mới nhân viên')" type="button">
             <i class="las la-plus"></i>@lang('Thêm mới')
         </button>
     @endcan

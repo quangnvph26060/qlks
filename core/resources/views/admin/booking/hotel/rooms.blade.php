@@ -30,11 +30,11 @@
 
                                                 @if ($room->status == Status::ENABLE)
                                                     <button class="btn btn-sm btn-outline--danger confirmationBtn" data-action="{{ route('admin.hotel.room.status', $room->id) }}" data-question="@lang('Are your to enable this room?')" type="button">
-                                                        <i class="la la-eye-slash"></i> @lang('Ngưng hoạt động')
+                                                        <i class="la la-eye-slash"></i>
                                                     </button>
                                                 @else
                                                     <button class="btn btn-sm btn-outline--success confirmationBtn" data-action="{{ route('admin.hotel.room.status', $room->id) }}" data-question="@lang('Are your to disable this room?')" type="button">
-                                                        <i class="la la-eye"></i> @lang('Cho phép')
+                                                        <i class="la la-eye"></i>
                                                     </button>
                                                 @endif
                                             </td>
@@ -87,7 +87,7 @@
                                     <div class="input-group row gx-0">
                                         <input type="text" class="form-control" name=room_numbers[]" required>
                                     </div>
-                                    <button class="btn btn--success input-group-text border-0 addItem flex-shrink-0 ms-4" type="button"><i class="las la-plus me-0"></i></button>
+                                    <button class="btn btn--success p-2 input-group-text border-0 addItem flex-shrink-0 ms-4" type="button"><i class="las la-plus me-0"></i></button>
                                 </div>
                             </div>
 
