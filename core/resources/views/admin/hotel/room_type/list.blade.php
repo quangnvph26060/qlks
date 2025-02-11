@@ -51,8 +51,7 @@
                                     @endcan
                                 </tr>
                             </thead>
-                            <tbody>
-
+                            <tbody id="data" >
 
                             </tbody>
                         </table>
@@ -71,8 +70,45 @@
 @endsection
 @can('admin.hotel.room.type.create')
     @push('breadcrumb-plugins')
-        <a class="btn btn-sm btn-outline--primary mt-1" href="{{ route('admin.hotel.room.type.create') }}"><i
-                class="las la-plus"></i></a>
+           <div class="card-body mt-1">
+            <div class="row">
+              <div class="col-md-12">
+                    <form role="form" enctype="multipart/form-data" action="{{route('admin.hotel.room.type.search')}}">
+                        <div class="form-group mb-0" style="display: flex;">
+                            <input class="searchInput" name="code"
+                                   style="height: 35px;border: 1px solid rgb(121, 117, 117, 0.5);"
+                                    placeholder="Mã phòng/Tên phòng">
+                
+                            <select name="room_type_id" class="form-control choose ml-1" id="tim-loai-phong" style="width:250px;margin-left: 8px;height: 35px">
+                                    <option value="">--Chọn loại phòng--</option>
+                                    @foreach($room_type as $type)
+                                        <option value="{{ $type->id }}">{{ $type->name }}</option>
+                                    @endforeach
+                            </select>
+                     
+                            <select name="status"  class="form-control choose" id="tim-trang-thai"  style="width:250px;margin-left: 8px;height: 35px">
+                                    <option value="">--Chọn trạng thái--</option>
+                            
+                                        <option value="0">Không hoạt động</option>
+                                        <option value="1">Hoạt động</option>
+
+            
+                             </select>
+                            
+                            <button type="submit" class="btn btn-primary" style="margin-left: 8px;height: 35px">
+                                <i class="las la-search p-1"></i>
+                            </button>
+                        </div>
+                    </form>
+                </div>
+                <div class="col-md-2">
+                       <a class="btn btn-sm btn-outline--primary mt-1" href="{{ route('admin.hotel.room.type.create') }}"><i
+                        class="las la-plus p-1"></i></a>
+                </div>
+            </div>
+        </div>
+
+  
 {{--        <div class="dropdown col-md-1 col-8" style="display: flex;--}}
 {{--                justify-content: end">--}}
 {{--            <a class="btn btn-outline-secondary dropdown-toggle d-flex justify-content-center--}}
@@ -86,7 +122,6 @@
 {{--                </li>--}}
 {{--            </ul>--}}
 {{--        </div>--}}
-        </div>
     @endpush
 @endcan
 
@@ -135,6 +170,48 @@
                     }
                 })
             })
+
+              $(document).ready(function () {
+        $('.choose').change(function () {
+            var status = $('#tim-trang-thai').val();
+            var room_type_id = $('#tim-loai-phong').val();
+            var url = "{{ route('admin.hotel.room.type.ajax') }}";
+            $.ajax({
+                type: 'GET',
+                cache: false,
+                url: url,
+                data: {
+                    status: status,
+                    room_type_id: room_type_id,
+        
+                },
+                success: function (response) {
+                    if (response) {
+                        $('#data').html(response)
+                    }
+                },
+                error: function (error) {
+                    console.log(error);
+                }
+            })
+        });
+        //jquery for toggle sub menus
+        $('.has-arrow').click(function () {
+            $(this).next('.menu-side').slideToggle();
+            $(this).find('.dropdown').toggleClass('rotate');
+        });
+
+        //jquery for expand and collapse the sidebar
+        $('.menu-btn').click(function () {
+            $('.side-bar').addClass('active');
+            $('.menu-btn').css("visibility", "hidden");
+        });
+
+        $('.close-btn').click(function () {
+            $('.side-bar').removeClass('active');
+            $('.menu-btn').css("visibility", "visible");
+        });
+    });
         })
     </script>
 @endpush

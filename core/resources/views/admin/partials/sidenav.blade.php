@@ -2,7 +2,8 @@
     $sideBarLinks = json_decode($sidenav);
 @endphp
 
-<div class="sidebar bg--dark">
+<div class="sidebar bg--dark" id="sidebar">
+     <button class="toggle-btn" id="toggle-btn">&#8592;</button>
     <button class="res-sidebar-close-btn"><i class="las la-times"></i></button>
     <div class="sidebar__inner">
         <div class="sidebar__logo">
@@ -19,7 +20,7 @@
                     @if (@$data->submenu)
                         @can(array_column($data->submenu, 'route_name'))
                             <li class="sidebar-menu-item sidebar-dropdown">
-                                <a href="javascript:void(0)" onclick="return loadIframe(this.href);" class="{{ menuActive(@$data->menu_active, 3) }}" >
+                                <a href="javascript:void(0)" class="{{ menuActive(@$data->menu_active, 3) }}">
                                     <i class="menu-icon {{ @$data->icon }}"></i>
                                     <span class="menu-title">{{ __(@$data->title) }}</span>
                                     @foreach (@$data->counters ?? [] as $counter)
@@ -44,10 +45,6 @@
                                         @endphp
 
                                         @can($menu->route_name)
-
-                                            <li class="sidebar-menu-item {{ menuActive(@$menu->menu_active) }} ">
-                                                <a href="{{ route(@$menu->route_name, $submenuParams) }}" onclick="return loadIframe(this.href);" class="nav-link">
-
                                             <li class="sidebar-menu-item {{ menuActive(@$menu->menu_active) }} "
                                                 data-route="{{ $menu->route_name }}">
                                                 
@@ -78,8 +75,6 @@
                     @endphp
                     @can(@$data->route_name)
                         <li class="sidebar-menu-item {{ menuActive(@$data->menu_active) }}">
-                            <a href="{{ route(@$data->route_name, $mainParams) }}" onclick="return loadIframe(this.href);" class="nav-link ">
-
                             <a href="{{ route(@$data->route_name, $mainParams) }}" class="nav-link">
                                 <i class="menu-icon {{ $data->icon }}"></i>
                                 <span class="menu-title">{{ __(@$data->title) }}</span>
@@ -100,7 +95,28 @@
     </div>
 </div>
 </div>
-<!-- sidebar end -->
+<style type="text/css">
+    .sidebar .toggle-btn {
+  position: absolute;
+  right: 0px; /* Vị trí của mũi tên */
+  font-size: 30px;
+  background: none;
+  border: none;
+  color: white;
+  cursor: pointer;
+  z-index: 999999;
+}
+.navbar-wrapper.shifted {
+  margin-left: 0 !important; /* Di chuyển nội dung chính khi sidebar bị ẩn */
+}
+.body-wrapper.shifted {
+  margin-left: 0 !important; /* Di chuyển nội dung chính khi sidebar bị ẩn */
+}
+.sidebar.closed {
+  transform: translateX(-250px); /* Ẩn sidebar bằng cách dịch chuyển nó sang trái */
+}
+
+</style>
 
 @push('script')
 <script>
@@ -111,7 +127,7 @@
         activeDataIds = JSON.parse(localStorage.getItem('activeDataIds'));
         // console.log(activeDataIds); // In ra các activeDataId đã được lưu
     }
-
+ 
     $('li').each(function() {
         if ($(this).hasClass('active')) {
             const activeDataId = $(this).find('span').text(); // Lấy nội dung text trong thẻ span
@@ -120,7 +136,7 @@
             // Kiểm tra xem cặp activeDataValue và activeDataId đã tồn tại trong mảng activeDataIds hay không
             const existingIndex = activeDataIds.findIndex(item => Object.keys(item)[0] === activeDataValue &&
                 item[activeDataValue] === activeDataId);
-
+            
             if (existingIndex === -1) {
                 activeDataIds.push({
                     [activeDataValue]: activeDataId
@@ -130,67 +146,12 @@
             $('.sidebar__menu-wrapper').animate({
                 scrollTop: eval($(this).offset().top - 320)
             }, 500);
+            $('.navbar__action-list').css('display','none');
+            $('.navbar-wrapper').css('padding','0px 30px 20px 30px');
         }
+       
     });
+       
 </script>
-<script>
-    $('ul > li > a.nav-link').click(function (e) {
-            e.preventDefault();
-            var seen = {};
-            var getItem = $(this).text();
-            var getURL = $(this).attr('href');
-            if (seen[getURL]) {
-                ($this).empty();
-            } else {
-                $('.p-globalNavi__item').removeClass('m-active');
-                var myEle = document.getElementById(getURL);
-                var parts = getURL.split('/');
-                var lastSegment = parts.pop() || parts.pop();
-                if (myEle == null) {
-                    $("#home").after(" <li class=\"p-globalNavi__item m-active\"><a class=\"p-globalNavi__link text-white tabs\" id=" + getURL + " >" + getItem + "<i class=\"close-b fa fa-close\" style=\"padding-left: 5px\"></i><span class=\"sr-only\">(current)<\/span><\/a><\/li> ");
-                } else {
-                    document.getElementById(getURL).click();
-                }
-            }
-            $('.top-menu').css('display','none');
-            $('.top-menu').removeClass('d-flex');
-            $('#dropdownButton').css('display','block');
-        });
-    function loadIframe(url) {
-        var myEle = document.getElementById(url);
-        $('iframe').css('z-index', '999');
-        var parts = url.split('/');
-        var lastSegment = parts.pop() || parts.pop();
-        if (myEle == null) {
-            $("#frame").append('<iframe name="main" id="' + lastSegment + '" class="frame" src="' + url + '" style="width:85%;position: fixed;z-index: 999; height: 90%;margin-top: 1px;border: none"></iframe>');
-        } else {
-            $('iframe#' + lastSegment + '').css('z-index', '10000');
-        }
-    }
-    $(document).on('click', '.p-globalNavi__link', function () {
-        $('.p-globalNavi__item').removeClass('m-active');
-        var id = $(this).attr('id');
-        $(this).parent().addClass('m-active');
-        $('iframe').css({'z-index': '999', 'display': 'none'});
-        var parts = id.split('/');
-        var lastSegment = parts.pop() || parts.pop();
-        $('iframe#' + lastSegment + '').css({'z-index': '10000', 'display': 'block'});
-    });
-    $(document).on('click', '.close-b', function () {
-        var parent = $(this).parent().prop('id');
-        var parts = parent.split('/');
-        var lastSegment = parts.pop() || parts.pop();
-        $('iframe#' + lastSegment + '').remove();
-        document.getElementById(parent).parentElement.remove();
-    });
-    $(".sidebar-submenu li").on("click", function () {
-        if ($(this).hasClass('m-active')) {
-            // $(this).removeClass('m-active');
-        } else {
-            $(".sidebar-submenu li").removeClass('m-active');
-            $(this).addClass('m-active');
 
-        }
-    });
-</script>
 @endpush

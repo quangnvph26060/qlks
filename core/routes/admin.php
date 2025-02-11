@@ -210,6 +210,9 @@ Route::middleware('admin', 'adminPermission')->group(function () {
             Route::delete('delete/{id}', 'destroy')->name('destroy');
             Route::get('/deleted', 'roomDeleted')->name('all.deleted');
             Route::get('/restore/{id}', 'restore')->name('restore');
+            Route::get('search', 'search')->name('search');
+            Route::get('ajax', 'ajax')->name('ajax');
+
         });
 
         //Room

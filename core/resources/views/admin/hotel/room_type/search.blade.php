@@ -1,4 +1,4 @@
-@forelse($response as $type)
+@foreach($room_type as $type)
     <tr>
         <td>
             <button class="btn btn-link btn-toggle" type="button"
@@ -7,7 +7,10 @@
         {{-- <td data-label="STT">{{ $loop->iteration }}</td> --}}
 
         <td data-label="Loại phòng">
-            {{ $type->roomType->name }}
+            @php
+                $name = \App\Models\RoomType::where('id','=',$type->room_type_id)->value('name');
+            @endphp
+            {{ $name }}
         </td>  
         <td data-label="Mã phòng">
             {{ $type->code }}
@@ -22,7 +25,7 @@
             {{ $type->beds }}
         </td>
         {{-- <td data-label="Tiện nghi">
-            @if ($type->amenities->count() > 0)
+           <!--  @if ($type->amenities->count() > 0)
                 <div class="float-inline-end">
                     @foreach ($type->amenities->take(3) as $amenity)
                         <span class="badge {{ getRandomColor() }} m-1 p-1 rounded-pill text-bg-primary">
@@ -37,11 +40,11 @@
                 </div>
             @else
                 Chưa có tiện nghi nào
-            @endif
+            @endif -->
         </td> --}}
         {{-- <td data-label="Cơ sở vật chất">
             @if ($type->facilities->count() > 0)
-                <div class="float-inline-end">
+            <!--     <div class="float-inline-end">
                     @foreach ($type->facilities as $facility)
                         <span class="badge {{ getRandomColor() }} m-1 p-1 rounded-pill text-bg-primary">
                             {{ $facility->title }}
@@ -50,7 +53,7 @@
                 </div>
             @else
                 Chưa có cơ sở vật chất
-            @endif
+            @endif -->
         </td> --}}
 
         {{-- <td data-label="Giá giờ">{{ showAmount($type->roomPriceNow()?->hourly_price) ?? '-----' }}</td>
@@ -158,8 +161,5 @@
             </div>
         </td>
     </tr>
-@empty
-    <tr>
-        <td class="text-muted text-center" colspan="100%">{{ __($emptyMessage) }}</td>
-    </tr>
-@endforelse
+
+@endforeach

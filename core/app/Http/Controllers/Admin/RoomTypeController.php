@@ -36,6 +36,7 @@ class RoomTypeController extends Controller
     }
     public function index()
     {
+        $room_type = RoomType::get();
         $pageTitle   = 'Danh sách phòng';
         // $typeList    = Room::with('amenities', 'facilities', 'products')->latest()->paginate(getPaginate());
         // return view('admin.hotel.room_type.list', compact('pageTitle', 'typeList'));
@@ -85,7 +86,7 @@ class RoomTypeController extends Controller
                 'pagination' => view('vendor.pagination.custom', compact('response'))->render(),
             ]);
         }
-        return view('admin.hotel.room_type.list', compact('pageTitle'));
+        return view('admin.hotel.room_type.list', compact('pageTitle','room_type'));
     }
 
     public function create()
@@ -123,7 +124,23 @@ class RoomTypeController extends Controller
 
         return view('admin.hotel.room_type.create', compact('pageTitle', 'roomType', 'amenities', 'facilities', 'bedTypes', 'images', 'roomTypes', 'prices', 'selectedPrices'));
     }
+    public function ajax(Request $request)
+    {
 
+        $room_type = Room::select('*')
+            ->where(function($q) use ($request) {
+        
+                if($request->room_type_id != '') {
+                    $q->where('rooms.room_type_id','=',$request->room_type_id);
+                }
+                if($request->status != '') {
+                    $q->where('rooms.status','=',$request->status);
+                }
+            })
+            ->distinct()
+            ->orderBy('id', 'desc')->get();
+        return view('admin.hotel.room_type.search', compact('room_type'));
+    }
     public function save(Request $request, $id = 0)
     {
         $this->validation($request, $id);
@@ -170,7 +187,7 @@ class RoomTypeController extends Controller
             $room->cancellation_policy = htmlspecialchars_decode($purifier->purify($request->cancellation_policy));
             $room->is_clean            = Status::ROOM_CLEAN_ACTIVE;
             $room->status              = $request->status ? 1 : 0;
-            $room->unit_code           = hf('ma_coso');
+            $room->unit_code           = unitCode();
             if ($request->hasFile('main_image')) {
                 $main_images = saveImages($request, 'main_image', 'roomImage', 600, 600);
                 if ($room->main_image && Storage::disk('public')->exists($room->main_image)) {
@@ -266,7 +283,28 @@ class RoomTypeController extends Controller
         $room->products()->sync($data);
     }
 
-
+    public function search(Request $request)
+    {
+      
+        if($request->input('room_type_id') == '' && $request->input('room_number') == '' && $request->input('code') == ''  && $request->input('status') == '')
+        {
+            $orderBy = request()->get('orderBy', 'id');
+        }
+        else
+        {
+            $orderBy = Room::select('rooms.*','room_types.name')->join('room_types','room_types.id','=','rooms.room_type_id')->where('room_type_id','LIKE', '%'.$request->input('room_type_id').'%')
+                ->where('room_number','LIKE', '%'.$request->input('room_number').'%')
+                ->where('rooms.code','LIKE', '%'.$request->input('code').'%')
+                ->where('rooms.status','LIKE', '%'.$request->input('status').'%')
+                ->orderBy('id', 'desc')->paginate(30);
+        }
+         $room_type = RoomType::where('status',1)->get();
+        $pageTitle   = 'Danh sách phòng';
+        // $typeList    = Room::with('amenities', 'facilities', 'products')->latest()->paginate(getPaginate());
+        // return view('admin.hotel.room_type.list', compact('pageTitle', 'typeList'));
+     
+        return view('admin.hotel.room_type.list', compact('pageTitle','room_type'));
+    }
 
     protected function validation($request, $id)
     {

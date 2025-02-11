@@ -170,7 +170,7 @@
     @can('admin.hotel.room.search')
     @push('breadcrumb-plugins')
         <!-- Form tìm kiếm trực tiếp -->
-        <form action="{{ route('admin.manage.room.status') }}" method="GET" id="searchForm" class="mx-5">
+        <form action="{{ route('admin.manage.room.status') }}" method="GET" id="searchForm">
             <div class="input-group">
                 <input
                     type="search"

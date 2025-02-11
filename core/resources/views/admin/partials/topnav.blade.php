@@ -18,29 +18,56 @@
 @endphp
 
 <!-- navbar-wrapper start -->
-<nav class="navbar-wrapper bg--dark d-flex flex-wrap top-menu">
-    {{-- <div class="navbar__left">
-        <button type="button" class="res-sidebar-open-btn me-3"><i class="las la-bars"></i></button>
-<nav class="navbar-wrapper bg--dark d-flex ">
-    <div class="col-md-8 navbar__left">
+<nav class="navbar-wrapper bg--dark d-flex" id="navbar-wrapper">
+    <div style="width: 97%">
         {{-- <button type="button" class="res-sidebar-open-btn me-3"><i class="las la-bars"></i></button>
-
         <form class="navbar-search">
             <input type="search" name="#0" class="navbar-search-field" id="searchInput" autocomplete="off" placeholder="@lang('Tìm kiếm ở đây...')">
             <i class="las la-search"></i>
             <ul class="search-list"></ul>
         </form> --}}
+          <div class="paddles">
+            <button class="right-paddle paddle" id="arrow-left" style="margin-left: -1.5%">
+                 &lt;
+            </button>
+        </div>
         <div class="nav-tabss">
             <nav>
-                <ul class="d-flex main__tabs-list">
+                <ul class="d-flex main__tabs-list horizontal-scroll" id="horizontal-scroll">
                 </ul>
             </nav>
         </div>
     </div>
-    <div class=" col-md-4 navbar__right" style="display: flex; align-items: baseline;">
+         
+        <div>
+             <div class="paddles">
+            <button class="right-paddle paddle" id="arrow-right" style="margin-left: -2%">
+                 &gt;
 
+            </button>
+        </div>
+              <button data-toggle="menu" class="btn btn-primary btn-menu" style="float: right;margin-top: 20px;margin-right: -20px">
+            <i class="fa fa-list"></i></button>
+        </div>
+   
+  
+    <div style="align-items: baseline;" class="navbar__right">
+       
+  <div id="menu" style="float: right;z-index: 9999;">
+    <ul>
+      <li class="border-bottom p-1"><a href="{{ route('admin.system.update') }}">Update Available</a></li>
+      <li class="border-bottom p-1"><a href="{{ route('admin.request.booking.all') }}">Yêu cầu đặt phòng</a></li>
+      <li class="border-bottom p-1"><a href="{{ route('admin.request.booking.all') }}">Services</a></li>
+      <li class="border-bottom p-1"><a a href="{{ route('home') }}">Visit Website</a></li>
+      <li class="border-bottom p-1"><a a href="{{ route('admin.profile') }}">Hồ sơ</a></li>
+      <li class="border-bottom p-1"><a a href="{{ route('admin.password') }}">Mật khẩu</a></li>
+      <li class="p-1"><a a href="{{ route('admin.logout') }}">Đăng xuất</a></li>
+
+    </ul>
+  </div>
         <button type="button" class="res-sidebar-open-btn me-3"><i class="las la-bars"></i></button>
         <ul class="navbar__action-list">
+
             {{-- @if (version_compare(gs('available_version'), systemDetails()['version'], '>'))
                 @can('admin.system.update')
                     <li><button type="button" class="primary--layer" data-bs-toggle="tooltip" data-bs-placement="bottom" title="@lang('Update Available')"><a href="{{ route('admin.system.update') }}" class="primary--layer"><i class="las la-download text--warning"></i></a> </button></li>
@@ -153,7 +180,6 @@
         </ul>
     </div>
 </nav>
-
 <!-- navbar-wrapper end -->
 <style scoped>
     /* background-color: #4634ff59 !important; */
@@ -162,7 +188,14 @@
         position: relative;
         border-radius: 6px;
     }
-
+     #menu {
+      display: none;
+      background-color: #f8f9fa;
+     right: 15px;
+     top: 75px;
+     padding: 10px;
+     position: absolute;      
+    }
     .nav-tabss {
         position: relative;
         bottom:  -16px;
@@ -193,6 +226,20 @@
         border-radius: 50%;
         cursor: pointer;
     }
+   .paddle {
+        position: absolute;
+        top: 0;
+        bottom: 0;
+        border: none;
+        cursor: pointer;
+        background-color: transparent;
+        font-size: 30px;
+        font-weight: bold;
+         animation: bounce 1s infinite;
+         color: white;
+         display: none;
+     }
+
 
     .nav-item.active {
         background-color: #4634ff59 !important;
@@ -201,11 +248,10 @@
     .main__tabs-list {
     display: flex;
     gap: 10px;
-    width: 1000px;
-    overflow-x: auto;
-    overflow-y: hidden; 
-    white-space: nowrap; 
-    padding-bottom: 5px;
+/*    width: 90%;
+*/    overflow-x: auto;
+/*    white-space: nowrap; 
+*/    padding-bottom: 5px;
     scrollbar-width: thin; 
     scrollbar-color: #071251 transparent;
 }
@@ -268,6 +314,16 @@
                 });
                 localStorage.setItem('activeDataIds', JSON.stringify(activeDataIds));
                 $(this).closest('.nav-item').remove();
+                const menu = document.querySelector('.horizontal-scroll');
+                const navItemExists = menu.querySelector('.nav-item') !== null;
+
+                if (navItemExists) {
+                  $(this).closest('.nav-item').remove();
+                } else {
+                  $('.navbar__action-list').css('display','flex');
+                  $('.navbar__right').css({'display':'flex','width':'70%','margin-top':'20px'});
+                  $('.btn-menu').css('display','none');
+                }
             }
         });
         $('.nav-link-tabs').on('click', function() {
@@ -280,5 +336,95 @@
                 })
             })
         });
+    document.querySelector('[data-toggle="menu"]').addEventListener('click', function() {
+      var menu = document.getElementById('menu');
+      // Kiểm tra trạng thái hiển thị và toggle
+      if (menu.style.display === 'none') {
+        menu.style.display = 'block';
+      } else {
+        menu.style.display = 'none';
+      }
+    });
+    document.getElementById('arrow-right').addEventListener('click', function() {
+        const scrollContainer = document.querySelector('.horizontal-scroll');
+        scrollContainer.scrollBy({
+            left: window.innerWidth / 3, // Cuộn sang phải một nửa chiều rộng cửa sổ
+            behavior: 'smooth' // Cuộn mượt mà
+        });
+    });
+    document.getElementById('arrow-left').addEventListener('click', function() {
+        const scrollContainer = document.querySelector('.horizontal-scroll');
+        scrollContainer.scrollBy({
+            left: - window.innerWidth / 3, // Cuộn sang phải một nửa chiều rộng cửa sổ
+            behavior: 'smooth' // Cuộn mượt mà
+        });
+    });
+    const toggleButton = document.getElementById('toggle-btn');
+    const sidebar = document.getElementById('sidebar');
+    const mainMenu = document.querySelector('.navbar-wrapper');
+    const mainContent = document.querySelector('.body-wrapper');
+
+
+    toggleButton.addEventListener('click', () => {
+      sidebar.classList.toggle('closed');
+      mainContent.classList.toggle('shifted');
+      mainMenu.classList.toggle('shifted');
+
+      // Thay đổi hướng mũi tên khi sidebar ẩn hiện
+      if (sidebar.classList.contains('closed')) {
+        toggleButton.innerHTML = '&#8594;';  // Mũi tên sang trái khi sidebar ẩn
+      } else {
+        toggleButton.innerHTML = '&#8592;';  // Mũi tên sang phải khi sidebar hiện
+      }
+    });
+
+    const scrollLeftButton = document.getElementById('arrow-left');
+    const scrollRightButton = document.getElementById('arrow-right');
+    const scrollContent = document.getElementById('horizontal-scroll');
+    // Kiểm tra chiều rộng của vùng chứa và nội dung
+     function checkScrollButtons() {
+      const containerWidth = scrollContent.offsetWidth;  // Chiều rộng của vùng hiển thị
+      const contentWidth = scrollContent.scrollWidth;   // Chiều rộng tổng của nội dung bên trong
+      // Nếu chiều rộng của nội dung lớn hơn vùng chứa, hiển thị mũi tên
+      if (contentWidth > containerWidth) {
+        // scrollLeftButton.style.display = 'block';
+        scrollRightButton.style.display = 'block';
+      } else {
+        scrollLeftButton.style.display = 'none';
+        scrollRightButton.style.display = 'none';
+      }
+    }
+
+    // Kiểm tra lại khi trang được tải và khi nội dung thay đổi
+     $('.paddle').on('click', function() {
+      const maxScrollLeft = scrollContent.scrollWidth - scrollContent.clientWidth;
+      const currentScrollLeft = scrollContent.scrollLeft;
+
+      // Nếu cuộn đến đầu (không thể cuộn trái nữa), ẩn mũi tên trái
+      if (currentScrollLeft === 0) {
+        scrollLeftButton.style.display = 'none';
+      } else {
+        scrollLeftButton.style.display = 'block';
+      }
+
+      // Nếu cuộn đến cuối (không thể cuộn phải nữa), ẩn mũi tên phải
+      if (currentScrollLeft === maxScrollLeft) {
+        scrollRightButton.style.display = 'none';
+      } else {
+        scrollRightButton.style.display = 'block';
+      }
+    });
+
+// Kiểm tra lại khi trang được tải và khi cửa sổ thay đổi kích thước
+window.addEventListener('load', () => {
+  checkScrollButtons();
+  checkArrowVisibility();
+});
+window.addEventListener('resize', () => {
+  checkScrollButtons();
+  checkArrowVisibility();
+});
     </script>
+
+ 
 @endpush

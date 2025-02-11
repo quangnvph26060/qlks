@@ -97,7 +97,7 @@
                                 <span class="invalid-feedback d-block" style="font-weight: 500"
                                       id="source_name_error"></span>
                             </div>
-                            <div class="form-group mb-3">
+                      <!--       <div class="form-group mb-3">
                                 <label for="">Mã đơn vị </label>
                                 <select name="unit_code" id="unit-code-multiple-choice" class="form-control">
                                     <option value="" selected>--Chọn mã đơn vị--</option>
@@ -105,7 +105,7 @@
                                         <option value="{{ $item->ma_coso }}">{{ $item->ma_coso }}</option>
                                     @endforeach
                                 </select>
-                            </div>
+                            </div> -->
                         </div>
                         <div class="modal-footer">
                             <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Đóng</button>
@@ -145,7 +145,7 @@
                                 <span class="invalid-feedback d-block" style="font-weight: 500"
                                       id="source_name_error"></span>
                             </div>
-                            <div class="form-group mb-3">
+                    <!--         <div class="form-group mb-3">
                                 <label for="">Mã đơn vị </label>
                                 <select name="unit_code" id="edit-unit-code" class="form-control">
                                     <option value="" selected>--Chọn mã đơn vị--</option>
@@ -153,7 +153,7 @@
                                         <option value="{{ $item->ma_coso }}">{{ $item->ma_coso }}</option>
                                     @endforeach
                                 </select>
-                            </div>
+                            </div> -->
                         </div>
                         <div class="modal-footer">
                             <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Đóng</button>
@@ -225,7 +225,7 @@
                     success: function(data) {
                             $('#edit-source-code').val(data.source_code);
                             $('#edit-source-name').val(data.source_name);
-                            $('#edit-unit-code').val(data.unit_code).change();
+                            // $('#edit-unit-code').val(data.unit_code).change();
                             $('#method').attr('value', 'PUT');
                             $('#editSource').attr('action', '{{ route('admin.hotel.customer.source.update', '') }}/' + dataId + '')
                             formEconomyEdit.source_code.element = document.getElementById('source_code');

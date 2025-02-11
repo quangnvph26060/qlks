@@ -6391,7 +6391,7 @@ th.w-85 {
 /* body-wrapper css start */
 .body-wrapper {
     margin-left: 250px;
-    padding: 0px 30px 30px 5px;
+    padding: 30px;
     transition: all 0.5s cubic-bezier(0.4, -0.25, 0.25, 1.1);
 }
 
