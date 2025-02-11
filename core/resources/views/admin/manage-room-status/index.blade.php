@@ -234,6 +234,15 @@
                 });
             });
         });
+        function formatDate(inputDate) {
+    // Chia chuỗi ngày thành các phần tử: năm, tháng, ngày
+    var parts = inputDate.split('-');
+
+    // Định dạng lại chuỗi ngày
+    var formattedDate = parts[2] + '/' + parts[1] + '/' + parts[0];
+
+    return formattedDate;
+}
         function loadingData(page = 1) {
             let roomId = $("#room_number").val();
             let statusId = $("#status_room").val();
@@ -256,8 +265,8 @@
                                     <tr>
                                         <td>${index + 1}</td>
                                         <td>${item.room_name}</td>
-                                        <td>${item.start_date}</td>
-                                        <td>${item.end_date}</td>
+                                        <td>${formatDate(item.start_date)}</td>
+                                        <td>${formatDate(item.end_date)}</td>
                                         <td>${item.status_name}</td>
                                         <td>${item.unit_code}</td>
                                     </tr>
