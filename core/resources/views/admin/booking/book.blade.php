@@ -646,11 +646,24 @@
             }
         });
 
-        $(document).on('click', '.add-book-room', function() {
-            var roomId = $(this).data('id');
-            var roomTypeId = $(this).data('room_type_id');
-            $('#myModal-booking').modal('show');
+        function countBookings() {
+            let bookingList = document.getElementById("list-booking");
+            let rows = bookingList.getElementsByTagName("tr");
+            return rows.length; // Trả về số lượng hàng <tr>
+        }
 
+        // Kiểm tra nếu danh sách đặt phòng có ít nhất một hàng
+        function hasBookings() {
+            return countBookings() > 0;
+        }
+        $(document).on('click', '.add-book-room', function() { 
+            $('#list-booking-edit').empty();
+             $('#myModal-booking').modal('show');
+            // var roomId = $(this).data('id');
+            // var roomTypeId = $(this).data('room_type_id');
+           
+            // $('#myModal-booking-edit').modal('hide');
+            hasBookings() ? "" : ($('#total_balance').text(0), $('#total_amount').text(0));
 
             // addRoomInBooking(roomId, roomTypeId);
             var selectedCheckboxes = [];
@@ -914,6 +927,7 @@
         });
         // sửa phòng  
         $(document).on('click', '.booked_room_edit', function() {
+            $('#list-booking').empty();
             var roomId = $(this).data('room-id');
             // ajax request
             var url = `{{ route('admin.room.booking.edit', ['id' => ':id']) }}`.replace(':id',
@@ -1403,7 +1417,7 @@
                                 $('.orderList').addClass('d-none');
                                 $('.formRoomSearch').trigger('reset');
                                 $('#myModal-booking').hide();
-                                  window.location.reload();
+                                window.location.reload();
                             } else {
                                 notify('error', response.error);
                             }
@@ -1436,7 +1450,7 @@
             // Duyệt qua từng dòng trong bảng 1234
             $('#list-booking-edit tr').each(function() {
                 var status = $(this).data('status');
-    
+
                 if (status !== 0) {
                     return;
                 }

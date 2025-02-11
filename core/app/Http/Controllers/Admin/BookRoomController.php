@@ -474,7 +474,30 @@ class BookRoomController extends Controller
 
                 $check_in = $request->method == 'check_in' ?  CheckIn::query() :  RoomBooking::query()->active();
                 $check_in = $check_in->where('id',$room['bookingId'])->first();
+
                 if ($check_in) {
+                    $room['dateIn'] = date('Y-m-d H:i:s', strtotime($room['dateIn']));
+                    $room['dateOut'] = date('Y-m-d H:i:s', strtotime($room['dateOut']));
+                    $resultDate = RoomBooking::query()->active()
+                    ->where('room_code', $check_in['room_code'])
+                    ->where('id', '!=', $room['bookingId'])
+                    ->when(!empty($room['dateIn']) && !empty($room['dateOut']), function ($query) use ($room) {
+                        $query->where(function ($q) use ($room) {
+                            $q->whereBetween('checkin_date', [$room['dateIn'], $room['dateOut']])
+                              ->orWhereBetween('checkout_date', [$room['dateIn'], $room['dateOut']])
+                              ->orWhere(function ($subQuery) use ($room) {
+                                  $subQuery->where('checkin_date', '<=', $room['dateIn'])
+                                           ->where('checkout_date', '>=', $room['dateOut']);
+                              });
+                        });
+                    });
+                
+                    $exists = $resultDate->exists();
+                    if($exists) {
+                        DB::rollBack();
+                        return response()->json(['error' => 'Ngày nhận ngày trả đã tồn tại']);
+                    }
+                
                     $check_in->room_code      = $room['room'];
                     $check_in->document_date  = now();
                     $check_in->checkin_date   = Carbon::parse($room['dateIn']);
