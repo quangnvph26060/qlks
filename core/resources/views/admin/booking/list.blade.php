@@ -479,28 +479,19 @@
                                             <input type="checkbox"> 
                                         </td>
 
-
-                        const formattedTimes = `${hoursss}:${minutesss}`;
-                        // <td>
-                        //      <p id="book_name" class="book_name">${response.room_type['name']}</p>
-                        // </td>
-                        var tr = `
-                                    <tr data-room-id="${response.room['id']}"  data-room-type-id="${response.room_type['id']}">
-
-
                                         <td>
                                             <p class="room__name"> ${item.room['room_number']}</p>
                                         </td>
                                          <td>
                                              <input type="number" min="1" name="adult" class="form-control adult"  value="1"  style="margin-left: 16px;">
-
+                                             
                                         </td>
                                         <td style="display: flex; justify-content: center">
                                             <select id="bookingType" class="form-select" name="optionRoom" style="width: 93px; font-size:15px">
-                                                 <option value="ngay">Ngày</option>
+                                                 <option value="ngay">Ngày</option> 
                                                  <option value="gio">Giờ</option>
-
-
+                                              
+                                                
                                             </select>
                                         </td>
                                          <td>
@@ -513,7 +504,6 @@
                                         <td>
                                             <div class="d-flex align-items-center justify-content-start" style="gap: 10px">
                                                 <input type="date" name="checkOutDate"  class="form-control date-book-room"  value="${item.date}">
-
 
                                                 <input type="time" name="checkOutTime" id="time-book-room" class="form-control time-book-room"  value="${item.room['room_type']['room_type_price']['setup_pricing']['check_out_time']}">
                                                
@@ -528,7 +518,6 @@
                                         </td>
                                         <td>
                                             <input type="text" name="note_room" class="form-control note_room" value="" id="note">
-
                                         </td>
 
 
@@ -569,7 +558,6 @@
                             formatNumber(this);
                         });
 
-
                         $('.custom-input-giam-gia').on('blur', function() {
                             // Lấy giá trị từ trường nhập liệu
                             let discountValue = $(this).val();
@@ -582,7 +570,6 @@
                             let deposit = parseFloat(pricedeposit.replace(/\./g, '').replace(' VND',
                                 ''));
                             $('#total_balance').text(formatCurrency(price - deposit - number));
-
                             formatNumber(this);
                         });
 
