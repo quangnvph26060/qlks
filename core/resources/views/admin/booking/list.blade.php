@@ -724,7 +724,7 @@
                             `
                             $('.data-table').append(html);
                         })
-                        updatePagination(pagination);
+                        updatePagination(pagination,'loadRoomBookings');
                     }
                 },
                 error: function(xhr, status, error) {

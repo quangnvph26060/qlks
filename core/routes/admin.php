@@ -696,5 +696,6 @@ Route::middleware('admin', 'adminPermission')->group(function () {
     Route::controller('ManageReportController')->prefix('manage')->name('manage.')->group(function () {
 
             Route::get('room-status', 'rommStatus')->name('room.status');
+            Route::get('room-status-history', 'roomStatusHistory')->name('room.status.history');
     });
 });

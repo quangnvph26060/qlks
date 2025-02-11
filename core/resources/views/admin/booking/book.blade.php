@@ -142,6 +142,7 @@
     <script src="{{ asset('assets/admin/js/daterangepicker.min.js') }}"></script>
     <script src="{{ asset('assets/validator/validator.js') }}"></script>
     <script  src="{{ asset('assets/admin/js/room_booking.js') }}"></script>
+    <script  src="{{ asset('assets/admin/js/pagination.js') }}"></script>
     <script src="https://cdn.jsdelivr.net/npm/@popperjs/core@2.5.3/dist/umd/popper.min.js"></script>
 @endpush
 
@@ -263,10 +264,10 @@
 @push('script')
    <script>
         var showRoomUrl = "{{ route('admin.booking.showRoom') }}";
-      var checkRoomBookingUrl =  '{{ route('admin.booking.checkRoomBooking') }}';
-      var  searchCustomerUrl = '{{ route('admin.search.customer') }}';
-      var roomBookingUrl =  '{{ route('admin.room.booking') }}';
-      var roomBookingEditUrl = "{{ route('admin.room.booking.edit', ['id' => ':id']) }}";
+        var checkRoomBookingUrl =  '{{ route('admin.booking.checkRoomBooking') }}';
+        var  searchCustomerUrl = '{{ route('admin.search.customer') }}';
+        var roomBookingUrl =  '{{ route('admin.room.booking') }}';
+        var roomBookingEditUrl = "{{ route('admin.room.booking.edit', ['id' => ':id']) }}";
         var bookingDetailUrl = "{{ route('admin.booking.details', ['id' => ':id']) }}";
         var checkInUrl = "{{ route('admin.room.check.in', ['id' => ':id']) }}";
         var deleteBookedRoomUrl = "{{ route('admin.booking.delete-booked-room', ['id' => ':id']) }}";

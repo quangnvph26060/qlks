@@ -1388,7 +1388,7 @@ function loadRoomBookings(page = 1) {
                     `
                     $('.data-table').append(html);
                 })
-                updatePagination(pagination);
+                updatePagination(pagination, 'loadRoomBookings');
             }
         },
         error: function(xhr, status, error) {
@@ -1397,18 +1397,4 @@ function loadRoomBookings(page = 1) {
     });
 }
 
-function updatePagination(pagination) {
-    var paginationHtml = '';
-    if (pagination.current_page > 1) {
-        paginationHtml += `<button onclick="loadRoomBookings(${pagination.current_page - 1})">Trước</button>`;
-    }
-    for (var i = 1; i <= pagination.last_page; i++) {
-        paginationHtml += `
-    <button onclick="loadRoomBookings(${i})">${i}</button>
-    `;
-    }
-    if (pagination.current_page < pagination.last_page) {
-        paginationHtml += `<button onclick="loadRoomBookings(${pagination.current_page + 1})">Tiếp theo</button>`;
-    }
-    $('.pagination-container').html(paginationHtml);
-}
+
