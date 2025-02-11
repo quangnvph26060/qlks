@@ -3,40 +3,40 @@
     <div class="row">
         <!-- Khối bên phải: Danh sách danh mục -->
         <div class="col-md-12">
-            <div class="border p-2">
-                <div class="d-flex justify-content-between mb-3">
-                    <div class="dt-length">
-                        <select name="example_length" id="perPage" style=" padding: 1px 3px; margin-right: 8px;"
-                            aria-controls="example" class="perPage">
-                            <option value="10">10</option>
-                            <option value="25">25</option>
-                            <option value="50">50</option>
-                            <option value="100">100</option>
-                        </select><label for="perPage"> entries per page</label>
-                    </div>
-                    <div class="search">
-                        {{-- <label for="searchInput">Search:</label>
-                        <input class="searchInput"
-                            style="padding: 1px 3px; border: 1px solid rgb(121, 117, 117, 0.5); margin-left: 8px;"
-                            type="search" placeholder="Tìm kiếm..."> --}}
+            <div class="border">
+{{--                <div class="d-flex justify-content-between mb-3">--}}
+{{--                    <div class="dt-length">--}}
+{{--                        <select name="example_length" id="perPage" style=" padding: 1px 3px; margin-right: 8px;"--}}
+{{--                            aria-controls="example" class="perPage">--}}
+{{--                            <option value="10">10</option>--}}
+{{--                            <option value="25">25</option>--}}
+{{--                            <option value="50">50</option>--}}
+{{--                            <option value="100">100</option>--}}
+{{--                        </select><label for="perPage"> entries per page</label>--}}
+{{--                    </div>--}}
+{{--                    <div class="search">--}}
+{{--                        --}}{{-- <label for="searchInput">Search:</label>--}}
+{{--                        <input class="searchInput"--}}
+{{--                            style="padding: 1px 3px; border: 1px solid rgb(121, 117, 117, 0.5); margin-left: 8px;"--}}
+{{--                            type="search" placeholder="Tìm kiếm..."> --}}
 
-                            <form method="GET" id="searchForm" >
-                                <div class="input-group flex-nowrap">
-                                    <input
-                                        type="search"
-                                        class="searchInput"
-                                        name="keyword"
-                                        id="searchInput"
-                                        value="{{ request('keyword') }}"
-                                        placeholder="Tìm kiếm ...">
-                                    <!-- Nút tìm kiếm -->
-                                    <button type="button" class="btn btn-primary">
-                                        <i class="las la-search"></i>
-                                    </button>
-                                </div>
-                            </form>
-                    </div>
-                </div>
+{{--                            <form method="GET" id="searchForm" >--}}
+{{--                                <div class="input-group flex-nowrap">--}}
+{{--                                    <input--}}
+{{--                                        type="search"--}}
+{{--                                        class="searchInput"--}}
+{{--                                        name="keyword"--}}
+{{--                                        id="searchInput"--}}
+{{--                                        value="{{ request('keyword') }}"--}}
+{{--                                        placeholder="Tìm kiếm ...">--}}
+{{--                                    <!-- Nút tìm kiếm -->--}}
+{{--                                    <button type="button" class="btn btn-primary">--}}
+{{--                                        <i class="las la-search"></i>--}}
+{{--                                    </button>--}}
+{{--                                </div>--}}
+{{--                            </form>--}}
+{{--                    </div>--}}
+{{--                </div>--}}
                 <div class="card b-radius--10">
                     <div class="card-body p-0">
                         <div class="table-responsive--sm table-responsive">
@@ -68,8 +68,9 @@
     </div>
     @can('')
         @push('breadcrumb-plugins')
-            <button type="button" class="btn btn-outline--primary btn-add">
-                Thêm mới
+            <button type="button" class="btn btn-outline--primary mt-1 btn-add">
+                <i class="las la-plus"></i>
+
             </button>
         @endpush
     @endcan
@@ -380,12 +381,12 @@
             margin-right: 20px;
             font-size: 16px;
         }
-      
+
         @media(max-width:768px){
         .flex-nowrap{
             flex-wrap: nowrap !important;
         }
-      
+
     }
         .form-check-group {
             display: flex;

@@ -24,7 +24,7 @@
                                         <td>{{ showDateTime($role->created_at) }}</td>
                                         @can('admin.roles.edit')
                                             <td>
-                                                <a class="btn btn-sm btn-outline--primary" href="{{ route('admin.roles.edit', $role->id) }}"><i class="las la-pencil-alt"></i>@lang('Edit')</a>
+                                                <a class="btn btn-sm btn-outline--primary" href="{{ route('admin.roles.edit', $role->id) }}"><i class="las la-pencil-alt"></i></a>
                                             </td>
                                         @endcan
                                     </tr>
@@ -44,6 +44,6 @@
 
 @can('admin.roles.add')
     @push('breadcrumb-plugins')
-        <a class="btn btn-sm btn-outline--primary" href="{{ route('admin.roles.add') }}"><i class="las la-plus"></i>@lang('Thêm mới')</a>
+        <a class="btn btn-sm btn-outline--primary" href="{{ route('admin.roles.add') }}"><i class="las la-plus"></i></a>
     @endpush
 @endcan

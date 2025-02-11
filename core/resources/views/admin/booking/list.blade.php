@@ -28,11 +28,13 @@
                                 <th>@lang('Ngày chứng từ')</th>
                                 <th>@lang('Ngày nhận')</th>
                                 <th>@lang('Ngày trả')</th>
+
                                 <th>@lang('Tên khách hàng')</th>
                                 <th>@lang('Số điện thoại')</th>
                                 <th>@lang('Số người')</th>
                                 <th>@lang('Thành tiền')</th>
                                 <th>@lang('Đặt cọc')</th>
+
                                 @can(['admin.hotel.room.type.edit', 'admin.hotel.room.type.status',
                                     'admin.hotel.room.type.destroy'])
                                     <th>@lang('Hành động')</th>
@@ -182,9 +184,9 @@
         $('[id="date-book-room-date"]').val(formattedNextDay);
         $('[id="time-book-room-date"]').val(formattedTimes);
         var formEconomyEdit = {
-            'name': { // passwword thì nên đặt là name trong input đó 
-                'element': document.getElementById('name'), // id trong input đó 
-                'error': document.getElementById('name_error'), // thẻ hiển thị lỗi 
+            'name': { // passwword thì nên đặt là name trong input đó
+                'element': document.getElementById('name'), // id trong input đó
+                'error': document.getElementById('name_error'), // thẻ hiển thị lỗi
                 'validations': [{
                         'func': function(value) {
                             return checkRequired(value); // check trống
@@ -477,19 +479,28 @@
                                             <input type="checkbox"> 
                                         </td>
 
+
+                        const formattedTimes = `${hoursss}:${minutesss}`;
+                        // <td>
+                        //      <p id="book_name" class="book_name">${response.room_type['name']}</p>
+                        // </td>
+                        var tr = `
+                                    <tr data-room-id="${response.room['id']}"  data-room-type-id="${response.room_type['id']}">
+
+
                                         <td>
                                             <p class="room__name"> ${item.room['room_number']}</p>
                                         </td>
                                          <td>
                                              <input type="number" min="1" name="adult" class="form-control adult"  value="1"  style="margin-left: 16px;">
-                                             
+
                                         </td>
                                         <td style="display: flex; justify-content: center">
                                             <select id="bookingType" class="form-select" name="optionRoom" style="width: 93px; font-size:15px">
-                                                 <option value="ngay">Ngày</option> 
+                                                 <option value="ngay">Ngày</option>
                                                  <option value="gio">Giờ</option>
-                                              
-                                                
+
+
                                             </select>
                                         </td>
                                          <td>
@@ -502,6 +513,7 @@
                                         <td>
                                             <div class="d-flex align-items-center justify-content-start" style="gap: 10px">
                                                 <input type="date" name="checkOutDate"  class="form-control date-book-room"  value="${item.date}">
+
 
                                                 <input type="time" name="checkOutTime" id="time-book-room" class="form-control time-book-room"  value="${item.room['room_type']['room_type_price']['setup_pricing']['check_out_time']}">
                                                
@@ -516,6 +528,7 @@
                                         </td>
                                         <td>
                                             <input type="text" name="note_room" class="form-control note_room" value="" id="note">
+
                                         </td>
 
 
@@ -556,6 +569,7 @@
                             formatNumber(this);
                         });
 
+
                         $('.custom-input-giam-gia').on('blur', function() {
                             // Lấy giá trị từ trường nhập liệu
                             let discountValue = $(this).val();
@@ -568,6 +582,7 @@
                             let deposit = parseFloat(pricedeposit.replace(/\./g, '').replace(' VND',
                                 ''));
                             $('#total_balance').text(formatCurrency(price - deposit - number));
+
                             formatNumber(this);
                         });
 
@@ -698,21 +713,23 @@
                                     <td>${index + 1  }</td>
                                     <td>${data['check_in_id']}</td>
                                     <td>${data['id_room_booking'] ? data['id_room_booking'] : ''}</td>
-                                    <td>${data['room']['room_number']}</td>
+                                   <td>${data['room']['room_number']}</td>
+
                                     <td>${formatDateTime(data['document_date'])}</td>
                                     <td>${formatDateTime(data['checkin_date'])}</td>
                                     <td>${formatDateTime(data['checkout_date'])}</td>
                                  
+
                                     <td>${data['customer_name'] ? data['customer_name'] : 'N/A'}</td>
                                     <td>${data['phone_number'] ? data['phone_number'] : 'N/A'}</td>
-                               
+
                                     <td>${data['guest_count']}</td>
                                     <td>${ formatCurrency( data['total_amount'])}</td>
                                     <td>${formatCurrency(data['deposit_amount'])}</td>
-                                
-                                   
+
+
                                     <td>
-                                        <svg class="svg_menu_check_in" xmlns="http://www.w3.org/2000/svg" width="30" height="30" viewBox="0 0 21 21"><g fill="currentColor" fill-rule="evenodd"><circle cx="10.5" cy="10.5" r="1"/><circle cx="10.5" cy="5.5" r="1"/><circle cx="10.5" cy="15.5" r="1"/></g></svg>    
+                                        <svg class="svg_menu_check_in" xmlns="http://www.w3.org/2000/svg" width="30" height="30" viewBox="0 0 21 21"><g fill="currentColor" fill-rule="evenodd"><circle cx="10.5" cy="10.5" r="1"/><circle cx="10.5" cy="5.5" r="1"/><circle cx="10.5" cy="15.5" r="1"/></g></svg>
                                         <div class="dropdown menu_dropdown_check_in" id="dropdown-menu">
                                             <div class="dropdown-item booked_room_caned" data-room-id="${data['id']}">Trả phòng</div>
                                             <div class="dropdown-item booked_room" data-room-id="${data['id']}">Đổi phòng</div>

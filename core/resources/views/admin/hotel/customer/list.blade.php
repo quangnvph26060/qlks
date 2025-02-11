@@ -17,7 +17,7 @@
                                 <th>@lang('Ngày tạo')</th>
 {{--                                <th>@lang('Ghi chú')</th>--}}
                                 <th>@lang('Trạng thái')</th>
-                                <th>@lang('Mã đơn vị')</th>
+                        <!--         <th>@lang('Mã đơn vị')</th> -->
                                 <th>@lang('Hành động')</th>
                             </tr>
                             </thead>
@@ -49,31 +49,31 @@
                                     <td class="status-hotel">
                                         {!! $customer->styleStatus() !!}
                                     </td>
-                                    <td>
+                              <!--       <td>
                                         {{ $customer->unit_code }}
-                                    </td>
+                                    </td> -->
                                     <td>
                                         <a class="btn btn-sm btn-outline--primary btn-edit-customer"
                                            data-id="{{ $customer->id }}" data-bs-toggle="modal" data-bs-target="#edit-customer">
-                                            <i class="la la-pencil"></i>@lang('Sửa')
+                                            <i class="la la-pencil"></i>
                                         </a>
                                         @if($customer->status == 1)
                                             <button class="btn btn-sm btn-outline--danger confirmationBtn"
                                                     data-action="{{ route('admin.hotel.customer.status', $customer->id) }}"   data-id="{{ $customer->id }}"
                                                     data-question="@lang('Bạn có chắc chắn muốn tắt trạng thái này không?')" type="button">
-                                                <i class="la la-eye-slash"></i> @lang('Ngưng hoạt động')
+                                                <i class="la la-eye-slash"></i>
                                             </button>
                                         @else
                                             <button class="btn btn-sm btn-outline--success confirmationBtn"
                                                     data-action="{{ route('admin.hotel.customer.status', $customer->id) }}"   data-id="{{ $customer->id }}"
                                                     data-question="@lang('Bạn có chắc chắn muốn tắt trạng thái này không?')" type="button">
-                                                <i class="la la-eye-slash"></i> @lang('Hoạt động')
+                                                <i class="la la-eye-slash"></i>
                                             </button>
                                         @endif
                                         <button class="btn btn-sm btn-outline--danger btn-delete icon-delete-room"
                                                 data-id="{{ $customer->id }}" data-modal_title="@lang('Xóa khách hàng')" type="button"
                                                 data-pro="0">
-                                            <i class="fas fa-trash"></i>@lang('Xóa')
+                                            <i class="fas fa-trash"></i>
                                         </button>
                                     </td>
                                 </tr>
@@ -97,26 +97,27 @@
 
     </div>
     @push('breadcrumb-plugins')
-        <div class="card-body">
+        <div class="card-body mt-1">
             <div class="row">
                 <div class="col-md-12 col-sm-12">
-                    <form role="form" enctype="multipart/form-data" action="{{route('admin.hotel.customer.search')}}">                        <div class="form-group position-relative mb-0" style="float: inline-end;width:100%" id="btn-add-customer">
+                    <form role="form" enctype="multipart/form-data" action="{{route('admin.hotel.customer.search')}}">
+                        <div class="form-group position-relative mb-0" id="btn-add-customer">
                             <input class="searchInput" name="customer_code"
-                                   style="height: 35px;width:18%;border: 1px solid rgb(121, 117, 117, 0.5);"
+                                   style="height: 35px;width:20%;border: 1px solid rgb(121, 117, 117, 0.5);"
                                     placeholder="Mã khách hàng">
                             <input class="searchInput" name="name"
-                                   style="height: 35px;width:18%;border: 1px solid rgb(121, 117, 117, 0.5); margin-left: 8px;"
+                                   style="height: 35px;width:20%;border: 1px solid rgb(121, 117, 117, 0.5); margin-left: 8px;"
                                    placeholder="Tên khách hàng">
                             <input class="searchInput" name="phone"
-                                   style="height: 35px;width:18%;border: 1px solid rgb(121, 117, 117, 0.5); margin-left: 8px;"
+                                   style="height: 35px;width:20%;border: 1px solid rgb(121, 117, 117, 0.5); margin-left: 8px;"
                                    placeholder="Điện thoại">
                             <input class="searchInput" name="address"
-                                   style="height: 35px;width:18%;border: 1px solid rgb(121, 117, 117, 0.5); margin-left: 8px;"
+                                   style="height: 35px;width:20%;border: 1px solid rgb(121, 117, 117, 0.5); margin-left: 8px;"
                                    type="search" placeholder="Địa chỉ">
-                            <input class="searchInput" name="unit_code"
+                  <!--           <input class="searchInput" name="unit_code"
                                    style="height: 35px;width:18%;border: 1px solid rgb(121, 117, 117, 0.5); margin-left: 8px;"
-                                   type="search" placeholder="Mã đơn vị">
-                            <button type="submit" class="btn btn-primary">
+                                   type="search" placeholder="Mã đơn vị"> -->
+                            <button type="submit" class="btn btn-primary" style="padding:10px">
                                 <i class="las la-search"></i>
                             </button>
 
@@ -124,9 +125,9 @@
                     </form>
                 </div>
                 <div class="col-md-2">
-                    <button class="btn mt-2 btn-sm btn-outline--primary" data-modal_title="Thêm mới khách hàng" type="button"
+                    <button class="btn mt-1 p-2 btn-sm btn-outline--primary" data-modal_title="Thêm mới khách hàng" type="button"
                                                 data-bs-toggle="modal" data-bs-target="#customer">
-                        <i class="las la-plus"></i>Thêm mới
+                        <i class="las la-plus"></i>
                     </button>
                 </div>
             </div>
@@ -194,7 +195,7 @@
                                 <input type="radio" name="status" value="0" id="statusInactive" checked>
                                 Không hoạt động
                             </div>
-                            <div class=" mb-3">
+                  <!--           <div class=" mb-3">
                                 <label for="">Mã đơn vị </label>
                                 <select name="unit_code" id="unit-code-multiple-choice" class="form-control">
                                     <option value="" selected>--Chọn mã đơn vị--</option>
@@ -202,7 +203,7 @@
                                         <option value="{{ $item->ma_coso }}">{{ $item->ma_coso }}</option>
                                     @endforeach
                                 </select>
-                            </div>
+                            </div> -->
                             <div class="modal-footer">
                                 <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Đóng</button>
                                 <button type="submit" id="btn-add-customer" class="btn btn-primary">Lưu</button>
@@ -271,7 +272,7 @@
                                 <input type="radio" name="status" value="0">
                                 Không hoạt động
                             </div>
-                            <div class=" mb-3">
+                   <!--          <div class=" mb-3">
                                 <label for="">Mã đơn vị </label>
                                 <select name="unit_code" id="edit-unit-code" class="form-control">
                                     <option value="" selected>--Chọn mã đơn vị--</option>
@@ -279,7 +280,7 @@
                                         <option value="{{ $item->ma_coso }}">{{ $item->ma_coso }}</option>
                                     @endforeach
                                 </select>
-                            </div>
+                            </div> -->
                             <div class="modal-footer">
                                 <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Đóng</button>
                                 <button type="submit" id="btn-edit-customer" class="btn btn-primary">Lưu</button>
@@ -308,7 +309,7 @@
                     $('#edit-email').val(data.email);
                     $('#edit-address').val(data.address);
                     $('#edit-note').val(data.note);
-                    $('#edit-unit-code').val(data.unit_code).change();
+                    // $('#edit-unit-code').val(data.unit_code).change();
                     $('input[name^="status"][value="' + data.status + '"').prop('checked', true);
                     $('#method').attr('value', 'PUT');
                     $('#editCustomer').attr('action', '{{ route('admin.hotel.customer.update', '') }}/' + dataId + '')

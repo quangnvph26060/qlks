@@ -2,45 +2,30 @@
 @section('panel')
     <div class="row">
         <div class="col-lg-12">
-            <div class="d-flex justify-content-between mb-3 row order-1">
-                <div class="dt-length col-md-6 col-4">
-                    <select name="example_length" id="perPage" style=" padding: 1px 3px; margin-right: 8px;"
-                        aria-controls="example" class="perPage">
-                        <option value="10">10</option>
-                        <option value="25">25</option>
-                        <option value="50">50</option>
-                        <option value="100">100</option>
-                    </select><label for="perPage"> entries per page</label>
-                </div>
+{{--            <div class="d-flex justify-content-between mb-3 row order-1">--}}
+{{--                <div class="dt-length col-md-6 col-4">--}}
+{{--                    <select name="example_length" id="perPage" style=" padding: 1px 3px; margin-right: 8px;"--}}
+{{--                        aria-controls="example" class="perPage">--}}
+{{--                        <option value="10">10</option>--}}
+{{--                        <option value="25">25</option>--}}
+{{--                        <option value="50">50</option>--}}
+{{--                        <option value="100">100</option>--}}
+{{--                    </select><label for="perPage"> entries per page</label>--}}
+{{--                </div>--}}
 
-                <div class="search col-md-4 col-12" style="text-align: end;">
-                    {{-- <label for="searchInput">Search:</label> --}}
-                    <div class="input-group" style="justify-content: end;">
-                        <input class="searchInput"
+{{--                <div class="search col-md-4 col-12" style="text-align: end;">--}}
+{{--                    --}}{{-- <label for="searchInput">Search:</label> --}}
+{{--                    <div class="input-group" style="justify-content: end;">--}}
+{{--                        <input class="searchInput"--}}
 
-                        type="search" placeholder="Tìm kiếm...">
-                        <button type="submit" class="btn btn-primary">
-                            <i class="las la-search"></i>
-                        </button>
-                    </div>
-                </div>
-                <div class="dropdown col-md-1 col-8" style="display: flex;
-                justify-content: end">
-                    <a class="btn btn-outline-secondary dropdown-toggle d-flex justify-content-center
-                align-items-center" href="#" role="button"
-                        data-bs-toggle="dropdown" aria-expanded="false">
-                        Thao tác
-                    </a>
-                    <ul class="dropdown-menu">
-                        <li><a class="dropdown-item"
-                                href="{{ route('admin.hotel.room.type.all.deleted') }}">Các phòng đã xóa</a>
-                        </li>
-                    </ul>
+{{--                        type="search" placeholder="Tìm kiếm...">--}}
+{{--                        <button type="submit" class="btn btn-primary">--}}
+{{--                            <i class="las la-search"></i>--}}
+{{--                        </button>--}}
+{{--                    </div>--}}
+{{--                </div>--}}
 
-                    </div>
-
-                </div>
-            </div>
+{{--            </div>--}}
             <div class="card b-radius--10">
                 <div class="card-body p-0">
                     <div class="table-responsive--md table-responsive">
@@ -49,7 +34,7 @@
                                 <tr>
                                     <th></th>
                                     {{-- <th>@lang('STT')</th> --}}
-                                    <th>@lang('Loại phòng')</th> 
+                                    <th>@lang('Loại phòng')</th>
                                     <th>@lang('Mã phòng')</th>
                                     <th>@lang('Tên phòng')</th>
                                     <th>@lang('Số người')</th>
@@ -66,8 +51,7 @@
                                     @endcan
                                 </tr>
                             </thead>
-                            <tbody>
-
+                            <tbody id="data" >
 
                             </tbody>
                         </table>
@@ -86,8 +70,58 @@
 @endsection
 @can('admin.hotel.room.type.create')
     @push('breadcrumb-plugins')
-        <a class="btn btn-sm btn-outline--primary" href="{{ route('admin.hotel.room.type.create') }}"><i
-                class="las la-plus"></i>@lang('Thêm mới')</a>
+           <div class="card-body mt-1">
+            <div class="row">
+              <div class="col-md-12">
+                    <form role="form" enctype="multipart/form-data" action="{{route('admin.hotel.room.type.search')}}">
+                        <div class="form-group mb-0" style="display: flex;">
+                            <input class="searchInput" name="code"
+                                   style="height: 35px;border: 1px solid rgb(121, 117, 117, 0.5);"
+                                    placeholder="Mã phòng/Tên phòng">
+                
+                            <select name="room_type_id" class="form-control choose ml-1" id="tim-loai-phong" style="width:250px;margin-left: 8px;height: 35px">
+                                    <option value="">--Chọn loại phòng--</option>
+                                    @foreach($room_type as $type)
+                                        <option value="{{ $type->id }}">{{ $type->name }}</option>
+                                    @endforeach
+                            </select>
+                     
+                            <select name="status"  class="form-control choose" id="tim-trang-thai"  style="width:250px;margin-left: 8px;height: 35px">
+                                    <option value="">--Chọn trạng thái--</option>
+                            
+                                        <option value="0">Không hoạt động</option>
+                                        <option value="1">Hoạt động</option>
+
+            
+                             </select>
+                            
+                            <button type="submit" class="btn btn-primary" style="margin-left: 8px;height: 35px">
+                                <i class="las la-search p-1"></i>
+                            </button>
+                        </div>
+                    </form>
+                </div>
+                <div class="col-md-2">
+                       <a class="btn btn-sm btn-outline--primary mt-1" href="{{ route('admin.hotel.room.type.create') }}"><i
+                        class="las la-plus p-1"></i></a>
+                </div>
+            </div>
+        </div>
+
+  
+{{--        <div class="dropdown col-md-1 col-8" style="display: flex;--}}
+{{--                justify-content: end">--}}
+{{--            <a class="btn btn-outline-secondary dropdown-toggle d-flex justify-content-center--}}
+{{--                align-items-center" href="#" role="button"--}}
+{{--               data-bs-toggle="dropdown" aria-expanded="false">--}}
+{{--                Thao tác--}}
+{{--            </a>--}}
+{{--            <ul class="dropdown-menu">--}}
+{{--                <li><a class="dropdown-item"--}}
+{{--                       href="{{ route('admin.hotel.room.type.all.deleted') }}">Các phòng đã xóa</a>--}}
+{{--                </li>--}}
+{{--            </ul>--}}
+{{--        </div>--}}
     @endpush
 @endcan
 
@@ -136,6 +170,48 @@
                     }
                 })
             })
+
+              $(document).ready(function () {
+        $('.choose').change(function () {
+            var status = $('#tim-trang-thai').val();
+            var room_type_id = $('#tim-loai-phong').val();
+            var url = "{{ route('admin.hotel.room.type.ajax') }}";
+            $.ajax({
+                type: 'GET',
+                cache: false,
+                url: url,
+                data: {
+                    status: status,
+                    room_type_id: room_type_id,
+        
+                },
+                success: function (response) {
+                    if (response) {
+                        $('#data').html(response)
+                    }
+                },
+                error: function (error) {
+                    console.log(error);
+                }
+            })
+        });
+        //jquery for toggle sub menus
+        $('.has-arrow').click(function () {
+            $(this).next('.menu-side').slideToggle();
+            $(this).find('.dropdown').toggleClass('rotate');
+        });
+
+        //jquery for expand and collapse the sidebar
+        $('.menu-btn').click(function () {
+            $('.side-bar').addClass('active');
+            $('.menu-btn').css("visibility", "hidden");
+        });
+
+        $('.close-btn').click(function () {
+            $('.side-bar').removeClass('active');
+            $('.menu-btn').css("visibility", "visible");
+        });
+    });
         })
     </script>
 @endpush

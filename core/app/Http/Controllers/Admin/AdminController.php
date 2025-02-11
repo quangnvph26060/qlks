@@ -50,7 +50,9 @@ class AdminController extends Controller
             return collect($item)->count();
         })->sort()->reverse()->take(5);
 
-        return view('admin.dashboard', compact('pageTitle', 'widget', 'chart'));
+       return view('admin.dashboard', compact('pageTitle', 'widget', 'chart'));
+        // return view('admin.blank');
+
     }
 
 

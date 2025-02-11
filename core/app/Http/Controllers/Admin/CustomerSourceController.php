@@ -27,7 +27,7 @@ class CustomerSourceController extends Controller
         $source = new CustomerSource();
         $source->source_code = $request->source_code;
         $source->source_name = $request->source_name;
-        $source->unit_code =  $request->unit_code;
+        $source->unit_code =  unitCode();
         $source->save();
         $notify[] = ['success', 'Thêm nguồn khách hàng thành công'];
         return back()->withNotify($notify);
@@ -52,7 +52,7 @@ class CustomerSourceController extends Controller
         $source = CustomerSource::find($id);
         $source->source_code = $request->source_code;
         $source->source_name = $request->source_name;
-        $source->unit_code =  $request->unit_code;
+        // $source->unit_code =  $request->unit_code;
         $source->save();
         $notify[] = ['success', 'Cập nhật nguồn khách hàng thành công'];
         return back()->withNotify($notify);
