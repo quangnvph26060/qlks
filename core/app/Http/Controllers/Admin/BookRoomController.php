@@ -314,7 +314,7 @@ class BookRoomController extends Controller
             return response()->json(['error' => 'Đã xảy ra lỗi, không đặt phòng thành công ']);
         }
     }
-    // check in, out xem các đơn hàng ko được cùng ngày nhận trà bằng nhau 
+    // check in, out xem các đơn hàng ko được cùng ngày nhận trà bằng nhau
     public function bookEdit(Request $request)
     {
         DB::beginTransaction();
