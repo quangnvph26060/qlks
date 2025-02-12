@@ -136,13 +136,12 @@
     @endpush
 @endcan
 
-@push('script-lib')  
-      
+@push('script-lib')
     <script src="{{ asset('assets/admin/js/moment.min.js') }}"></script>
     <script src="{{ asset('assets/admin/js/daterangepicker.min.js') }}"></script>
     <script src="{{ asset('assets/validator/validator.js') }}"></script>
-    <script  src="{{ asset('assets/admin/js/room_booking.js') }}"></script>
-    <script  src="{{ asset('assets/admin/js/pagination.js') }}"></script>
+    <script src="{{ asset('assets/admin/js/room_booking.js') }}"></script>
+    <script src="{{ asset('assets/admin/js/pagination.js') }}"></script>
     <script src="https://cdn.jsdelivr.net/npm/@popperjs/core@2.5.3/dist/umd/popper.min.js"></script>
 @endpush
 
@@ -262,14 +261,27 @@
 @endpush
 
 @push('script')
-   <script>
+    <script>
         var showRoomUrl = "{{ route('admin.booking.showRoom') }}";
-        var checkRoomBookingUrl =  '{{ route('admin.booking.checkRoomBooking') }}';
-        var  searchCustomerUrl = '{{ route('admin.search.customer') }}';
-        var roomBookingUrl =  '{{ route('admin.room.booking') }}';
+        var checkRoomBookingUrl = '{{ route('admin.booking.checkRoomBooking') }}';
+        var searchCustomerUrl = '{{ route('admin.search.customer') }}';
+        var roomBookingUrl = '{{ route('admin.room.booking') }}';
         var roomBookingEditUrl = "{{ route('admin.room.booking.edit', ['id' => ':id']) }}";
         var bookingDetailUrl = "{{ route('admin.booking.details', ['id' => ':id']) }}";
         var checkInUrl = "{{ route('admin.room.check.in', ['id' => ':id']) }}";
         var deleteBookedRoomUrl = "{{ route('admin.booking.delete-booked-room', ['id' => ':id']) }}";
-   </script>
+    </script>
+
+    <script>
+        $(document).ready(function() {
+            $("#date-chon-phong-in").on("change", function() {
+                let checkInDate = new Date($(this).val());
+                if (!isNaN(checkInDate.getTime())) {
+                    checkInDate.setDate(checkInDate.getDate() + 1); // Thêm 1 ngày
+                    let checkOutDate = checkInDate.toISOString().split('T')[0]; // Format YYYY-MM-DD
+                    $("#date-chon-phong-out").val(checkOutDate);
+                }
+            });
+        });
+    </script>
 @endpush
