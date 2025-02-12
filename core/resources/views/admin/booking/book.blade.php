@@ -1,7 +1,7 @@
 @extends('admin.layouts.app')
 @section('panel')
     <div class="row">
-        <div class="col-lg-12">
+        {{-- <div class="col-lg-12" style="height: 10px">
             <div class="d-flex justify-content-between mb-3 row order-1">
                 <div class="dt-length col-md-6 col-4">
                     <select name="example_length" id="perPage" style=" padding: 1px 3px; margin-right: 8px;"
@@ -13,14 +13,16 @@
                     </select><label for="perPage"> entries per page</label>
                 </div>
             </div>
-        </div>
-        <div class="card b-radius--10">
-            <div class="card-body p-0">
+        </div> --}}
+        <div class="pagination-container"></div>
+        <div class="card b-radius--10 mt-1" >
+            <div class="card-body p-0">  
                 <div class="table-responsive--md">
+                  
                     <table class="table--light style--two table table-striped" id="data-table">
                         <thead>
                             <tr>
-
+                                <th>@lang('Hành động')</th>
                                 <th>@lang('STT')</th>
                                 <th>@lang('Mã đặt hàng')</th>
                                 <th>@lang('Mã phòng')</th>
@@ -34,7 +36,6 @@
                                 <th>@lang('Đặt cọc')</th>
                                 @can(['admin.hotel.room.type.edit', 'admin.hotel.room.type.status',
                                     'admin.hotel.room.type.destroy'])
-                                    <th>@lang('Hành động')</th>
                                 @endcan
                             </tr>
                         </thead>
@@ -47,15 +48,10 @@
 
                 </div>
             </div>
-            <div id="pagination" class="m-3">
-
-            </div>
             @include('admin.booking.partials.room_booking')
             @include('admin.booking.partials.room_booking_edit')
             @include('admin.booking.partials.confirm-room')
         </div>
-        <div class="pagination-container"></div>
-
     </div>
 @endsection
 
@@ -136,13 +132,12 @@
     @endpush
 @endcan
 
-@push('script-lib')  
-      
+@push('script-lib')
     <script src="{{ asset('assets/admin/js/moment.min.js') }}"></script>
     <script src="{{ asset('assets/admin/js/daterangepicker.min.js') }}"></script>
     <script src="{{ asset('assets/validator/validator.js') }}"></script>
-    <script  src="{{ asset('assets/admin/js/room_booking.js') }}"></script>
-    <script  src="{{ asset('assets/admin/js/pagination.js') }}"></script>
+    <script src="{{ asset('assets/admin/js/room_booking.js') }}"></script>
+    <script src="{{ asset('assets/admin/js/pagination.js') }}"></script>
     <script src="https://cdn.jsdelivr.net/npm/@popperjs/core@2.5.3/dist/umd/popper.min.js"></script>
 @endpush
 
@@ -183,14 +178,14 @@
         .pagination-container {
             display: flex;
             justify-content: center;
-            margin-top: 20px;
+            /* margin-top: 20px; */
         }
 
         .pagination-container button {
             background-color: #4634ff;
             color: white;
             border: 1px solid #ddd;
-            padding: 10px 15px;
+            padding: 4px 10px;
             margin: 0 5px;
             border-radius: 5px;
             cursor: pointer;
@@ -207,7 +202,9 @@
             background-color: #ddd;
             cursor: not-allowed;
         }
-
+        .body-wrapper {
+    padding: 6px 25px 10px !important;
+        }
         .pagination-container button.active {
             background-color: #4634ff;
             border-color: #4634ff;
@@ -258,18 +255,49 @@
         .background-primary td {
             color: white !important;
         }
+    #data-table {
+        border-collapse: collapse; /* Gộp viền bảng */
+    }
+    #data-table td, #data-table th {
+        line-height: 1 !important;
+    }
+#data-table td {
+    height: 30px !important;
+    overflow: hidden;
+    white-space: nowrap; /* Ngăn xuống dòng để giảm chiều cao */
+}
+
+
+#data-table td, #data-table th {
+    padding: 6px !important; /* Giảm padding để thu nhỏ chiều cao */
+}
+
+
     </style>
 @endpush
 
 @push('script')
-   <script>
+    <script>
         var showRoomUrl = "{{ route('admin.booking.showRoom') }}";
-        var checkRoomBookingUrl =  '{{ route('admin.booking.checkRoomBooking') }}';
-        var  searchCustomerUrl = '{{ route('admin.search.customer') }}';
-        var roomBookingUrl =  '{{ route('admin.room.booking') }}';
+        var checkRoomBookingUrl = '{{ route('admin.booking.checkRoomBooking') }}';
+        var searchCustomerUrl = '{{ route('admin.search.customer') }}';
+        var roomBookingUrl = '{{ route('admin.room.booking') }}';
         var roomBookingEditUrl = "{{ route('admin.room.booking.edit', ['id' => ':id']) }}";
         var bookingDetailUrl = "{{ route('admin.booking.details', ['id' => ':id']) }}";
         var checkInUrl = "{{ route('admin.room.check.in', ['id' => ':id']) }}";
         var deleteBookedRoomUrl = "{{ route('admin.booking.delete-booked-room', ['id' => ':id']) }}";
-   </script>
+    </script>
+
+    <script>
+        $(document).ready(function() {
+            $("#date-chon-phong-in").on("change", function() {
+                let checkInDate = new Date($(this).val());
+                if (!isNaN(checkInDate.getTime())) {
+                    checkInDate.setDate(checkInDate.getDate() + 1); // Thêm 1 ngày
+                    let checkOutDate = checkInDate.toISOString().split('T')[0]; // Format YYYY-MM-DD
+                    $("#date-chon-phong-out").val(checkOutDate);
+                }
+            });
+        });
+    </script>
 @endpush

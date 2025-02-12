@@ -566,15 +566,15 @@ function addRoomInBooking(data) {
                     let rowTotal = 0;
                     $('tr').each(function() {
                         $(this).find('input.deposit').each(function() {
-                            let depositValue = $(this).val().replace(/[,.]/g,
-                                '');
+                            let depositValue = $(this).val().replace(/[,.]/g, '');
+                                console.log(depositValue);
                             let numericDeposit = parseInt(depositValue) || 0;
                             rowTotal += numericDeposit;
                         });
                     });
                     $('#total_deposit').text(formatCurrency(rowTotal));
                     let priceString = $('#discountInput').val();
-                    let price = parseInt(priceString.replace(/\./g, ''));
+                    let price = parseInt(priceString.replace(/\./g, ""), 10);
                     price = isNaN(price) ? 0 : price;
                     totalBalance = totalPrice - rowTotal - price;
                     $('#total_balance').text(formatCurrency(totalBalance));
@@ -587,14 +587,14 @@ function addRoomInBooking(data) {
                 $('.custom-input-giam-gia').on('blur', function() {
                     // Lấy giá trị từ trường nhập liệu
                     let discountValue = $(this).val();
-                    let number = parseInt(discountValue.replace('.', ''));
+                    let number = parseInt(discountValue.replace(/\./g, ""), 10);
                     number = isNaN(number) ? 0 : number;
                     let priceString = $('#total_amount').text();
-                    let price = parseFloat(priceString.replace(/\./g, '').replace(' VND', ''));
+                    let price = parseFloat(priceString.replace(/\./g, "").replace(' VND', ""), 10);
 
                     let pricedeposit = $('#total_deposit').text();
-                    let deposit = parseFloat(pricedeposit.replace(/\./g, '').replace(' VND',
-                        ''));
+                    let deposit = parseFloat(pricedeposit.replace(/\./g, "").replace(' VND', ""), 10);
+
                     $('#total_balance').text(formatCurrency(price - deposit - number));
                     formatNumber(this);
                 });
@@ -1383,6 +1383,16 @@ function loadRoomBookings(page = 1) {
                 data.forEach(function(data, index) {
                     var html = `
                         <tr data-id="${data['id']}">
+                          <td>
+                                <svg class="svg_menu_check_in" xmlns="http://www.w3.org/2000/svg" width="30" height="30" viewBox="0 0 21 21"><g fill="currentColor" fill-rule="evenodd"><circle cx="10.5" cy="10.5" r="1"/><circle cx="10.5" cy="5.5" r="1"/><circle cx="10.5" cy="15.5" r="1"/></g></svg>
+                                <div class="dropdown menu_dropdown_check_in" id="dropdown-menu">
+                                    <div class="dropdown-item booked_room_edit" data-room-id="${data['booking_id']}">Sửa phòng</div>
+                                    <div class="dropdown-item booked_room" data-room-id="${data['id']}">Nhận phòng</div>
+                                    <div class="dropdown-item booked_room" data-room-id="${data['id']}">Đổi phòng</div>
+                                    <div class="dropdown-item delete-booked-room"  data-room-id="${data['id']}" >Xóa phòng</div>
+
+                                </div>
+                            </td>
                              <td>${index + 1  }</td>
                             <td>${data['booking_id']}</td>
                             <td>${data['room']['room_number']}</td>
@@ -1396,17 +1406,7 @@ function loadRoomBookings(page = 1) {
                             <td>${formatCurrency(data['deposit_amount'])}</td>
 
 
-                            <td>
-                                <svg class="svg_menu_check_in" xmlns="http://www.w3.org/2000/svg" width="30" height="30" viewBox="0 0 21 21"><g fill="currentColor" fill-rule="evenodd"><circle cx="10.5" cy="10.5" r="1"/><circle cx="10.5" cy="5.5" r="1"/><circle cx="10.5" cy="15.5" r="1"/></g></svg>
-                                <div class="dropdown menu_dropdown_check_in" id="dropdown-menu">
-                                    <div class="dropdown-item booked_room_edit" data-room-id="${data['booking_id']}">Sửa phòng</div>
-                                    <div class="dropdown-item booked_room" data-room-id="${data['id']}">Nhận phòng</div>
-                                    <div class="dropdown-item booked_room" data-room-id="${data['id']}">Đổi phòng</div>
-                                      <div class="dropdown-item booked_room_detail" data-room-id="${data['id']}">Chi tiết</div>
-                                    <div class="dropdown-item delete-booked-room"  data-room-id="${data['id']}" >Xóa phòng</div>
 
-                                </div>
-                            </td>
                         </tr>
                     `
                     $('.data-table').append(html);
