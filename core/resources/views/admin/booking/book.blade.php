@@ -1,7 +1,7 @@
 @extends('admin.layouts.app')
 @section('panel')
     <div class="row">
-        <div class="col-lg-12">
+        {{-- <div class="col-lg-12" style="height: 10px">
             <div class="d-flex justify-content-between mb-3 row order-1">
                 <div class="dt-length col-md-6 col-4">
                     <select name="example_length" id="perPage" style=" padding: 1px 3px; margin-right: 8px;"
@@ -13,14 +13,16 @@
                     </select><label for="perPage"> entries per page</label>
                 </div>
             </div>
-        </div>
-        <div class="card b-radius--10">
-            <div class="card-body p-0">
+        </div> --}}
+        <div class="pagination-container"></div>
+        <div class="card b-radius--10 mt-1" >
+            <div class="card-body p-0">  
                 <div class="table-responsive--md">
+                  
                     <table class="table--light style--two table table-striped" id="data-table">
                         <thead>
                             <tr>
-
+                                <th>@lang('Hành động')</th>
                                 <th>@lang('STT')</th>
                                 <th>@lang('Mã đặt hàng')</th>
                                 <th>@lang('Mã phòng')</th>
@@ -34,7 +36,6 @@
                                 <th>@lang('Đặt cọc')</th>
                                 @can(['admin.hotel.room.type.edit', 'admin.hotel.room.type.status',
                                     'admin.hotel.room.type.destroy'])
-                                    <th>@lang('Hành động')</th>
                                 @endcan
                             </tr>
                         </thead>
@@ -47,15 +48,10 @@
 
                 </div>
             </div>
-            <div id="pagination" class="m-3">
-
-            </div>
             @include('admin.booking.partials.room_booking')
             @include('admin.booking.partials.room_booking_edit')
             @include('admin.booking.partials.confirm-room')
         </div>
-        <div class="pagination-container"></div>
-
     </div>
 @endsection
 
@@ -183,14 +179,14 @@
         .pagination-container {
             display: flex;
             justify-content: center;
-            margin-top: 20px;
+            /* margin-top: 20px; */
         }
 
         .pagination-container button {
             background-color: #4634ff;
             color: white;
             border: 1px solid #ddd;
-            padding: 10px 15px;
+            padding: 4px 10px;
             margin: 0 5px;
             border-radius: 5px;
             cursor: pointer;
@@ -207,7 +203,9 @@
             background-color: #ddd;
             cursor: not-allowed;
         }
-
+        .body-wrapper {
+    padding: 6px 25px 10px !important;
+        }
         .pagination-container button.active {
             background-color: #4634ff;
             border-color: #4634ff;
@@ -258,6 +256,24 @@
         .background-primary td {
             color: white !important;
         }
+    #data-table {
+        border-collapse: collapse; /* Gộp viền bảng */
+    }
+    #data-table td, #data-table th {
+        line-height: 1 !important;
+    }
+#data-table td {
+    height: 30px !important;
+    overflow: hidden;
+    white-space: nowrap; /* Ngăn xuống dòng để giảm chiều cao */
+}
+
+
+#data-table td, #data-table th {
+    padding: 6px !important; /* Giảm padding để thu nhỏ chiều cao */
+}
+
+
     </style>
 @endpush
 

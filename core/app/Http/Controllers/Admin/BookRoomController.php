@@ -34,7 +34,7 @@ class BookRoomController extends Controller
     public function getBooking(Request $request)
     {
         $perPage = 10;
-        $roomBookings = RoomBooking::active()->with('room', 'admin')->where('unit_code', unitCode())->orderBy('created_at', 'asc')->paginate($perPage);
+        $roomBookings = RoomBooking::active()->with('room', 'admin')->where('unit_code', unitCode())->orderBy('created_at', 'desc')->paginate($perPage);
         return response([
             'status' => 'success',
             'data' => $roomBookings->items(),

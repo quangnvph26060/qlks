@@ -43,7 +43,7 @@
 .add-book-room{
     cursor: pointer;
     text-wrap: nowrap;
-    padding: 8px 12px;
+    padding: 4px 12px;
     color: #fff;
     background-color: #337ab7;
     border-color: #2e6da4;
@@ -120,7 +120,7 @@ body.modal-open {
 .add-book-room{
     cursor: pointer;
     text-wrap: nowrap;
-    padding: 8px 12px;
+    padding: 4px 12px;
     color: #fff;
     background-color: #337ab7;
     border-color: #2e6da4;
@@ -825,7 +825,7 @@ h5 {
     box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
     padding: 8px 0;
     z-index: 1000;
-    right: 18px;
+    /* right: 18px; */
   }
   .menu_dropdown_check_in.show {
     display: block;
