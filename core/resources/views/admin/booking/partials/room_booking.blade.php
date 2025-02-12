@@ -14,6 +14,26 @@
                                         aria-label="Close"></button>
                                 </div>
 
+                                </div>
+                                <div class="modal-body overflow-add-room">
+                                    <table class="table table-striped">
+                                        <thead>
+                                            <tr>
+                                                <th data-table="Hạng phòng">Hạng phòng</th>
+                                                <th data-table="Phòng">Phòng</th>
+                                                <th data-table="Giá">Giá</th>
+                                                <th data-table="Thao tác">Thao tác</th>
+
+                                            </tr>
+                                        </thead>
+
+                                        <tbody id="show-room">
+
+                                        </tbody>
+
+                                    </table>
+                                </div>
+
                             </div>
                             <div class="modal-body overflow-add-room">
                                 <table class="table table-striped">
@@ -113,8 +133,13 @@
                                     </div>
                                     <div class="col-md-8 mb-3 mt-2">
                                         <label for="phone" class="form-label">Số điện thoại</label>
-                                        <input type="text" id="phone" name="phone" class="form-control"
-                                            placeholder="Số điện thoại">
+                                        {{-- <input type="text" id="phone" name="phone" class="form-control"
+                                            placeholder="Số điện thoại"> --}}
+                                            <select id="selectphone" name="phone" class="form-control select2" style="width: 100%;">
+                                                <option value="">Chọn số điện thoại</option>
+
+                                                <!-- Thêm các số điện thoại khác ở đây -->
+                                            </select>
                                     </div>
                                     <div class="mb-3">
                                         <p class="add-room-booking" style="width: 185px;">

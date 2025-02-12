@@ -1,22 +1,24 @@
 @extends('admin.layouts.app')
 @section('panel')
     <div class="row">
-        <div class="col-lg-12">
+        <div class="col-lg-12">  <div class="pagination-container"> </div>
             <div class="card b-radius--10">
+
                 <div class="card-body p-0">
-                    <div class="table-responsive--md table-responsive">
-                        <table class="table--light style--two table">
+                    <div class="table-responsive--md table-responsive mt-1">
+                        <table class="table--light style--two table" id="data-table">
                             <thead>
                                 <tr>
-                                    <th>@lang('STT')</th>
-                                    <th>@lang('Tên phòng')</th>
-                                    <th>@lang('Ngày bắt đầu')</th>
-                                    <th>@lang('Ngày kết thúc')</th>
-                                    <th>@lang('Trạng thái')</th>
-                                    <th>@lang('Mã cơ sở')</th>
+                                    <th data-table="Hạng phòng">Hạng phòng</th>
+                                    <th data-table="Phòng">Tên phòng</th>
+                                    <th data-table="Ngày">Ngày</th>
+                                    <th data-table="Trạng thái phòng">Trạng thái phòng</th>
+                                    <th data-table="Giá">Giá</th>
+                                    {{-- <th data-table="Thao tác">Thao tác</th> --}}
                                 </tr>
                             </thead>
-                            <tbody class="data-table">
+
+                            <tbody id="show-room">
 
                             </tbody>
                         </table>
@@ -29,7 +31,7 @@
                 @endif --}}
             </div>
         </div>
-        <div class="pagination-container"> </div>
+
     </div>
 
 
@@ -37,30 +39,36 @@
     @can('admin.hotel.room.search')
         @push('breadcrumb-plugins')
             <!-- Form tìm kiếm trực tiếp -->
-            <form action="{{ route('admin.manage.room.status') }}" method="GET" id="searchForm" class="mx-5">
-                @csrf
-                <div class="input-group" style="gap:10px">
-                    <div class="">
-                        <label for="">Tên phòng</label>
-                        <select class="form-select" id="room_number">
-                            <option value="">Chọn tên phòng</option>
-                            @foreach ($room as $item)
-                                <option value="{{ $item->id }}">{{ $item->room_number }}</option>
-                            @endforeach
-                        </select>
-                    </div>
-                    <div class="">
-                        <label for="">Trạng thái phòng</label>
-                        <select class="form-select" id="status_room">
-                            <option value="">Chọn trạng tên phòng</option>
-                            @foreach ($roomStatus as $item)
-                                <option value="{{ $item->id }}">{{ $item->status_name }}</option>
-                            @endforeach
-                        </select>
-                    </div>
+            <div class=" mt-2 d-flex mb-2" style="gap: 10px;justify-content: space-around;">
+                <div class="">
+                    <label for="">Chọn hạng phòng</label>
+                    <select class="form-select" id="selected-hang-phong">
+                    </select>
                 </div>
+                <div class="">
+                    <label for="">Chọn tên phòng</label>
+                    <select class="form-select" id="selected-name-phong">
+
+                    </select>
                 </div>
-            </form>
+                <div class="">
+                    <label for="">Từ ngày</label>
+                    <input type="date" class="form-control " id="date-chon-phong-in" style="height: 38px">
+                </div>
+                <div class="">
+                    <label for="">Đến ngày</label>
+                    <input type="date" class="form-control" id="date-chon-phong-out" style="height: 38px">
+                </div>
+                <div class="">
+                    <label for="">Trạng thái phòng</label>
+                    <select class="form-select" id="status-room">
+                        <option value="">Chọn trạng tên phòng</option>
+                        <option value="Trống">Trống</option>
+                        <option value="Đã đặt">Đã đặt</option>
+                        <option value="Đã nhận">Đã nhận</option>
+                    </select>
+                </div>
+            </div>
         @endpush
     @endcan
 
@@ -75,7 +83,7 @@
         @lang('Thêm mới')</button>
 
 @endpush --}}
-@push('script-lib')  
+@push('script-lib')
     <script  src="{{ asset('assets/admin/js/pagination.js') }}"></script>
 @endpush
 
@@ -84,14 +92,14 @@
           .pagination-container {
             display: flex;
             justify-content: center;
-            margin-top: 20px;
+            /* margin-top: 20px; */
         }
 
         .pagination-container button {
             background-color: #4634ff;
             color: white;
             border: 1px solid #ddd;
-            padding: 10px 15px;
+            padding: 4px 10px;
             margin: 0 5px;
             border-radius: 5px;
             cursor: pointer;
@@ -128,13 +136,13 @@
             border-color: #4634ff;
         }
 
-        .pagination-container button:first-child {
+        /* .pagination-container button:first-child {
             border-radius: 5px 0 0 5px;
         }
 
         .pagination-container button:last-child {
             border-radius: 0 5px 5px 0;
-        }
+        } */
         .upload-box {
             width: 100%;
             height: 200px;
@@ -204,6 +212,39 @@
             z-index: 1080;
             /* Đảm bảo select2 hiển thị trên modal */
         }
+        .background-primary {
+            background: #0b138d;
+        }
+
+        .background-yellow {
+            background-color: #eeddaa;
+        }
+
+        .background-white {
+            color: #5b6e88;
+            background-color: #f0f1f1;
+        }
+
+        .background-yellow td,
+        .background-primary td {
+            color: white !important;
+        }
+        #data-table {
+        border-collapse: collapse; /* Gộp viền bảng */
+    }
+        #data-table td, #data-table th {
+            line-height: 1 !important;
+        }
+        #data-table td {
+            height: 30px !important;
+            overflow: hidden;
+            white-space: nowrap; /* Ngăn xuống dòng để giảm chiều cao */
+        }
+
+
+        #data-table td, #data-table th {
+            padding: 6px !important; /* Giảm padding để thu nhỏ chiều cao */
+        }
     </style>
 @endpush
 
@@ -211,7 +252,16 @@
     <script>
         "use strict";
         var url = "{{ route('admin.manage.room.status.history') }}";
+        var showRoomUrl = "{{ route('admin.booking.showRoom') }}";
+        function formatCurrency(amount) {
+            const parts = amount.toString().split('.');
+            const integerPart = parts[0];
+            const formattedInteger = integerPart.replace(/\B(?=(\d{3})+(?!\d))/g, '.');
+
+            return formattedInteger + ' VND';
+        }
         $(document).ready(function () {
+
             $("#room_number, #status_room").change(function () {
                 let roomId = $("#room_number").val();
                 let statusId = $("#status_room").val();
@@ -233,6 +283,150 @@
                     }
                 });
             });
+
+            function showRoom(data = "", checkInDateValue = "", checkOutDateValue = "", selectedOptionHangPhong = "",
+                selectedOptionNamePhong = "", selectedOptionStatusPhong = "") {
+                $('#loading').show();
+                $('[id="date-chon-phong-in"]').val(checkInDateValue);
+                $('[id="date-chon-phong-out"]').val(checkOutDateValue);
+                $.ajax({
+                    url: showRoomUrl,
+                    type: 'POST',
+                    data: {
+                        roomIds: data,
+                        checkInDate: checkInDateValue,
+                        checkOutDate: checkOutDateValue,
+                        optionHangPhong: selectedOptionHangPhong,
+                        optionNamePhong: selectedOptionNamePhong,
+                        optionStatusPhong: selectedOptionStatusPhong,
+                    },
+                    success: function(data) {
+                        // <p data-id="${ item.id }" data-room_type_id="${ item.room_type_id }" class="add-book-room" id="add-book-room">Đặt phòng</p>
+                        var tbody = $('#show-room');
+
+                        const dataNew = Object.values(data.data);
+                        let seenRooms = new Set();
+                        tbody.empty();
+                        dataNew.forEach(function(item) {
+                            let rowClass = '';
+                            let isFirst = !seenRooms.has(item.room_number);
+                            seenRooms.add(item.room_number);
+                            // Nếu không phải bản ghi đầu tiên, đặt class theo trạng thái
+                            if (!isFirst) {
+                                if (item.check_booked === 'Đã nhận') {
+                                    rowClass = "background-primary";
+                                } else if (item.check_booked === 'Đã đặt') {
+                                    rowClass = 'background-yellow';
+                                }
+                            } else {
+                                if (item.check_booked === 'Đã nhận') {
+                                    rowClass = "background-primary";
+                                } else if (item.check_booked === 'Đã đặt') {
+                                    rowClass = 'background-yellow';
+                                } else {
+                                    rowClass = "background-white";
+                                }
+                            }
+                            // <td>
+                            //                 <input type="checkbox" ${item.status == 1 ? 'disabled' : ''} data-date="${ item.date }" data-id="${ item.id }" data-room_type_id="${ item.room_type_id }" id="checkbox-${item.id}">
+                            //             </td>
+                            var tr = `
+                                    <tr class="${rowClass}">
+                                        <td style="${isFirst ? 'font-weight: bold;' : ''}"> ${ item.room_type['name'] } </td>
+                                        <td style="${isFirst ? 'font-weight: bold;' : ''}"> ${ item.room_number } </td>
+                                        <td style="${isFirst ? 'font-weight: bold;' : ''}"> ${ formatDate(item.date) } </td>
+                                        <td style="${isFirst ? 'font-weight: bold;' : ''}"> ${ item.check_booked } </td>
+                                        <td style="${isFirst ? 'font-weight: bold;' : ''}"> ${ formatCurrency(item.room_type.room_type_price['unit_price']) } </td>
+
+                                    </tr>
+                                `;
+                            tbody.append(tr);
+
+                        });
+                        // hạng phòng
+                        var selected_hang = $('#selected-hang-phong');
+                        selected_hang.empty();
+                        let option = `<option value="">Chọn hạng phòng</option>`;
+                        data.roomType.forEach(function(item) {
+                            if (item.id == data.option_hang_phong) {
+                                option += `<option value="${item.id}" selected>${item.name}</option>`;
+                            } else {
+                                option += `<option value="${item.id}">${item.name}</option>`;
+                            }
+                        });
+                        selected_hang.append(option);
+
+                        // tên phòng
+                        var selected_name = $('#selected-name-phong');
+                        selected_name.empty();
+                        let options = `<option value="">Chọn tên phòng</option>`;
+
+
+                        data.room.forEach(function(item) {
+                            if (item.id == data.option_name_phong) {
+                                options +=
+                                    `<option value="${item.id}" selected>${item.room_number}</option>`;
+                            } else {
+                                options += `<option value="${item.id}">${item.room_number}</option>`;
+                            }
+                        });
+
+                        selected_name.append(options);
+                        // trạng thái phòng
+                        // var selected_status = $('#status-room');
+                        // selected_status.empty();
+                        // let status = ``;
+                        // if(data.option_status_phong === null){
+                        //      status += `<option value="">Chọn trạng thái phòng</option>`;
+                        // }else{
+                        //      status += `<option value="${data.option_status_phong}">${data.option_status_phong}</option>`;
+                        // }
+                        // selected_status.append(status);
+                        $('#loading').hide();
+                    },
+                    error: function(error) {
+                        $('#loading').hide();
+                        console.log('Error:', error);
+                    }
+                });
+            }
+
+            $('#selected-name-phong, #selected-hang-phong, #date-chon-phong-out, #date-chon-phong-in, #status-room').on(
+                'change',
+                function() {
+                    var selectedOptionHangPhong = $('#selected-hang-phong').val();
+                    var selectedOptionNamePhong = $('#selected-name-phong').val();
+                    var selectedOptionStatusPhong = $('#status-room').val();
+                    const roomIds = [];
+                    $('#list-booking tr').each(function() {
+                        const roomId = $(this).attr('data-room-id');
+
+                        if (roomId) {
+                            roomIds.push(roomId);
+                        }
+                    });
+                    const checkInDateValue = $('#date-chon-phong-in').val();
+                    const checkOutDateValue = $('#date-chon-phong-out').val();
+                    showRoom(roomIds, checkInDateValue, checkOutDateValue, selectedOptionHangPhong, selectedOptionNamePhong,
+                        selectedOptionStatusPhong)
+            });
+            const date_booking = new Date();
+            const date_yyyy = date_booking.getFullYear();
+            const date_mm = String(date_booking.getMonth() + 1).padStart(2, '0');
+            const date_dd = String(date_booking.getDate()).padStart(2, '0');
+            const date_hour = String(date_booking.getHours()).padStart(2, '0'); // Giờ
+            const date_minutes = String(date_booking.getMinutes()).padStart(2, '0'); // Phút
+
+            const formattedDates = `${date_yyyy}-${date_mm}-${date_dd}`;
+            const formattedTimes = `${date_hour}:${date_minutes}`;
+
+            console.log(formattedDates);
+            let date = new Date(formattedDates);
+                    date.setDate(date.getDate() + 1);
+            // $('[id="date-chon-phong-in"]').val(formattedDates);
+            // // $('[id="date-chon-phong-out"]').val(formattedTimes);
+            showRoom('', formattedDates, date.toISOString().split('T')[0], '' );
+
         });
         function formatDate(inputDate) {
     // Chia chuỗi ngày thành các phần tử: năm, tháng, ngày
@@ -280,7 +474,7 @@
                         console.error("Lỗi khi gửi AJAX:", error);
                     }
                 });
-           
+
         }
         $(document).ready(function() {
             loadingData()

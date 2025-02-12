@@ -435,7 +435,7 @@ class BookRoomController extends Controller
 
     public function searchCustomer(Request $request)
     {
-        $data = Customer::where('name', $request->name)->first();
+        $data = Customer::where('name', $request->name)->get();
         return response()->json([
             'status' => 'success',
             'data'   => $data
