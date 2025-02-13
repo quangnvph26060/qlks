@@ -197,11 +197,12 @@ $(document).on('click', '.confirmBookingBtn', function () {
 //     dropdownParent: $('.select2-parent')
 // });
 $(document).ready(function () {
-    $('#searchBtn').click(function () {
-        var search_value = $('#searchInput').val();
+    $('#searchInput').blur(function () {
+        var search_value = $(this).val();
         var option_customer_source = $('#selected-customer-source').val();
         showCustomer(search_value, option_customer_source);
     });
+    
 });
 
 function showCustomer(value = "", option_customer_source = "") {
@@ -362,6 +363,7 @@ $('#selected-customer-source').on('change', function () {
     var searchInput = $('#searchInput').val();
     showCustomer(searchInput, selectedOptionCustomerSource)
 });
+
 $('#selected-name-phong, #selected-hang-phong, #date-chon-phong-out, #date-chon-phong-in, #status-room').on(
     'change',
     function () {
@@ -417,6 +419,15 @@ $('.add-customer-booked').on('click', function () {
     }
     let Id = selectedCustomer.data('id');
     findCustomerById(Id)
+});
+
+$(document).on("dblclick", "#data-table tbody tr", function () {
+    let customerId = $(this).find('input[type="radio"]').data("id");
+    if (!customerId) {
+        alert("Không tìm thấy ID khách hàng. Kiểm tra lại input radio!");
+        return;
+    }
+    findCustomerById(customerId);
 });
 function findCustomerById(id){
     $.ajax({

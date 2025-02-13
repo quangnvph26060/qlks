@@ -142,7 +142,7 @@
 
                             </select>
                             <input type="text" class="form-control" id="searchInput" placeholder="Tìm kiếm">
-                            <p class="btn btn-primary" id="searchBtn">Tìm kiếm</p>
+                        
                         </div>
                     </div>
                     <div class="modal-body overflow-add-room">
@@ -217,6 +217,11 @@
 @endpush
 @push('style')
     <style scoped>
+        #data-table tbody tr:hover {
+            background-color: #f0f0f0; /* Màu nền khi hover */
+            cursor: pointer; /* Con trỏ chuột đổi thành dạng pointer */
+        }
+
         .table-responsive--md {
             overflow-x: auto;
             /* Enable horizontal scrolling if the table overflows */

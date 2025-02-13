@@ -131,7 +131,6 @@
                                         {{-- <input type="text" id="phone" name="phone" class="form-control"
                                             placeholder="Số điện thoại"> --}}
                                             <select id="select-customer-source" name="customer_source" class="form-control " style="width: 100%;">
-                                              
                                             </select>
                                     </div>
                                     <div class="col-md-8 mb-3 mt-3 d-flex align-items-center result-add-customer" style="gap:10px">
