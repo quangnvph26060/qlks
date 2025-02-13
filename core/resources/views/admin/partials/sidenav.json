@@ -129,6 +129,14 @@
             },
             {
                 "keyword": [
+                    "Danh mục nhóm khách"
+                ],
+                "title": "Danh mục nhóm khách",
+                "route_name": "admin.hotel.customer.group.all",
+                "menu_active": "admin.hotel.customer.group.all"
+            },
+            {
+                "keyword": [
                     "Danh mục trạng thái"
                 ],
                 "title": "Danh mục trạng thái",

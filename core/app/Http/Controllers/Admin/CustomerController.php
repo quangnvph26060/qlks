@@ -106,7 +106,7 @@ class CustomerController extends Controller
     public function search(Request $request)
     {
         $pageTitle = '';
-        if($request->input('customer_code') == '' && $request->input('name') == '' && $request->input('phone') == ''  && $request->input('address') == ''  && $request->input('unit_code') == '')
+        if($request->input('customer_code') == '' && $request->input('name') == '' && $request->input('phone') == '')
         {
             $customers = Customer::orderBy('id', 'desc')->paginate(30);
         }
@@ -120,7 +120,7 @@ class CustomerController extends Controller
                 ->where('name','LIKE', '%'.$request->input('name').'%')
                 ->where('phone','LIKE', '%'.$request->input('phone').'%')
                 ->where('address','LIKE', '%'.$request->input('address').'%')
-                ->where('unit_code','LIKE', '%'.$request->input('unit_code').'%')
+                ->where('unit_code',unitCode())
                 ->orderBy('id', 'desc')->paginate(30);
         }
         $unit_codes = HotelFacility::select('ma_coso')->get();

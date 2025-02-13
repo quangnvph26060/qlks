@@ -9,21 +9,52 @@
                         <table class="table table--light style--two">
                             <thead>
                             <tr>
+                                <th>@lang('STT')</th>
+                                <th>@lang('Hành động')</th>
                                 <th>@lang('Mã KH')</th>
                                 <th>@lang('Tên')</th>
                                 <th>@lang('Số điện thoại')</th>
-{{--                                <th>@lang('Email')</th>--}}
+                                <th>@lang('Email')</th>
                                 <th>@lang('Địa chỉ')</th>
                                 <th>@lang('Ngày tạo')</th>
 {{--                                <th>@lang('Ghi chú')</th>--}}
                                 <th>@lang('Trạng thái')</th>
                         <!--         <th>@lang('Mã đơn vị')</th> -->
-                                <th>@lang('Hành động')</th>
+                            
                             </tr>
                             </thead>
                             <tbody>
                             @forelse($customers as $customer)
                                 <tr data-id="{{ $customer->id }}">
+                                    <td>{{ $loop->iteration }}</td>
+                                  
+                                    <td>
+                                        <svg class="svg_menu_check_in" xmlns="http://www.w3.org/2000/svg" width="30" height="30" viewBox="0 0 21 21"><g fill="currentColor" fill-rule="evenodd"><circle cx="10.5" cy="10.5" r="1"/><circle cx="10.5" cy="5.5" r="1"/><circle cx="10.5" cy="15.5" r="1"/></g></svg>
+                            
+                                        <div class="dropdown menu_dropdown_check_in" id="dropdown-menu">
+                                            <div class="dropdown-item booked_room_edit"><a
+                                            data-id="{{ $customer->id }}" data-bs-toggle="modal" data-bs-target="#edit-customer">
+                                                Sửa khách hàng
+                                            </a></div>
+                                            <div class="dropdown-item booked_room">    @if($customer->status == 1)
+                                            <button class=" confirmationBtn"
+                                                    data-action="{{ route('admin.hotel.customer.status', $customer->id) }}"   data-id="{{ $customer->id }}"
+                                                    data-question="@lang('Bạn có chắc chắn muốn tắt trạng thái này không?')" type="button">
+                                                Tắt hoạt động
+                                            </button>
+                                            @else
+                                                <button class="confirmationBtn"
+                                                        data-action="{{ route('admin.hotel.customer.status', $customer->id) }}"   data-id="{{ $customer->id }}"
+                                                        data-question="@lang('Bạn có chắc chắn muốn tắt trạng thái này không?')" type="button">
+                                                    Hoạt động
+                                                </button>
+                                            @endif</div>
+                                              <div class="dropdown-item booked_room_detail"> <button class=" btn-delete"
+                                                data-id="{{ $customer->id }}" data-modal_title="@lang('Xóa khách hàng')" type="button"
+                                                data-pro="0">Xóa khách hàng</div>
+                              
+                                        </div>
+                                    </td>
                                     <td>
                                         <span class="fw-bold">{{ $customer->customer_code }}</span>
                                     </td>
@@ -33,49 +64,29 @@
                                     <td>
                                         {{ $customer->phone }}
                                     </td>
-{{--                                    <td>--}}
-{{--                                        {{ $customer->email }}--}}
-{{--                                    </td>--}}
+                                   <td>
+                                       {{ $customer->email }}
+                                   </td>
                                     <td>
                                         {{ $customer->address }}
                                     </td>
                                     <td>
-                                        {{ showDateTime($customer->created_at) }} <br> {{ diffForHumans($customer->created_at) }}
+                                    {{ (new DateTime($customer->created_at))->format('d/m/Y')  }}
                                     </td>
 
 {{--                                    <td>--}}
 {{--                                        {{ $customer->note }}--}}
 {{--                                    </td>--}}
-                                    <td class="status-hotel">
-                                        {!! $customer->styleStatus() !!}
-                                    </td>
+                                        <td style="width:50px;text-align: center">
+                                        @if(!empty($customer->status))
+                                            <i class="fa fa-check" style="color:green;text-align: center"></i>
+                                        @else
+                                            <i class="fa fa-close" style="color:red;text-align: center"></i>
+                                        @endif</td>
                               <!--       <td>
                                         {{ $customer->unit_code }}
                                     </td> -->
-                                    <td>
-                                        <a class="btn btn-sm btn-outline--primary btn-edit-customer"
-                                           data-id="{{ $customer->id }}" data-bs-toggle="modal" data-bs-target="#edit-customer">
-                                            <i class="la la-pencil"></i>
-                                        </a>
-                                        @if($customer->status == 1)
-                                            <button class="btn btn-sm btn-outline--danger confirmationBtn"
-                                                    data-action="{{ route('admin.hotel.customer.status', $customer->id) }}"   data-id="{{ $customer->id }}"
-                                                    data-question="@lang('Bạn có chắc chắn muốn tắt trạng thái này không?')" type="button">
-                                                <i class="la la-eye-slash"></i>
-                                            </button>
-                                        @else
-                                            <button class="btn btn-sm btn-outline--success confirmationBtn"
-                                                    data-action="{{ route('admin.hotel.customer.status', $customer->id) }}"   data-id="{{ $customer->id }}"
-                                                    data-question="@lang('Bạn có chắc chắn muốn tắt trạng thái này không?')" type="button">
-                                                <i class="la la-eye-slash"></i>
-                                            </button>
-                                        @endif
-                                        <button class="btn btn-sm btn-outline--danger btn-delete icon-delete-room"
-                                                data-id="{{ $customer->id }}" data-modal_title="@lang('Xóa khách hàng')" type="button"
-                                                data-pro="0">
-                                            <i class="fas fa-trash"></i>
-                                        </button>
-                                    </td>
+                               
                                 </tr>
                             @empty
                                 <tr>
@@ -99,11 +110,15 @@
     @push('breadcrumb-plugins')
         <div class="card-body mt-1">
             <div class="row">
-                <div class="col-md-12 col-sm-12">
+                <div class="col-md-12 col-sm-12 d-flex">
+                     <button class="btn btn-sm btn-outline--primary" data-modal_title="Thêm mới khách hàng" type="button"
+                                                data-bs-toggle="modal" data-bs-target="#customer" style="padding-right:15px;padding-left:15px">
+                        <i class="las la-plus"></i>
+                    </button>
                     <form role="form" enctype="multipart/form-data" action="{{route('admin.hotel.customer.search')}}">
                         <div class="form-group position-relative mb-0" id="btn-add-customer">
                             <input class="searchInput" name="customer_code"
-                                   style="height: 35px;width:20%;border: 1px solid rgb(121, 117, 117, 0.5);"
+                                   style="height: 35px;width:20%;border: 1px solid rgb(121, 117, 117, 0.5);margin-left: 8px;"
                                     placeholder="Mã khách hàng">
                             <input class="searchInput" name="name"
                                    style="height: 35px;width:20%;border: 1px solid rgb(121, 117, 117, 0.5); margin-left: 8px;"
@@ -117,19 +132,14 @@
                   <!--           <input class="searchInput" name="unit_code"
                                    style="height: 35px;width:18%;border: 1px solid rgb(121, 117, 117, 0.5); margin-left: 8px;"
                                    type="search" placeholder="Mã đơn vị"> -->
-                            <button type="submit" class="btn btn-primary" style="padding:10px">
+                            <button type="submit" class="btn btn-primary" style="padding-right:15px;padding-left:15px">
                                 <i class="las la-search"></i>
                             </button>
 
                         </div>
                     </form>
                 </div>
-                <div class="col-md-2">
-                    <button class="btn mt-1 p-2 btn-sm btn-outline--primary" data-modal_title="Thêm mới khách hàng" type="button"
-                                                data-bs-toggle="modal" data-bs-target="#customer">
-                        <i class="las la-plus"></i>
-                    </button>
-                </div>
+          
             </div>
         </div>
     @endpush
@@ -191,8 +201,8 @@
                             </div>
                             <div class="mb-3">
                                 <label class="form-label">Trạng thái</label><br>
-                                <input type="radio" name="status" value="1" id="statusActive">Hoạt động
-                                <input type="radio" name="status" value="0" id="statusInactive" checked>
+                                <input type="radio" name="status" value="1" id="statusActive" checked>Hoạt động
+                                <input type="radio" name="status" value="0" id="statusInactive">
                                 Không hoạt động
                             </div>
                   <!--           <div class=" mb-3">
@@ -293,6 +303,18 @@
         </div>
     </div>
 @endsection
+@push('style-lib')
+    <link rel="stylesheet" type="text/css" href="{{ asset('assets/admin/css/daterangepicker.css') }}">
+    <link rel="stylesheet" href="{{ asset('assets/global/css/modal.css') }}">
+    <style>
+            .navbar__right{
+                display: none;
+            }
+            #navbar-wrapper{
+                padding: 0px 30px 20px;
+            }
+    </style>
+@endpush
 @push('script')
 
 <script>
@@ -380,5 +402,31 @@
 
     });
 
+
+         $(document).ready(function() {
+
+            $(document).on('click', '.svg-icon', function(e) {
+                e.stopPropagation();
+                const $dropdown = $(this).siblings('.menu_dropdown');
+                $('.menu_dropdown').not($dropdown).removeClass('show');
+                $dropdown.toggleClass('show');
+            });
+            $(document).on('click', function() {
+                $('.menu_dropdown').removeClass('show');
+            });
+            $(document).on('click', '.svg_menu_check_in', function(e) {
+                e.stopPropagation();
+                const $dropdown = $(this).siblings('.menu_dropdown_check_in');
+                $('.menu_dropdown_check_in').not($dropdown).removeClass('show');
+                $dropdown.toggleClass('show');
+            });
+            $(document).on('click', function() {
+                $('.menu_dropdown_check_in').removeClass('show');
+            });
+            $(document).on('click', function() {
+                $('.menu_dropdown').removeClass('show');
+            });
+
+        });
 </script>
 @endpush

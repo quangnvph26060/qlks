@@ -263,6 +263,15 @@ Route::middleware('admin', 'adminPermission')->group(function () {
             Route::post('delete-source/{id}', 'delete')->name('delete');
         });
 
+        Route::controller('CustomerGroupController')->name('customer.group.')->prefix('customer-groups')->group(function () {
+            Route::get('', 'index')->name('all');
+            Route::post('/source/add-group', 'store')->name('store');
+            Route::get('source/edit-group/{id}', 'edit')->name('edit');
+            Route::put('/source/update-group/{id}', 'update')->name('update');
+            Route::post('delete-group/{id}', 'delete')->name('delete');
+        });
+
+
         Route::controller('CustomerController')->name('customer.')->prefix('customers')->group(function () {
             Route::get('', 'index')->name('all');
             Route::post('/add-customer', 'store')->name('store');

@@ -98,7 +98,8 @@ function generateErrorMessage(code, values = []) {
         TTT001: 'Tên trạng thái không được để trống',
         MN001: 'Mã nguồn không được để trống',
         TN001: 'Tên nguồn không được để trống',
-
+        MNH001: 'Mã nhóm không được để trống',
+        TNH001: 'Tên nhóm không được để trống',
         // khai báo thêm các message vào đây ...
     };
     const errorMessage = errorMessages[code];

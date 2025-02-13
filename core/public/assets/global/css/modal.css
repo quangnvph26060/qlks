@@ -1,0 +1,41 @@
+.menu_dropdown {
+    display: none;
+    position: absolute;
+    background-color: #fff;
+    border: 1px solid #ccc;
+    border-radius: 4px;
+    box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
+    padding: 8px 0;
+    z-index: 1000;
+    right: 18px;
+  }
+  .menu_dropdown_check_in {
+    display: none;
+    position: absolute;
+    background-color: #fff;
+    border: 1px solid #ccc;
+    border-radius: 4px;
+    box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
+    padding: 8px 0;
+    z-index: 1000;
+    right: 18px;
+  }
+  .menu_dropdown_check_in.show {
+    display: block;
+  }
+
+  .menu_dropdown.show {
+    display: block;
+  }
+
+  .dropdown-item {
+    padding: 8px 16px;
+    cursor: pointer;
+    font-size: 14px;
+    color: black;
+    background: white;
+  }
+  .dropdown-item button{
+    background: white;
+
+  }
