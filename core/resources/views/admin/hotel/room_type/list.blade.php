@@ -33,7 +33,11 @@
                             <thead>
                                 <tr>
                                     <th></th>
-                                    {{-- <th>@lang('STT')</th> --}}
+                                    <th>@lang('STT')</th>
+                                    @can(['admin.hotel.room.type.edit', 'admin.hotel.room.type.status',
+                                        'admin.hotel.room.type.destroy'])
+                                        <th>@lang('Hành động')</th>
+                                    @endcan
                                     <th>@lang('Loại phòng')</th>
                                     <th>@lang('Mã phòng')</th>
                                     <th>@lang('Tên phòng')</th>
@@ -45,10 +49,7 @@
                                     <th>@lang('Giá ngày')</th>
                                     <th>@lang('Giá đêm')</th> --}}
                                     <th>@lang('Trạng thái')</th>
-                                    @can(['admin.hotel.room.type.edit', 'admin.hotel.room.type.status',
-                                        'admin.hotel.room.type.destroy'])
-                                        <th>@lang('Hành động')</th>
-                                    @endcan
+                                 
                                 </tr>
                             </thead>
                             <tbody id="data" >
@@ -72,7 +73,9 @@
     @push('breadcrumb-plugins')
            <div class="card-body mt-1">
             <div class="row">
-              <div class="col-md-12">
+              <div class="col-md-12 d-flex">
+                    <a class="btn btn-sm btn-outline--primary" href="{{ route('admin.hotel.room.type.create') }}"><i
+                    class="las la-plus mt-1 p-1"></i></a>
                     <form role="form" enctype="multipart/form-data" action="{{route('admin.hotel.room.type.search')}}">
                         <div class="form-group mb-0" style="display: flex;">
                             <input class="searchInput" name="code"
@@ -101,10 +104,7 @@
                         </div>
                     </form>
                 </div>
-                <div class="col-md-2">
-                       <a class="btn btn-sm btn-outline--primary mt-1" href="{{ route('admin.hotel.room.type.create') }}"><i
-                        class="las la-plus p-1"></i></a>
-                </div>
+            
             </div>
         </div>
 
@@ -124,7 +124,10 @@
 {{--        </div>--}}
     @endpush
 @endcan
-
+@push('style-lib')
+    <link rel="stylesheet" type="text/css" href="{{ asset('assets/admin/css/daterangepicker.css') }}">
+    <link rel="stylesheet" href="{{ asset('assets/global/css/modal.css') }}">
+@endpush
 @push('script')
     <script src="{{ asset('assets/admin/js/dataTable.js') }}"></script>
     <script>
@@ -213,6 +216,31 @@
         });
     });
         })
+        $(document).ready(function() {
+
+            $(document).on('click', '.svg-icon', function(e) {
+                e.stopPropagation();
+                const $dropdown = $(this).siblings('.menu_dropdown');
+                $('.menu_dropdown').not($dropdown).removeClass('show');
+                $dropdown.toggleClass('show');
+            });
+            $(document).on('click', function() {
+                $('.menu_dropdown').removeClass('show');
+            });
+            $(document).on('click', '.svg_menu_check_in', function(e) {
+                e.stopPropagation();
+                const $dropdown = $(this).siblings('.menu_dropdown_check_in');
+                $('.menu_dropdown_check_in').not($dropdown).removeClass('show');
+                $dropdown.toggleClass('show');
+            });
+            $(document).on('click', function() {
+                $('.menu_dropdown_check_in').removeClass('show');
+            });
+            $(document).on('click', function() {
+                $('.menu_dropdown').removeClass('show');
+            });
+
+            });
     </script>
 @endpush
 
@@ -225,15 +253,14 @@
                 padding-left: 4% !important;
             }
         }
-
+        th, td {
+            text-align: center !important;
+        }
         .table-striped tbody tr:nth-child(odd) {
             background-color: #fff;
         }
 
-        .table th,
-        td {
-            text-align: unset !important;
-        }
+       
 
         .btn-toggle {
             border: 1px solid #007bff;
@@ -329,6 +356,9 @@
                 margin-top: 15px
             }
 
+        }
+        .menu_dropdown_check_in{
+            right: auto !important;
         }
     </style>
 @endpush
