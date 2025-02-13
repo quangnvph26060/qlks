@@ -197,12 +197,20 @@ $(document).on('click', '.confirmBookingBtn', function () {
 //     dropdownParent: $('.select2-parent')
 // });
 $(document).ready(function () {
-    $('#searchInput').blur(function () {
+ 
+
+    let typingTimer;
+    $('#searchInput').on('input', function () {
+        clearTimeout(typingTimer);
         var search_value = $(this).val();
         var option_customer_source = $('#selected-customer-source').val();
-        showCustomer(search_value, option_customer_source);
+            console.log(option_customer_source);
+            
+        typingTimer = setTimeout(function () {
+           showCustomer(search_value, option_customer_source);
+        }, 300); // Chỉ tìm kiếm sau 300ms nếu không có nhập liệu mới
     });
-    
+
 });
 
 function showCustomer(value = "", option_customer_source = "") {
