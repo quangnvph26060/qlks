@@ -479,7 +479,7 @@ class BookRoomController extends Controller
     // lấy ra nhân viên và nguồn khách
     public function StaffAndCustomerSource(Request $request){
         $customerSourse = CustomerSource::where('unit_code',unitCode())->get();
-        $admin = Admin::where('unit_code', unitCode())->get();
+        $admin = Admin::where('unit_code', unitCode()) ->where('role_id', '!=', 0)->get();
         if(!$customerSourse && !$admin){
             return response()->json(['error' => 'Không tìm thấy khách hàng'], 404);
         }
