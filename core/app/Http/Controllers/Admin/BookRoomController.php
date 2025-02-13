@@ -4,11 +4,13 @@ namespace App\Http\Controllers\Admin;
 
 use App\Constants\Status;
 use App\Http\Controllers\Controller;
+use App\Models\Admin;
 use App\Models\Booking;
 use App\Models\BookedRoom;
 use App\Models\CheckIn;
 use App\Models\CheckInRoom;
 use App\Models\Customer;
+use App\Models\CustomerSource;
 use App\Models\RoomType;
 use App\Models\Room;
 use App\Models\RoomBooking;
@@ -244,9 +246,13 @@ class BookRoomController extends Controller
                     $filteredRooms[] = $room;
                 }
             }
+          
             foreach ($filteredRooms as $index => $room) {
                 // kiểm tra khách hàng
-                $customer = $this->add_guest($request->name, $request->phone);
+                if (!empty($request->insert_customer)) {
+                    $customer = $this->add_guest($request->name, $request->phone);
+                }
+                
                 // \Log::info($request->all());
                 // \Log::info($customer);
                 // đặt cọc của từng phòng
@@ -290,18 +296,18 @@ class BookRoomController extends Controller
                 $check_in->document_date  = now();
                 $check_in->checkin_date   = Carbon::parse($room['dateIn']);
                 $check_in->checkout_date  = Carbon::parse($room['dateOut']);
-                $check_in->customer_code  = $customer['customer_code'];
-                $check_in->customer_name  = $customer['name'];
-                $check_in->phone_number   = $customer['phone'];
-                $check_in->email          = $customer['email'];
+                $check_in->customer_code  = $customer['customer_code'] ?? $request->customer_code;
+                $check_in->customer_name  = $customer['name'] ?? $request->name;
+                $check_in->phone_number   = $customer['phone'] ?? $request->phone;
+                $check_in->email          = $customer['email'] ?? "";
                 $check_in->price_group    = 1; // đang fix cứng
                 $check_in->guest_count    = $room['adult'];
                 $check_in->total_amount   = $roomPice['unit_price']; // giá phòng hiện tại đang áp dụng
                 $check_in->deposit_amount = $depositAmount;
                 $check_in->note           = $room['note'];
-                $check_in->user_source    = 'FB';
+                $check_in->user_source    = $request->customer_source;
                 $check_in->unit_code      = hf('ma_coso');
-                $check_in->created_by     = authAdmin()->id;
+                $check_in->created_by     = $request->name_staff ??  authAdmin()->id;
 
                 $check_in->save();
             }
@@ -396,11 +402,10 @@ class BookRoomController extends Controller
     }
     protected function add_guest($name, $phone)
     {
-        // Kiểm tra nếu email đã tồn tại
         $existingUser = Customer::where('name', $name);
-        // if (!is_null($phone)) {
-        //     $existingUser->orWhere('phone', $phone);
-        // }
+        if (!is_null($phone)) {
+            $existingUser->orWhere('phone', $phone);
+        }
         $existingUser = $existingUser->first();
         // \Log::info($existingUser);
         if ($existingUser) {
@@ -435,10 +440,53 @@ class BookRoomController extends Controller
 
     public function searchCustomer(Request $request)
     {
-        $data = Customer::where('name', $request->name)->get();
+        $customer = Customer::query()->where('unit_code', unitCode());
+
+        if (!empty($request->name)) {
+            $customer->where(function ($query) use ($request) {
+                $query->where('customer_code', $request->name)
+                ->orWhere('name', 'LIKE', '%' . $request->name . '%');
+            });
+        }
+    
+        // Lọc theo nguồn khách hàng (option_customer_source) nếu có chọn
+        if (!empty($request->option_customer_source)) {
+            $customer->where('group_code', $request->option_customer_source);
+        }
+        
+        $customer = $customer->get();
+        
+        $customerSourse = CustomerSource::where('unit_code',unitCode())->get();
         return response()->json([
-            'status' => 'success',
-            'data'   => $data
+            'status'         => 'success',
+            'data'           => $customer,
+            'customerSourse' => $customerSourse,
+            'option_customer_source' =>$request->option_customer_source
+            
+        ]);
+    }
+    // tìm kiếm khách hàng
+    public function findCustomer(Request $request){
+        $customer = Customer::where('unit_code', unitCode())->where('id', $request->id)->first();
+        if(!$customer){
+            return response()->json(['error' => 'Không tìm thấy khách hàng'], 404);
+        }
+        return response()->json([
+            'status'         => 'success',
+            'data'           => $customer,
+        ]);
+    }
+    // lấy ra nhân viên và nguồn khách
+    public function StaffAndCustomerSource(Request $request){
+        $customerSourse = CustomerSource::where('unit_code',unitCode())->get();
+        $admin = Admin::where('unit_code', unitCode())->get();
+        if(!$customerSourse && !$admin){
+            return response()->json(['error' => 'Không tìm thấy khách hàng'], 404);
+        }
+        return response()->json([
+            'status'         => 'success',
+            'customerSourse' => $customerSourse,
+            'admin' => $admin,
         ]);
     }
     // sửa phòng

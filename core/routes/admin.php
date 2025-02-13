@@ -304,6 +304,8 @@ Route::middleware('admin', 'adminPermission')->group(function () {
         Route::get('room/search', 'searchRoom')->name('room.search');
 
         Route::get('search/customer', 'searchCustomer')->name('search.customer');
+        Route::get('find/customer', 'findCustomer')->name('find.customer');
+        Route::get('customer-staff', 'StaffAndCustomerSource')->name('get.customer.staff');
         Route::post('room-note', 'updatenote')->name('room.note');
         Route::post('room-check-in/{id}', 'checkIn')->name('room.check.in');
         Route::post('room-booking/{id}', 'roomBookingEdit')->name('room.booking.edit');

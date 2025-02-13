@@ -1,50 +1,31 @@
-<div class="card mb-3">
-    <div class="card-body">
-        <div class="row mb-3 justify-content-between">
-            <div class="col-md-9">
-                <div class="d-flex" style="flex-direction: column; gap:20px">
-
-                    <div class="modal fade" id="addRoomModal" tabindex="-1" aria-hidden="true">
-                        <div class="modal-dialog modal-dialog-centered">
-                            <div class="modal-content">
-                                <div class="modal-header">
-                                    <h5 class="modal-title">Chọn Phòng</h5>
-                                    <button type="button" class="btn-close" data-bs-dismiss="modal"
-                                        aria-label="Close"></button>
-                                </div>
-
-                                </div>
-                                <div class="modal-body overflow-add-room">
-                                    <table class="table table-striped">
-                                        <thead>
-                                            <tr>
-                                                <th data-table="Hạng phòng">Hạng phòng</th>
-                                                <th data-table="Phòng">Phòng</th>
-                                                <th data-table="Giá">Giá</th>
-                                                <th data-table="Thao tác">Thao tác</th>
-
-                                            </tr>
-                                        </thead>
-
-                                        <tbody id="show-room">
-
-                                        </tbody>
-
-                                    </table>
-                                </div>
-
-                            </div>
-                        </div>
-                    </div>
-                    {{-- <div class="d-flex justify-content-flex-start align-items-end mt-2"
-                    style="gap: 10px">
-                    <label>Ghi chú</label>
-                    <input name="ghichu" class="input-ghichu"
-                        placeholder="Nhập ghi chú..."></input>
-                </div> --}}
-                </div>
+<div class="modal fade" id="addRoomModal" tabindex="-1" aria-hidden="true">
+    <div class="modal-dialog modal-dialog-centered">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h5 class="modal-title">Chọn Phòng</h5>
+                <button type="button" class="btn-close" data-bs-dismiss="modal"
+                    aria-label="Close"></button>
             </div>
 
+            </div>
+            <div class="modal-body overflow-add-room">
+                <table class="table table-striped">
+                    <thead>
+                        <tr>
+                            <th data-table="Hạng phòng">Hạng phòng</th>
+                            <th data-table="Phòng">Phòng</th>
+                            <th data-table="Giá">Giá</th>
+                            <th data-table="Thao tác">Thao tác</th>
+
+                        </tr>
+                    </thead>
+
+                    <tbody id="show-room">
+
+                    </tbody>
+
+                </table>
+            </div>
 
         </div>
     </div>
