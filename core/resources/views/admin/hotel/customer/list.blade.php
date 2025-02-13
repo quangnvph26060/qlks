@@ -306,6 +306,14 @@
 @push('style-lib')
     <link rel="stylesheet" type="text/css" href="{{ asset('assets/admin/css/daterangepicker.css') }}">
     <link rel="stylesheet" href="{{ asset('assets/global/css/modal.css') }}">
+    <style>
+            .navbar__right{
+                display: none;
+            }
+            #navbar-wrapper{
+                padding: 0px 30px 20px;
+            }
+    </style>
 @endpush
 @push('script')
 
