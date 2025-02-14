@@ -1,7 +1,7 @@
 @if ($response->hasPages())
     <!-- Pagination -->
-    <div class="d-flex align-items-center justify-content-center">
-        <div>
+    <div class="align-items-center justify-content-center mt-1">
+        <div class="d-flex">
             <div class="text-center mb-2">
                 <p class="small text-muted">
                     {!! __('Showing') !!}

@@ -5,12 +5,12 @@
         <div class="col-lg-12">
             <div class="card">
                 <div class="card-body p-0">
-                    <div class="table-responsive--md  table-responsive">
+                    <div class="table-responsive--md  table-responsive" style="overflow-x: visible;">
                         <table class="table table--light style--two">
                             <thead>
                             <tr>
+                                 <th>@lang('Hành động')</th>
                                 <th>@lang('STT')</th>
-                                <th>@lang('Hành động')</th>
                                 <th>@lang('Mã KH')</th>
                                 <th>@lang('Tên')</th>
                                 <th>@lang('Số điện thoại')</th>
@@ -26,18 +26,16 @@
                             <tbody>
                             @forelse($customers as $customer)
                                 <tr data-id="{{ $customer->id }}">
-                                    <td>{{ $loop->iteration }}</td>
-                                  
-                                    <td>
+                                <td style="width:20px;">
                                         <svg class="svg_menu_check_in" xmlns="http://www.w3.org/2000/svg" width="30" height="30" viewBox="0 0 21 21"><g fill="currentColor" fill-rule="evenodd"><circle cx="10.5" cy="10.5" r="1"/><circle cx="10.5" cy="5.5" r="1"/><circle cx="10.5" cy="15.5" r="1"/></g></svg>
                             
                                         <div class="dropdown menu_dropdown_check_in" id="dropdown-menu">
-                                            <div class="dropdown-item booked_room_edit"><a
-                                            data-id="{{ $customer->id }}" data-bs-toggle="modal" data-bs-target="#edit-customer">
+                                            <div class="dropdown-item"><a
+                                            data-id="{{ $customer->id }}" class="btn-edit-customer" data-bs-toggle="modal" data-bs-target="#edit-customer" style="color:black">
                                                 Sửa khách hàng
                                             </a></div>
                                             <div class="dropdown-item booked_room">    @if($customer->status == 1)
-                                            <button class=" confirmationBtn"
+                                            <button class="confirmationBtn"
                                                     data-action="{{ route('admin.hotel.customer.status', $customer->id) }}"   data-id="{{ $customer->id }}"
                                                     data-question="@lang('Bạn có chắc chắn muốn tắt trạng thái này không?')" type="button">
                                                 Tắt hoạt động
@@ -49,12 +47,15 @@
                                                     Hoạt động
                                                 </button>
                                             @endif</div>
-                                              <div class="dropdown-item booked_room_detail"> <button class=" btn-delete"
+                                              <div class="dropdown-item booked_room_detail"> <button class=" btn-delete icon-delete-room"
                                                 data-id="{{ $customer->id }}" data-modal_title="@lang('Xóa khách hàng')" type="button"
                                                 data-pro="0">Xóa khách hàng</div>
                               
                                         </div>
                                     </td>
+                                    <td style="width:20px;text-align:right">{{ $loop->iteration }}</td>
+          
+                    
                                     <td>
                                         <span class="fw-bold">{{ $customer->customer_code }}</span>
                                     </td>
@@ -77,7 +78,7 @@
 {{--                                    <td>--}}
 {{--                                        {{ $customer->note }}--}}
 {{--                                    </td>--}}
-                                        <td style="width:50px;text-align: center">
+                                        <td style="width:50px;text-align: center" class="status-hotel">
                                         @if(!empty($customer->status))
                                             <i class="fa fa-check" style="color:green;text-align: center"></i>
                                         @else
@@ -98,11 +99,7 @@
                         </table><!-- table end -->
                     </div>
                 </div>
-                @if ($customers->hasPages())
-                    <div class="card-footer py-4">
-                        {{ paginateLinks($customers) }}
-                    </div>
-                @endif
+            
             </div>
         </div>
 
@@ -139,7 +136,11 @@
                         </div>
                     </form>
                 </div>
-          
+                @if ($customers->hasPages())
+                    <div >
+                        {{ paginateLinks($customers) }}
+                    </div>
+                @endif
             </div>
         </div>
     @endpush
@@ -278,8 +279,8 @@
                             </div>
                             <div class="mb-3">
                                 <label class="form-label">Trạng thái</label><br>
-                                <input type="radio" name="status" value="1">Hoạt động
-                                <input type="radio" name="status" value="0">
+                                <input type="radio" class="edit-status" name="status" value="1">Hoạt động
+                                <input type="radio" class="edit-status" name="status" value="0">
                                 Không hoạt động
                             </div>
                    <!--          <div class=" mb-3">
@@ -332,7 +333,7 @@
                     $('#edit-address').val(data.address);
                     $('#edit-note').val(data.note);
                     // $('#edit-unit-code').val(data.unit_code).change();
-                    $('input[name^="status"][value="' + data.status + '"').prop('checked', true);
+                    $('input[name^="status"][class^="edit-status"][value="' + data.status + '"').prop('checked', true);
                     $('#method').attr('value', 'PUT');
                     $('#editCustomer').attr('action', '{{ route('admin.hotel.customer.update', '') }}/' + dataId + '')
 

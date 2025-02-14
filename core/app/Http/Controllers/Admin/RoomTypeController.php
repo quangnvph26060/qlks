@@ -41,7 +41,7 @@ class RoomTypeController extends Controller
         // $typeList    = Room::with('amenities', 'facilities', 'products')->latest()->paginate(getPaginate());
         // return view('admin.hotel.room_type.list', compact('pageTitle', 'typeList'));
         $search = request()->get('search');
-        $perPage = request()->get('perPage', 10);
+        $perPage = request()->get('perPage', 15);
         $orderBy = request()->get('orderBy', 'id');
         $columns = [
             'id',
