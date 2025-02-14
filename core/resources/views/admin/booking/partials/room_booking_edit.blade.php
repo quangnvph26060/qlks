@@ -56,8 +56,17 @@
                                         <option value="">2</option>
                                        </select>
                                     </div> --}}
-                                    <div class="customer-input-container mt-2">
+                                    <div class="customer-input-container">
+                                        <div class="col-md-1" style="margin-left: 10px">
+                                            {{-- <p class="btn btn--primary "
+                                                style="white-space: nowrap; font-size: 13px" id="btn-search">Tìm
+                                                kiếm</p> --}}
+                                            <p class="btn btn--primary modal--search-customer"
+                                                style="white-space: nowrap; font-size: 13px;" id="btn-search">Tìm
+                                                khách</p>
+                                        </div>
                                         <label for="phone" class="form-label required">Tên khách hàng</label>
+                                        
                                         <div class="d-flex">
                                             <div class="col-md-8">
                                                 <input type="text" name="name"  id="name" class="form-control name-edit"
@@ -65,10 +74,7 @@
                                                 <span class="invalid-feedback d-block name_error"
                                                     style="font-weight: 500" id="name_error"></span>
                                             </div>
-                                            <div class="col-md-1" style="margin-left: 10px">
-                                                <p class="btn btn--primary " style="white-space: nowrap; font-size: 13px"
-                                                    id="btn-search">Tìm kiếm</p>
-                                            </div>
+                                         
 
                                         </div>
 
@@ -89,7 +95,7 @@
                                         </svg>
                                         </div> --}}
                                     </div>
-                                    <div class="col-md-8 mb-3 mt-2">
+                                    <div class="col-md-8 ">
                                         <label for="phone" class="form-label">Số điện thoại</label>
                                         <input type="text" id="phone" name="phone" class="form-control phone-edit"
                                             placeholder="Số điện thoại">
@@ -123,7 +129,17 @@
                                             placeholder="Nhập ghi chú...">
                                     </div> --}}
 
-
+                                    <div class="col-md-8  ">
+                                        <input type="hidden" name="customer_code" id="customer_code">
+                                        <label for="phone" class="form-label">Nguồn khách</label>
+                                        {{-- <input type="text" id="phone" name="phone" class="form-control"
+                                            placeholder="Số điện thoại"> --}}
+                                            <select id="select-customer-source-edit" name="customer_source" class="form-control " style="width: 100%;">
+                                            </select>
+                                    </div>
+                                    <div class="col-md-8 mb-3 mt-3 d-flex align-items-center result-add-customer" style="gap:10px">
+                                        <input type="checkbox" name="insert_customer"> <p style="font-size: 13px">Lưu thông tin khách</p>
+                                    </div>
 
                                 </div>
                             </div>
@@ -143,11 +159,20 @@
                                             </div>
                                         </div>
                                     </div>
-                                    <div class="col-md-8 mb-3 mt-2">
+                                    {{-- <div class="col-md-8 mb-3 mt-2">
                                         <label for="phone" class="form-label required">Ngày trả</label>
                                         <div class="d-flex align-items-center justify-content-start" style="gap: 10px">
                                             <input type="date" name="checkOutDate" id="date-book-room-date" class="form-control" >
                                             <input type="time" name="checkOutTime" id="time-book-room-date" class="form-control">
+                                        </div>
+                                    </div> --}}
+                                    <div class="col-md-8">
+                                        <label for="phone" class="form-label ">Nhân viên </label>
+                                        <div class="d-flex align-items-center justify-content-start"
+                                            style="gap: 10px">
+                                            <select id="select-staff-edit"name="name_staff"class="form-control " style="width: 100%;">
+                                             
+                                            </select>
                                         </div>
                                     </div>
                                 </div>

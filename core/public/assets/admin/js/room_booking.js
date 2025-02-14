@@ -833,6 +833,23 @@ $(document).on('click', '.booked_room_edit', function () {
         type: 'POST',
         success: function (response) {
             if (response.status == 'success') {
+                var selected_customer_source = $('#select-customer-source-edit');
+                selected_customer_source.empty();
+                let option = `<option value="">Chọn nguồn khách hàng</option>`;
+                response.customerSourse.forEach(function (item) {
+                  
+                        option += `<option value="${item.source_code}">${item.source_name}</option>`;
+                    
+                });
+                selected_customer_source.append(option);
+                // nhân viên 
+                var selected_select_staff = $('#select-staff-edit');
+                selected_select_staff.empty();
+                let option_staff = `<option value="">Chọn nhân viên</option>`;
+                response.admin.forEach(function (item) {
+                    option_staff += `<option value="${item.id}">${item.username}</option>`;
+                });
+                selected_select_staff.append(option_staff);
                 $('#myModal-booking-edit').modal('show').on('shown.bs.modal', function () {
                     $('.name-edit, .phone-edit').val('');
                     $('#list-booking-edit').empty();

@@ -316,7 +316,6 @@ class BookRoomController extends Controller
             DB::commit();
             return response()->json(['success' => 'Đặt phòng thành công']);
         } catch (\Exception $e) {
-            \Log::info('Error booking : ' . $e->getMessage());
             DB::rollBack();
             return response()->json(['error' => 'Đã xảy ra lỗi, không đặt phòng thành công ']);
         }
@@ -502,8 +501,8 @@ class BookRoomController extends Controller
                 $groupedBookings[$key] = [
                     'customer_code' => $booking->customer_code,
                     'customer_name' => $booking->customer_name,
-                    'email' => $booking->email,
-                    'phone_number' => $booking->phone_number,
+                    'email'         => $booking->email,
+                    'phone_number'  => $booking->phone_number,
                     'room_bookings' => [],
                 ];
             }
@@ -524,6 +523,14 @@ class BookRoomController extends Controller
         }
         // Chuyển về dạng danh sách thay vì array với key
         $groupedBookings = array_values($groupedBookings);
-        return response()->json(['status' => 'success', 'data' => $groupedBookings]);
+        $customerSourse = CustomerSource::where('unit_code',unitCode())->get();
+        $admin = Admin::where('unit_code', unitCode()) ->where('role_id', '!=', 0)->get();
+        return response()->json([
+            'status'                 => 'success', 
+            'data'                   => $groupedBookings,
+            'admin'                  => $admin,
+            'customerSourse'         => $customerSourse,
+            'option_customer_source' => $booking->customer_code,
+        ]);
     }
 }

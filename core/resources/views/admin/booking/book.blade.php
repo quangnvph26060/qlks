@@ -204,8 +204,6 @@
     </script>
 
     <script>
-      
-
         $(document).ready(function() {
             $("#date-chon-phong-in").on("change", function() {
                 let checkInDate = new Date($(this).val());
@@ -226,17 +224,17 @@
         .mt-10{
             margin-top: -9px !important;
         }
-        .text-left {
-    text-align: left !important;
-}
+            .text-left {
+            text-align: left !important;
+            }
 
-.text-right {
-    text-align: right !important;
-}
+            .text-right {
+                text-align: right !important;
+            }
 
-.text-center {
-    text-align: center;
-}
+            .text-center {
+                text-align: center;
+            }
 
         #data-table tbody tr:hover {
             background-color: #f0f0f0;
