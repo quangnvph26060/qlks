@@ -3469,7 +3469,7 @@ select:focus-within {
 } */
 
 table th:first-child {
-    text-align: left;
+    text-align: center;
     font-weight: 600;
 }
 
