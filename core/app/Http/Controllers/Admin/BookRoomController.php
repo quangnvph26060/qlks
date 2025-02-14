@@ -201,7 +201,6 @@ class BookRoomController extends Controller
     }
     public function book(Request $request)
     {
-
         DB::beginTransaction();
         try {
             $validator = Validator::make($request->all(), [
@@ -249,7 +248,6 @@ class BookRoomController extends Controller
                     $filteredRooms[] = $room;
                 }
             }
-          
             foreach ($filteredRooms as $index => $room) {
                 // kiểm tra khách hàng
                 if (!empty($request->insert_customer)) {

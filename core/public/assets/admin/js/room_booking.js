@@ -1261,18 +1261,22 @@ $('.booking-form').on('submit', function (e) {
             hasError = false;
             return false;
         }
-        // Thêm thông tin của phòng vào mảng
-        roomData.push({
-            roomId: roomId,
-            roomTypeId: roomTypeId,
-            checkInDate: checkInDate,
-            checkInTime: checkInTime,
-            checkOutDate: checkOutDate,
-            checkOutTime: checkOutTime,
-            adult: adult,
-            note: note,
-            deposit: deposit,
-        });
+       
+      
+    
+      
+            roomData.push({
+                roomId: roomId,
+                roomTypeId: roomTypeId,
+                checkInDate: checkInDate,
+                checkInTime: checkInTime,
+                checkOutDate: checkOutDate,
+                checkOutTime: checkOutTime,
+                adult: adult,
+                note: note,
+                deposit: deposit,
+            });
+        
     });
 
     if (hasError) {
@@ -1557,7 +1561,6 @@ function loadRoomBookings(page = 1) {
                 `;
                 $('.data-table').append(html);
                 
-                    $('.data-table').append(html);
                 })
                 updatePagination(pagination, 'loadRoomBookings');
             }

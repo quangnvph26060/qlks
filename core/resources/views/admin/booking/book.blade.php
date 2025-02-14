@@ -18,8 +18,8 @@
         <div class="card b-radius--10 mt-1">
             <div class="card-body p-0">
                 <div class="table-responsive--md">
-
-                    <table class="table--light style--two table table-striped" id="data-table">
+{{-- giữ --}}
+                    <table class="table--light style--two table table-striped" id="data-table"> 
                         <thead>
                             <tr>
                                 <th>@lang('Hành động')</th>
@@ -103,7 +103,7 @@
                         </div>
                     </div>
                     <div class="modal-body overflow-add-room">
-                        <table class="table "id="data-table">
+                        <table class="table ">
                             <thead>
                                 <tr>
                                     <th data-table="Hạng phòng" class="text-left">Hạng phòng</th>
@@ -181,23 +181,12 @@
     <script src="{{ asset('assets/admin/js/room_booking.js') }}"></script>
     <script src="{{ asset('assets/admin/js/pagination.js') }}"></script>
     <script src="https://cdn.jsdelivr.net/npm/@popperjs/core@2.5.3/dist/umd/popper.min.js"></script>
-    <!-- jQuery -->
-<script src="https://code.jquery.com/jquery-3.6.0.min.js"></script>
 
-
-<!-- DataTables JS -->
-<script src="https://cdn.datatables.net/1.13.7/js/jquery.dataTables.min.js"></script>
-
-
-<script src="//cdn.datatables.net/2.2.2/js/dataTables.min.js"></script>
 @endpush
 
 @push('style-lib')
     <link rel="stylesheet" type="text/css" href="{{ asset('assets/admin/css/daterangepicker.css') }}">
     <link rel="stylesheet" href="{{ asset('assets/global/css/book.css') }}">
-    <!-- DataTables CSS -->
-<link rel="stylesheet" href="https://cdn.datatables.net/1.13.7/css/jquery.dataTables.min.css">
-<link rel="stylesheet" href="//cdn.datatables.net/2.2.2/css/dataTables.dataTables.min.css">
 @endpush
 
 @push('script')
@@ -215,17 +204,7 @@
     </script>
 
     <script>
-        $(document).ready(function () {
-            $('#data-table').DataTable({
-                "destroy": true,   // Hủy bảng cũ trước khi vẽ lại
-                "autoWidth": false, 
-                "ordering": false, // Tắt sắp xếp cột
-                "paging": false,   // Tắt phân trang
-                "info": false,     // Ẩn tổng số dòng
-                "searching": false // Ẩn ô tìm kiếm
-            });
-
-        });
+      
 
         $(document).ready(function() {
             $("#date-chon-phong-in").on("change", function() {
