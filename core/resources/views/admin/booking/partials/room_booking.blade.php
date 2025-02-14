@@ -218,7 +218,7 @@
                         </div>
                         <!-- Row: Labels -->
                         <div class="table-responsive mt-2">
-                            <table class="table mobi-table">
+                            <table class="table mobi-table" id="data-table">
                                 <thead>
                                     <tr class="text-center fw-bold main-booking-modal">
                                         {{-- <th>Hạng phòng</th> --}}
@@ -297,8 +297,19 @@
         padding: 15px 5px !important;
     }
 </style>
+<!-- jQuery -->
+<script src="https://code.jquery.com/jquery-3.6.0.min.js"></script>
 
+<!-- DataTables CSS -->
+<link rel="stylesheet" href="https://cdn.datatables.net/1.13.7/css/jquery.dataTables.min.css">
+
+<!-- DataTables JS -->
+<script src="https://cdn.datatables.net/1.13.7/js/jquery.dataTables.min.js"></script>
+
+<link rel="stylesheet" href="//cdn.datatables.net/2.2.2/css/dataTables.dataTables.min.css">
+<script src="//cdn.datatables.net/2.2.2/js/dataTables.min.js"></script>
 <script>
+   
     document.getElementById("date-book-room-booking").addEventListener("change", function() {
         let checkInDate = new Date(this.value);
         if (!isNaN(checkInDate.getTime())) {

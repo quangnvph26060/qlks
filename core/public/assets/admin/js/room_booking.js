@@ -228,16 +228,16 @@ function showCustomer(value = "", option_customer_source = "") {
             tbody.empty();
             data.data.forEach(function (item) {
                 var tr = `
-                        <tr class="">
-                            <td> ${item.customer_code} </td>
-                            <td> ${item.name} </td>
-                            <td> ${item.phone} </td>
-                            <td> ${item.group_code} </td>
-                            <td>
-                                <input type="radio" name="customer_select" data-id="${item.id}">
-                            </td>
-                        </tr>
-                    `;
+                <tr class="customer-row">
+                    <td class="text-left "> ${item.customer_code} </td>
+                    <td class="text-left "> ${item.name} </td>
+                    <td class="text-right"> ${item.phone} </td>
+                    <td class="text-left "> ${item.group_code} </td>
+                    <td class="text-center">
+                        <input type="radio" name="customer_select" data-id="${item.id}">
+                    </td>
+                </tr>
+            `;
                 tbody.append(tr);
             });
             // hạng phòng
@@ -306,11 +306,11 @@ function showRoom(data = "", checkInDateValue = "", checkOutDateValue = "", sele
 
                 var tr = `
                         <tr class="${rowClass}">
-                            <td style="${isFirst ? 'font-weight: bold;' : ''}"> ${item.room_type['name']} </td>
-                            <td style="${isFirst ? 'font-weight: bold;' : ''}"> ${item.room_number} </td>
-                            <td style="${isFirst ? 'font-weight: bold;' : ''}"> ${formatDate(item.date)} </td>
-                            <td style="${isFirst ? 'font-weight: bold;' : ''}"> ${item.check_booked} </td>
-                            <td style="${isFirst ? 'font-weight: bold;' : ''}"> ${formatCurrency(item.room_type.room_type_price['unit_price'])} </td>
+                            <td style="${isFirst ? 'font-weight: bold;' : ''}" class="text-left"> ${item.room_type['name']} </td>
+                            <td style="${isFirst ? 'font-weight: bold;' : ''}"class="text-left"> ${item.room_number} </td>
+                            <td style="${isFirst ? 'font-weight: bold;' : ''}"class="text-left"> ${formatDate(item.date)} </td>
+                            <td style="${isFirst ? 'font-weight: bold;' : ''}"class="text-left"> ${item.check_booked} </td>
+                            <td style="${isFirst ? 'font-weight: bold;' : ''}"class="text-right"> ${formatCurrency(item.room_type.room_type_price['unit_price'])} </td>
                             <td>
                                 <input type="checkbox" ${item.status == 1 ? 'disabled' : ''} data-date="${item.date}" data-id="${item.id}" data-room_type_id="${item.room_type_id}" id="checkbox-${item.id}">
                             </td>
@@ -432,7 +432,6 @@ $('.add-customer-booked').on('click', function () {
 $(document).on("dblclick", "#data-table tbody tr", function () {
     let customerId = $(this).find('input[type="radio"]').data("id");
     if (!customerId) {
-        alert("Không tìm thấy ID khách hàng. Kiểm tra lại input radio!");
         return;
     }
     findCustomerById(customerId);
@@ -668,7 +667,7 @@ function addRoomInBooking(data) {
                                      <input type="number" min="1" name="adult" class="form-control adult"  value="1"  style="margin-left: 16px;">
 
                                 </td>
-                                <td style="display: flex; justify-content: center">
+                                <td >
                                     <select id="bookingType" class="form-select" name="optionRoom" style="width: 93px; font-size:15px">
                                          <option value="ngay">Ngày</option>
                                          <option value="gio">Giờ</option>
@@ -1533,33 +1532,31 @@ function loadRoomBookings(page = 1) {
                 // <td>${data['admin']['name']}</td> user tạo
                 data.forEach(function (data, index) {
                     var html = `
-                        <tr data-id="${data['id']}">
-                          <td>
-                                <svg class="svg_menu_check_in" xmlns="http://www.w3.org/2000/svg" width="30" height="30" viewBox="0 0 21 21"><g fill="currentColor" fill-rule="evenodd"><circle cx="10.5" cy="10.5" r="1"/><circle cx="10.5" cy="5.5" r="1"/><circle cx="10.5" cy="15.5" r="1"/></g></svg>
-                                <div class="dropdown menu_dropdown_check_in" id="dropdown-menu">
-                                    <div class="dropdown-item booked_room_edit" data-room-id="${data['booking_id']}">Sửa phòng</div>
-                                    <div class="dropdown-item booked_room" data-room-id="${data['id']}">Nhận phòng</div>
-                                    <div class="dropdown-item booked_room" data-room-id="${data['id']}">Đổi phòng</div>
-                                    <div class="dropdown-item delete-booked-room"  data-room-id="${data['id']}" >Xóa phòng</div>
-
-                                </div>
-                            </td>
-                             <td>${index + 1}</td>
-                            <td>${data['booking_id']}</td>
-                            <td>${data['room']['room_number']}</td>
-                            <td>${formatDateTime(data['document_date'])}</td>
-                            <td>${formatDateTime(data['checkin_date'])}</td>
-                            <td>${formatDateTime(data['checkout_date'])}</td>
-                            <td>${data['customer_name'] ? data['customer_name'] : 'N/A'}</td>
-                            <td>${data['phone_number'] ? data['phone_number'] : 'N/A'}</td>
-                            <td>${data['guest_count']}</td>
-                            <td>${formatCurrency(data['total_amount'])}</td>
-                            <td>${formatCurrency(data['deposit_amount'])}</td>
-
-
-
-                        </tr>
-                    `
+                    <tr data-id="${data['id']}">
+                        <td class="text-center">
+                            <svg class="svg_menu_check_in" xmlns="http://www.w3.org/2000/svg" width="30" height="30" viewBox="0 0 21 21"><g fill="currentColor" fill-rule="evenodd"><circle cx="10.5" cy="10.5" r="1"/><circle cx="10.5" cy="5.5" r="1"/><circle cx="10.5" cy="15.5" r="1"/></g></svg>
+                            <div class="dropdown menu_dropdown_check_in" id="dropdown-menu">
+                                <div class="dropdown-item booked_room_edit" data-room-id="${data['booking_id']}">Sửa phòng</div>
+                                <div class="dropdown-item booked_room" data-room-id="${data['id']}">Nhận phòng</div>
+                                <div class="dropdown-item booked_room" data-room-id="${data['id']}">Đổi phòng</div>
+                                <div class="dropdown-item delete-booked-room" data-room-id="${data['id']}">Xóa phòng</div>
+                            </div>
+                        </td>
+                        <td class="text-right">${index + 1}</td>
+                        <td class="text-left">${data['booking_id']}</td>
+                        <td class="text-left">${data['room']['room_number']}</td>
+                        <td class="text-right">${formatDateTime(data['document_date'])}</td>
+                        <td class="text-right">${formatDateTime(data['checkin_date'])}</td>
+                        <td class="text-right">${formatDateTime(data['checkout_date'])}</td>
+                        <td class="text-left">${data['customer_name'] ? data['customer_name'] : 'N/A'}</td>
+                        <td class="text-right">${data['phone_number'] ? data['phone_number'] : 'N/A'}</td>
+                        <td class="text-right">${data['guest_count']}</td>
+                        <td class="text-right">${formatCurrency(data['total_amount'])}</td>
+                        <td class="text-right">${formatCurrency(data['deposit_amount'])}</td>
+                    </tr>
+                `;
+                $('.data-table').append(html);
+                
                     $('.data-table').append(html);
                 })
                 updatePagination(pagination, 'loadRoomBookings');

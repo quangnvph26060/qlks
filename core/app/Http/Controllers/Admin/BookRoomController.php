@@ -22,6 +22,7 @@ use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Validator;
 use Carbon\Carbon;
 use Illuminate\Support\Facades\DB;
+use Yajra\DataTables\DataTables;
 
 class BookRoomController extends Controller
 {
@@ -47,6 +48,8 @@ class BookRoomController extends Controller
                 'per_page' => $roomBookings->perPage(),
             ]
         ]);
+     
+
     }
     public function getDates($startDate, $endDate)
     {

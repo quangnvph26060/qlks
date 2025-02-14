@@ -15,10 +15,10 @@
             </div>
         </div> --}}
         <div class="pagination-container"></div>
-        <div class="card b-radius--10 mt-1" >
-            <div class="card-body p-0">  
+        <div class="card b-radius--10 mt-1">
+            <div class="card-body p-0">
                 <div class="table-responsive--md">
-                  
+
                     <table class="table--light style--two table table-striped" id="data-table">
                         <thead>
                             <tr>
@@ -103,14 +103,14 @@
                         </div>
                     </div>
                     <div class="modal-body overflow-add-room">
-                        <table class="table ">
+                        <table class="table "id="data-table">
                             <thead>
                                 <tr>
-                                    <th data-table="Hạng phòng">Hạng phòng</th>
-                                    <th data-table="Phòng">Tên phòng</th>
-                                    <th data-table="Ngày">Ngày</th>
-                                    <th data-table="Trạng thái phòng">Trạng thái phòng</th>
-                                    <th data-table="Giá">Giá</th>
+                                    <th data-table="Hạng phòng" class="text-left">Hạng phòng</th>
+                                    <th data-table="Phòng" class="text-left">Tên phòng</th>
+                                    <th data-table="Ngày" class="text-left">Ngày</th>
+                                    <th data-table="Trạng thái phòng" class="text-left">Trạng thái phòng</th>
+                                    <th data-table="Giá" class="text-right">Giá</th>
                                     <th data-table="Thao tác">Thao tác</th>
                                 </tr>
                             </thead>
@@ -142,17 +142,17 @@
 
                             </select>
                             <input type="text" class="form-control" id="searchInput" placeholder="Tìm kiếm">
-                        
+
                         </div>
                     </div>
                     <div class="modal-body overflow-add-room">
-                        <table class="table " id="data-table">
+                        <table class="table mt-10" id="data-table">
                             <thead>
                                 <tr>
-                                    <th data-table="Mã khách hàng">Mã khách hàng</th>
-                                    <th data-table="Tên khách hàng">Tên khách hàng</th>
-                                    <th data-table="Số điện thoại">Số điện thoại</th>
-                                    <th data-table="Nguồn khách hàng">Nguồn khách hàng</th>
+                                    <th data-table="Mã khách hàng" class="text-left">Mã khách hàng</th>
+                                    <th data-table="Tên khách hàng" class="text-left">Tên khách hàng</th>
+                                    <th data-table="Số điện thoại" class="text-right">Số điện thoại</th>
+                                    <th data-table="Nguồn khách hàng" class="text-left">Nguồn khách hàng</th>
                                     <th data-table="Thao tác">Thao tác</th>
                                 </tr>
                             </thead>
@@ -181,28 +181,52 @@
     <script src="{{ asset('assets/admin/js/room_booking.js') }}"></script>
     <script src="{{ asset('assets/admin/js/pagination.js') }}"></script>
     <script src="https://cdn.jsdelivr.net/npm/@popperjs/core@2.5.3/dist/umd/popper.min.js"></script>
+    <!-- jQuery -->
+<script src="https://code.jquery.com/jquery-3.6.0.min.js"></script>
+
+
+<!-- DataTables JS -->
+<script src="https://cdn.datatables.net/1.13.7/js/jquery.dataTables.min.js"></script>
+
+
+<script src="//cdn.datatables.net/2.2.2/js/dataTables.min.js"></script>
 @endpush
 
 @push('style-lib')
     <link rel="stylesheet" type="text/css" href="{{ asset('assets/admin/css/daterangepicker.css') }}">
     <link rel="stylesheet" href="{{ asset('assets/global/css/book.css') }}">
+    <!-- DataTables CSS -->
+<link rel="stylesheet" href="https://cdn.datatables.net/1.13.7/css/jquery.dataTables.min.css">
+<link rel="stylesheet" href="//cdn.datatables.net/2.2.2/css/dataTables.dataTables.min.css">
 @endpush
 
 @push('script')
     <script>
-        var showRoomUrl         = "{{ route('admin.booking.showRoom') }}";
+        var showRoomUrl = "{{ route('admin.booking.showRoom') }}";
         var checkRoomBookingUrl = '{{ route('admin.booking.checkRoomBooking') }}';
-        var searchCustomerUrl   = '{{ route('admin.search.customer') }}';
-        var roomBookingUrl      = '{{ route('admin.room.booking') }}';
-        var roomBookingEditUrl  = "{{ route('admin.room.booking.edit', ['id' => ':id']) }}";
-        var bookingDetailUrl    = "{{ route('admin.booking.details', ['id' => ':id']) }}";
-        var checkInUrl          = "{{ route('admin.room.check.in', ['id' => ':id']) }}";
+        var searchCustomerUrl = '{{ route('admin.search.customer') }}';
+        var roomBookingUrl = '{{ route('admin.room.booking') }}';
+        var roomBookingEditUrl = "{{ route('admin.room.booking.edit', ['id' => ':id']) }}";
+        var bookingDetailUrl = "{{ route('admin.booking.details', ['id' => ':id']) }}";
+        var checkInUrl = "{{ route('admin.room.check.in', ['id' => ':id']) }}";
         var deleteBookedRoomUrl = "{{ route('admin.booking.delete-booked-room', ['id' => ':id']) }}";
-        var findCustomerUrl     = '{{ route('admin.find.customer') }}';
-        var getCustomerStaff    = "{{route('admin.get.customer.staff')}}";
+        var findCustomerUrl = '{{ route('admin.find.customer') }}';
+        var getCustomerStaff = "{{ route('admin.get.customer.staff') }}";
     </script>
 
     <script>
+        $(document).ready(function () {
+            $('#data-table').DataTable({
+                "destroy": true,   // Hủy bảng cũ trước khi vẽ lại
+                "autoWidth": false, 
+                "ordering": false, // Tắt sắp xếp cột
+                "paging": false,   // Tắt phân trang
+                "info": false,     // Ẩn tổng số dòng
+                "searching": false // Ẩn ô tìm kiếm
+            });
+
+        });
+
         $(document).ready(function() {
             $("#date-chon-phong-in").on("change", function() {
                 let checkInDate = new Date($(this).val());
@@ -217,11 +241,30 @@
 @endpush
 @push('style')
     <style scoped>
-        #data-table tbody tr:hover {
-            background-color: #f0f0f0; /* Màu nền khi hover */
-            cursor: pointer; /* Con trỏ chuột đổi thành dạng pointer */
+        .dt-column-title{
+            color: white !important;
         }
+        .mt-10{
+            margin-top: -9px !important;
+        }
+        .text-left {
+    text-align: left !important;
+}
 
+.text-right {
+    text-align: right !important;
+}
+
+.text-center {
+    text-align: center;
+}
+
+        #data-table tbody tr:hover {
+            background-color: #f0f0f0;
+            /* Màu nền khi hover */
+            cursor: pointer;
+            /* Con trỏ chuột đổi thành dạng pointer */
+        }
         .table-responsive--md {
             overflow-x: auto;
             /* Enable horizontal scrolling if the table overflows */
@@ -248,18 +291,24 @@
         .modal-open .select2-container {
             z-index: 9 !important;
         }
+
         .search-container {
             width: 50%;
             display: flex;
             align-items: center;
-            gap: 8px; /* Khoảng cách giữa input và button */
+            gap: 8px;
+            /* Khoảng cách giữa input và button */
         }
+
         .search-container select,
         .search-container input,
         .search-container p {
-            flex: 1; /* Chia đều kích thước */
-            height: 40px; /* Đảm bảo chiều cao bằng nhau */
+            flex: 1;
+            /* Chia đều kích thước */
+            height: 40px;
+            /* Đảm bảo chiều cao bằng nhau */
         }
+
         .search-container p {
             margin: 0;
             height: 40px;
@@ -273,9 +322,11 @@
             cursor: pointer;
             user-select: none;
         }
+
         .search-container p:hover {
             background-color: #0056b3;
         }
+
         .pagination-container {
             display: flex;
             justify-content: center;
@@ -303,13 +354,37 @@
             background-color: #ddd;
             cursor: not-allowed;
         }
+
         .body-wrapper {
-    padding: 6px 25px 10px !important;
+            padding: 6px 25px 10px !important;
         }
+
         .pagination-container button.active {
             background-color: #4634ff;
             border-color: #4634ff;
         }
+/* Căn lề trái cho Mã khách hàng & Tên khách hàng */
+.customer-code,
+.customer-name,
+.customer-group {
+    text-align: left !important;
+    padding-left: 10px;
+}
+
+/* Căn lề phải cho Số điện thoại */
+.customer-phone {
+    display: flex;
+    justify-content: flex-end; /* Căn nội dung sang phải */
+    align-items: center; /* Giữ nội dung ở giữa theo chiều dọc */
+    text-align: right;
+    padding-right: 10px;
+}
+
+
+/* Căn giữa cho cột Thao tác */
+.text-center {
+    text-align: center !important;
+}
 
         .check_in_status {
             background: rgb(245, 243, 243);
@@ -340,11 +415,11 @@
         }
 
         .background-primary {
-            background: #0b138d;
+            background: #0b138d !important;
         }
 
         .background-yellow {
-            background-color: #eeddaa;
+            background-color: #eeddaa !important;
         }
 
         .background-white {
@@ -356,38 +431,28 @@
         .background-primary td {
             color: white !important;
         }
-    #data-table {
-        border-collapse: collapse; /* Gộp viền bảng */
-    }
-    #data-table td, #data-table th {
-        line-height: 1 !important;
-    }
-#data-table td {
-    height: 30px !important;
-    overflow: hidden;
-    white-space: nowrap; /* Ngăn xuống dòng để giảm chiều cao */
-}
 
+        #data-table {
+            border-collapse: collapse;
+            /* Gộp viền bảng */
+        }
 
-#data-table td, #data-table th {
-    padding: 6px !important; /* Giảm padding để thu nhỏ chiều cao */
-}
-#data-table {
-        border-collapse: collapse; /* Gộp viền bảng */
-    }
-    #data-table td, #data-table th {
-        line-height: 1 !important;
-    }
-#data-table td {
-    height: 30px !important;
-    overflow: hidden;
-    white-space: nowrap; /* Ngăn xuống dòng để giảm chiều cao */
-}
+        #data-table td,
+        #data-table th {
+            line-height: 1 !important; padding: 6px !important;
+        }
 
-
-#data-table td, #data-table th {
-    padding: 6px !important; /* Giảm padding để thu nhỏ chiều cao */
-}
-
+        #data-table td {
+            height: 30px !important;
+            overflow: hidden;
+            white-space: nowrap;
+            /* Ngăn xuống dòng để giảm chiều cao */
+        }
+        #data-table td {
+            height: 30px !important;
+            overflow: hidden;
+            white-space: nowrap;
+            /* Ngăn xuống dòng để giảm chiều cao */
+        }
     </style>
 @endpush
