@@ -12,10 +12,9 @@ class StatusCode extends Model
     protected $table = 'status_codes';
 
     protected $fillable = [
-        'status_code',
-        'status_name',
+        'group_code',
+        'group_name',
         'note',
-        'status_status',
         'created_at',
         'updated_at',
 

@@ -96,7 +96,7 @@ class CustomerController extends Controller
         $newStatus = $customer->status == 1 ? 0 : 1;
 
         $customer->update(['status' => $newStatus]);
-        $statusHtml = $newStatus == 1 ? '<span class="badge badge--success">Hoạt động</span>' : '<span class="badge badge--danger">Không hoạt động</span>';
+        $statusHtml = $newStatus == 1 ? ' <i class="fa fa-check" style="color:green;text-align: center"></i>' : '<i class="fa fa-close" style="color:red;text-align: center"></i>';
         return response()->json([
             'status' => 'success',
             'message' => 'Cập nhật trạng thái chức năng thành công',

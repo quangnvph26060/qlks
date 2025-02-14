@@ -4,9 +4,8 @@
             <button class="btn btn-link btn-toggle" type="button"
                 onclick=" toggleRepresentatives('{{ $type->id }}', this)"></button>
         </td>
-        <td data-label="STT">{{ $loop->iteration }}</td>
         @can(['admin.hotel.room.type.edit', 'admin.hotel.room.type.status', 'admin.hotel.room.type.destroy'])
-            <td>
+            <td style="width:20px">
             <svg class="svg_menu_check_in" xmlns="http://www.w3.org/2000/svg" width="30" height="30" viewBox="0 0 21 21"><g fill="currentColor" fill-rule="evenodd"><circle cx="10.5" cy="10.5" r="1"/><circle cx="10.5" cy="5.5" r="1"/><circle cx="10.5" cy="15.5" r="1"/></g></svg>
                             
             <div class="dropdown menu_dropdown_check_in" id="dropdown-menu">
@@ -41,6 +40,8 @@
 
             </td>
         @endcan
+        <td data-label="STT" style="text-align:right">{{ $loop->iteration }}</td>
+      
         <td data-label="Loại phòng">
             {{ $type->roomType->name }}
         </td>  

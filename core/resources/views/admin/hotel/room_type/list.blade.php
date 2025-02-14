@@ -33,10 +33,11 @@
                             <thead>
                                 <tr>
                                     <th></th>
+                                    <th>@lang('Hành động')</th>
                                     <th>@lang('STT')</th>
                                     @can(['admin.hotel.room.type.edit', 'admin.hotel.room.type.status',
                                         'admin.hotel.room.type.destroy'])
-                                        <th>@lang('Hành động')</th>
+                                      
                                     @endcan
                                     <th>@lang('Loại phòng')</th>
                                     <th>@lang('Mã phòng')</th>
@@ -59,9 +60,7 @@
 
                     </div>
                 </div>
-                <div id="pagination" class="m-3">
-
-                </div>
+           
             </div>
         </div>
     </div>
@@ -73,6 +72,7 @@
     @push('breadcrumb-plugins')
            <div class="card-body mt-1">
             <div class="row">
+        
               <div class="col-md-12 d-flex">
                     <a class="btn btn-sm btn-outline--primary" href="{{ route('admin.hotel.room.type.create') }}"><i
                     class="las la-plus mt-1 p-1"></i></a>
@@ -105,6 +105,9 @@
                     </form>
                 </div>
             
+            </div>
+            <div id="pagination">
+
             </div>
         </div>
 
