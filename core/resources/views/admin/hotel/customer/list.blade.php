@@ -34,8 +34,8 @@
                                             data-id="{{ $customer->id }}" class="btn-edit-customer" data-bs-toggle="modal" data-bs-target="#edit-customer" style="color:black">
                                                 Sửa khách hàng
                                             </a></div>
-                                            <div class="dropdown-item booked_room">    @if($customer->status == 1)
-                                            <button class="confirmationBtn"
+                                            <!-- <div class="dropdown-item booked_room">    @if($customer->status == 1) -->
+                                            <!-- <button class="confirmationBtn"
                                                     data-action="{{ route('admin.hotel.customer.status', $customer->id) }}"   data-id="{{ $customer->id }}"
                                                     data-question="@lang('Bạn có chắc chắn muốn tắt trạng thái này không?')" type="button">
                                                 Tắt hoạt động
@@ -46,7 +46,7 @@
                                                         data-question="@lang('Bạn có chắc chắn muốn tắt trạng thái này không?')" type="button">
                                                     Hoạt động
                                                 </button>
-                                            @endif</div>
+                                            @endif</div> -->
                                               <div class="dropdown-item booked_room_detail"> <button class=" btn-delete icon-delete-room"
                                                 data-id="{{ $customer->id }}" data-modal_title="@lang('Xóa khách hàng')" type="button"
                                                 data-pro="0">Xóa khách hàng</div>
@@ -62,7 +62,7 @@
                                     <td>
                                         <span class="fw-bold">{{ $customer->name }}</span>
                                     </td>
-                                    <td>
+                                    <td style="text-align:right">
                                         {{ $customer->phone }}
                                     </td>
                                    <td>
@@ -71,7 +71,7 @@
                                     <td>
                                         {{ $customer->address }}
                                     </td>
-                                    <td>
+                                    <td style="text-align:right">
                                     {{ (new DateTime($customer->created_at))->format('d/m/Y')  }}
                                     </td>
 
@@ -113,7 +113,7 @@
                         <i class="las la-plus"></i>
                     </button>
                     <form role="form" enctype="multipart/form-data" action="{{route('admin.hotel.customer.search')}}">
-                        <div class="form-group position-relative mb-0" id="btn-add-customer">
+                        <div class="form-group position-relative mb-0">
                             <input class="searchInput" name="customer_code"
                                    style="height: 35px;width:20%;border: 1px solid rgb(121, 117, 117, 0.5);margin-left: 8px;"
                                     placeholder="Mã khách hàng">
@@ -125,10 +125,8 @@
                                    placeholder="Điện thoại">
                             <input class="searchInput" name="address"
                                    style="height: 35px;width:20%;border: 1px solid rgb(121, 117, 117, 0.5); margin-left: 8px;"
-                                   type="search" placeholder="Địa chỉ">
-                  <!--           <input class="searchInput" name="unit_code"
-                                   style="height: 35px;width:18%;border: 1px solid rgb(121, 117, 117, 0.5); margin-left: 8px;"
-                                   type="search" placeholder="Mã đơn vị"> -->
+                                 placeholder="Địa chỉ">
+            
                             <button type="submit" class="btn btn-primary" style="padding-right:15px;padding-left:15px">
                                 <i class="las la-search"></i>
                             </button>
@@ -160,14 +158,14 @@
                             <div style="display: grid; grid-template-columns: 50% 50%">
                                 <div class="mb-3">
                                     <label for="statusCode" class="form-label">Mã khách hàng</label>
-                                    <input type="text" class="form-control " name="customer_code" id="customer_code"
+                                    <input type="text" class="form-control " name="customer_code" id="add_customer_code"
                                            placeholder="Nhập mã khách hàng" style="width:98%">
                                     <span class="invalid-feedback d-block" style="font-weight: 500"
                                           id="customer_code_error"></span>
                                 </div>
                                 <div class="mb-3">
                                     <label for="statusName" class="form-label">Tên khách hàng</label>
-                                    <input type="text" class="form-control " name="name" id="name"
+                                    <input type="text" class="form-control " name="name" id="add_name"
                                            placeholder="Nhập tên khách hàng">
                                     <span class="invalid-feedback d-block" style="font-weight: 500"
                                           id="name_error"></span>
@@ -176,14 +174,14 @@
                             <div style="display: grid; grid-template-columns: 50% 50%">
                                 <div class="mb-3">
                                     <label for="statusCode" class="form-label">Điện thoại</label>
-                                    <input type="text" class="form-control " name="phone" id="phone"
+                                    <input type="number" class="form-control " name="phone" id="add_phone"
                                            placeholder="Nhập số điện thoại" style="width:98%">
                                     <span class="invalid-feedback d-block" style="font-weight: 500"
                                           id="phone_error"></span>
                                 </div>
                                 <div class="mb-3">
                                     <label for="statusCode" class="form-label">Email</label>
-                                    <input type="email" class="form-control " name="email" id="email"
+                                    <input type="email" class="form-control " name="email" id="add_email"
                                            placeholder="Nhập email">
                                     <span class="invalid-feedback d-block" style="font-weight: 500"
                                           id="email_error"></span>
@@ -191,9 +189,9 @@
                             </div>
                             <div class="mb-3">
                                 <label for="address" class="form-label">Địa chỉ</label>
-                                <input type="text" class="form-control" name="address"
+                                <input type="text" class="form-control" name="address" id="add_address"
                                        placeholder="Nhập địa chỉ">
-                                <span class="invalid-feedback d-block" style="font-weight: 500"></span>
+                                <span class="invalid-feedback d-block"  id="address_error" style="font-weight: 500"></span>
                             </div>
                             <div class="mb-3">
                                 <label class="form-label">Ghi chú</label>
@@ -243,13 +241,13 @@
                                     <label for="statusCode" class="form-label">Mã khách hàng</label>
                                     <input type="text" class="form-control " name="customer_code" id="edit-customer-code"
                                            placeholder="Nhập mã khách hàng" style="width:98%">
-                                    <span class="invalid-feedback d-block" style="font-weight: 500"></span>
+                                    <span class="invalid-feedback d-block" id="edit_customer_code_error" style="font-weight: 500"></span>
                                 </div>
                                 <div class="mb-3">
                                     <label for="statusName" class="form-label">Tên khách hàng</label>
                                     <input type="text" class="form-control " name="name" id="edit-name"
                                            placeholder="Nhập tên khách hàng" s>
-                                    <span class="invalid-feedback d-block" style="font-weight: 500"></span>
+                                    <span class="invalid-feedback d-block" id="edit_name_error" style="font-weight: 500"></span>
                                 </div>
                             </div>
                             <div style="display: grid; grid-template-columns: 50% 50%">
@@ -257,20 +255,20 @@
                                     <label for="statusCode" class="form-label">Điện thoại</label>
                                     <input type="text" class="form-control " name="phone" id="edit-phone"
                                            placeholder="Nhập số điện thoại" style="width:98%">
-                                    <span class="invalid-feedback d-block" style="font-weight: 500"></span>
+                                    <span class="invalid-feedback d-block" id="edit_phone_error" style="font-weight: 500"></span>
                                 </div>
                                 <div class="mb-3">
                                     <label for="email" class="form-label">Email</label>
                                     <input type="email" class="form-control" name="email" id="edit-email"
                                            placeholder="Nhập email">
-                                    <span class="invalid-feedback d-block" style="font-weight: 500" ></span>
+                                    <span class="invalid-feedback d-block" id="edit_email_error" style="font-weight: 500" ></span>
                                 </div>
                             </div>
                             <div class="mb-3">
                             <label for="address" class="form-label">Địa chỉ</label>
                                 <input type="text" class="form-control " name="address" id="edit-address"
                                    placeholder="Nhập địa chỉ">
-                                 <span class="invalid-feedback d-block" style="font-weight: 500"></span>
+                                 <span class="invalid-feedback d-block" id="edit_address_error" style="font-weight: 500"></span>
                              </div>
                             <div class="mb-3">
                                 <label class="form-label">Ghi chú</label>
@@ -307,6 +305,7 @@
 @push('style-lib')
     <link rel="stylesheet" type="text/css" href="{{ asset('assets/admin/css/daterangepicker.css') }}">
     <link rel="stylesheet" href="{{ asset('assets/global/css/modal.css') }}">
+    
     <style>
             .navbar__right{
                 display: none;
@@ -317,9 +316,237 @@
     </style>
 @endpush
 @push('script')
-
+<script src="{{ asset('assets/admin/js/highlighter22.js') }}"></script>
+<script src="{{ asset('assets/validator/validator.js') }}"></script>
 <script>
     $(document).ready(function() {
+        var formEconomyEdit = {
+                'customer_code': {
+                    'element': document.getElementById('add_customer_code'),
+                    'error': document.getElementById('customer_code_error'),
+                
+                    'validations': [{
+                        'func': function(value) {
+                            return checkRequired(value); // check trống
+                        },
+                        'message': generateErrorMessage('MKH001')
+                    },
+                    ]
+                },
+
+                'name': {
+                    'element': document.getElementById('add_name'), // id trong input đó
+                    'error': document.getElementById('name_error'), // thẻ hiển thị lỗi
+                    'validations': [{
+                        'func': function(value) {
+                            return checkRequired(value);
+                        },
+                        'message': generateErrorMessage('TKH001')
+                    },
+                    ]
+                },
+                'phone': {
+                    'element': document.getElementById('add_phone'), // id trong input đó
+                    'error': document.getElementById('phone_error'), // thẻ hiển thị lỗi
+                    'validations': [{
+                        'func': function(value) {
+                            return checkRequired(value);
+                        },
+                        'message': generateErrorMessage('SDT001')
+                    },
+                    ]
+                },
+            
+                'email': {
+                    'element': document.getElementById('add_email'), // id trong input đó
+                    'error': document.getElementById('email_error'), // thẻ hiển thị lỗi
+                    'validations': [{
+                        'func': function(value) {
+                            return checkRequired(value);
+                        },
+                        'message': generateErrorMessage('Email001') 
+                    },
+                    ]
+                
+                },
+                'email': {
+                    'element': document.getElementById('add_email'), // id trong input đó
+                    'error': document.getElementById('email_error'), // thẻ hiển thị lỗi
+                    'validations': [{
+                        'func': function(value) {
+                            return checkEmail(value);
+                        },
+                        'message': generateErrorMessage('Email002') 
+                    },
+                    ]
+                },
+                'address': {
+                    'element': document.getElementById('add_address'), // id trong input đó
+                    'error': document.getElementById('address_error'), // thẻ hiển thị lỗi
+                    'validations': [{
+                        'func': function(value) {
+                            return checkRequired(value);
+                        },
+                        'message': generateErrorMessage('DiaChi001')
+                    },
+                    ]
+                },
+            }
+            var formEconomyEdit_edit = {
+                'customer_code': {
+                    'element': document.getElementById('edit-customer-code'),
+                    'error': document.getElementById('edit_customer_code_error'),
+                
+                    'validations': [{
+                        'func': function(value) {
+                            return checkRequired(value); // check trống
+                        },
+                        'message': generateErrorMessage('MKH001')
+                    },
+                    ]
+                },
+
+                'name': {
+                    'element': document.getElementById('edit-name'), // id trong input đó
+                    'error': document.getElementById('edit_name_error'), // thẻ hiển thị lỗi
+                    'validations': [{
+                        'func': function(value) {
+                            return checkRequired(value);
+                        },
+                        'message': generateErrorMessage('TKH001')
+                    },
+                    ]
+                },
+                'phone': {
+                    'element': document.getElementById('edit-phone'), // id trong input đó
+                    'error': document.getElementById('edit_phone_error'), // thẻ hiển thị lỗi
+                    'validations': [{
+                        'func': function(value) {
+                            return checkRequired(value);
+                        },
+                        'message': generateErrorMessage('SDT001')
+                    },
+                    ]
+                },
+            
+                'email': {
+                    'element': document.getElementById('edit-email'), // id trong input đó
+                    'error': document.getElementById('edit_email_error'), // thẻ hiển thị lỗi
+                    'validations': [{
+                        'func': function(value) {
+                            return checkRequired(value);
+                        },
+                        'message': generateErrorMessage('Email001') 
+                    },
+                    ]
+                
+                },
+                'email': {
+                    'element': document.getElementById('edit-email'), // id trong input đó
+                    'error': document.getElementById('edit_email_error'), // thẻ hiển thị lỗi
+                    'validations': [{
+                        'func': function(value) {
+                            return checkEmail(value);
+                        },
+                        'message': generateErrorMessage('Email002') 
+                    },
+                    ]
+                },
+                'address': {
+                    'element': document.getElementById('edit-address'), // id trong input đó
+                    'error': document.getElementById('edit_address_error'), // thẻ hiển thị lỗi
+                    'validations': [{
+                        'func': function(value) {
+                            return checkRequired(value);
+                        },
+                        'message': generateErrorMessage('DiaChi001')
+                    },
+                    ]
+                },
+            }
+            $(document).on('click', '#btn-add-customer', function(event) {
+                
+                if (validateAllFields(formEconomyEdit)) {
+                    document.getElementById('addCustomer').submit(); // là id trong form
+                }
+
+                else
+                {
+                    event.preventDefault();
+                
+                }
+                
+            });
+            $(document).on('keyup', '#add_customer_code', function(event) {
+                    var code = $('#add_customer_code').val();
+                    $.ajax({
+                        url: `{{ route('admin.hotel.customer.check') }}`,
+                        type: 'GET',
+                        cache: false,
+                        data: {
+                            'customer_code': code,
+                    },
+                    success: function(response) {
+                            if(response == 1)
+                            {
+                                $('#customer_code_error').html('Mã khách hàng đã tồn tại');
+                                document.getElementById('btn-add-customer').disabled = 'disabled';
+
+                            }
+                            else
+                            {
+                                $('#customer_code_error').html('');
+                                document.getElementById('btn-add-customer').disabled = false;
+
+                            }
+            
+                     },
+                     error: function(error) {
+                        console.log(error);
+                
+                     }
+                });
+            });
+            $(document).on('keyup', '#edit-customer-code', function(event) {
+                    var code = $('#edit-customer-code').val();
+                    $.ajax({
+                        url: `{{ route('admin.hotel.customer.check') }}`,
+                        type: 'GET',
+                        cache: false,
+                        data: {
+                            'customer_code': code,
+                    },
+                    success: function(response) {
+                            if(response == 1)
+                            {
+                                $('#edit_customer_code_error').html('Mã khách hàng đã tồn tại');
+                                document.getElementById('btn-edit-customer').disabled = 'disabled';
+
+                            }
+                            else
+                            {
+                                $('#edit_customer_code_error').html('');
+                                document.getElementById('btn-edit-customer').disabled = false;
+
+                            }
+            
+                     },
+                     error: function(error) {
+                        console.log(error);
+                
+                     }
+                });
+            });
+            $(document).on('click', '#btn-edit-customer', function() {
+                if (validateAllFields(formEconomyEdit_edit)) {
+                    document.getElementById('editCustomer').submit(); // là id trong form
+                }
+                else
+                {
+                    event.preventDefault();
+
+                }
+            });
         $('.btn-edit-customer').on('click', function() {
             var dataId = $(this).data('id');
             $.ajax({
@@ -337,10 +564,7 @@
                     $('#method').attr('value', 'PUT');
                     $('#editCustomer').attr('action', '{{ route('admin.hotel.customer.update', '') }}/' + dataId + '')
 
-                    // formEconomyEdit.source_code.element = document.getElementById('source_code');
-                    // formEconomyEdit.source_code.error = document.getElementById('source_code_error');
-                    // formEconomyEdit.source_name.element = document.getElementById('source_name');
-                    // formEconomyEdit.source_name.error = document.getElementById('source_name_error');
+                  
                 },
                 error: function(xhr, status, error) {
                     console.log(xhr.responseText);
@@ -368,8 +592,11 @@
                         success: function(data) {
                             if (data.status ==='success') {
                                 rowToDelete.remove();
-
-
+                                    
+                            }
+                            else
+                            {
+                                alert('Khách hàng đã có đơn hàng, không thể xóa');
                             }
                         },
                         error: function(xhr, status, error) {
