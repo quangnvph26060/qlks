@@ -3434,11 +3434,19 @@ select:focus-within {
     /* padding: 15px 25px; */
     white-space: nowrap;
 }
+.table td span, .table td p, .table td li
+{
+    padding: 5px !important;
+    
+}
+.table.table--light.style--two tbody td{
+    border: 1px solid lightgray;
+}
 
 .table td {
     font-size: 0.8125rem;
     color: #5b6e88;
-    text-align: center;
+    text-align: left;
     font-weight: 500;
     padding: 15px 25px;
     vertical-align: middle;

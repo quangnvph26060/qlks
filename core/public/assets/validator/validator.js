@@ -100,6 +100,13 @@ function generateErrorMessage(code, values = []) {
         TN001: 'Tên nguồn không được để trống',
         MNH001: 'Mã nhóm không được để trống',
         TNH001: 'Tên nhóm không được để trống',
+        TKH001: 'Tên khách hàng không được để trống',
+        MKH001: 'Mã khách hàng không được để trống',
+        SDT001: `Điện thoại không được để trống`,
+        SDT002: `${values} phải là số`,
+        Email001: 'Email không được để trống',
+        Email002: 'Email không hợp lệ',
+        DiaChi001: 'Địa chỉ không được để trống'
         // khai báo thêm các message vào đây ...
     };
     const errorMessage = errorMessages[code];

@@ -19,7 +19,46 @@
                 <div class="modal-dialog" id="modal-dialog">
                 </div>
             </div>
+            <div class="modal fade" id="edit-customer-group" data-bs-backdrop="static" data-bs-keyboard="false" tabindex="-1"
+                aria-labelledby="staticBackdropLabel" aria-hidden="true">
+                <div class="modal-dialog modal-lg">
+                    <div class="modal-content">
+                        <div class="modal-header">
+                            <h5 class="modal-title" id="staticBackdropLabel">Cập nhật khách hàng</h5>
+                            <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+                        </div>
+                        <div class="modal-body">
+                            <form id="editCustomer" method="POST" action="">
+                                {!! csrf_field() !!}
+                                <input type="hidden" id="method" name="_method" value="">
+                                <div class="row">
+                                    <div style="display: grid; grid-template-columns: 50% 50%">
+                                        <div class="mb-3">
+                                            <label for="statusCode" class="form-label">Mã khách hàng</label>
+                                            <input type="text" class="form-control " name="customer_code" id="edit-customer-code"
+                                                placeholder="Nhập mã khách hàng" style="width:98%">
+                                            <span class="invalid-feedback d-block" style="font-weight: 500"></span>
+                                        </div>
+                                        <div class="mb-3">
+                                            <label for="statusName" class="form-label">Tên khách hàng</label>
+                                            <input type="text" class="form-control " name="name" id="edit-name"
+                                                placeholder="Nhập tên khách hàng" s>
+                                            <span class="invalid-feedback d-block" style="font-weight: 500"></span>
+                                        </div>
+                                    </div>
+                                   
+                                
+                                    <div class="modal-footer">
+                                        <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Đóng</button>
+                                        <button type="submit" id="btn-edit-customer" class="btn btn-primary">Lưu</button>
+                                    </div>
+                                </div>
+                            </form>
 
+                        </div>
+                    </div>
+                </div>
+            </div>
             <div class="row gy-4">
                 <div class="col-12">
                     <div class="emptyArea"></div>
@@ -48,7 +87,7 @@
                                 <td>
                                     {{-- href="{{ route('admin.setting.setup.edit.hotel', $item->id) }}" --}}
                                     <a class="btn btn-sm btn-outline--primary btn-edit-group"
-                                       data-id="{{ $item->id }}" data-bs-toggle="modal" data-bs-target="#customer-group">
+                                       data-id="{{ $item->id }}" data-bs-toggle="modal" data-bs-target="#edit-customer-group">
                                         <i class="la la-pencil"></i>
                                     </a>
                         
@@ -174,7 +213,7 @@
                             rowEdit += `
                             <div class="modal-content">
                                 <div class="modal-header">
-                                    <h1 class="modal-title fs-5" id="exampleModalLabel">Chỉnh sửa trạng thái chức năng
+                                    <h1 class="modal-title fs-5" id="exampleModalLabel">Chỉnh sửa nhóm khách hàng
                                     </h1>
                                     <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
                                 </div>
@@ -184,17 +223,17 @@
                                         @csrf
                             <!-- Input 1 -->
                             <div class="mb-3">
-                                <label for="groupCode" class="form-label">Mã trạng thái</label>
+                                <label for="groupCode" class="form-label">Mã nhóm</label>
                                 <input type="text" class="form-control " name="group_code" id="group_code"
-                                    placeholder="Nhập mã trạng thái" value="${data.data['group_code']}">
+                                    placeholder="Nhập mã nhóm" value="${data.data['group_code']}">
                                             <span class="invalid-feedback d-block" style="font-weight: 500"
                                                 id="group_code_error"></span>
                                         </div>
                                         <!-- Input 2 -->
                                         <div class="mb-3">
-                                            <label for="groupName" class="form-label">Tên trạng thái</label>
+                                            <label for="groupName" class="form-label">Tên nhóm</label>
                                             <input type="text" class="form-control " name="group_name" id="group_name"
-                                                placeholder="Nhập tên trạng thái" value="${data.data['group_name']}">
+                                                placeholder="Nhập tên nhóm" value="${data.data['group_name']}">
                                             <span class="invalid-feedback d-block" style="font-weight: 500"
                                                 id="group_name_error"></span>
                                         </div>

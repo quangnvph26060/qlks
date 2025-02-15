@@ -280,6 +280,7 @@ Route::middleware('admin', 'adminPermission')->group(function () {
             Route::post('delete-customer/{id}', 'delete')->name('delete');
             Route::post('status/{id}', 'status')->name('status');
             Route::get('search', 'search')->name('search');
+            Route::get('check-code','checkCode')->name('check');
 
         });
 
@@ -660,7 +661,6 @@ Route::middleware('admin', 'adminPermission')->group(function () {
 
     // SEO
     Route::get('seo', 'FrontendController@seoEdit')->name('seo');
-
     // Frontend
     Route::name('frontend.')->prefix('frontend')->group(function () {
 

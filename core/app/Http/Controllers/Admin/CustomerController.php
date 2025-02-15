@@ -5,6 +5,7 @@ namespace App\Http\Controllers\Admin;
 use App\Http\Controllers\Controller;
 use App\Http\Helpers\helpers;
 use App\Models\Customer;
+use App\Models\Booking;
 use App\Models\HotelFacility;
 use Illuminate\Http\Request;
 
@@ -25,10 +26,11 @@ class CustomerController extends Controller
     public function store(Request $request)
     {
         $request->validate([
+            'email' => 'required|string',
             'customer_code' => 'required|string',
             'name' => 'required|string',
             'phone' => 'required|numeric',
-            'email' => 'required|string',
+           
         ]);
         $customer = new Customer();
         $customer->customer_code = $request->customer_code;
@@ -75,11 +77,23 @@ class CustomerController extends Controller
     }
     public function delete($id)
     {
-        Customer::destroy($id);
-        return response()->json([
-            'status' => 'success',
-            'message' => 'Xóa khách hàng thành công',
-        ]);
+        $bookings = Booking::where('user_id', $id)->first();
+
+        if ($bookings) {
+            return response()->json([
+                'status' => 'error',
+                'message' => 'Không thể xóa vì khách hàng đã có đơn hàng'
+            ]);
+        }
+        else
+        {
+            Customer::destroy($id);
+            return response()->json([
+                'status' => 'success',
+                'message' => 'Xóa khách hàng thành công',
+            ]);
+        }
+       
     }
     public function status($id)
     {
@@ -106,7 +120,7 @@ class CustomerController extends Controller
     public function search(Request $request)
     {
         $pageTitle = '';
-        if($request->input('customer_code') == '' && $request->input('name') == '' && $request->input('phone') == '')
+        if($request->input('customer_code') == '' && $request->input('name') == '' && $request->input('phone') == '' && $request->input('address') == '')
         {
             $customers = Customer::orderBy('id', 'desc')->paginate(30);
         }
@@ -126,4 +140,20 @@ class CustomerController extends Controller
         $unit_codes = HotelFacility::select('ma_coso')->get();
         return view('admin.hotel.customer.list', compact('pageTitle', 'customers', 'unit_codes'));
     }
+    public function checkCode(Request $request)
+    {
+        $customer_code = $request->input('customer_code');
+        $customer = new Customer();
+        $user = $customer->select('customer_code')->where('customer_code', $customer_code)->first();
+        // $user_delete = $customer->onlyTrashed()->select('customer_code')->where('customer_code', $customer_code)->first();
+        if (!empty($user)) {
+            return 1;
+        }
+        else
+        {
+            return 2;
+        }
+       
+    }
+ 
 }

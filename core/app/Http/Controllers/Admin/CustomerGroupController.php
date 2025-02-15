@@ -35,8 +35,8 @@ class CustomerGroupController extends Controller
             $notify[] = ['error', 'Không tìm thấy nguồn khách hàng'];
             return back()->withNotify($notify);
         }
-        $source = CustomerGroup::find($id);
-        return $source;
+        $group = CustomerGroup::find($id);
+        return $group;
     }
 
     public function update($id, Request $request)
