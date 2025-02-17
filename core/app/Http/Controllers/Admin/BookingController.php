@@ -186,7 +186,6 @@ class BookingController extends Controller
     }
     public function bookingserviceproduct($id)
     {
-        Log::info($id);
         $service = PremiumService::get();
         $product = Product::get();
         $currentDate = Carbon::now()->format('Y-m-d');

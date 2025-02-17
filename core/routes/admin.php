@@ -700,7 +700,7 @@ Route::middleware('admin', 'adminPermission')->group(function () {
     // Report room status
     Route::controller('ManageReportController')->prefix('manage')->name('manage.')->group(function () {
 
-            Route::get('room-status', 'rommStatus')->name('room.status');
+            Route::get('room-status', action: 'rommStatus')->name('room.status');
             Route::get('room-status-history', 'roomStatusHistory')->name('room.status.history');
     });
 });

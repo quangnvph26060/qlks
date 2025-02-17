@@ -18,8 +18,8 @@
         <div class="card b-radius--10 mt-1">
             <div class="card-body p-0">
                 <div class="table-responsive--md">
-{{-- giữ --}}
-                    <table class="table--light style--two table table-striped" id="data-table"> 
+                    {{-- giữ --}}
+                    <table class="table--light style--two table table-striped" id="data-table">
                         <thead>
                             <tr>
                                 <th>@lang('Hành động')</th>
@@ -60,9 +60,26 @@
         {{-- <a class="btn btn-sm btn--primary" href="{{ route('admin.booking.all') }}">
             <i class="la la-list"></i>@lang('Tất cả các đặt phòng')
         </a> --}}
+      <div class="d-flex">
         <a class="btn btn-sm btn--primary add-book-room">
-            <i class="la la-plus"></i>@lang('Đặt phòng')
+            <i class="la la-plus"></i>
         </a>
+        <div class="form-group position-relative mb-0" style="display: flex;gap: 10px;">
+            <input class="searchInput input-field-search-book" name="booking_code" placeholder="Mã đặt phòng" id="booking_code">
+            <select class="searchInput input-field-search-book"  name="room_code" id="select_room_number"></select>
+          {{-- <div class="d-flex" style="gap: 10px">
+            <input type="date" class="form-control " id="date-chon-phong-in" style="height: 35px">
+            <input type="date" class="form-control " id="date-chon-phong-out" style="height: 35px">
+          </div> --}}
+            <input class="searchInput input-field-search-book" name="name" placeholder="Tên khách hàng" id="name_book">
+            <button type="submit" class="btn btn-primary btn-submit-search-book">
+                <i class="las la-search"></i>
+            </button>
+            <button type="submit" class="btn btn-primary btn-submit-sync-book">
+                <i class="las la-sync"></i>
+            </button>
+        </div>
+      </div>
         <div class="modal fade" id="addRoomModal" tabindex="-1" aria-hidden="true" style="overflow: unset">
             <div class="modal-dialog modal-dialog-centered" style="top: 4px">
                 <div class="modal-content" style="height: 100vh;">
@@ -103,7 +120,7 @@
                         </div>
                     </div>
                     <div class="modal-body overflow-add-room">
-                        <table class="table ">
+                        <table class=" table--light style--two table ">
                             <thead>
                                 <tr>
                                     <th data-table="Hạng phòng" class="text-left">Hạng phòng</th>
@@ -181,7 +198,6 @@
     <script src="{{ asset('assets/admin/js/room_booking.js') }}"></script>
     <script src="{{ asset('assets/admin/js/pagination.js') }}"></script>
     <script src="https://cdn.jsdelivr.net/npm/@popperjs/core@2.5.3/dist/umd/popper.min.js"></script>
-
 @endpush
 
 @push('style-lib')
@@ -218,23 +234,25 @@
 @endpush
 @push('style')
     <style scoped>
-        .dt-column-title{
+        .dt-column-title {
             color: white !important;
         }
-        .mt-10{
+
+        .mt-10 {
             margin-top: -9px !important;
         }
-            .text-left {
+
+        .text-left {
             text-align: left !important;
-            }
+        }
 
-            .text-right {
-                text-align: right !important;
-            }
+        .text-right {
+            text-align: right !important;
+        }
 
-            .text-center {
-                text-align: center;
-            }
+        .text-center {
+            text-align: center;
+        }
 
         #data-table tbody tr:hover {
             background-color: #f0f0f0;
@@ -242,6 +260,7 @@
             cursor: pointer;
             /* Con trỏ chuột đổi thành dạng pointer */
         }
+
         .table-responsive--md {
             overflow-x: auto;
             /* Enable horizontal scrolling if the table overflows */
@@ -340,28 +359,31 @@
             background-color: #4634ff;
             border-color: #4634ff;
         }
-/* Căn lề trái cho Mã khách hàng & Tên khách hàng */
-.customer-code,
-.customer-name,
-.customer-group {
-    text-align: left !important;
-    padding-left: 10px;
-}
 
-/* Căn lề phải cho Số điện thoại */
-.customer-phone {
-    display: flex;
-    justify-content: flex-end; /* Căn nội dung sang phải */
-    align-items: center; /* Giữ nội dung ở giữa theo chiều dọc */
-    text-align: right;
-    padding-right: 10px;
-}
+        /* Căn lề trái cho Mã khách hàng & Tên khách hàng */
+        .customer-code,
+        .customer-name,
+        .customer-group {
+            text-align: left !important;
+            padding-left: 10px;
+        }
+
+        /* Căn lề phải cho Số điện thoại */
+        .customer-phone {
+            display: flex;
+            justify-content: flex-end;
+            /* Căn nội dung sang phải */
+            align-items: center;
+            /* Giữ nội dung ở giữa theo chiều dọc */
+            text-align: right;
+            padding-right: 10px;
+        }
 
 
-/* Căn giữa cho cột Thao tác */
-.text-center {
-    text-align: center !important;
-}
+        /* Căn giữa cho cột Thao tác */
+        .text-center {
+            text-align: center !important;
+        }
 
         .check_in_status {
             background: rgb(245, 243, 243);
@@ -392,11 +414,15 @@
         }
 
         .background-primary {
-            background: #0b138d !important;
+            background: #0b138d;
+        }
+
+        .background-red {
+            background: #d31922;
         }
 
         .background-yellow {
-            background-color: #eeddaa !important;
+            background-color: #e7bd3d;
         }
 
         .background-white {
@@ -405,6 +431,7 @@
         }
 
         .background-yellow td,
+        .background-red td,
         .background-primary td {
             color: white !important;
         }
@@ -416,16 +443,26 @@
 
         #data-table td,
         #data-table th {
-            line-height: 1 !important; padding: 6px !important;
+            line-height: 1 !important;
+            padding: 6px !important;
         }
-
         #data-table td {
             height: 30px !important;
             overflow: hidden;
             white-space: nowrap;
             /* Ngăn xuống dòng để giảm chiều cao */
         }
-        #data-table td {
+        #show-customer {
+            border-collapse: collapse;
+            /* Gộp viền bảng */
+        }
+
+        #show-customer td,
+        #show-customer th {
+            line-height: 1 !important;
+            padding: 6px !important;
+        }
+        #show-customer td {
             height: 30px !important;
             overflow: hidden;
             white-space: nowrap;

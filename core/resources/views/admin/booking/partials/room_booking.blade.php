@@ -171,7 +171,7 @@
                                             </div>
                                         </div>
                                     </div>
-                                    {{-- <div class="col-md-8 mt-3">
+                                    <div class="col-md-8 mt-3" style="display: none">
                                         <label for="phone" class="form-label required">Ngày trả</label>
                                         <div class="d-flex align-items-center justify-content-start"
                                             style="gap: 10px">
@@ -180,7 +180,7 @@
                                             <input type="time" name="checkOutTime" id="time-book-room-date"
                                                 class="form-control">
                                         </div>
-                                    </div> --}}
+                                    </div>
                                     <div class="col-md-8 mt-3">
                                         <label for="phone" class="form-label ">Nhân viên </label>
                                         <div class="d-flex align-items-center justify-content-start"

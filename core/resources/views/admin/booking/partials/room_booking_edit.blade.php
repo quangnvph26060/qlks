@@ -100,19 +100,7 @@
                                         <input type="text" id="phone" name="phone" class="form-control phone-edit"
                                             placeholder="Số điện thoại">
                                     </div>
-                                    {{-- <div class="mb-3">
-                                        <p class="add-room-booking" style="width: 185px;">
-                                            <svg xmlns="http://www.w3.org/2000/svg" width="20" height="20" viewBox="0 0 24 24">
-                                                <g fill="currentColor" fill-rule="evenodd" clip-rule="evenodd">
-                                                    <path
-                                                        d="M2 12C2 6.477 6.477 2 12 2s10 4.477 10 10s-4.477 10-10 10S2 17.523 2 12Zm10-8a8 8 0 1 0 0 16a8 8 0 0 0 0-16Z" />
-                                                    <path
-                                                        d="M13 7a1 1 0 1 0-2 0v4H7a1 1 0 1 0 0 2h4v4a1 1 0 1 0 2 0v-4h4a1 1 0 1 0 0-2h-4V7Z" />
-                                                </g>
-                                            </svg>
-                                            Chọn thêm phòng
-                                        </p>
-                                    </div> --}}
+                                  
                                     {{-- <div class="mb-3">
                                         <label for="address" class="form-label required">Địa chỉ</label>
                                         <input type="text" id="address" class="form-control" placeholder="Địa chỉ">
@@ -140,7 +128,19 @@
                                     <div class="col-md-8 mb-3 mt-3 d-flex align-items-center result-add-customer" style="gap:10px">
                                         <input type="checkbox" name="insert_customer"> <p style="font-size: 13px">Lưu thông tin khách</p>
                                     </div>
-
+                                    <div class="">
+                                        <p class="add-room-booking-edit" style="width: 185px;">
+                                            <svg xmlns="http://www.w3.org/2000/svg" width="20" height="20" viewBox="0 0 24 24">
+                                                <g fill="currentColor" fill-rule="evenodd" clip-rule="evenodd">
+                                                    <path
+                                                        d="M2 12C2 6.477 6.477 2 12 2s10 4.477 10 10s-4.477 10-10 10S2 17.523 2 12Zm10-8a8 8 0 1 0 0 16a8 8 0 0 0 0-16Z" />
+                                                    <path
+                                                        d="M13 7a1 1 0 1 0-2 0v4H7a1 1 0 1 0 0 2h4v4a1 1 0 1 0 2 0v-4h4a1 1 0 1 0 0-2h-4V7Z" />
+                                                </g>
+                                            </svg>
+                                            Chọn thêm phòng
+                                        </p>
+                                    </div>
                                 </div>
                             </div>
                             <div class="col-md-6">
@@ -151,7 +151,7 @@
                                         <div class="d-flex">
                                             <div class="col-md-8">
                                                 <div class="d-flex align-items-center justify-content-start" style="gap: 10px">
-                                                    <input type="date" name="checkInDate" id="date-book-room-booking" class="form-control " >
+                                                    <input type="date" name="checkInDate" id="date-book-room-booking-edit" class="form-control " >
                                                     <input type="time" name="checkInTime" id="time-book-room-booking" class="form-control " >
                                                 </div>
                                                 {{-- <span class="invalid-feedback d-block"
@@ -159,13 +159,13 @@
                                             </div>
                                         </div>
                                     </div>
-                                    {{-- <div class="col-md-8 mb-3 mt-2">
+                                    <div class="col-md-8 mb-3 mt-2"  style="display: none">
                                         <label for="phone" class="form-label required">Ngày trả</label>
                                         <div class="d-flex align-items-center justify-content-start" style="gap: 10px">
                                             <input type="date" name="checkOutDate" id="date-book-room-date" class="form-control" >
                                             <input type="time" name="checkOutTime" id="time-book-room-date" class="form-control">
                                         </div>
-                                    </div> --}}
+                                    </div>
                                     <div class="col-md-8">
                                         <label for="phone" class="form-label ">Nhân viên </label>
                                         <div class="d-flex align-items-center justify-content-start"
@@ -273,3 +273,14 @@
         padding: 15px 5px !important;
     }
 </style>
+<script>
+   
+    document.getElementById("date-book-room-booking-edit").addEventListener("change", function() {
+        let checkInDate = new Date(this.value);
+        if (!isNaN(checkInDate.getTime())) {
+            checkInDate.setDate(checkInDate.getDate() + 1); // Thêm 1 ngày
+            let checkOutDate = checkInDate.toISOString().split('T')[0]; // Định dạng YYYY-MM-DD
+            document.getElementById("date-book-room-date").value = checkOutDate;
+        }
+    });
+</script>

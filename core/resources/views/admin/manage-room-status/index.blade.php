@@ -215,9 +215,11 @@
         .background-primary {
             background: #0b138d;
         }
-
+        .background-red {
+            background: #d31922;
+        }
         .background-yellow {
-            background-color: #eeddaa;
+            background-color: #e7bd3d;
         }
 
         .background-white {
@@ -226,6 +228,7 @@
         }
 
         .background-yellow td,
+        .background-red td,
         .background-primary td {
             color: white !important;
         }
@@ -312,18 +315,26 @@
                             let isFirst = !seenRooms.has(item.room_number);
                             seenRooms.add(item.room_number);
                             // Nếu không phải bản ghi đầu tiên, đặt class theo trạng thái
+                            console.log(item.check_booked);
+                            
                             if (!isFirst) {
+                                
                                 if (item.check_booked === 'Đã nhận') {
-                                    rowClass = "background-primary";
+                                    rowClass = "background-red";
                                 } else if (item.check_booked === 'Đã đặt') {
                                     rowClass = 'background-yellow';
+                                }else if (item.check_booked === 'Trống') {
+                                    rowClass = "background-primary";
                                 }
                             } else {
                                 if (item.check_booked === 'Đã nhận') {
-                                    rowClass = "background-primary";
+                                    rowClass = "background-red";
                                 } else if (item.check_booked === 'Đã đặt') {
                                     rowClass = 'background-yellow';
-                                } else {
+                                }else if (item.check_booked === 'Trống') {
+                                    rowClass = "background-primary";
+                                }
+                                 else {
                                     rowClass = "background-white";
                                 }
                             }
