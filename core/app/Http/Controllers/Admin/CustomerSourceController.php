@@ -66,7 +66,24 @@ class CustomerSourceController extends Controller
             'message' => 'Xóa nguồn khách hàng thành công',
         ]);
     }
+    public function search(Request $request)
+    {
+        $pageTitle = '';
+        if($request->input('source_code') == '' && $request->input('source_name') == '')
+        {
+            $customer_sources = CustomerSource::orderBy('id', 'desc')->paginate(30);
+        }
+        else
+        {
+            $customer_sources = CustomerSource::select('*')
 
+                ->where('source_code','LIKE', '%'.$request->input('source_code').'%')
+                ->where('source_name','LIKE', '%'.$request->input('source_name').'%')
+                ->where('unit_code',unitCode())
+                ->orderBy('id', 'desc')->paginate(30);
+        }
+        return view('admin.hotel.customer_source.list', compact('pageTitle', 'customer_sources'));
+    }
 //    protected $repository;
 
 //    public function __construct()

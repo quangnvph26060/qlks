@@ -1,59 +1,61 @@
 @extends('admin.layouts.app')
+@push('breadcrumb-plugins')
+    <button class="btn btn-outline--primary" data-bs-target="#addModal" data-bs-toggle="modal">
+        <i class="las la-plus"></i>
+    </button>
+    {{-- <x-search-form filter='yes' /> --}}
+@endpush
 @section('panel')
     <div class="row">
         <div class="col-lg-12">
             <div class="card b-radius--10">
                 <div class="card-body p-0">
-                    <div class="table-responsive--md table-responsive">
-                        <table class="table--light style--two table">
+                    <div class="table-responsive--md table-responsive" style="overflow-x: visible;">
+                        <table class="table--light style--two table" >
                             <thead>
                                 <tr>
-                                    <th>@lang('STT')</th>
+                                @can(['admin.hotel.room.status', 'admin.hotel.room.add'])
+                                        <th>@lang('Hành động')</th>
+                                    @endcan
+                                    <th style="width:50px">@lang('STT')</th>
                                     <th>@lang('Mã loại phòng')</th>
                                     <th>@lang('Tên loại phòng')</th>
                                     <th>@lang('Trạng thái')</th>
-                                    @can(['admin.hotel.room.status', 'admin.hotel.room.add'])
-                                        <th>@lang('Hành động')</th>
-                                    @endcan
+                            
                                 </tr>
                             </thead>
                             <tbody>
                                 @forelse($rooms as  $room)
                                     <tr>
-                                        <td>{{ $loop->iteration }}</td>
+                                        @can(['admin.hotel.room.status', 'admin.hotel.room.add'])
+                                        <td style="width:20px;">
+                                        <svg class="svg_menu_check_in" xmlns="http://www.w3.org/2000/svg" width="30" height="30" viewBox="0 0 21 21"><g fill="currentColor" fill-rule="evenodd"><circle cx="10.5" cy="10.5" r="1"/><circle cx="10.5" cy="5.5" r="1"/><circle cx="10.5" cy="15.5" r="1"/></g></svg>
+                            
+                                        <div class="dropdown menu_dropdown_check_in" id="dropdown-menu">
+                                            <div class="dropdown-item"><button
+                                            data-resource="{{ $room }}" class="btn-edit-customer editBtn" data-bs-toggle="modal" data-bs-target="#edit-customer" style="color:black">
+                                                Sửa loại phòng
+                                            </button></div>
+                                        
+                                              <div class="dropdown-item booked_room_detail"> <button class=" btn-delete icon-delete-room"
+                                                data-id="{{ $room->id }}" data-modal_title="@lang('Xóa loại phòng')" type="button"
+                                                data-pro="0">Xóa loại phòng</div>
+                              
+                                        </div>
+                                        </td>
+                                         
+                                        @endcan     
+                                        <td style="text-align:right">{{ $loop->iteration }}</td>
                                         <td> {{ $room->code ?? 'Chưa có mã phòng' }}</td>
                                         <td>{{ __($room->name) }}</td>
 
-
-                                        <td> @php echo $room->statusBadge @endphp </td>
-                                        @can(['admin.hotel.room.status', 'admin.hotel.room.add'])
-                                            <td>
-                                                <div class="button--group">
-                                                    @can('admin.hotel.room.add')
-                                                        <button class="btn btn-sm btn-outline--primary editBtn"
-                                                            data-resource="{{ $room }}"><i class="las la-pencil-alt"></i>
-                                                            </button>
-                                                    @endcan
-
-                                                    @if ($room->status == Status::ENABLE)
-                                                        <button class="btn btn-sm btn-outline--danger confirmationBtn"
-                                                            data-action="{{ route('admin.hotel.room.status', $room->id) }}"
-                                                            data-question="@lang('Bạn có chắc chắn ngưng hoạt động không ?')" type="button">
-                                                            <i class="la la-eye-slash"></i>
-                                                        </button>
-                                                    @else
-                                                        <button class="btn btn-sm btn-outline--success confirmationBtn"
-                                                            data-action="{{ route('admin.hotel.room.status', $room->id) }}"
-                                                            data-question="@lang('Bạn có muốn kích hoạt không ?')" type="button">
-                                                            <i class="la la-eye"></i>
-                                                        </button>
-                                                    @endif
-                                                    <button class="btn btn-sm btn-outline--danger btn-delete" data-id="{{$room->id}}" data-modal_title="Xóa" type="button">
-                                                        <i class="fas fa-trash"></i>
-                                                    </button>
-                                                </div>
-                                            </td>
-                                        @endcan
+                                        <td style="width:50px;text-align: center">
+                                        @if($room->status == 1)
+                                            <i class="fa fa-check" style="color:green;text-align: center"></i>
+                                        @else
+                                            <i class="fa fa-close" style="color:red;text-align: center"></i>
+                                        @endif</td>                                        
+                              
                                     </tr>
                                 @empty
                                     <tr>
@@ -186,14 +188,11 @@
     @endcan
 @endsection
 
-@push('breadcrumb-plugins')
-    <button class="btn btn-outline--primary" data-bs-target="#addModal" data-bs-toggle="modal">
-        <i class="las la-plus"></i>
-    </button>
-    {{-- <x-search-form filter='yes' /> --}}
+
+@push('style-lib')
+    <link rel="stylesheet" type="text/css" href="{{ asset('assets/admin/css/daterangepicker.css') }}">
+    <link rel="stylesheet" href="{{ asset('assets/global/css/modal.css') }}">
 @endpush
-
-
 @push('style')
     <style>
         .upload-box {
@@ -382,7 +381,31 @@
         $('#addModal').on('hidden.bs.modal', function(e) {
             $(this).find('.append-item').html('');
         });
+        $(document).ready(function() {
 
+            $(document).on('click', '.svg-icon', function(e) {
+                e.stopPropagation();
+                const $dropdown = $(this).siblings('.menu_dropdown');
+                $('.menu_dropdown').not($dropdown).removeClass('show');
+                $dropdown.toggleClass('show');
+            });
+            $(document).on('click', function() {
+                $('.menu_dropdown').removeClass('show');
+            });
+            $(document).on('click', '.svg_menu_check_in', function(e) {
+                e.stopPropagation();
+                const $dropdown = $(this).siblings('.menu_dropdown_check_in');
+                $('.menu_dropdown_check_in').not($dropdown).removeClass('show');
+                $dropdown.toggleClass('show');
+            });
+            $(document).on('click', function() {
+                $('.menu_dropdown_check_in').removeClass('show');
+            });
+            $(document).on('click', function() {
+                $('.menu_dropdown').removeClass('show');
+            });
+
+            });
         $('#main_image').on('change', function(event) {
             const input = event.target;
             const preview = document.getElementById('preview');

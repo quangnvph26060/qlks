@@ -3439,6 +3439,20 @@ select:focus-within {
     padding: 5px !important;
     
 }
+tbody tr .address-content p:hover {
+    display: block;
+
+}
+.address-content p{
+    display: block;
+    display: -webkit-box;
+    line-height: 1.7;
+    -webkit-line-clamp: 1; /* số dòng hiển thị */
+    -webkit-box-orient: vertical;
+    overflow: hidden;
+    text-overflow: ellipsis;
+    border-bottom: none !important;
+}
 .table.table--light.style--two tbody td{
     border: 1px solid lightgray;
 }
@@ -3450,7 +3464,7 @@ select:focus-within {
     font-weight: 500;
     padding: 15px 25px;
     vertical-align: middle;
-    white-space: nowrap;
+    /* white-space: nowrap; */
 }
 
 .white-space-wrap {
