@@ -15,7 +15,8 @@
                                 <th>@lang('Tên')</th>
                                 <th>@lang('Số điện thoại')</th>
                                 <th>@lang('Email')</th>
-                                <th>@lang('Địa chỉ')</th>
+                                <th style="width:200px">@lang('Địa chỉ')</th>
+                                <th>@lang('Nhóm khách hàng')</th>
                                 <th>@lang('Ngày tạo')</th>
 {{--                                <th>@lang('Ghi chú')</th>--}}
                                 <th>@lang('Trạng thái')</th>
@@ -68,8 +69,14 @@
                                    <td>
                                        {{ $customer->email }}
                                    </td>
+                                    <td class="address-content">
+                                        <p>{{ $customer->address }}</p>
+                                    </td>
                                     <td>
-                                        {{ $customer->address }}
+                                        @php
+                                            $group = \App\Models\CustomerGroup::where('group_code','=',$customer->group_code)->value('group_name');
+                                        @endphp
+                                        {{ $group}}
                                     </td>
                                     <td style="text-align:right">
                                     {{ (new DateTime($customer->created_at))->format('d/m/Y')  }}
@@ -79,7 +86,7 @@
 {{--                                        {{ $customer->note }}--}}
 {{--                                    </td>--}}
                                         <td style="width:50px;text-align: center" class="status-hotel">
-                                        @if(!empty($customer->status))
+                                        @if($customer->status == 1)
                                             <i class="fa fa-check" style="color:green;text-align: center"></i>
                                         @else
                                             <i class="fa fa-close" style="color:red;text-align: center"></i>
@@ -108,10 +115,16 @@
         <div class="card-body mt-1">
             <div class="row">
                 <div class="col-md-12 col-sm-12 d-flex">
+                    <a class="mr-1" href="{{route('admin.hotel.customer.all')}}">
+                        <button class="btn btn-sm btn-outline--primary" data-modal_title="Làm mới">
+                            <i class="fa fa-repeat p-2"></i>
+                        </button>
+                    </a>
                      <button class="btn btn-sm btn-outline--primary" data-modal_title="Thêm mới khách hàng" type="button"
-                                                data-bs-toggle="modal" data-bs-target="#customer" style="padding-right:15px;padding-left:15px">
+                                                data-bs-toggle="modal" data-bs-target="#customer" style="padding-right:15px;padding-left:15px;margin-left:10px">
                         <i class="las la-plus"></i>
                     </button>
+                
                     <form role="form" enctype="multipart/form-data" action="{{route('admin.hotel.customer.search')}}">
                         <div class="form-group position-relative mb-0">
                             <input class="searchInput" name="customer_code"
@@ -199,11 +212,25 @@
 
                             </div>
                             <div class="mb-3">
+                                    <label>@lang('Nhóm khách')</label>
+                                    <select class="form-control" name="group_code">
+                                        <option value="">@lang('Chọn nhóm khách hàng')</option>
+                                        @php
+                                            $customer_group = \App\Models\CustomerGroup::where('unit_code',unitCode())->get();
+                                        @endphp
+                                        @foreach ($customer_group as $group)
+                                            <option value="{{ $group->group_code }}">
+                                                {{ $group->group_name }}</option>
+                                        @endforeach
+                                    </select>
+                            </div>
+                            <div class="mb-3">
                                 <label class="form-label">Trạng thái</label><br>
                                 <input type="radio" name="status" value="1" id="statusActive" checked>Hoạt động
                                 <input type="radio" name="status" value="0" id="statusInactive">
                                 Không hoạt động
                             </div>
+                       
                   <!--           <div class=" mb-3">
                                 <label for="">Mã đơn vị </label>
                                 <select name="unit_code" id="unit-code-multiple-choice" class="form-control">
@@ -246,7 +273,7 @@
                                 <div class="mb-3">
                                     <label for="statusName" class="form-label">Tên khách hàng</label>
                                     <input type="text" class="form-control " name="name" id="edit-name"
-                                           placeholder="Nhập tên khách hàng" s>
+                                           placeholder="Nhập tên khách hàng">
                                     <span class="invalid-feedback d-block" id="edit_name_error" style="font-weight: 500"></span>
                                 </div>
                             </div>
@@ -274,6 +301,19 @@
                                 <label class="form-label">Ghi chú</label>
                                 <textarea type="text" class="form-control" id="edit-note" name="note" rows="1"></textarea>
 
+                            </div>
+                            <div class="mb-3">
+                                    <label>@lang('Nhóm khách')</label>
+                                    <select class="form-control" name="group_code" id="edit-group-code">
+                                        <option value="">@lang('Chọn nhóm khách hàng')</option>
+                                        @php
+                                            $customer_group = \App\Models\CustomerGroup::where('unit_code',unitCode())->get();
+                                        @endphp
+                                        @foreach ($customer_group as $group)
+                                            <option value="{{ $group->group_code }}">
+                                                {{ $group->group_name }}</option>
+                                        @endforeach
+                                    </select>
                             </div>
                             <div class="mb-3">
                                 <label class="form-label">Trạng thái</label><br>
@@ -345,52 +385,52 @@
                     },
                     ]
                 },
-                'phone': {
-                    'element': document.getElementById('add_phone'), // id trong input đó
-                    'error': document.getElementById('phone_error'), // thẻ hiển thị lỗi
-                    'validations': [{
-                        'func': function(value) {
-                            return checkRequired(value);
-                        },
-                        'message': generateErrorMessage('SDT001')
-                    },
-                    ]
-                },
+            //     'phone': {
+            //         'element': document.getElementById('add_phone'), // id trong input đó
+            //         'error': document.getElementById('phone_error'), // thẻ hiển thị lỗi
+            //         'validations': [{
+            //             'func': function(value) {
+            //                 return checkRequired(value);
+            //             },
+            //             'message': generateErrorMessage('SDT001')
+            //         },
+            //         ]
+            //     },
             
-                'email': {
-                    'element': document.getElementById('add_email'), // id trong input đó
-                    'error': document.getElementById('email_error'), // thẻ hiển thị lỗi
-                    'validations': [{
-                        'func': function(value) {
-                            return checkRequired(value);
-                        },
-                        'message': generateErrorMessage('Email001') 
-                    },
-                    ]
+            //     'email': {
+            //         'element': document.getElementById('add_email'), // id trong input đó
+            //         'error': document.getElementById('email_error'), // thẻ hiển thị lỗi
+            //         'validations': [{
+            //             'func': function(value) {
+            //                 return checkRequired(value);
+            //             },
+            //             'message': generateErrorMessage('Email001') 
+            //         },
+            //         ]
                 
-                },
-                'email': {
-                    'element': document.getElementById('add_email'), // id trong input đó
-                    'error': document.getElementById('email_error'), // thẻ hiển thị lỗi
-                    'validations': [{
-                        'func': function(value) {
-                            return checkEmail(value);
-                        },
-                        'message': generateErrorMessage('Email002') 
-                    },
-                    ]
-                },
-                'address': {
-                    'element': document.getElementById('add_address'), // id trong input đó
-                    'error': document.getElementById('address_error'), // thẻ hiển thị lỗi
-                    'validations': [{
-                        'func': function(value) {
-                            return checkRequired(value);
-                        },
-                        'message': generateErrorMessage('DiaChi001')
-                    },
-                    ]
-                },
+            //     },
+            //     'email': {
+            //         'element': document.getElementById('add_email'), // id trong input đó
+            //         'error': document.getElementById('email_error'), // thẻ hiển thị lỗi
+            //         'validations': [{
+            //             'func': function(value) {
+            //                 return checkEmail(value);
+            //             },
+            //             'message': generateErrorMessage('Email002') 
+            //         },
+            //         ]
+            //     },
+            //     'address': {
+            //         'element': document.getElementById('add_address'), // id trong input đó
+            //         'error': document.getElementById('address_error'), // thẻ hiển thị lỗi
+            //         'validations': [{
+            //             'func': function(value) {
+            //                 return checkRequired(value);
+            //             },
+            //             'message': generateErrorMessage('DiaChi001')
+            //         },
+            //         ]
+            //     },
             }
             var formEconomyEdit_edit = {
                 'customer_code': {
@@ -417,52 +457,52 @@
                     },
                     ]
                 },
-                'phone': {
-                    'element': document.getElementById('edit-phone'), // id trong input đó
-                    'error': document.getElementById('edit_phone_error'), // thẻ hiển thị lỗi
-                    'validations': [{
-                        'func': function(value) {
-                            return checkRequired(value);
-                        },
-                        'message': generateErrorMessage('SDT001')
-                    },
-                    ]
-                },
+                // 'phone': {
+                //     'element': document.getElementById('edit-phone'), // id trong input đó
+                //     'error': document.getElementById('edit_phone_error'), // thẻ hiển thị lỗi
+                //     'validations': [{
+                //         'func': function(value) {
+                //             return checkRequired(value);
+                //         },
+                //         'message': generateErrorMessage('SDT001')
+                //     },
+                //     ]
+                // },
             
-                'email': {
-                    'element': document.getElementById('edit-email'), // id trong input đó
-                    'error': document.getElementById('edit_email_error'), // thẻ hiển thị lỗi
-                    'validations': [{
-                        'func': function(value) {
-                            return checkRequired(value);
-                        },
-                        'message': generateErrorMessage('Email001') 
-                    },
-                    ]
+                // 'email': {
+                //     'element': document.getElementById('edit-email'), // id trong input đó
+                //     'error': document.getElementById('edit_email_error'), // thẻ hiển thị lỗi
+                //     'validations': [{
+                //         'func': function(value) {
+                //             return checkRequired(value);
+                //         },
+                //         'message': generateErrorMessage('Email001') 
+                //     },
+                //     ]
                 
-                },
-                'email': {
-                    'element': document.getElementById('edit-email'), // id trong input đó
-                    'error': document.getElementById('edit_email_error'), // thẻ hiển thị lỗi
-                    'validations': [{
-                        'func': function(value) {
-                            return checkEmail(value);
-                        },
-                        'message': generateErrorMessage('Email002') 
-                    },
-                    ]
-                },
-                'address': {
-                    'element': document.getElementById('edit-address'), // id trong input đó
-                    'error': document.getElementById('edit_address_error'), // thẻ hiển thị lỗi
-                    'validations': [{
-                        'func': function(value) {
-                            return checkRequired(value);
-                        },
-                        'message': generateErrorMessage('DiaChi001')
-                    },
-                    ]
-                },
+                // },
+                // 'email': {
+                //     'element': document.getElementById('edit-email'), // id trong input đó
+                //     'error': document.getElementById('edit_email_error'), // thẻ hiển thị lỗi
+                //     'validations': [{
+                //         'func': function(value) {
+                //             return checkEmail(value);
+                //         },
+                //         'message': generateErrorMessage('Email002') 
+                //     },
+                //     ]
+                // },
+                // 'address': {
+                //     'element': document.getElementById('edit-address'), // id trong input đó
+                //     'error': document.getElementById('edit_address_error'), // thẻ hiển thị lỗi
+                //     'validations': [{
+                //         'func': function(value) {
+                //             return checkRequired(value);
+                //         },
+                //         'message': generateErrorMessage('DiaChi001')
+                //     },
+                //     ]
+                // },
             }
             $(document).on('click', '#btn-add-customer', function(event) {
                 
@@ -559,7 +599,7 @@
                     $('#edit-email').val(data.email);
                     $('#edit-address').val(data.address);
                     $('#edit-note').val(data.note);
-                    // $('#edit-unit-code').val(data.unit_code).change();
+                    $('#edit-group-code').val(data.group_code).change();
                     $('input[name^="status"][class^="edit-status"][value="' + data.status + '"').prop('checked', true);
                     $('#method').attr('value', 'PUT');
                     $('#editCustomer').attr('action', '{{ route('admin.hotel.customer.update', '') }}/' + dataId + '')
@@ -631,7 +671,7 @@
     });
 
 
-         $(document).ready(function() {
+        $(document).ready(function() {
 
             $(document).on('click', '.svg-icon', function(e) {
                 e.stopPropagation();

@@ -261,6 +261,8 @@ Route::middleware('admin', 'adminPermission')->group(function () {
             Route::get('source/edit-source/{id}', 'edit')->name('edit');
             Route::put('/source/update-source/{id}', 'update')->name('update');
             Route::post('delete-source/{id}', 'delete')->name('delete');
+            Route::get('search', 'search')->name('search');
+
         });
 
         Route::controller('CustomerGroupController')->name('customer.group.')->prefix('customer-groups')->group(function () {
@@ -269,6 +271,8 @@ Route::middleware('admin', 'adminPermission')->group(function () {
             Route::get('source/edit-group/{id}', 'edit')->name('edit');
             Route::put('/source/update-group/{id}', 'update')->name('update');
             Route::post('delete-group/{id}', 'delete')->name('delete');
+            Route::get('search', 'search')->name('search');
+
         });
 
 
@@ -291,6 +295,8 @@ Route::middleware('admin', 'adminPermission')->group(function () {
             Route::post('/status/update-status/{id}', 'update')->name('update');
             Route::post('status/{id}', 'status')->name('status');
             Route::post('delete-status/{id}', 'delete')->name('delete');
+            Route::get('search', 'search')->name('search');
+
         });
 
         Route::controller('ManageRoomProductController')->name('room.product.')->prefix('roomProduct')->group(function () {

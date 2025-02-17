@@ -26,19 +26,20 @@ class CustomerController extends Controller
     public function store(Request $request)
     {
         $request->validate([
-            'email' => 'required|string',
+            // 'email' => 'required|string',
             'customer_code' => 'required|string',
             'name' => 'required|string',
-            'phone' => 'required|numeric',
+            // 'phone' => 'required|numeric',
            
         ]);
         $customer = new Customer();
         $customer->customer_code = $request->customer_code;
         $customer->name = $request->name;
-        $customer->phone = $request->phone;
-        $customer->email = $request->email;
-        $customer->address = $request->address;
-        $customer->note = $request->note;
+        $customer->phone = $request->phone ?? '';
+        $customer->email = $request->email ?? '';
+        $customer->address = $request->address ?? '';
+        $customer->group_code = $request->group_code ?? '';
+        $customer->note = $request->note ?? '';
         $customer->status = $request->status;
         $customer->unit_code =  unitCode();
         $customer->save();
@@ -60,15 +61,16 @@ class CustomerController extends Controller
         $request->validate([
             'customer_code' => 'required|string',
             'name' => 'required|string',
-            'phone' => 'required|numeric',
+            // 'phone' => 'required|numeric',
         ]);
         $customer = Customer::find($id);
         $customer->customer_code = $request->customer_code;
         $customer->name = $request->name;
-        $customer->phone = $request->phone;
-        $customer->email = $request->email;
-        $customer->address = $request->address;
-        $customer->note = $request->note;
+        $customer->phone = $request->phone ?? '';
+        $customer->email = $request->email ?? '';
+        $customer->address = $request->address ?? '';
+        $customer->group_code = $request->group_code ?? '';
+        $customer->note = $request->note ?? '';
         $customer->status = $request->status;
         // $customer->unit_code =  $request->unit_code;
         $customer->save();
@@ -116,6 +118,7 @@ class CustomerController extends Controller
             'message' => 'Cập nhật trạng thái chức năng thành công',
             'status_html' => $statusHtml,
         ]);
+        
     }
     public function search(Request $request)
     {

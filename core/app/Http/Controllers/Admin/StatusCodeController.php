@@ -12,7 +12,7 @@ class StatusCodeController extends Controller
     public function index()
     {
         $pageTitle = 'Trạng thái chức năng';
-        $status_codes = StatusCode::orderBy('id', 'desc')->get();
+        $status_codes = StatusCode::orderBy('id', 'desc')->where('unit_code',unitCode())->get();
         ;
         $emptyMessage = 'Không tìm thấy dữ liệu';
         return view('admin.hotel.status_code.list', compact('pageTitle', 'status_codes', 'emptyMessage'));
@@ -28,6 +28,7 @@ class StatusCodeController extends Controller
         $status->status_name = $request->status_name;
         $status->note =  $request->note;
         $status->status_status = $request->status_status;
+        $status->unit_code =  unitCode();
         $status->save();
         $notify[] = ['success', 'Thêm trạng thái chức năng thành công'];
         return back()->withNotify($notify);
@@ -93,5 +94,25 @@ class StatusCodeController extends Controller
             'message' => 'Cập nhật trạng thái chức năng thành công',
             'status_html' => $statusHtml,
         ]);
+    }
+    public function search(Request $request)
+    {
+        $pageTitle = '';
+        if($request->input('status_code') == '' && $request->input('status_name') == '')
+        {
+            $status_codes = StatusCode::orderBy('id', 'desc')->paginate(30);
+        }
+        else
+        {
+            $status_codes = StatusCode::select('*')
+
+                ->where('status_code','LIKE', '%'.$request->input('status_code').'%')
+                ->where('status_name','LIKE', '%'.$request->input('status_name').'%')
+                ->where('unit_code',unitCode())
+                ->orderBy('id', 'desc')->paginate(30);
+        }
+        $emptyMessage = 'Không tìm thấy dữ liệu';
+
+        return view('admin.hotel.status_code.list', compact('pageTitle', 'status_codes', 'emptyMessage'));
     }
 }

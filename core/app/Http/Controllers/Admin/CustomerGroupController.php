@@ -11,7 +11,7 @@ class CustomerGroupController extends Controller
     public function index()
     {
         $pageTitle = 'Nhóm khách hàng';
-        $customer_groups = CustomerGroup::orderBy('id', 'desc')->get();
+        $customer_groups = CustomerGroup::orderBy('id', 'desc')->where('unit_code',unitCode())->get();
         $emptyMessage = 'Không tìm thấy dữ liệu';
         return view('admin.hotel.customer_group.list', compact('pageTitle', 'customer_groups', 'emptyMessage'));
     }
@@ -51,16 +51,37 @@ class CustomerGroupController extends Controller
         $group->group_name = $request->group_name;
         // $source->unit_code =  $request->unit_code;
         $group->save();
-        $notify[] = ['success', 'Cập nhật nguồn khách hàng thành công'];
+        $notify[] = ['success', 'Cập nhật nhóm khách hàng thành công'];
         return back()->withNotify($notify);
     }
 
     public function delete($id)
     {
-        CustomerSource::destroy($id);
+        CustomerGroup::destroy($id);
         return response()->json([
             'status' => 'success',
-            'message' => 'Xóa nguồn khách hàng thành công',
+            'message' => 'Xóa nhóm khách hàng thành công',
         ]);
+    }
+    public function search(Request $request)
+    {
+        $pageTitle = '';
+        if($request->input('group_code') == '' && $request->input('group_name') == '')
+        {
+            $customer_groups = CustomerGroup::orderBy('id', 'desc')->paginate(30);
+        }
+        else
+        {
+            $customer_groups = CustomerGroup::select('*')
+
+                ->where('group_code','LIKE', '%'.$request->input('group_code').'%')
+                ->where('group_name','LIKE', '%'.$request->input('group_name').'%')
+
+                ->where('unit_code',unitCode())
+                ->orderBy('id', 'desc')->paginate(30);
+        }
+        $emptyMessage = 'Không tìm thấy dữ liệu';
+
+        return view('admin.hotel.customer_group.list', compact('pageTitle', 'customer_groups', 'emptyMessage'));
     }
 }
