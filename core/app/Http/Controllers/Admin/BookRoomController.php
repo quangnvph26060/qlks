@@ -37,7 +37,7 @@ class BookRoomController extends Controller
     public function getBooking(Request $request)
     {
       
-        $perPage = getPaginate();
+        $perPage = 10;
         $roomBookings = RoomBooking::query()->active()->with('room', 'admin')
         ->where('unit_code', unitCode())
         ->when(!empty($request->data['bookingCode']), function ($query) use ($request) {
