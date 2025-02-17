@@ -1510,7 +1510,7 @@ $('.booking-form-edit').on('submit', function (e) {
                         $('.orderList').addClass('d-none');
                         $('.formRoomSearch').trigger('reset');
                         $('#myModal-booking-edit').hide();
-                       // window.location.reload();
+                        window.location.reload();
                     } else {
                         notify('error', response.error);
                     }
