@@ -58,7 +58,7 @@
           
                     
                                     <td>
-                                        <span class="fw-bold">{{ $customer->customer_code }}</span>
+                                        <span class="fw-bold code">{{ $customer->customer_code }}</span>
                                     </td>
                                     <td>
                                         <span class="fw-bold">{{ $customer->name }}</span>
@@ -268,6 +268,7 @@
                                     <label for="statusCode" class="form-label">Mã khách hàng</label>
                                     <input type="text" class="form-control " name="customer_code" id="edit-customer-code"
                                            placeholder="Nhập mã khách hàng" style="width:98%">
+                                           <input id="ma-kh-cu" hidden>
                                     <span class="invalid-feedback d-block" id="edit_customer_code_error" style="font-weight: 500"></span>
                                 </div>
                                 <div class="mb-3">
@@ -561,6 +562,23 @@
                             {
                                 $('#edit_customer_code_error').html('Mã khách hàng đã tồn tại');
                                 document.getElementById('btn-edit-customer').disabled = 'disabled';
+                                var old_code = $('#ma-kh-cu').val();
+                                var allVals = [];
+                                $(".code").each(function () {
+                                if ($(this).text() != old_code) {
+                                        allVals.push($(this).text());
+                                    }
+                                });
+                               
+                                if (allVals.indexOf($('#edit-customer-code').val()) > -1) {
+                                    $('#edit_customer_code_error').html('Mã khách hàng đã tồn tại');
+                                    document.getElementById('btn-edit-customer').disabled = 'disabled';
+                                }
+                                else
+                                {
+                                    $('#edit_customer_code_error').html('');
+                                    document.getElementById('btn-edit-customer').disabled = false;
+                                }
 
                             }
                             else
@@ -587,12 +605,14 @@
 
                 }
             });
+           
         $('.btn-edit-customer').on('click', function() {
             var dataId = $(this).data('id');
             $.ajax({
                 url: `{{ route('admin.hotel.customer.edit', '') }}/${dataId}`,
                 type: 'GET',
                 success: function(data) {
+                    $('#ma-kh-cu').val(data.customer_code);
                     $('#edit-customer-code').val(data.customer_code);
                     $('#edit-name').val(data.name);
                     $('#edit-phone').val(data.phone);
