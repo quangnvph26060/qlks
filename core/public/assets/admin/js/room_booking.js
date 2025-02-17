@@ -412,6 +412,24 @@ $('.delete-room-booking').on('click', function () {
         }
     });
 });
+//xoá phòng edit
+$('.delete-room-booking-edit').on('click', function () {
+    let selectedBookingIds = []; 
+    $('#list-booking-edit tr').each(function () {
+        var checkbox = $(this).find('input[type="checkbox"]');
+        if (checkbox.prop('checked')) {
+            var bookingId = $(this).data('room-booking-id');
+            selectedBookingIds.push(bookingId);
+            $(this).remove();
+            let totalPrice = 0;
+            totalPrice = calculateTotalPrice();
+            $('#total_amount').text(formatCurrency(totalPrice));
+            // $('#total_amount').text(formatCurrency(totalPrice));
+            // $('#total_balance').text(formatCurrency(totalPrice));
+        }
+     
+    });   console.log(selectedBookingIds);
+});
 // add phòng vào booked
 $('.add-room-list').on('click', function () {
     let dataListValue = $(this).attr('data-list');

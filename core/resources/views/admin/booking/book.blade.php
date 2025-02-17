@@ -61,9 +61,15 @@
             <i class="la la-list"></i>@lang('Tất cả các đặt phòng')
         </a> --}}
       <div class="d-flex">
-        <a class="btn btn-sm btn--primary add-book-room">
+      <div class="d-flex" style="gap: 10px">
+        <a class="btn btn-sm btn--primary add-book-room" style="margin-left: 10px">
             <i class="la la-plus"></i>
         </a>
+        <a class="btn btn-sm btn--primary btn-submit-sync-book">
+            <i class="las la-sync"></i>
+        </a>
+      </div>
+    
         <div class="form-group position-relative mb-0" style="display: flex;gap: 10px;">
             <input class="searchInput input-field-search-book" name="booking_code" placeholder="Mã đặt phòng" id="booking_code">
             <select class="searchInput input-field-search-book"  name="room_code" id="select_room_number"></select>
@@ -75,9 +81,7 @@
             <button type="submit" class="btn btn-primary btn-submit-search-book">
                 <i class="las la-search"></i>
             </button>
-            <button type="submit" class="btn btn-primary btn-submit-sync-book">
-                <i class="las la-sync"></i>
-            </button>
+          
         </div>
       </div>
         <div class="modal fade" id="addRoomModal" tabindex="-1" aria-hidden="true" style="overflow: unset">

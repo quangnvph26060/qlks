@@ -24,13 +24,14 @@
     justify-content: space-between;
     padding: 5px;
 }
-.delete-room-booking{
+.delete-room-booking,.delete-room-booking-edit{
     border: 1px solid #f03514;
     border-radius: 8px;
     cursor: pointer;
     color: #f03514;
     padding: 0px 10px 0px 10px;
 }
+
 .modal-content {
     border-radius: 8px;
     box-shadow: 0 4px 10px rgba(0, 0, 0, 0.2);
