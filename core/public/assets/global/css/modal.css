@@ -18,7 +18,7 @@
     box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
     padding: 8px 0;
     z-index: 1000;
-    right: 18px;
+    /* right: 18px; */
   }
   .menu_dropdown_check_in.show {
     display: block;

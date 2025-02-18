@@ -5,7 +5,7 @@
         <div class="col-lg-12">
             <div class="card">
                 <div class="card-body p-0">
-                    <div class="table-responsive--md table-responsive" style="overflow-x:visible">
+                    <div class="table-responsive--md table-responsive" style="overflow-x:auto">
                         <div>
                             <table class="table--light style--two table">
                                 <thead>
@@ -30,7 +30,7 @@
                                     <td style="width:20px;">
                                             <svg class="svg_menu_check_in" xmlns="http://www.w3.org/2000/svg" width="30" height="30" viewBox="0 0 21 21"><g fill="currentColor" fill-rule="evenodd"><circle cx="10.5" cy="10.5" r="1"/><circle cx="10.5" cy="5.5" r="1"/><circle cx="10.5" cy="15.5" r="1"/></g></svg>
                                 
-                                            <div class="dropdown menu_dropdown_check_in" id="dropdown-menu">
+                                            <div class="dropdown menu_dropdown_check_in" id="dropdown-menu" style="position:fixed">
                                                 <div class="dropdown-item"><a
                                                 data-id="{{ $customer->id }}" class="btn-edit-customer" data-bs-toggle="modal" data-bs-target="#edit-customer" style="color:black">
                                                     Sửa khách hàng
@@ -49,16 +49,16 @@
                                     <td>
                                             <span class="fw-bold code">{{ $customer->customer_code }}</span>
                                     </td>
-                                    <td class="address-content">
+                                    <td>
                                             <p class="fw-bold">{{ $customer->name }}</p>
                                     </td>
-                                    <td class="address-content" style="text-align:right">
+                                    <td style="text-align:right">
                                             <p>{{ $customer->phone }}</p>
                                     </td>
-                                    <td class="address-content">
+                                    <td>
                                         <p>{{ $customer->email }}</p>
                                     </td>
-                                    <td class="address-content">
+                                    <td>
                                             <p>{{ $customer->address }}</p>
                                     </td>
                                     <td>
