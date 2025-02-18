@@ -647,7 +647,6 @@
                         success: function(data) {
                            if(data == 1)
                            {
-                            alert(1);
                             Swal.fire({
                                 title: 'Khách hàng đã có đơn hàng',
                                 text: 'Bạn không thể xóa khách hàng này',
