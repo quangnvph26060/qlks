@@ -323,13 +323,13 @@ function showRoom(data = "", checkInDateValue = "", checkOutDateValue = "", sele
                         rowClass = "background-white";
                     }
                 }
-
+                let firstRowClass = isFirst ? "first-row" : "";
                 var tr = `
-                        <tr class="${rowClass}">
+                        <tr class="${firstRowClass}">
                             <td style="${isFirst ? 'font-weight: bold;' : ''}" class="text-left"> ${item.room_type['name']} </td>
                             <td style="${isFirst ? 'font-weight: bold;' : ''}"class="text-left"> ${item.room_number} </td>
                             <td style="${isFirst ? 'font-weight: bold;' : ''}"class="text-left"> ${formatDate(item.date)} </td>
-                            <td style="${isFirst ? 'font-weight: bold;' : ''}"class="text-left"> ${item.check_booked} </td>
+                            <td style="${isFirst ? 'font-weight: bold;' : ''}"class="text-left ${rowClass}"> ${item.check_booked} </td>
                             <td style="${isFirst ? 'font-weight: bold;' : ''}"class="text-right"> ${formatCurrency(item.room_type.room_type_price['unit_price'])} </td>
                             <td>
                                 <input type="checkbox" ${item.status == 1 ? 'disabled' : ''} data-date="${item.date}" data-id="${item.id}" data-room_type_id="${item.room_type_id}" id="checkbox-${item.id}">

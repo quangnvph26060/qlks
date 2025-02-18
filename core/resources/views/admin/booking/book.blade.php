@@ -385,27 +385,29 @@
         }
 
         .background-primary {
-            background: #0b138d;
+            color: #0b138d !important;
         }
 
         .background-red {
-            background: #d31922;
+            color: #d31922 !important;
         }
 
         .background-yellow {
-            background-color: #e7bd3d;
+            color: #e7bd3d !important;
         }
-
+        .first-row{
+            background-color: #f3f3f3 !important;
+        }
         .background-white {
             color: #5b6e88;
             background-color: #f0f1f1;
         }
 
-        .background-yellow td,
+        /* .background-yellow td,
         .background-red td,
         .background-primary td {
             color: white !important;
-        }
+        } */
 
         #data-table {
             border-collapse: collapse;

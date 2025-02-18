@@ -8,7 +8,7 @@
     background-color: #4634ff;
     color: white;
     border: 1px solid #ddd;
-    padding: 4px 10px;
+    padding: 0px 5px;
     margin: 0 5px;
     border-radius: 5px;
     cursor: pointer;
@@ -31,6 +31,6 @@
 }
 
 .pagination-container button.active {
-    background-color: #4634ff;
-    border-color: #4634ff;
+    background-color: #071251;
+    border-color: #071251;
 }
