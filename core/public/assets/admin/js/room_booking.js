@@ -1068,7 +1068,7 @@ $(document).on('click', '.booked_room_edit', function () {
                     $(document).ready(function () {
                         calculateDepositAndBalance();
                     });
-                    $('tr').find('input.deposit').on('blur', function () {
+                    $(document).on('blur', 'input.deposit', function () {
                         let rowTotal = 0;
                         $('tr').each(function () {
                             $(this).find('input.deposit').each(function () {
@@ -1077,16 +1077,25 @@ $(document).on('click', '.booked_room_edit', function () {
                                 rowTotal += numericDeposit;
                             });
                         });
+                    
                         $('.total_deposit').text(formatCurrency(rowTotal));
+                    
                         let priceString = $('.total_discount').text();
-                        console.log(priceString);
-                        
                         let price = parseInt(priceString.replace(/\./g, ""), 10);
                         price = isNaN(price) ? 0 : price;
-                        totalBalance = totalPrice - rowTotal - price;
+                    
+                        let total_amount = $('.total_amount').text();
+                        let total_amount_price = parseInt(total_amount.replace(/\./g, '')) || 0;
+                        total_amount_price = isNaN(total_amount_price) ? 0 : total_amount_price;
+                    
+                        totalBalance = total_amount_price - rowTotal - price;
+                    
+                     
+                    
                         $('.total_balance').text(formatCurrency(totalBalance));
                     });
-                    $('tr').find('input.discount').on('blur', function () {
+                    
+                        $(document).on('blur', 'input.discount', function () {
                         let rowTotal = 0;
                         $('tr').each(function () {
                             $(this).find('input.discount').each(function () {
@@ -1100,7 +1109,12 @@ $(document).on('click', '.booked_room_edit', function () {
                        
                         let price = parseInt(priceString.replace(/\./g, ""), 10);
                         price = isNaN(price) ? 0 : price; 
-                        totalBalance = totalPrice - rowTotal - price;
+                        let total_amount = $('.total_amount').text();
+                        let total_amount_price = parseInt(total_amount.replace(/\./g, '')) || 0;
+                        total_amount_price = isNaN(total_amount_price) ? 0 : total_amount_price;
+                        totalBalance = total_amount_price - rowTotal - price;
+                      
+                        
                         $('.total_balance').text(formatCurrency(totalBalance));  
                     });
                     $('.number-input').on('blur', function () {
@@ -1614,7 +1628,7 @@ $('.booking-form-edit').on('submit', function (e) {
                         $('.orderList').addClass('d-none');
                         $('.formRoomSearch').trigger('reset');
                         $('#myModal-booking-edit').hide();
-                        window.location.reload();
+                      //  window.location.reload();
                     } else {
                         notify('error', response.error);
                     }

@@ -272,8 +272,8 @@ class BookRoomController extends Controller
                 // \Log::info($request->all());
                 // \Log::info($customer);
                 // đặt cọc của từng phòng
-                $depositAmount = is_numeric($room['deposit']) ? intval(floatval(str_replace('.', '', $room['deposit']))) : $room['deposit'];
-                $discountAmount = is_numeric($room['discount']) ? intval(floatval(str_replace('.', '', $room['discount']))) : $room['discount'];
+                $depositAmount = intval(str_replace('.', '', $room['deposit']));
+                $discountAmount = intval(str_replace('.', '', $room['discount']));
                 $roomPice = RoomTypePrice::where('room_type_id', $room['roomType'])->orderByDesc('price_validity_period')->first();
 
                 $check_in = $request->method == 'check_in' ? new CheckIn() : new RoomBooking();
@@ -359,8 +359,8 @@ class BookRoomController extends Controller
                 // kiểm tra khách hàng
                 $customer = $this->add_guest($request->name, $request->phone);
                 // đặt cọc của từng phòng
-                $depositAmount  = is_numeric($room['deposit']) ? intval(floatval(str_replace('.', '', $room['deposit']))) : $room['deposit'];
-                $discountAmount = is_numeric($room['discount']) ? intval(floatval(str_replace('.', '', $room['discount']))) : $room['discount'];
+                $depositAmount  =    intval(str_replace('.', '', $room['deposit']));
+                $discountAmount =    intval(str_replace('.', '', $room['discount']));
                 $roomPice = RoomTypePrice::where('room_type_id', $room['roomType'])->orderByDesc('price_validity_period')->first();
 
                 $check_in = $request->method == 'check_in' ?  CheckIn::query() :  RoomBooking::query()->active();
