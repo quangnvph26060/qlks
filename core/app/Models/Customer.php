@@ -17,6 +17,7 @@ class Customer extends Model
         'email',
         'note',
         'group_code',
+        'source_code',
         'unit_code',
         'status',
         'created_at',
