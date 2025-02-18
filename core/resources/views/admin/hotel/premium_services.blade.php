@@ -96,7 +96,7 @@
                                             {{ showAmount($premiumService->cost) }}
                                         </td>
 
-                                        <td style="width:50px;text-align: center" class="status-hotel">
+                                        <td style="width:50px;text-align: center">
                                         @if($premiumService->status == 1)
                                             <i class="fa fa-check" style="color:green;text-align: center"></i>
                                         @else

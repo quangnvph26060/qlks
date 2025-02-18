@@ -25,7 +25,7 @@
                                 </tr>
                                 </thead>
                                 <tbody>
-                                @forelse($customers as $customer)
+                                @forelse($customers as $id => $customer)
                                     <tr data-id="{{ $customer->id }}">
                                     <td style="width:20px;">
                                             <svg class="svg_menu_check_in" xmlns="http://www.w3.org/2000/svg" width="30" height="30" viewBox="0 0 21 21"><g fill="currentColor" fill-rule="evenodd"><circle cx="10.5" cy="10.5" r="1"/><circle cx="10.5" cy="5.5" r="1"/><circle cx="10.5" cy="15.5" r="1"/></g></svg>
@@ -43,7 +43,7 @@
                                 
                                             </div>
                                     </td>
-                                    <td style="width:20px;text-align:right">{{ $loop->iteration }}</td>
+                                    <td style="width:20px;text-align:right">{{ $customers->count() - ($loop->iteration - 1) }}</td>
             
                         
                                     <td>
@@ -641,38 +641,64 @@
         $('.icon-delete-room').on('click', function() {
             var dataId = $(this).data('id');
             var rowToDelete = $(`tr[data-id="${dataId}"]`);
-            Swal.fire({
-                title: 'Xác nhận xóa khách hàng?',
-                text: 'Bạn có chắc chắn muốn xóa khách hàng này không?',
-                icon: 'warning',
-                showCancelButton: true,
-                confirmButtonText: 'Đồng ý',
-                cancelButtonText: 'Hủy bỏ',
-                reverseButtons: true
-            }).then((result) => {
-                if (result.isConfirmed) {
-                    // ajax
-                    $.ajax({
-                        url: `{{ route('admin.hotel.customer.delete', '') }}/${dataId}`,
-                        type: 'POST',
+            $.ajax({
+                        url: `{{ route('admin.hotel.customer.get', '') }}/${dataId}`,
+                        type: 'GET',
                         success: function(data) {
-                            if (data.status ==='success') {
-                                rowToDelete.remove();
-                                    
-                            }
-                            else
-                            {
-                                alert('Khách hàng đã có đơn hàng, không thể xóa');
-                            }
+                           if(data == 1)
+                           {
+                            alert(1);
+                            Swal.fire({
+                                title: 'Khách hàng đã có đơn hàng',
+                                text: 'Bạn không thể xóa khách hàng này',
+                                icon: 'warning',
+                                showCancelButton: true,
+                                // confirmButtonText: 'Đồng ý',
+                                cancelButtonText: 'Hủy bỏ',
+                                reverseButtons: true
+                            })
+                           }
+                           else
+                           {
+                            Swal.fire({
+                                title: 'Xác nhận xóa khách hàng?',
+                                text: 'Bạn có chắc chắn muốn xóa khách hàng này không?',
+                                icon: 'warning',
+                                showCancelButton: true,
+                                confirmButtonText: 'Đồng ý',
+                                cancelButtonText: 'Hủy bỏ',
+                                reverseButtons: true
+                            }).then((result) => {
+                                if (result.isConfirmed) {
+                                    // ajax
+                                    $.ajax({
+                                        url: `{{ route('admin.hotel.customer.delete', '') }}/${dataId}`,
+                                        type: 'POST',
+                                        success: function(data) {
+                                            if (data.status ==='success') {
+                                                rowToDelete.remove();
+                                                    
+                                            }
+                                            else
+                                            {
+                                                alert('Khách hàng đã có đơn hàng, không thể xóa');
+                                            }
+                                        },
+                                        error: function(xhr, status, error) {
+                                            console.log(xhr.responseText);
+                                        }
+                                    });
+
+
+                                }
+                            });
+                           }
                         },
                         error: function(xhr, status, error) {
                             console.log(xhr.responseText);
                         }
                     });
-
-
-                }
-            });
+          
         });
 
     });
@@ -722,5 +748,8 @@
             });
 
         });
+</script>
+<script type="text/javascript">
+    $('.iziToast-title').html('<p>Thông báo</p>'); 
 </script>
 @endpush

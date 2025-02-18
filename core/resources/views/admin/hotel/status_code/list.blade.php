@@ -68,7 +68,7 @@
                                         </div>
                                           
                                          <div class="dropdown-item booked_room_detail"> <button class=" btn-delete icon-delete-room"
-                                                data-id="{{ $item->id }}" data-modal_title="@lang('Xóa khách hàng')" type="button"
+                                                data-id="{{ $item->id }}" data-modal_title="@lang('Xóa trạng thái')" type="button"
                                                 data-pro="0">Xóa trạng thái</div>
                               
                                         </div>
@@ -365,7 +365,7 @@
                 $('.menu_dropdown').removeClass('show');
             });
 
-            });
+        });
     </script>
 
 @endpush

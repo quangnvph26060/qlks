@@ -285,6 +285,8 @@ Route::middleware('admin', 'adminPermission')->group(function () {
             Route::post('status/{id}', 'status')->name('status');
             Route::get('search', 'search')->name('search');
             Route::get('check-code','checkCode')->name('check');
+            Route::get('get/{id}','getCustomer')->name('get');
+
 
         });
 
