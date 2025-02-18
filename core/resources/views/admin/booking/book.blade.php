@@ -207,6 +207,7 @@
 @push('style-lib')
     <link rel="stylesheet" type="text/css" href="{{ asset('assets/admin/css/daterangepicker.css') }}">
     <link rel="stylesheet" href="{{ asset('assets/global/css/book.css') }}">
+    <link rel="stylesheet" href="{{ asset('assets/global/css/pagination.css') }}">
 @endpush
 
 @push('script')
@@ -328,42 +329,7 @@
             background-color: #0056b3;
         }
 
-        .pagination-container {
-            display: flex;
-            justify-content: center;
-            /* margin-top: 20px; */
-        }
-
-        .pagination-container button {
-            background-color: #4634ff;
-            color: white;
-            border: 1px solid #ddd;
-            padding: 4px 10px;
-            margin: 0 5px;
-            border-radius: 5px;
-            cursor: pointer;
-            font-size: 14px;
-            transition: background-color 0.3s, transform 0.3s;
-        }
-
-        .pagination-container button:hover {
-            background-color: #4634ff;
-            transform: scale(1.05);
-        }
-
-        .pagination-container button:disabled {
-            background-color: #ddd;
-            cursor: not-allowed;
-        }
-
-        .body-wrapper {
-            padding: 6px 25px 10px !important;
-        }
-
-        .pagination-container button.active {
-            background-color: #4634ff;
-            border-color: #4634ff;
-        }
+     
 
         /* Căn lề trái cho Mã khách hàng & Tên khách hàng */
         .customer-code,

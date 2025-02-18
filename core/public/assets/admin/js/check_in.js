@@ -514,13 +514,33 @@ function getDatesBetween(checkInDate, checkInTime, checkOutDate, checkOutTime, r
     }
     return dates;
 }
-
-function loadRoomBookings(page = 1) {
+$(document).ready(function () {
+    $(document).on('click', '.btn-submit-sync-book', function () {
+        $('#booking_code').val('');
+        $('#select_room_number').val('');
+        $('#name_book').val('');
+        loadRoomBookings();
+    });
+    $(document).on('click', '.btn-submit-search-book', function () {
+        let bookingCode = $('#booking_code').val();
+        let roomCode = $('#select_room_number').val();
+        let customerName = $('#name_book').val();
+        
+        let data = {
+            bookingCode: bookingCode,
+            roomCode: roomCode,
+            customerName: customerName,
+        }
+        loadRoomBookings(1, data);
+    });
+});
+function loadRoomBookings(page = 1,data) {
     $.ajax({
         url: allCheckInUrl,
         type: 'GET',
         data: {
-            page: page
+            page: page,
+            data: data,
         },
         success: function(response) {
 
@@ -533,6 +553,15 @@ function loadRoomBookings(page = 1) {
                 data.forEach(function(data, index) {
                     var html = `
                         <tr data-id="${data['id']}">
+                           <td>
+                                <svg class="svg_menu_check_in" xmlns="http://www.w3.org/2000/svg" width="30" height="30" viewBox="0 0 21 21"><g fill="currentColor" fill-rule="evenodd"><circle cx="10.5" cy="10.5" r="1"/><circle cx="10.5" cy="5.5" r="1"/><circle cx="10.5" cy="15.5" r="1"/></g></svg>
+                                <div class="dropdown menu_dropdown_check_in" id="dropdown-menu">
+                                    <div class="dropdown-item check_in_edit" data-room-id="${data['booking_id']}">Sửa phòng</div>
+                                    <div class="dropdown-item booked_room_caned" data-room-id="${data['id']}">Trả phòng</div>
+                                    <div class="dropdown-item booked_room" data-room-id="${data['id']}">Đổi phòng</div>
+                                    <div class="dropdown-item delete-booked-room"  data-room-id="${data['id']}" >Xóa phòng</div>
+                                </div>
+                            </td>
                             <td>${index + 1  }</td>
                             <td>${data['check_in_id']}</td>
                             <td>${data['id_room_booking'] ? data['id_room_booking'] : ''}</td>
@@ -549,21 +578,21 @@ function loadRoomBookings(page = 1) {
                             <td>${data['guest_count']}</td>
                             <td>${ formatCurrency( data['total_amount'])}</td>
                             <td>${formatCurrency(data['deposit_amount'])}</td>
-
-
-                            <td>
-                                <svg class="svg_menu_check_in" xmlns="http://www.w3.org/2000/svg" width="30" height="30" viewBox="0 0 21 21"><g fill="currentColor" fill-rule="evenodd"><circle cx="10.5" cy="10.5" r="1"/><circle cx="10.5" cy="5.5" r="1"/><circle cx="10.5" cy="15.5" r="1"/></g></svg>
-                                <div class="dropdown menu_dropdown_check_in" id="dropdown-menu">
-                                    <div class="dropdown-item check_in_edit" data-room-id="${data['booking_id']}">Sửa phòng</div>
-                                    <div class="dropdown-item booked_room_caned" data-room-id="${data['id']}">Trả phòng</div>
-                                    <div class="dropdown-item booked_room" data-room-id="${data['id']}">Đổi phòng</div>
-                                    <div class="dropdown-item delete-booked-room"  data-room-id="${data['id']}" >Xóa phòng</div>
-                                </div>
-                            </td>
                         </tr>
                     `
                     $('.data-table').append(html);
                 })
+                var selected_select = $('#select_room_number');
+                selected_select.empty();
+                let option = `<option value="">Chọn mã phòng</option>`;
+                response.rooms.forEach(function (item) {
+                    if (item.id == response.option_selected) {
+                        option += `<option value="${item.id}" selected>${item.room_number}</option>`;
+                    } else {
+                        option += `<option value="${item.id}">${item.room_number}</option>`;
+                    }
+                });
+                selected_select.append(option);
                 updatePagination(pagination,'loadRoomBookings');
             }
         },
@@ -584,12 +613,50 @@ $(document).on('click', '.check-in-room', function() {
     var roomId = $(this).data('id');
     var roomTypeId = $(this).data('room_type_id');
     $('#myModal-booking').modal('show');
+    allStaffandCustomerSource()
+    // $('#myModal-booking-edit').modal('hide');
+    hasBookings() ? "" : ($('#total_balance').text(0), $('#total_amount').text(0), $('#total_deposit').text(0));
 
-
-    // addRoomInBooking(roomId, roomTypeId);
-    var selectedCheckboxes = [];
+ 
 
 });
+function allStaffandCustomerSource() {
+    $.ajax({
+        url: getCustomerStaff,
+        type: 'GET',
+        success: function (data) {
+
+            var selected_customer_source = $('#select-customer-source');
+            selected_customer_source.empty();
+            let option = `<option value="">Chọn nguồn khách hàng</option>`;
+            data.customerSourse.forEach(function (item) {
+                if (item.id == data.option_customer_source) {
+                    option += `<option value="${item.source_code}" selected>${item.source_name}</option>`;
+                } else {
+                    option += `<option value="${item.source_code}">${item.source_name}</option>`;
+                }
+            });
+            selected_customer_source.append(option);
+            // nhân viên 
+            var selected_select_staff = $('#select-staff');
+            selected_select_staff.empty();
+            let option_staff = `<option value="">Chọn nhân viên</option>`;
+            data.admin.forEach(function (item) {
+                if (item.id == data.option_customer_source) {
+                    option_staff += `<option value="${item.id}" selected>${item.username}</option>`;
+                } else {
+                    option_staff += `<option value="${item.id}">${item.username}</option>`;
+                }
+            });
+            selected_select_staff.append(option_staff);
+            $('#loading').hide();
+        },
+        error: function (error) {
+            $('#loading').hide();
+            console.log('Error:', error);
+        }
+    });
+}
 $('.add-room-booking').on('click', function() {
 
     const roomIds = [];

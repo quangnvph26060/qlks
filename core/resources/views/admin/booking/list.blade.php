@@ -1,7 +1,8 @@
 @extends('admin.layouts.app')
 @section('panel')
+
     <div class="row">
-        <div class="col-lg-12">
+        {{-- <div class="col-lg-12">
             <div class="d-flex justify-content-between mb-3 row order-1">
                 <div class="dt-length col-md-6 col-4">
                     <select name="example_length" id="perPage" style=" padding: 1px 3px; margin-right: 8px;"
@@ -13,14 +14,15 @@
                     </select><label for="perPage"> entries per page</label>
                 </div>
             </div>
-        </div>
+        </div> --}}
+        <div class="pagination-container"></div>
         <div class="card b-radius--10">
             <div class="card-body p-0">
                 <div class="table-responsive--md">
                     <table class="table--light style--two table table-striped" id="data-table">
                         <thead>
                             <tr>
-
+                                <th>@lang('Hành động')</th>
                                 <th>@lang('STT')</th>
                                 <th>@lang('Mã nhận hàng')</th>
                                 <th>@lang('Mã đặt hàng')</th>
@@ -35,10 +37,10 @@
                                 <th>@lang('Thành tiền')</th>
                                 <th>@lang('Đặt cọc')</th>
 
-                                @can(['admin.hotel.room.type.edit', 'admin.hotel.room.type.status',
+                                {{-- @can(['admin.hotel.room.type.edit', 'admin.hotel.room.type.status',
                                     'admin.hotel.room.type.destroy'])
-                                    <th>@lang('Hành động')</th>
-                                @endcan
+                              
+                                @endcan --}}
                             </tr>
                         </thead>
                         <tbody>
@@ -50,11 +52,9 @@
 
                 </div>
             </div>
-            <div id="pagination" class="m-3">
-
-            </div>
+          
         </div>
-        <div class="pagination-container"></div>
+     
         {{-- @include('admin.booking.partials.room_booking') --}}
         @include('admin.booking.partials.confirm-room')
         @include('admin.booking.partials.check-in-room')
@@ -69,9 +69,25 @@
         {{-- <a class="btn btn-sm btn--primary" href="{{ route('admin.book.room') }}">
             <i class="la la-hand-o-right"></i>@lang('Thêm phòng mới')
         </a> --}}
-        <a class="btn btn-sm btn--primary check-in-room">
-            <i class="la la-plus"></i>@lang('Nhận phòng')
+        <a class="btn btn-sm btn--primary check-in-room"  style="margin-left: 10px">
+            <i class="la la-plus"></i>
         </a>
+        <a class="btn btn-sm btn--primary btn-submit-sync-book">
+            <i class="las la-sync"></i>
+        </a>
+        <div class="form-group position-relative mb-0" style="display: flex;gap: 10px;">
+            <input class="searchInput input-field-search-book" name="booking_code" placeholder="Mã nhận phòng" id="booking_code">
+            <select class="searchInput input-field-search-book"  name="room_code" id="select_room_number"></select>
+          {{-- <div class="d-flex" style="gap: 10px">
+            <input type="date" class="form-control " id="date-chon-phong-in" style="height: 35px">
+            <input type="date" class="form-control " id="date-chon-phong-out" style="height: 35px">
+          </div> --}}
+            <input class="searchInput input-field-search-book" name="name" placeholder="Tên khách hàng" id="name_book">
+            <button type="submit" class="btn btn-primary btn-submit-search-book">
+                <i class="las la-search"></i>
+            </button>
+          
+        </div>
         <div class="modal fade" id="addRoomModal" tabindex="-1" aria-hidden="true" style="overflow: unset">
             <div class="modal-dialog modal-dialog-centered" style="top: 4px">
                 <div class="modal-content" style="height: 100vh;">
@@ -151,6 +167,7 @@
 @push('style-lib')
     <link rel="stylesheet" type="text/css" href="{{ asset('assets/admin/css/daterangepicker.css') }}">
     <link rel="stylesheet" href="{{ asset('assets/global/css/book.css') }}">
+    <link rel="stylesheet" href="{{ asset('assets/global/css/pagination.css') }}">
 @endpush
 
 @push('script')
@@ -206,24 +223,6 @@
         .card {
             box-shadow: none;
         }
-
-        .pagination-container {
-            display: flex;
-            justify-content: center;
-            margin-top: 20px;
-        }
-
-        .pagination-container button {
-            background-color: #4634ff;
-            color: white;
-            border: 1px solid #ddd;
-            padding: 10px 15px;
-            margin: 0 5px;
-            border-radius: 5px;
-            cursor: pointer;
-            font-size: 14px;
-            transition: background-color 0.3s, transform 0.3s;
-        }
         .background-primary {
             background: #0b138d;
         }
@@ -240,28 +239,6 @@
         .background-yellow td,
         .background-primary td {
             color: white !important;
-        }
-        .pagination-container button:hover {
-            background-color: #4634ff;
-            transform: scale(1.05);
-        }
-
-        .pagination-container button:disabled {
-            background-color: #ddd;
-            cursor: not-allowed;
-        }
-
-        .pagination-container button.active {
-            background-color: #4634ff;
-            border-color: #4634ff;
-        }
-
-        .pagination-container button:first-child {
-            border-radius: 5px 0 0 5px;
-        }
-
-        .pagination-container button:last-child {
-            border-radius: 0 5px 5px 0;
         }
     </style>
 @endpush

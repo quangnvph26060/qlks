@@ -96,10 +96,25 @@ class BookingController extends Controller
     public function getBooking(Request $request)
     {
         $perPage = 10;
-        $roomBookings = CheckIn::with('room', 'admin')->orderBy('created_at', 'asc')->paginate($perPage);
+        $roomBookings = CheckIn::with('room', 'admin')
+        ->where('unit_code', unitCode())
+        ->when(!empty($request->data['bookingCode']), function ($query) use ($request) {
+            $query->where('check_in_id', 'LIKE', '%'. $request->data['bookingCode']. '%');
+        })
+        ->when(!empty($request->data['customerName']), function ($query) use ($request) {
+            $query->where('customer_name', 'LIKE', '%'. $request->data['customerName']. '%');
+        })
+        ->when(!empty($request->data['roomCode']), function ($query) use ($request) {
+            $query->where('room_code', 'LIKE', '%'. $request->data['roomCode']. '%');
+        })
+        ->orderBy('created_at', 'desc')
+        ->paginate($perPage);
+        $rooms = Room::active()->select('id', 'room_number')->get();
         return response([
             'status' => 'success',
             'data' => $roomBookings->items(),
+            'rooms' => $rooms,
+            'option_selected' => $request->data['roomCode'] ?? "",
             'pagination' => [
                 'total' => $roomBookings->total(),
                 'current_page' => $roomBookings->currentPage(),
