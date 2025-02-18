@@ -41,6 +41,7 @@ class RoomBooking extends Model
         'unit_code',
         'created_by',
         'status',
+        'discount'
     ];
      /**
      * The attributes that should be cast to native types.

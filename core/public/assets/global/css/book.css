@@ -205,7 +205,26 @@ textarea {
     height: 36px;
     border-radius: 4px;
 }
+.table-responsive {
+    display: block;
+    height: 170px; /* Giới hạn chiều cao */
+    overflow-y: scroll; /* Bật cuộn dọc */
+    scrollbar-width: none; /* Ẩn thanh cuộn trên Firefox */
+    -ms-overflow-style: none; /* Ẩn thanh cuộn trên IE và Edge */
+}
 
+/* Ẩn thanh cuộn trên Chrome, Safari */
+.table-responsive::-webkit-scrollbar {
+    display: none;
+}
+
+
+.table td{
+    vertical-align: sub  !important;
+}
+#list-booking tr {
+    vertical-align: top;
+}
 .row.mb-2.text-center.fw-bold {
     font-weight: bold;
 }
@@ -853,7 +872,7 @@ h5 {
   svg {
     cursor: pointer;
   }
-.deposit{
+.deposit,.discount{
     padding: 0px 3px !important;
     text-align: end;
     /* width: 135px !important; */

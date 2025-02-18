@@ -273,7 +273,7 @@ class BookRoomController extends Controller
                 // \Log::info($customer);
                 // đặt cọc của từng phòng
                 $depositAmount = is_numeric($room['deposit']) ? intval(floatval(str_replace('.', '', $room['deposit']))) : $room['deposit'];
-
+                $discountAmount = is_numeric($room['discount']) ? intval(floatval(str_replace('.', '', $room['discount']))) : $room['discount'];
                 $roomPice = RoomTypePrice::where('room_type_id', $room['roomType'])->orderByDesc('price_validity_period')->first();
 
                 $check_in = $request->method == 'check_in' ? new CheckIn() : new RoomBooking();
@@ -320,6 +320,7 @@ class BookRoomController extends Controller
                 $check_in->guest_count    = $room['adult'];
                 $check_in->total_amount   = $roomPice['unit_price']; // giá phòng hiện tại đang áp dụng
                 $check_in->deposit_amount = $depositAmount;
+                $check_in->discount       = $discountAmount;
                 $check_in->note           = $room['note'];
                 $check_in->user_source    = $request->customer_source;
                 $check_in->unit_code      = hf('ma_coso');

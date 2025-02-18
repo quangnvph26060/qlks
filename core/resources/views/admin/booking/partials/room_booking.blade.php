@@ -59,7 +59,7 @@
                 <h5 class="modal-title" id="myModalLabel-booking">Đặt phòng</h5>
                 <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
             </div>
-            <div class="modal-body ">
+            <div class="modal-body " style="padding: 5px 5px 12px 5px;">
 
 
                 <form id="bookingForm" action="{{ route('admin.room.book') }}" class="booking-form" method="POST">
@@ -233,6 +233,7 @@
                                         <th>Ngày trả phòng</th>
                                         <th>Tiền phòng</th>
                                         <th>Tiền cọc</th>
+                                        <th>Giảm giá</th>
                                         <th>Ghi chú</th>
                                         {{-- <th class="d-flex justify-content-between align-items-center">Dự kiến
                                         <span>Thành tiền</span>
@@ -269,7 +270,8 @@
                                 </li>
                                 <li class="financial-item highlighted">
                                     <span>Giảm giá</span>
-                                    <input type="text" id="discountInput" class="custom-input-giam-gia">
+                                    <span id="total_discount">0</span>
+                                    {{-- <input type="text" id="discountInput" class="custom-input-giam-gia"> --}}
                                 </li>
                                 <li class="financial-item">
                                     <span>Tiền cọc</span>
@@ -318,4 +320,22 @@
             document.getElementById("date-book-room-date").value = checkOutDate;
         }
     });
+    document.addEventListener("DOMContentLoaded", function () {
+    function updateScroll() {
+        const listBooking = document.getElementById("list-booking");
+        const rows = listBooking.querySelectorAll("tr");
+
+        if (rows.length > 3) {
+            listBooking.style.display = "block";
+            listBooking.style.height = "150px"; // Giới hạn chiều cao
+            listBooking.style.overflowY = "auto"; // Hiển thị thanh cuộn
+        } else {
+            listBooking.style.height = "none";
+            listBooking.style.overflowY = "visible"; // Không có thanh cuộn nếu ít hơn hoặc bằng 3 hàng
+        }
+    }
+
+    updateScroll();
+});
+
 </script>

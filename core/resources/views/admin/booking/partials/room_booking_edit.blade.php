@@ -39,7 +39,7 @@
                 <h5 class="modal-title" id="myModalLabel-booking">Sửa đặt phòng</h5>
                 <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
             </div>
-            <div class="modal-body ">
+            <div class="modal-body "  style="padding: 5px 5px 12px 5px;">
 
 
                 <form id="bookingForm" action="{{ route('admin.room.book.edit') }}" class="booking-form-edit" method="POST">
@@ -243,10 +243,10 @@
                                     <span>Tiền phòng</span>
                                     <span class="total_amount">0</span>
                                 </li>
-                                <li class="financial-item highlighted">
+                                {{-- <li class="financial-item highlighted">
                                     <span>Giảm giá</span>
                                     <input type="text" id="discountInput" class="custom-input-giam-gia">
-                                </li>
+                                </li> --}}
                                 <li class="financial-item">
                                     <span>Tiền cọc</span>
                                     <span class="total_deposit">0</span>
