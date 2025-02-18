@@ -699,12 +699,11 @@ function calculateTotalPrice() {
     // }
     $('.total_balance').each(function() {
         $(this).text(formatCurrency(totalPrice));
-
     });
-    // $('.total_amount').each(function() {
-    //     $(this).text(formatCurrency(totalPrice - pricediscount));
-        
-    // });
+    $('.total_amount').each(function() {
+        $(this).text(formatCurrency(totalPrice));
+    });
+    
     $('#total_balance').text(formatCurrency(totalPrice));
     // $('#total_deposit').text(formatCurrency(totalPrice));
     return totalPrice;
@@ -820,6 +819,7 @@ function addRoomInBooking(data, list) {
                         });
                     });
                     $('#total_deposit').text(formatCurrency(rowTotal));
+                    $('.total_deposit').text(formatCurrency(rowTotal));
                     let priceString = $('#total_discount').text();
                     let price = parseInt(priceString.replace(/\./g, ""), 10);
                     price = isNaN(price) ? 0 : price;
@@ -836,6 +836,7 @@ function addRoomInBooking(data, list) {
                         });
                     });
                     $('#total_discount').text(formatCurrency(rowTotal));
+                    $('.total_discount').text(formatCurrency(rowTotal));
                     let priceString = $('#total_deposit').text();
                     let price = parseInt(priceString.replace(/\./g, ""), 10);
                     price = isNaN(price) ? 0 : price;
@@ -1078,6 +1079,8 @@ $(document).on('click', '.booked_room_edit', function () {
                         });
                         $('.total_deposit').text(formatCurrency(rowTotal));
                         let priceString = $('.total_discount').text();
+                        console.log(priceString);
+                        
                         let price = parseInt(priceString.replace(/\./g, ""), 10);
                         price = isNaN(price) ? 0 : price;
                         totalBalance = totalPrice - rowTotal - price;
@@ -1094,10 +1097,11 @@ $(document).on('click', '.booked_room_edit', function () {
                         });
                         $('.total_discount').text(formatCurrency(rowTotal));
                         let priceString = $('.total_deposit').text();
+                       
                         let price = parseInt(priceString.replace(/\./g, ""), 10);
-                        price = isNaN(price) ? 0 : price;
+                        price = isNaN(price) ? 0 : price; 
                         totalBalance = totalPrice - rowTotal - price;
-                        $('#total_balance').text(formatCurrency(totalBalance));  
+                        $('.total_balance').text(formatCurrency(totalBalance));  
                     });
                     $('.number-input').on('blur', function () {
                         formatNumber(this);
