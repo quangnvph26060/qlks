@@ -52,7 +52,7 @@
 
 <div class="modal fade" id="myModal-booking" tabindex="-1" role="dialog" aria-labelledby="myModalLabel-booking"
     aria-hidden="true">
-
+    {{-- padding: 115px 10px 0px; --}}
     <div class="modal-dialog modal-dialog-centered" role="document" style="width: 100%;">
         <div class="modal-content">
             <div class="modal-header">

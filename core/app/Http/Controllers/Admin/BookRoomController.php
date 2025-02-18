@@ -266,7 +266,7 @@ class BookRoomController extends Controller
             foreach ($filteredRooms as $index => $room) {
                 // kiểm tra khách hàng
                 if (!empty($request->insert_customer)) {
-                    $customer = $this->add_guest($request->name, $request->phone);
+                    $customer = $this->add_guest($request->name, $request->phone,$request->customer_source);
                 }
                 
                 // \Log::info($request->all());
@@ -357,7 +357,7 @@ class BookRoomController extends Controller
                 $room = json_decode($item, true);
             
                 // kiểm tra khách hàng
-                $customer = $this->add_guest($request->name, $request->phone);
+                $customer = $this->add_guest($request->name, $request->phone,$request->customer_source);
                 // đặt cọc của từng phòng
                 $depositAmount  =    intval(str_replace('.', '', $room['deposit']));
                 $discountAmount =    intval(str_replace('.', '', $room['discount']));
@@ -426,7 +426,7 @@ class BookRoomController extends Controller
         return response()->json(['status' => 'success','success'=>'Xoá thành công']);
     }
 
-    protected function add_guest($name, $phone)
+    protected function add_guest($name, $phone, $customer_source)
     {
         $existingUser = Customer::where('name', $name);
         if (!is_null($phone)) {
@@ -448,6 +448,7 @@ class BookRoomController extends Controller
                 'name'          => $name,
                 'phone'         => $phone,
                 'unit_code'     => hf('ma_coso'),
+                'group_code'    => $customer_source,
                 'created_at'    => now(),
                 'updated_at'    => now()
             ]);
