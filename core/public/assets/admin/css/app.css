@@ -3464,7 +3464,7 @@ tbody tr .address-content p:hover {
     font-weight: 500;
     padding: 15px 25px;
     vertical-align: middle;
-    /* white-space: nowrap; */
+    white-space: nowrap;
 }
 
 .white-space-wrap {
