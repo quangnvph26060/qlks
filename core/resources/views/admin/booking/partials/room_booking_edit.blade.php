@@ -69,10 +69,10 @@
                                         
                                         <div class="d-flex">
                                             <div class="col-md-8">
-                                                <input type="text" name="name"  id="name" class="form-control name-edit"
+                                                <input type="text" name="name"  id="name_edit" class="form-control name-edit"
                                                     placeholder="Tên khách hàng">
-                                                <span class="invalid-feedback d-block name_error"
-                                                    style="font-weight: 500" id="name_error"></span>
+                                                <span class="invalid-feedback d-block name_error_edit"
+                                                    style="font-weight: 500" id="name_error_edit"></span>
                                             </div>
                                          
 
@@ -199,7 +199,7 @@
                        </div>
                         <!-- Row: Labels -->
                         <div class="table-responsive mt-2">
-                            <table class="table mobi-table">
+                            <table class="table mobi-table" id="data-table">
                                 <thead>
                                     <tr class="text-center fw-bold main-booking-modal">
                                         {{-- <th>Hạng phòng</th> --}}
@@ -214,6 +214,7 @@
                                         <th>Ngày trả phòng</th>
                                         <th>Tiền phòng</th>
                                         <th>Tiền cọc</th>
+                                        <th>Giảm giá</th>
                                         <th>Ghi chú</th>
                                         {{-- <th class="d-flex justify-content-between align-items-center">Dự kiến
                                         <span>Thành tiền</span>
@@ -243,10 +244,11 @@
                                     <span>Tiền phòng</span>
                                     <span class="total_amount">0</span>
                                 </li>
-                                {{-- <li class="financial-item highlighted">
+                                <li class="financial-item highlighted">
                                     <span>Giảm giá</span>
-                                    <input type="text" id="discountInput" class="custom-input-giam-gia">
-                                </li> --}}
+                                    <span class="total_discount">0</span>
+                                    {{-- <input type="text" id="discountInput" class="custom-input-giam-gia"> --}}
+                                </li>
                                 <li class="financial-item">
                                     <span>Tiền cọc</span>
                                     <span class="total_deposit">0</span>
@@ -283,4 +285,21 @@
             document.getElementById("date-book-room-date").value = checkOutDate;
         }
     });
+    document.addEventListener("DOMContentLoaded", function () {
+    function updateScroll() {
+        const listBooking = document.getElementById("list-booking-edit");
+        const rows = listBooking.querySelectorAll("tr");
+
+        if (rows.length > 3) {
+            listBooking.style.display = "block";
+            listBooking.style.height = "150px"; // Giới hạn chiều cao
+            listBooking.style.overflowY = "auto"; // Hiển thị thanh cuộn
+        } else {
+            listBooking.style.height = "none";
+            listBooking.style.overflowY = "visible"; // Không có thanh cuộn nếu ít hơn hoặc bằng 3 hàng
+        }
+    }
+
+    updateScroll();
+});
 </script>

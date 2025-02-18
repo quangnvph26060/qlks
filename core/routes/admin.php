@@ -317,6 +317,7 @@ Route::middleware('admin', 'adminPermission')->group(function () {
         Route::get('book-room', 'room')->name('book.room');
         Route::post('room-book', 'book')->name('room.book');
         Route::post('room-book-edit', 'bookEdit')->name('room.book.edit');
+        Route::post('room-book-delete', 'deleteRoomBooking')->name('room.booking.delete');
         Route::get('room/search', 'searchRoom')->name('room.search');
 
         Route::get('search/customer', 'searchCustomer')->name('search.customer');

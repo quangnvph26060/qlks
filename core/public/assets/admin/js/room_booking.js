@@ -74,10 +74,24 @@ const dateRangeOptions = {
         'Next 30 Days': [moment(), moment().add(30, 'days')]
     }
 }
-var formEconomyEdit = {
+var validatorForm = {
     'name': { // passwword thì nên đặt là name trong input đó
         'element': document.getElementById('name'), // id trong input đó
         'error': document.getElementById('name_error'), // thẻ hiển thị lỗi
+        'validations': [{
+            'func': function (value) {
+                return checkRequired(value); // check trống
+            },
+            'message': generateErrorMessage('P001', 'Tên')
+        }, // viết tiếp điều kiện validate vào đây (validations)
+        ]
+    },
+
+}
+var formEconomyEdit = {
+    'name': { // passwword thì nên đặt là name trong input đó
+        'element': document.getElementById('name_edit'), // id trong input đó
+        'error': document.getElementById('name_error_edit'), // thẻ hiển thị lỗi
         'validations': [{
             'func': function (value) {
                 return checkRequired(value); // check trống
@@ -197,17 +211,17 @@ $(document).on('click', '.confirmBookingBtn', function () {
 //     dropdownParent: $('.select2-parent')
 // });
 $(document).ready(function () {
- 
+
 
     let typingTimer;
     $('#searchInput').on('input', function () {
         clearTimeout(typingTimer);
         var search_value = $(this).val();
         var option_customer_source = $('#selected-customer-source').val();
-            console.log(option_customer_source);
-            
+        console.log(option_customer_source);
+
         typingTimer = setTimeout(function () {
-           showCustomer(search_value, option_customer_source);
+            showCustomer(search_value, option_customer_source);
         }, 300); // Chỉ tìm kiếm sau 300ms nếu không có nhập liệu mới
     });
 
@@ -289,12 +303,12 @@ function showRoom(data = "", checkInDateValue = "", checkOutDateValue = "", sele
                 seenRooms.add(item.room_number);
                 // Nếu không phải bản ghi đầu tiên, đặt class theo trạng thái
                 if (!isFirst) {
-                                
+
                     if (item.check_booked === 'Đã nhận') {
                         rowClass = "background-red";
                     } else if (item.check_booked === 'Đã đặt') {
                         rowClass = 'background-yellow';
-                    }else if (item.check_booked === 'Trống') {
+                    } else if (item.check_booked === 'Trống') {
                         rowClass = "background-primary";
                     }
                 } else {
@@ -302,10 +316,10 @@ function showRoom(data = "", checkInDateValue = "", checkOutDateValue = "", sele
                         rowClass = "background-red";
                     } else if (item.check_booked === 'Đã đặt') {
                         rowClass = 'background-yellow';
-                    }else if (item.check_booked === 'Trống') {
+                    } else if (item.check_booked === 'Trống') {
                         rowClass = "background-primary";
                     }
-                     else {
+                    else {
                         rowClass = "background-white";
                     }
                 }
@@ -414,27 +428,44 @@ $('.delete-room-booking').on('click', function () {
 });
 //xoá phòng edit
 $('.delete-room-booking-edit').on('click', function () {
-    let selectedBookingIds = []; 
+    let selectedBookingIds = [];
     $('#list-booking-edit tr').each(function () {
         var checkbox = $(this).find('input[type="checkbox"]');
         if (checkbox.prop('checked')) {
             var bookingId = $(this).data('room-booking-id');
             selectedBookingIds.push(bookingId);
             $(this).remove();
-            let totalPrice = 0;
-            totalPrice = calculateTotalPrice();
-            $('#total_amount').text(formatCurrency(totalPrice));
-            // $('#total_amount').text(formatCurrency(totalPrice));
-            // $('#total_balance').text(formatCurrency(totalPrice));
         }
-     
-    });   
-    // console.log(selectedBookingIds);
+
+    });
+    //  console.log(selectedBookingIds);
+    $.ajax({
+        url: deleteRoomEdit,
+        type: 'POST',
+        data: {
+            data: JSON.stringify(selectedBookingIds)
+        },
+        success: function (response) {
+           if(response.status === 'success') {
+            loadRoomBookings();
+              let totalPrice = 0;
+            totalPrice = calculateTotalPrice(); 
+            $('#total_amount').text(formatCurrency(totalPrice));
+            $('.total_amount').text(formatCurrency(totalPrice));
+            // $('#total_balance').text(formatCurrency(totalPrice));
+            notify('success', response.success);
+           }
+        },
+        error: function (error) {
+            $('#loading').hide();
+            console.log('Error:', error);
+        }
+    });
 });
 // add phòng vào booked
 $('.add-room-list').on('click', function () {
     let dataListValue = $(this).attr('data-list');
-    console.log("Giá trị của data-list:", dataListValue);
+    // console.log("Giá trị của data-list:", dataListValue);
     const selectedCheckboxes = [];
     $('#show-room input[type="checkbox"]:checked').each(function () {
         const checkboxData = {
@@ -464,7 +495,7 @@ $(document).on("dblclick", "#data-table tbody tr", function () {
     }
     findCustomerById(customerId);
 });
-function findCustomerById(id){
+function findCustomerById(id) {
     $.ajax({
         url: findCustomerUrl,
         type: 'GET',
@@ -472,10 +503,11 @@ function findCustomerById(id){
             id: id,
         },
         success: function (data) {
-            $('#name').val(data.data.name);
-            $('#phone').val(data.data.phone);
-            $('#customer_code').val(data.data.customer_code);
+            $('input[name="name"]').val(data.data.name);
+            $('input[name="phone"]').val(data.data.phone);
+            $('input[name="customer_code"]').val(data.data.customer_code);
             $("#select-customer-source").val(data.data.group_code).change();
+            $("#select-customer-source-edit").val(data.data.group_code).change();
             $('#addCustomerModal').modal('hide');
             $('#loading').hide();
         },
@@ -571,18 +603,18 @@ $(document).on('click', '.add-book-room', function () {
     // var roomTypeId = $(this).data('room_type_id');
     allStaffandCustomerSource()
     // $('#myModal-booking-edit').modal('hide');
-    hasBookings() ? "" : ($('#total_balance').text(0), $('#total_amount').text(0));
+    hasBookings() ? "" : ($('#total_balance').text(0), $('#total_amount').text(0), $('#total_deposit').text(0));
 
     // addRoomInBooking(roomId, roomTypeId);
     var selectedCheckboxes = [];
 
 });
-function allStaffandCustomerSource(){
+function allStaffandCustomerSource() {
     $.ajax({
         url: getCustomerStaff,
         type: 'GET',
         success: function (data) {
-          
+
             var selected_customer_source = $('#select-customer-source');
             selected_customer_source.empty();
             let option = `<option value="">Chọn nguồn khách hàng</option>`;
@@ -658,20 +690,27 @@ function calculateTotalPrice() {
 
         totalPrice += price;
     });
-    let pricediscount = 0;
-    let discountInputValue = $('#discountInput').val();
+    // let pricediscount = 0;
+    // let discountInputValue = $('#discountInput').val();
 
-    if (discountInputValue) {
-        pricediscount = parseInt(discountInputValue.replace(/\./g, ''));
-        pricediscount = isNaN(pricediscount) ? 0 : pricediscount;
-    }
-    $('.total_balance').text(formatCurrency(totalPrice - pricediscount));
-    $('#total_balance').text(formatCurrency(totalPrice - pricediscount));
+    // if (discountInputValue) {
+    //     pricediscount = parseInt(discountInputValue.replace(/\./g, ''));
+    //     pricediscount = isNaN(pricediscount) ? 0 : pricediscount;
+    // }
+    $('.total_balance').each(function() {
+        $(this).text(formatCurrency(totalPrice));
+
+    });
+    // $('.total_amount').each(function() {
+    //     $(this).text(formatCurrency(totalPrice - pricediscount));
+        
+    // });
+    $('#total_balance').text(formatCurrency(totalPrice));
     // $('#total_deposit').text(formatCurrency(totalPrice));
     return totalPrice;
 }
 
-function addRoomInBooking(data,list) {
+function addRoomInBooking(data, list) {
     $('#loading').show();
     $.ajax({
         url: checkRoomBookingUrl,
@@ -680,7 +719,7 @@ function addRoomInBooking(data,list) {
             data: JSON.stringify(data)
         },
         success: function (response) {
-            var tbody =list;
+            var tbody = list;
             if (response.status === 'success') {
                 //   getRoomType(response.room_type['id'], response.room['room_number'])
                 const todays = new Date();
@@ -782,8 +821,6 @@ function addRoomInBooking(data,list) {
                     });
                     $('#total_deposit').text(formatCurrency(rowTotal));
                     let priceString = $('#total_discount').text();
-                    console.log(priceString);
-                    
                     let price = parseInt(priceString.replace(/\./g, ""), 10);
                     price = isNaN(price) ? 0 : price;
                     totalBalance = totalPrice - rowTotal - price;
@@ -800,10 +837,9 @@ function addRoomInBooking(data,list) {
                     });
                     $('#total_discount').text(formatCurrency(rowTotal));
                     let priceString = $('#total_deposit').text();
-                    console.log(priceString);
                     let price = parseInt(priceString.replace(/\./g, ""), 10);
                     price = isNaN(price) ? 0 : price;
-                    totalBalance = totalPrice - rowTotal -  price;
+                    totalBalance = totalPrice - rowTotal - price;
                     $('#total_balance').text(formatCurrency(totalBalance));
                 });
                 $('.number-input').on('blur', function () {
@@ -909,13 +945,13 @@ $(document).on('click', '.booked_room_edit', function () {
                 var selected_customer_source = $('#select-customer-source-edit');
                 selected_customer_source.empty();
                 let option = `<option value="">Chọn nguồn khách hàng</option>`;
-                response.customerSourse.forEach(function (item) { 
+                response.customerSourse.forEach(function (item) {
                     if (item.source_code == response.option_customer_source) {
                         option += `<option value="${item.source_code}" selected>${item.source_name}</option>`;
                     } else {
                         option += `<option value="${item.source_code}">${item.source_name}</option>`;
                     }
-                 
+
                 });
                 selected_customer_source.append(option);
                 // nhân viên 
@@ -935,7 +971,6 @@ $(document).on('click', '.booked_room_edit', function () {
                         $('.name-edit').val(item.customer_name);
                         $('.phone-edit').val(item.phone_number);
                         item.room_bookings.forEach(room => {
-
                             let [checkinDate, checkinTime] = room
                                 .checkin_date.split(' ');
                             checkinTime = checkinTime.slice(0, 5);
@@ -956,7 +991,7 @@ $(document).on('click', '.booked_room_edit', function () {
                                         <td>
                                             <input type="number" min="1" name="adult" class="form-control adult"  value="${room.guest_count}"  style="margin-left: 16px;">
                                         </td>
-                                        <td style="display: flex; justify-content: center">
+                                        <td >
                                             <select id="bookingType" class="form-select" name="optionRoom" style="width: 93px; font-size:15px">
                                                 <option value="ngay">Ngày</option>
                                                 <option value="gio">Giờ</option>
@@ -982,6 +1017,9 @@ $(document).on('click', '.booked_room_edit', function () {
                                         </td>
                                         <td>
                                             <input type="text" class="form-control deposit number-input" oninput="this.value = this.value.slice(0, 16)"  name="deposit" value="${formatCurrencyEdit(room.deposit_amount)}" placeholder="0">
+                                        </td>
+                                          <td>
+                                            <input type="text" class="form-control discount number-input-discount" oninput="this.value = this.value.slice(0, 16)"  name="discount" value="${formatCurrencyEdit(room.discount?? 0)}" placeholder="0">
                                         </td>
                                         <td>
                                             <input type="text" name="note_room" class="form-control note_room" value="${room.note}" id="note">
@@ -1017,11 +1055,12 @@ $(document).on('click', '.booked_room_edit', function () {
 
                         $('.total_deposit').text(formatCurrency(rowTotal));
 
-                        let priceString = $('.custom-input-giam-gia').val();
+                        let priceString = $('.total_discount').text();
                         let price = parseInt(priceString.replace(/\./g, '')) || 0;
 
                         totalBalance = totalPrice - rowTotal - price;
                         $('.total_balance').text(formatCurrency(totalBalance));
+                        $('.total_deposit').text(formatCurrency(price));
                     }
 
                     // Chạy khi trang load
@@ -1031,45 +1070,59 @@ $(document).on('click', '.booked_room_edit', function () {
                     $('tr').find('input.deposit').on('blur', function () {
                         let rowTotal = 0;
                         $('tr').each(function () {
-                            $(this).find('input.deposit').each(
-                                function () {
-                                    let depositValue = $(this).val()
-                                        .replace(/[,.]/g,
-                                            '');
-                                    let numericDeposit = parseInt(
-                                        depositValue) || 0;
-                                    rowTotal += numericDeposit;
-                                });
+                            $(this).find('input.deposit').each(function () {
+                                let depositValue = $(this).val().replace(/[,.]/g, '');
+                                let numericDeposit = parseInt(depositValue) || 0;
+                                rowTotal += numericDeposit;
+                            });
                         });
                         $('.total_deposit').text(formatCurrency(rowTotal));
-                        let priceString = $('.custom-input-giam-gia').val();
-                        let price = parseInt(priceString.replace(/\./g, ''));
+                        let priceString = $('.total_discount').text();
+                        let price = parseInt(priceString.replace(/\./g, ""), 10);
                         price = isNaN(price) ? 0 : price;
                         totalBalance = totalPrice - rowTotal - price;
                         $('.total_balance').text(formatCurrency(totalBalance));
                     });
-
+                    $('tr').find('input.discount').on('blur', function () {
+                        let rowTotal = 0;
+                        $('tr').each(function () {
+                            $(this).find('input.discount').each(function () {
+                                let depositValue = $(this).val().replace(/[,.]/g, '');
+                                let numericDeposit = parseInt(depositValue) || 0;
+                                rowTotal += numericDeposit;
+                            });
+                        });
+                        $('.total_discount').text(formatCurrency(rowTotal));
+                        let priceString = $('.total_deposit').text();
+                        let price = parseInt(priceString.replace(/\./g, ""), 10);
+                        price = isNaN(price) ? 0 : price;
+                        totalBalance = totalPrice - rowTotal - price;
+                        $('#total_balance').text(formatCurrency(totalBalance));  
+                    });
                     $('.number-input').on('blur', function () {
                         formatNumber(this);
                     });
-
-                    $('.custom-input-giam-gia').on('blur', function () {
-                        // Lấy giá trị từ trường nhập liệu
-                        let discountValue = $(this).val();
-                        let number = parseInt(discountValue.replace('.', ''));
-                        number = isNaN(number) ? 0 : number;
-                        let priceString = $('.total_amount').text();
-                        let price = parseFloat(priceString.replace(/\./g, '')
-                            .replace(' VND', ''));
-
-                        let pricedeposit = $('.total_deposit').text();
-                        let deposit = parseFloat(pricedeposit.replace(/\./g, '')
-                            .replace(' VND',
-                                ''));
-                        $('.total_balance').text(formatCurrency(price -
-                            deposit - number));
+                    $('.number-input-discount').on('blur', function () {
                         formatNumber(this);
                     });
+
+                    // $('.custom-input-giam-gia').on('blur', function () {
+                    //     // Lấy giá trị từ trường nhập liệu
+                    //     let discountValue = $(this).val();
+                    //     let number = parseInt(discountValue.replace('.', ''));
+                    //     number = isNaN(number) ? 0 : number;
+                    //     let priceString = $('.total_amount').text();
+                    //     let price = parseFloat(priceString.replace(/\./g, '')
+                    //         .replace(' VND', ''));
+
+                    //     let pricedeposit = $('.total_deposit').text();
+                    //     let deposit = parseFloat(pricedeposit.replace(/\./g, '')
+                    //         .replace(' VND',
+                    //             ''));
+                    //     $('.total_balance').text(formatCurrency(price -
+                    //         deposit - number));
+                    //     formatNumber(this);
+                    // });
                 });
                 // notify('success', response.success);
                 // loadRoomBookings();
@@ -1157,7 +1210,7 @@ $(document).on('click', '#btn-search', function () {
                 let selectPhone = $('#selectphone');
 
                 if (response.status == 'success') {
-                   
+
                     selectPhone.empty();
                     // Nếu có số điện thoại, cập nhật giá trị vào select
                     if (response.data.length > 0) {
@@ -1244,7 +1297,7 @@ function getDatesBetween(checkInDate, checkInTime, checkOutDate, checkOutTime, r
             adult: adult,
             note: note,
             deposit: deposit,
-            discount:discount,
+            discount: discount,
             bookingId: roomBookingId
         });
 
@@ -1292,7 +1345,7 @@ function validator(checkInDate, checkOutDate, dataRowValue) {
 $('.btn-book').on('click', function () {
     const dataRowValue = $(this).data('row');
     $('.booking-form').data('row', dataRowValue);
-    if (validateAllFields(formEconomyEdit)) {
+    if (validateAllFields(validatorForm)) {
         $('.booking-form').submit(); // Gửi form
     }
 });
@@ -1300,8 +1353,11 @@ $('.btn-book').on('click', function () {
 $('.btn-book-edit').on('click', function () {
     const dataRowValue = $(this).data('row');
     $('.booking-form-edit').data('row', dataRowValue);
-    var name = $('.name-edit').val();
-    $('.booking-form-edit').submit(); // Gửi form
+    console.log(validateAllFields(formEconomyEdit));
+    
+    if (validateAllFields(formEconomyEdit)) {
+        $('.booking-form-edit').submit(); // Gửi form
+    }
     // if (name !== "" && name.trim()) {
     //     $('.name_error').text('');
     //     $('input[name="name"]').removeClass('is-invalid');
@@ -1353,23 +1409,23 @@ $('.booking-form').on('submit', function (e) {
             hasError = false;
             return false;
         }
-       
-      
-    
-      
-            roomData.push({
-                roomId: roomId,
-                roomTypeId: roomTypeId,
-                checkInDate: checkInDate,
-                checkInTime: checkInTime,
-                checkOutDate: checkOutDate,
-                checkOutTime: checkOutTime,
-                adult: adult,
-                note: note,
-                deposit: deposit,
-                discount:discount,
-            });
-        
+
+
+
+
+        roomData.push({
+            roomId: roomId,
+            roomTypeId: roomTypeId,
+            checkInDate: checkInDate,
+            checkInTime: checkInTime,
+            checkOutDate: checkOutDate,
+            checkOutTime: checkOutTime,
+            adult: adult,
+            note: note,
+            deposit: deposit,
+            discount: discount,
+        });
+
     });
 
     if (hasError) {
@@ -1474,6 +1530,7 @@ $('.booking-form-edit').on('submit', function (e) {
         var adult = $(this).find('input[name="adult"]').val();
         var note = $(this).closest('tr').find('input[name="note_room"]').val();
         var deposit = $(this).closest('tr').find('input[name="deposit"]').val();
+        var discount = $(this).closest('tr').find('input[name="discount"]').val();
         // console.log(roomId, roomTypeId, checkInDate, checkInTime, checkOutDate, checkOutTime, adult, note);
         const errorDiv = document.querySelector('.message-error-edit');
         if (new Date(checkOutDate) <= new Date(checkInDate)) {
@@ -1494,6 +1551,7 @@ $('.booking-form-edit').on('submit', function (e) {
             adult: adult,
             note: note,
             deposit: deposit,
+            discount: discount,
             roomBookingId: roomBookingId,
         });
     });
@@ -1502,7 +1560,7 @@ $('.booking-form-edit').on('submit', function (e) {
         roomData.forEach(function (item) {
             const roomDates = getDatesBetween(item['checkInDate'], item['checkInTime'],
                 item['checkOutDate'], item['checkOutTime'], item['roomId'], item['roomTypeId'],
-                item['adult'], item['note'], item['deposit'], item['roomBookingId']);
+                item['adult'], item['note'], item['deposit'], item['discount'], item['roomBookingId']);
 
             roomDates.forEach(function (date, index) {
                 formData.push({
@@ -1595,10 +1653,10 @@ $(document).ready(function () {
         loadRoomBookings();
     });
     $(document).on('click', '.btn-submit-search-book', function () {
-        let bookingCode  = $('#booking_code').val();
-        let roomCode     = $('#select_room_number').val();
+        let bookingCode = $('#booking_code').val();
+        let roomCode = $('#select_room_number').val();
         let customerName = $('#name').val();
-        let data =  {
+        let data = {
             bookingCode: bookingCode,
             roomCode: roomCode,
             customerName: customerName,
@@ -1672,7 +1730,7 @@ function loadRoomBookings(page = 1, data) {
                         </tr>
                     `;
                     $('.data-table').append(html);
-                
+
                 })
                 var selected_select = $('#select_room_number');
                 selected_select.empty();

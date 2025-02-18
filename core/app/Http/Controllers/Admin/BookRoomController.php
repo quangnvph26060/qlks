@@ -359,8 +359,8 @@ class BookRoomController extends Controller
                 // kiểm tra khách hàng
                 $customer = $this->add_guest($request->name, $request->phone);
                 // đặt cọc của từng phòng
-                $depositAmount = is_numeric($room['deposit']) ? intval(floatval(str_replace('.', '', $room['deposit']))) : $room['deposit'];
-
+                $depositAmount  = is_numeric($room['deposit']) ? intval(floatval(str_replace('.', '', $room['deposit']))) : $room['deposit'];
+                $discountAmount = is_numeric($room['discount']) ? intval(floatval(str_replace('.', '', $room['discount']))) : $room['discount'];
                 $roomPice = RoomTypePrice::where('room_type_id', $room['roomType'])->orderByDesc('price_validity_period')->first();
 
                 $check_in = $request->method == 'check_in' ?  CheckIn::query() :  RoomBooking::query()->active();
@@ -371,32 +371,6 @@ class BookRoomController extends Controller
                 $room['dateIn'] = date('Y-m-d H:i:s', strtotime($room['dateIn']));
                 $room['dateOut'] = date('Y-m-d H:i:s', strtotime($room['dateOut']));
                 if ($check_in) {
-                 
-                  
-                    $resultDate = RoomBooking::query()->active()
-                    ->where('room_code', $check_in['room_code'])
-                    ->where('id', '!=', $room['bookingId'])
-                    ->when(!empty($room['dateIn']) && !empty($room['dateOut']), function ($query) use ($room) {
-                        $query->where(function ($q) use ($room) {
-                            $q->whereBetween('checkin_date', [$room['dateIn'], $room['dateOut']])
-                                ->orWhereBetween('checkout_date', [$room['dateIn'], $room['dateOut']])
-                                ->orWhere(function ($subQuery) use ($room) {
-                                    $subQuery->where('checkin_date', '<', $room['dateIn'])
-                                        ->where('checkout_date', '>', $room['dateOut']);
-                                });
-                        })
-                        // So sánh cả ngày và giờ checkout để cho phép đặt phòng liền kề
-                        ->whereRaw('(checkout_date != ?) OR (checkout_date = ? AND TIME(checkout_date) <= TIME(?))', [
-                            $room['dateIn'], $room['dateIn'], $room['dateIn']
-                        ]);
-                    });
-                
-                
-                $exists = $resultDate->exists();
-                if ($exists) {
-                    DB::rollBack();
-                    return response()->json(['error' => 'Ngày nhận ngày trả đã tồn tại']);
-                }
                     $check_in->room_code      = $room['room'];
                     $check_in->document_date  = now();
                     $check_in->checkin_date   = Carbon::parse($room['dateIn']);
@@ -409,6 +383,7 @@ class BookRoomController extends Controller
                     $check_in->guest_count    = $room['adult'];
                     $check_in->total_amount   = $roomPice['unit_price']; // giá phòng hiện tại đang áp dụng
                     $check_in->deposit_amount = $depositAmount;
+                    $check_in->discount       = $discountAmount;
                     $check_in->note           = $room['note'];
                     $check_in->user_source    = $customer['customer_sourece'] ?? $request->customer_source;
                     $check_in->unit_code      = hf('ma_coso');
@@ -416,24 +391,6 @@ class BookRoomController extends Controller
                     $check_in->save();
                   
                 }else {
-                        $resultDate = RoomBooking::query()->active()
-                        ->where('room_code', $room['room'])
-                        // ->where('id', '!=', $room['bookingId'])
-                        ->when(!empty($room['dateIn']) && !empty($room['dateOut']), function ($query) use ($room) {
-                            $query->where(function ($q) use ($room) {
-                                $q->whereBetween('checkin_date', [$room['dateIn'], $room['dateOut']])
-                                    ->orWhereBetween('checkout_date', [$room['dateIn'], $room['dateOut']])
-                                    ->orWhere(function ($subQuery) use ($room) {
-                                        $subQuery->where('checkin_date', '<=', $room['dateIn'])
-                                            ->where('checkout_date', '>=', $room['dateOut']);
-                                    });
-                            });
-                        });
-                        $exists = $resultDate->exists();
-                        if ($exists) {
-                            DB::rollBack();
-                            return response()->json(['error' => 'Ngày nhận ngày trả đã tồn tại']);
-                        }
                     $check_in_new = $request->method == 'check_in' ? new CheckIn() : new RoomBooking();
                     $check_in_new->booking_id =  $firstBookingId;
                     $check_in_new->room_code      = $room['room'];
@@ -463,6 +420,12 @@ class BookRoomController extends Controller
             return response()->json(['error' => 'Đã xảy ra lỗi, không đặt phòng thành công ']);
         }
     }
+    public function deleteRoomBooking(Request $request){
+        $ids = json_decode($request->data, true);
+        RoomBooking::whereIn('id', $ids)->delete();
+        return response()->json(['status' => 'success','success'=>'Xoá thành công']);
+    }
+
     protected function add_guest($name, $phone)
     {
         $existingUser = Customer::where('name', $name);
@@ -576,6 +539,7 @@ class BookRoomController extends Controller
                 'checkout_date'     => $booking->checkout_date,
                 'total_amount'      => $booking->total_amount,
                 'deposit_amount'    => $booking->deposit_amount,
+                'discount'          => $booking->discount,
                 'note'              => $booking->note,
                 'room_id'           => $booking->room->id,
                 'room_type_id'      => $booking->room->room_type_id,

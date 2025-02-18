@@ -217,12 +217,10 @@ textarea {
 .table-responsive::-webkit-scrollbar {
     display: none;
 }
-
-
 .table td{
     vertical-align: sub  !important;
 }
-#list-booking tr {
+#list-booking tr,#list-booking-edit tr {
     vertical-align: top;
 }
 .row.mb-2.text-center.fw-bold {

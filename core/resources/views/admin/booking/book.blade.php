@@ -213,6 +213,7 @@
     <script>
         var showRoomUrl = "{{ route('admin.booking.showRoom') }}";
         var checkRoomBookingUrl = '{{ route('admin.booking.checkRoomBooking') }}';
+        var deleteRoomEdit      = '{{ route('admin.room.booking.delete')}}';
         var searchCustomerUrl = '{{ route('admin.search.customer') }}';
         var roomBookingUrl = '{{ route('admin.room.booking') }}';
         var roomBookingEditUrl = "{{ route('admin.room.booking.edit', ['id' => ':id']) }}";
