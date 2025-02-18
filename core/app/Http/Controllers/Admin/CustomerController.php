@@ -191,5 +191,19 @@ class CustomerController extends Controller
         }
        
     }
- 
+    public function getCustomer(Request $request,$id)
+    {
+        $customer = Customer::find($id);
+        $code = $customer->customer_code;
+        $bookings = RoomBooking::where('customer_code', $code)->where('unit_code',unitCode())->first();
+        // $user_delete = $customer->onlyTrashed()->select('customer_code')->where('customer_code', $customer_code)->first();
+        if (!empty($bookings)) {
+            return 1;
+        }
+        else
+        {
+            return 2;
+        }
+       
+    }
 }

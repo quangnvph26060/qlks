@@ -641,38 +641,64 @@
         $('.icon-delete-room').on('click', function() {
             var dataId = $(this).data('id');
             var rowToDelete = $(`tr[data-id="${dataId}"]`);
-            Swal.fire({
-                title: 'Xác nhận xóa khách hàng?',
-                text: 'Bạn có chắc chắn muốn xóa khách hàng này không?',
-                icon: 'warning',
-                showCancelButton: true,
-                confirmButtonText: 'Đồng ý',
-                cancelButtonText: 'Hủy bỏ',
-                reverseButtons: true
-            }).then((result) => {
-                if (result.isConfirmed) {
-                    // ajax
-                    $.ajax({
-                        url: `{{ route('admin.hotel.customer.delete', '') }}/${dataId}`,
-                        type: 'POST',
+            $.ajax({
+                        url: `{{ route('admin.hotel.customer.get', '') }}/${dataId}`,
+                        type: 'GET',
                         success: function(data) {
-                            if (data.status ==='success') {
-                                rowToDelete.remove();
-                                    
-                            }
-                            else
-                            {
-                                alert('Khách hàng đã có đơn hàng, không thể xóa');
-                            }
+                           if(data == 1)
+                           {
+                            alert(1);
+                            Swal.fire({
+                                title: 'Khách hàng đã có đơn hàng',
+                                text: 'Bạn không thể xóa khách hàng này',
+                                icon: 'warning',
+                                showCancelButton: true,
+                                // confirmButtonText: 'Đồng ý',
+                                cancelButtonText: 'Hủy bỏ',
+                                reverseButtons: true
+                            })
+                           }
+                           else
+                           {
+                            Swal.fire({
+                                title: 'Xác nhận xóa khách hàng?',
+                                text: 'Bạn có chắc chắn muốn xóa khách hàng này không?',
+                                icon: 'warning',
+                                showCancelButton: true,
+                                confirmButtonText: 'Đồng ý',
+                                cancelButtonText: 'Hủy bỏ',
+                                reverseButtons: true
+                            }).then((result) => {
+                                if (result.isConfirmed) {
+                                    // ajax
+                                    $.ajax({
+                                        url: `{{ route('admin.hotel.customer.delete', '') }}/${dataId}`,
+                                        type: 'POST',
+                                        success: function(data) {
+                                            if (data.status ==='success') {
+                                                rowToDelete.remove();
+                                                    
+                                            }
+                                            else
+                                            {
+                                                alert('Khách hàng đã có đơn hàng, không thể xóa');
+                                            }
+                                        },
+                                        error: function(xhr, status, error) {
+                                            console.log(xhr.responseText);
+                                        }
+                                    });
+
+
+                                }
+                            });
+                           }
                         },
                         error: function(xhr, status, error) {
                             console.log(xhr.responseText);
                         }
                     });
-
-
-                }
-            });
+          
         });
 
     });
