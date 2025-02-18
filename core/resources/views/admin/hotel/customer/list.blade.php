@@ -25,7 +25,7 @@
                                 </tr>
                                 </thead>
                                 <tbody>
-                                @forelse($customers as $customer)
+                                @forelse($customers as $id => $customer)
                                     <tr data-id="{{ $customer->id }}">
                                     <td style="width:20px;">
                                             <svg class="svg_menu_check_in" xmlns="http://www.w3.org/2000/svg" width="30" height="30" viewBox="0 0 21 21"><g fill="currentColor" fill-rule="evenodd"><circle cx="10.5" cy="10.5" r="1"/><circle cx="10.5" cy="5.5" r="1"/><circle cx="10.5" cy="15.5" r="1"/></g></svg>
@@ -43,7 +43,7 @@
                                 
                                             </div>
                                     </td>
-                                    <td style="width:20px;text-align:right">{{ $loop->iteration }}</td>
+                                    <td style="width:20px;text-align:right">{{ $customers->count() - ($loop->iteration - 1) }}</td>
             
                         
                                     <td>
@@ -722,5 +722,8 @@
             });
 
         });
+</script>
+<script type="text/javascript">
+    $('.iziToast-title').html('<p>Thông báo</p>'); 
 </script>
 @endpush

@@ -14,7 +14,7 @@ class CustomerController extends Controller
     public function index()
     {
         $pageTitle = '';
-        $customers = Customer::orderBy('id', 'desc')->paginate(30);
+        $customers = Customer::orderBy('id', 'desc')->paginate(10);
         $unit_codes = HotelFacility::select('ma_coso')->get();
         return view('admin.hotel.customer.list', compact('pageTitle', 'customers', 'unit_codes'));
     }
@@ -69,7 +69,24 @@ class CustomerController extends Controller
         $bookings = RoomBooking::where('customer_code', $code)->where('unit_code',unitCode())->first();
         if($bookings)
         {
-            $notify[] = ['error', 'Khách hàng đang có đơn hàng, không thể cập nhật'];
+            if($request->customer_code == $customer->customer_code)
+            {
+                $customer->phone = $request->phone ?? '';
+                $customer->email = $request->email ?? '';
+                $customer->address = $request->address ?? '';
+                $customer->group_code = $request->group_code ?? '';
+                $customer->note = $request->note ?? '';
+                $customer->source_code = $request->source_code;
+                $customer->status = $request->status;
+                // $customer->unit_code =  $request->unit_code;
+                $customer->save();
+                $notify[] = ['success', 'Cập nhật khách hàng thành công'];
+            }
+            else
+            {
+                $notify[] = ['error', 'Khách hàng đang có đơn hàng, không thể cập nhật'];
+            }
+        
         }
         else
         {
@@ -138,7 +155,7 @@ class CustomerController extends Controller
         $pageTitle = '';
         if($request->input('customer_code') == '' && $request->input('name') == '' && $request->input('phone') == '' && $request->input('address') == '')
         {
-            $customers = Customer::orderBy('id', 'desc')->paginate(30);
+            $customers = Customer::orderBy('id', 'desc')->paginate(10);
         }
         else
         {
@@ -151,7 +168,7 @@ class CustomerController extends Controller
                 ->where('phone','LIKE', '%'.$request->input('phone').'%')
                 ->where('address','LIKE', '%'.$request->input('address').'%')
                 ->where('unit_code',unitCode())
-                ->orderBy('id', 'desc')->paginate(30);
+                ->orderBy('id', 'desc')->paginate(10);
         }
         $customer_code = $request->input('customer_code');
         $name =  $request->input('name');
