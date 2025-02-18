@@ -3466,7 +3466,12 @@ tbody tr .address-content p:hover {
     vertical-align: middle;
     white-space: nowrap;
 }
-
+.dropdown-item a:hover{
+    background-color: #dadada;
+}
+.dropdown-item button:hover{
+    background-color: #dadada;
+}
 .white-space-wrap {
     white-space: initial !important;
 }
