@@ -1667,13 +1667,14 @@ $(document).ready(function () {
     $(document).on('click', '.btn-submit-sync-book', function () {
         $('#booking_code').val('');
         $('#select_room_number').val('');
-        $('#name').val('');
+        $('#name_book').val('');
         loadRoomBookings();
     });
     $(document).on('click', '.btn-submit-search-book', function () {
         let bookingCode = $('#booking_code').val();
         let roomCode = $('#select_room_number').val();
-        let customerName = $('#name').val();
+        let customerName = $('#name_book').val();
+        
         let data = {
             bookingCode: bookingCode,
             roomCode: roomCode,
