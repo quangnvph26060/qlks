@@ -267,6 +267,10 @@
             /* Con trỏ chuột đổi thành dạng pointer */
         }
 
+    #show-room tr td {
+        padding: 6px 2px !important;
+        line-height: 0;    /* Giảm chiều cao dòng */
+    }
         .table-responsive--md {
             overflow-x: auto;
             /* Enable horizontal scrolling if the table overflows */
