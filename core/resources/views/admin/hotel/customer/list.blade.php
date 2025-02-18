@@ -5,105 +5,96 @@
         <div class="col-lg-12">
             <div class="card">
                 <div class="card-body p-0">
-                    <div class="table-responsive--md  table-responsive" style="overflow-x: visible;">
-                        <table class="table table--light style--two">
-                            <thead>
-                            <tr>
-                                 <th>@lang('Hành động')</th>
-                                <th>@lang('STT')</th>
-                                <th>@lang('Mã KH')</th>
-                                <th>@lang('Tên')</th>
-                                <th>@lang('Số điện thoại')</th>
-                                <th>@lang('Email')</th>
-                                <th style="width:200px">@lang('Địa chỉ')</th>
-                                <th>@lang('Nhóm khách hàng')</th>
-                                <th>@lang('Ngày tạo')</th>
-{{--                                <th>@lang('Ghi chú')</th>--}}
-                                <th>@lang('Trạng thái')</th>
-                        <!--         <th>@lang('Mã đơn vị')</th> -->
-                            
-                            </tr>
-                            </thead>
-                            <tbody>
-                            @forelse($customers as $customer)
-                                <tr data-id="{{ $customer->id }}">
-                                <td style="width:20px;">
-                                        <svg class="svg_menu_check_in" xmlns="http://www.w3.org/2000/svg" width="30" height="30" viewBox="0 0 21 21"><g fill="currentColor" fill-rule="evenodd"><circle cx="10.5" cy="10.5" r="1"/><circle cx="10.5" cy="5.5" r="1"/><circle cx="10.5" cy="15.5" r="1"/></g></svg>
-                            
-                                        <div class="dropdown menu_dropdown_check_in" id="dropdown-menu">
-                                            <div class="dropdown-item"><a
-                                            data-id="{{ $customer->id }}" class="btn-edit-customer" data-bs-toggle="modal" data-bs-target="#edit-customer" style="color:black">
-                                                Sửa khách hàng
-                                            </a></div>
-                                            <!-- <div class="dropdown-item booked_room">    @if($customer->status == 1) -->
-                                            <!-- <button class="confirmationBtn"
-                                                    data-action="{{ route('admin.hotel.customer.status', $customer->id) }}"   data-id="{{ $customer->id }}"
-                                                    data-question="@lang('Bạn có chắc chắn muốn tắt trạng thái này không?')" type="button">
-                                                Tắt hoạt động
-                                            </button>
-                                            @else
-                                                <button class="confirmationBtn"
-                                                        data-action="{{ route('admin.hotel.customer.status', $customer->id) }}"   data-id="{{ $customer->id }}"
-                                                        data-question="@lang('Bạn có chắc chắn muốn tắt trạng thái này không?')" type="button">
-                                                    Hoạt động
-                                                </button>
-                                            @endif</div> -->
-                                              <div class="dropdown-item booked_room_detail"> <button class=" btn-delete icon-delete-room"
-                                                data-id="{{ $customer->id }}" data-modal_title="@lang('Xóa khách hàng')" type="button"
-                                                data-pro="0">Xóa khách hàng</div>
-                              
-                                        </div>
+                    <div class="table-responsive--md table-responsive" style="overflow-x:visible">
+                        <div>
+                            <table class="table--light style--two table">
+                                <thead>
+                                <tr>
+                                    <th>@lang('Thao tác')</th>
+                                    <th>@lang('STT')</th>
+                                    <th style="width:8%">@lang('Mã KH')</th>
+                                    <th>@lang('Tên')</th>
+                                    <th style="width:110px">@lang('Số điện thoại')</th>
+                                    <th style="width:15%">@lang('Email')</th>
+                                    <th style="width:10%">@lang('Địa chỉ')</th>
+                                    <th>@lang('Nhóm KH')</th>
+                                    <th>@lang('Nguồn KH')</th>
+                                    <th>@lang('Ngày tạo')</th>
+                                    <th>@lang('Tr.thái')</th>
+                                
+                                </tr>
+                                </thead>
+                                <tbody>
+                                @forelse($customers as $customer)
+                                    <tr data-id="{{ $customer->id }}">
+                                    <td style="width:20px;">
+                                            <svg class="svg_menu_check_in" xmlns="http://www.w3.org/2000/svg" width="30" height="30" viewBox="0 0 21 21"><g fill="currentColor" fill-rule="evenodd"><circle cx="10.5" cy="10.5" r="1"/><circle cx="10.5" cy="5.5" r="1"/><circle cx="10.5" cy="15.5" r="1"/></g></svg>
+                                
+                                            <div class="dropdown menu_dropdown_check_in" id="dropdown-menu">
+                                                <div class="dropdown-item"><a
+                                                data-id="{{ $customer->id }}" class="btn-edit-customer" data-bs-toggle="modal" data-bs-target="#edit-customer" style="color:black">
+                                                    Sửa khách hàng
+                                                </a>
+                                                </div>
+                                                <div class="dropdown-item booked_room_detail"> <button class=" btn-delete icon-delete-room"
+                                                        data-id="{{ $customer->id }}" data-modal_title="@lang('Xóa khách hàng')" type="button"
+                                                        data-pro="0">Xóa khách hàng
+                                                </div>
+                                
+                                            </div>
                                     </td>
                                     <td style="width:20px;text-align:right">{{ $loop->iteration }}</td>
-          
-                    
+            
+                        
                                     <td>
-                                        <span class="fw-bold code">{{ $customer->customer_code }}</span>
+                                            <span class="fw-bold code">{{ $customer->customer_code }}</span>
                                     </td>
-                                    <td>
-                                        <span class="fw-bold">{{ $customer->name }}</span>
-                                    </td>
-                                    <td style="text-align:right">
-                                        {{ $customer->phone }}
-                                    </td>
-                                   <td>
-                                       {{ $customer->email }}
-                                   </td>
                                     <td class="address-content">
-                                        <p>{{ $customer->address }}</p>
+                                            <p class="fw-bold">{{ $customer->name }}</p>
+                                    </td>
+                                    <td class="address-content" style="text-align:right">
+                                            <p>{{ $customer->phone }}</p>
+                                    </td>
+                                    <td class="address-content">
+                                        <p>{{ $customer->email }}</p>
+                                    </td>
+                                    <td class="address-content">
+                                            <p>{{ $customer->address }}</p>
                                     </td>
                                     <td>
-                                        @php
-                                            $group = \App\Models\CustomerGroup::where('group_code','=',$customer->group_code)->value('group_name');
-                                        @endphp
-                                        {{ $group}}
+                                            @php
+                                                $group = \App\Models\CustomerGroup::where('group_code','=',$customer->group_code)->value('group_name');
+                                            @endphp
+                                            {{ $group}}
                                     </td>
-                                    <td style="text-align:right">
-                                    {{ (new DateTime($customer->created_at))->format('d/m/Y')  }}
+                                    <td>
+                                            @php
+                                                $source = \App\Models\CustomerSource::where('source_code','=',$customer->source_code)->value('source_name');
+                                            @endphp
+                                            {{ $source}}
                                     </td>
-
-{{--                                    <td>--}}
-{{--                                        {{ $customer->note }}--}}
-{{--                                    </td>--}}
-                                        <td style="width:50px;text-align: center" class="status-hotel">
-                                        @if($customer->status == 1)
-                                            <i class="fa fa-check" style="color:green;text-align: center"></i>
-                                        @else
+                                    <td style="text-align:right;width:90px">
+                                        {{ (new DateTime($customer->created_at))->format('d/m/Y')  }}
+                                    </td>
+                                    <td style="width:50px;text-align: center" class="status-hotel">
+                                            @if($customer->status == 1)
+                                                <i class="fa fa-check" style="color:green;text-align: center"></i>
+                                            @else
                                             <i class="fa fa-close" style="color:red;text-align: center"></i>
-                                        @endif</td>
-                              <!--       <td>
-                                        {{ $customer->unit_code }}
-                                    </td> -->
-                               
-                                </tr>
-                            @empty
-                                <tr>
-                                    <td class="text-muted text-center" colspan="100%">{{ __($emptyMessage) }}</td>
-                                </tr>
-                            @endforelse
+                                            @endif
+                                    </td>
+                            
+                                
+                                    </tr>
+                                @empty
+                                    <tr>
+                                        <td class="text-muted text-center" colspan="100%">{{ __($emptyMessage) }}</td>
+                                    </tr>
+                                @endforelse
 
-                            </tbody>
-                        </table><!-- table end -->
+                                </tbody>
+                            </table><!-- table end -->
+                        </div>
                     </div>
                 </div>
             
@@ -129,16 +120,16 @@
                         <div class="form-group position-relative mb-0">
                             <input class="searchInput" name="customer_code"
                                    style="height: 35px;width:20%;border: 1px solid rgb(121, 117, 117, 0.5);margin-left: 8px;"
-                                    placeholder="Mã khách hàng">
+                                    placeholder="Mã khách hàng" value="{{ $customer_code ?? '' }}">
                             <input class="searchInput" name="name"
                                    style="height: 35px;width:20%;border: 1px solid rgb(121, 117, 117, 0.5); margin-left: 8px;"
-                                   placeholder="Tên khách hàng">
+                                   placeholder="Tên khách hàng" value="{{ $name ?? '' }}">
                             <input class="searchInput" name="phone"
                                    style="height: 35px;width:20%;border: 1px solid rgb(121, 117, 117, 0.5); margin-left: 8px;"
-                                   placeholder="Điện thoại">
+                                   placeholder="Điện thoại" value="{{ $phone ?? '' }}">
                             <input class="searchInput" name="address"
                                    style="height: 35px;width:20%;border: 1px solid rgb(121, 117, 117, 0.5); margin-left: 8px;"
-                                 placeholder="Địa chỉ">
+                                 placeholder="Địa chỉ" value="{{ $address ?? '' }}">
             
                             <button type="submit" class="btn btn-primary" style="padding-right:15px;padding-left:15px">
                                 <i class="las la-search"></i>
@@ -211,9 +202,10 @@
                                 <textarea type="text" class="form-control " name="note" rows="1"></textarea>
 
                             </div>
+                            <div style="display: grid; grid-template-columns: 50% 50%">
                             <div class="mb-3">
                                     <label>@lang('Nhóm khách')</label>
-                                    <select class="form-control" name="group_code">
+                                    <select class="form-control" name="group_code" style="width:98%">
                                         <option value="">@lang('Chọn nhóm khách hàng')</option>
                                         @php
                                             $customer_group = \App\Models\CustomerGroup::where('unit_code',unitCode())->get();
@@ -225,21 +217,27 @@
                                     </select>
                             </div>
                             <div class="mb-3">
+                                    <label>@lang('Nguồn khách')</label>
+                                    <select class="form-control" name="source_code">
+                                        <option value="">@lang('Chọn nguồn khách hàng')</option>
+                                        @php
+                                            $customer_source = \App\Models\CustomerSource::where('unit_code',unitCode())->get();
+                                        @endphp
+                                        @foreach ($customer_source as $source)
+                                            <option value="{{ $source->source_code }}">
+                                                {{ $source->source_name }}</option>
+                                        @endforeach
+                                    </select>
+                            </div>
+                            </div>
+                            <div class="mb-3">
                                 <label class="form-label">Trạng thái</label><br>
                                 <input type="radio" name="status" value="1" id="statusActive" checked>Hoạt động
                                 <input type="radio" name="status" value="0" id="statusInactive">
                                 Không hoạt động
                             </div>
                        
-                  <!--           <div class=" mb-3">
-                                <label for="">Mã đơn vị </label>
-                                <select name="unit_code" id="unit-code-multiple-choice" class="form-control">
-                                    <option value="" selected>--Chọn mã đơn vị--</option>
-                                    @foreach($unit_codes as $item)
-                                        <option value="{{ $item->ma_coso }}">{{ $item->ma_coso }}</option>
-                                    @endforeach
-                                </select>
-                            </div> -->
+            
                             <div class="modal-footer">
                                 <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Đóng</button>
                                 <button type="submit" id="btn-add-customer" class="btn btn-primary">Lưu</button>
@@ -303,9 +301,10 @@
                                 <textarea type="text" class="form-control" id="edit-note" name="note" rows="1"></textarea>
 
                             </div>
+                            <div style="display: grid; grid-template-columns: 50% 50%">
                             <div class="mb-3">
                                     <label>@lang('Nhóm khách')</label>
-                                    <select class="form-control" name="group_code" id="edit-group-code">
+                                    <select class="form-control" name="group_code" id="edit-group-code" style="width:98%">
                                         <option value="">@lang('Chọn nhóm khách hàng')</option>
                                         @php
                                             $customer_group = \App\Models\CustomerGroup::where('unit_code',unitCode())->get();
@@ -317,20 +316,26 @@
                                     </select>
                             </div>
                             <div class="mb-3">
+                                    <label>@lang('Nguồn khách')</label>
+                                    <select class="form-control" name="source_code" id="edit-source-code">
+                                        <option value="">@lang('Chọn nguồn khách hàng')</option>
+                                        @php
+                                            $customer_source = \App\Models\CustomerSource::where('unit_code',unitCode())->get();
+                                        @endphp
+                                        @foreach ($customer_source as $source)
+                                            <option value="{{ $source->source_code }}">
+                                                {{ $source->source_name }}</option>
+                                        @endforeach
+                                    </select>
+                            </div>
+                            </div>
+                            <div class="mb-3">
                                 <label class="form-label">Trạng thái</label><br>
                                 <input type="radio" class="edit-status" name="status" value="1">Hoạt động
                                 <input type="radio" class="edit-status" name="status" value="0">
                                 Không hoạt động
                             </div>
-                   <!--          <div class=" mb-3">
-                                <label for="">Mã đơn vị </label>
-                                <select name="unit_code" id="edit-unit-code" class="form-control">
-                                    <option value="" selected>--Chọn mã đơn vị--</option>
-                                    @foreach($unit_codes as $item)
-                                        <option value="{{ $item->ma_coso }}">{{ $item->ma_coso }}</option>
-                                    @endforeach
-                                </select>
-                            </div> -->
+               
                             <div class="modal-footer">
                                 <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Đóng</button>
                                 <button type="submit" id="btn-edit-customer" class="btn btn-primary">Lưu</button>
@@ -620,6 +625,7 @@
                     $('#edit-address').val(data.address);
                     $('#edit-note').val(data.note);
                     $('#edit-group-code').val(data.group_code).change();
+                    $('#edit-source-code').val(data.source_code).change();
                     $('input[name^="status"][class^="edit-status"][value="' + data.status + '"').prop('checked', true);
                     $('#method').attr('value', 'PUT');
                     $('#editCustomer').attr('action', '{{ route('admin.hotel.customer.update', '') }}/' + dataId + '')

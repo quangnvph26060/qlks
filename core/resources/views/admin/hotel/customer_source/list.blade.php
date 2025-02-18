@@ -6,7 +6,7 @@
                 <div class="col-12">
                     <div class="emptyArea"></div>
                 </div>
-                <div class="table-responsive--md table-responsive" style="overflow-x: visible;">
+                <div class="table-responsive--md table-responsive">
                     <table class="table--light style--two table">
                         <thead>
                         <tr>

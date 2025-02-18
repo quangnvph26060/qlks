@@ -400,7 +400,7 @@ class RoomTypeController extends Controller
     {
         $room = Room::find($id);
 
-        if (! $room) {
+        if (!$room) {
             return response()->json([
                 'status' => false,
                 'message' => 'Dữ liệu không tồn tại trên hệ thống!'
@@ -426,7 +426,7 @@ class RoomTypeController extends Controller
         if ($bookings) {
             return response()->json([
                 'status' => false,
-                'message' => 'Không thể xóa vì phòng đang được thuệ.'
+                'message' => 'Không thể xóa vì phòng đang được thuê.'
             ]);
         }
         $room->delete();

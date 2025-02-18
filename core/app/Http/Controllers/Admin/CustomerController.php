@@ -5,7 +5,7 @@ namespace App\Http\Controllers\Admin;
 use App\Http\Controllers\Controller;
 use App\Http\Helpers\helpers;
 use App\Models\Customer;
-use App\Models\Booking;
+use App\Models\RoomBooking;
 use App\Models\HotelFacility;
 use Illuminate\Http\Request;
 
@@ -41,6 +41,7 @@ class CustomerController extends Controller
         $customer->group_code = $request->group_code ?? '';
         $customer->note = $request->note ?? '';
         $customer->status = $request->status;
+        $customer->source_code = $request->source_code;
         $customer->unit_code =  unitCode();
         $customer->save();
         $notify[] = ['success', 'Thêm khách hàng thành công'];
@@ -64,23 +65,35 @@ class CustomerController extends Controller
             // 'phone' => 'required|numeric',
         ]);
         $customer = Customer::find($id);
-        $customer->customer_code = $request->customer_code;
-        $customer->name = $request->name;
-        $customer->phone = $request->phone ?? '';
-        $customer->email = $request->email ?? '';
-        $customer->address = $request->address ?? '';
-        $customer->group_code = $request->group_code ?? '';
-        $customer->note = $request->note ?? '';
-        $customer->status = $request->status;
-        // $customer->unit_code =  $request->unit_code;
-        $customer->save();
-        $notify[] = ['success', 'Cập nhật khách hàng thành công'];
+        $code = $customer->customer_code;
+        $bookings = RoomBooking::where('customer_code', $code)->where('unit_code',unitCode())->first();
+        if($bookings)
+        {
+            $notify[] = ['error', 'Khách hàng đang có đơn hàng, không thể cập nhật'];
+        }
+        else
+        {
+            $customer->customer_code = $request->customer_code;
+            $customer->name = $request->name;
+            $customer->phone = $request->phone ?? '';
+            $customer->email = $request->email ?? '';
+            $customer->address = $request->address ?? '';
+            $customer->group_code = $request->group_code ?? '';
+            $customer->note = $request->note ?? '';
+            $customer->source_code = $request->source_code;
+            $customer->status = $request->status;
+            // $customer->unit_code =  $request->unit_code;
+            $customer->save();
+            $notify[] = ['success', 'Cập nhật khách hàng thành công'];
+        }
+       
         return back()->withNotify($notify);
     }
     public function delete($id)
     {
-        $bookings = Booking::where('user_id', $id)->first();
-
+        $customer = Customer::find($id);
+        $code = $customer->customer_code;
+        $bookings = RoomBooking::where('customer_code', $code)->where('unit_code',unitCode())->first();
         if ($bookings) {
             return response()->json([
                 'status' => 'error',
@@ -140,8 +153,11 @@ class CustomerController extends Controller
                 ->where('unit_code',unitCode())
                 ->orderBy('id', 'desc')->paginate(30);
         }
-        $unit_codes = HotelFacility::select('ma_coso')->get();
-        return view('admin.hotel.customer.list', compact('pageTitle', 'customers', 'unit_codes'));
+        $customer_code = $request->input('customer_code');
+        $name =  $request->input('name');
+        $phone = $request->input('phone');
+        $address = $request->input('address');
+        return view('admin.hotel.customer.list', compact('pageTitle', 'customers','customer_code','name','address','phone'));
     }
     public function checkCode(Request $request)
     {
