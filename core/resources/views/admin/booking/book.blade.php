@@ -61,30 +61,31 @@
         {{-- <a class="btn btn-sm btn--primary" href="{{ route('admin.booking.all') }}">
             <i class="la la-list"></i>@lang('Tất cả các đặt phòng')
         </a> --}}
-      <div class="d-flex">
-      <div class="d-flex" style="gap: 10px">
-        <a class="btn btn-sm btn--primary add-book-room" style="margin-left: 10px">
-            <i class="la la-plus"></i>
-        </a>
-        <a class="btn btn-sm btn--primary btn-submit-sync-book">
-            <i class="las la-sync"></i>
-        </a>
-      </div>
-    
-        <div class="form-group position-relative mb-0" style="display: flex;gap: 10px;">
-            <input class="searchInput input-field-search-book" name="booking_code" placeholder="Mã đặt phòng" id="booking_code">
-            <select class="searchInput input-field-search-book"  name="room_code" id="select_room_number"></select>
-          {{-- <div class="d-flex" style="gap: 10px">
+        <div class="d-flex">
+            <div class="d-flex" style="gap: 10px">
+                <a class="btn btn-sm btn--primary add-book-room" style="margin-left: 10px">
+                    <i class="la la-plus"></i>
+                </a>
+                <a class="btn btn-sm btn--primary btn-submit-sync-book">
+                    <i class="las la-sync"></i>
+                </a>
+            </div>
+
+            <div class="form-group position-relative mb-0" style="display: flex;gap: 10px;">
+                <input class="searchInput input-field-search-book" name="booking_code" placeholder="Mã đặt phòng"
+                    id="booking_code">
+                <select class="searchInput input-field-search-book" name="room_code" id="select_room_number"></select>
+                {{-- <div class="d-flex" style="gap: 10px">
             <input type="date" class="form-control " id="date-chon-phong-in" style="height: 35px">
             <input type="date" class="form-control " id="date-chon-phong-out" style="height: 35px">
           </div> --}}
-            <input class="searchInput input-field-search-book" name="name" placeholder="Tên khách hàng" id="name_book">
-            <button type="submit" class="btn btn-primary btn-submit-search-book">
-                <i class="las la-search"></i>
-            </button>
-          
+                <input class="searchInput input-field-search-book" name="name" placeholder="Tên khách hàng" id="name_book">
+                <button type="submit" class="btn btn-primary btn-submit-search-book">
+                    <i class="las la-search"></i>
+                </button>
+
+            </div>
         </div>
-      </div>
         <div class="modal fade" id="addRoomModal" tabindex="-1" aria-hidden="true" style="overflow: unset">
             <div class="modal-dialog modal-dialog-centered" style="top: 4px">
                 <div class="modal-content" style="height: 100vh;">
@@ -197,6 +198,7 @@
 @endcan
 
 @push('script-lib')
+<script src="{{ asset('assets/admin/js/common.js') }}"></script>
     <script src="{{ asset('assets/admin/js/moment.min.js') }}"></script>
     <script src="{{ asset('assets/admin/js/daterangepicker.min.js') }}"></script>
     <script src="{{ asset('assets/validator/validator.js') }}"></script>
@@ -215,7 +217,7 @@
     <script>
         var showRoomUrl = "{{ route('admin.booking.showRoom') }}";
         var checkRoomBookingUrl = '{{ route('admin.booking.checkRoomBooking') }}';
-        var deleteRoomEdit      = '{{ route('admin.room.booking.delete')}}';
+        var deleteRoomEdit = '{{ route('admin.room.booking.delete') }}';
         var searchCustomerUrl = '{{ route('admin.search.customer') }}';
         var roomBookingUrl = '{{ route('admin.room.booking') }}';
         var roomBookingEditUrl = "{{ route('admin.room.booking.edit', ['id' => ':id']) }}";
@@ -238,12 +240,11 @@
             });
         });
         window.toggleRepresentatives = function(id, button) {
-    const rows = document.querySelectorAll('[id="rep-' + id + '"]'); // Lấy tất cả các hàng có cùng ID
-    rows.forEach(row => row.classList.toggle('show')); // Toggle từng hàng
+            const rows = document.querySelectorAll('[id="rep-' + id + '"]'); // Lấy tất cả các hàng có cùng ID
+            rows.forEach(row => row.classList.toggle('show')); // Toggle từng hàng
 
-    button.classList.toggle('collapsed'); // Toggle trạng thái button
-};
-
+            button.classList.toggle('collapsed'); // Toggle trạng thái button
+        };
     </script>
 @endpush
 @push('style')
@@ -275,10 +276,12 @@
             /* Con trỏ chuột đổi thành dạng pointer */
         }
 
-    #show-room tr td {
-        padding: 6px 2px !important;
-        line-height: 0;    /* Giảm chiều cao dòng */
-    }
+        #show-room tr td {
+            padding: 6px 2px !important;
+            line-height: 0;
+            /* Giảm chiều cao dòng */
+        }
+
         .table-responsive--md {
             overflow-x: auto;
             /* Enable horizontal scrolling if the table overflows */
@@ -341,7 +344,7 @@
             background-color: #0056b3;
         }
 
-     
+
 
         /* Căn lề trái cho Mã khách hàng & Tên khách hàng */
         .customer-code,
@@ -396,30 +399,12 @@
             border-radius: 0 5px 5px 0;
         }
 
-        .background-primary {
-            color: #0b138d !important;
-        }
-
-        .background-red {
-            color: #d31922 !important;
-        }
-
-        .background-yellow {
-            color: #e7bd3d !important;
-        }
-        .first-row{
-            background-color: #f3f3f3 !important;
-        }
-        .background-white {
-            color: #5b6e88;
-            background-color: #f0f1f1;
-        }
 
         /* .background-yellow td,
-        .background-red td,
-        .background-primary td {
-            color: white !important;
-        } */
+            .background-red td,
+            .background-primary td {
+                color: white !important;
+            } */
 
         #data-table {
             border-collapse: collapse;
@@ -431,12 +416,14 @@
             line-height: 1 !important;
             padding: 6px !important;
         }
+
         #data-table td {
             height: 30px !important;
             overflow: hidden;
             white-space: nowrap;
             /* Ngăn xuống dòng để giảm chiều cao */
         }
+
         #show-customer {
             border-collapse: collapse;
             /* Gộp viền bảng */
@@ -447,6 +434,7 @@
             line-height: 1 !important;
             padding: 6px !important;
         }
+
         #show-customer td {
             height: 30px !important;
             overflow: hidden;

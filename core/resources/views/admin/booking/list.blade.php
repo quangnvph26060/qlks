@@ -128,7 +128,7 @@
                         </div>
                     </div>
                     <div class="modal-body overflow-add-room">
-                        <table class="table">
+                        <table class=" table--light style--two table">
                             <thead>
                                 <tr>
                                     <th data-table="Hạng phòng">Hạng phòng</th>
@@ -172,6 +172,16 @@
 
 @push('script')
 <script>
+      $(document).ready(function() {
+            $("#date-chon-phong-in").on("change", function() {
+                let checkInDate = new Date($(this).val());
+                if (!isNaN(checkInDate.getTime())) {
+                    checkInDate.setDate(checkInDate.getDate() + 1); // Thêm 1 ngày
+                    let checkOutDate = checkInDate.toISOString().split('T')[0]; // Format YYYY-MM-DD
+                    $("#date-chon-phong-out").val(checkOutDate);
+                }
+            });
+        });
     var checkInDetailUrl = "{{ route('admin.booking.check.in.details', ['id' => ':id']) }}";
     var allCheckInUrl =  "{{ route('admin.booking.all.check.in') }}";
     var showRoomUrl = "{{ route('admin.booking.showRoom') }}";
@@ -182,11 +192,16 @@
     var bookingDetailUrl = "{{ route('admin.booking.details', ['id' => ':id']) }}";
     var checkInUrl = "{{ route('admin.room.check.in', ['id' => ':id']) }}";
     var deleteBookedRoomUrl = "{{ route('admin.booking.delete-booked-room', ['id' => ':id']) }}";
+    var getCustomerStaff = "{{ route('admin.get.customer.staff') }}";
 </script>
 @endpush
 
 @push('style')
     <style scoped>
+            #show-room tr td {
+        padding: 6px 2px !important;
+        line-height: 0;    /* Giảm chiều cao dòng */
+    }
         .table-responsive--md {
             overflow-x: auto;
             /* Enable horizontal scrolling if the table overflows */

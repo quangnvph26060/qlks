@@ -250,20 +250,20 @@
                             <ul class="financial-list">
                                 <li class="financial-item">
                                     <span>Tiền phòng</span>
-                                    <span id="total_amount">0</span>
+                                    <span class="total_amount">0</span>
                                 </li>
                                 <li class="financial-item highlighted">
                                     <span>Giảm giá</span>
-                                    <span id="total_discount">0</span>
+                                    <span class="total_discount">0</span>
                                     {{-- <input type="text" id="discountInput" class="custom-input-giam-gia"> --}}
                                 </li>
                                 <li class="financial-item">
                                     <span>Tiền cọc</span>
-                                    <span id="total_deposit">0</span>
+                                    <span class="total_deposit">0</span>
                                 </li>
                                 <li class="financial-item">
                                     <span>Còn lại</span>
-                                    <span id="total_balance">0</span>
+                                    <span class="total_balance">0</span>
                                 </li>
 
                             </ul>

@@ -66,3 +66,21 @@
 .btn-toggle.collapsed::after {
     content: '−';
 }
+.background-primary {
+    color: #0b138d !important;
+}
+
+.background-red {
+    color: #d31922 !important;
+}
+
+.background-yellow {
+    color: #e7bd3d !important;
+}
+.first-row{
+    background-color: #f3f3f3 !important;
+}
+.background-white {
+    color: #5b6e88;
+    background-color: #f0f1f1;
+}
