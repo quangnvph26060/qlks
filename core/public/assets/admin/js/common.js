@@ -9,7 +9,11 @@ document.addEventListener('input', function (e) {
 
 
 function formatCurrency(amount) {
-    const parts = amount.toString().split('.');
+    if (!amount || isNaN(amount)) {
+        return '0 VND'; // Nếu amount không hợp lệ, trả về 0 VND
+    }
+
+    const parts = parseFloat(amount).toFixed(2).toString().split('.');
     const integerPart = parts[0];
     const formattedInteger = integerPart.replace(/\B(?=(\d{3})+(?!\d))/g, '.');
 

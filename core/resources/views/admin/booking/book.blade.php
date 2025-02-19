@@ -26,15 +26,14 @@
                                 <th>@lang('Hành động')</th>
                                 <th>@lang('STT')</th>
                                 <th>@lang('Mã đặt hàng')</th>
-                                <th>@lang('Mã phòng')</th>
+                                <th>@lang('Số lượng phòng')</th>
                                 <th>@lang('Ngày chứng từ')</th>
-                                <th>@lang('Ngày nhận')</th>
-                                <th>@lang('Ngày trả')</th>
                                 <th>@lang('Tên khách hàng')</th>
                                 <th>@lang('Số điện thoại')</th>
-                                <th>@lang('Số người')</th>
-                                <th>@lang('Thành tiền')</th>
-                                <th>@lang('Đặt cọc')</th>
+                                <th>@lang('Số lượng người')</th>
+                                <th>@lang('Tổng tiền')</th>
+                                <th>@lang('Tổng đặt cọc')</th>
+                                <th>@lang('Tổng giảm giá')</th>
                                 @can(['admin.hotel.room.type.edit', 'admin.hotel.room.type.status',
                                     'admin.hotel.room.type.destroy'])
                                 @endcan
