@@ -48,10 +48,10 @@
 .adult__main{
     white-space: nowrap;
 }
-.modal-dialog{
+/* .modal-dialog{
     max-width: 1200px;
     max-height: 700px;
-}
+} */
 
 .table-responsive{
     /* overflow-y: scroll; */
@@ -264,11 +264,15 @@ hr {
 }
 
 .modal-dialog {
+    display: flex;
+    align-items: center;
+    justify-content: center;
     max-width: 80vw;
     max-height: 90vh;
     width: 100%;
     margin: auto;
 }
+
 .room__name {
     font-weight: 500;
 }
@@ -282,7 +286,7 @@ hr {
 
 @media (max-width: 768px) {
     .modal-dialog {
-        max-width: 95vw;
+        /* max-width: 95vw; */
     }
 }
 .main-hour-out{

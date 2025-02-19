@@ -65,7 +65,7 @@
                 <form id="bookingForm" action="{{ route('admin.room.book') }}" class="booking-form" method="POST">
                     @csrf
 
-                    <div class="row">
+                 
                         <h5 class="modal-title" id="myModalLabel-booking">Thông tin khách hàng</h5>
                         <div class="row">
                             <div class="col-md-6">
@@ -79,64 +79,48 @@
                                     </div> --}}
                                     <div class="customer-input-container">
                                         <div class="col-md-1" style="margin-left: 10px">
-                                            {{-- <p class="btn btn--primary "
-                                                style="white-space: nowrap; font-size: 13px" id="btn-search">Tìm
-                                                kiếm</p> --}}
                                             <p class="btn btn--primary modal--search-customer"
                                                 style="white-space: nowrap; font-size: 13px;" id="btn-search">Tìm
                                                 khách</p>
-                                        </div>
-                                        <label for="phone" class="form-label required mt-3">Tên khách hàng</label>
-                                        <div class="d-flex">
+                                        </div> 
+                                        <div class="mb-2">
+                                             <label for="phone" class="form-label required mt-3">Tên khách hàng</label>
                                             <div class="col-md-8">
                                                 <input type="text" name="name" id="name" class="form-control"
                                                     placeholder="Tên khách hàng">
                                                 <span class="invalid-feedback d-block"
                                                     style="font-weight: 500"id="name_error"></span>
                                             </div>
-
-
                                         </div>
 
-                                        {{-- <div class="d-flex customer-svg-icon" style="gap: 5px">
-                                        <svg xmlns="http://www.w3.org/2000/svg" class="camera-svg-icon-add" width="20"
-                                            height="20" viewBox="0 0 1024 1024">
-                                            <path fill="currentColor"
-                                                d="M928 224H780.816L704 96H320l-76.8 128H96c-32 0-96 32-96 95.008V832c0 53.008 48 96 89.328 96H930c42 0 94-44.992 94-94.992V320c0-32-32-96-96-96zm32 609.008c0 12.624-20.463 30.288-29.999 31.008H89.521c-7.408-.609-25.52-15.04-25.52-32.016V319.008c0-20.272 27.232-30.496 32-31.008h183.44l76.8-128h313.647l57.12 96.945l17.6 31.055H928c22.56 0 31.68 29.472 32 32v513.008zM512.001 320c-123.712 0-224 100.288-224 224s100.288 224 224 224s224-100.288 224-224s-100.288-224-224-224zm0 384c-88.224 0-160-71.776-160-160s71.776-160 160-160s160 71.776 160 160s-71.776 160-160 160z" />
-                                        </svg>
-
-                                        <input type="file" class="file-upload-input" id="fileUpload">
-                                        <svg xmlns="http://www.w3.org/2000/svg" class="customer-svg-icon-add" width="20"
-                                            height="20" viewBox="0 0 24 24">
-                                            <g fill="none" stroke="currentColor" stroke-width="2">
-                                                <path stroke-linecap="round" d="M12 8v4m0 0v4m0-4h4m-4 0H8" />
-                                                <circle cx="12" cy="12" r="10" />
-                                            </g>
-                                        </svg>
-                                        </div> --}}
+                                    
                                     </div>
-                                    <div class="col-md-8 mt-3">
-                                        <label for="phone" class="form-label">Số điện thoại</label>
-                                        <input type="text" id="phone" name="phone" class="form-control"
-                                            placeholder="Số điện thoại">
+                                    <div class="mb-2">
+                                        <div class="col-md-8">
+                                            <label for="phone" class="form-label">Số điện thoại</label>
+                                            <input type="text" id="phone" name="phone" class="form-control"
+                                                placeholder="Số điện thoại">
+                                        </div>
                                         {{-- <select id="selectphone" name="phone" class="form-control select2" style="width: 100%;">
                                                 <option value="">Chọn số điện thoại</option>
 
                                                 <!-- Thêm các số điện thoại khác ở đây -->
                                             </select> --}}
                                     </div>
-                                    <div class="col-md-8  mt-3">
-                                        <input type="hidden" name="customer_code" id="customer_code">
-                                        <label for="phone" class="form-label">Nguồn khách</label>
-                                        {{-- <input type="text" id="phone" name="phone" class="form-control"
-                                            placeholder="Số điện thoại"> --}}
-                                            <select id="select-customer-source" name="customer_source" class="form-control " style="width: 100%;">
-                                            </select>
+                                    <div class="mb-2">
+                                        <div class="col-md-8">
+                                            <input type="hidden" name="customer_code" id="customer_code">
+                                            <label for="phone" class="form-label">Nguồn khách</label>
+                                            {{-- <input type="text" id="phone" name="phone" class="form-control"
+                                                placeholder="Số điện thoại"> --}}
+                                                <select id="select-customer-source" name="customer_source" class="form-control " style="width: 100%;">
+                                                </select>
+                                        </div>
                                     </div>
                                     <div class="col-md-8 mb-3 mt-3 d-flex align-items-center result-add-customer" style="gap:10px">
                                         <input type="checkbox" name="insert_customer"> <p style="font-size: 13px">Lưu thông tin khách</p>
                                     </div>
-                                    <div class="">
+                                    <div class="mb-2">
                                         <p class="add-room-booking" style="width: 185px;">
                                             <svg xmlns="http://www.w3.org/2000/svg" width="20" height="20"
                                                 viewBox="0 0 24 24">
@@ -203,7 +187,7 @@
                         {{-- <p id="error-message" style="color: red; display: none;">Không tìm thấy email khách hàng phù
                             hợp
                         </p> --}}
-                    </div>
+                  
                     <div class="row">
                         <div class="d-flex align-items-center justify-content-between">
                             <h5 class="modal-title" id="myModalLabel-booking">Danh sách phòng</h5>

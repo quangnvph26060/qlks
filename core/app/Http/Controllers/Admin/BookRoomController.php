@@ -452,6 +452,7 @@ class BookRoomController extends Controller
             $existingUser->update([
                 'name'      => $name,
                 'phone'     => $phone,
+                'group_code'    => $customer_source,
                 'updated_at' => now()
             ]);
         } else {
