@@ -22,6 +22,7 @@
                     <table class="table--light style--two table table-striped" id="data-table">
                         <thead>
                             <tr>
+                                <th></th>
                                 <th>@lang('Hành động')</th>
                                 <th>@lang('STT')</th>
                                 <th>@lang('Mã đặt hàng')</th>
@@ -236,6 +237,13 @@
                 }
             });
         });
+        window.toggleRepresentatives = function(id, button) {
+    const rows = document.querySelectorAll('[id="rep-' + id + '"]'); // Lấy tất cả các hàng có cùng ID
+    rows.forEach(row => row.classList.toggle('show')); // Toggle từng hàng
+
+    button.classList.toggle('collapsed'); // Toggle trạng thái button
+};
+
     </script>
 @endpush
 @push('style')

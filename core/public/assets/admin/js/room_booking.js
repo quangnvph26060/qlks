@@ -429,38 +429,51 @@ $('.delete-room-booking').on('click', function () {
 //xoá phòng edit
 $('.delete-room-booking-edit').on('click', function () {
     let selectedBookingIds = [];
-    $('#list-booking-edit tr').each(function () {
-        var checkbox = $(this).find('input[type="checkbox"]');
-        if (checkbox.prop('checked')) {
-            var bookingId = $(this).data('room-booking-id');
-            selectedBookingIds.push(bookingId);
-            $(this).remove();
+    Swal.fire({
+        title: 'Bạn có chắc chắn xoá phòng này không',
+        text: 'Bạn có chắc chắn xoá phòng này không',
+        icon: 'warning',
+        showCancelButton: true,
+        confirmButtonText: 'Đồng ý',
+        cancelButtonText: 'Hủy bỏ',
+        reverseButtons: true
+    }).then((result) => {
+        if(result.isConfirmed){
+            $('#list-booking-edit tr').each(function () {
+                var checkbox = $(this).find('input[type="checkbox"]');
+                if (checkbox.prop('checked')) {
+                    var bookingId = $(this).data('room-booking-id');
+                    selectedBookingIds.push(bookingId);
+                    $(this).remove();
+                }
+        
+            });
+            //  console.log(selectedBookingIds);
+            $.ajax({
+                url: deleteRoomEdit,
+                type: 'POST',
+                data: {
+                    data: JSON.stringify(selectedBookingIds)
+                },
+                success: function (response) {
+                   if(response.status === 'success') {
+                    loadRoomBookings();
+                      let totalPrice = 0;
+                    totalPrice = calculateTotalPrice(); 
+                    $('#total_amount').text(formatCurrency(totalPrice));
+                    $('.total_amount').text(formatCurrency(totalPrice));
+                    // $('#total_balance').text(formatCurrency(totalPrice));
+                    notify('success', response.success);
+                   }
+                },
+                error: function (error) {
+                    $('#loading').hide();
+                    console.log('Error:', error);
+                }
+            });
         }
-
     });
-    //  console.log(selectedBookingIds);
-    $.ajax({
-        url: deleteRoomEdit,
-        type: 'POST',
-        data: {
-            data: JSON.stringify(selectedBookingIds)
-        },
-        success: function (response) {
-           if(response.status === 'success') {
-            loadRoomBookings();
-              let totalPrice = 0;
-            totalPrice = calculateTotalPrice(); 
-            $('#total_amount').text(formatCurrency(totalPrice));
-            $('.total_amount').text(formatCurrency(totalPrice));
-            // $('#total_balance').text(formatCurrency(totalPrice));
-            notify('success', response.success);
-           }
-        },
-        error: function (error) {
-            $('#loading').hide();
-            console.log('Error:', error);
-        }
-    });
+   
 });
 // add phòng vào booked
 $('.add-room-list').on('click', function () {
@@ -904,25 +917,37 @@ $(document).on('click', '[id="hour_current"]', function () {
 $(document).on('click', '.delete-booked-room', function () {
     var roomId = $(this).data('room-id');
 
-
-    if (confirm("Bạn có chắc chắn muốn xóa đặt phòng này?")) {
-        var url = deleteBookedRoomUrl.replace(':id', roomId);
-        $.ajax({
-            url: url,
-            type: 'POST',
-            success: function (response) {
-                if (response.status == 'success') {
-                    notify('success', response.success);
-                    loadRoomBookings();
-                } else {
-                    notify('error', response.success);
+    Swal.fire({
+        title: 'Bạn có chắc chắn muốn xóa đặt phòng này?',
+        text: 'Bạn có chắc chắn muốn xóa đặt phòng này?',
+        icon: 'warning',
+        showCancelButton: true,
+        confirmButtonText: 'Đồng ý',
+        cancelButtonText: 'Hủy bỏ',
+        reverseButtons: true
+    }).then((result) => {
+        if(result.isConfirmed){
+            var url = deleteBookedRoomUrl.replace(':id', roomId);
+            $.ajax({
+                url: url,
+                type: 'POST',
+                success: function (response) {
+                    if (response.status == 'success') {
+                        notify('success', response.success);
+                        loadRoomBookings();
+                    } else {
+                        notify('error', response.success);
+                    }
+                },
+                error: function (error) {
+                    console.log('Error:', error);
                 }
-            },
-            error: function (error) {
-                console.log('Error:', error);
-            }
-        });
-    }
+            });
+        }
+    })
+   
+      
+    
 });
 // chi tiết
 $(document).on('click', '.booked_room_detail', function () {
@@ -1718,39 +1743,79 @@ function loadRoomBookings(page = 1, data) {
         success: function (response) {
 
             if (response.status === 'success') {
-                var data = response.data;
+                var data = response.data.data;
                 var pagination = response.pagination;
 
                 $('.data-table').html('');
-                // <td>${data['admin']['name']}</td> user tạo
-                data.forEach(function (data, index) {
-                    var html = `
-                        <tr data-id="${data['id']}">
-                            <td class="text-center">
-                                <svg class="svg_menu_check_in" xmlns="http://www.w3.org/2000/svg" width="30" height="30" viewBox="0 0 21 21"><g fill="currentColor" fill-rule="evenodd"><circle cx="10.5" cy="10.5" r="1"/><circle cx="10.5" cy="5.5" r="1"/><circle cx="10.5" cy="15.5" r="1"/></g></svg>
-                                <div class="dropdown menu_dropdown_check_in" id="dropdown-menu">
-                                    <div class="dropdown-item booked_room_edit" data-room-id="${data['booking_id']}">Sửa phòng</div>
-                                    <div class="dropdown-item booked_room" data-room-id="${data['id']}">Nhận phòng</div>
-                                    <div class="dropdown-item booked_room" data-room-id="${data['id']}">Đổi phòng</div>
-                                    <div class="dropdown-item delete-booked-room" data-room-id="${data['id']}">Xóa phòng</div>
-                                </div>
-                            </td>
-                            <td class="text-right">${index + 1}</td>
-                            <td class="text-left">${data['booking_id']}</td>
-                            <td class="text-left">${data['room']['room_number']}</td>
-                            <td class="text-right">${formatDateTime(data['document_date'])}</td>
-                            <td class="text-right">${formatDateTime(data['checkin_date'])}</td>
-                            <td class="text-right">${formatDateTime(data['checkout_date'])}</td>
-                            <td class="text-left">${data['customer_name'] ? data['customer_name'] : 'N/A'}</td>
-                            <td class="text-right">${data['phone_number'] ? data['phone_number'] : 'N/A'}</td>
-                            <td class="text-right">${data['guest_count']}</td>
-                            <td class="text-right">${formatCurrency(data['total_amount'])}</td>
-                            <td class="text-right">${formatCurrency(data['deposit_amount'])}</td>
-                        </tr>
-                    `;
-                    $('.data-table').append(html);
-
-                })
+                var html = '';
+                Object.entries(data).forEach(function([bookingId, bookingData], index) {
+                    let firstRecord = bookingData[0];  let collapseContent = '';
+                    bookingData.forEach(function(record, idx) {
+                     
+                        if (idx === 0) {
+                                html += `
+                                        <tr data-id="${record['id']}">
+                                            <td>
+                                                <button class="btn btn-link btn-toggle" type="button"
+                                                    onclick="toggleRepresentatives('${record['booking_id']}', this)"></button>
+                                            </td>
+                                            <td class="text-center">
+                                                <svg class="svg_menu_check_in" xmlns="http://www.w3.org/2000/svg" width="30" height="30" viewBox="0 0 21 21"><g fill="currentColor" fill-rule="evenodd"><circle cx="10.5" cy="10.5" r="1"/><circle cx="10.5" cy="5.5" r="1"/><circle cx="10.5" cy="15.5" r="1"/></g></svg>
+                                                <div class="dropdown menu_dropdown_check_in" id="dropdown-menu">
+                                                    <div class="dropdown-item booked_room_edit" data-room-id="${record['booking_id']}">Sửa phòng</div>
+                                                    <div class="dropdown-item booked_room" data-room-id="${record['id']}">Nhận phòng</div>
+                                                    <div class="dropdown-item booked_room" data-room-id="${record['id']}">Đổi phòng</div>
+                                                    <div class="dropdown-item delete-booked-room" data-room-id="${record['booking_id']}">Xóa phòng</div>
+                                                </div>
+                                            </td>
+                                            <td class="text-right">${index + 1}</td>
+                                            <td class="text-left">${record['booking_id']}</td>
+                                            <td class="text-left">${record['room']['room_number']}</td>
+                                            <td class="text-right">${formatDateTime(record['document_date'])}</td>
+                                            <td class="text-right">${formatDateTime(record['checkin_date'])}</td>
+                                            <td class="text-right">${formatDateTime(record['checkout_date'])}</td>
+                                            <td class="text-left">${record['customer_name'] ? record['customer_name'] : 'N/A'}</td>
+                                            <td class="text-right">${record['phone_number'] ? record['phone_number'] : 'N/A'}</td>
+                                            <td class="text-right">${record['guest_count']}</td>
+                                            <td class="text-right">${formatCurrency(record['total_amount'])}</td>
+                                            <td class="text-right">${formatCurrency(record['deposit_amount'])}</td>
+                                        </tr>
+                                    `;
+                       
+                        } else {
+                            html += `
+                                <tr class="collapse" id="rep-${firstRecord['booking_id']}">
+                                    <td colspan="2">
+                                        <td class="text-right"></td>
+                                        <td class="text-left">${record['booking_id']}</td>
+                                        <td class="text-left">${record['room']['room_number']}</td>
+                                        <td class="text-right">${formatDateTime(record['document_date'])}</td>
+                                        <td class="text-right">${formatDateTime(record['checkin_date'])}</td>
+                                        <td class="text-right">${formatDateTime(record['checkout_date'])}</td>
+                                        <td class="text-left">${record['customer_name'] ? record['customer_name'] : 'N/A'}</td>
+                                        <td class="text-right">${record['phone_number'] ? record['phone_number'] : 'N/A'}</td>
+                                        <td class="text-right">${record['guest_count']}</td>
+                                        <td class="text-right">${formatCurrency(record['total_amount'])}</td>
+                                        <td class="text-right">${formatCurrency(record['deposit_amount'])}</td>
+                                    </td>
+                                <tr/>
+                            `;
+                        }
+                        // console.log(seenBookingIds);
+                        
+                        // Thêm HTML vào table
+                      
+                    }); 
+                    // if (collapseContent !== "") {
+                    //     html += `
+                    //         <tr class="collapse" id="rep-${firstRecord['booking_id']}">
+                    //             ${collapseContent}
+                    //         </tr>
+                    //     `;
+                    // }
+                    
+                });
+                 $('.data-table').append(html);
                 var selected_select = $('#select_room_number');
                 selected_select.empty();
                 let option = `<option value="">Chọn mã phòng</option>`;

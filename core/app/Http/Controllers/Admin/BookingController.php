@@ -808,13 +808,14 @@ class BookingController extends Controller
         ]);
     }
     // xóa đặt phòng
-    public function deleteRoomBooking($id)
-    {
-        $bookingRoom = RoomBooking::find($id);
-        if (!$bookingRoom) {
-            return response()->json(['status' => 'error', 'message' => 'Room booking không tồn tại']);
-        }
-        $bookingRoom->delete();
-        return response()->json(['status' => 'success', 'message' => 'Xóa thành công']);
+
+public function deleteRoomBooking($id)
+{
+    $deletedRows = RoomBooking::where('booking_id', $id)->delete();
+    if ($deletedRows === 0) {
+        return response()->json(['status' => 'error', 'message' => 'Room booking không tồn tại']);
     }
+    return response()->json(['status' => 'success', 'message' => 'Xóa thành công']);
+}
+
 }
