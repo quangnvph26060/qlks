@@ -610,7 +610,7 @@ $(document).on('click', '.add-book-room', function () {
     // var roomTypeId = $(this).data('room_type_id');
     allStaffandCustomerSource()
     // $('#myModal-booking-edit').modal('hide');
-    hasBookings() ? "" : ($('#total_balance').text(0), $('#total_amount').text(0), $('#total_deposit').text(0));
+    hasBookings() ? "" : ($('.total_balance').text(0), $('.total_amount').text(0), $('.total_deposit').text(0)), $('.total_discount').text(0);
 
     // addRoomInBooking(roomId, roomTypeId);
     var selectedCheckboxes = [];
