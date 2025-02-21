@@ -1,8 +1,33 @@
 @if ($response->isNotEmpty())
-    @foreach ($response as $room)
+    @foreach ($response as $id => $room)
         @if ($room->amenities->count())
             <tr data-id="{{ $room->id }}">
-                <th>{{ $loop->iteration }}</th>
+            @can('admin.hotel.room.amenities.all')
+                
+                <td style="width:20px;">
+                <svg class="svg_menu_check_in" xmlns="http://www.w3.org/2000/svg" width="30" height="30" viewBox="0 0 21 21"><g fill="currentColor" fill-rule="evenodd"><circle cx="10.5" cy="10.5" r="1"/><circle cx="10.5" cy="5.5" r="1"/><circle cx="10.5" cy="15.5" r="1"/></g></svg>
+                        
+                       <div class="dropdown menu_dropdown_check_in" id="dropdown-menu">
+                        <div class="dropdown-item">
+                        <a class="btn btn-sm btn-outline--primary btn-edit" data-id="{{ $room->id }}"
+                            data-modal_title="@lang('Cập nhật tiện nghi')" type="button" style="color:black !important;border:none;padding:5px">
+                            Sửa tiện nghi
+                        </a>
+                      </div>    
+                                    
+                       <div class="dropdown-item booked_room_detail">
+                         <button class=" btn-delete icon-delete-room" data-id="{{ $room->id }}" data-modal_title="@lang('Xóa tiện nghi')" type="button"data-pro="0">Xóa tiện nghi
+                        </div>
+                          
+                     </div>
+                 </td>
+            @endcan
+                <td style="text-align:right">      
+                    @php
+                         $stt = $response->total() - ($response->currentPage() - 1) * $response->perPage() - $id;
+                     @endphp
+                     {{ $stt }}
+                </td>
                 <td>{{ $room->code }}</td>
                 <td>{{ $room->roomType->name }}</td>
                 <td>{{ $room->room_number }}</td>
@@ -16,16 +41,7 @@
                     @endif
 
                 </td>
-                @can('admin.hotel.room.amenities.all')
-                    <td>
-                        <div class="button--group">
-                            <button class="btn btn-sm btn-outline--primary btn-edit" data-id="{{ $room->id }}"
-                                data-modal_title="@lang('Cập nhật danh mục')" type="button">
-                                <i class="fas fa-edit"></i>@lang('Sửa')
-                            </button>
-                        </div>
-                    </td>
-                @endcan
+               
             </tr>
         @endif
     @endforeach

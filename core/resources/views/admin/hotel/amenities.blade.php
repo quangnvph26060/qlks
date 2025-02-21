@@ -1,4 +1,4 @@
-@extends('admin.layouts.app')
+@extends('admin.layouts.master_iframe')
 @section('panel')
     <div class="row">
         <div class="col-lg-12">
@@ -140,10 +140,20 @@
         @endpush
     @endcan
     @can('admin.hotel.amenity.save')
+      
         @push('breadcrumb-plugins')
-            <button class="btn btn-sm btn-outline--primary cuModalBtn" data-modal_title="@lang('Thêm tiện nghi mới')" type="button">
-                <i class="las la-plus"></i>@lang('Thêm mới')
-            </button>
+       
+       <a class="mr-1" href="{{ route('admin.hotel.amenity.all') }}">
+       <button class="btn btn-sm btn-outline--primary" data-modal_title="Làm mới">
+                           <i class="fa fa-repeat p-2"></i>
+       </button>
+           </a>
+           <a>
+               <button class="btn btn-sm btn-outline--primary cuModalBtn" data-modal_title="@lang('Thêm mới tiện nghi')" type="button"
+                       style="margin-left:10px">
+                       <i class="las la-plus p-2"></i>
+                   </button>
+           </a>      
         @endpush
     @endcan
 

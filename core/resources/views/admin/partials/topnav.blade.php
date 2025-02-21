@@ -18,19 +18,15 @@
 @endphp
 
 <!-- navbar-wrapper start -->
-<nav class="navbar-wrapper bg--dark d-flex" id="navbar-wrapper">
-    <div style="width: 97%">
+<nav class="navbar-wrapper bg--dark d-flex flex-wrap top-menu">
+        <div style="width: 97%">
         {{-- <button type="button" class="res-sidebar-open-btn me-3"><i class="las la-bars"></i></button>
         <form class="navbar-search">
             <input type="search" name="#0" class="navbar-search-field" id="searchInput" autocomplete="off" placeholder="@lang('Tìm kiếm ở đây...')">
             <i class="las la-search"></i>
             <ul class="search-list"></ul>
         </form> --}}
-          <div class="paddles">
-            <button class="right-paddle paddle" id="arrow-left" style="margin-left: -1.5%">
-                 &lt;
-            </button>
-        </div>
+         
         <div class="nav-tabss">
             <nav>
                 <ul class="d-flex main__tabs-list horizontal-scroll" id="horizontal-scroll">
@@ -40,20 +36,15 @@
     </div>
          
         <div>
-             <div class="paddles">
-            <button class="right-paddle paddle" id="arrow-right" style="margin-left: -2%">
-                 &gt;
-
-            </button>
-        </div>
-              <button data-toggle="menu" class="btn btn-primary btn-menu" style="float: right;margin-top: 20px;margin-right: -20px">
+            
+              <button data-toggle="menu" class="btn btn-primary btn-menu" style="float: right;margin-top: 20px;margin-right: -20px;display:none">
             <i class="fa fa-list"></i></button>
         </div>
    
   
     <div style="align-items: baseline;" class="navbar__right">
-       
-  <div id="menu" style="float: right;z-index: 9999;">
+<!--        
+  <div id="menu-btn" style="float: right;z-index: 9999;">
     <ul>
       <li class="border-bottom p-1"><a href="{{ route('admin.system.update') }}">Update Available</a></li>
       <li class="border-bottom p-1"><a href="{{ route('admin.request.booking.all') }}">Yêu cầu đặt phòng</a></li>
@@ -64,7 +55,7 @@
       <li class="p-1"><a a href="{{ route('admin.logout') }}">Đăng xuất</a></li>
 
     </ul>
-  </div>
+  </div> -->
         <button type="button" class="res-sidebar-open-btn me-3"><i class="las la-bars"></i></button>
         <ul class="navbar__action-list">
 
@@ -188,14 +179,7 @@
         position: relative;
         border-radius: 6px;
     }
-     #menu {
-      display: none;
-      background-color: #f8f9fa;
-     right: 15px;
-     top: 75px;
-     padding: 10px;
-     position: absolute;      
-    }
+    
     .nav-tabss {
         position: relative;
         bottom:  -16px;
@@ -236,8 +220,7 @@
         font-size: 30px;
         font-weight: bold;
          animation: bounce 1s infinite;
-         color: white;
-         display: none;
+         color: black;
      }
 
 
@@ -345,15 +328,19 @@
         menu.style.display = 'none';
       }
     });
+    $('#arrow-right').on('click', function() {
+           alert(1)
+        });
     document.getElementById('arrow-right').addEventListener('click', function() {
-        const scrollContainer = document.querySelector('.horizontal-scroll');
+        alert(1);
+        const scrollContainer = document.querySelector('.globalNavi__list');
         scrollContainer.scrollBy({
             left: window.innerWidth / 3, // Cuộn sang phải một nửa chiều rộng cửa sổ
             behavior: 'smooth' // Cuộn mượt mà
         });
     });
     document.getElementById('arrow-left').addEventListener('click', function() {
-        const scrollContainer = document.querySelector('.horizontal-scroll');
+        const scrollContainer = document.querySelector('.globalNavi__list');
         scrollContainer.scrollBy({
             left: - window.innerWidth / 3, // Cuộn sang phải một nửa chiều rộng cửa sổ
             behavior: 'smooth' // Cuộn mượt mà
@@ -380,7 +367,7 @@
 
     const scrollLeftButton = document.getElementById('arrow-left');
     const scrollRightButton = document.getElementById('arrow-right');
-    const scrollContent = document.getElementById('horizontal-scroll');
+    const scrollContent = document.getElementById('globalNavi__list');
     // Kiểm tra chiều rộng của vùng chứa và nội dung
      function checkScrollButtons() {
       const containerWidth = scrollContent.offsetWidth;  // Chiều rộng của vùng hiển thị
@@ -422,6 +409,7 @@
     window.addEventListener('resize', () => {
     checkScrollButtons();
     });
+
     </script>
 
  

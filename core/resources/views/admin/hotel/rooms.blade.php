@@ -1,8 +1,17 @@
-@extends('admin.layouts.app')
+@extends('admin.layouts.master_iframe')
 @push('breadcrumb-plugins')
-    <button class="btn btn-outline--primary" data-bs-target="#addModal" data-bs-toggle="modal">
-        <i class="las la-plus"></i>
-    </button>
+  
+    <a class="mr-1" href="{{ route('admin.hotel.room.all') }}">
+        <button class="btn btn-sm btn-outline--primary" data-modal_title="Làm mới">
+                            <i class="fa fa-repeat p-2"></i>
+        </button>
+    </a>
+    <a>
+     <button class="btn btn-sm btn-outline--primary" data-bs-target="#addModal" data-bs-toggle="modal"
+             style="margin-left:10px">
+                <i class="las la-plus p-2"></i>
+         </button>
+    </a>       
     {{-- <x-search-form filter='yes' /> --}}
 @endpush
 @section('panel')
@@ -10,7 +19,7 @@
         <div class="col-lg-12">
             <div class="card b-radius--10">
                 <div class="card-body p-0">
-                    <div class="table-responsive--md table-responsive" style="overflow-x: visible;">
+                    <div class="table-responsive--md table-responsive" style="overflow-x: auto;">
                         <table class="table--light style--two table" >
                             <thead>
                                 <tr>
@@ -21,11 +30,10 @@
                                     <th>@lang('Mã loại phòng')</th>
                                     <th>@lang('Tên loại phòng')</th>
                                     <th>@lang('Trạng thái')</th>
-                            
                                 </tr>
                             </thead>
                             <tbody>
-                                @forelse($rooms as  $room)
+                                @forelse($rooms as $id => $room)
                                     <tr>
                                         @can(['admin.hotel.room.status', 'admin.hotel.room.add'])
                                         <td style="width:20px;">
@@ -45,7 +53,12 @@
                                         </td>
                                          
                                         @endcan     
-                                        <td style="text-align:right">{{ $loop->iteration }}</td>
+                                        <td style="text-align:right">
+                                            @php
+                                            $stt = $rooms->total() - ($rooms->currentPage() - 1) * $rooms->perPage() - $id;
+                                            @endphp
+                                            {{ $stt }}
+                                        </td>
                                         <td> {{ $room->code ?? 'Chưa có mã phòng' }}</td>
                                         <td>{{ __($room->name) }}</td>
 

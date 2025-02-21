@@ -1,4 +1,4 @@
-@extends('admin.layouts.app')
+@extends('admin.layouts.master_iframe')
 
 @section('panel')
     <div class="row">
@@ -43,9 +43,12 @@
                                 
                                             </div>
                                     </td>
-                                    <td style="width:20px;text-align:right">{{ $customers->count() - ($loop->iteration - 1) }}</td>
-            
-                        
+                                    <td style="width:20px;text-align:right">
+                                    @php
+                                        $stt = $customers->total() - ($customers->currentPage() - 1) * $customers->perPage() - $id;
+                                        @endphp
+                                        {{ $stt }}
+                                    </td>
                                     <td>
                                             <span class="fw-bold code">{{ $customer->customer_code }}</span>
                                     </td>
@@ -111,11 +114,12 @@
                             <i class="fa fa-repeat p-2"></i>
                         </button>
                     </a>
+                    <a>
                      <button class="btn btn-sm btn-outline--primary" data-modal_title="Thêm mới khách hàng" type="button"
-                                                data-bs-toggle="modal" data-bs-target="#customer" style="padding-right:15px;padding-left:15px;margin-left:10px">
-                        <i class="las la-plus"></i>
+                                                data-bs-toggle="modal" data-bs-target="#customer" style="margin-left:10px">
+                        <i class="las la-plus p-2"></i>
                     </button>
-                
+                    </a>                
                     <form role="form" enctype="multipart/form-data" action="{{route('admin.hotel.customer.search')}}">
                         <div class="form-group position-relative mb-0">
                             <input class="searchInput" name="customer_code"
@@ -130,11 +134,11 @@
                             <input class="searchInput" name="address"
                                    style="height: 35px;width:20%;border: 1px solid rgb(121, 117, 117, 0.5); margin-left: 8px;"
                                  placeholder="Địa chỉ" value="{{ $address ?? '' }}">
-            
-                            <button type="submit" class="btn btn-primary" style="padding-right:15px;padding-left:15px">
-                                <i class="las la-search"></i>
+                            <a>
+                            <button type="submit" class="btn btn-primary">
+                                <i class="las la-search p-2"></i>
                             </button>
-
+                            </a>
                         </div>
                     </form>
                 </div>
