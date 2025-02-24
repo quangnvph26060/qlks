@@ -318,6 +318,8 @@ Route::middleware('admin', 'adminPermission')->group(function () {
     Route::controller('BookRoomController')->group(function () {
         Route::get('book-room', 'room')->name('book.room');
         Route::post('room-book', 'book')->name('room.book');
+        Route::post('room-book-check-in', 'roomBookToCheckIn')->name('room.booked.check.in');
+        Route::post('check-in-update', 'checkInUpdate')->name('check.in.update');
         Route::post('room-book-edit', 'bookEdit')->name('room.book.edit');
         Route::post('room-book-delete', 'deleteRoomBooking')->name('room.booking.delete');
         Route::get('room/search', 'searchRoom')->name('room.search');
@@ -328,7 +330,10 @@ Route::middleware('admin', 'adminPermission')->group(function () {
         Route::post('room-note', 'updatenote')->name('room.note');
         Route::post('room-check-in/{id}', 'checkIn')->name('room.check.in');
         Route::post('room-booking/{id}', 'roomBookingEdit')->name('room.booking.edit');
+        Route::post('check-in/{id}', 'checkInEdit')->name('check.in.edit');
         Route::get('room-booking', 'getBooking')->name('room.booking');
+        Route::get('get-room-booking', 'getRoomBooking')->name('get.room.booking');
+        Route::post('find-room-booking', 'findRoomBookingId')->name('find.room.booking');
     });
 
     //Manage Reservation

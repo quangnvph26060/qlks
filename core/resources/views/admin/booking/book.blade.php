@@ -151,48 +151,7 @@
                 </div>
             </div>
         </div>
-        <div class="modal fade" id="addCustomerModal" tabindex="-1" aria-hidden="true" style="overflow: unset">
-            <div class="modal-dialog modal-dialog-centered" style="top: 4px">
-                <div class="modal-content" style="height: 100vh;">
-                    <div class="modal-header">
-                        <h5 class="modal-title">Chọn khách hàng</h5>
-                        <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
-                    </div>
-                    <div class=" mt-3" style="    padding: 0px 15px">
-                        <div class="search-container">
-                            <select class="form-select" id="selected-customer-source">
-
-                            </select>
-                            <input type="text" class="form-control" id="searchInput" placeholder="Tìm kiếm">
-
-                        </div>
-                    </div>
-                    <div class="modal-body overflow-add-room">
-                        <table class="table mt-10" id="data-table">
-                            <thead>
-                                <tr>
-                                    <th data-table="Mã khách hàng" class="text-left">Mã khách hàng</th>
-                                    <th data-table="Tên khách hàng" class="text-left">Tên khách hàng</th>
-                                    <th data-table="Số điện thoại" class="text-right">Số điện thoại</th>
-                                    <th data-table="Nguồn khách hàng" class="text-left">Nguồn khách hàng</th>
-                                    <th data-table="Thao tác">Thao tác</th>
-                                </tr>
-                            </thead>
-
-                            <tbody id="show-customer">
-
-                            </tbody>
-
-                        </table>
-                    </div>
-                    <div class="d-flex justify-content-end" style="gap: 10px;padding: 7px 31px">
-                        <p data-row="booked" class=" btn-dat-truoc  add-customer-booked" style="cursor: pointer">Lưu
-                        </p>
-                        <p type="button" data-row="booked" class="alert-paragraph close_modal_booked_room">Hủy</p>
-                    </div>
-                </div>
-            </div>
-        </div>
+        @include('admin.booking.partials.customer_booked')
     @endpush
 @endcan
 
@@ -308,40 +267,6 @@
             z-index: 9 !important;
         }
 
-        .search-container {
-            width: 50%;
-            display: flex;
-            align-items: center;
-            gap: 8px;
-            /* Khoảng cách giữa input và button */
-        }
-
-        .search-container select,
-        .search-container input,
-        .search-container p {
-            flex: 1;
-            /* Chia đều kích thước */
-            height: 40px;
-            /* Đảm bảo chiều cao bằng nhau */
-        }
-
-        .search-container p {
-            margin: 0;
-            height: 40px;
-            display: flex;
-            align-items: center;
-            justify-content: center;
-            padding: 0 15px;
-            background-color: #007bff;
-            color: white;
-            border-radius: 5px;
-            cursor: pointer;
-            user-select: none;
-        }
-
-        .search-container p:hover {
-            background-color: #0056b3;
-        }
 
 
 
@@ -405,40 +330,8 @@
                 color: white !important;
             } */
 
-        #data-table {
-            border-collapse: collapse;
-            /* Gộp viền bảng */
-        }
+     
 
-        #data-table td,
-        #data-table th {
-            line-height: 1 !important;
-            padding: 6px !important;
-        }
-
-        #data-table td {
-            height: 30px !important;
-            overflow: hidden;
-            white-space: nowrap;
-            /* Ngăn xuống dòng để giảm chiều cao */
-        }
-
-        #show-customer {
-            border-collapse: collapse;
-            /* Gộp viền bảng */
-        }
-
-        #show-customer td,
-        #show-customer th {
-            line-height: 1 !important;
-            padding: 6px !important;
-        }
-
-        #show-customer td {
-            height: 30px !important;
-            overflow: hidden;
-            white-space: nowrap;
-            /* Ngăn xuống dòng để giảm chiều cao */
-        }
+    
     </style>
 @endpush

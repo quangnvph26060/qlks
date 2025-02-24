@@ -22,20 +22,18 @@
                     <table class="table--light style--two table table-striped" id="data-table">
                         <thead>
                             <tr>
+                                <th></th>
                                 <th>@lang('Hành động')</th>
                                 <th>@lang('STT')</th>
                                 <th>@lang('Mã nhận hàng')</th>
-                                <th>@lang('Mã đặt hàng')</th>
-                                <th>@lang('Mã phòng')</th>
+                                <th>@lang('Số lượng phòng')</th>
                                 <th>@lang('Ngày chứng từ')</th>
-                                <th>@lang('Ngày nhận')</th>
-                                <th>@lang('Ngày trả')</th>
-
                                 <th>@lang('Tên khách hàng')</th>
                                 <th>@lang('Số điện thoại')</th>
-                                <th>@lang('Số người')</th>
-                                <th>@lang('Thành tiền')</th>
+                                <th>@lang('Số lượng người')</th>
+                                <th>@lang('Tổng tiền')</th>
                                 <th>@lang('Đặt cọc')</th>
+                                <th>Giảm giá</th>
 
                                 {{-- @can(['admin.hotel.room.type.edit', 'admin.hotel.room.type.status',
                                     'admin.hotel.room.type.destroy'])
@@ -58,6 +56,9 @@
         {{-- @include('admin.booking.partials.room_booking') --}}
         @include('admin.booking.partials.confirm-room')
         @include('admin.booking.partials.check-in-room')
+        @include('admin.booking.partials.check_in_room_edit')
+        @include('admin.booking.partials.customer_booked')
+        @include('admin.booking.partials.booked_room')
     </div>
     {{-- @include('admin.booking.partials.modals') --}}
 
@@ -158,6 +159,7 @@
 @endcan
 
 @push('script-lib')
+    <script src="{{ asset('assets/admin/js/common.js') }}"></script>
     <script src="{{ asset('assets/validator/validator.js') }}"></script>
     <script  src="{{ asset('assets/admin/js/check_in.js') }}"></script>
     <script src="{{ asset('assets/admin/js/moment.min.js') }}"></script>
@@ -172,7 +174,7 @@
 
 @push('script')
 <script>
-      $(document).ready(function() {
+        $(document).ready(function() {
             $("#date-chon-phong-in").on("change", function() {
                 let checkInDate = new Date($(this).val());
                 if (!isNaN(checkInDate.getTime())) {
@@ -182,22 +184,40 @@
                 }
             });
         });
+        window.toggleRepresentatives = function(id, button) {
+            const rows = document.querySelectorAll('[id="rep-' + id + '"]'); // Lấy tất cả các hàng có cùng ID
+            rows.forEach(row => row.classList.toggle('show')); // Toggle từng hàng
+
+            button.classList.toggle('collapsed'); // Toggle trạng thái button
+        };
+        var findCustomerUrl = '{{ route('admin.find.customer') }}';
     var checkInDetailUrl = "{{ route('admin.booking.check.in.details', ['id' => ':id']) }}";
     var allCheckInUrl =  "{{ route('admin.booking.all.check.in') }}";
     var showRoomUrl = "{{ route('admin.booking.showRoom') }}";
     var checkRoomBookingUrl =  '{{ route('admin.booking.checkRoomBooking') }}';
     var  searchCustomerUrl = '{{ route('admin.search.customer') }}';
     var roomBookingUrl =  '{{ route('admin.room.booking') }}';
-    var roomBookingEditUrl = "{{ route('admin.room.booking.edit', ['id' => ':id']) }}";
+    var getRoomBookingUrl =  '{{ route('admin.get.room.booking') }}';
+    var checkInEditUrl = "{{ route('admin.check.in.edit', ['id' => ':id']) }}";
     var bookingDetailUrl = "{{ route('admin.booking.details', ['id' => ':id']) }}";
     var checkInUrl = "{{ route('admin.room.check.in', ['id' => ':id']) }}";
     var deleteBookedRoomUrl = "{{ route('admin.booking.delete-booked-room', ['id' => ':id']) }}";
     var getCustomerStaff = "{{ route('admin.get.customer.staff') }}";
+    var findRoomBookingIdUrl = '{{ route('admin.find.room.booking') }}';
+    var deleteRoomEdit = '{{ route('admin.room.booking.delete') }}';
+    var roomBook = "{{ route('admin.room.book') }}";
+    var CheckInUrl = "{{route('admin.room.booked.check.in')}}";
 </script>
 @endpush
 
 @push('style')
     <style scoped>
+          #data-table tbody tr:hover {
+            background-color: #f0f0f0;
+            /* Màu nền khi hover */
+            cursor: pointer;
+            /* Con trỏ chuột đổi thành dạng pointer */
+        }
             #show-room tr td {
         padding: 6px 2px !important;
         line-height: 0;    /* Giảm chiều cao dòng */

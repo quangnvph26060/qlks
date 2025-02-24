@@ -74,7 +74,7 @@
                                                 <span class="invalid-feedback d-block name_error_edit"
                                                     style="font-weight: 500" id="name_error_edit"></span>
                                             </div>
-                                         
+                                            <input type="hidden" class="form-control booking_id" name="booking_id">
 
                                         </div>
 

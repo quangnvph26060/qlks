@@ -891,6 +891,70 @@ h5 {
 .fz-13{
     font-size: 13px;
 }
+.search-container {
+    width: 50%;
+    display: flex;
+    align-items: center;
+    gap: 8px;
+    /* Khoảng cách giữa input và button */
+}
+
+.search-container select,
+.search-container input,
+.search-container p {
+    flex: 1;
+    /* Chia đều kích thước */
+    height: 40px;
+    /* Đảm bảo chiều cao bằng nhau */
+}
+
+.search-container p {
+    margin: 0;
+    height: 40px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    padding: 0 15px;
+    background-color: #007bff;
+    color: white;
+    border-radius: 5px;
+    cursor: pointer;
+    user-select: none;
+}
+
+.search-container p:hover {
+    background-color: #0056b3;
+}
+.text-left {
+    text-align: left !important;
+}
+
+.text-right {
+    text-align: right !important;
+}
+
+.text-center {
+    text-align: center;
+}
+#show-customer {
+    border-collapse: collapse;
+    /* Gộp viền bảng */
+}
+
+
+#show-customer th,
+#show-booked-room th{
+    line-height: 1 !important;
+    padding: 6px !important;
+}
+
+#show-customer td,
+#show-booked-room td {
+    height: 30px !important;
+    overflow: hidden;
+    white-space: nowrap;
+    /* Ngăn xuống dòng để giảm chiều cao */
+}
 .table-fz-13,
 .table-fz-13 th,
 .table-fz-13 td {

@@ -24,6 +24,7 @@ use App\Models\RoomTypePrice;
 use App\Models\UserCleanroom;
 use Carbon\Carbon;
 use Hamcrest\Arrays\IsArray;
+use Illuminate\Pagination\LengthAwarePaginator;
 use Illuminate\Support\Facades\Auth;
 use Illuminate\Support\Facades\Log;
 use Symfony\Component\Console\Helper\Helper;
@@ -108,18 +109,26 @@ class BookingController extends Controller
             $query->where('room_code', 'LIKE', '%'. $request->data['roomCode']. '%');
         })
         ->orderBy('created_at', 'desc')
-        ->paginate($perPage);
+        ->get(); 
+        $groupedBookings = $roomBookings->groupBy('check_in_id');
+        $paginatedBookings = new LengthAwarePaginator(
+            $groupedBookings->forPage($request->page, $perPage), // Dữ liệu phân trang
+            $groupedBookings->count(), // Tổng số bản ghi
+            $perPage, // Số bản ghi mỗi trang
+            $request->page, // Trang hiện tại
+            ['path' => url()->current()] // Đường dẫn phân trang
+        );
         $rooms = Room::active()->select('id', 'room_number')->get();
         return response([
             'status' => 'success',
-            'data' => $roomBookings->items(),
+            'data' => $paginatedBookings,
             'rooms' => $rooms,
             'option_selected' => $request->data['roomCode'] ?? "",
             'pagination' => [
-                'total' => $roomBookings->total(),
-                'current_page' => $roomBookings->currentPage(),
-                'last_page' => $roomBookings->lastPage(),
-                'per_page' => $roomBookings->perPage(),
+                'total' => $paginatedBookings->total(),
+                'current_page' => $paginatedBookings->currentPage(),
+                'last_page' => $paginatedBookings->lastPage(),
+                'per_page' => $paginatedBookings->perPage(),
             ]
         ]);
     }

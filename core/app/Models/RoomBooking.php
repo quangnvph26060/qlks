@@ -72,4 +72,9 @@ class RoomBooking extends Model
     {
         return $this->total_amount - $this->deposit_amount;
     }
+    public function customer()
+    {
+        return $this->belongsTo(Customer::class, 'customer_code', 'customer_code');
+    }
+
 }

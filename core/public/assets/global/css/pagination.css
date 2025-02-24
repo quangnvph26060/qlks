@@ -84,3 +84,26 @@
     color: #5b6e88;
     background-color: #f0f1f1;
 }
+.w-10{
+    width: 10px !important;
+}
+.background-tr{
+    background: #a5818129 !important;
+}
+#data-table {
+    border-collapse: collapse;
+    /* Gộp viền bảng */
+}
+
+#data-table td,
+#data-table th {
+    line-height: 1 !important;
+    padding: 6px !important;
+}
+
+#data-table td {
+    height: 30px !important;
+    overflow: hidden;
+    white-space: nowrap;
+    /* Ngăn xuống dòng để giảm chiều cao */
+}
