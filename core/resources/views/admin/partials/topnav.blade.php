@@ -27,12 +27,12 @@
             <ul class="search-list"></ul>
         </form> --}}
          
-        <div class="nav-tabss">
+        <!-- <div class="nav-tabss">
             <nav>
                 <ul class="d-flex main__tabs-list horizontal-scroll" id="horizontal-scroll">
                 </ul>
             </nav>
-        </div>
+        </div> -->
     </div>
          
         <div>
@@ -195,33 +195,20 @@
     }
 
     .close-tab {
-        position: absolute;
-        top: -8px;
-        right: -4px;
+        top: 0;
         background: red;
         color: white;
-        font-size: 12px;
+        font-size: 15px;
         font-weight: bold;
         width: 16px;
         height: 16px;
-        display: flex;
         align-items: center;
         justify-content: center;
         border-radius: 50%;
         cursor: pointer;
+        padding: 1px;
     }
-   .paddle {
-        position: absolute;
-        top: 0;
-        bottom: 0;
-        border: none;
-        cursor: pointer;
-        background-color: transparent;
-        font-size: 30px;
-        font-weight: bold;
-         animation: bounce 1s infinite;
-         color: black;
-     }
+
 
 
     .nav-item.active {
@@ -230,7 +217,6 @@
     }
     .main__tabs-list {
     display: flex;
-    gap: 10px;
 /*    width: 90%;
 */    overflow-x: auto;
 /*    white-space: nowrap; 
@@ -297,16 +283,16 @@
                 });
                 localStorage.setItem('activeDataIds', JSON.stringify(activeDataIds));
                 $(this).closest('.nav-item').remove();
-                const menu = document.querySelector('.horizontal-scroll');
-                const navItemExists = menu.querySelector('.nav-item') !== null;
+                // const menu = document.querySelector('.p-globalNavi__list');
+                // const navItemExists = menu.querySelector('.p-globalNavi__item') !== null;
 
-                if (navItemExists) {
-                  $(this).closest('.nav-item').remove();
-                } else {
-                  $('.navbar__action-list').css('display','flex');
-                  $('.navbar__right').css({'display':'flex','width':'70%','margin-top':'20px'});
-                  $('.btn-menu').css('display','none');
-                }
+                // if (navItemExists) {
+                //   $(this).closest('.p-globalNavi__item').remove();
+                // } else {
+                //   $('.navbar__action-list').css('display','flex');
+                //   $('.navbar__right').css({'display':'flex','width':'70%','margin-top':'20px'});
+                //   $('.btn-menu').css('display','none');
+                // }
             }
         });
         $('.nav-link-tabs').on('click', function() {
@@ -319,96 +305,10 @@
                 })
             })
         });
-    document.querySelector('[data-toggle="menu"]').addEventListener('click', function() {
-      var menu = document.getElementById('menu');
-      // Kiểm tra trạng thái hiển thị và toggle
-      if (menu.style.display === 'none') {
-        menu.style.display = 'block';
-      } else {
-        menu.style.display = 'none';
-      }
-    });
-    $('#arrow-right').on('click', function() {
-           alert(1)
-        });
-    document.getElementById('arrow-right').addEventListener('click', function() {
-        alert(1);
-        const scrollContainer = document.querySelector('.globalNavi__list');
-        scrollContainer.scrollBy({
-            left: window.innerWidth / 3, // Cuộn sang phải một nửa chiều rộng cửa sổ
-            behavior: 'smooth' // Cuộn mượt mà
-        });
-    });
-    document.getElementById('arrow-left').addEventListener('click', function() {
-        const scrollContainer = document.querySelector('.globalNavi__list');
-        scrollContainer.scrollBy({
-            left: - window.innerWidth / 3, // Cuộn sang phải một nửa chiều rộng cửa sổ
-            behavior: 'smooth' // Cuộn mượt mà
-        });
-    });
-    const toggleButton = document.getElementById('toggle-btn');
-    const sidebar = document.getElementById('sidebar');
-    const mainMenu = document.querySelector('.navbar-wrapper');
-    const mainContent = document.querySelector('.body-wrapper');
+   
 
+  
 
-    toggleButton.addEventListener('click', () => {
-      sidebar.classList.toggle('closed');
-      mainContent.classList.toggle('shifted');
-      mainMenu.classList.toggle('shifted');
-
-      // Thay đổi hướng mũi tên khi sidebar ẩn hiện
-      if (sidebar.classList.contains('closed')) {
-        toggleButton.innerHTML = '&#8594;';  // Mũi tên sang trái khi sidebar ẩn
-      } else {
-        toggleButton.innerHTML = '&#8592;';  // Mũi tên sang phải khi sidebar hiện
-      }
-    });
-
-    const scrollLeftButton = document.getElementById('arrow-left');
-    const scrollRightButton = document.getElementById('arrow-right');
-    const scrollContent = document.getElementById('globalNavi__list');
-    // Kiểm tra chiều rộng của vùng chứa và nội dung
-     function checkScrollButtons() {
-      const containerWidth = scrollContent.offsetWidth;  // Chiều rộng của vùng hiển thị
-      const contentWidth = scrollContent.scrollWidth;   // Chiều rộng tổng của nội dung bên trong
-      // Nếu chiều rộng của nội dung lớn hơn vùng chứa, hiển thị mũi tên
-      if (contentWidth > containerWidth) {
-        // scrollLeftButton.style.display = 'block';
-        scrollRightButton.style.display = 'block';
-      } else {
-        scrollLeftButton.style.display = 'none';
-        scrollRightButton.style.display = 'none';
-      }
-    }
-
-    // Kiểm tra lại khi trang được tải và khi nội dung thay đổi
-     $('.paddle').on('click', function() {
-      const maxScrollLeft = scrollContent.scrollWidth - scrollContent.clientWidth;
-      const currentScrollLeft = scrollContent.scrollLeft;
-
-      // Nếu cuộn đến đầu (không thể cuộn trái nữa), ẩn mũi tên trái
-      if (currentScrollLeft === 0) {
-        scrollLeftButton.style.display = 'none';
-      } else {
-        scrollLeftButton.style.display = 'block';
-      }
-
-      // Nếu cuộn đến cuối (không thể cuộn phải nữa), ẩn mũi tên phải
-      if (currentScrollLeft === maxScrollLeft) {
-        scrollRightButton.style.display = 'none';
-      } else {
-        scrollRightButton.style.display = 'block';
-      }
-    });
-
-// Kiểm tra lại khi trang được tải và khi cửa sổ thay đổi kích thước
-    window.addEventListener('load', () => {
-    checkScrollButtons();
-    });
-    window.addEventListener('resize', () => {
-    checkScrollButtons();
-    });
 
     </script>
 

@@ -1,6 +1,6 @@
 @extends('admin.layouts.master_iframe')
 @section('panel')
-    <div class="row">
+    <div class="row pb-3">
         <div class="col-lg-12">
             <form action="{{ route('admin.hotel.room.type.save', @$roomType ? $roomType->id : 0) }}"
                 enctype="multipart/form-data" method="POST">

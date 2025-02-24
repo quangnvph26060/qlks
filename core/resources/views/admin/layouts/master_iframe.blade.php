@@ -39,17 +39,6 @@
 
 
 
-    .paddle {
-        position: absolute;
-        top: 0;
-        bottom: 0;
-        border: none;
-        cursor: pointer;
-        height: 45px;
-        background-color: transparent;
-        font-size: 30px;
-        font-weight: bold;
-    }
 
     .left-paddle {
         left: 0;

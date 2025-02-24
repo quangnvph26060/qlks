@@ -150,9 +150,9 @@
     width: 20% !important;
 }
 
-.page-wrapper {
+/* .page-wrapper {
     min-height: 100vh;
-}
+} */
 
 /* global css end */
 /* typography css start */
@@ -5788,7 +5788,7 @@ th.w-85 {
 .p-globalNavi__item
 {
     list-style-type: none; /* Bỏ dấu chấm */
-    padding: 5px;
+    padding: 5px 0px;
     display: inline-block;
     margin-right: 1px;
     --color: #071251;

@@ -157,6 +157,8 @@
 </script>
 <script>
     $('ul > li > a.nav-link').click(function (e) {
+        $('.menu-header').css('display','block');
+
         e.preventDefault();
             var seen = {};
             var getItem = $(this).text();
@@ -170,14 +172,34 @@
                 var lastSegment = parts.pop() || parts.pop();
                 if (myEle == null) {
                     
-                    $("#home").after(" <li class=\"p-globalNavi__item m-active\"><a class=\"p-globalNavi__link text-white tabs\" id=" + getURL + " >" + getItem + "<i class=\"close-b fa fa-close\" style=\"padding-left: 5px\"></i><span class=\"sr-only\">(current)<\/span><\/a><\/li> ");
+                    $("#home").after(" <li class=\"p-globalNavi__item m-active\"><a class=\"p-globalNavi__link text-white tabs\" id=" + getURL + " >" + getItem + "<i class=\"close-tab fa fa-close\"></i><span class=\"sr-only\">(current)<\/span><\/a><\/li> ");
                 } else {
                     document.getElementById(getURL).click();
+                    document.getElementById(getURL).scrollIntoView({ behavior: 'smooth' });
                 }
             }
             $('.top-menu').css('display','none');
             $('.top-menu').removeClass('d-flex');
             $('#dropdownButton').css('display','block');
+            const scrollLeftButton = document.getElementById('arrow-left');
+            const scrollRightButton = document.getElementById('arrow-right');
+            const scrollContent = document.getElementById('menu');
+            const maxScrollLeft = scrollContent.scrollWidth - scrollContent.clientWidth;
+            const currentScrollLeft = scrollContent.scrollLeft;
+
+                if (currentScrollLeft === 0) {
+                scrollLeftButton.style.display = 'none';
+            } else {
+                scrollLeftButton.style.display = 'block';
+            }
+
+            // Nếu cuộn đến cuối (không thể cuộn phải nữa), ẩn mũi tên phải
+            if (currentScrollLeft === maxScrollLeft) {
+                scrollRightButton.style.display = 'none';
+            } else {
+                scrollRightButton.style.display = 'block';
+            }
+            $('.btn-menu').css('display','block');
         });
     function loadIframe(url) {
         var myEle = document.getElementById(url);
@@ -200,12 +222,23 @@
         var lastSegment = parts.pop() || parts.pop();
         $('iframe#' + lastSegment + '').css({'z-index': '10000', 'display': 'block'});
     });
-    $(document).on('click', '.close-b', function () {
+    $(document).on('click', '.close-tab', function () {
         var parent = $(this).parent().prop('id');
         var parts = parent.split('/');
         var lastSegment = parts.pop() || parts.pop();
         $('iframe#' + lastSegment + '').remove();
         document.getElementById(parent).parentElement.remove();
+        const menu = document.querySelector('.p-globalNavi__list');
+                const navItemExists = menu.querySelector('.p-globalNavi__item') !== null;
+
+                if (navItemExists) {
+                  $(this).closest('.p-globalNavi__item').remove();
+                } else {
+                  $('.top-menu').css('display','flex');
+                //   $('.navbar__right').css({'display':'flex','width':'70%','margin-top':'20px'});
+                  $('.btn-menu').css('display','none');
+                  $('.p-globalNavi__list').css('display','none');
+                }
     });
     $(".sidebar-submenu li").on("click", function () {
         if ($(this).hasClass('m-active')) {
@@ -217,6 +250,7 @@
             $(this).addClass('m-active');
             $(this).find('.has-arrow').addClass('active');
         }
+       
     });
 
     // Hàm tính toán và áp dụng chiều rộng

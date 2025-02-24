@@ -16,7 +16,23 @@
                             style="margin-left:10px">
                             <i class="las la-plus p-2"></i>
                         </button>
-                </a>      
+                </a>
+                <form role="form" enctype="multipart/form-data" action="{{route('admin.hotel.premium.service.all')}}" method="GET" id="searchForm" style="margin-top:20px">
+                        <div class="form-group position-relative mb-0">
+                             <input placeholder="Nhập tên dịch vụ"
+                                            style="height: 35px;border: 1px solid rgb(121, 117, 117, 0.5);margin-left: 8px;"
+                                            name="name"
+                                id="searchInput"
+                                value="{{ $input}}">
+                                    
+                                <a>
+                                    <button type="submit" class="btn btn-primary">
+                                            <i class="las la-search p-2"></i>
+                                    </button>
+                                </a>
+                         </div>
+                 </form>      
+
              @endpush
                 <div class="d-flex justify-content-between mb-3" style="float: right;">
                     {{-- <div class=" input-group " style="justify-content: end;">
@@ -28,34 +44,6 @@
                         </form>
                     </div> --}}
 
-                    @can('admin.hotel.service.search')
-                        @push('breadcrumb-plugins')
-                                <!-- Form tìm kiếm trực tiếp -->
-                                <form action="{{ route('admin.hotel.premium.service.all') }}" method="GET" id="searchForm" class="mx-5">
-                                    <div class="input-group mt-1">
-                                        <input
-                                            type="search"
-                                            class="searchInput"
-                                            name="name"
-                                            id="searchInput"
-                                            value="{{$input}}"
-                                            placeholder="Tìm kiếm..."
-                                            onsearch="handleSearchClear()" style="padding: .375rem .75rem;height:auto">
-                                        <!-- Nút tìm kiếm -->
-                                        <button type="button" class="btn btn-primary">
-                                            <i class="las la-search"></i>
-                                        </button>
-                                    </div>
-                                </form>
-                            @endpush
-                        @endcan
-                    {{-- <div class="input-group" style="justify-content: end;">
-                        <input class="searchInput"
-                        type="search" placeholder="Tìm kiếm...">
-                        <button type="submit" class="btn btn-primary">
-                            <i class="las la-search"></i>
-                        </button>
-                    </div> --}}
                 </div>
             </div>
             <div id="pagination" class="mt-3">
