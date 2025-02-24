@@ -1,9 +1,4 @@
-.add-room-booking{
-    border: 1px solid #337ab7;
-    border-radius: 8px;
-    cursor: pointer;
-    color: #337ab7;
-}
+
 
 .custom-input-giam-gia {
     width: 50% !important;
@@ -29,13 +24,14 @@
     justify-content: space-between;
     padding: 5px;
 }
-.delete-room-booking{
+.delete-room-booking,.delete-room-booking-edit{
     border: 1px solid #f03514;
     border-radius: 8px;
     cursor: pointer;
     color: #f03514;
     padding: 0px 10px 0px 10px;
 }
+
 .modal-content {
     border-radius: 8px;
     box-shadow: 0 4px 10px rgba(0, 0, 0, 0.2);
@@ -43,7 +39,7 @@
 .add-book-room{
     cursor: pointer;
     text-wrap: nowrap;
-    padding: 8px 12px;
+    padding: 4px 12px;
     color: #fff;
     background-color: #337ab7;
     border-color: #2e6da4;
@@ -52,10 +48,10 @@
 .adult__main{
     white-space: nowrap;
 }
-.modal-dialog{
+/* .modal-dialog{
     max-width: 1200px;
     max-height: 700px;
-}
+} */
 
 .table-responsive{
     /* overflow-y: scroll; */
@@ -101,7 +97,7 @@ body.modal-open {
     text-overflow: ellipsis;
     white-space: nowrap;
 }
-.add-room-booking{
+.add-room-booking, .add-room-booking-edit{
    
     padding: 4px 10px;
     border: 1px solid #337ab7;
@@ -109,6 +105,7 @@ body.modal-open {
     cursor: pointer;
     color: #337ab7;
 }
+
 .icon-delete-room:hover{
     cursor: pointer;
     color: red;
@@ -117,15 +114,18 @@ body.modal-open {
 .datphong{
    
 }
-.add-book-room{
-    cursor: pointer;
-    text-wrap: nowrap;
-    padding: 8px 12px;
-    color: #fff;
-    background-color: #337ab7;
-    border-color: #2e6da4;
-    border-radius: 5px;
+.input-field-search-book {
+    height: 35px;
+    width: 25%;
+    border: 1px solid rgb(121, 117, 117, 0.5);
+    margin-left: 8px;
 }
+
+.btn-submit-search-book,.btn-submit-sync-book {
+    padding-right: 15px;
+    padding-left: 15px;
+}
+
 .pt-90 {
     padding-top: 90px;
 }
@@ -205,7 +205,24 @@ textarea {
     height: 36px;
     border-radius: 4px;
 }
+.table-responsive {
+    display: block;
+    height: 170px; /* Giới hạn chiều cao */
+    overflow-y: scroll; /* Bật cuộn dọc */
+    scrollbar-width: none; /* Ẩn thanh cuộn trên Firefox */
+    -ms-overflow-style: none; /* Ẩn thanh cuộn trên IE và Edge */
+}
 
+/* Ẩn thanh cuộn trên Chrome, Safari */
+.table-responsive::-webkit-scrollbar {
+    display: none;
+}
+.table td{
+    vertical-align: sub  !important;
+}
+#list-booking tr,#list-booking-edit tr {
+    vertical-align: top;
+}
 .row.mb-2.text-center.fw-bold {
     font-weight: bold;
 }
@@ -247,11 +264,15 @@ hr {
 }
 
 .modal-dialog {
+    display: flex;
+    align-items: center;
+    justify-content: center;
     max-width: 80vw;
     max-height: 90vh;
     width: 100%;
     margin: auto;
 }
+
 .room__name {
     font-weight: 500;
 }
@@ -265,7 +286,7 @@ hr {
 
 @media (max-width: 768px) {
     .modal-dialog {
-        max-width: 95vw;
+        /* max-width: 95vw; */
     }
 }
 .main-hour-out{
@@ -752,7 +773,11 @@ h5 {
 .cancel-booking {
     width: 50%;
 }
-
+.message-error-edit{
+    display: none;
+    padding: 5px 10px;
+    font-size: 13px
+}
 .message-error{
     display: none;
     padding: 5px 10px;
@@ -821,7 +846,7 @@ h5 {
     box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
     padding: 8px 0;
     z-index: 1000;
-    right: 18px;
+    /* right: 18px; */
   }
   .menu_dropdown_check_in.show {
     display: block;
@@ -849,7 +874,7 @@ h5 {
   svg {
     cursor: pointer;
   }
-.deposit{
+.deposit,.discount{
     padding: 0px 3px !important;
     text-align: end;
     /* width: 135px !important; */
@@ -865,6 +890,70 @@ h5 {
 }
 .fz-13{
     font-size: 13px;
+}
+.search-container {
+    width: 50%;
+    display: flex;
+    align-items: center;
+    gap: 8px;
+    /* Khoảng cách giữa input và button */
+}
+
+.search-container select,
+.search-container input,
+.search-container p {
+    flex: 1;
+    /* Chia đều kích thước */
+    height: 40px;
+    /* Đảm bảo chiều cao bằng nhau */
+}
+
+.search-container p {
+    margin: 0;
+    height: 40px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    padding: 0 15px;
+    background-color: #007bff;
+    color: white;
+    border-radius: 5px;
+    cursor: pointer;
+    user-select: none;
+}
+
+.search-container p:hover {
+    background-color: #0056b3;
+}
+.text-left {
+    text-align: left !important;
+}
+
+.text-right {
+    text-align: right !important;
+}
+
+.text-center {
+    text-align: center;
+}
+#show-customer {
+    border-collapse: collapse;
+    /* Gộp viền bảng */
+}
+
+
+#show-customer th,
+#show-booked-room th{
+    line-height: 1 !important;
+    padding: 6px !important;
+}
+
+#show-customer td,
+#show-booked-room td {
+    height: 30px !important;
+    overflow: hidden;
+    white-space: nowrap;
+    /* Ngăn xuống dòng để giảm chiều cao */
 }
 .table-fz-13,
 .table-fz-13 th,
