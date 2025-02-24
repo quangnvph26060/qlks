@@ -184,6 +184,21 @@
                 }
             });
         });
+        function updateScroll() {
+        const listBooking = document.getElementById("list-booking");
+        const rows = listBooking.querySelectorAll("tr");
+
+        if (rows.length > 3) {
+            listBooking.style.display = "block";
+            listBooking.style.height = "150px"; // Giới hạn chiều cao
+            listBooking.style.overflowY = "auto"; // Hiển thị thanh cuộn
+        } else {
+            listBooking.style.height = "none";
+            listBooking.style.overflowY = "visible"; // Không có thanh cuộn nếu ít hơn hoặc bằng 3 hàng
+        }
+    }
+
+    updateScroll();
         window.toggleRepresentatives = function(id, button) {
             const rows = document.querySelectorAll('[id="rep-' + id + '"]'); // Lấy tất cả các hàng có cùng ID
             rows.forEach(row => row.classList.toggle('show')); // Toggle từng hàng
