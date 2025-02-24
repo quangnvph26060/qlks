@@ -1,4 +1,4 @@
-@extends('admin.layouts.app')
+@extends('admin.layouts.master_iframe')
 @section('panel')
     <div class="row">
         <div class="col-lg-12">
@@ -74,8 +74,18 @@
             <div class="row">
         
               <div class="col-md-12 d-flex">
-                    <a class="btn btn-sm btn-outline--primary" href="{{ route('admin.hotel.room.type.create') }}"><i
-                    class="las la-plus mt-1 p-1"></i></a>
+                 
+                    <a class="mr-1" href="{{ route('admin.hotel.room.type.all') }}">
+                        <button class="btn btn-sm btn-outline--primary" data-modal_title="Làm mới">
+                            <i class="fa fa-repeat p-2"></i>
+                        </button>
+                    </a>
+                    <a href="{{ route('admin.hotel.room.type.create') }}">
+                     <button class="btn btn-sm btn-outline--primary" data-modal_title="Thêm mới phòng" type="button"
+                                                 style="margin-left:10px">
+                        <i class="las la-plus p-2"></i>
+                    </button>
+                    </a>          
                     <form role="form" enctype="multipart/form-data" action="{{route('admin.hotel.room.type.search')}}">
                         <div class="form-group mb-0" style="display: flex;">
                             <input class="searchInput" name="code"
@@ -98,7 +108,7 @@
             
                              </select>
                             
-                            <button type="submit" class="btn btn-primary" style="margin-left: 8px;height: 35px">
+                            <button type="submit" class="btn btn-primary" style="margin-left: 8px;height: 40px">
                                 <i class="las la-search p-1"></i>
                             </button>
                         </div>

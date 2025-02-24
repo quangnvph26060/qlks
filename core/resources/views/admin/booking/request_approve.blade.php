@@ -1,4 +1,4 @@
-@extends('admin.layouts.app')
+@extends('admin.layouts.master_iframe')
 @section('panel')
     <div class="row gy-4 booking-wrapper">
         <div class="col-xxl-12 col-xl-12">

@@ -1,8 +1,39 @@
-@extends('admin.layouts.app')
+@extends('admin.layouts.master_iframe')
 @push('breadcrumb-plugins')
-    <button class="btn btn-outline--primary" data-bs-target="#addModal" data-bs-toggle="modal">
-        <i class="las la-plus"></i>
-    </button>
+<div class="card-body mt-1">
+            <div class="row">
+        
+              <div class="col-md-12 d-flex">
+    <a class="mr-1" href="{{ route('admin.hotel.room.all') }}">
+        <button class="btn btn-sm btn-outline--primary" data-modal_title="Làm mới">
+                            <i class="fa fa-repeat p-2"></i>
+        </button>
+    </a>
+    <a>
+         <button class="btn btn-sm btn-outline--primary" data-bs-target="#addModal" data-bs-toggle="modal"
+             style="margin-left:10px">
+                <i class="las la-plus p-2"></i>
+         </button>
+    </a>       
+       
+    <form role="form" enctype="multipart/form-data" action="{{ route('admin.hotel.room.all') }}" method="GET" id="searchForm" >
+                    <div class="form-group position-relative mb-0">
+                            <input placeholder="Nhập Mã/Tên loại phòng"
+                                   style="height: 35px;border: 1px solid rgb(121, 117, 117, 0.5);margin-left: 8px;"
+                                   name="keyword"
+                    id="searchInput"
+                    value="{{ request('keyword') }}">
+                         
+                     <a>
+                        <button type="submit" class="btn btn-primary">
+                                <i class="las la-search p-2"></i>
+                        </button>
+                    </a>
+                </div>
+            </form>
+            </div>
+            </div>
+</div>
     {{-- <x-search-form filter='yes' /> --}}
 @endpush
 @section('panel')
@@ -10,7 +41,7 @@
         <div class="col-lg-12">
             <div class="card b-radius--10">
                 <div class="card-body p-0">
-                    <div class="table-responsive--md table-responsive" style="overflow-x: visible;">
+                    <div class="table-responsive--md table-responsive" style="overflow-x: auto;">
                         <table class="table--light style--two table" >
                             <thead>
                                 <tr>
@@ -21,11 +52,10 @@
                                     <th>@lang('Mã loại phòng')</th>
                                     <th>@lang('Tên loại phòng')</th>
                                     <th>@lang('Trạng thái')</th>
-                            
                                 </tr>
                             </thead>
                             <tbody>
-                                @forelse($rooms as  $room)
+                                @forelse($rooms as $id => $room)
                                     <tr>
                                         @can(['admin.hotel.room.status', 'admin.hotel.room.add'])
                                         <td style="width:20px;">
@@ -45,7 +75,12 @@
                                         </td>
                                          
                                         @endcan     
-                                        <td style="text-align:right">{{ $loop->iteration }}</td>
+                                        <td style="text-align:right">
+                                            @php
+                                            $stt = $rooms->total() - ($rooms->currentPage() - 1) * $rooms->perPage() - $id;
+                                            @endphp
+                                            {{ $stt }}
+                                        </td>
                                         <td> {{ $room->code ?? 'Chưa có mã phòng' }}</td>
                                         <td>{{ __($room->name) }}</td>
 
@@ -110,7 +145,7 @@
                             </div>
                         </div>
                         <div class="modal-footer">
-                            <button class="btn btn--primary w-100 h-45" type="submit">@lang('Submit')</button>
+                            <button class="btn btn--primary w-100 h-45" type="submit">@lang('Lưu lại')</button>
                         </div>
                     </form>
                 </div>
@@ -153,7 +188,7 @@
                             </div>
                         </div>
                         <div class="modal-footer">
-                            <button class="btn btn--primary w-100 h-45" type="submit">@lang('Submit')</button>
+                            <button class="btn btn--primary w-100 h-45" type="submit">@lang('Lưu lại')</button>
                         </div>
                     </form>
                 </div>
@@ -162,25 +197,7 @@
     @endcan
 
     @can('admin.hotel.room.search')
-    @push('breadcrumb-plugins')
-        <!-- Form tìm kiếm trực tiếp -->
-        <form action="{{ route('admin.hotel.room.all') }}" method="GET" id="searchForm" class="mx-5">
-            <div class="input-group mt-1">
-                <input
-                    type="search"
-                    class="form-control"
-                    name="keyword"
-                    id="searchInput"
-                    value="{{ request('keyword') }}"
-                    placeholder="Tìm kiếm theo tiêu đề hoặc mô tả..."
-                    onsearch="handleSearchClear()" style="padding: .375rem .75rem;height:auto">
-                <!-- Nút tìm kiếm -->
-                <button type="submit" class="btn btn-primary">
-                    <i class="las la-search"></i>
-                </button>
-            </div>
-        </form>
-    @endpush
+
 @endcan
 
     @can('admin.hotel.room.status')

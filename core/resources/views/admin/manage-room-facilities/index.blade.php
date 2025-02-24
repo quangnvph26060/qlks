@@ -1,4 +1,4 @@
-@extends('admin.layouts.app')
+@extends('admin.layouts.master_iframe')
 @section('panel')
     <div class="row">
         <!-- Khối bên phải: Danh sách danh mục -->
@@ -43,14 +43,15 @@
                             <table class="table--light style--two table" id="data-table">
                                 <thead>
                                     <tr>
+                                         @can('admin.hotel.room.facilities.all')
+                                            <th>@lang('Hành động')</th>
+                                        @endcan
                                         <th>@lang('STT')</th>
                                         <th>@lang('Mã phòng')</th>
                                         <th>@lang('Loại phòng')</th>
                                         <th>@lang('Số phòng')</th>
                                         <th>@lang('Cơ sở vật chất')</th>
-                                        @can('admin.hotel.room.facilities.all')
-                                            <th>@lang('Hành động')</th>
-                                        @endcan
+                                
                                     </tr>
                                 </thead>
                                 <tbody>
@@ -68,10 +69,18 @@
     </div>
     @can('')
         @push('breadcrumb-plugins')
-            <button type="button" class="btn btn-outline--primary mt-1 btn-add">
-                <i class="las la-plus"></i>
+         
+            <a href="{{ route('admin.hotel.room.facilities.all') }}">
+                    <button class="btn btn-outline--primary">
+                    <i class="fa fa-repeat p-2"></i>
+                    </button>
+            </a>
+            <a>
+                 <button type="button" class="btn btn-outline--primary btn-add">
+                 <i class="las la-plus p-2"></i>
 
-            </button>
+                 </button>
+            </a>      
         @endpush
     @endcan
 
@@ -176,6 +185,19 @@
 
 
 @endsection
+@push('style-lib')
+    <link rel="stylesheet" type="text/css" href="{{ asset('assets/admin/css/daterangepicker.css') }}">
+    <link rel="stylesheet" href="{{ asset('assets/global/css/modal.css') }}">
+    
+    <style>
+            .navbar__right{
+                display: none;
+            }
+            #navbar-wrapper{
+                padding: 0px 30px 20px;
+            }
+    </style>
+@endpush
 
 @push('script')
     <script src="{{ asset('assets/admin/js/vendor/sweetalert2@11.js') }}"></script>
@@ -298,6 +320,31 @@
 
             });
         })(jQuery);
+        $(document).ready(function() {
+
+                $(document).on('click', '.svg-icon', function(e) {
+                    e.stopPropagation();
+                    const $dropdown = $(this).siblings('.menu_dropdown');
+                    $('.menu_dropdown').not($dropdown).removeClass('show');
+                    $dropdown.toggleClass('show');  
+                });
+                $(document).on('click', function() {
+                    $('.menu_dropdown').removeClass('show');
+                });
+                $(document).on('click', '.svg_menu_check_in', function(e) {
+                    e.stopPropagation();
+                    const $dropdown = $(this).siblings('.menu_dropdown_check_in');
+                    $('.menu_dropdown_check_in').not($dropdown).removeClass('show');
+                    $dropdown.toggleClass('show');
+                });
+                $(document).on('click', function() {
+                    $('.menu_dropdown_check_in').removeClass('show');
+                });
+                $(document).on('click', function() {
+                    $('.menu_dropdown').removeClass('show');
+                });
+
+                });
     </script>
 @endpush
 
