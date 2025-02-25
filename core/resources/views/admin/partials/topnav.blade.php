@@ -276,7 +276,7 @@
             event.stopPropagation();
             let dataKey = $(this).attr('data-key'); // Lấy giá trị data-key từ tab
             if (localStorage.getItem('activeDataIds')) {
-                let activeDataIds = JSON.parse(localStorage.getItem('activeDataIds'));
+                let activeDataIds = JSON.parse(localStorage.getItem('activeDataIds') ?? "");
                 activeDataIds = activeDataIds.filter(item => {
                     let key = Object.keys(item)[0]; // Lấy key của object
                     return key !== dataKey; // Chỉ giữ lại những object KHÔNG có key trùng dataKey

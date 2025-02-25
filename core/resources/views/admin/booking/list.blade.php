@@ -229,26 +229,22 @@
     <style scoped>
           #data-table tbody tr:hover {
             background-color: #f0f0f0;
-            /* Màu nền khi hover */
             cursor: pointer;
-            /* Con trỏ chuột đổi thành dạng pointer */
         }
         #show-room tr td {
-        padding: 6px 2px !important;
-        line-height: 0;    /* Giảm chiều cao dòng */
-    }
-    #dropdown-menu {
-            position: fixed; /* hoặc fixed */
-            z-index: 9999; /* Số lớn để đè lên các phần khác */
-            background: white; /* Đảm bảo nội dung rõ ràng */
-            box-shadow: 0px 4px 10px rgba(0, 0, 0, 0.2); /* Tạo hiệu ứng nổi bật */
+            padding: 6px 2px !important;
+            line-height: 0;   
+        }
+        #dropdown-menu {
+            position: fixed; 
+            z-index: 9999; 
+            background: white; 
+            box-shadow: 0px 4px 10px rgba(0, 0, 0, 0.2);
         }
         .table-responsive--md {
             overflow-x: auto;
-            /* Enable horizontal scrolling if the table overflows */
+           
         }
-
-        /* Optional: Adjust the font size and padding for smaller screens */
         @media (max-width: 768px) {
             .table--light {
                 font-size: 12px;
