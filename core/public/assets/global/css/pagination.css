@@ -47,7 +47,13 @@
     border-radius: 50%;
     font-family: 'Courier New', Courier, monospace;
 }
+.text-left {
+    text-align: left !important;
+}
 
+.text-right {
+    text-align: right !important;
+}
 .btn-toggle:hover {
     background-color: #0056b3;
     border-color: #0056b3;

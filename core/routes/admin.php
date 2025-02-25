@@ -385,7 +385,8 @@ Route::middleware('admin', 'adminPermission')->group(function () {
         Route::post('addPrice', 'addPrice')->name('manage.addPrice');
         Route::post('editPriceRoomType/{id}', 'editPriceRoomType')->name('manage.editPriceRoomType');
         Route::get('setupPriceRoomType', 'setupPriceRoomType')->name('manage.setupPriceRoomType');
-        Route::post('updateRoomTypePrice', 'updateRoomTypePrice')->name('manage.updateRoomTypePrice');
+        Route::post('updateRoomTypePrice/{id}', 'updateRoomTypePrice')->name('manage.updateRoomTypePrice');
+        Route::post('findRooomType', 'findRooomType')->name('manage.findRooomType');
         Route::post('deleteRoomTypePrice/{id}', 'deleteRoomTypePrice')->name('manage.deleteRoomTypePrice');
         Route::get('showRoomTypePrice', 'showRoomTypePrice')->name('manage.showRoomTypePrice');
         Route::post('deletePriceRoomType/{id}', 'deletePriceRoomType')->name('manage.deletePriceRoomType');

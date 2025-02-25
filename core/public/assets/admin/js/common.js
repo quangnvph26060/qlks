@@ -96,6 +96,13 @@ function formatMoneyInput(input) {
         input.value = "";
     }
 }
+function formatDateTime(inputDateTime) {
+    var dateTimeParts = inputDateTime.split(' ');
+    var dateParts = dateTimeParts[0].split('-');
+    var formattedDate = dateParts[2] + '/' + dateParts[1] + '/' + dateParts[0];
+    var formattedDateTime = formattedDate + ' ' + dateTimeParts[1];
+    return formattedDateTime;
+}
 
 function calculateTotalPrice() {
     let totalPrice = 0;

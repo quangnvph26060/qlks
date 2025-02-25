@@ -67,13 +67,7 @@ function formatDate(inputDate) {
     return formattedDate;
 }
 
-function formatDateTime(inputDateTime) {
-    var dateTimeParts = inputDateTime.split(' ');
-    var dateParts = dateTimeParts[0].split('-');
-    var formattedDate = dateParts[2] + '/' + dateParts[1] + '/' + dateParts[0];
-    var formattedDateTime = formattedDate + ' ' + dateTimeParts[1];
-    return formattedDateTime;
-}
+
 
 function showRoom(data = "", checkInDateValue = "", checkOutDateValue = "", selectedOptionHangPhong = "",
     selectedOptionNamePhong = "", selectedOptionStatusPhong = "") {
