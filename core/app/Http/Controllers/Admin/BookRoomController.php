@@ -808,48 +808,50 @@ class BookRoomController extends Controller
             'option_customer_source' => $customer->group_code ?? "",
         ]);
     }
-    // get room booking
+    // get room booking 123
     public function getRoomBooking(Request $request)
     {
-        $data = RoomBooking::query()
-             ->active()
-            ->where('unit_code', unitCode());
-
-        if ($request->filled('name')) {
-            $data->where('booking_id', 'like', '%' . $request->name . '%');
-        }
-
-        $data = $data->selectRaw('
-                booking_id,
-                customer_name,
-                phone_number, 
-                document_date,
-                SUM(total_amount) as total_amount, 
-                SUM(guest_count) as total_guest, 
-                SUM(discount) as total_discount,
-                SUM(deposit_amount) as deposit_amount,
-                COUNT(*) as total_records
-            ')
-            ->groupBy('booking_id', 'customer_name', 'phone_number', 'document_date')
-            ->get();
+        $data = RoomBooking::query() // Đưa array vào cho dễ đọc
+        // ->active()
+        ->where('unit_code', unitCode())
+        ->where('status', '=', 0)
+        ->whereDate('checkin_date', '>=', today());
+    
+    // Lọc theo name nếu có
+    if ($request->filled('name')) {
+        $data->where('booking_id', 'like', '%' . $request->name . '%');
+    }
+    
+    // Lấy dữ liệu và sắp xếp theo created_at
+    $groupedBookings = $data->orderByDesc('created_at')->with(['room', 'admin'])->get()->groupBy('booking_id');
+    
+    
 
         return response()->json([
             'status' => 'success',
-            'data' => $data,
+            'data' => $groupedBookings,
         ]);
     }
 
     public function findRoomBookingId(Request $request)
     {
         $data = [];
-        $roomBooking  = RoomBooking::query()
-        // ->active()
-        ->where('unit_code', unitCode())
-            ->where('booking_id', $request->booking_id)
-            ->with(['room', 'room.roomType', 'customer' => function ($query) {
-                $query->whereNotNull('customer_code'); // Chỉ lấy khách hàng có mã customer_code
-            }])
-            ->get();
+        $roomBooking = [];
+        foreach ($request->booking_id as $item) {
+            $result  = RoomBooking::query()
+            // ->active()
+                ->where('unit_code', unitCode())
+                ->where('id', $item['id'])
+                    ->where('booking_id', $item['book'])
+                    ->with(['room', 'room.roomType', 'customer' => function ($query) {
+                        $query->whereNotNull('customer_code'); // Chỉ lấy khách hàng có mã customer_code
+                    }])
+                    ->first();
+            if ($result) { 
+                $roomBooking[] = $result;
+            }
+        }
+      
 
         foreach ($roomBooking as $roomBook) {
             $bookingId = $roomBook['booking_id'];

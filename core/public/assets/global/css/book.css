@@ -121,9 +121,13 @@ body.modal-open {
     margin-left: 8px;
 }
 
-.btn-submit-search-book,.btn-submit-sync-book {
+.btn-submit-search-book,.btn-submit-sync-book,.add-book-room,.check-in-room{
     padding-right: 15px;
     padding-left: 15px;
+    height: 35px;
+    display: flex;
+    align-items: center;
+    width: 46px;
 }
 
 .pt-90 {

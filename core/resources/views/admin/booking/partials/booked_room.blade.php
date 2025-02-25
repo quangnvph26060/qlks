@@ -15,9 +15,10 @@
                 </div>
             </div>
             <div class="modal-body overflow-add-room">
-                <table class="table mt-10" id="data-table">
+                <table class="table--light style--two table mt-10" id="data-table">
                     <thead>
                         <tr>
+                            <th></th>
                             <th data-table="Mã đặt phòng" class="text-left">Mã đặt phòng</th>
                             <th data-table="Số lượng phòng" class="text-right">Số lượng phòng</th>
                             <th data-table="Ngày chứng từ" class="text-right">Ngày chứng từ</th>
@@ -26,7 +27,7 @@
                             <th data-table="Số lượng người" class="text-right">Số lượng người</th>
                             <th data-table="Tổng tiền" class="text-right">Tổng tiền</th>
                             <th data-table="Tổng đặt cọc" class="text-right">Tổng đặt cọc</th>
-                            <th data-table="Thao tác">Thao tác</th>
+                            <th data-table="Tổng đặt cọc" class="text-right">Tổng giảm giá</th>
                         </tr>
                     </thead>
 

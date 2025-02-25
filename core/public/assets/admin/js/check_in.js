@@ -533,7 +533,7 @@ $(document).ready(function () {
         loadRoomBookings(1, data);
     });
 });
-//123
+
 function loadRoomBookings(page = 1, data) {
     $.ajax({
         url: allCheckInUrl,
@@ -727,7 +727,7 @@ $(document).on('click', '.booked_room_edit', function () {
                         $('.phone-edit').val(item.phone_number);
 
                         item.room_bookings.forEach((room, index) => {
-                            if(index === 0) {
+                            if (index === 0) {
                                 $('.id_room_booking').val(room.booking_id);
                             }
                             let [checkinDate, checkinTime] = room.checkin_date.split(' ');
@@ -755,16 +755,16 @@ $(document).on('click', '.booked_room_edit', function () {
                                             <input type="number" min="1" name="adult" class="form-control adult"  value="${room.guest_count}"  style="margin-left: 16px;">
                                         </td>
                                         <td >
-                                            <select id="bookingType" class="form-select" name="optionRoom" style="width: 93px; font-size:15px">
+                                            <select id="bookingType" class="form-select" name="optionRoom" >
                                                 <option value="ngay">Ngày</option>
                                                 <option value="gio">Giờ</option>
                                             </select>
                                         </td>
                                         <td>
                                             <div class="d-flex align-items-center justify-content-start" style="gap: 10px">
-                                                <input type="date" name="checkInDate" id="date-book-room" class="form-control date-book-room"  value="${checkinDate}" readonly>
+                                                <input type="date" name="checkInDate" id="date-book-room" class="form-control date-book-room"  value="${formattedDates}" readonly>
 
-                                                <input type="time" name="checkInTime" id="time-book-room" class="form-control time-book-room"  value="${checkinTime}" readonly>
+                                                <input type="time" name="checkInTime" id="time-book-room" class="form-control time-book-room"  value="${formattedTimes}" readonly>
                                             </div>
                                         </td>
                                         <td>
@@ -978,13 +978,13 @@ $('.booking-form-edit').on('submit', function (e) {
         var deposit = $(this).closest('tr').find('input[name="deposit"]').val();
         var discount = $(this).closest('tr').find('input[name="discount"]').val();
         const errorDiv = document.querySelector('.message-error-edit');
-        if (new Date(checkOutDate) <= new Date(checkInDate)) {
-            errorDiv.textContent = `Ngày trả phòng phải lớn hơn ngày nhận phòng`;
-            errorDiv.classList.add('alert', 'alert-danger');
-            errorDiv.style.display = 'block';
-            hasError = false;
-            return false;
-        }
+        // if (new Date(checkOutDate) <= new Date(checkInDate)) {
+        //     errorDiv.textContent = `Ngày trả phòng phải lớn hơn ngày nhận phòng`;
+        //     errorDiv.classList.add('alert', 'alert-danger');
+        //     errorDiv.style.display = 'block';
+        //     hasError = false;
+        //     return false;
+        // }
         // Thêm thông tin của phòng vào mảng
         roomData.push({
             roomId: roomId,
@@ -1079,7 +1079,7 @@ $('.add-customer-booked').on('click', function () {
     let Id = selectedCustomer.data('id');
     findCustomerById(Id)
 });
-function findRoomBookingId(id) {
+function findRoomBookingId(id) { 
     $.ajax({
         url: findRoomBookingIdUrl,
         type: 'POST',
@@ -1087,8 +1087,7 @@ function findRoomBookingId(id) {
             booking_id: id,
         },
         success: function (data) {
-            if(data.status === 'success')
-            {
+            if (data.status === 'success') {
                 $('#bookingForm').attr('action', `${CheckInUrl}`);
                 let totalPrice, total_deposit_amount, total_deposit_discount = 0;
                 var tbody = $('#list-booking');
@@ -1099,7 +1098,7 @@ function findRoomBookingId(id) {
                     $('input[name="customer_code"]').val(item.customer_code);
                     $('input[name="id_room_booking"]').val(item.booking_id);
                     $("#select-customer-source").val(item.user_source).change();
-                    item.rooms.forEach(function(room){
+                    item.rooms.forEach(function (room) {
                         let checkinDateTime = room.checkin_date;
 
                         let [dateIn, timeIn] = checkinDateTime.split(" ");
@@ -1132,9 +1131,9 @@ function findRoomBookingId(id) {
                             </td>
                              <td>
                                 <div class="d-flex align-items-center justify-content-start" style="gap: 3px">
-                                    <input type="date" name="checkInDate" id="date-book-room" class="form-control date-book-room"  value="${dateIn}" readonly>
+                                    <input type="date" name="checkInDate" id="date-book-room" class="form-control date-book-room"  value="${formattedDates}" readonly>
 
-                                    <input type="time" name="checkInTime" id="time-book-room" class="form-control time-book-room"  value="${timeIn}" readonly>
+                                    <input type="time" name="checkInTime" id="time-book-room" class="form-control time-book-room"  value="${formattedTimes}" readonly>
                                 </div>
                             </td>
                             <td>
@@ -1163,7 +1162,7 @@ function findRoomBookingId(id) {
                             </td>
                         </tr>
                     `;
-                    tbody.append(tr);
+                        tbody.append(tr);
                     });
 
                 });
@@ -1272,21 +1271,23 @@ function findRoomBookingId(id) {
         }
     });
 }
+
 $('.add-booked-room-form').on('click', function () {
-    let selectedCustomer = $('#show-booked-room input[type="radio"]:checked');
-    if (selectedCustomer.length === 0) {
+    let selectedRooms = $('#show-booked-room input[type="checkbox"]:checked'); 
+    if (selectedRooms.length === 0) {
         notify('error', 'Vui lòng chọn đặt phòng');
         return;
     }
-    let Id = selectedCustomer.data('id');
-    findRoomBookingId(Id)
-});
-$(document).on("dblclick", "#data-table #show-booked-room tr", function () {
-    let customerId = $(this).find('input[type="radio"]').data("id");
-    if (!customerId) {
-        return;
-    }
-    findRoomBookingId(customerId);
+    let selectedData = []; // Mảng chứa các ID đã chọn
+    selectedRooms.each(function () {
+        selectedData.push({
+            id: $(this).data('id'),         // Lấy data-id
+            book: $(this).data('book'),     // Lấy data-book
+            date: $(this).data('date'),     // Lấy ngày check-in
+            room_code: $(this).data('id') // Lấy loại phòng
+        });
+    });
+    findRoomBookingId(selectedData); // Gọi hàm xử lý với danh sách ID
 });
 
 // function showRoomBooking (data){
@@ -1380,25 +1381,90 @@ function showBookedRoom(value = "", option_customer_source = "") {
         success: function (data) {
             // <p data-id="${ item.id }" data-room_type_id="${ item.room_type_id }" class="add-book-room" id="add-book-room">Đặt phòng</p>
             var tbody = $('#show-booked-room');
+            var tr = "";
             tbody.empty();
-            data.data.forEach(function (item) {
-                var tr = `
-                <tr class="booked-room-row">
-                    <td class="text-left "> ${item.booking_id} </td>
-                     <td class="text-right "> ${item.total_records} </td>
-                     <td class="text-right "> ${item.document_date} </td>
-                    <td class="text-left "> ${item.customer_name} </td>
-                    <td class="text-right"> ${item.phone_number} </td>
-                      <td class="text-right"> ${item.total_guest} </td>
-                        <td class="text-right"> ${formatCurrency(item.deposit_amount)} </td>
-                          <td class="text-right"> ${formatCurrency(item.total_discount)} </td>
-                    <td class="text-center">
-                        <input type="radio" name="booked_room_select" data-id="${item.booking_id}">
-                    </td>
-                </tr>
-            `;
-                tbody.append(tr);
+
+            var data = data.data;
+            Object.entries(data).forEach(function ([bookingId, bookingData], index) {
+                let firstRecord = bookingData[0]; let collapseContent = '';
+                let totalGuests = bookingData.reduce((sum, booking) => sum + (booking.guest_count || 0), 0);
+                const totalPrice = bookingData.reduce((sum, booking) => sum + parseFloat(booking.total_amount || 0), 0);
+                const totalDiscount = bookingData.reduce((sum, booking) => sum + parseFloat(booking.discount || 0), 0);
+                const totalAmount = bookingData.reduce((sum, booking) => sum + parseFloat(booking.deposit_amount || 0), 0);
+                bookingData.forEach(function (record, idx) {
+                
+                    if (idx === 0) {
+                        tr += `
+                         
+                                        <tr data-id="${record['id']}">
+                                            <td>
+                                                <button class="btn btn-link btn-toggle" type="button"
+                                                onclick="toggleRepresentatives('${record['booking_id']}', this)"></button>
+                                            </td>
+                                            <td class="text-left">${record['booking_id']}</td>
+                                            <td class="text-right">${bookingData.length}</td>
+                                            <td class="text-right">${formatDateTime(record['document_date'])}</td>
+                                            <td class="text-left">${record['customer_name'] ? record['customer_name'] : 'N/A'}</td>
+                                            <td class="text-right">${record['phone_number'] ? record['phone_number'] : 'N/A'}</td>
+                                            <td class="text-right">${totalGuests}</td>
+                                            <td class="text-right">${formatCurrency(totalPrice)}</td>
+                                            <td class="text-right">${formatCurrency(totalAmount)}</td>   
+                                            <td class="text-right">${formatCurrency(totalDiscount)}</td>
+                                        </tr>
+                                          <tr class="collapse" id="rep-${firstRecord['booking_id']}">
+                                    <td colspan="12">
+                                        <table class="table--light style--two  table">
+                                            <thead>
+                                                <tr>
+                                                    <th colspan="6">Phòng</th>
+                                                    <th>Ngày check-in</th>
+                                                    <th>Ngày check-out</th>
+                                                    <th>Số người</th>
+                                                    <th>Tổng tiền</th>
+                                                    <th>Đặt cọc</th>
+                                                    <th>Giảm giá</th>
+                                                    <th>Ghi chú</th>
+                                                    <th>Thao tác</th>
+                                                </tr>
+                                            </thead>
+                                            <tbody id="room-booking-detail">
+                                    `;
+                    }
+                        tr += `
+                              
+                                    <tr class="background-tr">
+                                        <td class="text-left" colspan="6">${record['room']['room_number']}</td>
+                                        <td class="text-right w-10">${formatDateTime(record['checkin_date'])}</td>
+                                        <td class="text-right w-10" >${formatDateTime(record['checkout_date'])}</td>
+                                      
+                                        <td class="text-right w-10" >${record['guest_count']}</td>
+                                        <td class="text-right w-10">${formatCurrency(record['total_amount'])}</td>
+                                        <td class="text-right w-10">${formatCurrency(record['deposit_amount'])}</td>
+                                        <td class="text-right w-10">${formatCurrency(record['discount'])}</td>
+                                        <td class="text-right">${record['note']}</td>
+                                        <td clas="text-center" style="text-align: center;">
+                                            <input type="checkbox" data-book="${firstRecord['booking_id']}"
+                                             data-date="${record['checkin_date']}" data-id="${record['id']}" 
+                                             data-room_type_id="${record['room']['room_type_id']}"
+                                             ${record['status'] === 1 ? 'disabled' : ''}
+                                              id="checkbox-${record['room_code']}">
+                                        </td>
+                                    </tr>
+                             
+                                `;
+                    
+                    if (idx === bookingData.length - 1) {
+                        tr += `
+                                                </tbody>
+                                            </table>
+                                        </td>
+                                    </tr>
+                                `;
+                    }
+
+                });
             });
+            tbody.append(tr);
             // hạng phòng
             // var selected_customer_source = $('#selected-customer-source');
             // selected_customer_source.empty();
@@ -1527,13 +1593,13 @@ $('.booking-form').on('submit', function (e) {
         var discount = $(this).closest('tr').find('input[name="discount"]').val();
         // console.log(roomId, roomTypeId, checkInDate, checkInTime, checkOutDate, checkOutTime, adult, note);
         const errorDiv = document.querySelector('.message-error');
-        if (new Date(checkOutDate) < new Date(checkInDate)) {
-            errorDiv.textContent = `Ngày trả phòng phải lớn hơn ngày nhận phòng`;
-            errorDiv.classList.add('alert', 'alert-danger');
-            errorDiv.style.display = 'block';
-            hasError = false;
-            return false;
-        }
+        // if (new Date(checkOutDate) < new Date(checkInDate)) {
+        //     errorDiv.textContent = `Ngày trả phòng phải lớn hơn ngày nhận phòng`;
+        //     errorDiv.classList.add('alert', 'alert-danger');
+        //     errorDiv.style.display = 'block';
+        //     hasError = false;
+        //     return false;
+        // }
         // Thêm thông tin của phòng vào mảng
         roomData.push({
             roomId: roomId,
@@ -1554,7 +1620,7 @@ $('.booking-form').on('submit', function (e) {
         roomData.forEach(function (item) {
             const roomDates = getDatesBetween(item['checkInDate'], item['checkInTime'],
                 item['checkOutDate'], item['checkOutTime'], item['roomId'], item['roomTypeId'],
-                item['adult'], item['note'], item['deposit'], item['discount'],item['roomBookingId']);
+                item['adult'], item['note'], item['deposit'], item['discount'], item['roomBookingId']);
 
             roomDates.forEach(function (date, index) {
                 formData.push({

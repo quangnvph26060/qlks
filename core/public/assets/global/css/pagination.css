@@ -107,3 +107,6 @@
     white-space: nowrap;
     /* Ngăn xuống dòng để giảm chiều cao */
 }
+.text-center{
+    text-align: center;
+}

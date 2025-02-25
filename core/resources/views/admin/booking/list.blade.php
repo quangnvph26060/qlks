@@ -1,6 +1,6 @@
 @extends('admin.layouts.master_iframe')
 @section('panel')
-
+<div class="pagination-container mb-1"></div>
     <div class="row">
         {{-- <div class="col-lg-12">
             <div class="d-flex justify-content-between mb-3 row order-1">
@@ -15,7 +15,7 @@
                 </div>
             </div>
         </div> --}}
-        <div class="pagination-container"></div>
+     
         <div class="card b-radius--10">
             <div class="card-body p-0">
                 <div class="table-responsive--md">
@@ -233,10 +233,16 @@
             cursor: pointer;
             /* Con trỏ chuột đổi thành dạng pointer */
         }
-            #show-room tr td {
+        #show-room tr td {
         padding: 6px 2px !important;
         line-height: 0;    /* Giảm chiều cao dòng */
     }
+    #dropdown-menu {
+            position: fixed; /* hoặc fixed */
+            z-index: 9999; /* Số lớn để đè lên các phần khác */
+            background: white; /* Đảm bảo nội dung rõ ràng */
+            box-shadow: 0px 4px 10px rgba(0, 0, 0, 0.2); /* Tạo hiệu ứng nổi bật */
+        }
         .table-responsive--md {
             overflow-x: auto;
             /* Enable horizontal scrolling if the table overflows */

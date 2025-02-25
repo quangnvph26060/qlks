@@ -330,7 +330,13 @@
                 color: white !important;
             } */
 
-     
+        #dropdown-menu {
+            position: fixed; /* hoặc fixed */
+            z-index: 9999; /* Số lớn để đè lên các phần khác */
+            background: white; /* Đảm bảo nội dung rõ ràng */
+            box-shadow: 0px 4px 10px rgba(0, 0, 0, 0.2); /* Tạo hiệu ứng nổi bật */
+        }
+
 
     
     </style>
