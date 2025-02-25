@@ -342,7 +342,7 @@ function addRoomInBooking(data, list) {
                                      <input type="number" min="1" name="adult" class="form-control adult"  value="1"  style="margin-left: 16px;">
 
                                 </td>
-                                <td style="display: flex; justify-content: center">
+                                <td >
                                     <select id="bookingType" class="form-select" name="optionRoom" style="width: 93px; font-size:15px">
                                          <option value="ngay">Ngày</option>
                                          <option value="gio">Giờ</option>

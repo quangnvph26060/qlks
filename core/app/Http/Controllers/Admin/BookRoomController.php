@@ -291,6 +291,21 @@ class BookRoomController extends Controller
 
                 $check_in = $request->method == 'check_in' ? new CheckIn() : new RoomBooking();
 
+                $dateIn  = Carbon::parse($room['dateIn']);
+                $dateOut =  Carbon::parse($room['dateOut']);
+
+                $checkin  = CheckIn::query();
+                $checkin  =  $checkin->where('room_code',$room['room'])
+                ->where('checkin_date', '<=', $dateIn)
+                ->where('checkout_date', '>=', $dateIn)
+                ->exists();
+
+                $is_room = Room::find($room['room']);
+
+                if($checkin){
+                    DB::rollBack();
+                    return response()->json(['error' =>'Phòng '. $is_room['room_number'] . ' đã được đặt trong ngày '.  Carbon::parse($dateIn)->format('d-m-Y') ]);
+                }
                 if ($index == 0) {
                     if ($request->method == 'check_in') {
                         $check_in->check_in_id      = getCode('NP', 12);
@@ -308,11 +323,11 @@ class BookRoomController extends Controller
                 }
 
                 $roomstatus = new RoomStatusHistory();
-                $roomstatus->room_id  = $room['room'];
-                $roomstatus->start_date   = Carbon::parse($room['dateIn']);
-                $roomstatus->end_date  = Carbon::parse($room['dateOut']);
-                $roomstatus->unit_code  = hf('ma_coso');
-                $roomstatus->created_at = now();
+                $roomstatus->room_id      = $room['room'];
+                $roomstatus->start_date   = $dateIn;
+                $roomstatus->end_date     = $dateOut;
+                $roomstatus->unit_code    = hf('ma_coso');
+                $roomstatus->created_at   = now();
 
                 if ($request->method == 'check_in') {
                     $roomstatus->status_code  = 3;
@@ -378,9 +393,27 @@ class BookRoomController extends Controller
                 $roomPice = RoomTypePrice::where('room_type_id', $room['roomType'])->orderByDesc('price_validity_period')->first();
                 $room['dateIn'] = date('Y-m-d H:i:s', strtotime($room['dateIn']));
                 $room['dateOut'] = date('Y-m-d H:i:s', strtotime($room['dateOut']));
+                $dateIn  = Carbon::parse($room['dateIn']);
+                $dateOut =  Carbon::parse($room['dateOut']);
+
+                $checkin  = CheckIn::query();
+                $checkin  =  $checkin->where('room_code',$room['room'])
+                ->where('checkin_date', '<=', $dateIn)
+                ->where('checkout_date', '>=', $dateIn)
+                ->exists();
+
+                $is_room = Room::find($room['room']);
+
+                if($checkin){
+                    DB::rollBack();
+                    return response()->json(['error' =>'Phòng '. $is_room['room_number'] . ' đã được đặt trong ngày '.  Carbon::parse($dateIn)->format('d-m-Y') ]);
+                }
+
                 if (!empty($room['bookingId'])) {
                     $checkRoom = RoomBooking::query()->active();
                     $checkRoom = $checkRoom->where('id', $room['bookingId'])->first();
+
+               
                     if ($checkRoom) {
                         $check_in = new CheckIn();
                         if ($index == 0) {
@@ -392,8 +425,8 @@ class BookRoomController extends Controller
                         $check_in->id_room_booking= $request->id_room_booking;
                         $check_in->room_code      = $room['room'];
                         $check_in->document_date  = now();
-                        $check_in->checkin_date   = Carbon::parse($room['dateIn']);
-                        $check_in->checkout_date  = Carbon::parse($room['dateOut']);
+                        $check_in->checkin_date   = $dateIn;
+                        $check_in->checkout_date  = $dateOut;
                         $check_in->customer_code  = $customer['customer_code'] ?? $request->customer_code;
                         $check_in->customer_name  = $customer['name'] ?? $request->name;
                         $check_in->phone_number   = $customer['phone'] ?? $request->phone;
