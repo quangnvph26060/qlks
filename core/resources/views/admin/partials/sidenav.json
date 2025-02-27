@@ -277,6 +277,14 @@
             },
             {
                 "keyword": [
+                    "Cài đặt mã"
+                ],
+                "title": "Cài đặt mã",
+                "route_name": "admin.hotel.setup.code.all",
+                "menu_active": "admin.hotel.setup.code.all"
+            },
+            {
+                "keyword": [
                     "Danh mục nhân viên"
                 ],
                 "title": "Danh mục nhân viên",

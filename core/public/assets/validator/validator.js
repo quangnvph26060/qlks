@@ -22,10 +22,22 @@ function checkCharacterPhone(value) {
     return false;
 }
 function checkEmail(value) {
-    if (value.match(/^[\w\.-]+@[a-zA-Z\d\.-]+\.[a-zA-Z]{2,}$/)) {
+    if(value == "" || value.trim() === "")
+    {
         return true;
+       
     }
-    return false;
+    else
+    {
+        if (value.match(/^[\w\.-]+@[a-zA-Z\d\.-]+\.[a-zA-Z]{2,}$/)) {
+            return true;
+        }
+        else
+        {
+            return false;
+        }
+    }
+   
 }
 function checkLength(value, length) {
     if (value.length != length) {
@@ -47,6 +59,13 @@ function checkYear(value, year) {
 }
 function checkURL(value) {
     if (value.match(/^http(s)?:\/\/([\w-]+\.)+[\w-]+(\/[\w-.\/?%&=]*)?/)) {
+        return true;
+    }
+    return false;
+
+}
+function checkKey(value) {
+    if (value.match(/^[a-zA-Z0-9]+$/)) {
         return true;
     }
     return false;
@@ -96,6 +115,8 @@ function generateErrorMessage(code, values = []) {
         P001: `${values} không được để trống`,
         P002: `${values} phải là số`,
         TTT001: 'Tên trạng thái không được để trống',
+        KT001: 'Mã code không được chưa ký tự đặc biệt',
+
         MN001: 'Mã nguồn không được để trống',
         TN001: 'Tên nguồn không được để trống',
         MNH001: 'Mã nhóm không được để trống',

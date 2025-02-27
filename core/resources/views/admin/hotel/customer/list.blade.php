@@ -110,14 +110,14 @@
             <div class="row">
                 <div class="col-md-12 col-sm-12 d-flex">
                     <a class="mr-1" href="{{route('admin.hotel.customer.all')}}">
-                        <button class="btn btn-sm btn-outline--primary" data-modal_title="Làm mới">
-                            <i class="fa fa-repeat p-2"></i>
+                        <button class="btn btn--primary" data-modal_title="Làm mới">
+                            <i class="fa fa-repeat p-1"></i>
                         </button>
                     </a>
                     <a>
-                     <button class="btn btn-sm btn-outline--primary" data-modal_title="Thêm mới khách hàng" type="button"
+                     <button class="btn btn--primary" data-modal_title="Thêm mới khách hàng" type="button"
                                                 data-bs-toggle="modal" data-bs-target="#customer" style="margin-left:10px">
-                        <i class="las la-plus p-2"></i>
+                        <i class="las la-plus p-1"></i>
                     </button>
                     </a>                
                     <form role="form" enctype="multipart/form-data" action="{{route('admin.hotel.customer.search')}}">
@@ -135,17 +135,21 @@
                                    style="height: 35px;width:20%;border: 1px solid rgb(121, 117, 117, 0.5); margin-left: 8px;"
                                  placeholder="Địa chỉ" value="{{ $address ?? '' }}">
                             <a>
-                            <button type="submit" class="btn btn-primary">
-                                <i class="las la-search p-2"></i>
+                            <button type="submit" class="btn btn--primary">
+                                <i class="las la-search p-1"></i>
                             </button>
                             </a>
                         </div>
                     </form>
                 </div>
                 @if ($customers->hasPages())
-                    <div >
-                        {{ paginateLinks($customers) }}
-                    </div>
+                <div class="pager-wrap">
+                            <div class="k-widget d-flex">
+                                <div class="pagination-tb" style="font-size: 13px;margin: 0 auto">
+                                    {{ $customers->links('pagination::bootstrap-4') }}
+                                </div>
+                            </div>
+                        </div>
                 @endif
             </div>
         </div>
@@ -163,11 +167,11 @@
                         {!! csrf_field() !!}
                         {{ method_field('POST') }}
                         <div class="row">
-                            <div style="display: grid; grid-template-columns: 50% 50%">
+                            <div>
                                 <div class="mb-3">
                                     <label for="statusCode" class="form-label">Mã khách hàng</label>
                                     <input type="text" class="form-control " name="customer_code" id="add_customer_code"
-                                           placeholder="Nhập mã khách hàng" style="width:98%">
+                                           placeholder="Nhập mã khách hàng" value="{{ $code }}">
                                     <span class="invalid-feedback d-block" style="font-weight: 500"
                                           id="customer_code_error"></span>
                                 </div>
@@ -265,7 +269,7 @@
                         {!! csrf_field() !!}
                         <input type="hidden" id="method" name="_method" value="">
                         <div class="row">
-                            <div style="display: grid; grid-template-columns: 50% 50%">
+                            <div>
                                 <div class="mb-3">
                                     <label for="statusCode" class="form-label">Mã khách hàng</label>
                                     <input type="text" class="form-control " name="customer_code" id="edit-customer-code"
@@ -363,6 +367,16 @@
             #navbar-wrapper{
                 padding: 0px 30px 20px;
             }
+            .pagination .page-item .page-link, .pagination .page-item span{
+                width: 22px !important;
+                height: auto !important;
+                background-color: #4634ff !important;
+                color: white !important;
+            }
+            .pagination .page-item.active .page-link{
+                background-color: #071251 !important;
+            }
+
     </style>
 @endpush
 @push('script')
@@ -383,7 +397,7 @@
                     },
                     ]
                 },
-
+             
                 'name': {
                     'element': document.getElementById('add_name'), // id trong input đó
                     'error': document.getElementById('name_error'), // thẻ hiển thị lỗi
@@ -419,17 +433,20 @@
             //         ]
                 
             //     },
-            //     'email': {
-            //         'element': document.getElementById('add_email'), // id trong input đó
-            //         'error': document.getElementById('email_error'), // thẻ hiển thị lỗi
-            //         'validations': [{
-            //             'func': function(value) {
-            //                 return checkEmail(value);
-            //             },
-            //             'message': generateErrorMessage('Email002') 
-            //         },
-            //         ]
-            //     },
+              
+                        'email': {
+                        'element': document.getElementById('add_email'), // id trong input đó
+                        'error': document.getElementById('email_error'), // thẻ hiển thị lỗi
+                        'validations': [{
+                            'func': function(value) {
+                                return checkEmail(value);
+                            },
+                            'message': generateErrorMessage('Email002') 
+                        },
+                        ]
+                    },
+                    
+               
             //     'address': {
             //         'element': document.getElementById('add_address'), // id trong input đó
             //         'error': document.getElementById('address_error'), // thẻ hiển thị lỗi
@@ -491,17 +508,17 @@
                 //     ]
                 
                 // },
-                // 'email': {
-                //     'element': document.getElementById('edit-email'), // id trong input đó
-                //     'error': document.getElementById('edit_email_error'), // thẻ hiển thị lỗi
-                //     'validations': [{
-                //         'func': function(value) {
-                //             return checkEmail(value);
-                //         },
-                //         'message': generateErrorMessage('Email002') 
-                //     },
-                //     ]
-                // },
+                'email': {
+                    'element': document.getElementById('edit-email'), // id trong input đó
+                    'error': document.getElementById('edit_email_error'), // thẻ hiển thị lỗi
+                    'validations': [{
+                        'func': function(value) {
+                            return checkEmail(value);
+                        },
+                        'message': generateErrorMessage('Email002') 
+                    },
+                    ]
+                },
                 // 'address': {
                 //     'element': document.getElementById('edit-address'), // id trong input đó
                 //     'error': document.getElementById('edit_address_error'), // thẻ hiển thị lỗi
@@ -752,7 +769,5 @@
 
         });
 </script>
-<script type="text/javascript">
-    $('.iziToast-title').html('<p>Thông báo</p>'); 
-</script>
+
 @endpush

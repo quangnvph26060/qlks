@@ -5,6 +5,7 @@ namespace App\Http\Controllers\Admin;
 use App\Http\Controllers\Controller;
 use App\Http\Helpers\helpers;
 use App\Models\Customer;
+use App\Models\SetupCode;
 use App\Models\RoomBooking;
 use App\Models\HotelFacility;
 use Illuminate\Http\Request;
@@ -13,10 +14,13 @@ class CustomerController extends Controller
 {
     public function index()
     {
+        $code = SetupCode::where('menu_name','Danh mục khách hàng')->where('unit_code',unitCode())->value('code');
+        $count = Customer::where('unit_code',unitCode())->count();
+        $code = $code.$count;
         $pageTitle = '';
-        $customers = Customer::orderBy('id', 'desc')->paginate(10);
+        $customers = Customer::where('unit_code',unitCode())->orderBy('id', 'desc')->paginate(10);
         $unit_codes = HotelFacility::select('ma_coso')->get();
-        return view('admin.hotel.customer.list', compact('pageTitle', 'customers', 'unit_codes'));
+        return view('admin.hotel.customer.list', compact('pageTitle', 'customers', 'unit_codes','code'));
     }
 
 //    public function index(){
