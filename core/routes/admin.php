@@ -255,6 +255,17 @@ Route::middleware('admin', 'adminPermission')->group(function () {
             Route::post('delete-status/{id}', 'delete')->name('delete');
         });
 
+
+        Route::controller('SetupController')->name('setup.code.')->prefix('setup')->group(function () {
+            Route::post('/setup/add-code', 'store')->name('store');
+            Route::get('', 'index')->name('all');
+            Route::get('setup/edit-setup/{id}', 'edit')->name('edit');
+            Route::put('/setup/update-setup/{id}', 'update')->name('update');    
+            Route::post('delete-setup/{id}', 'delete')->name('delete');
+            Route::get('search', 'search')->name('search');
+
+        });
+
         Route::controller('CustomerSourceController')->name('customer.source.')->prefix('customer-sources')->group(function () {
             Route::get('', 'index')->name('all');
             Route::post('/source/add-source', 'store')->name('store');
