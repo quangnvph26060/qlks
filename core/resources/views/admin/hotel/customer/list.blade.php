@@ -397,7 +397,17 @@
                     },
                     ]
                 },
-             
+                'customer_code': {
+                    'element': document.getElementById('add_customer_code'),
+                    'error': document.getElementById('customer_code_error'),
+                    'validations': [{
+                        'func': function(value) {
+                            return checkKey(value); // check trống
+                        },
+                        'message': generateErrorMessage('KT001')
+                    },
+                    ]
+                },
                 'name': {
                     'element': document.getElementById('add_name'), // id trong input đó
                     'error': document.getElementById('name_error'), // thẻ hiển thị lỗi
@@ -472,7 +482,17 @@
                     },
                     ]
                 },
-
+                'customer_code': {
+                    'element': document.getElementById('edit-customer-code'),
+                    'error': document.getElementById('edit_customer_code_error'),
+                    'validations': [{
+                        'func': function(value) {
+                            return checkKey(value); // check trống
+                        },
+                        'message': generateErrorMessage('KT001')
+                    },
+                    ]
+                },
                 'name': {
                     'element': document.getElementById('edit-name'), // id trong input đó
                     'error': document.getElementById('edit_name_error'), // thẻ hiển thị lỗi
