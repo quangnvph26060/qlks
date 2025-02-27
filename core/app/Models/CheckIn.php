@@ -37,6 +37,7 @@ class CheckIn extends Model
         'user_source',
         'unit_code',
         'created_by',
+        'discount'
     ];
     public function room() {
         return $this->belongsTo(Room::class,'room_code');

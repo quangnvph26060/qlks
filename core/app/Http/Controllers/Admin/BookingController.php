@@ -24,6 +24,7 @@ use App\Models\RoomTypePrice;
 use App\Models\UserCleanroom;
 use Carbon\Carbon;
 use Hamcrest\Arrays\IsArray;
+use Illuminate\Pagination\LengthAwarePaginator;
 use Illuminate\Support\Facades\Auth;
 use Illuminate\Support\Facades\Log;
 use Symfony\Component\Console\Helper\Helper;
@@ -96,15 +97,38 @@ class BookingController extends Controller
     public function getBooking(Request $request)
     {
         $perPage = 10;
-        $roomBookings = CheckIn::with('room', 'admin')->orderBy('created_at', 'asc')->paginate($perPage);
+        $roomBookings = CheckIn::with('room', 'admin')
+        ->where('unit_code', unitCode())
+        ->when(!empty($request->data['bookingCode']), function ($query) use ($request) {
+            $query->where('check_in_id', 'LIKE', '%'. $request->data['bookingCode']. '%');
+        })
+        ->when(!empty($request->data['customerName']), function ($query) use ($request) {
+            $query->where('customer_name', 'LIKE', '%'. $request->data['customerName']. '%');
+        })
+        ->when(!empty($request->data['roomCode']), function ($query) use ($request) {
+            $query->where('room_code', 'LIKE', '%'. $request->data['roomCode']. '%');
+        })
+        ->orderBy('created_at', 'desc')
+        ->get(); 
+        $groupedBookings = $roomBookings->groupBy('check_in_id');
+        $paginatedBookings = new LengthAwarePaginator(
+            $groupedBookings->forPage($request->page, $perPage), // Dữ liệu phân trang
+            $groupedBookings->count(), // Tổng số bản ghi
+            $perPage, // Số bản ghi mỗi trang
+            $request->page, // Trang hiện tại
+            ['path' => url()->current()] // Đường dẫn phân trang
+        );
+        $rooms = Room::active()->select('id', 'room_number')->get();
         return response([
             'status' => 'success',
-            'data' => $roomBookings->items(),
+            'data' => $paginatedBookings,
+            'rooms' => $rooms,
+            'option_selected' => $request->data['roomCode'] ?? "",
             'pagination' => [
-                'total' => $roomBookings->total(),
-                'current_page' => $roomBookings->currentPage(),
-                'last_page' => $roomBookings->lastPage(),
-                'per_page' => $roomBookings->perPage(),
+                'total' => $paginatedBookings->total(),
+                'current_page' => $paginatedBookings->currentPage(),
+                'last_page' => $paginatedBookings->lastPage(),
+                'per_page' => $paginatedBookings->perPage(),
             ]
         ]);
     }
@@ -186,7 +210,6 @@ class BookingController extends Controller
     }
     public function bookingserviceproduct($id)
     {
-        Log::info($id);
         $service = PremiumService::get();
         $product = Product::get();
         $currentDate = Carbon::now()->format('Y-m-d');
@@ -794,13 +817,14 @@ class BookingController extends Controller
         ]);
     }
     // xóa đặt phòng
-    public function deleteRoomBooking($id)
-    {
-        $bookingRoom = RoomBooking::find($id);
-        if (!$bookingRoom) {
-            return response()->json(['status' => 'error', 'message' => 'Room booking không tồn tại']);
-        }
-        $bookingRoom->delete();
-        return response()->json(['status' => 'success', 'message' => 'Xóa thành công']);
+
+public function deleteRoomBooking($id)
+{
+    $deletedRows = RoomBooking::where('booking_id', $id)->delete();
+    if ($deletedRows === 0) {
+        return response()->json(['status' => 'error', 'message' => 'Room booking không tồn tại']);
     }
+    return response()->json(['status' => 'success', 'message' => 'Xóa thành công']);
+}
+
 }

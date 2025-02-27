@@ -172,14 +172,14 @@ function renderSettings(filteredSettings, query) {
     }
 }
 
-$('#searchInput').on('input', function () {
-    $('.search-list').html('');
+// $('#searchInput').on('input', function () {
+//     $('.search-list').html('');
 
-    var query = $(this).val().trim();
-    if (!query) {
-        return false;
-    }
+//     var query = $(this).val().trim();
+//     if (!query) {
+//         return false;
+//     }
 
-    var filteredData = filterSettings(query);
-    renderSettings(filteredData, query);
-});
+//     var filteredData = filterSettings(query);
+//     renderSettings(filteredData, query);
+// });

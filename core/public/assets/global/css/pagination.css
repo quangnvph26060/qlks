@@ -1,0 +1,109 @@
+.pagination-container {
+    display: flex;
+    justify-content: center;
+    /* margin-top: 20px; */
+}
+
+.pagination-container button {
+    background-color: #4634ff;
+    color: white;
+    border: 1px solid #ddd;
+    padding: 0px 5px;
+    margin: 0 5px;
+    border-radius: 5px;
+    cursor: pointer;
+    font-size: 14px;
+    transition: background-color 0.3s, transform 0.3s;
+}
+
+.pagination-container button:hover {
+    background-color: #4634ff;
+    transform: scale(1.05);
+}
+
+.pagination-container button:disabled {
+    background-color: #ddd;
+    cursor: not-allowed;
+}
+
+.body-wrapper {
+    padding: 6px 25px 10px !important;
+}
+
+.pagination-container button.active {
+    background-color: #071251;
+    border-color: #071251;
+}
+.btn-toggle {
+    border: 1px solid #007bff;
+    background-color: #007bff;
+    color: #fff;
+    font-size: 1rem;
+    padding: 1px 4px;
+    cursor: pointer;
+    transition: background-color 0.3s, color 0.3s;
+    text-align: center;
+    line-height: 1;
+    border-radius: 50%;
+    font-family: 'Courier New', Courier, monospace;
+}
+
+.btn-toggle:hover {
+    background-color: #0056b3;
+    border-color: #0056b3;
+}
+
+.btn-toggle.collapsed {
+    background-color: red;
+    border-color: red;
+}
+
+.btn-toggle::after {
+    content: '+';
+    display: inline-block;
+}
+
+.btn-toggle.collapsed::after {
+    content: '−';
+}
+.background-primary {
+    color: #0b138d !important;
+}
+
+.background-red {
+    color: #d31922 !important;
+}
+
+.background-yellow {
+    color: #e7bd3d !important;
+}
+.first-row{
+    background-color: #f3f3f3 !important;
+}
+.background-white {
+    color: #5b6e88;
+    background-color: #f0f1f1;
+}
+.w-10{
+    width: 10px !important;
+}
+.background-tr{
+    background: #a5818129 !important;
+}
+#data-table {
+    border-collapse: collapse;
+    /* Gộp viền bảng */
+}
+
+#data-table td,
+#data-table th {
+    line-height: 1 !important;
+    padding: 6px !important;
+}
+
+#data-table td {
+    height: 30px !important;
+    overflow: hidden;
+    white-space: nowrap;
+    /* Ngăn xuống dòng để giảm chiều cao */
+}

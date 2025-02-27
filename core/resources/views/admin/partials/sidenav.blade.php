@@ -38,7 +38,7 @@
                                 <ul>
                                     @foreach ($data->submenu as $menu)
                                         @php
-                                                $submenuParams = null;
+                                            $submenuParams = null;
                                             if (@$menu->params) {
                                                 foreach ($menu->params as $submenuParamVal) {
                                                     $submenuParams[] = array_values((array) $submenuParamVal)[0];
@@ -49,9 +49,14 @@
                                         @can($menu->route_name)
                                             <li class="sidebar-menu-item {{ menuActive(@$menu->menu_active) }} "
                                                 data-route="{{ $menu->route_name }}">
+
                                                 
                                                 <!-- <a href="{{ route(@$menu->route_name, $submenuParams) }}" class="nav-link"> -->
                                                 <a href="{{ route(@$menu->route_name, $submenuParams) }}" onclick="return loadIframe(this.href);" class="nav-link">
+
+
+                                             {{--   <a href="{{ route(@$menu->route_name, $submenuParams) }}" class="nav-link"> --}}
+
                                                     <i class="menu-icon las la-dot-circle"></i>
                                                     <span class="menu-title">{{ __($menu->title) }}</span>
                                                     @php $counter = @$menu->counter; @endphp
@@ -122,39 +127,7 @@
 </style>
 
 @push('script')
-<script>
-    // let activeDataIds = [];
 
-    // // Lấy mảng activeDataIds từ Local Storage khi trang được tải lại
-    // if (localStorage.getItem('activeDataIds')) {
-    //     activeDataIds = JSON.parse(localStorage.getItem('activeDataIds'));
-    //     // console.log(activeDataIds); // In ra các activeDataId đã được lưu
-    // }
- 
-    // $('li').each(function() {
-    //     if ($(this).hasClass('active')) {
-    //         const activeDataId = $(this).find('span').text(); // Lấy nội dung text trong thẻ span
-    //         const activeDataValue = $(this).data('route');
-    //         // Kiểm tra xem cặp activeDataValue và activeDataId đã tồn tại trong mảng activeDataIds hay không
-    //         const existingIndex = activeDataIds.findIndex(item => Object.keys(item)[0] === activeDataValue &&
-    //             item[activeDataValue] === activeDataId);
-            
-    //         if (existingIndex === -1) {
-    //             activeDataIds.push({
-    //                 [activeDataValue]: activeDataId
-    //             });
-    //         }
-    //         localStorage.setItem('activeDataIds', JSON.stringify(activeDataIds));
-    //         $('.sidebar__menu-wrapper').animate({
-    //             scrollTop: eval($(this).offset().top - 320)
-    //         }, 500);
-    //         $('.navbar__action-list').css('display','none');
-    //         $('.navbar-wrapper').css('padding','0px 30px 20px 30px');
-    //     }
-       
-    // });
-       
-</script>
 <script>
     $('ul > li > a.nav-link').click(function (e) {
         $('.menu-header').css('display','block');
@@ -210,7 +183,7 @@
             $("#frame").append('<iframe name="main" id="' + lastSegment + '" class="frame" src="' + url + '" style="width:calc(100% - 265px);position: fixed;z-index: 999; height: 100%;margin-top: 1px;border: none"></iframe>');
         } else {
             $('iframe#' + lastSegment + '').css('z-index', '10000');
-        }
+      }
             
     }
     $(document).on('click', '.p-globalNavi__link', function () {
