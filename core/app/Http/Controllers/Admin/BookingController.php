@@ -557,10 +557,11 @@ class BookingController extends Controller
                     }
                 } 
                 else if (!empty($roomBookingArray) && empty($roomCheckInArray) && empty($roomBookingChangeArray)) {
+                   
                     //   \Log::info('phòng đã đặt trước đó và đổi '. $room->room_number);
                     foreach ($roomBookingArray as $roomBooking) {
                         // $roomChange = $roomBooking['room_booking_change'];
-                        if(!$roomBooking['room_change'] && $roomBooking['status'] == Status::DISABLE && $roomBooking['room_change'] === null){ // 0 
+                        if(!$roomBooking['room_change'] && $roomBooking['status'] == Status::DISABLE && $roomBooking['room_change'] == null){ // 0 
                             // \Log::info('phòng đã đặt '. $room->room_number);
                             $dateRoomBooking = $this->getDates($roomBooking['checkin_date'], $roomBooking['checkout_date']);
                             if (in_array($date, $dateRoomBooking)) {
@@ -571,8 +572,8 @@ class BookingController extends Controller
                                 $newRecord->check_booked = 'Trống';
                                 $newRecord->status = 0;
                             }
-                        }else if($roomBooking['room_change'] && $roomBooking['room_change'] === null){
-                        
+                        }else if($roomBooking['room_change'] && $roomBooking['room_change'] == null){
+                           
                             $dateRoomBooking = $this->getDates($roomBooking['checkin_date'], $roomBooking['checkout_date']);
                             if (in_array($date, $dateRoomBooking)) {
                                 $newRecord->check_booked = 'Đã đặt';
@@ -586,7 +587,6 @@ class BookingController extends Controller
                             $newRecord->check_booked = 'Trống';
                             $newRecord->status = 0;
                         }
-                        
                     }
                 }else if(empty($roomBookingArray) && !empty($roomCheckInArray) && empty($roomBookingChangeArray)){
                     
