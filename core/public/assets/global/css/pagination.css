@@ -58,7 +58,11 @@
     background-color: #0056b3;
     border-color: #0056b3;
 }
-
+#show-room-change tr td {
+    padding: 6px 2px !important;
+    line-height: 0;
+    /* Giảm chiều cao dòng */
+}
 .btn-toggle.collapsed {
     background-color: red;
     border-color: red;

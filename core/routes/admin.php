@@ -372,8 +372,8 @@ Route::middleware('admin', 'adminPermission')->group(function () {
 
 
             Route::post('show-room', 'showRoom')->name('showRoom');
-
-
+            Route::post('change-room-booking','changeRoom')->name('changeRoomBooking');
+            // Route::post('change-check-in','changeCheckIn')->name('changeCheckIn');
             Route::get('serviceproduct/{id}', 'bookingserviceproduct')->name('serviceproduct');
 
             Route::get('show-room', 'showRoom')->name('showRoom');
@@ -426,6 +426,7 @@ Route::middleware('admin', 'adminPermission')->group(function () {
             Route::post('get-room-check-in', 'getRoomCheckIn')->name('getRoomCheckIn');
 
             Route::get('all-check-in', 'getBooking')->name('all.check.in');
+            Route::get('all-change-room', 'getChangeRoom')->name('all.change.room');
         });
 
         Route::controller('ManageBookingController')->group(function () {

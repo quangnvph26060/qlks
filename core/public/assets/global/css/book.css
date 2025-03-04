@@ -80,6 +80,10 @@ body.modal-open {
     overflow-y: scroll;
     height: 529px;
 }
+.overflow-change-room{
+    overflow-y: scroll;
+    height: 265px;
+}
 .custom-input:focus {
     outline: none;
 }
@@ -120,7 +124,9 @@ body.modal-open {
     border: 1px solid rgb(121, 117, 117, 0.5);
     margin-left: 8px;
 }
-
+.color-red{
+    color: red !important;
+}
 .btn-submit-search-book,.btn-submit-sync-book,.add-book-room,.check-in-room{
     padding-right: 15px;
     padding-left: 15px;
@@ -1119,7 +1125,9 @@ textarea.form-control {
     .w-100 {
         width: unset !important;
     }
-
+    .w-10{
+        width: 10px !important;
+    }
     .flex-wrap-mobi {
         flex-direction: column;
     }

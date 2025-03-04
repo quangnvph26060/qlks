@@ -151,12 +151,14 @@
                 </div>
             </div>
         </div>
+       
+        @include('admin.booking.partials.change_room_booking')
         @include('admin.booking.partials.customer_booked')
     @endpush
 @endcan
 
 @push('script-lib')
-<script src="{{ asset('assets/admin/js/common.js') }}"></script>
+    <script src="{{ asset('assets/admin/js/common.js') }}"></script>
     <script src="{{ asset('assets/admin/js/moment.min.js') }}"></script>
     <script src="{{ asset('assets/admin/js/daterangepicker.min.js') }}"></script>
     <script src="{{ asset('assets/validator/validator.js') }}"></script>
@@ -184,6 +186,7 @@
         var deleteBookedRoomUrl = "{{ route('admin.booking.delete-booked-room', ['id' => ':id']) }}";
         var findCustomerUrl = '{{ route('admin.find.customer') }}';
         var getCustomerStaff = "{{ route('admin.get.customer.staff') }}";
+        var changeRoomBooking = "{{ route('admin.booking.changeRoomBooking') }}";
     </script>
 
     <script>
@@ -234,7 +237,7 @@
             /* Con trỏ chuột đổi thành dạng pointer */
         }
 
-        #show-room tr td {
+        #show-room tr td,#show-room-change tr td {
             padding: 6px 2px !important;
             line-height: 0;
             /* Giảm chiều cao dòng */

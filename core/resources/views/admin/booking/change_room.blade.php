@@ -25,7 +25,7 @@
                                 <th></th>
                                 <th>@lang('Hành động')</th>
                                 <th>@lang('STT')</th>
-                                <th>@lang('Mã nhận phòng')</th>
+                                <th>@lang('Mã đổi phòng')</th>
                                 <th>@lang('Số lượng phòng')</th>
                                 <th>@lang('Ngày chứng từ')</th>
                                 <th>@lang('Tên khách hàng')</th>
@@ -155,14 +155,13 @@
                 </div>
             </div>
         </div>
-        @include('admin.booking.partials.change_room_booking')
     @endpush
 @endcan
 
 @push('script-lib')
     <script src="{{ asset('assets/admin/js/common.js') }}"></script>
     <script src="{{ asset('assets/validator/validator.js') }}"></script>
-    <script  src="{{ asset('assets/admin/js/check_in.js') }}"></script>
+    <script  src="{{ asset('assets/admin/js/change_room.js') }}"></script>
     <script src="{{ asset('assets/admin/js/moment.min.js') }}"></script>
     <script src="{{ asset('assets/admin/js/daterangepicker.min.js') }}"></script>
 @endpush
@@ -206,23 +205,24 @@
 
             button.classList.toggle('collapsed'); // Toggle trạng thái button
         };
-        var findCustomerUrl = '{{ route('admin.find.customer') }}';
-    var checkInDetailUrl = "{{ route('admin.booking.check.in.details', ['id' => ':id']) }}";
-    var allCheckInUrl =  "{{ route('admin.booking.all.check.in') }}";
-    var showRoomUrl = "{{ route('admin.booking.showRoom') }}";
-    var checkRoomBookingUrl =  '{{ route('admin.booking.checkRoomBooking') }}';
-    var  searchCustomerUrl = '{{ route('admin.search.customer') }}';
-    var roomBookingUrl =  '{{ route('admin.room.booking') }}';
-    var getRoomBookingUrl =  '{{ route('admin.get.room.booking') }}';
-    var checkInEditUrl = "{{ route('admin.check.in.edit', ['id' => ':id']) }}";
-    var bookingDetailUrl = "{{ route('admin.booking.details', ['id' => ':id']) }}";
-    var checkInUrl = "{{ route('admin.room.check.in', ['id' => ':id']) }}";
-    var deleteBookedRoomUrl = "{{ route('admin.booking.delete-booked-room', ['id' => ':id']) }}";
-    var getCustomerStaff = "{{ route('admin.get.customer.staff') }}";
-    var findRoomBookingIdUrl = '{{ route('admin.find.room.booking') }}';
-    var deleteRoomEdit = '{{ route('admin.room.booking.delete') }}';
-    var roomBook = "{{ route('admin.room.book') }}";
-    var CheckInUrl = "{{route('admin.room.booked.check.in')}}";
+        var allCheckInUrl =  "{{ route('admin.booking.all.change.room') }}";
+        // var findCustomerUrl = '{{ route('admin.find.customer') }}';
+        // var checkInDetailUrl = "{{ route('admin.booking.check.in.details', ['id' => ':id']) }}";
+        // var allCheckInUrl =  "{{ route('admin.booking.all.check.in') }}";
+        // var showRoomUrl = "{{ route('admin.booking.showRoom') }}";
+        // var checkRoomBookingUrl =  '{{ route('admin.booking.checkRoomBooking') }}';
+        // var  searchCustomerUrl = '{{ route('admin.search.customer') }}';
+        // var roomBookingUrl =  '{{ route('admin.room.booking') }}';
+        // var getRoomBookingUrl =  '{{ route('admin.get.room.booking') }}';
+        // var checkInEditUrl = "{{ route('admin.check.in.edit', ['id' => ':id']) }}";
+        // var bookingDetailUrl = "{{ route('admin.booking.details', ['id' => ':id']) }}";
+        // var checkInUrl = "{{ route('admin.room.check.in', ['id' => ':id']) }}";
+        // var deleteBookedRoomUrl = "{{ route('admin.booking.delete-booked-room', ['id' => ':id']) }}";
+        // var getCustomerStaff = "{{ route('admin.get.customer.staff') }}";
+        // var findRoomBookingIdUrl = '{{ route('admin.find.room.booking') }}';
+        // var deleteRoomEdit = '{{ route('admin.room.booking.delete') }}';
+        // var roomBook = "{{ route('admin.room.book') }}";
+        // var CheckInUrl = "{{route('admin.room.booked.check.in')}}";
 </script>
 @endpush
 

@@ -213,4 +213,7 @@ class Room extends Model
     {
         return $this->hasMany(CheckIn::class, 'room_code');
     }
+    public function  roomBookingChange(){
+        return $this->hasMany(RoomChange::class, 'new_room_code');
+    }
 }
