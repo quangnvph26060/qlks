@@ -432,6 +432,17 @@ class BookingController extends Controller
                                 $newRecord->check_booked = 'Trống';
                                 $newRecord->status = 0;
                             }
+                        }else if($roomBookingChange['id_room_booking'] != "" && $roomBookingChange['id_check_in'] != ""){
+                            $dateRoomBooking = $this->getDates($roomBookingChange['checkin_date'], $roomBookingChange['checkout_date']);
+                            if (in_array($date, $dateRoomBooking)) {
+                                $newRecord->check_booked = 'Đã nhận';
+                                $newRecord->status = 1;
+                            //  \Log::info('phòng đặt sang phòng này '. $room->room_number);
+                                break;
+                            } else {
+                                $newRecord->check_booked = 'Trống';
+                                $newRecord->status = 0;
+                            }
                         }
                       
                         
@@ -525,28 +536,20 @@ class BookingController extends Controller
                                 }
                             }
                         }else if($roomBookingChange['id_room_booking'] != null && $roomBookingChange['id_check_in'] == null){
-                            $dateRoomBooking = $this->getDates($roomBookingChange['checkin_date'], $roomBookingChange['checkout_date']);
-                            if (in_array($date, $dateRoomBooking)) {
-                                $newRecord->check_booked = 'Đã đặt';
-                                $newRecord->status = 1;
-                                break;
-                            } else {
-                                foreach ($roomCheckInArray as $roomBooking) {
-                                    $dateRoomBooking = $this->getDates($roomBooking['checkin_date'], $roomBooking['checkout_date']);
-                                    if (in_array($date, $dateRoomBooking)  && $roomBooking['status'] == Status::DISABLE && $roomBooking['room_change'] == null) {
-                                        $newRecord->check_booked = 'Đã đặt';
-                                        $newRecord->status = 1;
-                                        break;
-                                    } else if(in_array($date, $dateRoomBooking)  && $roomBooking['status'] == Status::ENABLE && $roomBooking['room_change'] != null) {
-                                        $newRecord->check_booked = 'Đã nhận';
-                                        $newRecord->status = 1;
-                                        break;
-                                       
-                                    }
-                                    else {
-                                        $newRecord->check_booked = 'Trống';
-                                        $newRecord->status = 0;
-                                    }
+                            foreach ($roomCheckInArray as $roomBooking) {
+                                $dateRoomBooking = $this->getDates($roomBooking['checkin_date'], $roomBooking['checkout_date']);
+                                if (in_array($date, $dateRoomBooking)&& $roomBooking['room_change'] == null) {
+                                    $newRecord->check_booked = 'Đã nhận';
+                                    $newRecord->status = 1;
+                                    break;
+                                } else if(in_array($date, $dateRoomBooking) && $roomBooking['room_change'] != null) {
+                                    $newRecord->check_booked = 'Trống';
+                                    $newRecord->status = 0;
+                                    break;
+                                }
+                                else {
+                                    $newRecord->check_booked = 'Trống';
+                                    $newRecord->status = 0;
                                 }
                             }
                         }
