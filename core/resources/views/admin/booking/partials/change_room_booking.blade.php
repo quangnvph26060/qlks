@@ -55,15 +55,16 @@
 </div>
 <style scoped>
     .room-box {
-               width: 250px;
-               padding: 30px 30px 30px 10px;
-               border: 2px solid #007bff;
-               border-radius: 10px;
-               text-align: center;
-               background-color: #f8f9fa;
-               box-shadow: 2px 2px 10px rgba(0, 0, 0, 0.1);
-               transition: transform 0.3s ease-in-out;
-           }
+        width: 100%;
+        padding: 30px 5px 30px 15px;
+        margin-left: 10px;
+        border: 2px solid #007bff;
+        border-radius: 10px;
+        text-align: center;
+        background-color: #f8f9fa;
+        box-shadow: 2px 2px 10px rgba(0, 0, 0, 0.1);
+        transition: transform 0.3s ease-in-out;
+    }
    
            .room-box:hover {
                transform: scale(1.05);

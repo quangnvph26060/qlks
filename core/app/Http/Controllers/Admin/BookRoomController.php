@@ -41,7 +41,7 @@ class BookRoomController extends Controller
 
         $perPage = 10;
         $roomBookings = RoomBooking::query()
-            ->with( 'admin','room')
+            ->with('admin', 'room')
             ->where('unit_code', unitCode())
             ->when(!empty($request->data['bookingCode']), function ($query) use ($request) {
                 $query->where('booking_id', 'LIKE', '%' . $request->data['bookingCode'] . '%');
@@ -296,17 +296,25 @@ class BookRoomController extends Controller
                 $dateIn  = Carbon::parse($room['dateIn']);
                 $dateOut =  Carbon::parse($room['dateOut']);
 
-                $checkin  = CheckIn::query();
-                $checkin  =  $checkin->where('room_code',$room['room'])
-                ->where('checkin_date', '<=', $dateIn)
-                ->where('checkout_date', '>=', $dateIn)
-                ->exists();
+                $checkin = CheckIn::where('room_code', $room['room'])
+                    ->where('checkin_date', '<=', $dateIn)
+                    ->where('checkout_date', '>=', $dateIn)
+                    ->first();
+               
 
+                if ($checkin) {
+                    if( !empty($checkin->room_change) ){
+                    $checkin = CheckIn::where('room_change', $room['room'])
+                            ->where('checkin_date', '<=', $dateIn)
+                            ->where('checkout_date', '>=', $dateIn)
+                            ->first();
+                    }
+                }
                 $is_room = Room::find($room['room']);
 
-                if($checkin){
+                if ($checkin) {
                     DB::rollBack();
-                    return response()->json(['error' =>'Phòng '. $is_room['room_number'] . ' đã được đặt trong ngày '.  Carbon::parse($dateIn)->format('d-m-Y') ]);
+                    return response()->json(['error' => 'Phòng ' . $is_room['room_number'] . ' đã được đặt trong ngày ' .  Carbon::parse($dateIn)->format('d-m-Y')]);
                 }
                 if ($index == 0) {
                     if ($request->method == 'check_in') {
@@ -372,8 +380,8 @@ class BookRoomController extends Controller
             return response()->json(['error' => 'Đã xảy ra lỗi, không đặt phòng thành công ']);
         }
     }
-    //123
-    public function roomBookToCheckIn(Request $request){
+    public function roomBookToCheckIn(Request $request)
+    {
         DB::beginTransaction();
         try {
             $validator = Validator::make($request->all(), [
@@ -398,25 +406,34 @@ class BookRoomController extends Controller
                 $room['dateOut'] = date('Y-m-d H:i:s', strtotime($room['dateOut']));
                 $dateIn  = Carbon::parse($room['dateIn']);
                 $dateOut =  Carbon::parse($room['dateOut']);
-
-                $checkin  = CheckIn::query();
-                $checkin  =  $checkin->where('room_code',$room['room'])
-                ->where('checkin_date', '<=', $dateIn)
-                ->where('checkout_date', '>=', $dateIn)
-                ->exists();
-
                 $is_room = Room::find($room['room']);
 
-                if($checkin){
-                    DB::rollBack();
-                    return response()->json(['error' =>'Phòng '. $is_room['room_number'] . ' đã được đặt trong ngày '.  Carbon::parse($dateIn)->format('d-m-Y') ]);
+                $checkin = CheckIn::where('room_code', $room['room'])
+                ->where('checkin_date', '<=', $dateIn)
+                ->where('checkout_date', '>=', $dateIn)
+                ->first();
+             
+                if ($checkin) {
+                    if( !empty($checkin->room_change) ){
+                    $checkin = CheckIn::where('room_change', $room['room'])
+                            ->where('checkin_date', '<=', $dateIn)
+                            ->where('checkout_date', '>=', $dateIn)
+                            ->first();
+                    }
                 }
+                if ($checkin) {
+                    DB::rollBack();
+                    return response()->json([
+                        'error' => 'Phòng ' . $is_room['room_number'] . ' đã được đặt trong ngày ' . Carbon::parse($dateIn)->format('d-m-Y')
+                    ]);
+                }
+
 
                 if (!empty($room['bookingId'])) {
                     $checkRoom = RoomBooking::query()->active();
                     $checkRoom = $checkRoom->where('id', $room['bookingId'])->first();
 
-               
+
                     if ($checkRoom) {
                         $check_in = new CheckIn();
                         if ($index == 0) {
@@ -425,7 +442,7 @@ class BookRoomController extends Controller
                         } else {
                             $check_in->check_in_id   = $bookingId;
                         }
-                        $check_in->id_room_booking= $request->id_room_booking;
+                        $check_in->id_room_booking = $request->id_room_booking;
                         $check_in->room_code      = $checkRoom['room_change'] ?? $checkRoom['room_code'];
                         $check_in->document_date  = now();
                         $check_in->checkin_date   = $dateIn;
@@ -451,7 +468,7 @@ class BookRoomController extends Controller
                 } else {
                     $check_in_new                 = new CheckIn();
                     $check_in_new->check_in_id    = $bookingId;
-                    $check_in_new->id_room_booking= null;
+                    $check_in_new->id_room_booking = null;
                     $check_in_new->room_code      = $room['room'];
                     $check_in_new->document_date  = now();
                     $check_in_new->checkin_date   = Carbon::parse($room['dateIn']);
@@ -476,7 +493,7 @@ class BookRoomController extends Controller
             return response()->json(['success' => 'Cập nhật nhận phòng thành công']);
         } catch (\Exception $e) {
             DB::rollBack();
-            Log::error('Có lỗi xảy ra trong quá trình đặt phòng', [
+            Log::error('Có lỗi xảy ra trong quá trình nhận phòng', [
                 'message' => $e->getMessage(), // Nội dung lỗi
                 'file' => $e->getFile(), // File xảy ra lỗi
                 'line' => $e->getLine(), // Dòng bị lỗi
@@ -718,7 +735,8 @@ class BookRoomController extends Controller
             'option_customer_source' => $customer->group_code ?? "",
         ]);
     }
-    public function checkInUpdate(Request $request){
+    public function checkInUpdate(Request $request)
+    {
         DB::beginTransaction();
         try {
             $validator      = Validator::make($request->all(), [
@@ -745,7 +763,7 @@ class BookRoomController extends Controller
                 $room['dateIn'] = date('Y-m-d H:i:s', strtotime($room['dateIn']));
                 $room['dateOut'] = date('Y-m-d H:i:s', strtotime($room['dateOut']));
                 if (!empty($room['bookingId'])) {
-                    $check_in =CheckIn::query();
+                    $check_in = CheckIn::query();
                     $check_in = $check_in->where('id', $room['bookingId'])->first();
                     if ($check_in) {
                         $check_in->room_code      = $room['room'];
@@ -801,7 +819,7 @@ class BookRoomController extends Controller
     }
     public function checkInEdit($id)
     {
-     
+
         $roomBookings = CheckIn::with('room', 'room.roomType', 'room.roomType.roomTypePrice', 'room.roomType.roomTypePrice.setupPricing')
             ->where('check_in_id', $id)->get();
         $groupedBookings = [];
@@ -851,57 +869,57 @@ class BookRoomController extends Controller
     public function getRoomBooking(Request $request)
     {
         $data = RoomBooking::query() // Đưa array vào cho dễ đọc
-        // ->active()
-        ->where('unit_code', unitCode())
-        ->where('status', '=', 0)
-        ->whereDate('checkin_date', '>=', today());
-    
-    // Lọc theo name nếu có
-    if ($request->filled('name')) {
-        $data->where('booking_id', 'like', '%' . $request->name . '%');
-    }
-    
-    // Lấy dữ liệu và sắp xếp theo created_at
-    $groupedBookings = $data->orderByDesc('created_at')->with(['room', 'admin'])->get()->groupBy('booking_id');
-    
-    
+            // ->active()
+            ->where('unit_code', unitCode())
+            ->where('status', '=', 0)
+            ->whereDate('checkin_date', '>=', today());
+
+        // Lọc theo name nếu có
+        if ($request->filled('name')) {
+            $data->where('booking_id', 'like', '%' . $request->name . '%');
+        }
+
+        // Lấy dữ liệu và sắp xếp theo created_at
+        $groupedBookings = $data->orderByDesc('created_at')->with(['room', 'admin'])->get()->groupBy('booking_id');
+
+
 
         return response()->json([
             'status' => 'success',
             'data' => $groupedBookings,
         ]);
     }
-//123
+    //123
     public function findRoomBookingId(Request $request)
     {
         $data = [];
         $roomBooking = [];
         foreach ($request->booking_id as $item) {
             $result  = RoomBooking::query()
-            // ->active()
+                // ->active()
                 ->where('unit_code', unitCode())
                 ->where('room_code', $item['id'])
+                ->where('booking_id', $item['book'])
+                ->with(['room', 'room.roomType', 'customer' => function ($query) {
+                    $query->whereNotNull('customer_code'); // Chỉ lấy khách hàng có mã customer_code
+                }])
+                ->first();
+            if (!$result) {
+                $result  = RoomBooking::query()
+                    // ->active()
+                    ->where('unit_code', unitCode())
+                    ->where('room_change', $item['id'])
                     ->where('booking_id', $item['book'])
                     ->with(['room', 'room.roomType', 'customer' => function ($query) {
                         $query->whereNotNull('customer_code'); // Chỉ lấy khách hàng có mã customer_code
                     }])
                     ->first();
-            if(!$result){
-                $result  = RoomBooking::query()
-                // ->active()
-                    ->where('unit_code', unitCode())
-                    ->where('room_change', $item['id'])
-                        ->where('booking_id', $item['book'])
-                        ->with(['room', 'room.roomType', 'customer' => function ($query) {
-                            $query->whereNotNull('customer_code'); // Chỉ lấy khách hàng có mã customer_code
-                        }])
-                        ->first();
-            }        
-            if ($result) { 
+            }
+            if ($result) {
                 $roomBooking[] = $result;
             }
         }
-     
+
 
         foreach ($roomBooking as $roomBook) {
             Log::info($roomBook['room_change_info']);
