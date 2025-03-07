@@ -2,7 +2,7 @@
     <div class="modal-dialog modal-dialog-centered" style="top: 4px">
         <div class="modal-content">
             <div class="modal-header">
-                <h5 class="modal-title">Đổi phòng</h5>
+                <h5 class="modal-title">Đổi phòng <span> - </span> <span class="customer-name"> </span><span> - </span> <span class="booking-id"></span> </h5>
                 <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
             </div>
             <form  id="btn-change-booking-room" action="{{ route('admin.booking.changeRoomBooking') }}" method="POST" class="row">
@@ -80,5 +80,8 @@
            .booking-date {
                font-size: 16px;
                color: #555;
+           }
+           .booking-id , .customer-name{
+            color: #34495e;
            }
    </style>

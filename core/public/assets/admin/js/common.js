@@ -103,7 +103,13 @@ function formatDateTime(inputDateTime) {
     var formattedDateTime = formattedDate + ' ' + dateTimeParts[1];
     return formattedDateTime;
 }
-
+function formatDate(inputDate) {
+    // Chia chuỗi ngày thành các phần tử: năm, tháng, ngày
+    var parts = inputDate.split('-');
+    // Định dạng lại chuỗi ngày
+    var formattedDate = parts[2] + '/' + parts[1] + '/' + parts[0];
+    return formattedDate;
+}
 function calculateTotalPrice() {
     let totalPrice = 0;
     let totalDeposit = 0;
@@ -221,7 +227,7 @@ $('.add-room-list').on('click', function () {
     addRoomInBooking(selectedCheckboxes, $(`#${dataListValue}`))
 });
 
-function changeRoom(Id, bookingId, roomId, dateId) {
+function changeRoom(Id, bookingId, roomId, dateId, name) {
     $('#loading').show();
     $.ajax({
         url: showRoomUrl,
@@ -292,6 +298,8 @@ function changeRoom(Id, bookingId, roomId, dateId) {
                 $('.date').text(` ${data.dateBookingRoomOld}`);
                 $('#room_old').val(data.roomId);
                 $('#booking_id').val(data.bookingId);
+                $('.customer-name').text(name);
+                $('.booking-id').text(data.bookingId);
                 $('#id').val(data.id);
             }
 

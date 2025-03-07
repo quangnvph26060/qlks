@@ -87,7 +87,7 @@ function showRoom(data = "", checkInDateValue = "", checkOutDateValue = "", sele
         },
         success: function (data) {
             var tbody = $('#show-room');
-            const dataNew = Object.values(data.data);
+            const dataNew = data.data;
             let seenRooms = new Set();
             tbody.empty();
 
@@ -587,9 +587,7 @@ function loadRoomBookings(page = 1, data) {
                                         <table class="table">
                                             <thead>
                                                 <tr>
-                                                    <th colspan="1"></th>
                                                     <th colspan="6">Phòng</th>
-                                                    <th colspan="6">Phòng mới</th>
                                                     <th>Ngày check-in</th>
                                                     <th>Ngày check-out</th>
                                                     <th>Số người</th>
@@ -604,23 +602,15 @@ function loadRoomBookings(page = 1, data) {
                         }
                         html += `
                                 <tr class="background-tr">
-                                    <td class="text-center w-10" colspan="1">
-                                        <svg class="change-room"
-                                        data-id="${record['id']}"
-                                        data-room-id="${ record['room_change_info'] ? record['room_change_info']['new_room_code'] : record['room_code'] }"
-                                        data-booking-id="${record['check_in_id']}" 
-                                        data-booking-date="${record['checkin_date']}" xmlns="http://www.w3.org/2000/svg" width="15" height="15" viewBox="0 0 14 14"><path fill="none" stroke="currentColor" stroke-linecap="round" stroke-linejoin="round" d="M4 10.5L.5 7L4 3.5m6 7L13.5 7L10 3.5"/></svg>
-                                    </td>
+                                  
                                     <td class="text-left" colspan="6">${record['room']['room_number']}</td>
-                                    <td class="text-left ${record['status'] == 1 ? "color-red" : ""}" colspan="6">
-                                        ${ record['room_change_info'] ? record['room_change_info']['room']['room_number'] : "" } 
-                                    </td>
+                                  
                                     <td class="text-right w-10">${formatDateTime(record['checkin_date'])}</td>
                                     <td class="text-right w-10" >${formatDateTime(record['checkout_date'])}</td>
 
                                     <td class="text-right w-10" >${record['guest_count']}</td>
                                   <td class="text-right w-10">
-                                                        ${ record['room_change_info'] ? formatCurrency(record['room_change_info']['total_amount']) : formatCurrency(record['total_amount'])}
+                                                        ${ formatCurrency(record['total_amount'])}
                                                     </td>
                                     <td class="text-right w-10">${formatCurrency(record['deposit_amount'])}</td>
                                     <td class="text-right w-10">${formatCurrency(record['discount'])}</td>

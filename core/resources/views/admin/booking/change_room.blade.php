@@ -25,7 +25,7 @@
                                 <th></th>
                                 <th>@lang('Hành động')</th>
                                 <th>@lang('STT')</th>
-                                <th>@lang('Mã đổi phòng')</th>
+                                <th>@lang('Mã nhận phòng')</th>
                                 <th>@lang('Số lượng phòng')</th>
                                 <th>@lang('Ngày chứng từ')</th>
                                 <th>@lang('Tên khách hàng')</th>
@@ -70,9 +70,9 @@
         {{-- <a class="btn btn-sm btn--primary" href="{{ route('admin.book.room') }}">
             <i class="la la-hand-o-right"></i>@lang('Thêm phòng mới')
         </a> --}}
-        <a class="btn btn-sm btn--primary check-in-room"  style="margin-left: 10px">
+        {{-- <a class="btn btn-sm btn--primary check-in-room"  style="margin-left: 10px">
             <i class="la la-plus"></i>
-        </a>
+        </a> --}}
         <a class="btn btn-sm btn--primary btn-submit-sync-book">
             <i class="las la-sync"></i>
         </a>
@@ -155,6 +155,7 @@
                 </div>
             </div>
         </div>
+        @include('admin.booking.partials.change_room_booking')
     @endpush
 @endcan
 
@@ -206,6 +207,7 @@
             button.classList.toggle('collapsed'); // Toggle trạng thái button
         };
         var allCheckInUrl =  "{{ route('admin.booking.all.change.room') }}";
+        var showRoomUrl = "{{ route('admin.booking.showRoom') }}";
         // var findCustomerUrl = '{{ route('admin.find.customer') }}';
         // var checkInDetailUrl = "{{ route('admin.booking.check.in.details', ['id' => ':id']) }}";
         // var allCheckInUrl =  "{{ route('admin.booking.all.check.in') }}";
