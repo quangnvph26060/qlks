@@ -75,14 +75,23 @@
                     id="booking_code">
                 <select class="searchInput input-field-search-book" name="room_code" id="select_room_number"></select>
                 {{-- <div class="d-flex" style="gap: 10px">
-            <input type="date" class="form-control " id="date-chon-phong-in" style="height: 35px">
-            <input type="date" class="form-control " id="date-chon-phong-out" style="height: 35px">
-          </div> --}}
+                    <input type="date" class="form-control " id="date-chon-phong-in" style="height: 35px">
+                    <input type="date" class="form-control " id="date-chon-phong-out" style="height: 35px">
+                </div> --}}
                 <input class="searchInput input-field-search-book" name="name" placeholder="Tên khách hàng" id="name_book">
                 <button type="submit" class="btn btn-primary btn-submit-search-book">
                     <i class="las la-search"></i>
                 </button>
-
+              
+            </div>  
+            <div style="  position: absolute;  right: 43px; display: flex;    gap: 10px;">
+                <button type="submit" class="btn btn-primary btn-submit-search-book">
+                    <i class="las la-search"></i>
+                </button>
+                <button type="submit" class="btn btn-primary btn-submit-search-book">
+                    <i class="las la-search"></i>
+                </button>
+   
             </div>
         </div>
         <div class="modal fade" id="addRoomModal" tabindex="-1" aria-hidden="true" style="overflow: unset">
@@ -151,7 +160,7 @@
                 </div>
             </div>
         </div>
-       
+
         @include('admin.booking.partials.change_room_booking')
         @include('admin.booking.partials.customer_booked')
     @endpush
@@ -184,6 +193,7 @@
         var bookingDetailUrl = "{{ route('admin.booking.details', ['id' => ':id']) }}";
         var checkInUrl = "{{ route('admin.room.check.in', ['id' => ':id']) }}";
         var deleteBookedRoomUrl = "{{ route('admin.booking.delete-booked-room', ['id' => ':id']) }}";
+        var checkBookedRoomUrl = "{{ route('admin.booking.check-booked-room-del', ['id' => ':id']) }}";
         var findCustomerUrl = '{{ route('admin.find.customer') }}';
         var getCustomerStaff = "{{ route('admin.get.customer.staff') }}";
         var changeRoomBooking = "{{ route('admin.booking.changeRoomBooking') }}";
@@ -237,7 +247,8 @@
             /* Con trỏ chuột đổi thành dạng pointer */
         }
 
-        #show-room tr td,#show-room-change tr td {
+        #show-room tr td,
+        #show-room-change tr td {
             padding: 6px 2px !important;
             line-height: 0;
             /* Giảm chiều cao dòng */
@@ -327,20 +338,12 @@
         }
 
 
-        /* .background-yellow td,
-            .background-red td,
-            .background-primary td {
-                color: white !important;
-            } */
-
         #dropdown-menu {
-            position: fixed; /* hoặc fixed */
-            z-index: 9999; /* Số lớn để đè lên các phần khác */
-            background: white; /* Đảm bảo nội dung rõ ràng */
-            box-shadow: 0px 4px 10px rgba(0, 0, 0, 0.2); /* Tạo hiệu ứng nổi bật */
+            left: 108px;
+            position: fixed;
+            z-index: 9999;
+            background: white;
+            box-shadow: 0px 4px 10px rgba(0, 0, 0, 0.2);
         }
-
-
-    
     </style>
 @endpush

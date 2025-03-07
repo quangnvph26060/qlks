@@ -239,6 +239,7 @@
             line-height: 0;   
         }
         #dropdown-menu {
+           
             position: fixed; 
             z-index: 9999; 
             background: white; 

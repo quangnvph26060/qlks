@@ -735,35 +735,60 @@ $(document).on('click', '[id="hour_current"]', function () {
 // xóa phòng
 $(document).on('click', '.delete-booked-room', function () {
     var roomId = $(this).data('room-id');
-
-    Swal.fire({
-        title: 'Bạn có chắc chắn muốn xóa đặt phòng này?',
-        text: 'Bạn có chắc chắn muốn xóa đặt phòng này?',
-        icon: 'warning',
-        showCancelButton: true,
-        confirmButtonText: 'Đồng ý',
-        cancelButtonText: 'Hủy bỏ',
-        reverseButtons: true
-    }).then((result) => {
-        if (result.isConfirmed) {
-            var url = deleteBookedRoomUrl.replace(':id', roomId);
-            $.ajax({
-                url: url,
-                type: 'POST',
-                success: function (response) {
-                    if (response.status == 'success') {
-                        notify('success', response.success);
-                        loadRoomBookings();
-                    } else {
-                        notify('error', response.success);
+    var url = checkBookedRoomUrl.replace(':id', roomId);
+    $.ajax({
+        url: url,
+        type: 'POST',
+        success: function (response) {
+            if (response.status == 'success') {
+                // notify('success', response.success);
+                // loadRoomBookings();
+                Swal.fire({
+                    title: 'Bạn có chắc chắn muốn xóa đặt phòng này?',
+                    text: 'Bạn có chắc chắn muốn xóa đặt phòng này?',
+                    icon: 'warning',
+                    showCancelButton: true,
+                    confirmButtonText: 'Đồng ý',
+                    cancelButtonText: 'Hủy bỏ',
+                    reverseButtons: true
+                }).then((result) => {
+                    if (result.isConfirmed) {
+                        var url = deleteBookedRoomUrl.replace(':id', roomId);
+                        $.ajax({
+                            url: url,
+                            type: 'POST',
+                            success: function (response) {
+                                if (response.status == 'success') {
+                                    notify('success', response.success);
+                                    loadRoomBookings();
+                                } else {
+                                    notify('error', response.success);
+                                }
+                            },
+                            error: function (error) {
+                                console.log('Error:', error);
+                            }
+                        });
                     }
-                },
-                error: function (error) {
-                    console.log('Error:', error);
-                }
-            });
+                })
+            } else {
+                // notify('error', response.success);
+                Swal.fire({
+                    title: response.message,
+                    text: response.message,
+                    icon: 'warning',
+                    showCancelButton: true,
+                    confirmButtonText: 'Đồng ý',
+                    cancelButtonText: 'Hủy bỏ',
+                    reverseButtons: true
+                })
+            }
+        },
+        error: function (error) {
+            console.log('Error:', error);
         }
-    })
+    });
+   
 
 
 
@@ -1531,6 +1556,7 @@ function formatDateTime(isoDateString) {
 }
 
 function loadRoomBookings(page = 1, data) {
+    $('#loading-overlay').css('display', 'flex');
     $.ajax({
         url: roomBookingUrl, // Adjust this to your route
         type: 'GET',
@@ -1569,10 +1595,8 @@ function loadRoomBookings(page = 1, data) {
                                             <td class="text-center">
                                                 <svg class="svg_menu_check_in" xmlns="http://www.w3.org/2000/svg" width="30" height="30" viewBox="0 0 21 21"><g fill="currentColor" fill-rule="evenodd"><circle cx="10.5" cy="10.5" r="1"/><circle cx="10.5" cy="5.5" r="1"/><circle cx="10.5" cy="15.5" r="1"/></g></svg>
                                                 <div class="dropdown menu_dropdown_check_in" id="dropdown-menu">
-                                                    <div class="dropdown-item booked_room_edit" data-room-id="${record['booking_id']}">Sửa phòng</div>
-                                                    <div class="dropdown-item booked_room" data-room-id="${record['id']}">Nhận phòng</div>
-                                                   
-                                                    <div class="dropdown-item delete-booked-room" data-room-id="${record['booking_id']}">Xóa phòng</div>
+                                                    <div class="dropdown-item booked_room_edit" data-room-id="${record['booking_id']}">Sửa</div>
+                                                    <div class="dropdown-item delete-booked-room" data-room-id="${record['booking_id']}">Xóa </div>
                                                 </div>
                                             </td>
                                             <td class="text-right">${index + 1}</td>
@@ -1651,6 +1675,9 @@ function loadRoomBookings(page = 1, data) {
                 });
                 selected_select.append(option);
                 updatePagination(pagination, 'loadRoomBookings');
+                setTimeout(function () {
+                    $('#loading-overlay').css('display', 'none'); 
+                }, 1000);
             }
         },
         error: function (xhr, status, error) {
