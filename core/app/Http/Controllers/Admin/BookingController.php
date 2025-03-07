@@ -100,6 +100,8 @@ class BookingController extends Controller
     //123
     public function getBooking(Request $request)
     {
+        Log::info($request->all());
+
         $perPage = 10;
         $roomBookings = CheckIn::with('room', 'admin')
             ->where('unit_code', unitCode())
@@ -109,9 +111,13 @@ class BookingController extends Controller
             ->when(!empty($request->data['customerName']), function ($query) use ($request) {
                 $query->where('customer_name', 'LIKE', '%' . $request->data['customerName'] . '%');
             })
-            ->when(!empty($request->data['roomCode']), function ($query) use ($request) {
-                $query->where('room_code', 'LIKE', '%' . $request->data['roomCode'] . '%');
-            })
+            // ->when(!empty($request->data['roomCode']), function ($query) use ($request) {
+            //     $query->where('room_code', 'LIKE', '%' . $request->data['roomCode'] . '%');
+            // })
+            ->when( !empty($request->data['roomName']),  fn ($query) => $query->whereHas('room', fn ($q) =>
+                    $q->where('room_number', 'LIKE', '%' . $request->data['roomName'] . '%')
+                )
+            )
             ->orderBy('created_at', 'desc')
             ->get();
         $groupedBookings = $roomBookings->groupBy('check_in_id');
@@ -484,7 +490,7 @@ class BookingController extends Controller
                 ];
             }
         }
-        // hạng phòng 
+        // hạng phòng
         $roomType = RoomType::active()->get();
         // tên phòng
         $room = Room::active();
@@ -586,13 +592,13 @@ class BookingController extends Controller
             $roomChange->email              = $roomBooking->email;
             $roomChange->price_group        = $roomBooking->price_group;
             $roomChange->guest_count        = $roomBooking->guest_count;
-            $roomChange->total_amount       = $isRoom['roomType']['roomTypePrice']['unit_price']; // giá tiền của phòng mới 
+            $roomChange->total_amount       = $isRoom['roomType']['roomTypePrice']['unit_price']; // giá tiền của phòng mới
             $roomChange->deposit_amount     = $roomBooking->deposit_amount;
             $roomChange->discount           = $roomBooking->discount;
             $roomChange->note               = "Đổi phòng từ " . ($isRoomOld->room_number ?? optional($roomBooking->room)->room_number) . " sang {$isRoom->room_number}";
             $roomChange->unit_code          = hf('ma_coso');
             $roomChange->created_by         = authAdmin()->id;
-            // check nếu lại đổi phòng trùng nhau 
+            // check nếu lại đổi phòng trùng nhau
             if ($roomBooking->room_code == $isRoom->id) {
                 return ApiResponse::error('Phòng mới đổi là phòng đang ở ' . $roomBooking->room_code, 200);
             }
@@ -657,13 +663,13 @@ class BookingController extends Controller
             $roomChange->email              = $roomBooking->email;
             $roomChange->price_group        = $roomBooking->price_group;
             $roomChange->guest_count        = $roomBooking->guest_count;
-            $roomChange->total_amount       = $isRoom['roomType']['roomTypePrice']['unit_price']; // giá tiền của phòng mới 
+            $roomChange->total_amount       = $isRoom['roomType']['roomTypePrice']['unit_price']; // giá tiền của phòng mới
             $roomChange->deposit_amount     = $roomBooking->deposit_amount;
             $roomChange->discount           = $roomBooking->discount;
             $roomChange->note               = "Đổi phòng từ " . ($isRoomOld->room_number ?? optional($roomBooking->room)->room_number) . " sang {$isRoom->room_number}";
             $roomChange->unit_code          = hf('ma_coso');
             $roomChange->created_by         = authAdmin()->id;
-            // check nếu lại đổi phòng trùng nhau 
+            // check nếu lại đổi phòng trùng nhau
             if ($roomBooking->room_code == $isRoom->id) {
                 return ApiResponse::error('Phòng mới đổi là phòng đang ở ' . $roomBooking->room_code, 200);
             }
@@ -673,7 +679,7 @@ class BookingController extends Controller
             $roomBooking->room_change = $isRoom->id;
             $roomBooking->save();
 
-            // trạng thái phòng 
+            // trạng thái phòng
             saveRoomStatusHistory($isRoom->id, now(), $roomBooking->checkout_date, 3);
             saveRoomStatusHistory($roomBooking->room_code, $roomBooking->checkin_date, $roomBooking->checkout_date, 1);
 

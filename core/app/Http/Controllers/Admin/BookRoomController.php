@@ -250,7 +250,7 @@ class BookRoomController extends Controller
             }
             $guest = [];
 
-           
+
             $bookingId = null;
             // $bookedRoomData = [];
             // $totalFare      = 0;
@@ -285,29 +285,29 @@ class BookRoomController extends Controller
                 $dateIn  = Carbon::parse($room['dateIn']);
                 $dateOut =  Carbon::parse($room['dateOut']);
 
-               
+
                 $is_room = Room::find($room['room']);
 
                 $checkRoom = RoomStatusHistory::where('room_id', $room['room'])
-                ->whereDate('start_date', '<=', Carbon::parse($room['dateIn'])->format('Y-m-d'))
-                ->whereDate('end_date', '>=', Carbon::parse($room['dateIn'])->format('Y-m-d'));
+                    ->whereDate('start_date', '<=', Carbon::parse($room['dateIn'])->format('Y-m-d'))
+                    ->whereDate('end_date', '>=', Carbon::parse($room['dateIn'])->format('Y-m-d'));
                 if ($request->method == 'check_in') {
-                    $checkRoom->where('status_code', 3); 
+                    $checkRoom->where('status_code', 3);
                 } else {
-                    $checkRoom->whereIn('status_code', [2,3]);
+                    $checkRoom->whereIn('status_code', [2, 3]);
                 }
-                
+
                 $checkRoom = $checkRoom->first();
-                
-               
+
+
                 if ($checkRoom) {
                     DB::rollBack();
                     return response()->json([
                         'error' => 'Phòng ' . $is_room['room_number'] . ' đã được đặt trong ngày ' . Carbon::parse($dateIn)->format('d-m-Y')
                     ]);
                 }
-                
-               
+
+
                 if ($index == 0) {
                     if ($request->method == 'check_in') {
                         $check_in->check_in_id      = getCode('NP', 12);
@@ -402,17 +402,17 @@ class BookRoomController extends Controller
                 $is_room = Room::find($room['room']);
 
                 $checkRoom = RoomStatusHistory::where('room_id', $room['room'])
-                ->whereDate('start_date', '<=', Carbon::parse($room['dateIn'])->format('Y-m-d'))
-                ->whereDate('end_date', '>=', Carbon::parse($room['dateIn'])->format('Y-m-d'));
+                    ->whereDate('start_date', '<=', Carbon::parse($room['dateIn'])->format('Y-m-d'))
+                    ->whereDate('end_date', '>=', Carbon::parse($room['dateIn'])->format('Y-m-d'));
                 if ($request->method == 'check_in') {
-                    $checkRoom->where('status_code', 3); 
+                    $checkRoom->where('status_code', 3);
                 } else {
-                    $checkRoom->whereIn('status_code', [2,3]);
+                    $checkRoom->whereIn('status_code', [2, 3]);
                 }
-                
+
                 $checkRoom = $checkRoom->first();
-                
-               
+
+
                 if ($checkRoom) {
                     DB::rollBack();
                     return response()->json([
@@ -584,6 +584,13 @@ class BookRoomController extends Controller
     {
         $ids = json_decode($request->data, true);
         RoomBooking::whereIn('id', $ids)->delete();
+        return response()->json(['status' => 'success', 'success' => 'Xoá thành công']);
+    }
+
+    public function deleteRoomCheckIn(Request $request)
+    {
+        $ids = json_decode($request->data, true);
+        CheckIn::whereIn('id', $ids)->delete();
         return response()->json(['status' => 'success', 'success' => 'Xoá thành công']);
     }
 
@@ -862,7 +869,7 @@ class BookRoomController extends Controller
             'option_customer_source' => $customer->group_code ?? "",
         ]);
     }
-    // get room booking 
+    // get room booking
     public function getRoomBooking(Request $request)
     {
         $data = RoomBooking::query() // Đưa array vào cho dễ đọc
