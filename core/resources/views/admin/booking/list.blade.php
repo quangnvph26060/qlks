@@ -15,7 +15,7 @@
                 </div>
             </div>
         </div> --}}
-     
+
         <div class="card b-radius--10">
             <div class="card-body p-0">
                 <div class="table-responsive--md">
@@ -37,7 +37,7 @@
 
                                 {{-- @can(['admin.hotel.room.type.edit', 'admin.hotel.room.type.status',
                                     'admin.hotel.room.type.destroy'])
-                              
+
                                 @endcan --}}
                             </tr>
                         </thead>
@@ -50,9 +50,9 @@
 
                 </div>
             </div>
-          
+
         </div>
-     
+
         {{-- @include('admin.booking.partials.room_booking') --}}
         @include('admin.booking.partials.confirm-room')
         @include('admin.booking.partials.check-in-room')
@@ -78,7 +78,8 @@
         </a>
         <div class="form-group position-relative mb-0" style="display: flex;gap: 10px;">
             <input class="searchInput input-field-search-book" name="booking_code" placeholder="Mã nhận phòng" id="booking_code">
-            <select class="searchInput input-field-search-book"  name="room_code" id="select_room_number"></select>
+            {{-- <select class="searchInput input-field-search-book"  name="room_code" id="select_room_number"></select> --}}
+            <input class="searchInput input-field-search-book" name="room_name" placeholder="Mã nhận phòng" id="room_name">
           {{-- <div class="d-flex" style="gap: 10px">
             <input type="date" class="form-control " id="date-chon-phong-in" style="height: 35px">
             <input type="date" class="form-control " id="date-chon-phong-out" style="height: 35px">
@@ -87,7 +88,7 @@
             <button type="submit" class="btn btn-primary btn-submit-search-book">
                 <i class="las la-search"></i>
             </button>
-          
+
         </div>
         <div class="modal fade" id="addRoomModal" tabindex="-1" aria-hidden="true" style="overflow: unset">
             <div class="modal-dialog modal-dialog-centered" style="top: 4px">
@@ -223,6 +224,7 @@
     var deleteRoomEdit = '{{ route('admin.room.booking.delete') }}';
     var roomBook = "{{ route('admin.room.book') }}";
     var CheckInUrl = "{{route('admin.room.booked.check.in')}}";
+    var deleteCheckin = '{{ route('admin.check.in.delete') }}';
 </script>
 @endpush
 
@@ -234,17 +236,17 @@
         }
         #show-room tr td {
             padding: 6px 2px !important;
-            line-height: 0;   
+            line-height: 0;
         }
         #dropdown-menu {
-            position: fixed; 
-            z-index: 9999; 
-            background: white; 
+            position: fixed;
+            z-index: 9999;
+            background: white;
             box-shadow: 0px 4px 10px rgba(0, 0, 0, 0.2);
         }
         .table-responsive--md {
             overflow-x: auto;
-           
+
         }
         @media (max-width: 768px) {
             .table--light {
