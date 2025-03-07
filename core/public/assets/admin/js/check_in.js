@@ -248,6 +248,55 @@ $('.delete-room-booking').on('click', function () {
         }
     });
 });
+
+//xoá phòng edit
+$('.delete-room-booking-edit').on('click', function () {
+    let selectedBookingIds = [];
+    Swal.fire({
+        title: 'Bạn có chắc chắn xoá phòng này không',
+        text: 'Bạn có chắc chắn xoá phòng này không',
+        icon: 'warning',
+        showCancelButton: true,
+        confirmButtonText: 'Đồng ý',
+        cancelButtonText: 'Hủy bỏ',
+        reverseButtons: true
+    }).then((result) => {
+        if (result.isConfirmed) {
+            $('#list-booking-edit tr').each(function () {
+                var checkbox = $(this).find('input[type="checkbox"]');
+                if (checkbox.prop('checked')) {
+                    var bookingId = $(this).data('room-booking-id');
+                    selectedBookingIds.push(bookingId);
+                    $(this).remove();
+                }
+
+            });
+            //  console.log(selectedBookingIds);
+            $.ajax({
+                url: deleteCheckin,
+                type: 'POST',
+                data: {
+                    data: JSON.stringify(selectedBookingIds)
+                },
+                success: function (response) {
+                    if (response.status === 'success') {
+                        loadRoomBookings();
+                        let totalPrice = 0;
+                        totalPrice = calculateTotalPrice();
+                        $('.total_amount').text(formatCurrency(totalPrice));
+                        // $('#total_balance').text(formatCurrency(totalPrice));
+                        notify('success', response.success);
+                    }
+                },
+                error: function (error) {
+                    $('#loading').hide();
+                    console.log('Error:', error);
+                }
+            });
+        }
+    });
+
+});
 $(document).on('click', '#btn-search', function () {
     var customerName = $('#name').val();
     let flag = true;
@@ -516,14 +565,15 @@ $(document).ready(function () {
     });
     $(document).on('click', '.btn-submit-search-book', function () {
         let bookingCode = $('#booking_code').val();
-        let roomCode = $('#select_room_number').val();
+        let roomName = $('#room_name').val();
         let customerName = $('#name_book').val();
 
         let data = {
             bookingCode: bookingCode,
-            roomCode: roomCode,
+            roomName: roomName,
             customerName: customerName,
         }
+
         loadRoomBookings(1, data);
     });
 });
@@ -537,6 +587,7 @@ function loadRoomBookings(page = 1, data) {
             data: data,
         },
         success: function (response) {
+
 
             if (response.status === 'success') {
                 var data = response.data.data;
@@ -564,10 +615,9 @@ function loadRoomBookings(page = 1, data) {
                                             <td class="text-center">
                                                 <svg class="svg_menu_check_in" xmlns="http://www.w3.org/2000/svg" width="30" height="30" viewBox="0 0 21 21"><g fill="currentColor" fill-rule="evenodd"><circle cx="10.5" cy="10.5" r="1"/><circle cx="10.5" cy="5.5" r="1"/><circle cx="10.5" cy="15.5" r="1"/></g></svg>
                                                 <div class="dropdown menu_dropdown_check_in" id="dropdown-menu">
-                                                    <div class="dropdown-item booked_room_edit" data-room-id="${record['check_in_id']}">Sửa phòng</div>
-                                                    <div class="dropdown-item booked_room" data-room-id="${record['id']}">Nhận phòng</div>
-                                                    <div class="dropdown-item booked_room" data-room-id="${record['id']}">Đổi phòng</div>
-                                                    <div class="dropdown-item delete-booked-room" data-room-id="${record['booking_id']}">Xóa phòng</div>
+                                                    <div class="dropdown-item booked_room_edit" data-room-id="${record['check_in_id']}">Sửa </div>
+
+                                                    <div class="dropdown-item delete-booked-room" data-room-id="${record['booking_id']}">Xóa </div>
                                                 </div>
                                             </td>
                                             <td class="text-right">${index + 1}</td>
@@ -602,9 +652,9 @@ function loadRoomBookings(page = 1, data) {
                         }
                         html += `
                                 <tr class="background-tr">
-                                  
+
                                     <td class="text-left" colspan="6">${record['room']['room_number']}</td>
-                                  
+
                                     <td class="text-right w-10">${formatDateTime(record['checkin_date'])}</td>
                                     <td class="text-right w-10" >${formatDateTime(record['checkout_date'])}</td>
 
@@ -1076,7 +1126,7 @@ $('.add-customer-booked').on('click', function () {
     let Id = selectedCustomer.data('id');
     findCustomerById(Id)
 });
-function findRoomBookingId(id) { 
+function findRoomBookingId(id) {
     $.ajax({
         url: findRoomBookingIdUrl,
         type: 'POST',
@@ -1270,7 +1320,7 @@ function findRoomBookingId(id) {
 }
 
 $('.add-booked-room-form').on('click', function () {
-    let selectedRooms = $('#show-booked-room input[type="checkbox"]:checked'); 
+    let selectedRooms = $('#show-booked-room input[type="checkbox"]:checked');
     if (selectedRooms.length === 0) {
         notify('error', 'Vui lòng chọn đặt phòng');
         return;
@@ -1389,10 +1439,10 @@ function showBookedRoom(value = "", option_customer_source = "") {
                 const totalDiscount = bookingData.reduce((sum, booking) => sum + parseFloat(booking.discount || 0), 0);
                 const totalAmount = bookingData.reduce((sum, booking) => sum + parseFloat(booking.deposit_amount || 0), 0);
                 bookingData.forEach(function (record, idx) {
-                    
+
                     if (idx === 0) {
                         tr += `
-                         
+
                                         <tr data-id="${record['id']}">
                                             <td>
                                                 <button class="btn btn-link btn-toggle" type="button"
@@ -1405,7 +1455,7 @@ function showBookedRoom(value = "", option_customer_source = "") {
                                             <td class="text-right">${record['phone_number'] ? record['phone_number'] : 'N/A'}</td>
                                             <td class="text-right">${totalGuests}</td>
                                             <td class="text-right">${formatCurrency(totalPrice)}</td>
-                                            <td class="text-right">${formatCurrency(totalAmount)}</td>   
+                                            <td class="text-right">${formatCurrency(totalAmount)}</td>
                                             <td class="text-right">${formatCurrency(totalDiscount)}</td>
                                         </tr>
                                           <tr class="collapse" id="rep-${firstRecord['booking_id']}">
@@ -1413,7 +1463,7 @@ function showBookedRoom(value = "", option_customer_source = "") {
                                         <table class="table--light style--two  table">
                                             <thead>
                                                 <tr>
-                                                  
+
                                                     <th colspan="6">Phòng</th>
                                                     <th>Ngày check-in</th>
                                                     <th>Ngày check-out</th>
@@ -1429,13 +1479,13 @@ function showBookedRoom(value = "", option_customer_source = "") {
                                     `;
                     }
                         tr += `
-                              
+
                                     <tr class="background-tr">
-                                  
+
                                         <td class="text-left" colspan="6">${ record['room_change_info'] ? record['room_change_info']['room']['room_number'] : record['room']['room_number']}</td>
                                         <td class="text-right w-10">${formatDateTime(record['checkin_date'])}</td>
                                         <td class="text-right w-10" >${formatDateTime(record['checkout_date'])}</td>
-                                      
+
                                         <td class="text-right w-10" >${record['guest_count']}</td>
                                         <td class="text-right w-10">
                                           ${ record['room_change_info'] ? formatCurrency(record['room_change_info']['total_amount']) : formatCurrency(record['total_amount'])}
@@ -1445,15 +1495,15 @@ function showBookedRoom(value = "", option_customer_source = "") {
                                         <td class="text-right">${record['note']}</td>
                                         <td clas="text-center" style="text-align: center;">
                                             <input type="checkbox" data-book="${firstRecord['booking_id']}"
-                                             data-date="${record['checkin_date']}" data-id="${ record['room_change'] ?? record['room_code']}" 
+                                             data-date="${record['checkin_date']}" data-id="${ record['room_change'] ?? record['room_code']}"
                                              data-room_type_id="${record['room']['room_type_id']}"
                                              ${record['status'] === 1 ? 'disabled' : ''}
                                               id="checkbox-${record['room_code']}">
                                         </td>
                                     </tr>
-                             
+
                                 `;
-                    
+
                     if (idx === bookingData.length - 1) {
                         tr += `
                                                 </tbody>
@@ -1768,7 +1818,7 @@ $(document).on('click', '.change-booking-room', function () {
     let roomId = selectedRoom.data('id');
     let roomTypeId = selectedRoom.data('room_type_id');
     let date = selectedRoom.data('date');
-    
+
     let roomNew = {
         room_id: roomId,
         room_type_id: roomTypeId,
@@ -1785,7 +1835,7 @@ $(document).on('click', '.change-booking-room', function () {
         <input type="hidden" name="date_new" value="${roomNew.date}">
     `);
     $('#btn-change-booking-room').submit();
-    
+
 });
 $('#btn-change-booking-room').on('submit', function (e) {
     e.preventDefault();
@@ -1814,7 +1864,7 @@ $('#btn-change-booking-room').on('submit', function (e) {
             }
         },
     });
-    
+
 });
 function updatePagination(pagination) {
     var paginationHtml = '';

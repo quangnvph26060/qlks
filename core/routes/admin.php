@@ -260,7 +260,7 @@ Route::middleware('admin', 'adminPermission')->group(function () {
             Route::post('/setup/add-code', 'store')->name('store');
             Route::get('', 'index')->name('all');
             Route::get('setup/edit-setup/{id}', 'edit')->name('edit');
-            Route::put('/setup/update-setup/{id}', 'update')->name('update');    
+            Route::put('/setup/update-setup/{id}', 'update')->name('update');
             Route::post('delete-setup/{id}', 'delete')->name('delete');
             Route::get('search', 'search')->name('search');
 
@@ -334,6 +334,7 @@ Route::middleware('admin', 'adminPermission')->group(function () {
         Route::post('room-book-edit', 'bookEdit')->name('room.book.edit');
         Route::post('room-book-delete', 'deleteRoomBooking')->name('room.booking.delete');
         Route::get('room/search', 'searchRoom')->name('room.search');
+        Route::post('room-book-delete-check-in', 'deleteRoomCheckIn')->name('check.in.delete');
 
         Route::get('search/customer', 'searchCustomer')->name('search.customer');
         Route::get('find/customer', 'findCustomer')->name('find.customer');
