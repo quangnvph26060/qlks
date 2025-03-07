@@ -250,18 +250,7 @@ class BookRoomController extends Controller
             }
             $guest = [];
 
-            // check thông tin  user đã đăng ký tài khoản chưa
-            // if ($request->guest_type == 1) {
-            //     $user = User::where('email', $request->email)->first();
-            //     if (!$user) {
-            //         return response()->json(['error' => 'Không có khách đã đăng ký nào được tìm thấy với email này']); // No registered guest found with this email
-            //     }
-            // } else {
-            //     $guest['name'] = $request->guest_name;
-            //     $guest['email'] = $request->email;
-            //     $guest['mobile'] = $request->mobile;
-            //     $guest['address'] = $request->address;
-            // }
+           
             $bookingId = null;
             // $bookedRoomData = [];
             // $totalFare      = 0;
@@ -494,17 +483,16 @@ class BookRoomController extends Controller
             }
             saveRoomStatusHistory($room['room'], $dateIn, $dateOut, 3);
 
-            // 123456
             DB::commit();
             return response()->json(['success' => 'Cập nhật nhận phòng thành công']);
         } catch (\Exception $e) {
             DB::rollBack();
-            Log::error('Có lỗi xảy ra trong quá trình nhận phòng', [
-                'message' => $e->getMessage(), // Nội dung lỗi
-                'file' => $e->getFile(), // File xảy ra lỗi
-                'line' => $e->getLine(), // Dòng bị lỗi
-                'trace' => $e->getTraceAsString() // Stack trace để debug
-            ]);
+            // Log::error('Có lỗi xảy ra trong quá trình nhận phòng', [
+            //     'message' => $e->getMessage(), // Nội dung lỗi
+            //     'file' => $e->getFile(), // File xảy ra lỗi
+            //     'line' => $e->getLine(), // Dòng bị lỗi
+            //     'trace' => $e->getTraceAsString() // Stack trace để debug
+            // ]);
             return response()->json(['error' => 'Đã xảy ra lỗi, không nhận phòng thành công ']);
         }
     }
