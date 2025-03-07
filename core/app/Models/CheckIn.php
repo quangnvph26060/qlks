@@ -18,6 +18,8 @@ class CheckIn extends Model
 
     public $timestamps = true; // Sử dụng `created_at` và `updated_at`
 
+    protected $appends = ['room_change_info'];
+
     protected $fillable = [
         'check_in_id',
         'id_room_booking',
@@ -49,5 +51,12 @@ class CheckIn extends Model
     public function due()
     {
         return $this->total_amount - $this->deposit_amount;
+    }
+    public function getRoomChangeInfoAttribute() {
+        if($this->room_change != null) {
+            return RoomChange::where('id_check_in', $this->check_in_id)
+                ->where('new_room_code', $this->room_change)->with('room') ->orderBy('updated_at', 'desc')
+                ->first();
+        }
     }
 }

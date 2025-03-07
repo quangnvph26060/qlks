@@ -1,4 +1,4 @@
-@extends('admin.layouts.app')
+@extends('admin.layouts.master_iframe')
 @section('panel')
     <div class="row mb-none-30">
         <div class="col-lg-12 col-md-12 mb-30">

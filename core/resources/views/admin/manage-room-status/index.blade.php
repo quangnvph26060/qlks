@@ -1,4 +1,4 @@
-@extends('admin.layouts.app')
+@extends('admin.layouts.master_iframe')
 @section('panel')
     <div class="row">
         <div class="col-lg-12">  <div class="pagination-container"> </div>
@@ -86,55 +86,12 @@
 @push('script-lib')
     <script  src="{{ asset('assets/admin/js/pagination.js') }}"></script>
 @endpush
-
+@push('style-lib')
+    <link rel="stylesheet" href="{{ asset('assets/global/css/pagination.css') }}">
+@endpush
 @push('style')
     <style>
-          .pagination-container {
-            display: flex;
-            justify-content: center;
-            /* margin-top: 20px; */
-        }
-
-        .pagination-container button {
-            background-color: #4634ff;
-            color: white;
-            border: 1px solid #ddd;
-            padding: 4px 10px;
-            margin: 0 5px;
-            border-radius: 5px;
-            cursor: pointer;
-            font-size: 14px;
-            transition: background-color 0.3s, transform 0.3s;
-        }
-
-        .pagination-container button:hover {
-            background-color: #4634ff;
-            transform: scale(1.05);
-        }
-
-        .pagination-container button:disabled {
-            background-color: #ddd;
-            cursor: not-allowed;
-        }
-
-        .pagination-container button.active {
-            background-color: #4634ff;
-            border-color: #4634ff;
-        }
-          .pagination-container button:hover {
-            background-color: #4634ff;
-            transform: scale(1.05);
-        }
-
-        .pagination-container button:disabled {
-            background-color: #ddd;
-            cursor: not-allowed;
-        }
-
-        .pagination-container button.active {
-            background-color: #4634ff;
-            border-color: #4634ff;
-        }
+      
 
         /* .pagination-container button:first-child {
             border-radius: 5px 0 0 5px;

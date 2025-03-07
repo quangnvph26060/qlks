@@ -40,8 +40,12 @@ class ManagePriceListController extends Controller
     //add 
     public function addPrice(Request $request){
         $validatedData = $request->validate([
-            'room_type_id' => 'required|exists:room_types,id', 
-            'setup_pricing_id' => 'required|exists:setup_pricing,id', 
+            'room_type_id'          => 'required|exists:room_types,id', 
+            'setup_pricing_id'      => 'required|exists:setup_pricing,id', 
+            'unit_price'            => 'required',
+            'overtime'              => 'required',
+            'too_many_people'       => 'required',
+            'price_validity_period' => 'required',
         ], [
             // Custom thông báo lỗi
             'room_type_id.required' => 'Vui lòng chọn mã hạng phòng.',
@@ -54,14 +58,17 @@ class ManagePriceListController extends Controller
             ->where('setup_pricing_id', $validatedData['setup_pricing_id'])
             ->exists();
             if ($exists) {
-              
                 $notify[] = ['error', 'Dữ liệu đã tồn tại.'];
                 return back()->withNotify($notify);
             }
             RoomTypePrice::create([
-                'room_type_id' => $validatedData['room_type_id'],
-                'setup_pricing_id' => $validatedData['setup_pricing_id'],
-                'unit_code' => hf('ma_coso'),
+                'room_type_id'               => $validatedData['room_type_id'],
+                'setup_pricing_id'           => $validatedData['setup_pricing_id'],
+                'unit_price'                 => (float) str_replace('.', '', $validatedData['unit_price']),
+                'overtime_price'             => (float) str_replace('.', '', $validatedData['overtime']),
+                'extra_person_price'         => (float) str_replace('.', '', $validatedData['too_many_people']),
+                'price_validity_period'      => $validatedData['price_validity_period'],
+                'unit_code'                  => hf('ma_coso'),
             ]);
             $notify[] = ['success', 'Thêm thành công'];
             return back()->withNotify($notify);
@@ -390,86 +397,43 @@ class ManagePriceListController extends Controller
         }
     }
     // updateRoomTypePrice
-    public function updateRoomTypePrice(Request $request) {
-        // switch case
-        $case = $request->method;
-        switch ($case) {
-            case 'unit_price':
-                return  $this->configUnitPrice($request->id, $request->value);
-                break;
-            case 'overtime_price':
-                return  $this->configOvertimePrice($request->id, $request->value);
-                break;
-            case 'extra_person_price':
-                return  $this->configExtraPersonPrice($request->id, $request->value);
-                break;
-            case 'price_validity_period':
-                return  $this->configPriceValidityPeriod($request->id, $request->value);
-                break;
-            default:
-                return response()->json(['error' => 'Thao tác không hợp lệ.']);
-        }
-    }
-    private  function configPriceValidityPeriod($id, $value){
-        $priceRoomType = RoomTypePrice::find($id);
-        if($priceRoomType){
-            $priceRoomType->price_validity_period = $value;
-            $priceRoomType->save();
-            return response()->json([
-               'status'  =>'success',
-               'message' => 'Cập nhật giá phòng thành công.',
-            ]);
-        }
-        return response()->json([
-           'status'  => 'error',
-           'message' => 'Giá phòng không tồn tại.',
+    public function updateRoomTypePrice($id, Request $request) {
+        // Xác thực dữ liệu đầu vào
+        $validatedData = $request->validate([
+            'room_type_id'          => 'required',
+            'setup_pricing_id'      => 'required',
+            'unit_price'            => 'required|string',
+            'overtime'              => 'nullable|string',
+            'too_many_people'       => 'nullable|string',
+            'price_validity_period' => 'required|date',
         ]);
-    }
-    private  function configUnitPrice($id, $value){
+    
         $priceRoomType = RoomTypePrice::find($id);
-        if($priceRoomType){
-            $priceRoomType->unit_price = $value;
-            $priceRoomType->save();
-            return response()->json([
-               'status'  =>'success',
-               'message' => 'Cập nhật giá phòng thành công.',
-            ]);
+        if (!$priceRoomType) {
+            $notify[] = ['error', 'Không tìm thấy dữ liệu'];
+            return back()->withNotify($notify);
         }
-        return response()->json([
-           'status'  => 'error',
-           'message' => 'Giá phòng không tồn tại.',
-        ]);
-    }
-    private  function configOvertimePrice($id, $value){
-        $priceRoomType = RoomTypePrice::find($id);
-        if($priceRoomType){
-            $priceRoomType->overtime_price = $value;
-            $priceRoomType->save();
-            return response()->json([
-               'status'  =>'success',
-               'message' => 'Cập nhật giá phòng thành công.',
-            ]);
+    
+        $is_flag = RoomTypePrice::where('room_type_id',$validatedData['room_type_id'])
+                    ->where('setup_pricing_id',$validatedData['setup_pricing_id'])->first();
+        if($is_flag){
+            $notify[] = ['error', 'Dữ liệu đã tồn tại'];
+            return back()->withNotify($notify);
         }
-        return response()->json([
-           'status'  => 'error',
-           'message' => 'Giá phòng không tồn tại.',
+        $priceRoomType->update([
+            'room_type_id'          => $validatedData['room_type_id'],
+            'setup_pricing_id'      => $validatedData['setup_pricing_id'],
+            'unit_price'            => (float) str_replace('.', '', $validatedData['unit_price']),
+            'overtime_price'        => (float) str_replace('.', '', $validatedData['overtime'] ?? '0'),
+            'extra_person_price'    => (float) str_replace('.', '', $validatedData['too_many_people'] ?? '0'),
+            'price_validity_period' => $validatedData['price_validity_period'],
+            'unit_code'             => hf('ma_coso'),
         ]);
+    
+        $notify[] = ['success', 'Thêm thành công'];
+        return back()->withNotify($notify);
     }
-    private  function configExtraPersonPrice($id, $value){
-        $priceRoomType = RoomTypePrice::find($id);
-        if($priceRoomType){
-            $priceRoomType->extra_person_price = $value;
-            $priceRoomType->save();
-            return response()->json([
-               'status'  =>'success',
-               'message' => 'Cập nhật giá phòng thành công.',
-            ]);
-        }
-        return response()->json([
-           'status'  => 'error',
-           'message' => 'Giá phòng không tồn tại.',
-        ]);
-    }
+    
     //delete RoomTypePrice
     public function deleteRoomTypePrice($id){
         $priceRoomType = RoomTypePrice::find($id);
@@ -483,6 +447,20 @@ class ManagePriceListController extends Controller
         return response()->json([
            'status'  => 'error',
            'message' => 'Giá phòng không tồn tại.',
+        ]);
+    }
+    public function findRooomType(Request $request){
+        $id = $request->id;
+        $priceRoomType = RoomTypePrice::where('id',$id)->where('unit_code', unitCode())->with('setupPricing','roomType')->first();
+        if (!$priceRoomType) {
+            return response()->json([
+               'status' => 'error',
+               'message' => 'Không tìm thấy giá phòng.'
+            ]);
+        }
+        return response()->json([
+            'status' => 'success',
+            'data'   => $priceRoomType,
         ]);
     }
 }

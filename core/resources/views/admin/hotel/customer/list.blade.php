@@ -1,4 +1,4 @@
-@extends('admin.layouts.app')
+@extends('admin.layouts.master_iframe')
 
 @section('panel')
     <div class="row">
@@ -43,9 +43,12 @@
                                 
                                             </div>
                                     </td>
-                                    <td style="width:20px;text-align:right">{{ $customers->count() - ($loop->iteration - 1) }}</td>
-            
-                        
+                                    <td style="width:20px;text-align:right">
+                                    @php
+                                        $stt = $customers->total() - ($customers->currentPage() - 1) * $customers->perPage() - $id;
+                                        @endphp
+                                        {{ $stt }}
+                                    </td>
                                     <td>
                                             <span class="fw-bold code">{{ $customer->customer_code }}</span>
                                     </td>
@@ -107,15 +110,16 @@
             <div class="row">
                 <div class="col-md-12 col-sm-12 d-flex">
                     <a class="mr-1" href="{{route('admin.hotel.customer.all')}}">
-                        <button class="btn btn-sm btn-outline--primary" data-modal_title="Làm mới">
-                            <i class="fa fa-repeat p-2"></i>
+                        <button class="btn btn--primary" data-modal_title="Làm mới">
+                            <i class="fa fa-repeat p-1"></i>
                         </button>
                     </a>
-                     <button class="btn btn-sm btn-outline--primary" data-modal_title="Thêm mới khách hàng" type="button"
-                                                data-bs-toggle="modal" data-bs-target="#customer" style="padding-right:15px;padding-left:15px;margin-left:10px">
-                        <i class="las la-plus"></i>
+                    <a>
+                     <button class="btn btn--primary" data-modal_title="Thêm mới khách hàng" type="button"
+                                                data-bs-toggle="modal" data-bs-target="#customer" style="margin-left:10px">
+                        <i class="las la-plus p-1"></i>
                     </button>
-                
+                    </a>                
                     <form role="form" enctype="multipart/form-data" action="{{route('admin.hotel.customer.search')}}">
                         <div class="form-group position-relative mb-0">
                             <input class="searchInput" name="customer_code"
@@ -130,18 +134,22 @@
                             <input class="searchInput" name="address"
                                    style="height: 35px;width:20%;border: 1px solid rgb(121, 117, 117, 0.5); margin-left: 8px;"
                                  placeholder="Địa chỉ" value="{{ $address ?? '' }}">
-            
-                            <button type="submit" class="btn btn-primary" style="padding-right:15px;padding-left:15px">
-                                <i class="las la-search"></i>
+                            <a>
+                            <button type="submit" class="btn btn--primary">
+                                <i class="las la-search p-1"></i>
                             </button>
-
+                            </a>
                         </div>
                     </form>
                 </div>
                 @if ($customers->hasPages())
-                    <div >
-                        {{ paginateLinks($customers) }}
-                    </div>
+                <div class="pager-wrap">
+                            <div class="k-widget d-flex">
+                                <div class="pagination-tb" style="font-size: 13px;margin: 0 auto">
+                                    {{ $customers->links('pagination::bootstrap-4') }}
+                                </div>
+                            </div>
+                        </div>
                 @endif
             </div>
         </div>
@@ -159,11 +167,11 @@
                         {!! csrf_field() !!}
                         {{ method_field('POST') }}
                         <div class="row">
-                            <div style="display: grid; grid-template-columns: 50% 50%">
+                            <div>
                                 <div class="mb-3">
                                     <label for="statusCode" class="form-label">Mã khách hàng</label>
                                     <input type="text" class="form-control " name="customer_code" id="add_customer_code"
-                                           placeholder="Nhập mã khách hàng" style="width:98%">
+                                           placeholder="Nhập mã khách hàng" value="{{ $code }}">
                                     <span class="invalid-feedback d-block" style="font-weight: 500"
                                           id="customer_code_error"></span>
                                 </div>
@@ -261,7 +269,7 @@
                         {!! csrf_field() !!}
                         <input type="hidden" id="method" name="_method" value="">
                         <div class="row">
-                            <div style="display: grid; grid-template-columns: 50% 50%">
+                            <div>
                                 <div class="mb-3">
                                     <label for="statusCode" class="form-label">Mã khách hàng</label>
                                     <input type="text" class="form-control " name="customer_code" id="edit-customer-code"
@@ -359,6 +367,16 @@
             #navbar-wrapper{
                 padding: 0px 30px 20px;
             }
+            .pagination .page-item .page-link, .pagination .page-item span{
+                width: 22px !important;
+                height: auto !important;
+                background-color: #4634ff !important;
+                color: white !important;
+            }
+            .pagination .page-item.active .page-link{
+                background-color: #071251 !important;
+            }
+
     </style>
 @endpush
 @push('script')
@@ -379,7 +397,17 @@
                     },
                     ]
                 },
-
+                'customer_code': {
+                    'element': document.getElementById('add_customer_code'),
+                    'error': document.getElementById('customer_code_error'),
+                    'validations': [{
+                        'func': function(value) {
+                            return checkKey(value); // check trống
+                        },
+                        'message': generateErrorMessage('KT001')
+                    },
+                    ]
+                },
                 'name': {
                     'element': document.getElementById('add_name'), // id trong input đó
                     'error': document.getElementById('name_error'), // thẻ hiển thị lỗi
@@ -415,17 +443,20 @@
             //         ]
                 
             //     },
-            //     'email': {
-            //         'element': document.getElementById('add_email'), // id trong input đó
-            //         'error': document.getElementById('email_error'), // thẻ hiển thị lỗi
-            //         'validations': [{
-            //             'func': function(value) {
-            //                 return checkEmail(value);
-            //             },
-            //             'message': generateErrorMessage('Email002') 
-            //         },
-            //         ]
-            //     },
+              
+                        'email': {
+                        'element': document.getElementById('add_email'), // id trong input đó
+                        'error': document.getElementById('email_error'), // thẻ hiển thị lỗi
+                        'validations': [{
+                            'func': function(value) {
+                                return checkEmail(value);
+                            },
+                            'message': generateErrorMessage('Email002') 
+                        },
+                        ]
+                    },
+                    
+               
             //     'address': {
             //         'element': document.getElementById('add_address'), // id trong input đó
             //         'error': document.getElementById('address_error'), // thẻ hiển thị lỗi
@@ -451,7 +482,17 @@
                     },
                     ]
                 },
-
+                'customer_code': {
+                    'element': document.getElementById('edit-customer-code'),
+                    'error': document.getElementById('edit_customer_code_error'),
+                    'validations': [{
+                        'func': function(value) {
+                            return checkKey(value); // check trống
+                        },
+                        'message': generateErrorMessage('KT001')
+                    },
+                    ]
+                },
                 'name': {
                     'element': document.getElementById('edit-name'), // id trong input đó
                     'error': document.getElementById('edit_name_error'), // thẻ hiển thị lỗi
@@ -487,17 +528,17 @@
                 //     ]
                 
                 // },
-                // 'email': {
-                //     'element': document.getElementById('edit-email'), // id trong input đó
-                //     'error': document.getElementById('edit_email_error'), // thẻ hiển thị lỗi
-                //     'validations': [{
-                //         'func': function(value) {
-                //             return checkEmail(value);
-                //         },
-                //         'message': generateErrorMessage('Email002') 
-                //     },
-                //     ]
-                // },
+                'email': {
+                    'element': document.getElementById('edit-email'), // id trong input đó
+                    'error': document.getElementById('edit_email_error'), // thẻ hiển thị lỗi
+                    'validations': [{
+                        'func': function(value) {
+                            return checkEmail(value);
+                        },
+                        'message': generateErrorMessage('Email002') 
+                    },
+                    ]
+                },
                 // 'address': {
                 //     'element': document.getElementById('edit-address'), // id trong input đó
                 //     'error': document.getElementById('edit_address_error'), // thẻ hiển thị lỗi
@@ -647,7 +688,6 @@
                         success: function(data) {
                            if(data == 1)
                            {
-                            alert(1);
                             Swal.fire({
                                 title: 'Khách hàng đã có đơn hàng',
                                 text: 'Bạn không thể xóa khách hàng này',
@@ -749,7 +789,5 @@
 
         });
 </script>
-<script type="text/javascript">
-    $('.iziToast-title').html('<p>Thông báo</p>'); 
-</script>
+
 @endpush

@@ -26,7 +26,8 @@ class CheckInRoom extends Model
         'option_room',
         'tax_charge',
         'unit_code',
-        'book_room_id'
+        'book_room_id',
+        'room_change',
     ];
     public function booking() {
         return $this->belongsTo(Booking::class, 'booking_id','id');

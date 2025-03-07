@@ -8,7 +8,8 @@ use Carbon\Carbon;
 use Illuminate\Database\Eloquent\Model;
 use Illuminate\Database\Eloquent\Casts\Attribute;
 use Illuminate\Database\Eloquent\SoftDeletes;
-
+use Carbon\CarbonPeriod;
+use App\Models\RoomChange;
 class Room extends Model
 {
     use GlobalStatus, SoftDeletes;
@@ -64,12 +65,12 @@ class Room extends Model
         if ($this->checkins()->exists()) {
             return $this->checkins;
         }
-    
+
         // Nếu không, trả về booked
         return $this->booked;
     }
-    
-    
+
+
 
     public function booked()
     {
@@ -178,13 +179,14 @@ class Room extends Model
         return $query->where('is_featured', Status::ROOM_TYPE_FEATURED);
     }
 
-    public function roomPriceNow(){
+    public function roomPriceNow()
+    {
         $day = Carbon::now()->toDateString();
         $thu = Carbon::now()->locale('en')->isoFormat('dddd');
 
-        if($this->roomPriceDayNow($day)){
+        if ($this->roomPriceDayNow($day)) {
             return  $this->roomPriceDayNow($day);
-        }elseif($this->roomPriceDayOfWeekNow($thu)){
+        } elseif ($this->roomPriceDayOfWeekNow($thu)) {
             return  $this->roomPriceDayOfWeekNow($thu);
         }
 
@@ -202,8 +204,10 @@ class Room extends Model
         return RoomPriceDayOfWeek::where('room_price_id', $this->id)->where('day_of_week', $dayofweek)->first();
     }
 
-    public function bookedRooms(){
-         return BookedRoom::where('room_id', $this->id)->get();
+
+    public function bookedRooms()
+    {
+        return BookedRoom::where('room_id', $this->id)->get();
     }
     public function roomBooking()
     {
@@ -212,5 +216,9 @@ class Room extends Model
     public function roomCheckIn()
     {
         return $this->hasMany(CheckIn::class, 'room_code');
+    }
+    public function  roomBookingChange()
+    {
+        return $this->hasMany(RoomChange::class, 'new_room_code');
     }
 }

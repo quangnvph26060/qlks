@@ -255,6 +255,17 @@ Route::middleware('admin', 'adminPermission')->group(function () {
             Route::post('delete-status/{id}', 'delete')->name('delete');
         });
 
+
+        Route::controller('SetupController')->name('setup.code.')->prefix('setup')->group(function () {
+            Route::post('/setup/add-code', 'store')->name('store');
+            Route::get('', 'index')->name('all');
+            Route::get('setup/edit-setup/{id}', 'edit')->name('edit');
+            Route::put('/setup/update-setup/{id}', 'update')->name('update');    
+            Route::post('delete-setup/{id}', 'delete')->name('delete');
+            Route::get('search', 'search')->name('search');
+
+        });
+
         Route::controller('CustomerSourceController')->name('customer.source.')->prefix('customer-sources')->group(function () {
             Route::get('', 'index')->name('all');
             Route::post('/source/add-source', 'store')->name('store');
@@ -361,8 +372,8 @@ Route::middleware('admin', 'adminPermission')->group(function () {
 
 
             Route::post('show-room', 'showRoom')->name('showRoom');
-
-
+            Route::post('change-room-booking','changeRoom')->name('changeRoomBooking');
+            // Route::post('change-check-in','changeCheckIn')->name('changeCheckIn');
             Route::get('serviceproduct/{id}', 'bookingserviceproduct')->name('serviceproduct');
 
             Route::get('show-room', 'showRoom')->name('showRoom');
@@ -385,7 +396,8 @@ Route::middleware('admin', 'adminPermission')->group(function () {
         Route::post('addPrice', 'addPrice')->name('manage.addPrice');
         Route::post('editPriceRoomType/{id}', 'editPriceRoomType')->name('manage.editPriceRoomType');
         Route::get('setupPriceRoomType', 'setupPriceRoomType')->name('manage.setupPriceRoomType');
-        Route::post('updateRoomTypePrice', 'updateRoomTypePrice')->name('manage.updateRoomTypePrice');
+        Route::post('updateRoomTypePrice/{id}', 'updateRoomTypePrice')->name('manage.updateRoomTypePrice');
+        Route::post('findRooomType', 'findRooomType')->name('manage.findRooomType');
         Route::post('deleteRoomTypePrice/{id}', 'deleteRoomTypePrice')->name('manage.deleteRoomTypePrice');
         Route::get('showRoomTypePrice', 'showRoomTypePrice')->name('manage.showRoomTypePrice');
         Route::post('deletePriceRoomType/{id}', 'deletePriceRoomType')->name('manage.deletePriceRoomType');
@@ -414,6 +426,7 @@ Route::middleware('admin', 'adminPermission')->group(function () {
             Route::post('get-room-check-in', 'getRoomCheckIn')->name('getRoomCheckIn');
 
             Route::get('all-check-in', 'getBooking')->name('all.check.in');
+            Route::get('all-change-room', 'getChangeRoom')->name('all.change.room');
         });
 
         Route::controller('ManageBookingController')->group(function () {

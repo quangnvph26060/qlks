@@ -9,6 +9,7 @@ class RoomBooking extends Model
 {
     use HasFactory;
     protected $table = 'room_booking';
+    protected $appends = ['room_change_info'];
 
     /**
      * The primary key associated with the table.
@@ -41,7 +42,8 @@ class RoomBooking extends Model
         'unit_code',
         'created_by',
         'status',
-        'discount'
+        'discount',
+        'room_change',
     ];
      /**
      * The attributes that should be cast to native types.
@@ -60,7 +62,29 @@ class RoomBooking extends Model
     public function room() {
         return $this->belongsTo(Room::class,'room_code');
     }
-
+    // public function actualRoom() {
+    //     return $this->belongsTo(Room::class, 'room_change');
+    // }
+    
+    // public function defaultRoom() {
+    //     return $this->belongsTo(Room::class, 'room_code');
+    // }
+    // public function getRoomAttribute() {
+    //     return $this->actualRoom ?? $this->defaultRoom;
+    // }
+    
+    public function getRoomChangeInfoAttribute() {
+        if($this->room_change != null) {
+            return RoomChange::where('id_room_booking', $this->booking_id)
+                ->where('new_room_code', $this->room_change)->with('room') ->orderBy('updated_at', 'desc')
+                ->first();
+        }
+    }
+    
+    
+    
+    
+    
     public function admin() {
         return $this->belongsTo(Admin::class,'created_by');
     }
@@ -75,6 +99,10 @@ class RoomBooking extends Model
     public function customer()
     {
         return $this->belongsTo(Customer::class, 'customer_code', 'customer_code');
+    }
+    public function  roomBookingChange(){
+        return $this->hasOne(RoomChange::class, 'id_room_booking', 'booking_id')
+        ->latest('created_at');   
     }
 
 }

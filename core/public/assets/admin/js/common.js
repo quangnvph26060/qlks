@@ -96,7 +96,20 @@ function formatMoneyInput(input) {
         input.value = "";
     }
 }
-
+function formatDateTime(inputDateTime) {
+    var dateTimeParts = inputDateTime.split(' ');
+    var dateParts = dateTimeParts[0].split('-');
+    var formattedDate = dateParts[2] + '/' + dateParts[1] + '/' + dateParts[0];
+    var formattedDateTime = formattedDate + ' ' + dateTimeParts[1];
+    return formattedDateTime;
+}
+function formatDate(inputDate) {
+    // Chia chuỗi ngày thành các phần tử: năm, tháng, ngày
+    var parts = inputDate.split('-');
+    // Định dạng lại chuỗi ngày
+    var formattedDate = parts[2] + '/' + parts[1] + '/' + parts[0];
+    return formattedDate;
+}
 function calculateTotalPrice() {
     let totalPrice = 0;
     let totalDeposit = 0;
@@ -177,6 +190,7 @@ $(document).on('click', '.close_modal', function () {
 $(document).on('click', '.close_modal_booked_room', function () {
     $('#addRoomModal').modal('hide');
     $('#addCustomerModal').modal('hide');
+    $('#changeRoomModal').modal('hide');
 });
 $('.add-room-booking-edit').on('click', function () {
     const roomIds = [];
@@ -212,3 +226,90 @@ $('.add-room-list').on('click', function () {
     });
     addRoomInBooking(selectedCheckboxes, $(`#${dataListValue}`))
 });
+
+function changeRoom(Id, bookingId, roomId, dateId, name) {
+    $('#loading').show();
+    $.ajax({
+        url: showRoomUrl,
+        type: 'POST',
+        data: {
+            Id:Id,
+            bookingId: bookingId,
+            roomId: roomId,
+            dateId: dateId,
+            method: 'change_room',
+        },
+        success: function (data) {
+            // <p data-id="${ item.id }" data-room_type_id="${ item.room_type_id }" class="add-book-room" id="add-book-room">Đặt phòng</p>
+            var tbody = $('#show-room-change');
+
+            if (data.status === 'success') {
+                const dataNew = Object.values(data.data);
+                let seenRooms = new Set();
+                tbody.empty();
+                dataNew.forEach(function (item) {
+                    let rowClass = '';
+                    let isFirst = !seenRooms.has(item.room_number);
+                    seenRooms.add(item.room_number);
+                    // Nếu không phải bản ghi đầu tiên, đặt class theo trạng thái
+                    if (!isFirst) {
+
+                        if (item.check_booked === 'Đã nhận') {
+                            rowClass = "background-red";
+                        } else if (item.check_booked === 'Đã đặt') {
+                            rowClass = 'background-yellow';
+                        } else if (item.check_booked === 'Trống') {
+                            rowClass = "background-primary";
+                        }
+                    } else {
+                        if (item.check_booked === 'Đã nhận') {
+                            rowClass = "background-red";
+                        } else if (item.check_booked === 'Đã đặt') {
+                            rowClass = 'background-yellow';
+                        } else if (item.check_booked === 'Trống') {
+                            rowClass = "background-primary";
+                        }
+                        else {
+                            rowClass = "background-white";
+                        }
+                    }
+                    let firstRowClass = isFirst ? "first-row" : "";
+                    var tr = `
+                        <tr class="${firstRowClass}">
+                            <td style="${isFirst ? 'font-weight: bold;' : ''}" class="text-left"> ${item.room_type['name']} </td>
+                            <td style="${isFirst ? 'font-weight: bold;' : ''}"class="text-left"> ${item.room_number} </td>
+                            <td style="${isFirst ? 'font-weight: bold;' : ''}"class="text-left"> ${formatDate(item.date)} </td>
+                            <td style="${isFirst ? 'font-weight: bold;' : ''}"class="text-left w-10  ${rowClass} "> ${item.check_booked} </td>
+                            <td style="${isFirst ? 'font-weight: bold;' : ''}"class="text-right"> ${formatCurrency(item.room_type.room_type_price['unit_price'])} </td>
+                            <td class="text-center">
+                                <input type="radio" name="change-room" ${item.status == 1 ? 'disabled' : ''}
+                                    data-date="${item.date}"
+                                    data-id="${item.id}"
+                                    data-room_type_id="${item.room_type_id}" 
+                                    id="checkbox-${item.id}">
+                            </td>
+                        </tr>
+                    `;
+                    tbody.append(tr);
+
+                });
+                //123
+                $('.room-number').text(`${data.room_number['room_number']}`);
+                $('.date').text(` ${data.dateBookingRoomOld}`);
+                $('#room_old').val(data.roomId);
+                $('#booking_id').val(data.bookingId);
+                $('.customer-name').text(name);
+                $('.booking-id').text(data.bookingId);
+                $('#id').val(data.id);
+            }
+
+
+
+            $('#loading').hide();
+        },
+        error: function (error) {
+            $('#loading').hide();
+            console.log('Error:', error);
+        }
+    });
+}

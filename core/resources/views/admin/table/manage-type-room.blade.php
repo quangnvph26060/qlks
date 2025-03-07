@@ -1,4 +1,4 @@
-@forelse($response as $type)
+@forelse($response as $id => $type)
     <tr>
         <td>
             <button class="btn btn-link btn-toggle" type="button"
@@ -40,7 +40,12 @@
 
             </td>
         @endcan
-        <td data-label="STT" style="text-align:right">{{ $loop->iteration }}</td>
+        <td data-label="STT" style="text-align:right">   
+             @php
+                $stt = $response->total() - ($response->currentPage() - 1) * $response->perPage() - $id;
+                    @endphp
+                {{ $stt }}
+        </td>
       
         <td data-label="Loại phòng">
             {{ $type->roomType->name }}

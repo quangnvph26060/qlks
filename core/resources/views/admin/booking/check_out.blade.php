@@ -1,4 +1,4 @@
-@extends('admin.layouts.app')
+@extends('admin.layouts.master_iframe')
 
 @section('panel')
     @php $due = $booking->due() @endphp

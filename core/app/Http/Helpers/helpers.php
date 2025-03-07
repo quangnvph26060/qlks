@@ -14,6 +14,7 @@ use App\Models\GeneralSetting;
 use App\Models\HotelFacility;
 use App\Models\Language;
 use App\Models\Role;
+use App\Models\RoomStatusHistory;
 use App\Notify\Notify;
 use Carbon\Carbon;
 use Illuminate\Support\Facades\Cache;
@@ -119,17 +120,17 @@ function getCode($prefix, $length = 12)
 {
     $characters       = 'ABCDEFGHIJKLMNOPQRSTUVWXYZ123456789';
     $charactersLength = strlen($characters);
-    
+
     $randomLength = $length - strlen($prefix);
     if ($randomLength <= 0) {
-        return substr($prefix, 0, $length); 
+        return substr($prefix, 0, $length);
     }
 
     $randomString = '';
     for ($i = 0; $i < $randomLength; $i++) {
         $randomString .= $characters[rand(0, $charactersLength - 1)];
     }
-    
+
     return $prefix . $randomString;
 }
 function getAmount($amount, $length = 2)
@@ -335,7 +336,31 @@ function menuActive($routeName, $type = null, $param = null)
         return $class;
     }
 }
+function saveRoomStatusHistory($room_id, $start_date, $end_date, $status_code)
+{
+    $start_date = Carbon::parse($start_date)->format('Y-m-d');
+    $end_date = Carbon::parse($end_date)->format('Y-m-d');
 
+    $existingRecords = RoomStatusHistory::where('room_id', $room_id)
+        ->where('start_date', $start_date)
+        ->where('end_date', $end_date)
+        ->get();
+
+    if ($existingRecords->isNotEmpty()) {
+        $existingRecords->each(function ($record) use ($status_code) {
+            $record->update(['status_code' => $status_code]);
+        });
+    } else {
+        RoomStatusHistory::create([
+            'room_id'     => $room_id,
+            'start_date'  => Carbon::parse($start_date),
+            'end_date'    => Carbon::parse($end_date),
+            'unit_code'   => hf('ma_coso'),
+            'created_at'  => now(),
+            'status_code' => $status_code
+        ]);
+    }
+}
 function fileUploader($file, $location, $size = null, $old = null, $thumb = null, $filename = null)
 {
     $fileManager           = new FileManager($file);
@@ -506,15 +531,16 @@ function hf($key = null) // hotel_facilities
     return $general;
 }
 // ma cơ sở 
-function unitCode(){
+function unitCode()
+{
     $unit = Cache::get('Unit_code');
     if (!$unit) {
-        $admin = Auth::guard('admin')->user(); 
-            $unit_code = $admin->unit_code;
+        $admin = Auth::guard('admin')->user();
+        $unit_code = $admin->unit_code;
         Cache::put('Unit_code', $unit_code);
         $unit = $unit_code;
     }
-    return $unit; 
+    return $unit;
 }
 // end setting and setup hotels
 function isImage($string)
@@ -730,7 +756,7 @@ function showImageStorage($path)
     return asset('assets/images/default.png');
 }
 
-function findTemplateEmail ($data)
+function findTemplateEmail($data)
 {
     $emailTempalte =   EmailTemplate::active()->where('act', $data)->first();
 

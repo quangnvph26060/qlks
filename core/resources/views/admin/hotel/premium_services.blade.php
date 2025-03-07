@@ -1,9 +1,39 @@
-@extends('admin.layouts.app')
+@extends('admin.layouts.master_iframe')
 
 @section('panel')
     <div class="row">
         <div class="col-md-12">
             <div class="">
+            @push('breadcrumb-plugins')
+       
+            <a class="mr-1" href="{{ route('admin.hotel.premium.service.all') }}">
+            <button class="btn btn-sm btn-outline--primary" data-modal_title="Làm mới">
+                                <i class="fa fa-repeat p-2"></i>
+            </button>
+                </a>
+                <a>
+                    <button class="btn btn-sm btn-outline--primary cuModalBtn" data-modal_title="@lang('Thêm mới dịch vụ cao cấp')" type="button"
+                            style="margin-left:10px">
+                            <i class="las la-plus p-2"></i>
+                        </button>
+                </a>
+                <form role="form" enctype="multipart/form-data" action="{{route('admin.hotel.premium.service.all')}}" method="GET" id="searchForm" style="margin-top:20px">
+                        <div class="form-group position-relative mb-0">
+                             <input placeholder="Nhập tên dịch vụ"
+                                            style="height: 35px;border: 1px solid rgb(121, 117, 117, 0.5);margin-left: 8px;"
+                                            name="name"
+                                id="searchInput"
+                                value="{{ $input}}">
+                                    
+                                <a>
+                                    <button type="submit" class="btn btn-primary">
+                                            <i class="las la-search p-2"></i>
+                                    </button>
+                                </a>
+                         </div>
+                 </form>      
+
+             @endpush
                 <div class="d-flex justify-content-between mb-3" style="float: right;">
                     {{-- <div class=" input-group " style="justify-content: end;">
                         <form id="search-premium" action="{{route('admin.hotel.premium.service.all')}}" method="GET">
@@ -14,34 +44,6 @@
                         </form>
                     </div> --}}
 
-                    @can('admin.hotel.service.search')
-                        @push('breadcrumb-plugins')
-                                <!-- Form tìm kiếm trực tiếp -->
-                                <form action="{{ route('admin.hotel.premium.service.all') }}" method="GET" id="searchForm" class="mx-5">
-                                    <div class="input-group mt-1">
-                                        <input
-                                            type="search"
-                                            class="searchInput"
-                                            name="name"
-                                            id="searchInput"
-                                            value="{{$input}}"
-                                            placeholder="Tìm kiếm..."
-                                            onsearch="handleSearchClear()" style="padding: .375rem .75rem;height:auto">
-                                        <!-- Nút tìm kiếm -->
-                                        <button type="button" class="btn btn-primary">
-                                            <i class="las la-search"></i>
-                                        </button>
-                                    </div>
-                                </form>
-                            @endpush
-                        @endcan
-                    {{-- <div class="input-group" style="justify-content: end;">
-                        <input class="searchInput"
-                        type="search" placeholder="Tìm kiếm...">
-                        <button type="submit" class="btn btn-primary">
-                            <i class="las la-search"></i>
-                        </button>
-                    </div> --}}
                 </div>
             </div>
             <div id="pagination" class="mt-3">
@@ -50,14 +52,14 @@
         <div class="col-lg-12">
             <div class="card b-radius--10">
                 <div class="card-body p-0">
-                    <div class="table-responsive--md table-responsive" style="overflow-x: visible;">
-                        <table class="table--light table">
+                <div class="table-responsive--md table-responsive" style="overflow-x: auto;">
+                <table class="table--light style--two table" >
                             <thead>
                                 <tr>
                                 @can(['admin.hotel.premium.service.save', 'admin.hotel.premium.service.status'])
                                         <th>@lang('Hành động')</th>
                                     @endcan
-                                    <th>@lang('STT')</th>
+                                    <th style="width:50px">@lang('STT')</th>
                                     <th>@lang('Mã dịch vụ')</th>
                                     <th>@lang('Tên dịch vụ')</th>
                                     <th>@lang('Giá')</th>
@@ -66,11 +68,11 @@
                                 </tr>
                             </thead>
                             <tbody>
-                                @forelse($premiumServices as $premiumService)
+                                @forelse($premiumServices as $id => $premiumService)
                                     <tr>
                                     <td style="width:20px;">
                                     <svg class="svg_menu_check_in" xmlns="http://www.w3.org/2000/svg" width="30" height="30" viewBox="0 0 21 21"><g fill="currentColor" fill-rule="evenodd"><circle cx="10.5" cy="10.5" r="1"/><circle cx="10.5" cy="5.5" r="1"/><circle cx="10.5" cy="15.5" r="1"/></g></svg>
-                                        <div class="dropdown menu_dropdown_check_in" id="dropdown-menu">
+                                        <div class="dropdown menu_dropdown_check_in" id="dropdown-menu" style="position:fixed">
                                             <div class="dropdown-item">
                                                  <button class="btn btn-sm btn-outline--primary cuModalBtn edit-service"
                                                             data-has_status="1" data-modal_title="@lang('Update Premium Service')"
@@ -87,7 +89,11 @@
                               
                                         </div>
                                      </td>
-                                        <td style="text-align:right">{{ $loop->iteration }}</td>
+                                        <td style="text-align:right">
+                                        @php
+                                        $stt = $premiumServices->total() - ($premiumServices->currentPage() - 1) * $premiumServices->perPage() - $id;
+                                        @endphp
+                                        {{ $stt }}</td>
                                         <td>{{ $premiumService->code ?? 'Chưa có mã dịch vụ' }}</td>
                                         <td>{{ __($premiumService->name) }}
                                         </td>
@@ -168,11 +174,7 @@
 @endsection
 
 @can('admin.hotel.premium.service.save')
-    @push('breadcrumb-plugins')
-        <button class="btn btn-sm btn-outline--primary p-2 cuModalBtn" data-modal_title="@lang('Thêm mới dịch vụ cao cấp')" type="button">
-            <i class="las la-plus"></i>
-        </button>
-    @endpush
+  
 @endcan
 @push('script')
     <script src="{{ asset('assets/admin/js/highlighter22.js') }}"></script>

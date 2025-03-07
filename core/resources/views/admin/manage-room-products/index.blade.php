@@ -1,4 +1,4 @@
-@extends('admin.layouts.app')
+@extends('admin.layouts.master_iframe')
 @section('panel')
 <link href="https://cdn.jsdelivr.net/npm/select2@4.1.0/dist/css/select2.min.css" rel="stylesheet" />
 <!-- Select2 JS -->
@@ -45,14 +45,15 @@
                         <table class="table--light style--two table" id="data-table">
                             <thead>
                                 <tr>
-                                    <th>@lang('STT')</th>
+                                @can('admin.hotel.room.product.all')
+                                    <th>@lang('Hành động')</th>
+                                    @endcan
+                                    <th style="width:50px">@lang('STT')</th>
                                     <th>@lang('Mã phòng')</th>
                                     <th>@lang('Loại phòng')</th>
                                     <th>@lang('Số phòng')</th>
                                     <th>@lang('Sản phẩm')</th>
-                                    @can('admin.hotel.room.product.all')
-                                    <th>@lang('Hành động')</th>
-                                    @endcan
+                              
                                 </tr>
                             </thead>
                             <tbody>
@@ -70,10 +71,19 @@
 </div>
 @can('')
 @push('breadcrumb-plugins')
-<button type="button" class="btn btn-outline--primary btn-add mt-1">
-    <i class="las la-plus"></i>
 
-</button>
+    <a  href="{{ route('admin.hotel.room.product.all') }}">
+            <button type="button" class="btn btn-outline--primary" data-modal_title="Làm mới">
+                    <i class="fa fa-repeat p-2 "></i>
+
+                </button>
+            </a>   
+            <a>
+            <button type="button" class="btn btn-outline--primary btn-add ">
+                    <i class="las la-plus p-2 "></i>
+
+            </button>
+    </a>     
 @endpush
 @endcan
 
@@ -347,6 +357,31 @@
 
 
         })(jQuery);
+        $(document).ready(function() {
+
+            $(document).on('click', '.svg-icon', function(e) {
+                e.stopPropagation();
+                const $dropdown = $(this).siblings('.menu_dropdown');
+                $('.menu_dropdown').not($dropdown).removeClass('show');
+                $dropdown.toggleClass('show');  
+            });
+            $(document).on('click', function() {
+                $('.menu_dropdown').removeClass('show');
+            });
+            $(document).on('click', '.svg_menu_check_in', function(e) {
+                e.stopPropagation();
+                const $dropdown = $(this).siblings('.menu_dropdown_check_in');
+                $('.menu_dropdown_check_in').not($dropdown).removeClass('show');
+                $dropdown.toggleClass('show');
+            });
+            $(document).on('click', function() {
+                $('.menu_dropdown_check_in').removeClass('show');
+            });
+            $(document).on('click', function() {
+                $('.menu_dropdown').removeClass('show');
+            });
+
+            });
 </script>
 <script>
     document.addEventListener("DOMContentLoaded", function() {
@@ -386,7 +421,10 @@
 </script>
 
 @endpush
-
+@push('style-lib')
+    <link rel="stylesheet" type="text/css" href="{{ asset('assets/admin/css/daterangepicker.css') }}">
+    <link rel="stylesheet" href="{{ asset('assets/global/css/modal.css') }}">
+@endpush
 @push('style')
 <style>
     .no-input {
