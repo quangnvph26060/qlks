@@ -393,468 +393,97 @@ class BookingController extends Controller
             ->get();
 
         $newRecords = [];
-       
+
         $allRoomStatusHistory = collect();
 
-foreach ($emptyRooms as $room) {
-    $roomStatusHistory = RoomStatusHistory::where('unit_code', unitCode())
-        ->where('room_id', $room->id)
-        ->with('roomStatus')
-        ->get();
+        foreach ($emptyRooms as $room) {
+            $roomStatusHistory = RoomStatusHistory::where('unit_code', unitCode())
+                ->where('room_id', $room->id)
+                ->with('roomStatus')
+                ->get();
 
-    $allRoomStatusHistory = $allRoomStatusHistory->merge($roomStatusHistory);
-}
-
-$groupedByRoom = $allRoomStatusHistory->groupBy('room_id');
-
-$filteredResults = collect();
-
-foreach ($groupedByRoom as $roomId => $records) {
-    // Sắp xếp bản ghi theo start_date
-    $sortedRecords = $records->sortBy('start_date')->values();
-    $uniqueRecords = collect();
-
-    foreach ($sortedRecords as $record) {
-        // Kiểm tra trùng lặp với danh sách đã lọc
-        $overlapIndex = $uniqueRecords->search(function ($item) use ($record) {
-            return ($record->start_date == $item->start_date && $record->end_date == $item->end_date) || 
-                   ($record->start_date < $item->end_date && $record->end_date > $item->start_date);
-        });
-
-        if ($overlapIndex !== false) {
-            $existingRecord = $uniqueRecords[$overlapIndex];
-
-            // Ưu tiên lấy bản ghi có status_code cao hơn theo thứ tự 3 > 2 > 1
-            if ($record->status_code > $existingRecord->status_code) {
-                $uniqueRecords[$overlapIndex] = $record;
-            }
-        } else {
-            $uniqueRecords->push($record);
+            $allRoomStatusHistory = $allRoomStatusHistory->merge($roomStatusHistory);
         }
-    }
 
-    // Merge vào kết quả cuối cùng
-    $filteredResults = $filteredResults->merge($uniqueRecords);
-}
+        $groupedByRoom = $allRoomStatusHistory->groupBy('room_id');
 
+        $filteredResults = collect();
 
-// return response()->json($filteredResults);
+        foreach ($groupedByRoom as $roomId => $records) {
+            // Sắp xếp bản ghi theo start_date
+            $sortedRecords = $records->sortBy('start_date')->values();
+            $uniqueRecords = collect();
 
-//  return response()->json($filteredResults);
-     $newRecords = [];
+            foreach ($sortedRecords as $record) {
+                // Kiểm tra trùng lặp với danh sách đã lọc
+                $overlapIndex = $uniqueRecords->search(function ($item) use ($record) {
+                    return ($record->start_date == $item->start_date && $record->end_date == $item->end_date) ||
+                        ($record->start_date < $item->end_date && $record->end_date > $item->start_date);
+                });
 
-     foreach ($emptyRooms as $room) { 
-        foreach ($dates as $date) {
-            $status = 0;
-            $check_booked = "Trống";
-            foreach ($filteredResults as $item) {
-            $dateRoomBooking = $this->getDates($item['start_date'], $item['end_date']);
-                if ($room->id == $item->room_id && in_array($date, $dateRoomBooking)) {
-                    $status = 1;
-                    if($item->status_code == 1){
-                        $check_booked = "Trống";
-                        $status = 0;
-                    } else  if($item->status_code == 2){
-                        $check_booked = "Đã đặt";
-                    }else{
-                        $check_booked = "Đã nhận";
+                if ($overlapIndex !== false) {
+                    $existingRecord = $uniqueRecords[$overlapIndex];
+                    if ($record->status_code > $existingRecord->status_code) {
+                        $uniqueRecords[$overlapIndex] = $record;
                     }
-                    break;
+                } else {
+                    $lastRecord = $uniqueRecords->last();
+
+                    if ($lastRecord && $record->room_id == $lastRecord->room_id) {
+                        $recordStartDate = Carbon::parse($record->start_date)->format('Y-m-d');
+                        $lastEndDate = Carbon::parse($lastRecord->end_date)->format('Y-m-d');
+
+                        if ($recordStartDate == $lastEndDate) {
+                            // Xóa bản ghi trước đó để chỉ giữ bản ghi mới
+                            $uniqueRecords->pop();
+                            $uniqueRecords->push($record);
+                            continue;
+                        }
+                    }
+                    $uniqueRecords->push($record);
                 }
             }
-            $newRecords[] = [
-            "room_type_id" => $room->room_type_id,
-            "room_number"  => $room->room_number,   
-            "id"           => $room->id,
-            "date"         => $date,
-            "check_booked" => $check_booked,
-            "status"       => $status,
-            "room_type"    => $room->roomType
-            ];
+
+            $filteredResults = $filteredResults->merge($uniqueRecords);
         }
-     }
-     
-       
-     
 
+        $newRecords = [];
 
-            //             $newRecord = $room->replicate();
-            //             $newRecord->date = $date;
-            //             $newRecord->id = $room->id;
-            //             $newRecord->check_booked = $longestRecord->roomStatus->status_name;
-            //             $newRecords[] = $newRecord;
-                       
-            //         }else{
-            //               $newRecord = $room->replicate(); // Sao chép thông tin phòng
-            //             $newRecord->date = $date;
-            //             $newRecord->id = $room->id;
-            //             $newRecord->check_booked = 'Trống';
-            //             $newRecords[] = $newRecord;
-            //         }
-        // $newRecords = [];
+        foreach ($emptyRooms as $room) {
+            foreach ($dates as $date) {
+                $status = 0;
+                $check_booked = "Trống";
+                $selectedStatus = null;
 
-        // if ($roomStatusHistory->isNotEmpty()) {
-        //     foreach ($roomStatusHistory as $roomStatus) {
-        //         $room = Room::find($roomStatus->room_id);
-        //         if ($room) {
-        //             $date = Carbon::parse($roomStatus->start_date); // Chỉnh lại nếu cần
-        //             $newRecord = $room->replicate();
-        //             $newRecord->date = $date;
-        //             $newRecord->id = $room->id;
-        //             $newRecord->check_booked = $roomStatus->status_code;
-        //             $newRecords[] = $newRecord;
-        //         }
-        //     }
-        // } else {
-        //     // Nếu không có dữ liệu trong RoomStatusHistory, tạo bản ghi mặc định
-        //     $rooms = Room::where('unit_code', unitCode())->get(); // Lấy danh sách phòng
-        //     foreach ($rooms as $room) {
-        //         $newRecord = $room->replicate();
-        //         $newRecord->date = Carbon::parse($request->checkInDate);
-        //         $newRecord->id = $room->id;
-        //         $newRecord->check_booked = 1; // Mặc định check_booked = 1
-        //         $newRecords[] = $newRecord;
-        //     }
-        // }
-
-
-      
-
-
-        // Room booking
-        // foreach ($emptyRooms as $room) {
-        //     foreach ($dates as $date) {
-        //         $newRecord = $room->replicate(); // Sao chép thông tin phòng
-        //         $newRecord->date = $date;
-        //         $newRecord->id = $room->id;
-        //         // Chuyển đổi chuỗi JSON thành mảng PHP
-        //         $roomBookingArray = json_decode($room->roomBooking, true);
-        //         $roomCheckInArray = json_decode($room->roomCheckIn, true);
-        //         $roomBookingChangeArray = json_decode($room->roomBookingChange, true);
-        //         // nếu cả 2 trống có nghĩa là phòng đó trống 
-
-        //         if (empty($roomBookingArray) && empty($roomCheckInArray) && empty($roomBookingChangeArray)) {
-        //             $newRecord->check_booked = 'Trống';
-        //             $newRecord->status = 0;
-        //         } else if (empty($roomBookingArray) && empty($roomCheckInArray) && !empty($roomBookingChangeArray)) { // trống đặt phòng và nhận phòng nhưng có trong đổi phòng 
-        //             foreach ($roomBookingChangeArray as $roomBookingChange) {
-
-        //                 if ($roomBookingChange['id_room_booking'] != "" && $roomBookingChange['id_check_in'] == "") {
-        //                     $dateRoomBooking = $this->getDates($roomBookingChange['checkin_date'], $roomBookingChange['checkout_date']);
-        //                     if (in_array($date, $dateRoomBooking)) {
-        //                         $newRecord->check_booked = 'Đã đặt';
-        //                         $newRecord->status = 1;
-        //                         //  \Log::info('phòng đổi sang phòng này '. $room->room_number);
-        //                         break;
-        //                     } else {
-        //                         $newRecord->check_booked = 'Trống';
-        //                         $newRecord->status = 0;
-        //                     }
-        //                 } else if ($roomBookingChange['id_room_booking'] == "" && $roomBookingChange['id_check_in'] != "") {
-        //                     $dateRoomBooking = $this->getDates($roomBookingChange['checkin_date'], $roomBookingChange['checkout_date']);
-        //                     if (in_array($date, $dateRoomBooking)) {
-        //                         $newRecord->check_booked = 'Đã nhận';
-        //                         $newRecord->status = 1;
-        //                         //  \Log::info('phòng đặt sang phòng này '. $room->room_number);
-        //                         break;
-        //                     } else {
-        //                         $newRecord->check_booked = 'Trống';
-        //                         $newRecord->status = 0;
-        //                     }
-        //                 } else if ($roomBookingChange['id_room_booking'] != "" && $roomBookingChange['id_check_in'] != "") {
-        //                     $dateRoomBooking = $this->getDates($roomBookingChange['checkin_date'], $roomBookingChange['checkout_date']);
-        //                     if (in_array($date, $dateRoomBooking)) {
-        //                         $newRecord->check_booked = 'Đã nhận';
-        //                         $newRecord->status = 1;
-        //                         //  \Log::info('phòng đặt sang phòng này '. $room->room_number);
-        //                         break;
-        //                     } else {
-        //                         $newRecord->check_booked = 'Trống';
-        //                         $newRecord->status = 0;
-        //                     }
-        //                 }
-        //             }
-        //         } else if (!empty($roomBookingArray) && !empty($roomCheckInArray) && empty($roomBookingChangeArray)) { // roomBookingChangeArray trống
-
-        //             foreach ($roomBookingArray as $roomBooking) {
-        //                 foreach ($roomCheckInArray as $roomCheckIn) {
-        //                     if($roomBooking['booking_id'] == $roomCheckIn['id_room_booking']){
-        //                         $dateRoomCheckIn = $this->getDates($roomCheckIn['checkin_date'], $roomCheckIn['checkout_date']);
-        //                         if (in_array($date, $dateRoomCheckIn) && $roomCheckIn['room_change'] == null) {
-        //                             $newRecord->check_booked = 'Đã nhận';
-        //                             $newRecord->status = 1;
-        //                            break;
-        //                         } else  if(in_array($date, $dateRoomCheckIn) && $roomCheckIn['room_change'] != null){
-        //                             $newRecord->check_booked = 'Trống1';
-        //                             $newRecord->status = 0; 
-        //                         }
-        //                         else  if(!in_array($date, $dateRoomCheckIn)){
-        //                             $newRecord->check_booked = 'Trống2';
-        //                             $newRecord->status = 0;
-        //                         }
-        //                     }else{
-        //                         foreach ($roomBookingArray as $roomBooking) {
-
-        //                             $dateRoomBooking = $this->getDates($roomBooking['checkin_date'], $roomBooking['checkout_date']);
-        //                             if(in_array($date, $dateRoomBooking) && $roomBooking['status'] && !empty($roomBooking['room_booking_change']) ) {
-        //                                 $newRecord->check_booked = 'Đã đặt';
-        //                                 $newRecord->status = 1; break;
-        //                             }
-        //                             else if(in_array($date, $dateRoomBooking) && $roomBooking['status'] == Status::DISABLE && empty($roomBooking['room_booking_change']) ) {
-        //                                 $newRecord->check_booked = 'Đã đặt';
-        //                                 $newRecord->status = 1;
-        //                                 break;
-        //                             }
-        //                             else if(!in_array($date, $dateRoomBooking)  && $roomBooking['status'] == Status::DISABLE) {
-
-        //                                 $newRecord->check_booked = 'Trống3';
-        //                                 $newRecord->status = 0;
-        //                             }
-        //                         }
-        //                         // $dateRoomCheckIn = $this->getDates($roomCheckIn['checkin_date'], $roomCheckIn['checkout_date']);
-        //                         //     if (in_array($date, $dateRoomCheckIn) && $roomCheckIn['room_change'] == null) {
-        //                         //         $newRecord->check_booked = 'Đã nhận';
-        //                         //         $newRecord->status = 1;
-        //                         //     }
-
-        //                         //     else if(!in_array($date, $dateRoomCheckIn) && $roomCheckIn['room_change'] == null) {
-
-        //                         //     } 
-
-        //                     }
-
-        //                 }
-        //             }
-        //         } else if (!empty($roomBookingArray) && empty($roomCheckInArray) && !empty($roomBookingChangeArray)) { // roomCheckInArray trống
-        //             foreach ($roomBookingChangeArray as $roomBookingChange) {
-        //                 $dateRoomBooking = $this->getDates($roomBookingChange['checkin_date'], $roomBookingChange['checkout_date']);
-        //                 if (in_array($date, $dateRoomBooking)) {
-        //                     $newRecord->check_booked = 'Đã nhận';
-        //                     $newRecord->status = 1;
-        //                     break;
-        //                 } else {
-        //                     foreach ($roomBookingArray as $roomBooking) {
-        //                         $dateRoomBooking = $this->getDates($roomBooking['checkin_date'], $roomBooking['checkout_date']);
-        //                         if (in_array($date, $dateRoomBooking)  && $roomBooking['status'] == Status::DISABLE && $roomBooking['room_change'] == null) {
-        //                             $newRecord->check_booked = 'Đã đặt';
-        //                             $newRecord->status = 1;
-        //                             break;
-        //                         } else if (in_array($date, $dateRoomBooking)  && $roomBooking['status'] == Status::ENABLE && $roomBooking['room_change'] != null) {
-        //                             $newRecord->check_booked = 'Đã nhận';
-        //                             $newRecord->status = 1;
-        //                             break;
-        //                         } else {
-        //                             $newRecord->check_booked = 'Trống';
-        //                             $newRecord->status = 0;
-        //                         }
-        //                     }
-        //                 }
-        //             }
-        //         } else if (empty($roomBookingArray) && !empty($roomCheckInArray) && !empty($roomBookingChangeArray)) { // roomBookingArray trống
-
-        //             foreach ($roomBookingChangeArray as $roomBookingChange) {
-        //                 if ($roomBookingChange['id_room_booking'] != null && $roomBookingChange['id_check_in'] != null) {
-        //                     $dateRoomBooking = $this->getDates($roomBookingChange['checkin_date'], $roomBookingChange['checkout_date']);
-        //                     if (in_array($date, $dateRoomBooking)) {
-        //                         $newRecord->check_booked = 'Đã nhận';
-        //                         $newRecord->status = 1;
-        //                         break;
-        //                     } else {
-        //                         foreach ($roomCheckInArray as $roomBooking) {
-        //                             $dateRoomBooking = $this->getDates($roomBooking['checkin_date'], $roomBooking['checkout_date']);
-        //                             if (in_array($date, $dateRoomBooking)  && $roomBooking['room_change'] == null) {
-        //                                 $newRecord->check_booked = 'Đã nhận';
-        //                                 $newRecord->status = 1;
-        //                                 break;
-        //                             } else if (in_array($date, $dateRoomBooking)  && $roomBooking['room_change'] != null) {
-        //                                 $newRecord->check_booked = 'Đã nhận';
-        //                                 $newRecord->status = 1;
-        //                                 break;
-        //                             } else {
-        //                                 $newRecord->check_booked = 'Trống';
-        //                                 $newRecord->status = 0;
-        //                             }
-        //                         }
-        //                     }
-        //                 } else if ($roomBookingChange['id_room_booking'] != null && $roomBookingChange['id_check_in'] == null) {
-        //                     $dateRoomBooking = $this->getDates($roomBookingChange['checkin_date'], $roomBookingChange['checkout_date']);
-        //                     if (in_array($date, $dateRoomBooking) && $roomBookingChange['id_room_booking'] != null &&  $roomBookingChange['id_check_in'] == null ) {
-        //                         foreach ($roomCheckInArray as $roomBooking) {
-        //                             $dateRoomBooking = $this->getDates($roomBooking['checkin_date'], $roomBooking['checkout_date']);
-        //                             if (in_array($date, $dateRoomBooking) ) {
-        //                                 $newRecord->check_booked = 'Đã nhận';
-        //                                 $newRecord->status = 1;
-        //                                 break;
-        //                             } else{
-        //                                 $newRecord->check_booked = 'Trống';
-        //                                 $newRecord->status = 0;
-        //                             }
-        //                         }
-        //                     }else{
-        //                         foreach ($roomCheckInArray as $roomBooking) {
-        //                             $dateRoomBooking = $this->getDates($roomBooking['checkin_date'], $roomBooking['checkout_date']);
-        //                             if (in_array($date, $dateRoomBooking) ) {
-        //                                 $newRecord->check_booked = 'Đã nhận';
-        //                                 $newRecord->status = 1;
-        //                                 break;
-        //                             } else{
-        //                                 $newRecord->check_booked = 'Trống';
-        //                                 $newRecord->status = 0;
-        //                             }
-        //                         }
-        //                     }
-        //                 }
-        //             }
-        //         } else if (!empty($roomBookingArray) && empty($roomCheckInArray) && empty($roomBookingChangeArray)) {
-
-        //             //   \Log::info('phòng đã đặt trước đó và đổi '. $room->room_number);
-        //             foreach ($roomBookingArray as $roomBooking) {
-        //                 // $roomChange = $roomBooking['room_booking_change'];
-        //                 if (!$roomBooking['room_change'] && $roomBooking['status'] == Status::DISABLE && $roomBooking['room_change'] == null) { // 0 
-        //                     // \Log::info('phòng đã đặt '. $room->room_number);
-        //                     $dateRoomBooking = $this->getDates($roomBooking['checkin_date'], $roomBooking['checkout_date']);
-        //                     if (in_array($date, $dateRoomBooking)) {
-        //                         $newRecord->check_booked = 'Đã đặt';
-        //                         $newRecord->status = 1;
-        //                         break;
-        //                     } else {
-        //                         $newRecord->check_booked = 'Trống';
-        //                         $newRecord->status = 0;
-        //                     }
-        //                 } else if ($roomBooking['room_change'] && $roomBooking['room_change'] == null) {
-
-        //                     $dateRoomBooking = $this->getDates($roomBooking['checkin_date'], $roomBooking['checkout_date']);
-        //                     if (in_array($date, $dateRoomBooking)) {
-        //                         $newRecord->check_booked = 'Đã đặt';
-        //                         $newRecord->status = 1;
-        //                         break;
-        //                     } else {
-        //                         $newRecord->check_booked = 'Trống';
-        //                         $newRecord->status = 0;
-        //                     }
-        //                 } else if ($roomBooking['room_change'] && $roomBooking['room_change'] !== null) {
-        //                     $newRecord->check_booked = 'Trống';
-        //                     $newRecord->status = 0;
-        //                 }
-        //             }
-        //         } else if (empty($roomBookingArray) && !empty($roomCheckInArray) && empty($roomBookingChangeArray)) {
-
-        //             foreach ($roomCheckInArray as $roomCheckIn) {
-
-        //                 $dateCheckIn = $this->getDates($roomCheckIn['checkin_date'], $roomCheckIn['checkout_date']);
-        //                 if (in_array($date, $dateCheckIn) && $roomCheckIn['room_change'] == null) {
-        //                     $newRecord->check_booked = 'Đã nhận';
-        //                     $newRecord->status = 1;
-        //                     break;
-        //                 } else {
-        //                     $newRecord->check_booked = 'Trống';
-        //                     $newRecord->status = 0;
-        //                 }
-        //             }
-        //         } else if (!empty($roomBookingArray) && !empty($roomCheckInArray) && !empty($roomBookingChangeArray)) {
-
-        //             foreach ($roomBookingArray as $roomBooking) {
-        //                 foreach ($roomCheckInArray as $roomCheckIn) {
-        //                     foreach ($roomBookingChangeArray as $roomChange) {
-        //                         if($roomBooking['booking_id'] == $roomCheckIn['id_room_booking'] || $roomCheckIn['id_room_booking'] == $roomChange['id_room_booking'] ){
-        //                             if($roomCheckIn['id_room_booking'] == $roomChange['id_room_booking'] ){
-        //                                 if(empty($roomBooking['room_change']) && empty($roomBooking['room_change_info']) && empty($roomBooking['room_booking_change']) && $roomBooking['status'] == Status::DISABLE) {
-        //                                     $dateRoomCheckIn = $this->getDates($roomBooking['checkin_date'], $roomBooking['checkout_date']);
-        //                                     if (in_array($date, $dateRoomCheckIn) ) {
-        //                                         $newRecord->check_booked = 'Đã đặt';
-        //                                         $newRecord->status = 1;
-        //                                         break;
-        //                                     } else{
-        //                                         $newRecord->check_booked = 'Trống';
-        //                                         $newRecord->status = 0;
-        //                                     }
-        //                                 }
-        //                                 $dateRoomCheckIn = $this->getDates($roomCheckIn['checkin_date'], $roomCheckIn['checkout_date']);
-
-        //                                 if (in_array($date, $dateRoomCheckIn) && $roomCheckIn['room_change'] == null) {
-        //                                     $newRecord->check_booked = 'Đã nhận';
-        //                                     $newRecord->status = 1;
-        //                                     break;
-        //                                 } else  if(in_array($date, $dateRoomCheckIn) && $roomCheckIn['room_change'] != null){
-        //                                     $newRecord->check_booked = 'Trống';
-        //                                     $newRecord->status = 0;
-        //                                     break;
-        //                                 }else if(!(in_array($date, $dateRoomCheckIn)) && $roomCheckIn['room_change'] != null){
-        //                                     $newRecord->check_booked = 'Trống';
-        //                                     $newRecord->status = 0;
-        //                                     break;
-        //                                 }else if(!(in_array($date, $dateRoomCheckIn)) && $roomCheckIn['room_change'] == null){
-
-        //                                     $newRecord->check_booked = 'Trống';
-        //                                     $newRecord->status = 0;
-        //                                 }
-        //                             }else {
-        //                                 $dateRoomCheckIn = $this->getDates($roomCheckIn['checkin_date'], $roomCheckIn['checkout_date']);
-        //                                 if (in_array($date, $dateRoomCheckIn) && $roomCheckIn['room_change'] == null) {
-        //                                     $newRecord->check_booked = 'Đã nhận';
-        //                                     $newRecord->status = 1;
-        //                                     break;
-        //                                 } else  if(in_array($date, $dateRoomCheckIn) && $roomCheckIn['room_change'] != null){
-        //                                     $newRecord->check_booked = 'Trống';
-        //                                     $newRecord->status = 0;
-        //                                     break;
-        //                                 }else if(!(in_array($date, $dateRoomCheckIn)) && $roomCheckIn['room_change'] != null){
-        //                                     $newRecord->check_booked = 'Trống';
-        //                                     $newRecord->status = 0;
-        //                                     break;
-        //                                 }else if(!(in_array($date, $dateRoomCheckIn)) && $roomCheckIn['room_change'] == null){
-
-        //                                     $newRecord->check_booked = 'Trống';
-        //                                     $newRecord->status = 0;
-        //                                 }
-        //                             }
-
-        //                         }else{
-        //                             $dateRoomBooking = $this->getDates($roomCheckIn['checkin_date'], $roomCheckIn['checkout_date']);
-        //                             if (in_array($date, $dateRoomBooking) && empty($roomCheckIn['room_change'])) {
-        //                                 $newRecord->check_booked = 'Đã nhận';
-        //                                 $newRecord->status = 1;
-        //                                 break;
-        //                             }  else if(!(in_array($date, $dateRoomBooking))){
-        //                                 if($roomBooking['booking_id'] == $roomCheckIn['id_room_booking']){
-        //                                     $newRecord->check_booked = 'Trống';
-        //                                     $newRecord->status = 0;
-        //                                     break;
-        //                                 }else if($roomBooking['booking_id'] != $roomCheckIn['id_room_booking']){
-        //                                     $dateRoomBooking = $this->getDates($roomBooking['checkin_date'], $roomBooking['checkout_date']);
-        //                                     if (in_array($date, $dateRoomBooking) && empty($roomBooking['room_change'])) {
-        //                                         $newRecord->check_booked = 'Đã đặt';
-        //                                         $newRecord->status = 1;
-        //                                         break;
-        //                                     }  else if(!(in_array($date, $dateRoomBooking))){
-        //                                         $newRecord->check_booked = 'Trống';
-        //                                         $newRecord->status = 0;
-        //                                         break;
-        //                                     }
-        //                                     else{
-        //                                         $newRecord->check_booked = 'Trống';
-        //                                         $newRecord->status = 0;
-        //                                     }
-        //                                 }
-
-        //                             }
-        //                             else{
-        //                                 $newRecord->check_booked = 'Trống2';
-        //                                 $newRecord->status = 0;
-        //                             }
-        //                         }
-        //                     }
-        //                 }
-        //             }
-        //         }
-
-
-
-        //         $newRecords[] = $newRecord;
-        //     }
-        // }
-        //end for loop
-
+                $roomRecords = $filteredResults->filter(function ($item) use ($room, $date) {
+                    return $item->room_id == $room->id && $date >= $item->start_date && $date <= $item->end_date;
+                });
+                if ($roomRecords->isNotEmpty()) {
+                    $selectedStatus = $roomRecords->sortByDesc('status_code')->first();
+                }
+                if ($selectedStatus !== null) {
+                    if ($selectedStatus->status_code == 1) {
+                        $check_booked = "Trống";
+                        $status = 0;
+                    } elseif ($selectedStatus->status_code == 2) {
+                        $check_booked = "Đã đặt";
+                        $status = 1;
+                    } else {
+                        $check_booked = "Đã nhận";
+                        $status = 1;
+                    }
+                }
+                $newRecords[] = [
+                    "room_type_id" => $room->room_type_id,
+                    "room_number"  => $room->room_number,
+                    "id"           => $room->id,
+                    "date"         => $date,
+                    "check_booked" => $check_booked,
+                    "status"       => $status,
+                    "room_type"    => $room->roomType
+                ];
+            }
+        }
         // hạng phòng 
         $roomType = RoomType::active()->get();
         // tên phòng
@@ -864,14 +493,6 @@ foreach ($groupedByRoom as $roomId => $records) {
         } else {
             $room = $room->where('id', $request->roomId)->first();
         }
-        // find check_booked 
-        // if ($request->method !== 'change_room') {
-        //     if ($request->optionStatusPhong !== null) {
-        //         $newRecords = array_filter($newRecords, function ($record) use ($request) {
-        //             return $record->check_booked == $request->optionStatusPhong;
-        //         });
-        //     }
-        // }
 
         if ($request->method === 'change_room') {
             return response()->json([
@@ -1054,8 +675,8 @@ foreach ($groupedByRoom as $roomId => $records) {
 
             // trạng thái phòng 
             saveRoomStatusHistory($isRoom->id, now(), $roomBooking->checkout_date, 3);
-            saveRoomStatusHistory($roomBooking->room_code,$roomBooking->checkin_date, $roomBooking->checkout_date, 1);
-           
+            saveRoomStatusHistory($roomBooking->room_code, $roomBooking->checkin_date, $roomBooking->checkout_date, 1);
+
 
             DB::commit();
             return ApiResponse::success('Thay đổi phòng thành công', 200);

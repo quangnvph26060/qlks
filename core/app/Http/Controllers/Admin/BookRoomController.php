@@ -296,30 +296,29 @@ class BookRoomController extends Controller
                 $dateIn  = Carbon::parse($room['dateIn']);
                 $dateOut =  Carbon::parse($room['dateOut']);
 
-                $checkin = CheckIn::where('room_code', $room['room'])
-                ->where(function ($query) use ($dateIn) {
-                    $query->where('checkin_date', '<=', $dateIn)
-                          ->where('checkout_date', '>=', $dateIn);
-                })
-                    ->first();
                
-
-                if ($checkin) {
-                    if( !empty($checkin->room_change) ){
-                    $checkin = CheckIn::where('room_change', $room['room'])
-                    ->where(function ($query) use ($dateIn) {
-                        $query->where('checkin_date', '<=', $dateIn)
-                              ->where('checkout_date', '>=', $dateIn);
-                    })
-                            ->first();
-                    }
-                }
                 $is_room = Room::find($room['room']);
 
-                if ($checkin) {
-                    DB::rollBack();
-                    return response()->json(['error' => 'Phòng ' . $is_room['room_number'] . ' đã được đặt trong ngày ' .  Carbon::parse($dateIn)->format('d-m-Y')]);
+                $checkRoom = RoomStatusHistory::where('room_id', $room['room'])
+                ->whereDate('start_date', '<=', Carbon::parse($room['dateIn'])->format('Y-m-d'))
+                ->whereDate('end_date', '>=', Carbon::parse($room['dateIn'])->format('Y-m-d'));
+                if ($request->method == 'check_in') {
+                    $checkRoom->where('status_code', 3); 
+                } else {
+                    $checkRoom->whereIn('status_code', [2,3]);
                 }
+                
+                $checkRoom = $checkRoom->first();
+                
+               
+                if ($checkRoom) {
+                    DB::rollBack();
+                    return response()->json([
+                        'error' => 'Phòng ' . $is_room['room_number'] . ' đã được đặt trong ngày ' . Carbon::parse($dateIn)->format('d-m-Y')
+                    ]);
+                }
+                
+               
                 if ($index == 0) {
                     if ($request->method == 'check_in') {
                         $check_in->check_in_id      = getCode('NP', 12);
@@ -410,25 +409,22 @@ class BookRoomController extends Controller
                 $room['dateOut'] = date('Y-m-d H:i:s', strtotime($room['dateOut']));
                 $dateIn  = Carbon::parse($room['dateIn']);
                 $dateOut =  Carbon::parse($room['dateOut']);
+
                 $is_room = Room::find($room['room']);
-                $checkin = CheckIn::where('room_code', $room['room'])
-                ->where(function ($query) use ($dateIn) {
-                    $query->whereDate('checkin_date', '<=', $dateIn)
-                          ->whereDate('checkout_date', '>=', $dateIn);
-                })
-                ->first();
-             
-                if ($checkin) {
-                    if( !empty($checkin->room_change) ){
-                    $checkin = CheckIn::where('room_change', $room['room'])
-                            ->where(function ($query) use ($dateIn) {
-                                $query->whereDate('checkin_date', '<=', $dateIn)
-                                    ->whereDate('checkout_date', '>=', $dateIn);
-                            })
-                            ->first();
-                    }
+
+                $checkRoom = RoomStatusHistory::where('room_id', $room['room'])
+                ->whereDate('start_date', '<=', Carbon::parse($room['dateIn'])->format('Y-m-d'))
+                ->whereDate('end_date', '>=', Carbon::parse($room['dateIn'])->format('Y-m-d'));
+                if ($request->method == 'check_in') {
+                    $checkRoom->where('status_code', 3); 
+                } else {
+                    $checkRoom->whereIn('status_code', [2,3]);
                 }
-                if ($checkin) {
+                
+                $checkRoom = $checkRoom->first();
+                
+               
+                if ($checkRoom) {
                     DB::rollBack();
                     return response()->json([
                         'error' => 'Phòng ' . $is_room['room_number'] . ' đã được đặt trong ngày ' . Carbon::parse($dateIn)->format('d-m-Y')
@@ -496,15 +492,8 @@ class BookRoomController extends Controller
                     $check_in_new->save();
                 }
             }
-            $roomstatus = new RoomStatusHistory();
-            $roomstatus->room_id      = $room['room'];
-            $roomstatus->start_date   = $dateIn;
-            $roomstatus->end_date     = $dateOut;
-            $roomstatus->unit_code    = hf('ma_coso');
-            $roomstatus->created_at   = now();
-            $roomstatus->status_code  = 3;
-            $roomstatus->save();
-            
+            saveRoomStatusHistory($room['room'], $dateIn, $dateOut, 3);
+
             // 123456
             DB::commit();
             return response()->json(['success' => 'Cập nhật nhận phòng thành công']);
@@ -590,10 +579,10 @@ class BookRoomController extends Controller
                     $check_in_new->unit_code      = hf('ma_coso');
                     $check_in_new->created_by     = $request->name_staff ??  authAdmin()->id;
                     $check_in_new->save();
-                    saveRoomStatusHistory($room['room'], $room['dateIn'] ,$room['dateOut'], 2);
+                    saveRoomStatusHistory($room['room'], $room['dateIn'], $room['dateOut'], 2);
                 }
             }
-          
+
             DB::commit();
             return response()->json(['success' => 'Cập nhật đặt phòng thành công']);
         } catch (\Exception $e) {
@@ -826,7 +815,7 @@ class BookRoomController extends Controller
                     $check_in_new->unit_code      = hf('ma_coso');
                     $check_in_new->created_by     = $request->name_staff ??  authAdmin()->id;
                     $check_in_new->save();
-                    saveRoomStatusHistory($room['room'], $room['dateIn'] ,$room['dateOut'], 3);
+                    saveRoomStatusHistory($room['room'], $room['dateIn'], $room['dateOut'], 3);
                 }
             }
             DB::commit();
