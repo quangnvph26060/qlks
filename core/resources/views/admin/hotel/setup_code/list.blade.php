@@ -235,7 +235,7 @@
                     'error': document.getElementById('code_error'),
                     'validations': [{
                         'func': function(value) {
-                            return checkKey(value); // check trống
+                            return checkKey(value); 
                         },
                         'message': generateErrorMessage('KT001')
                     },

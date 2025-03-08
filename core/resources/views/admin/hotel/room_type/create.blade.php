@@ -369,7 +369,7 @@
                                     <span class="slider"></span>
                                 </label>
                             </div> --}}
-                            <div class="col-md-1" style=" margin-top: 18px; ">
+                            <div class="col-md-12" style=" margin-top: 18px; ">
                                 <h5 class="card-title mb-0">
                                     @lang('Trạng thái')
                                 </h5>
@@ -389,7 +389,7 @@
                 </div>
 
                 @can('admin.hotel.room.type.save')
-                    <div class="card mt-3">
+                    <div class="card mt-3 pb-5">
                         <div class="card-body">
                             <div class="row">
                                 <div class="col-md-12">

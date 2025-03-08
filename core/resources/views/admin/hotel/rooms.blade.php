@@ -4,35 +4,44 @@
             <div class="row">
         
               <div class="col-md-12 d-flex">
-    <a class="mr-1" href="{{ route('admin.hotel.room.all') }}">
-        <button class="btn btn-sm btn-outline--primary" data-modal_title="Làm mới">
-                            <i class="fa fa-repeat p-2"></i>
-        </button>
-    </a>
-    <a>
-         <button class="btn btn-sm btn-outline--primary" data-bs-target="#addModal" data-bs-toggle="modal"
-             style="margin-left:10px">
-                <i class="las la-plus p-2"></i>
-         </button>
-    </a>       
-       
-    <form role="form" enctype="multipart/form-data" action="{{ route('admin.hotel.room.all') }}" method="GET" id="searchForm" >
-                    <div class="form-group position-relative mb-0">
-                            <input placeholder="Nhập Mã/Tên loại phòng"
-                                   style="height: 35px;border: 1px solid rgb(121, 117, 117, 0.5);margin-left: 8px;"
-                                   name="keyword"
-                    id="searchInput"
-                    value="{{ request('keyword') }}">
-                         
-                     <a>
-                        <button type="submit" class="btn btn-primary">
-                                <i class="las la-search p-2"></i>
-                        </button>
-                    </a>
-                </div>
-            </form>
-            </div>
-            </div>
+                <a class="mr-1" href="{{ route('admin.hotel.room.all') }}">
+                <button class="btn btn--primary" data-modal_title="Làm mới">
+                                        <i class="fa fa-repeat p-1"></i>
+                    </button>
+                </a>
+                <a>
+                <button class="btn btn--primary" data-bs-target="#addModal" data-bs-toggle="modal"
+                        style="margin-left:10px">
+                            <i class="las la-plus p-1"></i>
+                    </button>
+                </a>       
+                
+                <form role="form" enctype="multipart/form-data" action="{{ route('admin.hotel.room.all') }}" method="GET" id="searchForm" >
+                        <div class="form-group position-relative mb-0">
+                             <input placeholder="Nhập Mã/Tên loại phòng"
+                                            style="height: 35px;border: 1px solid rgb(121, 117, 117, 0.5);margin-left: 8px;"
+                                            name="keyword"
+                                id="searchInput"
+                                value="{{ request('keyword') }}">
+                                    
+                                <a>
+                                    <button type="submit" class="btn btn--primary">
+                                            <i class="las la-search p-1"></i>
+                                    </button>
+                                </a>
+                         </div>
+                 </form>
+        </div>
+        @if ($rooms->hasPages())
+                <div class="pager-wrap">
+                            <div class="k-widget d-flex">
+                                <div class="pagination-tb" style="font-size: 13px;margin: 0 auto">
+                                    {{ $rooms->links('pagination::bootstrap-4') }}
+                                </div>
+                            </div>
+                        </div>
+                @endif
+    </div>
 </div>
     {{-- <x-search-form filter='yes' /> --}}
 @endpush
@@ -61,7 +70,7 @@
                                         <td style="width:20px;">
                                         <svg class="svg_menu_check_in" xmlns="http://www.w3.org/2000/svg" width="30" height="30" viewBox="0 0 21 21"><g fill="currentColor" fill-rule="evenodd"><circle cx="10.5" cy="10.5" r="1"/><circle cx="10.5" cy="5.5" r="1"/><circle cx="10.5" cy="15.5" r="1"/></g></svg>
                             
-                                        <div class="dropdown menu_dropdown_check_in" id="dropdown-menu">
+                                        <div class="dropdown menu_dropdown_check_in" id="dropdown-menu" style="position:fixed">
                                             <div class="dropdown-item"><button
                                             data-resource="{{ $room }}" class="btn-edit-customer editBtn" data-bs-toggle="modal" data-bs-target="#edit-customer" style="color:black">
                                                 Sửa loại phòng
@@ -101,11 +110,7 @@
                         </table>
                     </div>
                 </div>
-                @if ($rooms->hasPages())
-                    <div class="card-footer py-4">
-                        {{ paginateLinks($rooms) }}
-                    </div>
-                @endif
+       
             </div>
         </div>
     </div>
@@ -125,7 +130,7 @@
                         <div class="modal-body">
                             <div class="form-group">
                                 <label>@lang('Mã loại phòng')</label>
-                                <input class="form-control" name="code" type="text" required>
+                                <input class="form-control" name="code" value="{{ $code }}" type="text" required>
                             </div>
                             <div class="form-group">
                                 <label>@lang('Tên loại phòng')</label>
@@ -142,6 +147,12 @@
                                         style="display: none;">
                                     <small class="text-danger"></small>
                                 </div>
+                            </div>
+                            <div class="form-group">
+                                <label for="statusStatus" class="form-label">Trạng thái</label><br>
+                                <input type="radio" name="status" value="1" id="statusActive" checked>Hoạt động
+                                <input type="radio" name="status" value="0" id="statusInactive">
+                                Không hoạt động
                             </div>
                         </div>
                         <div class="modal-footer">
@@ -168,11 +179,11 @@
                         <div class="modal-body">
                             <div class="form-group">
                                 <label>@lang('Mã loại phòng')</label>
-                                <input class="form-control" name="code" type="text">
+                                <input class="form-control" name="code" id="edit-code" type="text">
                             </div>
                             <div class="form-group">
                                 <label>@lang('Tên loại phòng')</label>
-                                <input class="form-control" name="name" type="text">
+                                <input class="form-control" name="name" id="edit-name" type="text">
                             </div>
                             <div class="form-group">
                                 <div class="upload-box">
@@ -185,6 +196,12 @@
                                         style="display: none;">
                                     <small class="text-danger"></small>
                                 </div>
+                            </div>
+                            <div class="form-group">
+                                <label for="statusStatus" class="form-label">Trạng thái</label><br>
+                                <input type="radio" name="status" value="1">Hoạt động
+                                <input type="radio" name="status" value="0">
+                                Không hoạt động
                             </div>
                         </div>
                         <div class="modal-footer">
@@ -261,7 +278,18 @@
             margin-top: 5px;
             text-align: center;
         }
-
+        #navbar-wrapper{
+                padding: 0px 30px 20px;
+            }
+            .pagination .page-item .page-link, .pagination .page-item span{
+                width: 22px !important;
+                height: auto !important;
+                background-color: #4634ff !important;
+                color: white !important;
+            }
+            .pagination .page-item.active .page-link{
+                background-color: #071251 !important;
+            }
         .preview-image {
             position: absolute;
             top: 0;
@@ -327,6 +355,7 @@
             modal.find('form').attr('action', route);
             modal.find('[name=code]').val(resource.code);
             modal.find('[name=name]').val(resource.name);
+            $('input[name^="status"][class^="edit-status"][value="' + resource.status + '"').prop('checked', true);
 
             // Hiển thị hình ảnh cũ nếu có
             let showImage = modal.find('#showImage');

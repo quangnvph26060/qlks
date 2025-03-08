@@ -6,25 +6,25 @@
             <div class="card-body">
                 <div class="row">
                 <div class="col-md-12 col-sm-12 d-flex">
-                        <a class="mr-1" href="{{route('admin.hotel.status.code.all')}}">
+                        <a class="mr-1" href="{{route('admin.hotel.setup.amenities.all')}}">
                         <button class="btn btn--primary" data-modal_title="Làm mới">
                             <i class="fa fa-repeat p-1"></i>
                         </button>
                          </a>
                          <a>
-                            <button class="btn btn--primary"  data-modal_title="Thêm mới trạng thái chức năng"  type="button" id="btn-add-status"
+                            <button class="btn btn--primary"  data-modal_title="Thêm mới tiện nghi"  type="button" id="btn-add-status"
                                     data-bs-toggle="modal" data-bs-target="#status-code"  style="margin-left:10px">
                                 <i class="las la-plus  p-1"></i>
                             </button>
                         </a>
-                            <form role="form" enctype="multipart/form-data" action="{{route('admin.hotel.status.code.search')}}">
+                            <form role="form" enctype="multipart/form-data" action="{{route('admin.hotel.setup.amenities.search')}}">
                                 <div class="form-group position-relative mb-0">
-                                    <input class="searchInput" name="status_code"
+                                    <input class="searchInput" name="code"
                                         style="height: 35px;border: 1px solid rgb(121, 117, 117, 0.5);margin-left: 8px;"
-                                            placeholder="Mã trạng thái">
-                                    <input class="searchInput" name="status_name"
+                                            placeholder="Mã tiện nghi" value="{{ $code ?? '' }}">
+                                    <input class="searchInput" name="title"
                                         style="height: 35px;border: 1px solid rgb(121, 117, 117, 0.5); margin-left: 8px;"
-                                        placeholder="Tên trạng thái">
+                                        placeholder="Tiêu đề tiện nghi" value="{{ $title ?? '' }}">
                                     <a>
                                     <button type="submit" class="btn btn--primary" style="padding-right:15px;padding-left:15px">
                                         <i class="las la-search p-1"></i>
@@ -34,11 +34,11 @@
                                 </div>
                             </form>
                     </div>
-                        @if ($status_codes->hasPages())
+                        @if ($amenities->hasPages())
                         <div class="pager-wrap">
                                     <div class="k-widget d-flex">
                                         <div class="pagination-tb" style="font-size: 13px;margin: 0 auto">
-                                            {{ $status_codes->links('pagination::bootstrap-4') }}
+                                            {{ $amenities->links('pagination::bootstrap-4') }}
                                         </div>
                                     </div>
                                 </div>
@@ -60,48 +60,49 @@
                         <tr>
                             <th>Hành động</th>
                             <th>STT</th>
-                            <th>@lang('Mã trạng thái')</th>
-                            <th>@lang('Tên trạng thái')</th>
-                            <th>@lang('Ghi chú')</th>
+                            <th>@lang('Mã tiện nghi')</th>
+                            <th>@lang('Tên tiện nghi')</th>
+                            <th>@lang('Icon')</th>
                             <th>@lang('Trạng thái')</th>
                           
                         </tr>
                         </thead>
                         <tbody id="main-table-hotel">
-                        @forelse($status_codes as $id => $item)
+                        @forelse($amenities as $id => $item)
                             <tr data-id="{{ $item->id }}">
                             <td style="width:20px;">
                                     <svg class="svg_menu_check_in" xmlns="http://www.w3.org/2000/svg" width="30" height="30" viewBox="0 0 21 21"><g fill="currentColor" fill-rule="evenodd"><circle cx="10.5" cy="10.5" r="1"/><circle cx="10.5" cy="5.5" r="1"/><circle cx="10.5" cy="15.5" r="1"/></g></svg>
-                                        <div class="dropdown menu_dropdown_check_in" id="dropdown-menu">
+                                        <div class="dropdown menu_dropdown_check_in" id="dropdown-menu" style="position:fixed">
                                             <div class="dropdown-item"><a
                                             data-id="{{ $item->id }}" class="btn-edit-status" data-bs-toggle="modal" data-bs-target="#status-code" style="color:black">
-                                                Sửa trạng thái
+                                                Sửa tiện nghi
                                             </a>
                                         </div>
                                           
                                          <div class="dropdown-item booked_room_detail"> <button class=" btn-delete icon-delete-room"
                                                 data-id="{{ $item->id }}" data-modal_title="@lang('Xóa trạng thái')" type="button"
-                                                data-pro="0">Xóa trạng thái</div>
+                                                data-pro="0">Xóa tiện nghi</div>
                               
                                         </div>
                                 </td>
                                 <td data-label="STT" style="text-align:right">   
                                     @php
-                                        $stt = $status_codes->total() - ($status_codes->currentPage() - 1) * $status_codes->perPage() - $id;
+                                        $stt = $amenities->total() - ($amenities->currentPage() - 1) * $amenities->perPage() - $id;
                                             @endphp
                                         {{ $stt }}
-                                </td>                                 <td>
-                                    {{ $item->status_code }}
+                                </td>                                 
+                                <td>
+                                    {{ $item->code }}
                                 </td>
                                 <td>
-                                    {{ $item->status_name }}
+                                    {{ $item->title }}
                                 </td>
                                 <td>
-                                    {{ $item->note }}
+                                    {{ $item->icon }}
                                 </td>
                              
                                 <td style="width:50px;text-align: center" class="status-hotel">
-                                        @if($item->status_status == 1)
+                                        @if($item->status == 1)
                                             <i class="fa fa-check" style="color:green;text-align: center"></i>
                                         @else
                                             <i class="fa fa-close" style="color:red;text-align: center"></i>
@@ -151,9 +152,9 @@
     <script>
         $(document).ready(function() {
             var formEconomyEdit = {
-                'status_code': {
-                    'element': document.getElementById('status_code'),
-                    'error': document.getElementById('status_code_error'),
+                'code': {
+                    'element': document.getElementById('add-code'),
+                    'error': document.getElementById('code_error'),
                     'validations': [{
                         'func': function(value) {
                             return checkRequired(value); // check trống
@@ -162,9 +163,9 @@
                     },
                     ]
                 },
-                'status_name': {
-                    'element': document.getElementById('status_name'), // id trong input đó
-                    'error': document.getElementById('status_name_error'), // thẻ hiển thị lỗi
+                'title': {
+                    'element': document.getElementById('add-title'), // id trong input đó
+                    'error': document.getElementById('title_error'), // thẻ hiển thị lỗi
                     'validations': [{
                         'func': function(value) {
                             return checkRequired(value);
@@ -191,60 +192,60 @@
                 row += `
                         <div class="modal-content">
                             <div class="modal-header">
-                                <h1 class="modal-title fs-5" id="exampleModalLabel">Thêm mới trạng thái chức năng</h1>
+                                <h1 class="modal-title fs-5" id="exampleModalLabel">Thêm mới</h1>
                                 <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
                             </div>
                             <div class="modal-body">
-                                <form id="btn-submit-status" action="{{ route('admin.hotel.status.code.store') }}"
+                                <form id="btn-submit-status" action="{{ route('admin.hotel.setup.amenities.store') }}"
                                     method="POST">
                                     @csrf
-                <!-- Input 1 -->
-                <div class="mb-3">
-                    <label for="statusCode" class="form-label">Mã trạng thái</label>
-                    <input type="text" class="form-control " name="status_code" id="status_code"
-                        placeholder="Nhập mã trạng thái">
-                    <span class="invalid-feedback d-block" style="font-weight: 500"
-                        id="status_code_error"></span>
+                        <!-- Input 1 -->
+                        <div class="mb-3">
+                            <label for="statusCode" class="form-label">Mã tiện nghi</label>
+                            <input type="text" class="form-control " name="code" id="add-code"
+                                placeholder="Nhập mã">
+                            <span class="invalid-feedback d-block" style="font-weight: 500"
+                                id="code_error"></span>
+                        </div>
+                        <!-- Input 2 -->
+                        <div class="mb-3">
+                            <label for="statusName" class="form-label">Tiêu đề tiện nghi</label>
+                            <input type="text" class="form-control " name="title" id="add-title"
+                                placeholder="Nhập tiêu đề">
+                            <span class="invalid-feedback d-block" style="font-weight: 500"
+                                id="title_error"></span>
+                        </div>
+                            <div class="mb-3">
+                            <label for="note" class="form-label">Icon</label>
+                            <input type="text" class="form-control " name="icon"
+                                                    placeholder="Nhập icon">
+                        </div>
+                        <div class="mb-3">
+                            <label for="statusStatus" class="form-label">Trạng thái</label><br>
+                            <input type="radio" name="status" value="1" id="statusActive" checked>Hoạt động
+                            <input type="radio" name="status" value="0" id="statusInactive">
+                            Không hoạt động
+                        </div>
+                        <div class="modal-footer">
+                            <button type="button" class="btn btn-primary" id="click-btn-status-code">Lưu</button>
+                        </div>
+                    </form>
+                    </div>
                 </div>
-                <!-- Input 2 -->
-                <div class="mb-3">
-                    <label for="statusName" class="form-label">Tên trạng thái</label>
-                    <input type="text" class="form-control " name="status_name" id="status_name"
-                        placeholder="Nhập tên trạng thái">
-                    <span class="invalid-feedback d-block" style="font-weight: 500"
-                        id="status_name_error"></span>
-                </div>
-                     <div class="mb-3">
-                    <label for="note" class="form-label">Ghi chú</label>
-                    <textarea type="text" class="form-control " name="note"></textarea>
-
-                </div>
-                <div class="mb-3">
-                    <label for="statusStatus" class="form-label">Trạng thái</label><br>
-                    <input type="radio" name="status_status" value="1" id="statusActive" checked>Hoạt động
-                    <input type="radio" name="status_status" value="0" id="statusInactive">
-                    Không hoạt động
-                </div>
-                <div class="modal-footer">
-                    <button type="button" class="btn btn-primary" id="click-btn-status-code">Lưu</button>
-                </div>
-            </form>
-        </div>
-    </div>
-`;
+            `;
                 $('#modal-dialog').append(row);
 
-                formEconomyEdit.status_code.element = document.getElementById('status_code');
-                formEconomyEdit.status_code.error = document.getElementById('status_code_error');
-                formEconomyEdit.status_name.element = document.getElementById('status_name');
-                formEconomyEdit.status_name.error = document.getElementById('status_name_error');
+                formEconomyEdit.code.element = document.getElementById('add-code');
+                formEconomyEdit.code.error = document.getElementById('code_error');
+                formEconomyEdit.title.element = document.getElementById('add-title');
+                formEconomyEdit.title.error = document.getElementById('title_error');
             });
             // sửa
             $('.btn-edit-status').on('click', function() {
                 var dataId = $(this).data('id');
                 // ajax request
                 $.ajax({
-                    url: `{{ route('admin.hotel.status.code.edit', '') }}/${dataId}`,
+                    url: `{{ route('admin.hotel.setup.amenities.edit', '') }}/${dataId}`,
                     type: 'GET',
                     success: function(data) {
                         if (data.status === 'success') {
@@ -253,39 +254,40 @@
                             rowEdit += `
                             <div class="modal-content">
                                 <div class="modal-header">
-                                    <h1 class="modal-title fs-5" id="exampleModalLabel">Chỉnh sửa trạng thái chức năng
+                                    <h1 class="modal-title fs-5" id="exampleModalLabel">Chỉnh sửa tiện nghi
                                     </h1>
                                     <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
                                 </div>
                                 <div class="modal-body">
-                                    <form id="btn-submit-status-update" action="{{ route('admin.hotel.status.code.update', '') }}/${data.data['id']}"
+                                    <form id="btn-submit-status-update" action="{{ route('admin.hotel.setup.amenities.update', '') }}/${data.data['id']}"
                                         method="POST">
                                         @csrf
                             <!-- Input 1 -->
                             <div class="mb-3">
-                                <label for="statusCode" class="form-label">Mã trạng thái</label>
-                                <input type="text" class="form-control " name="status_code" id="status_code"
-                                    placeholder="Nhập mã trạng thái" value="${data.data['status_code']}">
+                                <label for="statusCode" class="form-label">Mã tiện nghi</label>
+                                <input type="text" class="form-control " name="code" id="add-code"
+                                    placeholder="Nhập mã" value="${data.data['code']}">
                                             <span class="invalid-feedback d-block" style="font-weight: 500"
-                                                id="status_code_error"></span>
+                                                id="code_error"></span>
                                         </div>
                                         <!-- Input 2 -->
                                         <div class="mb-3">
-                                            <label for="statusName" class="form-label">Tên trạng thái</label>
-                                            <input type="text" class="form-control " name="status_name" id="status_name"
-                                                placeholder="Nhập tên trạng thái" value="${data.data['status_name']}">
+                                            <label for="statusName" class="form-label">Tiêu đề tiện nghi</label>
+                                            <input type="text" class="form-control " name="title" id="add-title"
+                                                placeholder="Nhập tiêu đề" value="${data.data['title']}">
                                             <span class="invalid-feedback d-block" style="font-weight: 500"
-                                                id="status_name_error"></span>
+                                                id="title_error"></span>
                                         </div>
-                                        <div class="mb-3">
+                                       <div class="mb-3">
                                             <label for="note" class="form-label">Ghi chú</label>
-                                            <textarea type="text" class="form-control " name="note" >${data.data['note']}</textarea>
+                                               <textarea type="text" class="form-control " name="icon"
+                                                placeholder="Nhập icon">${data.data['icon']}</textarea>
 
                                         </div>
                                         <div class="mb-3">
                                             <label for="hotelStatus" class="form-label">Trạng thái</label><br>
-                                            <input type="radio" name="status_status" value="1" id="statusActive" ${data.data['status_status'] == 1 ? 'checked' : ''}> Hoạt động
-                                            <input type="radio" name="status_status" value="0" id="statusInactive" ${data.data['status_status'] == 0 ? 'checked' : ''}> Không hoạt động
+                                            <input type="radio" name="status" value="1" id="statusActive" ${data.data['status'] == 1 ? 'checked' : ''}> Hoạt động
+                                            <input type="radio" name="status" value="0" id="statusInactive" ${data.data['status'] == 0 ? 'checked' : ''}> Không hoạt động
                                         </div>
 
                                         <div class="modal-footer">
@@ -296,10 +298,10 @@
                             </div>
                             `;
                             $('#modal-dialog').append(rowEdit);
-                            formEconomyEdit.status_code.element = document.getElementById('status_code');
-                            formEconomyEdit.status_code.error = document.getElementById('status_code_error');
-                            formEconomyEdit.status_name.element = document.getElementById('status_name');
-                            formEconomyEdit.status_name.error = document.getElementById('status_name_error');
+                            formEconomyEdit.code.element = document.getElementById('add-code');
+                            formEconomyEdit.code.error = document.getElementById('code_error');
+                            formEconomyEdit.title.element = document.getElementById('add-title');
+                            formEconomyEdit.title.error = document.getElementById('title_error');
                         }
                     },
                     error: function(xhr, status, error) {
@@ -324,7 +326,7 @@
                     if (result.isConfirmed) {
                         // ajax
                         $.ajax({
-                            url: `{{ route('admin.hotel.status.code.delete', '') }}/${dataId}`,
+                            url: `{{ route('admin.hotel.setup.amenities.delete', '') }}/${dataId}`,
                             type: 'POST',
                             success: function(data) {
                                 if (data.status ==='success') {

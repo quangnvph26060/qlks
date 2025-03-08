@@ -16,7 +16,7 @@ class CustomerController extends Controller
     {
         $code = SetupCode::where('menu_name','Danh mục khách hàng')->where('unit_code',unitCode())->value('code');
         $count = Customer::where('unit_code',unitCode())->count();
-        $code = $code.$count;
+        $code = $code ? $code.$count+1 : '';
         $pageTitle = '';
         $customers = Customer::where('unit_code',unitCode())->orderBy('id', 'desc')->paginate(10);
         $unit_codes = HotelFacility::select('ma_coso')->get();
@@ -156,6 +156,9 @@ class CustomerController extends Controller
     }
     public function search(Request $request)
     {
+        $code = SetupCode::where('menu_name','Danh mục khách hàng')->where('unit_code',unitCode())->value('code');
+        $count = Customer::where('unit_code',unitCode())->count();
+        $code = $code.$count;
         $pageTitle = '';
         if($request->input('customer_code') == '' && $request->input('name') == '' && $request->input('phone') == '' && $request->input('address') == '')
         {
@@ -178,7 +181,7 @@ class CustomerController extends Controller
         $name =  $request->input('name');
         $phone = $request->input('phone');
         $address = $request->input('address');
-        return view('admin.hotel.customer.list', compact('pageTitle', 'customers','customer_code','name','address','phone'));
+        return view('admin.hotel.customer.list', compact('pageTitle', 'customers','customer_code','name','address','phone','code'));
     }
     public function checkCode(Request $request)
     {

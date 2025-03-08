@@ -1,4 +1,4 @@
-@extends('admin.layouts.app')
+@extends('admin.layouts.master_iframe')
 @section('panel')
     <form action="" method="POST" enctype="multipart/form-data" id="productForm">
 
@@ -126,10 +126,23 @@
                 </div>
             </div>
         </div>
-        <div class="my-3">
-            <button type="submit" class="btn btn--primary btn-block">Thực hiện</button>
-            <a href="javascript:void(0)" class="btn btn-outline--secondary btn-block" id="btn-reset">Đặt lại</a>
-        </div>
+        <div class="card mt-3 pb-5">
+                        <div class="card-body">
+                            <div class="row">
+                                <div class="col-md-12">
+                                    <div class="form-group mb-0">
+                                        <button class="btn btn--primary w-100 h-45" type="submit">@lang('Xác nhận')
+                                        </button>
+                                    </div>
+                                    <!-- <div class="form-group mb-0">
+
+                                    <a href="javascript:void(0)" class="btn btn-outline--secondary btn-block" id="btn-reset">Đặt lại</a>
+                                    </div> -->
+
+                                </div>
+                            </div>
+                        </div>
+                    </div>
     </form>
     @push('breadcrumb-plugins')
         <a class="btn btn-sm btn-outline--danger" href="{{ route('admin.product.index') }}"><i

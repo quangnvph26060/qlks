@@ -34,61 +34,67 @@ class RoomTypeController extends Controller
     {
         $this->repository = new BaseRepository(new Room());
     }
+    // public function index()
+    // {
+    //     $room_type = RoomType::get();
+    //     $pageTitle   = 'Danh sách phòng';
+    //     // $typeList    = Room::with('amenities', 'facilities', 'products')->latest()->paginate(getPaginate());
+    //     // return view('admin.hotel.room_type.list', compact('pageTitle', 'typeList'));
+    //     $search = request()->get('search');
+    //     $perPage = request()->get('perPage', 15);
+    //     $orderBy = request()->get('orderBy', 'id');
+    //     $columns = [
+    //         'id',
+    //         'room_type_id',
+    //         'room_number',
+    //         'code',
+    //         'status',
+    //         'total_adult',
+    //         'total_child',
+    //         'created_at',
+    //         'updated_at',
+    //         'beds',
+    //     ];
+    //     $relations = [
+    //         'amenities',
+    //         'facilities',
+    //         'products',
+    //         'roomType'
+    //     ];
+    //     $searchColumns = [
+    //         'code',
+    //         'room_number',
+    //     ];
+    //     $relationSearchColumns = ['roomType' => ['name']];
+
+    //     $response = $this->repository
+    //         ->customPaginate(
+    //             $columns,
+    //             $relations,
+    //             $perPage,
+    //             $orderBy,
+    //             $search,
+    //             [],
+    //             $searchColumns,
+    //             $relationSearchColumns
+    //         );
+
+
+    //     if (request()->ajax()) {
+    //         return response()->json([
+    //             'results' => view('admin.table.manage-type-room', compact('response'))->render(),
+    //             'pagination' => view('vendor.pagination.custom', compact('response'))->render(),
+    //         ]);
+    //     }
+    //     return view('admin.hotel.room_type.list', compact('pageTitle','room_type'));
+    // }
     public function index()
     {
-        $room_type = RoomType::get();
+        $room_type = RoomType::where('unit_code',unitCode())->get();
         $pageTitle   = 'Danh sách phòng';
-        // $typeList    = Room::with('amenities', 'facilities', 'products')->latest()->paginate(getPaginate());
-        // return view('admin.hotel.room_type.list', compact('pageTitle', 'typeList'));
-        $search = request()->get('search');
-        $perPage = request()->get('perPage', 10);
-        $orderBy = request()->get('orderBy', 'id');
-        $columns = [
-            'id',
-            'room_type_id',
-            'room_number',
-            'code',
-            'status',
-            'total_adult',
-            'total_child',
-            'created_at',
-            'updated_at',
-            'beds',
-        ];
-        $relations = [
-            'amenities',
-            'facilities',
-            'products',
-            'roomType'
-        ];
-        $searchColumns = [
-            'code',
-            'room_number',
-        ];
-        $relationSearchColumns = ['roomType' => ['name']];
-
-        $response = $this->repository
-            ->customPaginate(
-                $columns,
-                $relations,
-                $perPage,
-                $orderBy,
-                $search,
-                [],
-                $searchColumns,
-                $relationSearchColumns
-            );
-
-
-        if (request()->ajax()) {
-            return response()->json([
-                'results' => view('admin.table.manage-type-room', compact('response'))->render(),
-                'pagination' => view('vendor.pagination.custom', compact('response'))->render(),
-            ]);
-        }
-        return view('admin.hotel.room_type.list', compact('pageTitle','room_type'));
+        $rooms = Room::where('unit_code',unitCode())->paginate(10);
+        return view('admin.hotel.room_type.list', compact('pageTitle','room_type','rooms'));
     }
-
     public function create()
     {
         $pageTitle   = 'Thêm loại phòng';
@@ -286,24 +292,29 @@ class RoomTypeController extends Controller
     public function search(Request $request)
     {
       
-        if($request->input('room_type_id') == '' && $request->input('room_number') == '' && $request->input('code') == ''  && $request->input('status') == '')
+        if($request->input('room_type_id') == '' && $request->input('code') == ''  && $request->input('status') == '')
         {
-            $orderBy = request()->get('orderBy', 'id');
+            $rooms =  Room::select('rooms.*')
+            ->orderBy('id', 'desc')->paginate(10);
         }
         else
         {
-            $orderBy = Room::select('rooms.*','room_types.name')->join('room_types','room_types.id','=','rooms.room_type_id')->where('room_type_id','LIKE', '%'.$request->input('room_type_id').'%')
-                ->where('room_number','LIKE', '%'.$request->input('room_number').'%')
-                ->where('rooms.code','LIKE', '%'.$request->input('code').'%')
+            $rooms = Room::select('rooms.*')->where('room_type_id','LIKE', '%'.$request->input('room_type_id').'%')
+            ->where(function ($query) use ($request) {
+                $query->where('room_number', 'LIKE', '%'.$request->input('code').'%')
+                    ->orWhere('code', 'LIKE', '%'.$request->input('code').'%');
+                    })
                 ->where('rooms.status','LIKE', '%'.$request->input('status').'%')
-                ->orderBy('id', 'desc')->paginate(30);
+                ->orderBy('id', 'desc')->paginate(10);
         }
-         $room_type = RoomType::where('status',1)->get();
+        $room_type = RoomType::where('unit_code',unitCode())->get();
+        $code =  $request->input('code');
+
         $pageTitle   = 'Danh sách phòng';
+        return view('admin.hotel.room_type.list', compact('pageTitle','room_type','rooms','code'));
         // $typeList    = Room::with('amenities', 'facilities', 'products')->latest()->paginate(getPaginate());
         // return view('admin.hotel.room_type.list', compact('pageTitle', 'typeList'));
      
-        return view('admin.hotel.room_type.list', compact('pageTitle','room_type'));
     }
 
     protected function validation($request, $id)

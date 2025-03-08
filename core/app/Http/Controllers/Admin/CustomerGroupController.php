@@ -11,7 +11,7 @@ class CustomerGroupController extends Controller
     public function index()
     {
         $pageTitle = 'Nhóm khách hàng';
-        $customer_groups = CustomerGroup::orderBy('id', 'desc')->where('unit_code',unitCode())->get();
+        $customer_groups = CustomerGroup::orderBy('id', 'desc')->where('unit_code',unitCode())->paginate(10);
         $emptyMessage = 'Không tìm thấy dữ liệu';
         return view('admin.hotel.customer_group.list', compact('pageTitle', 'customer_groups', 'emptyMessage'));
     }
@@ -68,7 +68,7 @@ class CustomerGroupController extends Controller
         $pageTitle = '';
         if($request->input('group_code') == '' && $request->input('group_name') == '')
         {
-            $customer_groups = CustomerGroup::orderBy('id', 'desc')->paginate(30);
+            $customer_groups = CustomerGroup::where('unit_code',unitCode())->orderBy('id', 'desc')->paginate(10);
         }
         else
         {
@@ -78,7 +78,7 @@ class CustomerGroupController extends Controller
                 ->where('group_name','LIKE', '%'.$request->input('group_name').'%')
 
                 ->where('unit_code',unitCode())
-                ->orderBy('id', 'desc')->paginate(30);
+                ->orderBy('id', 'desc')->paginate(10);
         }
         $emptyMessage = 'Không tìm thấy dữ liệu';
 

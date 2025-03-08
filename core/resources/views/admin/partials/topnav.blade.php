@@ -198,7 +198,7 @@
         top: 0;
         background: red;
         color: white;
-        font-size: 15px;
+        font-size: 16px;
         font-weight: bold;
         width: 16px;
         height: 16px;

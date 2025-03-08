@@ -9,57 +9,133 @@ use Illuminate\Support\Facades\Schema;
 
 class AmenitiesController extends Controller
 {
-    public function index(Request $request)
+    // public function index(Request $request)
+    // {
+    //     $pageTitle = 'Danh sách tiện nghi';
+    //     $keyword = $request->input('keyword');
+
+    //     $columns = Schema::getColumnListing('amenities');
+
+    //     $amenities = Amenity::query()
+    //         ->when($keyword, function ($query) use ($keyword, $columns) {
+    //             $query->where(function ($query) use ($keyword, $columns) {
+    //                 foreach ($columns as $column) {
+    //                     $query->orWhere($column, 'like', '%' . $keyword . '%');
+    //                 }
+    //             });
+    //         })
+    //     ->orderBy('title')
+    //     ->paginate(getPaginate());
+
+    // // Trả về view kèm từ khóa và kết quả
+    //     return view('admin.hotel.amenities', compact('pageTitle', 'amenities', 'keyword'));
+    // }
+  public function index(Request $request)
     {
         $pageTitle = 'Danh sách tiện nghi';
-        $keyword = $request->input('keyword');
+        // $keyword = $request->input('keyword');
 
-        $columns = Schema::getColumnListing('amenities');
+        // $columns = Schema::getColumnListing('amenities');
 
-        $amenities = Amenity::query()
-            ->when($keyword, function ($query) use ($keyword, $columns) {
-                $query->where(function ($query) use ($keyword, $columns) {
-                    foreach ($columns as $column) {
-                        $query->orWhere($column, 'like', '%' . $keyword . '%');
-                    }
-                });
-            })
-        ->orderBy('title')
-        ->paginate(getPaginate());
+        // $amenities = Amenity::query()
+        //     ->when($keyword, function ($query) use ($keyword, $columns) {
+        //         $query->where(function ($query) use ($keyword, $columns) {
+        //             foreach ($columns as $column) {
+        //                 $query->orWhere($column, 'like', '%' . $keyword . '%');
+        //             }
+        //         });
+        //     })
+        // ->orderBy('title')
+        // ->paginate(getPaginate());
 
-    // Trả về view kèm từ khóa và kết quả
-        return view('admin.hotel.amenities', compact('pageTitle', 'amenities', 'keyword'));
+        $amenities = Amenity::orderBy('id', 'desc')->where('unit_code',unitCode())->paginate(10);;
+        $emptyMessage = 'Không tìm thấy dữ liệu';
+        return view('admin.hotel.setup.amenities', compact('pageTitle', 'amenities', 'emptyMessage'));
     }
-
-    public function save(Request $request, $id = 0)
+    public function store(Request $request, $id = 0)
     {
         $request->validate([
-            'code' => 'unique:amenities,code|max:6',
+            'code' => 'required',
             'title'      => 'required|string|unique:amenities,title,' . $id,
-            'icon'       => 'required'
         ]);
 
         if ($id) {
             $amenities          = Amenity::findOrFail($id);
-            $notification       = 'Amenity updated successfully';
+            $notification       = 'Cập nhật tiện ích thành công';
         } else {
             $amenities          = new Amenity();
-            $notification       = 'Amenity added successfully';
+            $notification       = 'Thêm tiện ích thành công';
         }
         $amenities->code = $request->code;
         $amenities->title      = $request->title;
         $amenities->icon       = $request->icon;
+        $amenities->status       = $request->status;
+        $amenities->unit_code = unitCode();
         $amenities->save();
 
         $notify[] = ['success', $notification];
         return back()->withNotify($notify);
     }
-
+    public function edit($id)
+    {
+        if (!$id) {
+            $notify[] = ['error', 'Không tìm thấy trạng thái'];
+            return back()->withNotify($notify);
+        }
+        $status = Amenity::find($id);
+        return response()->json([
+            'status' => 'success',
+            'data' => $status,
+        ]);
+    }
     public function status($id)
     {
         return Amenity::changeStatus($id);
     }
+    public function update($id, Request $request)
+    {
+        $request->validate([
+            'code' => 'required|string',
+            'title' => 'required|string',
+        ]);
 
+        $status = StatusCode::find($id);
+        $status->status_code = $request->status_code;
+        $status->status_name = $request->status_name;
+        $status->note =  $request->note;
+        $status->status_status = $request->status_status;
+        $status->save();
 
+        $notify[] = ['success', 'Cập nhật trạng thái chức năng thành công'];
+        return back()->withNotify($notify);
+    }
+    public function delete($id)
+    {
+        Amenity::destroy($id);
+        return response()->json([
+            'status' => 'success',
+            'message' => 'Xóa trạng thái chức năng thành công',
+        ]);
+    }
+    public function search(Request $request)
+    {
+        $pageTitle = '';
+        if($request->input('code') == '' && $request->input('title') == '')
+        {
+            $amenities = Amenity::where('unit_code',unitCode())->orderBy('id', 'desc')->paginate(10);
+        }
+        else
+        {
+            $amenities = Amenity::select('*')
 
+                ->where('code','LIKE', '%'.$request->input('code').'%')
+                ->where('title','LIKE', '%'.$request->input('title').'%')
+                ->where('unit_code',unitCode())
+                ->orderBy('id', 'desc')->paginate(10);
+        }
+        $emptyMessage = 'Không tìm thấy dữ liệu';
+        $code = $request->input('code');
+        $title = $request->input('title');
+        return view('admin.hotel.setup.amenities', compact('pageTitle', 'amenities', 'emptyMessage','code','title'));
+    }
 }

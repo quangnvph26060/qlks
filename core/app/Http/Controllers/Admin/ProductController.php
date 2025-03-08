@@ -24,56 +24,56 @@ class ProductController extends Controller
     /**
      * Display a listing of the resource.
      */
-    public function index()
-    {
+    // public function index()
+    // {
 
-        $pageTitle = "Danh sách sản phẩm";
+    //     $pageTitle = "Danh sách sản phẩm";
 
-        $search = request()->get('search');
-        $perPage = request()->get('perPage', 10);
-        $orderBy = request()->get('orderBy', 'id');
-        $columns = [
-            'id',
-            'image_path',
-            'name',
-            'import_price',
-            'selling_price',
-            'category_id',
-            'brand_id',
-            'sku',
-            'stock',
-            'is_published',
-        ];
-        $relations = ['category', 'brand'];
-        $searchColumns = [
-            'name',
-            'import_price',
-            'selling_price',
-            'sku',
-        ];
-        $relationSearchColumns = ['brand' => ['name'], 'category' => ['name']];
+    //     $search = request()->get('search');
+    //     $perPage = request()->get('perPage', 10);
+    //     $orderBy = request()->get('orderBy', 'id');
+    //     $columns = [
+    //         'id',
+    //         'image_path',
+    //         'name',
+    //         'import_price',
+    //         'selling_price',
+    //         'category_id',
+    //         'brand_id',
+    //         'sku',
+    //         'stock',
+    //         'is_published',
+    //     ];
+    //     $relations = ['category', 'brand'];
+    //     $searchColumns = [
+    //         'name',
+    //         'import_price',
+    //         'selling_price',
+    //         'sku',
+    //     ];
+    //     $relationSearchColumns = ['brand' => ['name'], 'category' => ['name']];
 
-        $response = $this->repository
-            ->customPaginate(
-                $columns,
-                $relations,
-                $perPage,
-                $orderBy,
-                $search,
-                [],
-                $searchColumns,
-                $relationSearchColumns
-            );
+    //     $response = $this->repository
+    //         ->customPaginate(
+    //             $columns,
+    //             $relations,
+    //             $perPage,
+    //             $orderBy,
+    //             $search,
+    //             [],
+    //             $searchColumns,
+    //             $relationSearchColumns
+    //         );
 
 
-        if (request()->ajax()) {
-            return response()->json([
-                'results' => view('admin.table.product', compact('response'))->render(),
-                'pagination' => view('vendor.pagination.custom', compact('response'))->render(),
-            ]);
-        }
-        return view('admin.product.index', compact('pageTitle'));
-    }
+    //     if (request()->ajax()) {
+    //         return response()->json([
+    //             'results' => view('admin.table.product', compact('response'))->render(),
+    //             'pagination' => view('vendor.pagination.custom', compact('response'))->render(),
+    //         ]);
+    //     }
+    //     return view('admin.product.index', compact('pageTitle'));
+    // }
 
     /**
      * Show the form for creating a new resource.
@@ -81,11 +81,63 @@ class ProductController extends Controller
     public function create()
     {
         $pageTitle = "Thêm mới sản phẩm";
-        $categories = Category::query()->pluck('name', 'id');
+        $categories = Product::query()->pluck('name', 'id');
         $brands = Brand::query()->pluck('name', 'id');
         return view('admin.product.create', compact('brands', 'categories', 'pageTitle'));
     }
-
+    public function index(Request $request)
+    {
+        $pageTitle = 'Danh sách sản phẩm';
+    
+        $brands = Brand::query()->pluck('name', 'id');
+        $categories = Product::query()->orderBy('id', 'desc')->where('unit_code',unitCode())->paginate(10);;
+        $emptyMessage = 'Không tìm thấy dữ liệu';
+        return view('admin.hotel.setup.product', compact('pageTitle', 'categories', 'emptyMessage'));
+    }
+    public function search(Request $request)
+    {
+        $pageTitle = '';
+        if($request->input('sku') == '' && $request->input('name') == '')
+        {
+            $categories = Product::query()->orderBy('id', 'desc')->where('unit_code',unitCode())->paginate(10);
+        }
+        else
+        {
+            $categories = Product::where('sku','LIKE', '%'.$request->input('sku').'%')
+                ->where('name','LIKE', '%'.$request->input('name').'%')
+                ->where('unit_code',unitCode())
+                ->orderBy('id', 'desc')->paginate(10);
+        }
+        $emptyMessage = 'Không tìm thấy dữ liệu';
+        $sku = $request->input('sku');
+        $name = $request->input('name');
+        return view('admin.hotel.setup.product', compact('pageTitle', 'categories', 'emptyMessage','sku','name'));
+    }
+    // public function edit($id)
+    // {
+    //     if (!$id) {
+    //         $notify[] = ['error', 'Không tìm thấy trạng thái'];
+    //         return back()->withNotify($notify);
+    //     }
+    //     $status = Amenity::find($id);
+    //     return response()->json([
+    //         'status' => 'success',
+    //         'data' => $status,
+    //     ]);
+    // }
+    public function status($id)
+    {
+        return Amenity::changeStatus($id);
+    }
+   
+    public function delete($id)
+    {
+        Amenity::destroy($id);
+        return response()->json([
+            'status' => 'success',
+            'message' => 'Xóa trạng thái chức năng thành công',
+        ]);
+    }
     /**
      * Store a newly created resource in storage.
      */
@@ -269,4 +321,5 @@ class ProductController extends Controller
             ]);
         }
     }
+    
 }
