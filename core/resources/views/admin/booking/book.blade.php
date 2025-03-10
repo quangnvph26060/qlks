@@ -15,7 +15,7 @@
             </div>
         </div> --}}
         <div class="pagination-container"></div>
-        <div class="card b-radius--10 mt-1">
+        <div class="card b-radius--10 mt-1 scroll-container-main">
             <div class="card-body p-0">
                 <div class="table-responsive--md">
                     {{-- giữ --}}

@@ -434,25 +434,25 @@ class BookingController extends Controller
                     }
                 } else {
                     $lastRecord = $uniqueRecords->last();
+                    // bắt đâu bằng thời gian kết thúc
+                    // if ($lastRecord && $record->room_id == $lastRecord->room_id) {
+                    //     $recordStartDate = Carbon::parse($record->start_date)->format('Y-m-d');
+                    //     $lastEndDate = Carbon::parse($lastRecord->end_date)->format('Y-m-d');
 
-                    if ($lastRecord && $record->room_id == $lastRecord->room_id) {
-                        $recordStartDate = Carbon::parse($record->start_date)->format('Y-m-d');
-                        $lastEndDate = Carbon::parse($lastRecord->end_date)->format('Y-m-d');
-
-                        if ($recordStartDate == $lastEndDate) {
-                            // Xóa bản ghi trước đó để chỉ giữ bản ghi mới
-                            $uniqueRecords->pop();
-                            $uniqueRecords->push($record);
-                            continue;
-                        }
-                    }
+                    //     if ($recordStartDate == $lastEndDate) {
+                    //         // Xóa bản ghi trước đó để chỉ giữ bản ghi mới
+                    //         $uniqueRecords->pop();
+                    //         $uniqueRecords->push($record);
+                    //         continue;
+                    //     }
+                    // }
                     $uniqueRecords->push($record);
                 }
             }
 
             $filteredResults = $filteredResults->merge($uniqueRecords);
         }
-
+      //  return response()->json($filteredResults);
         $newRecords = [];
 
         foreach ($emptyRooms as $room) {

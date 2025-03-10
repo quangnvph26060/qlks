@@ -136,3 +136,10 @@
 #loading-overlay svg {
     color: white; 
 }
+.scroll-container-main{
+    height: calc(100vh - 130px);
+    overflow-y: auto;
+    overflow-x: hidden;
+    border: 1px solid #ddd;
+    padding: 8px;
+}
