@@ -10,6 +10,8 @@ use App\Models\Amenity;
 use App\Models\BedType;
 use App\Models\Product;
 use App\Models\Facility;
+use App\Models\SetupCode;
+
 use App\Models\RoomType;
 use App\Rules\StockCheck;
 use Illuminate\Support\Str;
@@ -97,18 +99,22 @@ class RoomTypeController extends Controller
     }
     public function create()
     {
-        $pageTitle   = 'Thêm loại phòng';
+        $pageTitle   = 'Thêm phòng';
+        $count = Room::where('unit_code',unitCode())->count();
+        $code = SetupCode::where('menu_name','Danh mục phòng')->where('unit_code',unitCode())->value('code');
+        $code = $code ? $code.$count+1 : '';
         $amenities   = Amenity::active()->get();
         $facilities  = Facility::active()->get();
         $bedTypes    = BedType::all();
         $roomTypes   = RoomType::pluck('name', 'id');
         $prices      = RoomPrice::active()->pluck('name', 'id');
 
-        return view('admin.hotel.room_type.create', compact('pageTitle', 'amenities', 'facilities', 'bedTypes', 'roomTypes', 'prices'));
+        return view('admin.hotel.room_type.create', compact('pageTitle','code', 'amenities', 'facilities', 'bedTypes', 'roomTypes', 'prices'));
     }
 
     public function edit($id)
     {
+        
         $roomType    = Room::with('amenities', 'facilities', 'images', 'products')->findOrFail($id);
         $pageTitle   = 'Cập nhật phòng  -' . $roomType->room_number;
         $amenities   = Amenity::active()->get();
@@ -134,6 +140,7 @@ class RoomTypeController extends Controller
     {
 
         $room_type = Room::select('*')
+            ->where('unit_code',unitCode())
             ->where(function($q) use ($request) {
         
                 if($request->room_type_id != '') {

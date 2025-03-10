@@ -208,4 +208,21 @@ class ManageRoomProductController extends Controller
         $pageTitle = 'Danh sách cơ sở vật chất của phòng';
         return view('admin.manage-room-products.index', compact('rooms', 'products','pageTitle','room_type','code'));
     }
+    public function ajax(Request $request)
+    {
+
+        $rooms = Room::select('*')
+            ->where('unit_code',unitCode())->where('status' , 1)
+
+            ->where(function($q) use ($request) {
+        
+                if($request->room_type_id != '') {
+                    $q->where('rooms.room_type_id','=',$request->room_type_id);
+                }
+               
+            })
+            ->distinct()
+            ->orderBy('id', 'desc')->paginate(10);
+        return view('admin.manage-room-products.search', compact('rooms'));
+    }
 }

@@ -53,7 +53,7 @@
                                   
                                     </tr>
                                 </thead>
-                                <tbody>
+                                <tbody id="data">
                                 @if ($rooms->isNotEmpty())
                                     @foreach ($rooms as $id => $room)
                                         @if ($rooms->count() > 0)
@@ -411,6 +411,28 @@
 
             });
         })(jQuery);
+ 
+        $('.choose').change(function () {
+            var room_type_id = $('#tim-loai-phong').val();
+            var url = "{{ route('admin.hotel.room.amenities.ajax') }}";
+            $.ajax({
+                type: 'GET',
+                cache: false,
+                url: url,
+                data: {
+                    room_type_id: room_type_id,
+        
+                },
+                success: function (response) {
+                    if (response) {
+                        $('#data').html(response)
+                    }
+                },
+                error: function (error) {
+                    console.log(error);
+                }
+            })
+        });
         $(document).ready(function() {
 
             $(document).on('click', '.svg-icon', function(e) {

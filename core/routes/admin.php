@@ -238,6 +238,8 @@ Route::middleware('admin', 'adminPermission')->group(function () {
             Route::get('room/edit-amenity/{id}', 'edit')->name('edit');
             Route::post('/rooms/update-amenity', 'update')->name('update');
             Route::get('search', 'search')->name('search');
+            Route::get('ajax', 'ajax')->name('ajax');
+
 
         });
         //Manage Facilities with room
@@ -247,6 +249,7 @@ Route::middleware('admin', 'adminPermission')->group(function () {
             Route::get('room/edit-facility/{id}', 'edit')->name('edit');
             Route::post('/rooms/update-facility', 'update')->name('update');
             Route::get('search', 'search')->name('search');
+            Route::get('ajax', 'ajax')->name('ajax');
 
         });
 
@@ -350,6 +353,7 @@ Route::middleware('admin', 'adminPermission')->group(function () {
             Route::get('room/edit-product/{id}', 'edit')->name('edit');
             Route::post('/rooms/update-product', 'update')->name('update');
             Route::get('search', 'search')->name('search');
+            Route::get('ajax', 'ajax')->name('ajax');
 
         });
         Route::controller('CustomerSourceController')->name('room.customer_customer.')->prefix('CustomerSource')->group(function () {

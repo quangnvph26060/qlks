@@ -163,4 +163,19 @@ class ManageRoomFacilitiesController extends Controller
             'message' => 'Cập nhật tiện nghi cho phòng thành công!'
         ]);
     }
+    public function ajax(Request $request)
+    {
+
+        $rooms = Room::select('*')
+            ->where(function($q) use ($request) {
+        
+                if($request->room_type_id != '') {
+                    $q->where('rooms.room_type_id','=',$request->room_type_id);
+                }
+               
+            })
+            ->distinct()
+            ->orderBy('id', 'desc')->paginate(10);
+        return view('admin.manage-room-facilities.search', compact('rooms'));
+    }
 }

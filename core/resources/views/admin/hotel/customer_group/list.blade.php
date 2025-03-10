@@ -61,7 +61,7 @@
                                 <div class="mb-3">
                                     <label for="groupCode" class="form-label">Mã nhóm</label>
                                     <input type="text" class="form-control" name="group_code" id="add_group_code"
-                                        placeholder="Nhập mã nhóm">
+                                        placeholder="Nhập mã nhóm" value="{{ $code }}">
                                     <span class="invalid-feedback d-block" style="font-weight: 500"
                                         id="group_code_error"></span>
                                 </div>

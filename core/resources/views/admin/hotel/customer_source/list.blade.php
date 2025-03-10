@@ -126,7 +126,7 @@
                             <div class="mb-3">
                                 <label for="statusCode" class="form-label">Mã nguồn</label>
                                 <input type="text" class="form-control " name="source_code" id="add_source_code"
-                                       placeholder="Nhập mã nguồn">
+                                       placeholder="Nhập mã nguồn" value="{{ $code }}">
                                 <span class="invalid-feedback d-block" style="font-weight: 500"
                                       id="source_code_error"></span>
                             </div>

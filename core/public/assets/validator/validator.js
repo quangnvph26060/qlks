@@ -116,6 +116,7 @@ function generateErrorMessage(code, values = []) {
         P002: `${values} phải là số`,
         TTT001: 'Tên trạng thái không được để trống',
         KT001: 'Mã code không được chưa ký tự đặc biệt',
+        TD001: 'Tiêu đề không được để trống',
 
         MN001: 'Mã nguồn không được để trống',
         TN001: 'Tên nguồn không được để trống',

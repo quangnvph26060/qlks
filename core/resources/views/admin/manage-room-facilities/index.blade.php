@@ -54,7 +54,7 @@
                                 
                                     </tr>
                                 </thead>
-                                <tbody>
+                                <tbody id="data">
                                 @if ($rooms->isNotEmpty())
                                     @foreach ($rooms as $id => $room)
                                         @if ($room->facilities->count())
@@ -444,6 +444,27 @@
                 });
 
                 });
+                $('.choose').change(function () {
+            var room_type_id = $('#tim-loai-phong').val();
+            var url = "{{ route('admin.hotel.room.facilities.ajax') }}";
+            $.ajax({
+                type: 'GET',
+                cache: false,
+                url: url,
+                data: {
+                    room_type_id: room_type_id,
+        
+                },
+                success: function (response) {
+                    if (response) {
+                        $('#data').html(response)
+                    }
+                },
+                error: function (error) {
+                    console.log(error);
+                }
+            })
+        });
     </script>
 @endpush
 

@@ -170,7 +170,7 @@
                         'func': function(value) {
                             return checkRequired(value);
                         },
-                        'message': generateErrorMessage('TTT001')
+                        'message': generateErrorMessage('TD001')
                     },
                     ]
                 },
