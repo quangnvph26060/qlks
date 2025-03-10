@@ -304,16 +304,8 @@
                                 </h5>
                             </div>
                             <div class="card-body">
-                            <div class="upload-box">
-                                    <input type="file" id="add_main_image" name="main_image" accept="image/*" required>
-                                    <label for="add_main_image" class="upload-label">
-                                        <i class="fas fa-cloud-upload-alt"></i>
-                                        <span>Ảnh loại phòng</span>
-                                    </label>
-                                    <img id="add_preview" class="preview-image" src="" alt="Preview Image"
-                                        style="display: none;">
-                                    <small class="text-danger"></small>
-                                </div>
+                                <x-image-uploader name="main_image" class="w-100" type="roomTypeImage" :image="@$roomType->main_image"
+                                    :required="@$roomType ? false : true" />
                             </div>
                         </div>
                     </div>

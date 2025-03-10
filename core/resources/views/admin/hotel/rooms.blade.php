@@ -200,8 +200,8 @@
                             </div>
                             <div class="form-group">
                                 <label for="statusStatus" class="form-label">Trạng thái</label><br>
-                                <input type="radio" name="status" value="1">Hoạt động
-                                <input type="radio" name="status" value="0">
+                                <input type="radio" class="edit-status" name="status" value="1">Hoạt động
+                                <input type="radio" class="edit-status" name="status" value="0">
                                 Không hoạt động
                             </div>
                         </div>

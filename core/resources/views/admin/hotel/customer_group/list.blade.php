@@ -133,7 +133,7 @@
                         <tr>
                             <th>@lang('Hành động')</th>
 
-                            <th>@lang('STT')</th>
+                            <th style="width:20px">@lang('STT')</th>
                             <th>@lang('Mã nhóm KH')</th>
                             <th>@lang('Tên nhóm KH')</th>
                             <!-- <th>@lang('Ghi chú')</th>

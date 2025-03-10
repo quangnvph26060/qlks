@@ -59,6 +59,14 @@
         <td data-label="Số giường">
             {{ $type->beds }}
         </td>
+        <td data-label="Hình ảnh">     
+                                    @if(!empty($type->main_image))
+                                            <i class="fa fa-check" style="color:green;text-align: center"></i>
+                                                    @else
+                                                <i class="fa fa-close" style="color:red;text-align: center"></i>
+                                                    @endif
+                                                        
+                                </td>
         {{-- <td data-label="Tiện nghi">
            <!--  @if ($type->amenities->count() > 0)
                 <div class="float-inline-end">

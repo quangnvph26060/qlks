@@ -7,14 +7,14 @@
                 <div class="row">
                 <div class="col-md-12 col-sm-12 d-flex">
                         <a class="mr-1" href="{{route('admin.hotel.setup.code.all')}}">
-                        <button class="btn btn-sm btn-outline--primary" data-modal_title="Làm mới">
-                            <i class="fa fa-repeat p-2"></i>
+                        <button class="btn btn--primary" data-modal_title="Làm mới">
+                            <i class="fa fa-repeat p-1"></i>
                         </button>
                          </a>
                          <a>
-                            <button class="btn btn-sm btn-outline--primary"  data-modal_title="Thêm mới mã mặc định"  type="button"
+                            <button class="btn btn--primary" data-modal_title="Thêm mới mã mặc định"  type="button"
                                     data-bs-toggle="modal" data-bs-target="#modal-add-code"  style="margin-left:10px">
-                                <i class="las la-plus  p-2"></i>
+                                <i class="las la-plus  p-1"></i>
                             </button>
                         </a>
                             <form role="form" enctype="multipart/form-data" action="{{route('admin.hotel.setup.code.search')}}">
@@ -26,7 +26,7 @@
                                         style="height: 35px;border: 1px solid rgb(121, 117, 117, 0.5); margin-left: 8px;"
                                         placeholder="Tên menu">
                                     <a>
-                                    <button type="submit" class="btn btn-primary" style="padding-right:15px;padding-left:15px">
+                                    <button type="submit" class="btn btn--primary" style="padding-right:15px;padding-left:15px">
                                         <i class="las la-search p-1"></i>
                                     </button>
                                     </a>
@@ -115,9 +115,9 @@
                                                         <option value="Danh mục hạng phòng" <?php $check = \App\Models\SetupCode::where('unit_code',unitCode())->where('menu_name','Danh mục hạng phòng')->first(); ?>@if($check) disabled="disabled" @endif>Danh mục hạng phòng</option>
                                                         <option value="Danh mục phòng" <?php $check = \App\Models\SetupCode::where('unit_code',unitCode())->where('menu_name','Danh mục phòng')->first(); ?>@if($check)  disabled="disabled" @endif>Danh mục phòng</option>
                                                         <option value="Danh mục dịch vụ cao cấp" <?php $check = \App\Models\SetupCode::where('unit_code',unitCode())->where('menu_name','Danh mục dịch vụ cao cấp')->first(); ?>@if($check)  disabled="disabled" @endif>Danh mục dịch vụ cao cấp</option>
-                                                        <option value="Danh mục tiện nghi"  <?php $check = \App\Models\SetupCode::where('unit_code',unitCode())->where('menu_name','Danh mục tiện nghi')->first(); ?>@if($check)  disabled="disabled" @endif>Danh mục tiện nghi</option>
-                                                        <option value="Danh mục cơ sở vật chất"  <?php $check = \App\Models\SetupCode::where('unit_code',unitCode())->where('menu_name','Danh mục cơ sở vật chất')->first(); ?>@if($check)  disabled="disabled" @endif>Danh mục cơ sở vật chất</option>
-                                                        <option value="Danh mục sản phẩm"  <?php $check = \App\Models\SetupCode::where('unit_code',unitCode())->where('menu_name','Danh mục sản phẩm')->first(); ?>@if($check)  disabled="disabled" @endif>Danh mục sản phẩm</option>
+                                                        <option value="Cài đặt tiện nghi"  <?php $check = \App\Models\SetupCode::where('unit_code',unitCode())->where('menu_name','Cài đặt tiện nghi')->first(); ?>@if($check)  disabled="disabled" @endif>Cài đặt tiện nghi</option>
+                                                        <option value="Cài đặt cơ sở vật chất"  <?php $check = \App\Models\SetupCode::where('unit_code',unitCode())->where('menu_name','Cài đặt cơ sở vật chất')->first(); ?>@if($check)  disabled="disabled" @endif>Cài đặt cơ sở vật chất</option>
+                                                        <option value="Cài đặt sản phẩm"  <?php $check = \App\Models\SetupCode::where('unit_code',unitCode())->where('menu_name','Cài đặt sản phẩm')->first(); ?>@if($check)  disabled="disabled" @endif>Cài đặt sản phẩm</option>
                                                         <option value="Danh mục người dùng"  <?php $check = \App\Models\SetupCode::where('unit_code',unitCode())->where('menu_name','Danh mục người dùng')->first(); ?>@if($check)  disabled="disabled" @endif>Danh mục người dùng</option>
                                                         <option value="Danh mục khách hàng"  <?php $check = \App\Models\SetupCode::where('unit_code',unitCode())->where('menu_name','Danh mục khách hàng')->first(); ?>@if($check)  disabled="disabled" @endif>Danh mục khách hàng</option>
                                                         <option value="Danh mục nguồn khách hàng" <?php $check = \App\Models\SetupCode::where('unit_code',unitCode())->where('menu_name','Danh mục nguồn khách hàng')->first(); ?>@if($check)  disabled="disabled" @endif>Danh mục nguồn khách hàng</option>
