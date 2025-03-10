@@ -11,11 +11,13 @@ class StatusCodeController extends Controller
 
     public function index()
     {
+        $count = StatusCode::where('unit_code',unitCode())->count();
+        $code = SetupCode::where('menu_name','Danh mục trạng thái')->where('unit_code',unitCode())->value('code');
+        $code = $code ? $code.$count+1 : '';
         $pageTitle = 'Trạng thái chức năng';
-        $status_codes = StatusCode::orderBy('id', 'desc')->where('unit_code',unitCode())->get();
-        ;
+        $status_codes = StatusCode::orderBy('id', 'desc')->where('unit_code',unitCode())->paginate(10);;
         $emptyMessage = 'Không tìm thấy dữ liệu';
-        return view('admin.hotel.status_code.list', compact('pageTitle', 'status_codes', 'emptyMessage'));
+        return view('admin.hotel.status_code.list', compact('pageTitle', 'status_codes','code', 'emptyMessage'));
     }
     public function store(Request $request)
     {
@@ -97,10 +99,13 @@ class StatusCodeController extends Controller
     }
     public function search(Request $request)
     {
+        $count = StatusCode::where('unit_code',unitCode())->count();
+        $code = SetupCode::where('menu_name','Danh mục trạng thái')->where('unit_code',unitCode())->value('code');
+        $code = $code ? $code.$count+1 : '';
         $pageTitle = '';
         if($request->input('status_code') == '' && $request->input('status_name') == '')
         {
-            $status_codes = StatusCode::orderBy('id', 'desc')->paginate(30);
+            $status_codes = StatusCode::orderBy('id', 'desc')->where('unit_code',unitCode())->paginate(10);
         }
         else
         {
@@ -109,10 +114,10 @@ class StatusCodeController extends Controller
                 ->where('status_code','LIKE', '%'.$request->input('status_code').'%')
                 ->where('status_name','LIKE', '%'.$request->input('status_name').'%')
                 ->where('unit_code',unitCode())
-                ->orderBy('id', 'desc')->paginate(30);
+                ->orderBy('id', 'desc')->paginate(10);
         }
         $emptyMessage = 'Không tìm thấy dữ liệu';
 
-        return view('admin.hotel.status_code.list', compact('pageTitle', 'status_codes', 'emptyMessage'));
+        return view('admin.hotel.status_code.list', compact('pageTitle','code', 'status_codes', 'emptyMessage'));
     }
 }

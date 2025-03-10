@@ -29,8 +29,8 @@
 {{--                                        value="{{ request('keyword') }}"--}}
 {{--                                        placeholder="Tìm kiếm ...">--}}
 {{--                                    <!-- Nút tìm kiếm -->--}}
-{{--                                    <button type="button" class="btn btn-primary">--}}
-{{--                                        <i class="las la-search"></i>--}}
+{{--                                    <button type="button" class="btn btn--primary">--}}
+{{--                                        <i class="las la-search p-1"></i>--}}
 {{--                                    </button>--}}
 {{--                                </div>--}}
 {{--                            </form>--}}
@@ -48,12 +48,65 @@
                                         <th>@lang('STT')</th>
                                         <th>@lang('Mã phòng')</th>
                                         <th>@lang('Loại phòng')</th>
-                                        <th>@lang('Số phòng')</th>
+                                        <th>@lang('Tên phòng')</th>
                                         <th>@lang('Tiện nghi')</th>
                                   
                                     </tr>
                                 </thead>
-                                <tbody>
+                                <tbody id="data">
+                                @if ($rooms->isNotEmpty())
+                                    @foreach ($rooms as $id => $room)
+                                        @if ($rooms->count() > 0)
+                                            <tr data-id="{{ $room->id }}">
+                                            @can('admin.hotel.room.amenities.all')
+                                                
+                                                <td style="width:20px;">
+                                                <svg class="svg_menu_check_in" xmlns="http://www.w3.org/2000/svg" width="30" height="30" viewBox="0 0 21 21"><g fill="currentColor" fill-rule="evenodd"><circle cx="10.5" cy="10.5" r="1"/><circle cx="10.5" cy="5.5" r="1"/><circle cx="10.5" cy="15.5" r="1"/></g></svg>
+                                                        
+                                                    <div class="dropdown menu_dropdown_check_in" id="dropdown-menu" style="position:fixed">
+                                                        <div class="dropdown-item">
+                                                        <a class="btn btn-sm btn-outline--primary btn-edit" data-id="{{ $room->id }}"
+                                                            data-modal_title="@lang('Cập nhật tiện nghi')" type="button" style="color:black !important;border:none;padding:5px">
+                                                            Sửa tiện nghi
+                                                        </a>
+                                                    </div>    
+                                                                    
+                                                    <div class="dropdown-item booked_room_detail">
+                                                        <button class=" btn-delete icon-delete-room" data-id="{{ $room->id }}" data-modal_title="@lang('Xóa tiện nghi')" type="button"data-pro="0">Xóa tiện nghi
+                                                        </div>
+                                                        
+                                                    </div>
+                                                </td>
+                                            @endcan
+                                                <td style="text-align:right">      
+                                                    @php
+                                                        $stt = $rooms->total() - ($rooms->currentPage() - 1) * $rooms->perPage() - $id;
+                                                    @endphp
+                                                    {{ $stt }}
+                                                </td>
+                                                <td>{{ $room->code }}</td>
+                                                <td data-label="Loại phòng">
+                                                    @php
+                                                        $type_name = \App\Models\RoomType::where('id',$room->room_type_id)->value('name');
+                                                    @endphp
+                                                    {{ $type_name }}
+                                                </td>                                                  
+                                                <td>{{ $room->room_number }}</td>
+                                                <td>
+                                                    @if ($room->amenities->count() > 0)
+                                                        @foreach ($room->amenities as $item)
+                                                            <span class="badge {{ getRandomColor() }}">{{ $item->title }}</span>
+                                                        @endforeach
+                                                    @else
+                                                        <p>Chưa có tiện nghi nào !</p>
+                                                    @endif
+
+                                                </td>
+                                            
+                                            </tr>
+                                        @endif
+                                    @endforeach
+                                @endif
 
                                 </tbody>
                             </table>
@@ -69,19 +122,51 @@
     @can('')
  
         @push('breadcrumb-plugins')
-       
+        <div class="card-body mt-1">
+            <div class="row">
+        
+              <div class="col-md-12 d-flex">
            <a  href="{{ route('admin.hotel.room.amenities.all') }}">
-           <button type="button" class="btn btn-outline--primary" data-modal_title="Làm mới">
-                <i class="fa fa-repeat p-2 "></i>
+           <button type="button" class="btn btn--primary"data-modal_title="Làm mới">
+                <i class="fa fa-repeat p-1"></i>
 
             </button>
            </a>   
            <a>
-           <button type="button" class="btn btn-outline--primary btn-add ">
-                <i class="las la-plus p-2 "></i>
+           <button type="button" class="btn btn--primary btn-add " style="margin-left:8px">
+                <i class="las la-plus p-1 "></i>
 
             </button>
-           </a>      
+           </a>     
+           <form role="form" enctype="multipart/form-data" action="{{route('admin.hotel.room.amenities.search')}}">
+                        <div class="form-group mb-0" style="display: flex;">
+                            <input class="searchInput" name="code"
+                                   style="height: 35px;border: 1px solid rgb(121, 117, 117, 0.5);margin-left:8px"
+                                    placeholder="Mã phòng/Tên phòng" value="{{ $code ?? '' }}">
+                
+                            <select name="room_type_id" class="form-control choose ml-1" id="tim-loai-phong" style="width:250px;margin-left: 8px;height: 35px">
+                                    <option value="">--Chọn loại phòng--</option>
+                                    @foreach($room_type as $type)
+                                        <option value="{{ $type->id }}">{{ $type->name }}</option>
+                                    @endforeach
+                            </select>
+                            
+                            <button type="submit" class="btn btn--primary" style="margin-left: 8px;">
+                                <i class="las la-search p-1"></i>
+                            </button>
+                        </div>
+                    </form> 
+                    </div>
+                    <div class="pager-wrap">
+                            <div class="k-widget d-flex">
+                                <div class="pagination-tb" style="font-size: 13px;margin: 0 auto">
+                                    {{ $rooms->links('pagination::bootstrap-4') }}
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+
+                </div>
         @endpush
     @endcan
 
@@ -189,15 +274,19 @@
 @push('style-lib')
     <link rel="stylesheet" type="text/css" href="{{ asset('assets/admin/css/daterangepicker.css') }}">
     <link rel="stylesheet" href="{{ asset('assets/global/css/modal.css') }}">
-    
     <style>
-            .navbar__right{
-                display: none;
-            }
-            #navbar-wrapper{
-                padding: 0px 30px 20px;
-            }
-    </style>
+          
+          .pagination .page-item .page-link, .pagination .page-item span{
+              width: 22px !important;
+              height: auto !important;
+              background-color: #4634ff !important;
+              color: white !important;
+          }
+          .pagination .page-item.active .page-link{
+              background-color: #071251 !important;
+          }
+
+  </style>
 @endpush
 
 @push('script')
@@ -322,6 +411,28 @@
 
             });
         })(jQuery);
+ 
+        $('.choose').change(function () {
+            var room_type_id = $('#tim-loai-phong').val();
+            var url = "{{ route('admin.hotel.room.amenities.ajax') }}";
+            $.ajax({
+                type: 'GET',
+                cache: false,
+                url: url,
+                data: {
+                    room_type_id: room_type_id,
+        
+                },
+                success: function (response) {
+                    if (response) {
+                        $('#data').html(response)
+                    }
+                },
+                error: function (error) {
+                    console.log(error);
+                }
+            })
+        });
         $(document).ready(function() {
 
             $(document).on('click', '.svg-icon', function(e) {

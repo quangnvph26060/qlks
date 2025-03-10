@@ -18,26 +18,30 @@
                         </tr>
                         </thead>
                         <tbody id="main-table-hotel">
-                        @forelse($customer_sources as $key => $item)
+                        @forelse($customer_sources as $id => $item)
                             <tr data-id="{{ $item->id }}">
                             <td style="width:20px;">
                                     <svg class="svg_menu_check_in" xmlns="http://www.w3.org/2000/svg" width="30" height="30" viewBox="0 0 21 21"><g fill="currentColor" fill-rule="evenodd"><circle cx="10.5" cy="10.5" r="1"/><circle cx="10.5" cy="5.5" r="1"/><circle cx="10.5" cy="15.5" r="1"/></g></svg>
                             
-                                    <div class="dropdown menu_dropdown_check_in" id="dropdown-menu">
+                                    <div class="dropdown menu_dropdown_check_in" id="dropdown-menu" style="position:fixed">
                                             <div class="dropdown-item"><a
                                             data-id="{{ $item->id }}" class="btn-edit-source" data-bs-toggle="modal" data-bs-target="#edit-customer-source" style="color:black">
-                                                Sửa khách hàng
+                                                Sửa nguồn khách hàng
                                             </a>
                                     </div>
                                           
                                     <div class="dropdown-item booked_room_detail"> <button class=" btn-delete icon-delete-room"
                                                 data-id="{{ $item->id }}" data-modal_title="@lang('Xóa nguồn khách')" type="button"
-                                                data-pro="0">Xóa khách hàng</div>
+                                                data-pro="0">Xóa nguồn khách hàng</div>
                               
                                     </div>
                                 </td>
-                            <td style="width:20px;text-align:right">{{ $loop->iteration }}</td>
-                          
+                                <td data-label="STT" style="text-align:right">   
+                                    @php
+                                        $stt = $customer_sources->total() - ($customer_sources->currentPage() - 1) * $customer_sources->perPage() - $id;
+                                            @endphp
+                                        {{ $stt }}
+                                </td>                          
                             <td>
                                     {{ $item->source_code }}
                              </td>
@@ -66,14 +70,14 @@
                     <div class="col-md-12 col-sm-12 d-flex">
                     
                         <a class="mr-1" href="{{route('admin.hotel.customer.source.all')}}">
-                        <button class="btn btn-sm btn-outline--primary" data-modal_title="Làm mới">
-                            <i class="fa fa-repeat p-2"></i>
+                        <button class="btn btn--primary" data-modal_title="Làm mới">
+                            <i class="fa fa-repeat p-1"></i>
                         </button>
                          </a>
                          <a>
-                            <button class="btn btn-sm btn-outline--primary" data-modal_title="Thêm mới nguồn khách hàng" type="button"
+                            <button class="btn btn--primary" data-modal_title="Thêm mới nguồn khách hàng" type="button"
                                     data-bs-toggle="modal" data-bs-target="#customer-source"  style="margin-left:10px">
-                                <i class="las la-plus  p-2"></i>
+                                <i class="las la-plus  p-1"></i>
                             </button>
                         </a>
                             <form role="form" enctype="multipart/form-data" action="{{route('admin.hotel.customer.source.search')}}">
@@ -85,14 +89,22 @@
                                         style="height: 35px;border: 1px solid rgb(121, 117, 117, 0.5); margin-left: 8px;"
                                         placeholder="Tên nguồn khách">
                                     <a>
-                                    <button type="submit" class="btn btn-primary" style="padding-right:15px;padding-left:15px">
+                                    <button type="submit" class="btn btn--primary">
                                         <i class="las la-search p-1"></i>
                                     </button>
                                     </a>
                                 </div>
                             </form>
                     </div>
-                
+                    @if ($customer_sources->hasPages())
+                        <div class="pager-wrap">
+                                    <div class="k-widget d-flex">
+                                        <div class="pagination-tb" style="font-size: 13px;margin: 0 auto">
+                                            {{ $customer_sources->links('pagination::bootstrap-4') }}
+                                        </div>
+                                    </div>
+                                </div>
+                        @endif
                 </div>
             </div>
         @endpush
@@ -114,7 +126,7 @@
                             <div class="mb-3">
                                 <label for="statusCode" class="form-label">Mã nguồn</label>
                                 <input type="text" class="form-control " name="source_code" id="add_source_code"
-                                       placeholder="Nhập mã nguồn">
+                                       placeholder="Nhập mã nguồn" value="{{ $code }}">
                                 <span class="invalid-feedback d-block" style="font-weight: 500"
                                       id="source_code_error"></span>
                             </div>
@@ -143,7 +155,7 @@
         <div class="modal-dialog modal-lg">
             <div class="modal-content">
                 <div class="modal-header">
-                    <h5 class="modal-title" id="staticBackdropLabel">Cập nhật</h5>
+                    <h5 class="modal-title" id="staticBackdropLabel">Cập nhật nguồn khách hàng</h5>
                     <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
                 </div>
                 <div class="modal-body">
@@ -191,6 +203,15 @@
             }
             #navbar-wrapper{
                 padding: 0px 30px 20px;
+            }
+            .pagination .page-item .page-link, .pagination .page-item span{
+                width: 22px !important;
+                height: auto !important;
+                background-color: #4634ff !important;
+                color: white !important;
+            }
+            .pagination .page-item.active .page-link{
+                background-color: #071251 !important;
             }
     </style>
 @endpush

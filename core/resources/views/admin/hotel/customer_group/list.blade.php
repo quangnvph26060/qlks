@@ -9,15 +9,15 @@
                         
                            
                             <a class="mr-1" href="{{route('admin.hotel.customer.group.all')}}">
-                        <button class="btn btn-sm btn-outline--primary" data-modal_title="Làm mới">
-                            <i class="fa fa-repeat p-2"></i>
-                        </button>
+                                <button  class="btn btn--primary"  data-modal_title="Làm mới">
+                                    <i class="fa fa-repeat p-1"></i>
+                                </button>
                             </a>
                             <a>
-                            <button class="btn btn-sm btn-outline--primary" data-modal_title="Thêm mới nhóm khách hàng" type="button"
-                            data-bs-toggle="modal" data-bs-target="#group-code" style="margin-left:10px">
-                                <i class="las la-plus p-2"></i>
-                            </button>
+                                <button  class="btn btn--primary"  data-modal_title="Thêm mới nhóm khách hàng" type="button"
+                                data-bs-toggle="modal" data-bs-target="#group-code" style="margin-left:10px">
+                                    <i class="las la-plus p-1"></i>
+                                </button>
                             </a>                
                             <form role="form" enctype="multipart/form-data" action="{{route('admin.hotel.customer.group.search')}}">
                                 <div class="form-group position-relative mb-0">
@@ -28,13 +28,22 @@
                                         style="height: 35px;border: 1px solid rgb(121, 117, 117, 0.5); margin-left: 8px;"
                                         placeholder="Tên nhóm khách">
                                     <a>
-                                    <button type="submit" class="btn btn-primary" style="padding-right:15px;padding-left:15px">
+                                    <button type="submit" class="btn btn--primary" style="padding-right:15px;padding-left:15px">
                                         <i class="las la-search p-1"></i>
                                     </button>
                                     </a>
                                 </div>
                             </form> 
                     </div>
+                    @if ($customer_groups->hasPages())
+                        <div class="pager-wrap">
+                                    <div class="k-widget d-flex">
+                                        <div class="pagination-tb" style="font-size: 13px;margin: 0 auto">
+                                            {{ $customer_groups->links('pagination::bootstrap-4') }}
+                                        </div>
+                                    </div>
+                                </div>
+                        @endif
                 </div>
             </div>
             <div class="modal fade" id="group-code" tabindex="-1" aria-labelledby="exampleModalLabel" aria-hidden="true">
@@ -52,7 +61,7 @@
                                 <div class="mb-3">
                                     <label for="groupCode" class="form-label">Mã nhóm</label>
                                     <input type="text" class="form-control" name="group_code" id="add_group_code"
-                                        placeholder="Nhập mã nhóm">
+                                        placeholder="Nhập mã nhóm" value="{{ $code }}">
                                     <span class="invalid-feedback d-block" style="font-weight: 500"
                                         id="group_code_error"></span>
                                 </div>
@@ -110,6 +119,7 @@
                                 </div>
                             </form>
                         </div>
+               
                     </div>
                 </div>
             </div>
@@ -117,7 +127,7 @@
                 <div class="col-12">
                     <div class="emptyArea"></div>
                 </div>
-                <div class="table-responsive--md  table-responsive" style="overflow-x: visible;">
+                <div class="table-responsive--md  table-responsive" style="overflow-x: auto;">
                                         <table class="table--light style--two table">
                         <thead>
                         <tr>
@@ -131,7 +141,7 @@
                         </tr>
                         </thead>
                         <tbody id="main-table-hotel">
-                        @forelse($customer_groups as $key => $item)
+                        @forelse($customer_groups as $id => $item)
                             <tr data-id="{{ $item->id }}">
                             <td style="width:20px;">
                                         <svg class="svg_menu_check_in" xmlns="http://www.w3.org/2000/svg" width="30" height="30" viewBox="0 0 21 21"><g fill="currentColor" fill-rule="evenodd"><circle cx="10.5" cy="10.5" r="1"/><circle cx="10.5" cy="5.5" r="1"/><circle cx="10.5" cy="15.5" r="1"/></g></svg>
@@ -148,7 +158,12 @@
                               
                                         </div>
                                     </td>
-                                <td style="width:20px;text-align:right">{{ $loop->iteration }}</td>
+                                    <td data-label="STT" style="text-align:right">   
+                                    @php
+                                        $stt = $customer_groups->total() - ($customer_groups->currentPage() - 1) * $customer_groups->perPage() - $id;
+                                            @endphp
+                                        {{ $stt }}
+                                    </td>
 
                                 <td>
                                     {{ $item->group_code }}
@@ -181,6 +196,15 @@
             }
             #navbar-wrapper{
                 padding: 0px 30px 20px;
+            }
+            .pagination .page-item .page-link, .pagination .page-item span{
+                width: 22px !important;
+                height: auto !important;
+                background-color: #4634ff !important;
+                color: white !important;
+            }
+            .pagination .page-item.active .page-link{
+                background-color: #071251 !important;
             }
     </style>
 @endpush

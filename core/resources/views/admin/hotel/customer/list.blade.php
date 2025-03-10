@@ -361,12 +361,7 @@
     <link rel="stylesheet" href="{{ asset('assets/global/css/modal.css') }}">
     
     <style>
-            .navbar__right{
-                display: none;
-            }
-            #navbar-wrapper{
-                padding: 0px 30px 20px;
-            }
+          
             .pagination .page-item .page-link, .pagination .page-item span{
                 width: 22px !important;
                 height: auto !important;
@@ -388,7 +383,6 @@
                 'customer_code': {
                     'element': document.getElementById('add_customer_code'),
                     'error': document.getElementById('customer_code_error'),
-                
                     'validations': [{
                         'func': function(value) {
                             return checkRequired(value); // check trống

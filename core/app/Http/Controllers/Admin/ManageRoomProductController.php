@@ -6,6 +6,8 @@ use App\Http\Controllers\Controller;
 use App\Models\Facility;
 use App\Models\Product;
 use App\Models\Room;
+use App\Models\RoomType;
+
 use App\Repositories\BaseRepository;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Log;
@@ -20,47 +22,56 @@ class ManageRoomProductController extends Controller
     {
         $this->repository = new BaseRepository(new Room());
     }
+    // public function index()
+    // {
+    //     $rooms = Room::where('status', 1)->get();
+    //     $products = Product::where('is_published', 1)->where('stock', '>', 0)->get();
+    //     $pageTitle = 'Danh sách sản phẩm của phòng';
+    //     $search = request()->get('search');
+    //     $perPage = request()->get('perPage', 10);
+    //     $orderBy = request()->get('orderBy', 'id');
+    //     $columns = [
+    //         'id',
+    //         'code',
+    //         'room_type_id',
+    //         'room_number',
+    //         'description'
+    //     ];
+    //     $relations = ['products', 'roomType'];
+    //     $searchColumns = [
+    //         'code',
+    //     ];
+    //     $relationSearchColumns = [];
+
+    //     $response = $this->repository
+    //         ->customPaginate(
+    //             $columns,
+    //             $relations,
+    //             $perPage,
+    //             $orderBy,
+    //             $search,
+    //             [],
+    //             $searchColumns,
+    //             $relationSearchColumns
+    //         );
+
+    //     if (request()->ajax()) {
+    //         return response()->json([
+    //             'results' => view('admin.table.manage-product-room', compact('response'))->render(),
+    //             'pagination' => view('vendor.pagination.custom', compact('response'))->render(),
+    //         ]);
+    //     }
+
+    //     return view('admin.manage-room-products.index', compact('rooms', 'products', 'pageTitle'));
+    // }
     public function index()
     {
-        $rooms = Room::where('status', 1)->get();
+        $rooms = Room::where('unit_code',unitCode())->where('status' , 1)->paginate(10);
         $products = Product::where('is_published', 1)->where('stock', '>', 0)->get();
         $pageTitle = 'Danh sách sản phẩm của phòng';
-        $search = request()->get('search');
-        $perPage = request()->get('perPage', 10);
-        $orderBy = request()->get('orderBy', 'id');
-        $columns = [
-            'id',
-            'code',
-            'room_type_id',
-            'room_number',
-            'description'
-        ];
-        $relations = ['products', 'roomType'];
-        $searchColumns = [
-            'code',
-        ];
-        $relationSearchColumns = [];
+        $room_type = RoomType::where('unit_code',unitCode())->get();
 
-        $response = $this->repository
-            ->customPaginate(
-                $columns,
-                $relations,
-                $perPage,
-                $orderBy,
-                $search,
-                [],
-                $searchColumns,
-                $relationSearchColumns
-            );
-
-        if (request()->ajax()) {
-            return response()->json([
-                'results' => view('admin.table.manage-product-room', compact('response'))->render(),
-                'pagination' => view('vendor.pagination.custom', compact('response'))->render(),
-            ]);
-        }
-
-        return view('admin.manage-room-products.index', compact('rooms', 'products', 'pageTitle'));
+        return view('admin.manage-room-products.index', compact('rooms','room_type', 'products', 'pageTitle'));
     }
     public function store(Request $request)
     {
@@ -171,5 +182,47 @@ class ManageRoomProductController extends Controller
             'status' => true,
             'message' => 'Cập nhật sản phẩm cho phòng thành công!'
         ]);
+    }
+    public function search(Request $request)
+    {
+        if($request->input('room_type_id') == '' && $request->input('code') == '')
+        {
+            $rooms =  Room::select('rooms.*')
+            ->where('unit_code',unitCode())->where('status' , 1)
+            ->orderBy('id', 'desc')->paginate(10);
+        }
+        else
+        {
+            $rooms = Room::select('rooms.*')->where('room_type_id','LIKE', '%'.$request->input('room_type_id').'%')
+            ->where(function ($query) use ($request) {
+                $query->where('room_number', 'LIKE', '%'.$request->input('code').'%')
+                    ->orWhere('code', 'LIKE', '%'.$request->input('code').'%');
+                    })
+                ->where('unit_code',unitCode())->where('status' , 1)
+
+                ->orderBy('id', 'desc')->paginate(10);
+        }
+        $products = Product::where('is_published', 1)->where('stock', '>', 0)->get();
+        $room_type = RoomType::where('unit_code',unitCode())->get();
+        $code =  $request->input('code');
+        $pageTitle = 'Danh sách cơ sở vật chất của phòng';
+        return view('admin.manage-room-products.index', compact('rooms', 'products','pageTitle','room_type','code'));
+    }
+    public function ajax(Request $request)
+    {
+
+        $rooms = Room::select('*')
+            ->where('unit_code',unitCode())->where('status' , 1)
+
+            ->where(function($q) use ($request) {
+        
+                if($request->room_type_id != '') {
+                    $q->where('rooms.room_type_id','=',$request->room_type_id);
+                }
+               
+            })
+            ->distinct()
+            ->orderBy('id', 'desc')->paginate(10);
+        return view('admin.manage-room-products.search', compact('rooms'));
     }
 }

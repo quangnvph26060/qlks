@@ -66,31 +66,72 @@
                         </table><!-- table end -->
                     </div>
                 </div>
-                @if ($users->hasPages())
-                    <div class="card-footer py-4">
-                        {{ paginateLinks($users) }}
-                    </div>
-                @endif
+           
             </div>
         </div>
 
     </div>
 @endsection
 @push('breadcrumb-plugins')
-
-    <a  href="{{ route('admin.users.all') }}">
-            <button type="button" class="btn btn-outline--primary" data-modal_title="Làm mới">
-                    <i class="fa fa-repeat p-2 "></i>
-
-                </button>
-            </a>   
-            <a>
-            <button type="button" class="btn btn-outline--primary btn-add ">
-                    <i class="las la-plus p-2 "></i>
+        <div class="card-body mt-1">
+            <div class="row">
+        
+              <div class="col-md-12 d-flex">
+           <a  href="{{ route('admin.users.all') }}">
+           <button type="button" class="btn btn--primary"data-modal_title="Làm mới">
+                <i class="fa fa-repeat p-1"></i>
 
             </button>
-    </a>     
-@endpush
-@push('breadcrumb-plugins')
-    <x-search-form placeholder="Username / Email" />
+           </a>   
+           <a>
+           <button type="button" class="btn btn--primary btn-add " style="margin-left:8px">
+                <i class="las la-plus p-1 "></i>
+
+            </button>
+           </a>     
+           <form role="form" enctype="multipart/form-data" action="">
+                        <div class="form-group mb-0" style="display: flex;">
+                            <input class="searchInput" name="name"
+                                   style="height: 35px;border: 1px solid rgb(121, 117, 117, 0.5);margin-left:8px"
+                                    placeholder="Tên người dùng" value="{{ $name ?? '' }}">
+                            <input class="searchInput" name="email"
+                                   style="height: 35px;border: 1px solid rgb(121, 117, 117, 0.5);margin-left:8px"
+                                    placeholder="Email" value="{{ $email ?? '' }}">
+                            
+                            <button type="submit" class="btn btn--primary" style="margin-left: 8px;">
+                                <i class="las la-search p-1"></i>
+                            </button>
+                        </div>
+                    </form> 
+                    </div>
+                    <div class="pager-wrap">
+                            <div class="k-widget d-flex">
+                                <div class="pagination-tb" style="font-size: 13px;margin: 0 auto">
+                                    {{ $users->links('pagination::bootstrap-4') }}
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                    </div>
+
+                </div>
+        @endpush
+
+@push('style-lib')
+    <link rel="stylesheet" type="text/css" href="{{ asset('assets/admin/css/daterangepicker.css') }}">
+    <link rel="stylesheet" href="{{ asset('assets/global/css/modal.css') }}">
+    
+   <style>
+          
+          .pagination .page-item .page-link, .pagination .page-item span{
+              width: 22px !important;
+              height: auto !important;
+              background-color: #4634ff !important;
+              color: white !important;
+          }
+          .pagination .page-item.active .page-link{
+              background-color: #071251 !important;
+          }
+
+  </style>
 @endpush

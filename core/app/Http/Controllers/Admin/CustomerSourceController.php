@@ -12,11 +12,14 @@ class CustomerSourceController extends Controller
 {
     public function index()
     {
+        $code = SetupCode::where('menu_name','Danh mục nguồn khách')->where('unit_code',unitCode())->value('code');
+        $count = CustomerSource::where('unit_code',unitCode())->count();
+        $code = $code ? $code.$count+1 : '';
         $pageTitle = 'Nguồn khách hàng';
-        $customer_sources = CustomerSource::orderBy('id', 'desc')->get();
+        $customer_sources = CustomerSource::orderBy('id', 'desc')->where('unit_code',unitCode())->paginate(10);
         $unit_codes = HotelFacility::select('ma_coso')->get();
         $emptyMessage = 'Không tìm thấy dữ liệu';
-        return view('admin.hotel.customer_source.list', compact('pageTitle', 'customer_sources','unit_codes', 'emptyMessage'));
+        return view('admin.hotel.customer_source.list', compact('pageTitle', 'customer_sources','unit_codes', 'emptyMessage','code'));
     }
     public function store(Request $request)
     {
@@ -68,21 +71,25 @@ class CustomerSourceController extends Controller
     }
     public function search(Request $request)
     {
+        $code = SetupCode::where('menu_name','Danh mục nguồn khách')->where('unit_code',unitCode())->value('code');
+        $count = CustomerSource::where('unit_code',unitCode())->count();
+        $code = $code ? $code.$count+1 : '';
+        $pageTitle = 'Nguồn khách hàng';
         $pageTitle = '';
         if($request->input('source_code') == '' && $request->input('source_name') == '')
         {
-            $customer_sources = CustomerSource::orderBy('id', 'desc')->paginate(30);
+            $customer_sources = CustomerSource::orderBy('id', 'desc')->where('unit_code',unitCode())->paginate(10);
         }
         else
         {
-            $customer_sources = CustomerSource::select('*')
+            $customer_sources = CustomerSource::select('*')->where('unit_code',unitCode())
 
                 ->where('source_code','LIKE', '%'.$request->input('source_code').'%')
                 ->where('source_name','LIKE', '%'.$request->input('source_name').'%')
                 ->where('unit_code',unitCode())
-                ->orderBy('id', 'desc')->paginate(30);
+                ->orderBy('id', 'desc')->paginate(10);
         }
-        return view('admin.hotel.customer_source.list', compact('pageTitle', 'customer_sources'));
+        return view('admin.hotel.customer_source.list', compact('pageTitle','code', 'customer_sources'));
     }
 //    protected $repository;
 

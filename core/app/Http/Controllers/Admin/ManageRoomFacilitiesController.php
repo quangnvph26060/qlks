@@ -5,6 +5,8 @@ namespace App\Http\Controllers\Admin;
 use App\Http\Controllers\Controller;
 use App\Models\Facility;
 use App\Models\Room;
+use App\Models\RoomType;
+
 use App\Repositories\BaseRepository;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Validator;
@@ -17,46 +19,81 @@ class ManageRoomFacilitiesController extends Controller
     {
         $this->repository = new BaseRepository(new Room());
     }
+    // public function index()
+    // {
+    //     $rooms = Room::where('status', 1)->get();
+    //     $facilities = Facility::where('status', 1)->get();
+    //     $pageTitle = 'Danh sách cơ sở vật chất của phòng';
+    //     $search = request()->get('search');
+    //     $perPage = request()->get('perPage', 10);
+    //     $orderBy = request()->get('orderBy', 'id');
+    //     $columns = [
+    //         'id',
+    //         'code',
+    //         'room_type_id',
+    //         'room_number',
+    //         'description'
+    //     ];
+    //     $relations = ['facilities', 'roomType'];
+    //     $searchColumns = [
+    //         'code',
+    //     ];
+    //     $relationSearchColumns = [];
+
+    //     $response = $this->repository
+    //         ->customPaginate(
+    //             $columns,
+    //             $relations,
+    //             $perPage,
+    //             $orderBy,
+    //             $search,
+    //             [],
+    //             $searchColumns,
+    //             $relationSearchColumns
+    //         );
+
+    //     if (request()->ajax()) {
+    //         return response()->json([
+    //             'results' => view('admin.table.manage-facility-room', compact('response'))->render(),
+    //             'pagination' => view('vendor.pagination.custom', compact('response'))->render(),
+    //         ]);
+    //     }
+    //     return view('admin.manage-room-facilities.index', compact('rooms', 'facilities', 'pageTitle'));
+    // }
     public function index()
     {
-        $rooms = Room::where('status', 1)->get();
+        $rooms = Room::where('unit_code',unitCode())->where('status' , 1)->paginate(10);
+        $room_type = RoomType::where('unit_code',unitCode())->get();
+
         $facilities = Facility::where('status', 1)->get();
         $pageTitle = 'Danh sách cơ sở vật chất của phòng';
-        $search = request()->get('search');
-        $perPage = request()->get('perPage', 10);
-        $orderBy = request()->get('orderBy', 'id');
-        $columns = [
-            'id',
-            'code',
-            'room_type_id',
-            'room_number',
-            'description'
-        ];
-        $relations = ['facilities', 'roomType'];
-        $searchColumns = [
-            'code',
-        ];
-        $relationSearchColumns = [];
-
-        $response = $this->repository
-            ->customPaginate(
-                $columns,
-                $relations,
-                $perPage,
-                $orderBy,
-                $search,
-                [],
-                $searchColumns,
-                $relationSearchColumns
-            );
-
-        if (request()->ajax()) {
-            return response()->json([
-                'results' => view('admin.table.manage-facility-room', compact('response'))->render(),
-                'pagination' => view('vendor.pagination.custom', compact('response'))->render(),
-            ]);
+        
+        return view('admin.manage-room-facilities.index', compact('rooms','room_type', 'facilities', 'pageTitle'));
+    }
+    public function search(Request $request)
+    {
+        if($request->input('room_type_id') == '' && $request->input('code') == '')
+        {
+            $rooms =  Room::select('rooms.*')
+            ->where('unit_code',unitCode())->where('status' , 1)
+            ->orderBy('id', 'desc')->paginate(10);
         }
-        return view('admin.manage-room-facilities.index', compact('rooms', 'facilities', 'pageTitle'));
+        else
+        {
+            $rooms = Room::select('rooms.*')->where('room_type_id','LIKE', '%'.$request->input('room_type_id').'%')
+            ->where(function ($query) use ($request) {
+                $query->where('room_number', 'LIKE', '%'.$request->input('code').'%')
+                    ->orWhere('code', 'LIKE', '%'.$request->input('code').'%');
+                    })
+                ->where('unit_code',unitCode())->where('status' , 1)
+
+                ->orderBy('id', 'desc')->paginate(10);
+        }
+        $facilities = Facility::where('status', 1)->get();
+        $room_type = RoomType::where('unit_code',unitCode())->get();
+        $code =  $request->input('code');
+        $pageTitle = 'Danh sách cơ sở vật chất của phòng';
+        return view('admin.manage-room-facilities.index', compact('rooms', 'facilities','pageTitle','room_type','code'));
     }
     public function store(Request $request)
     {
@@ -125,5 +162,20 @@ class ManageRoomFacilitiesController extends Controller
             'status' => true,
             'message' => 'Cập nhật tiện nghi cho phòng thành công!'
         ]);
+    }
+    public function ajax(Request $request)
+    {
+
+        $rooms = Room::select('*')
+            ->where(function($q) use ($request) {
+        
+                if($request->room_type_id != '') {
+                    $q->where('rooms.room_type_id','=',$request->room_type_id);
+                }
+               
+            })
+            ->distinct()
+            ->orderBy('id', 'desc')->paginate(10);
+        return view('admin.manage-room-facilities.search', compact('rooms'));
     }
 }

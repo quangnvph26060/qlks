@@ -10,6 +10,8 @@ use Illuminate\Http\Request;
 use App\Http\Controllers\Controller;
 use Illuminate\Support\Facades\Schema;
 use Illuminate\Support\Facades\Storage;
+use App\Models\SetupCode;
+
 
 class RoomController extends Controller
 {
@@ -31,8 +33,9 @@ class RoomController extends Controller
 
 
         // $rooms =  $rooms->paginate(getPaginate());
-
-
+        $count = RoomType::where('unit_code',unitCode())->count();
+        $code = SetupCode::where('menu_name','Danh mục hạng phòng')->where('unit_code',unitCode())->value('code');
+        $code = $code ? $code.$count+1 : '';
         $keyword = $request->input('keyword');
 
         $columns = Schema::getColumnListing('room_types');
@@ -48,10 +51,10 @@ class RoomController extends Controller
             if (request()->status == Status::ENABLE || request()->status == Status::DISABLE) {
                 $rooms = $rooms->filter(['status']);
             }
-            $rooms = $rooms->paginate(getPaginate());
+            $rooms = $rooms->paginate(10);
 
 
-        return view('admin.hotel.rooms', compact('pageTitle', 'rooms', 'keyword'));
+        return view('admin.hotel.rooms', compact('pageTitle', 'rooms', 'keyword','code'));
     }
 
     public function status($id)
@@ -94,7 +97,7 @@ class RoomController extends Controller
             $roomType->name = $request->name;
             $roomType->slug = \Str::slug($roomType->name);
             $roomType->code  = $request->code;
-            $roomType->status = Status::ROOM_TYPE_ACTIVE;
+            $roomType->status = $request->status;
             if ($request->hasFile('main_image')) {
                 $main_images = saveImages($request, 'main_image', 'roomTypeImage', 600, 600);
                 if ($roomType->main_image && Storage::disk('public')->exists($roomType->main_image)) {
@@ -116,7 +119,7 @@ class RoomController extends Controller
             $roomType->name = $request->name;
             $roomType->slug = \Str::slug($roomType->name);
             $roomType->code  = $request->code;
-            $roomType->status = Status::ROOM_TYPE_ACTIVE;
+            $roomType->status = $request->status;
             if ($request->hasFile('main_image')) {
                 $main_images = saveImages($request, 'main_image', 'roomTypeImage', 600, 600);
                 if ($roomType->main_image && Storage::disk('public')->exists($roomType->main_image)) {

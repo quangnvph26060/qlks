@@ -277,6 +277,30 @@
             },
             {
                 "keyword": [
+                    "Cài đặt tiện nghi"
+                ],
+                "title": "Cài đặt tiện nghi",
+                "route_name": "admin.hotel.setup.amenities.all",
+                "menu_active": "admin.hotel.setup.amenities.all"
+            },
+            {
+                "keyword": [
+                    "Cài đặt cơ sở vật chất"
+                ],
+                "title": "Cài đặt cơ sở vật chất",
+                "route_name": "admin.hotel.setup.facilities.all",
+                "menu_active": "admin.hotel.setup.facilities.all"
+            },
+            {
+                "keyword": [
+                    "Cài đặt sản phẩm"
+                ],
+                "title": "Cài đặt sản phẩm",
+                "route_name": "admin.hotel.setup.product.all",
+                "menu_active": "admin.hotel.setup.product.all"
+            },
+            {
+                "keyword": [
                     "Cài đặt mã"
                 ],
                 "title": "Cài đặt mã",
