@@ -94,7 +94,8 @@ class RoomTypeController extends Controller
     {
         $room_type = RoomType::where('unit_code',unitCode())->get();
         $pageTitle   = 'Danh sách phòng';
-        $rooms = Room::where('unit_code',unitCode())->paginate(10);
+        $rooms = Room::where('unit_code',unitCode())->orderBy('id', 'desc')->paginate(10);
+
         return view('admin.hotel.room_type.list', compact('pageTitle','room_type','rooms'));
     }
     public function create()
@@ -141,6 +142,7 @@ class RoomTypeController extends Controller
 
         $room_type = Room::select('*')
             ->where('unit_code',unitCode())
+
             ->where(function($q) use ($request) {
         
                 if($request->room_type_id != '') {
@@ -151,7 +153,7 @@ class RoomTypeController extends Controller
                 }
             })
             ->distinct()
-            ->orderBy('id', 'desc')->get();
+            ->orderBy('id', 'desc')->paginate(10);
         return view('admin.hotel.room_type.search', compact('room_type'));
     }
     public function save(Request $request, $id = 0)
@@ -168,7 +170,7 @@ class RoomTypeController extends Controller
             //     }
             // }
             // $bedArray         = array_values($request->bed ?? []);
-            $purifier         = new \HTMLPurifier();
+            // $purifier         = new \HTMLPurifier();
 
             if ($id) {
                 $room         = Room::findOrFail($id);
@@ -193,20 +195,28 @@ class RoomTypeController extends Controller
             $room->room_number         = $request->room_number;
             $room->total_adult         = $request->total_adult;
             // $room->total_child         = $request->total_child;
-            $room->description         = htmlspecialchars_decode($purifier->purify($request->description));
+            // $room->description         = htmlspecialchars_decode($purifier->purify($request->description));
             $room->beds                = $request->beds;
             $room->is_featured         = $request->is_featured ? 1 : 0;
             //$room->cancellation_fee    = $request->cancellation_fee ?? 0;
-            $room->cancellation_policy = htmlspecialchars_decode($purifier->purify($request->cancellation_policy));
+            // $room->cancellation_policy = htmlspecialchars_decode($purifier->purify($request->cancellation_policy));
             $room->is_clean            = Status::ROOM_CLEAN_ACTIVE;
             $room->status              = $request->status ? 1 : 0;
             $room->unit_code           = unitCode();
             if ($request->hasFile('main_image')) {
-                $main_images = saveImages($request, 'main_image', 'roomImage', 600, 600);
-                if ($room->main_image && Storage::disk('public')->exists($room->main_image)) {
-                    Storage::disk('public')->delete($room->main_image);
-                }
-                $room->main_image = $main_images[0];
+                // $main_images = saveImages($request, 'main_image', 'roomImage', 600, 600);
+                // if ($room->main_image && Storage::disk('public')->exists($room->main_image)) {
+                //     Storage::disk('public')->delete($room->main_image);
+                // }
+                // $room->main_image = $main_images[0];
+                $image = $request->file('main_image');
+                $imageName = time() . '.' . $image->getClientOriginalExtension(); // Tạo tên ảnh duy nhất
+    
+                // Lưu ảnh vào thư mục public/images
+                $imagePath = $image->move(public_path('images'), $imageName);
+    
+                // Lưu thông tin ảnh vào cơ sở dữ liệu
+                $room->main_image = $imageName;
             }
 
             $room->save();
@@ -344,7 +354,7 @@ class RoomTypeController extends Controller
             'facilities'          => 'nullable|array',
             'facilities.*'        => 'integer|exists:facilities,id',
             // 'total_bed'           => 'required|gt:0',
-            'main_image'          => $imgValidation,
+            // 'main_image'          => $imgValidation,
             'beds'                 => 'required',
             // 'bed.*'               => 'exists:bed_types,name',
             'cancellation_policy' => 'nullable|string',

@@ -44,6 +44,8 @@
                                     <th>@lang('Tên phòng')</th>
                                     <th>@lang('Số người')</th>
                                     <th>@lang('Số giường')</th>
+                                    <th>@lang('Hình ảnh')</th>
+
                                     {{-- <th>@lang('Tiện nghi')</th>
                                     <th>@lang('Cở sở vật chất')</th>
                                     <th>@lang('Giá giờ')</th>
@@ -64,7 +66,7 @@
                                     <td style="width:20px">
                                     <svg class="svg_menu_check_in" xmlns="http://www.w3.org/2000/svg" width="30" height="30" viewBox="0 0 21 21"><g fill="currentColor" fill-rule="evenodd"><circle cx="10.5" cy="10.5" r="1"/><circle cx="10.5" cy="5.5" r="1"/><circle cx="10.5" cy="15.5" r="1"/></g></svg>
                                                     
-                                    <div class="dropdown menu_dropdown_check_in" id="dropdown-menu">
+                                    <div class="dropdown menu_dropdown_check_in" id="dropdown-menu" style="position:fixed">
                                         <div class="dropdown-item booked_room_edit">
                                         <a href="{{ route('admin.hotel.room.type.edit', $type->id) }}" style="color:black;padding:5px">
                                             Sửa phòng
@@ -120,6 +122,14 @@
                                 </td>
                                 <td data-label="Số giường">
                                     {{ $type->beds }}
+                                </td>
+                                <td data-label="Hình ảnh">     
+                                    @if(!empty($type->main_image))
+                                            <i class="fa fa-check" style="color:green;text-align: center"></i>
+                                                    @else
+                                                <i class="fa fa-close" style="color:red;text-align: center"></i>
+                                                    @endif
+                                                        
                                 </td>
                                 {{-- <td data-label="Tiện nghi">
                                     @if ($type->amenities->count() > 0)
@@ -305,7 +315,7 @@
                                 </div>
                             </div>
                         </div>
-            </div>
+                </div>
             
         </div>
 
@@ -343,7 +353,6 @@
     </style>
 @endpush
 @push('script')
-    <script src="{{ asset('assets/admin/js/dataTable.js') }}"></script>
     <script>
         toggleRepresentatives = function(id, button) {
             const row = document.getElementById('rep-' + id);
