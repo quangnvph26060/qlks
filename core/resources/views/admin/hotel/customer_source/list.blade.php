@@ -11,7 +11,7 @@
                         <thead>
                         <tr>
                             <th>Hành động</th>
-                            <th>@lang('STT')</th>
+                            <th style="width:20px">@lang('STT')</th>
                             <th>@lang('Mã nguồn')</th>
                             <th>@lang('Tên nguồn')</th>
                             <!-- <th>@lang('Mã đơn vị')</th> -->

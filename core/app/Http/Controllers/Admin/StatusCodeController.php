@@ -5,6 +5,7 @@ namespace App\Http\Controllers\Admin;
 use App\Http\Controllers\Controller;
 use App\Models\StatusCode;
 use Illuminate\Http\Request;
+use App\Models\SetupCode;
 
 class StatusCodeController extends Controller
 {

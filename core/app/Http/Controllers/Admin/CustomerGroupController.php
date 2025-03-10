@@ -5,6 +5,7 @@ namespace App\Http\Controllers\Admin;
 use App\Http\Controllers\Controller;
 use Illuminate\Http\Request;
 use App\Models\CustomerGroup;
+use App\Models\SetupCode;
 
 class CustomerGroupController extends Controller
 {
