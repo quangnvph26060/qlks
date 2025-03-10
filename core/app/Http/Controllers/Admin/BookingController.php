@@ -1060,12 +1060,20 @@ class BookingController extends Controller
     public function deleteRoomBooking($id)
     {  
        
-          $deletedRows = RoomBooking::where('booking_id', $id)->delete();
-        if ($deletedRows === 0) {
-            return response()->json(['status' => 'error', 'message' => 'Room booking không tồn tại']);
+        $deletedRows = RoomBooking::where('booking_id', $id)->get();
+        if ($deletedRows->isEmpty()) {
+            return response()->json(['status' => 'error', 'message' => 'Không tìm thấy phòng.']);
         }
-            return response()->json(['status' => 'success', 'message' => 'Xóa thành công']);
+        foreach ($deletedRows as $roomBooking) {
+            if (!empty($roomBooking->room_change)) {
+                return response()->json(['status' => 'error', 'message' => 'Phòng đã có thay đổi, không thể xoá.']);
+            }
+            saveRoomStatusHistory($roomBooking->room_code, $roomBooking->checkin_date, $roomBooking->checkout_date, 1);
+            $roomBooking->delete();
+        }
+        return response()->json(['status' => 'success', 'message' => 'Xoá thành công.']);
     }
+ 
     public function checkRoomBookingdel($id)
     {  
      $is_check = CheckIn::where('id_room_booking', $id)->first();
@@ -1074,5 +1082,31 @@ class BookingController extends Controller
         }else{
            return response()->json(['status' => 'error', 'message' => 'Mã đặt phòng này không xoá được']);
         }  
+    }
+    // xoá nhận phòng
+    public function checkCheckIndel($id)
+    {  
+     $is_check = RoomChange::where('id_check_in', $id)->first();
+        if(!$is_check){
+            return response()->json(['status' => 'success']);
+        }else{
+           return response()->json(['status' => 'error', 'message' => 'Mã nhận phòng này không xoá được']);
+        }  
+    }
+    public function deleteCheckIn($id)
+    {  
+       
+        $deletedRows = CheckIn::where('check_in_id', $id)->get();
+        if ($deletedRows->isEmpty()) {
+            return response()->json(['status' => 'error', 'message' => 'Không tìm thấy phòng.']);
+        }
+        foreach ($deletedRows as $roomBooking) {
+            if (!empty($roomBooking->room_change)) {
+                return response()->json(['status' => 'error', 'message' => 'Phòng đã có thay đổi, không thể xoá.']);
+            }
+            saveRoomStatusHistory($roomBooking->room_code, $roomBooking->checkin_date, $roomBooking->checkout_date, 1);
+            $roomBooking->delete();
+        }
+        return response()->json(['status' => 'success', 'message' => 'Xoá thành công.']);
     }
 }

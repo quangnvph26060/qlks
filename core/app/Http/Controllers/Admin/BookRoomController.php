@@ -25,7 +25,7 @@ use Illuminate\Support\Facades\Validator;
 use Carbon\Carbon;
 use Illuminate\Support\Facades\DB;
 use Yajra\DataTables\DataTables;
-
+use Illuminate\Http\JsonResponse;
 class BookRoomController extends Controller
 {
     use BookingActions;
@@ -49,9 +49,17 @@ class BookRoomController extends Controller
             ->when(!empty($request->data['customerName']), function ($query) use ($request) {
                 $query->where('customer_name', 'LIKE', '%' . $request->data['customerName'] . '%');
             })
-            ->when(!empty($request->data['roomCode']), function ($query) use ($request) {
-                $query->where('room_code', 'LIKE', '%' . $request->data['roomCode'] . '%');
-            })
+            // ->when(!empty($request->data['roomCode']), function ($query) use ($request) {
+            //     $query->where('room_code', 'LIKE', '%' . $request->data['roomCode'] . '%');
+            // })
+            ->when(
+                !empty($request->data['roomName']),
+                fn($query) => $query->whereHas(
+                    'room',
+                    fn($q) =>
+                    $q->where('room_number', 'LIKE', '%' . $request->data['roomName'] . '%')
+                )
+            )
             ->orderBy('created_at', 'desc')
             ->get();
 
@@ -292,9 +300,10 @@ class BookRoomController extends Controller
                     ->whereDate('start_date', '<=', Carbon::parse($room['dateIn'])->format('Y-m-d'))
                     ->whereDate('end_date', '>=', Carbon::parse($room['dateIn'])->format('Y-m-d'));
                 if ($request->method == 'check_in') {
-                    $checkRoom->where('status_code', 3);
+                  //  $checkRoom->where('status_code', 3); // đang ở 
+                  $checkRoom->whereIn('status_code', [2, 3]);
                 } else {
-                    $checkRoom->whereIn('status_code', [2, 3]);
+                    $checkRoom->whereIn('status_code', [2, 3]); // đã đặt và đang ở 
                 }
 
                 $checkRoom = $checkRoom->first();
@@ -582,16 +591,62 @@ class BookRoomController extends Controller
     }
     public function deleteRoomBooking(Request $request)
     {
-        $ids = json_decode($request->data, true);
-        RoomBooking::whereIn('id', $ids)->delete();
-        return response()->json(['status' => 'success', 'success' => 'Xoá thành công']);
+        $ids = json_decode($request->input('data'), true);
+
+        if (empty($ids) || !is_array($ids)) {
+            return response()->json(['status' => 'error', 'message' => 'Dữ liệu không hợp lệ.']);
+        }
+        try {
+            return DB::transaction(function () use ($ids) {
+                $roomBookings = RoomBooking::whereIn('id', $ids)->get();
+
+                if ($roomBookings->isEmpty()) {
+                    return response()->json(['status' => 'error', 'message' => 'Không tìm thấy phòng.']);
+                }
+
+                foreach ($roomBookings as $roomBooking) {
+                    if (!empty($roomBooking->room_change)) {
+                        return response()->json(['status' => 'error', 'message' => 'Phòng đã có thay đổi, không thể xoá.']);
+                    }
+                    saveRoomStatusHistory($roomBooking->room_code, $roomBooking->checkin_date, $roomBooking->checkout_date, 1);
+                    $roomBooking->delete();
+                }
+                return response()->json(['status' => 'success', 'message' => 'Xoá thành công.']);
+            });
+        } catch (\Exception $e) {
+            return response()->json(['status' => 'error', 'message' => 'Đã xảy ra lỗi khi xoá.', 'error' => $e->getMessage()]);
+        }
     }
 
-    public function deleteRoomCheckIn(Request $request)
+    public function deleteRoomCheckIn(Request $request): JsonResponse
     {
-        $ids = json_decode($request->data, true);
-        CheckIn::whereIn('id', $ids)->delete();
-        return response()->json(['status' => 'success', 'success' => 'Xoá thành công']);
+        $ids = json_decode($request->input('data'), true);
+
+        if (empty($ids) || !is_array($ids)) {
+            return response()->json(['status' => 'error', 'message' => 'Dữ liệu không hợp lệ.']);
+        }
+        try {
+            return DB::transaction(function () use ($ids) {
+                $checkIns = CheckIn::whereIn('id', $ids)->get();
+
+                if ($checkIns->isEmpty()) {
+                    return response()->json(['status' => 'error', 'message' => 'Không tìm thấy phòng.']);
+                }
+
+                foreach ($checkIns as $checkIn) {
+                    if (!empty($checkIn->room_change)) {
+                        return response()->json(['status' => 'error', 'message' => 'Phòng đã có thay đổi, không thể xoá.']);
+                    }
+
+                    saveRoomStatusHistory($checkIn->room_code, $checkIn->checkin_date, $checkIn->checkout_date, 1);
+                    $checkIn->delete();
+                }
+
+                return response()->json(['status' => 'success', 'message' => 'Xoá thành công.']);
+            });
+        } catch (\Exception $e) {
+            return response()->json(['status' => 'error', 'message' => 'Đã xảy ra lỗi khi xoá.', 'error' => $e->getMessage()]);
+        }
     }
 
     protected function add_guest($name, $phone, $customer_source)

@@ -73,7 +73,7 @@
             <div class="form-group position-relative mb-0" style="display: flex;gap: 10px;">
                 <input class="searchInput input-field-search-book" name="booking_code" placeholder="Mã đặt phòng"
                     id="booking_code">
-                <select class="searchInput input-field-search-book" name="room_code" id="select_room_number"></select>
+                    <input class="searchInput input-field-search-book" name="room_name" placeholder="Tên phòng" id="room_name">
                 {{-- <div class="d-flex" style="gap: 10px">
                     <input type="date" class="form-control " id="date-chon-phong-in" style="height: 35px">
                     <input type="date" class="form-control " id="date-chon-phong-out" style="height: 35px">
@@ -85,13 +85,18 @@
               
             </div>  
             <div style="  position: absolute;  right: 43px; display: flex;    gap: 10px;">
-                <button type="submit" class="btn btn-primary btn-submit-search-book">
-                    <i class="las la-search"></i>
+                <button onclick="toggleView('viewBox')" data-view="viewBox" class="btn btn-primary btn-submit-search-book btn-toggle-view">
+                    <svg fill="white" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 16 16" width="24" height="24">
+                        <path fill="white" d="M5.75 7.5h7.5a.75.75 0 0 1 0 1.5h-7.5a.75.75 0 0 1 0-1.5Zm0 5h7.5a.75.75 0 0 1 0 1.5h-7.5a.75.75 0 0 1 0-1.5Zm-4-10h6.5a.75.75 0 0 1 0 1.5h-6.5a.75.75 0 0 1 0-1.5ZM2 14a1 1 0 1 1 0-2 1 1 0 0 1 0 2Zm1-6a1 1 0 1 1-2 0 1 1 0 0 1 2 0Zm10.314-3.082L11.07 2.417A.25.25 0 0 1 11.256 2h4.488a.25.25 0 0 1 .186.417l-2.244 2.5a.25.25 0 0 1-.372 0Z"></path>
+                    </svg>
                 </button>
-                <button type="submit" class="btn btn-primary btn-submit-search-book">
-                    <i class="las la-search"></i>
+                
+                <button onclick="toggleView('viewModel')" data-view="viewModel" class="btn btn-primary btn-submit-search-book btn-toggle-view">
+                    <svg fill="white" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 16 16" width="16" height="16">
+                        <path fill="white" d="M1.75 2.5h10.5a.75.75 0 0 1 0 1.5H1.75a.75.75 0 0 1 0-1.5Zm4 5h8.5a.75.75 0 0 1 0 1.5h-8.5a.75.75 0 0 1 0-1.5Zm0 5h8.5a.75.75 0 0 1 0 1.5h-8.5a.75.75 0 0 1 0-1.5ZM2.5 7.75v6a.75.75 0 0 1-1.5 0v-6a.75.75 0 0 1 1.5 0Z"></path>
+                    </svg>
                 </button>
-   
+                
             </div>
         </div>
         <div class="modal fade" id="addRoomModal" tabindex="-1" aria-hidden="true" style="overflow: unset">
@@ -167,6 +172,7 @@
 @endcan
 
 @push('script-lib')
+    <script src="{{ asset('assets/admin/js/toggle_view.js') }}"></script>
     <script src="{{ asset('assets/admin/js/common.js') }}"></script>
     <script src="{{ asset('assets/admin/js/moment.min.js') }}"></script>
     <script src="{{ asset('assets/admin/js/daterangepicker.min.js') }}"></script>
@@ -210,12 +216,7 @@
                 }
             });
         });
-        window.toggleRepresentatives = function(id, button) {
-            const rows = document.querySelectorAll('[id="rep-' + id + '"]'); // Lấy tất cả các hàng có cùng ID
-            rows.forEach(row => row.classList.toggle('show')); // Toggle từng hàng
-
-            button.classList.toggle('collapsed'); // Toggle trạng thái button
-        };
+    
     </script>
 @endpush
 @push('style')

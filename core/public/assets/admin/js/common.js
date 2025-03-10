@@ -143,8 +143,9 @@ function calculateTotalPrice() {
     //     pricediscount = parseInt(discountInputValue.replace(/\./g, ''));
     //     pricediscount = isNaN(pricediscount) ? 0 : pricediscount;
     // }
+
     $('.total_balance').each(function () {
-        $(this).text(formatCurrency(totalPrice - totalDeposit - totalDiscount));
+        $(this).text(formatCurrency(totalPrice - totalDeposit - totalDiscount)); // tiền còn lại
     });
 
     $('.total_amount').each(function () {

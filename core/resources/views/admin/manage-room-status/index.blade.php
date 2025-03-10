@@ -272,7 +272,6 @@
                             let isFirst = !seenRooms.has(item.room_number);
                             seenRooms.add(item.room_number);
                             // Nếu không phải bản ghi đầu tiên, đặt class theo trạng thái
-                            console.log(item.check_booked);
                             
                             if (!isFirst) {
                                 

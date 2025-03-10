@@ -8,6 +8,7 @@ $.ajaxSetup({
 });
 // allCheckInUrl
 function loadRoomBookings(page = 1, data) {
+    $('#loading-overlay').css('display', 'flex');
     $.ajax({
         url: allCheckInUrl,
         type: 'GET',
@@ -20,7 +21,7 @@ function loadRoomBookings(page = 1, data) {
             if (response.status === 'success') {
                 var data = response.data.data;
                 var pagination = response.pagination;
-
+                const currentView = localStorage.getItem('viewMode');
                 $('.data-table').html('');
                 var html = '';
                 Object.entries(data).forEach(function ([bookingId, bookingData], index) {
@@ -61,7 +62,7 @@ function loadRoomBookings(page = 1, data) {
                                             <td class="text-right">${formatCurrency(totalAmount)}</td>
                                             <td class="text-right">${formatCurrency(totalDiscount)}</td>
                                         </tr>
-                                          <tr class="collapse" id="rep-${firstRecord['check_in_id']}">
+                                          <tr class="collapse ${currentView === 'viewModel' ? "show" : ""}" id="rep-${firstRecord['check_in_id']}">
                                     <td colspan="12">
                                         <table class="table">
                                             <thead>
@@ -87,21 +88,21 @@ function loadRoomBookings(page = 1, data) {
                                     <p  class="btn btn-primary change-room"
                                         data-id="${record['id']}"
                                         data-name="${record['customer_name']}"
-                                        data-room-id="${ record['room_change_info'] ? record['room_change_info']['new_room_code'] : record['room_code'] }"
+                                        data-room-id="${record['room_change_info'] ? record['room_change_info']['new_room_code'] : record['room_code']}"
                                         data-booking-id="${record['check_in_id']}" 
                                         data-booking-date="${record['checkin_date']}" 
                                     >Đổi phòng</p>
                                     </td>
                                     <td class="text-left" colspan="6">${record['room']['room_number']}</td>
                                     <td class="text-left ${record['status'] == 1 ? "color-red" : ""}" colspan="6">
-                                        ${ record['room_change_info'] ? record['room_change_info']['room']['room_number'] : "" } 
+                                        ${record['room_change_info'] ? record['room_change_info']['room']['room_number'] : ""} 
                                     </td>
                                     <td class="text-right w-10">${formatDateTime(record['checkin_date'])}</td>
                                     <td class="text-right w-10" >${formatDateTime(record['checkout_date'])}</td>
 
                                     <td class="text-right w-10" >${record['guest_count']}</td>
                                   <td class="text-right w-10">
-                                                        ${ record['room_change_info'] ? formatCurrency(record['room_change_info']['total_amount']) : formatCurrency(record['total_amount'])}
+                                                        ${record['room_change_info'] ? formatCurrency(record['room_change_info']['total_amount']) : formatCurrency(record['total_amount'])}
                                                     </td>
                                     <td class="text-right w-10">${formatCurrency(record['deposit_amount'])}</td>
                                     <td class="text-right w-10">${formatCurrency(record['discount'])}</td>
@@ -120,38 +121,6 @@ function loadRoomBookings(page = 1, data) {
 
                     });
                 });
-                // data.forEach(function (data, index) {
-                //     var html = `
-                //         <tr data-id="${data['id']}">
-                //            <td>
-                //                 <svg class="svg_menu_check_in" xmlns="http://www.w3.org/2000/svg" width="30" height="30" viewBox="0 0 21 21"><g fill="currentColor" fill-rule="evenodd"><circle cx="10.5" cy="10.5" r="1"/><circle cx="10.5" cy="5.5" r="1"/><circle cx="10.5" cy="15.5" r="1"/></g></svg>
-                //                 <div class="dropdown menu_dropdown_check_in" id="dropdown-menu">
-                //                     <div class="dropdown-item check_in_edit" data-room-id="${data['booking_id']}">Sửa phòng</div>
-                //                     <div class="dropdown-item booked_room_caned" data-room-id="${data['id']}">Trả phòng</div>
-                //                     <div class="dropdown-item booked_room" data-room-id="${data['id']}">Đổi phòng</div>
-                //                     <div class="dropdown-item delete-booked-room"  data-room-id="${data['id']}" >Xóa phòng</div>
-                //                 </div>
-                //             </td>
-                //             <td>${index + 1}</td>
-                //             <td>${data['check_in_id']}</td>
-                //             <td>${data['id_room_booking'] ? data['id_room_booking'] : ''}</td>
-                //            <td>${data['room']['room_number']}</td>
-
-                //             <td>${formatDateTime(data['document_date'])}</td>
-                //             <td>${formatDateTime(data['checkin_date'])}</td>
-                //             <td>${formatDateTime(data['checkout_date'])}</td>
-
-
-                //             <td>${data['customer_name'] ? data['customer_name'] : 'N/A'}</td>
-                //             <td>${data['phone_number'] ? data['phone_number'] : 'N/A'}</td>
-
-                //             <td>${data['guest_count']}</td>
-                //             <td>${formatCurrency(data['total_amount'])}</td>
-                //             <td>${formatCurrency(data['deposit_amount'])}</td>
-                //         </tr>
-                //     `
-                //     $('.data-table').append(html);
-                // })
 
                 $('.data-table').append(html);
 
@@ -167,6 +136,9 @@ function loadRoomBookings(page = 1, data) {
                 });
                 selected_select.append(option);
                 updatePagination(pagination, 'loadRoomBookings');
+                setTimeout(function () {
+                    $('#loading-overlay').css('display', 'none'); 
+                }, 1000);
             }
         },
         error: function (xhr, status, error) {
@@ -200,13 +172,13 @@ $(document).on('click', '.change-booking-room', function () {
     let roomId = selectedRoom.data('id');
     let roomTypeId = selectedRoom.data('room_type_id');
     let date = selectedRoom.data('date');
-    
+
     let roomNew = {
         room_id: roomId,
         room_type_id: roomTypeId,
         date: date
     }
-     // Xóa các input cũ để tránh trùng lặp
+    // Xóa các input cũ để tránh trùng lặp
     $('#btn-change-booking-room input[name="room_id_new"]').remove();
     $('#btn-change-booking-room input[name="room_type_id_new"]').remove();
     $('#btn-change-booking-room input[name="date_new"]').remove();
@@ -217,7 +189,7 @@ $(document).on('click', '.change-booking-room', function () {
         <input type="hidden" name="date_new" value="${roomNew.date}">
     `);
     $('#btn-change-booking-room').submit();
-    
+
 });
 $('#btn-change-booking-room').on('submit', function (e) {
     e.preventDefault();
@@ -246,7 +218,7 @@ $('#btn-change-booking-room').on('submit', function (e) {
             }
         },
     });
-    
+
 });
 function updatePagination(pagination) {
     var paginationHtml = '';
