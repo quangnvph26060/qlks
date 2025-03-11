@@ -449,7 +449,7 @@ class RoomTypeController extends Controller
                 'message' => 'Không thể xóa vì phòng đang được thuê.'
             ]);
         }
-        $room->delete();
+        $room->destroy();
         return response()->json([
             'status' => true,
             'message' => 'Thao tác thành công.'

@@ -228,46 +228,7 @@
 
 
 
-                $(document).on('click', '.btn-delete', function() {
 
-                    var row = $(this).closest('tr');
-
-                    var productId = row.data('id');
-
-                    Swal.fire({
-                        title: 'Xóa sản phẩm',
-                        text: 'Bạn muốn xóa sản phẩm này ?',
-                        icon: 'warning',
-                        showCancelButton: true,
-                        confirmButtonColor: '#3085d6',
-                        cancelButtonColor: '#d33',
-                        confirmButtonText: 'Đồng ý',
-                        cancelButtonText: 'Huỷ'
-
-                    }).then((result) => {
-                        if (result.isConfirmed) {
-                            $.ajax({
-                                type: 'DELETE',
-                                url: '{{ route('admin.product.destroy', ':id') }}'
-                                    .replace(':id', productId),
-                                success: function(response) {
-
-                                    if (response.status) {
-                                        row.remove();
-                                        $(`#rep-${productId}`).remove();
-                                        notData();
-                                        showSwalMessage('success', response
-                                            .message);
-                                    } else {
-                                        showSwalMessage('error', response.message);
-                                    }
-                                },
-
-                            })
-                        }
-                    })
-
-                });
             });
 
             $(document).on('change', '.update-status', function() {
@@ -311,7 +272,45 @@
             });
         })(jQuery);
         $(document).ready(function() {
+            $(document).on('click', '.btn-delete', function() {
+                    var row = $(this).closest('tr');
 
+                    var productId = row.data('id');
+
+                    Swal.fire({
+                        title: 'Xóa sản phẩm',
+                        text: 'Bạn muốn xóa sản phẩm này ?',
+                        icon: 'warning',
+                        showCancelButton: true,
+                        confirmButtonColor: '#3085d6',
+                        cancelButtonColor: '#d33',
+                        confirmButtonText: 'Đồng ý',
+                        cancelButtonText: 'Huỷ'
+
+                    }).then((result) => {
+                        if (result.isConfirmed) {
+                            $.ajax({
+                                type: 'DELETE',
+                                url: '{{ route('admin.product.destroy', ':id') }}'
+                                    .replace(':id', productId),
+                                success: function(response) {
+
+                                    if (response.status) {
+                                        row.remove();
+                                        $(`#rep-${productId}`).remove();
+                                        notData();
+                                        showSwalMessage('success', response
+                                            .message);
+                                    } else {
+                                        showSwalMessage('error', response.message);
+                                    }
+                                },
+
+                            })
+                        }
+                    })
+
+                });
             $(document).on('click', '.svg-icon', function(e) {
                 e.stopPropagation();
                 const $dropdown = $(this).siblings('.menu_dropdown');

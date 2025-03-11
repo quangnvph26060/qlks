@@ -41,6 +41,7 @@ class RoomController extends Controller
         $columns = Schema::getColumnListing('room_types');
 
         $rooms = RoomType::query()
+            ->where('unit_code',unitCode())
             ->when($keyword, function ($query) use ($keyword, $columns) {
                 $query->where(function ($query) use ($keyword, $columns) {
                     foreach ($columns as $column) {
@@ -98,6 +99,7 @@ class RoomController extends Controller
             $roomType->slug = \Str::slug($roomType->name);
             $roomType->code  = $request->code;
             $roomType->status = $request->status;
+            $roomType->unit_code = unitCode();
             if ($request->hasFile('main_image')) {
                 $main_images = saveImages($request, 'main_image', 'roomTypeImage', 600, 600);
                 if ($roomType->main_image && Storage::disk('public')->exists($roomType->main_image)) {

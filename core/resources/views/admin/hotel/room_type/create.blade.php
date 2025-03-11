@@ -30,7 +30,7 @@
                                 <div class="form-group">
                                     <label>@lang('Mã phòng')</label>
                                     <input class="form-control" name="code"  placeholder="Mã phòng" type="text"
-                                        value="{{ $code ?? old('code', @$roomType->code) }}">
+                                        value="{{ $code ?? old('code', @$roomType->code) }}" required>
                                 </div>
                             </div>
 
@@ -38,7 +38,7 @@
                                 <div class="form-group">
                                     <label>@lang('Tên phòng')</label>
                                     <input class="form-control" placeholder="Tên phòng" name="room_number" type="text"
-                                        value="{{ old('room_number', @$roomType->room_number) }}">
+                                        value="{{ old('room_number', @$roomType->room_number) }}" required>
                                 </div>
                             </div>
 
