@@ -81,7 +81,7 @@ class ProductController extends Controller
     public function create()
     {
         $pageTitle = "Thêm mới sản phẩm";
-        $categories = Product::query()->pluck('name', 'id');
+        $categories = Category::query()->pluck('name', 'id');
         $brands = Brand::query()->pluck('name', 'id');
         return view('admin.product.create', compact('brands', 'categories', 'pageTitle'));
     }
@@ -127,12 +127,12 @@ class ProductController extends Controller
     // }
     public function status($id)
     {
-        return Amenity::changeStatus($id);
+        return Product::changeStatus($id);
     }
    
     public function delete($id)
     {
-        Amenity::destroy($id);
+        Product::destroy($id);
         return response()->json([
             'status' => 'success',
             'message' => 'Xóa trạng thái chức năng thành công',
@@ -145,15 +145,26 @@ class ProductController extends Controller
     {
 
         $path = saveImages($request, 'image_path', 'products', 300, 300);
-
         try {
-            $data = $request->validated();
-            $data['unit_code'] = unitCode();
-            $data['image_path'] = $path[0];
-            $data['is_published'] = $request->has('is_published') ? 1 : 0;
+            $product = new Product();
 
-            Product::create($data);
+            // $data = $request->validated();
+            $product->unit_code = unitCode();
+            $product->image_path = $path[0] ?? '';
+            $product->category_id = $request->input('category_id') ?? '';
+            $product->brand_id = $request->input('brand_id') ?? '';
+            $product->name = $request->input('name') ?? '';
 
+            $product->description = $request->input('description') ?? '';
+            $product->import_price = $request->input('import_price') ?? 0;
+            $product->selling_price = $request->input('selling_price') ?? 0;
+            $product->sku = $request->input('sku') ?? '';
+            $product->stock = $request->input('stock') ?? 0;
+            $product->is_published = $request->has('is_published') ? 1 : 0;
+               
+            $product->save();
+            // Product::create($data);
+            
             session()->flash('success', 'Thêm sản phẩm thành công!');
 
             return response()->json([

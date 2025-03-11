@@ -31,7 +31,6 @@ class StoreProductRequest extends FormRequest
             'category_id' => 'required',
             'brand_id' => 'required',
             'stock' => 'nullable|integer',
-            'image_path' => 'required|mimes:png,jpg,jpeg|max:2048',
         ];
     }
 
@@ -50,9 +49,7 @@ class StoreProductRequest extends FormRequest
             'sku.unique'                            => 'Mã sản phẩm đã tồn tại',
             'category_id.required'                  => 'Vui lòng chọn :attribute',
             'brand_id.required'                     => 'Vui lòng chọn :attribute',
-            'image_path.required'                   => 'Vui lòng chọn :attribute',
-            'image_path.mimes'                      => 'Vui lòng chọn hình ảnh định dạng png,jpg,jpeg',
-            'image_path.max'                        => 'Vui lòng chọn hình ảnh nhỏ hơn 2 MB',
+
             'stock.integer'                         => 'Vui lòng nhập đúng định dạng :attribute',
         ];
     }
@@ -68,7 +65,6 @@ class StoreProductRequest extends FormRequest
             'category_id'                           => 'Danh mục',
             'brand_id'                              => 'Thương hiệu',
             'stock'                                 => 'Số lượng',
-            'image_path'                            => 'Hình ảnh',
         ];
     }
 

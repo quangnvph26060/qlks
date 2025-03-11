@@ -202,6 +202,7 @@
                         processData: false,
                         contentType: false,
                         success: function(response) {
+                            console.log(response);
                             if (response.status) {
                                 window.location.href = "{{ route('admin.product.index') }}";
                             } else {
