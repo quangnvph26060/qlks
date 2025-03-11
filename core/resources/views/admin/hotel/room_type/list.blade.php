@@ -57,7 +57,7 @@
                             </thead>
                             <tbody id="data" >
                             @forelse($rooms as $id => $type)
-                            <tr>
+                            <tr data-id="{{ $type->id }}">
                                 <td>
                                     <button class="btn btn-link btn-toggle" type="button"
                                         onclick=" toggleRepresentatives('{{ $type->id }}', this)"></button>
@@ -88,11 +88,11 @@
                                         </button>
                                             @endif
                                         </div>
-                                        <div class="dropdown-item booked_room_detail">
-                                        <button class=" btn-delete" data-id="{{ $type->id }}"
-                                            data-modal_title="@lang('Xóa')" type="button">
-                                                    Xóa phòng
-                                        </button>
+                                        <div class="dropdown-item booked_room_detail"> <button class=" btn-delete icon-delete-room"
+                                                data-id="{{ $type->id }}" data-modal_title="@lang('Xóa trạng thái')" type="button"
+                                                data-pro="0">Xóa phòng</div>
+                              
+                                        </div>
                                         </div>
                                         </div>
 
@@ -353,6 +353,8 @@
     </style>
 @endpush
 @push('script')
+<script src="{{ asset('assets/admin/js/highlighter22.js') }}"></script>
+<script src="{{ asset('assets/validator/validator.js') }}"></script>
     <script>
         toggleRepresentatives = function(id, button) {
             const row = document.getElementById('rep-' + id);
@@ -364,41 +366,62 @@
             initDataFetch(apiUrl);
 
 
-            $(document).on('click', '.btn-delete', function() {
-                let id = $(this).data('id');
+         
+      
+        //jquery for toggle sub menus
+        $('.has-arrow').click(function () {
+            $(this).next('.menu-side').slideToggle();
+            $(this).find('.dropdown').toggleClass('rotate');
+        });
 
+        //jquery for expand and collapse the sidebar
+        $('.menu-btn').click(function () {
+            $('.side-bar').addClass('active');
+            $('.menu-btn').css("visibility", "hidden");
+        });
+
+        $('.close-btn').click(function () {
+            $('.side-bar').removeClass('active');
+            $('.menu-btn').css("visibility", "visible");
+        });
+        });
+        $(document).ready(function() {
+            $('.btn-delete').on('click', function() {
+            
+                var dataId = $(this).data('id');
+                var rowToDelete = $(`tr[data-id="${dataId}"]`);
                 Swal.fire({
-                    title: 'Xóa phòng',
-                    text: 'Bạn có chắc chắn không?',
+                    title: 'Xác nhận xóa phòng?',
+                    text: 'Bạn có chắc chắn muốn xóa phòng này không?',
                     icon: 'warning',
                     showCancelButton: true,
-                    confirmButtonColor: '#3085d6',
-                    cancelButtonColor: '#d33',
                     confirmButtonText: 'Đồng ý',
-                    cancelButtonText: 'Huỷ'
+                    cancelButtonText: 'Hủy bỏ',
+                    reverseButtons: true
                 }).then((result) => {
                     if (result.isConfirmed) {
+                        // ajax
                         $.ajax({
-                            type: "DELETE",
-                            url: "{{ route('admin.hotel.room.type.destroy', ':id') }}"
-                                .replace(':id', id),
-                            success: function(response) {
-                                if (response.status) {
-                                    showSwalMessage('success', response
-                                        .message);
-                                    initDataFetch(apiUrl);
-                                } else {
-                                    showSwalMessage('error', response
-                                        .message);
+                            url: `{{ route('admin.hotel.room.type.delete', '') }}/${dataId}`,
+                            type: 'POST',
+                            success: function(data) {
+                                if (data.status ==='success') {
+                                    rowToDelete.remove();
+
+
                                 }
+                            },
+                            error: function(xhr, status, error) {
+                                console.log(xhr.responseText);
                             }
                         });
-                    }
-                })
-            })
 
-              $(document).ready(function () {
-        $('.choose').change(function () {
+
+                    }
+                });
+            });
+           
+            $('.choose').change(function () {
             var status = $('#tim-trang-thai').val();
             var room_type_id = $('#tim-loai-phong').val();
             var url = "{{ route('admin.hotel.room.type.ajax') }}";
@@ -421,26 +444,6 @@
                 }
             })
         });
-        //jquery for toggle sub menus
-        $('.has-arrow').click(function () {
-            $(this).next('.menu-side').slideToggle();
-            $(this).find('.dropdown').toggleClass('rotate');
-        });
-
-        //jquery for expand and collapse the sidebar
-        $('.menu-btn').click(function () {
-            $('.side-bar').addClass('active');
-            $('.menu-btn').css("visibility", "hidden");
-        });
-
-        $('.close-btn').click(function () {
-            $('.side-bar').removeClass('active');
-            $('.menu-btn').css("visibility", "visible");
-        });
-    });
-        })
-        $(document).ready(function() {
-
             $(document).on('click', '.svg-icon', function(e) {
                 e.stopPropagation();
                 const $dropdown = $(this).siblings('.menu_dropdown');

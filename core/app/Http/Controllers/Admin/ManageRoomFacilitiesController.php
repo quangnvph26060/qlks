@@ -6,6 +6,7 @@ use App\Http\Controllers\Controller;
 use App\Models\Facility;
 use App\Models\Room;
 use App\Models\RoomType;
+use App\Models\RoomFacility;
 
 use App\Repositories\BaseRepository;
 use Illuminate\Http\Request;
@@ -167,6 +168,7 @@ class ManageRoomFacilitiesController extends Controller
     {
 
         $rooms = Room::select('*')
+            ->where('unit_code',unitCode())
             ->where(function($q) use ($request) {
         
                 if($request->room_type_id != '') {
@@ -177,5 +179,14 @@ class ManageRoomFacilitiesController extends Controller
             ->distinct()
             ->orderBy('id', 'desc')->paginate(10);
         return view('admin.manage-room-facilities.search', compact('rooms'));
+    }
+    public function delete($id)
+    {
+        $room = RoomFacility::where('room_id',$id)->delete();
+     
+        return response()->json([
+            'status' => 'success',
+            'message' => 'Xóa cơ sở vật chất thành công',
+        ]);
     }
 }

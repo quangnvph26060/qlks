@@ -7,6 +7,7 @@ use App\Models\Facility;
 use App\Models\Product;
 use App\Models\Room;
 use App\Models\RoomType;
+use App\Models\RoomProduct;
 
 use App\Repositories\BaseRepository;
 use Illuminate\Http\Request;
@@ -224,5 +225,14 @@ class ManageRoomProductController extends Controller
             ->distinct()
             ->orderBy('id', 'desc')->paginate(10);
         return view('admin.manage-room-products.search', compact('rooms'));
+    }
+    public function delete($id)
+    {
+        $room = RoomProduct::where('room_id',$id)->delete();
+     
+        return response()->json([
+            'status' => 'success',
+            'message' => 'Xóa sản phẩm thành công',
+        ]);
     }
 }

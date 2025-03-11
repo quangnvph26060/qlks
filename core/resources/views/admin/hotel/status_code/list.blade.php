@@ -152,7 +152,7 @@
         $(document).ready(function() {
             var formEconomyEdit = {
                 'status_code': {
-                    'element': document.getElementById('status_code'),
+                    'element': document.getElementById('add_status_code'),
                     'error': document.getElementById('status_code_error'),
                     'validations': [{
                         'func': function(value) {
@@ -163,7 +163,7 @@
                     ]
                 },
                 'status_name': {
-                    'element': document.getElementById('status_name'), // id trong input đó
+                    'element': document.getElementById('add_status_name'), // id trong input đó
                     'error': document.getElementById('status_name_error'), // thẻ hiển thị lỗi
                     'validations': [{
                         'func': function(value) {
@@ -201,7 +201,7 @@
                 <!-- Input 1 -->
                 <div class="mb-3">
                     <label for="statusCode" class="form-label">Mã trạng thái</label>
-                    <input type="text" class="form-control " name="status_code" id="status_code"
+                    <input type="text" class="form-control " name="status_code" id="add_status_code"
                         placeholder="Nhập mã trạng thái">
                     <span class="invalid-feedback d-block" style="font-weight: 500"
                         id="status_code_error"></span>
@@ -209,7 +209,7 @@
                 <!-- Input 2 -->
                 <div class="mb-3">
                     <label for="statusName" class="form-label">Tên trạng thái</label>
-                    <input type="text" class="form-control " name="status_name" id="status_name"
+                    <input type="text" class="form-control " name="status_name" id="add_status_name"
                         placeholder="Nhập tên trạng thái">
                     <span class="invalid-feedback d-block" style="font-weight: 500"
                         id="status_name_error"></span>
@@ -234,9 +234,9 @@
 `;
                 $('#modal-dialog').append(row);
 
-                formEconomyEdit.status_code.element = document.getElementById('status_code');
+                formEconomyEdit.status_code.element = document.getElementById('add_status_code');
                 formEconomyEdit.status_code.error = document.getElementById('status_code_error');
-                formEconomyEdit.status_name.element = document.getElementById('status_name');
+                formEconomyEdit.status_name.element = document.getElementById('add_status_name');
                 formEconomyEdit.status_name.error = document.getElementById('status_name_error');
             });
             // sửa
@@ -264,7 +264,7 @@
                             <!-- Input 1 -->
                             <div class="mb-3">
                                 <label for="statusCode" class="form-label">Mã trạng thái</label>
-                                <input type="text" class="form-control " name="status_code" id="status_code"
+                                <input type="text" class="form-control " name="status_code" id="add_status_code"
                                     placeholder="Nhập mã trạng thái" value="${data.data['status_code']}">
                                             <span class="invalid-feedback d-block" style="font-weight: 500"
                                                 id="status_code_error"></span>
@@ -272,7 +272,7 @@
                                         <!-- Input 2 -->
                                         <div class="mb-3">
                                             <label for="statusName" class="form-label">Tên trạng thái</label>
-                                            <input type="text" class="form-control " name="status_name" id="status_name"
+                                            <input type="text" class="form-control " name="status_name" id="add_status_name"
                                                 placeholder="Nhập tên trạng thái" value="${data.data['status_name']}">
                                             <span class="invalid-feedback d-block" style="font-weight: 500"
                                                 id="status_name_error"></span>
@@ -296,9 +296,9 @@
                             </div>
                             `;
                             $('#modal-dialog').append(rowEdit);
-                            formEconomyEdit.status_code.element = document.getElementById('status_code');
+                            formEconomyEdit.status_code.element = document.getElementById('add_status_code');
                             formEconomyEdit.status_code.error = document.getElementById('status_code_error');
-                            formEconomyEdit.status_name.element = document.getElementById('status_name');
+                            formEconomyEdit.status_name.element = document.getElementById('add_status_name');
                             formEconomyEdit.status_name.error = document.getElementById('status_name_error');
                         }
                     },

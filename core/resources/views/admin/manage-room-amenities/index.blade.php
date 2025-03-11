@@ -433,6 +433,39 @@
                 }
             })
         });
+        $('.icon-delete-room').on('click', function() {
+                var dataId = $(this).data('id');
+                var rowToDelete = $(`tr[data-id="${dataId}"]`);
+                Swal.fire({
+                    title: 'Xác nhận xóa tiện nghi?',
+                    text: 'Bạn có chắc chắn muốn xóa tiện nghi này không?',
+                    icon: 'warning',
+                    showCancelButton: true,
+                    confirmButtonText: 'Đồng ý',
+                    cancelButtonText: 'Hủy bỏ',
+                    reverseButtons: true
+                }).then((result) => {
+                    if (result.isConfirmed) {
+                        // ajax
+                        $.ajax({
+                            url: `{{ route('admin.hotel.room.amenities.delete', '') }}/${dataId}`,
+                            type: 'POST',
+                            success: function(data) {
+                                if (data.status ==='success') {
+                                    rowToDelete.remove();
+
+
+                                }
+                            },
+                            error: function(xhr, status, error) {
+                                console.log(xhr.responseText);
+                            }
+                        });
+
+
+                    }
+                });
+            });
         $(document).ready(function() {
 
             $(document).on('click', '.svg-icon', function(e) {
