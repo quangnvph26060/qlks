@@ -23,8 +23,9 @@
 
 
     const triggerToaster = (status, message) => {
+        var type = status == 'success' ? 'Thành công' : 'Lỗi';
         iziToast[status]({
-            title: status.charAt(0).toUpperCase() + status.slice(1),
+            title: type.charAt(0).toUpperCase() + type.slice(1),
             message: message,
             position: "topRight",
             backgroundColor: '#fff',
