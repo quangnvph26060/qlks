@@ -206,7 +206,7 @@ $('.add-room-booking-edit').on('click', function () {
 
     // Lấy giá trị của input checkOutDate
     const checkOutDateValue = $('#date-book-room-date').val();
-    showRoom(roomIds, checkInDateValue, checkOutDateValue, '', '')
+    showRoom(roomIds, checkInDateValue, checkInDateValue, '', '')
     $('#addRoomModal').modal('show');
 
     $('#addRoomModal').on('shown.bs.modal', function () {

@@ -355,6 +355,7 @@ class BookingController extends Controller
 
     public function showRoom(Request $request)
     {
+       
         $disabledRoomTypeIDs = RoomType::where('status', 0)->pluck('id')->toArray();
 
         if ($request->method === 'change_room') {
@@ -499,12 +500,35 @@ class BookingController extends Controller
         } else {
             $room = $room->where('id', $request->roomId)->first();
         }
+        $newRecordsUpdated = []; // Khởi tạo mảng mới
 
+        foreach ($newRecords as &$item) {
+            $roomIdExists = false;
+        
+            // Kiểm tra nếu checkbox đã tồn tại trước đó
+            $checkboxExists = isset($item['checkbox']) && $item['checkbox'] === 'checked';
+        
+            foreach ((array) $request->roomIds as $room) {
+                if (isset($room['roomId'], $room['dateId']) && $room['roomId'] == $item['id'] && $room['dateId'] == $item['date']) {
+                    $roomIdExists = true;
+                    break; // Nếu tìm thấy, thoát vòng lặp sớm để tối ưu
+                }
+            }
+        
+            // Nếu đã có checkbox hoặc tìm thấy điều kiện mới, gán lại giá trị
+            if ($roomIdExists || $checkboxExists) {
+                $item['checkbox'] = 'checked';
+            }
+        
+            $newRecordsUpdated[] = $item;
+        }
+        
+        
         if ($request->method === 'change_room') {
             return response()->json([
                 'status' => 'success',
                 // 'data'   => $emptyRooms,
-                'data'               => $newRecords,
+                'data'               => $newRecordsUpdated,
                 'room_number'        => $room,
                 'bookingId'          => $request->bookingId,
                 'roomId'             => $request->roomId,
@@ -513,11 +537,12 @@ class BookingController extends Controller
             ]);
         }
         return response()->json([
+            'roomIds'=>$request->roomIds,
             'status' => 'success',
             // 'data'   => $emptyRooms,
             'roomType' => $roomType,
             'room'  => $room,
-            'data'   => $newRecords,
+            'data'   => $newRecordsUpdated,
             'option_hang_phong'   => $request->optionHangPhong,
             'option_name_phong'   => $request->optionNamePhong,
             'option_status_phong' => $request->optionStatusPhong,
@@ -1068,7 +1093,7 @@ class BookingController extends Controller
             if (!empty($roomBooking->room_change)) {
                 return response()->json(['status' => 'error', 'message' => 'Phòng đã có thay đổi, không thể xoá.']);
             }
-            saveRoomStatusHistory($roomBooking->room_code, $roomBooking->checkin_date, $roomBooking->checkout_date, 1);
+            saveRoomStatusHistory($roomBooking->room_code, $roomBooking->checkin_date, $roomBooking->checkin_date, 1);
             $roomBooking->delete();
         }
         return response()->json(['status' => 'success', 'message' => 'Xoá thành công.']);
@@ -1104,7 +1129,7 @@ class BookingController extends Controller
             if (!empty($roomBooking->room_change)) {
                 return response()->json(['status' => 'error', 'message' => 'Phòng đã có thay đổi, không thể xoá.']);
             }
-            saveRoomStatusHistory($roomBooking->room_code, $roomBooking->checkin_date, $roomBooking->checkout_date, 1);
+            saveRoomStatusHistory($roomBooking->room_code, $roomBooking->checkin_date, $roomBooking->checkin_date, 1);
             $roomBooking->delete();
         }
         return response()->json(['status' => 'success', 'message' => 'Xoá thành công.']);

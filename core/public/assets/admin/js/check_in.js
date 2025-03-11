@@ -371,7 +371,7 @@ function addRoomInBooking(data, list) {
         },
         success: function (response) {
             var tbody = list;
-            console.log(list);
+           
             let targetId = list[0]?.id;
                 targetId === 'list-booking-edit' 
                     ?  $('#list-booking').empty()
@@ -404,7 +404,6 @@ function addRoomInBooking(data, list) {
                     const roomId = item.room["id"];
                     const roomTypeId = item.room_type["id"];
                     const key = `${roomId}-${roomTypeId}`;
-                        console.log(key);
                         
                     if (seenRooms.has(key)) {
                         return;
@@ -814,7 +813,7 @@ $(document).on('click', '.booked_room_edit', function () {
                                             <input type="number" min="1" name="adult" class="form-control adult"  value="${room.guest_count}"  style="margin-left: 16px;">
                                         </td>
                                         <td >
-                                            <select id="bookingType" class="form-select" name="optionRoom" >
+                                            <select id="bookingType" class="form-select" name="optionRoom" style="width: 93px; font-size:15px">
                                                 <option value="ngay">Ngày</option>
                                                 <option value="gio">Giờ</option>
                                             </select>

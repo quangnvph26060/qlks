@@ -332,21 +332,13 @@ class BookRoomController extends Controller
                         $check_in->booking_id = $bookingId;
                     }
                 }
-
-                $roomstatus = new RoomStatusHistory();
-                $roomstatus->room_id      = $room['room'];
-                $roomstatus->start_date   = $dateIn;
-                $roomstatus->end_date     = $dateOut;
-                $roomstatus->unit_code    = hf('ma_coso');
-                $roomstatus->created_at   = now();
+               
 
                 if ($request->method == 'check_in') {
-                    $roomstatus->status_code  = 3;
+                    saveRoomStatusHistory($room['room'], $dateIn, $dateIn, 3);
                 } else {
-                    $roomstatus->status_code  = 2;
+                    saveRoomStatusHistory($room['room'], $dateIn, $dateIn, 2);
                 }
-                $roomstatus->save();
-
                 $check_in->room_code      = $room['room'];
                 $check_in->document_date  = now();
                 $check_in->checkin_date   = Carbon::parse($room['dateIn']);
@@ -490,7 +482,7 @@ class BookRoomController extends Controller
                     $check_in_new->save();
                 }
             }
-            saveRoomStatusHistory($room['room'], $dateIn, $dateOut, 3);
+            saveRoomStatusHistory($room['room'], $dateIn, $dateIn, 3);
 
             DB::commit();
             return response()->json(['success' => 'Cập nhật nhận phòng thành công']);
@@ -576,7 +568,7 @@ class BookRoomController extends Controller
                     $check_in_new->unit_code      = hf('ma_coso');
                     $check_in_new->created_by     = $request->name_staff ??  authAdmin()->id;
                     $check_in_new->save();
-                    saveRoomStatusHistory($room['room'], $room['dateIn'], $room['dateOut'], 2);
+                    saveRoomStatusHistory($room['room'], $room['dateIn'], $room['dateIn'], 2);
                 }
             }
 
@@ -608,7 +600,7 @@ class BookRoomController extends Controller
                     if (!empty($roomBooking->room_change)) {
                         return response()->json(['status' => 'error', 'message' => 'Phòng đã có thay đổi, không thể xoá.']);
                     }
-                    saveRoomStatusHistory($roomBooking->room_code, $roomBooking->checkin_date, $roomBooking->checkout_date, 1);
+                    saveRoomStatusHistory($roomBooking->room_code, $roomBooking->checkin_date, $roomBooking->checkin_date, 1);
                     $roomBooking->delete();
                 }
                 return response()->json(['status' => 'success', 'message' => 'Xoá thành công.']);
@@ -638,7 +630,7 @@ class BookRoomController extends Controller
                         return response()->json(['status' => 'error', 'message' => 'Phòng đã có thay đổi, không thể xoá.']);
                     }
 
-                    saveRoomStatusHistory($checkIn->room_code, $checkIn->checkin_date, $checkIn->checkout_date, 1);
+                    saveRoomStatusHistory($checkIn->room_code, $checkIn->checkin_date, $checkIn->checkin_date, 1);
                     $checkIn->delete();
                 }
 
@@ -865,7 +857,7 @@ class BookRoomController extends Controller
                     $check_in_new->unit_code      = hf('ma_coso');
                     $check_in_new->created_by     = $request->name_staff ??  authAdmin()->id;
                     $check_in_new->save();
-                    saveRoomStatusHistory($room['room'], $room['dateIn'], $room['dateOut'], 3);
+                    saveRoomStatusHistory($room['room'], $room['dateIn'], $room['dateIn'], 3);
                 }
             }
             DB::commit();
