@@ -373,9 +373,9 @@ function addRoomInBooking(data, list) {
             var tbody = list;
            
             let targetId = list[0]?.id;
-                targetId === 'list-booking-edit' 
+                targetId === 'list-booking-edit'
                     ?  $('#list-booking').empty()
-                    : targetId === 'list-booking' 
+                    : targetId === 'list-booking'
                     ?  $('#list-booking-edit').empty()
                     : null;
 
@@ -390,14 +390,14 @@ function addRoomInBooking(data, list) {
 
                 const formattedDates = `${yyyys}-${mms}-${dds}`;
                 const formattedTimes = `${hoursss}:${minutesss}`;
-               
-                const seenRooms = new Set(); 
+
+                const seenRooms = new Set();
                 let totalPrice = 0;
                 response.data.forEach(item => {
                     let date = new Date(item.date);
                     if(item.date == formattedDates ){
-                        item.date = new Date(item.date); 
-                        item.date.setDate(item.date.getDate() + 1); 
+                        item.date = new Date(item.date);
+                        item.date.setDate(item.date.getDate() + 1);
                         item.date = item.date.toISOString().split('T')[0];
                     }
                     // date.setDate(date.getDate() + 1);
@@ -463,14 +463,14 @@ function addRoomInBooking(data, list) {
                     let isDuplicate = $(`${tableSelector} tr`).filter(function () {
                         return $(this).attr('data-room-id') == roomId && $(this).attr('data-room-type-id') == roomTypeId;
                     }).length > 0;
-                    
+
                     if (!isDuplicate) {
-                        tbody.append(tr); 
+                        tbody.append(tr);
                     }
                 })
-            
+
                 totalPrice = calculateTotalPrice();
-              
+
                 $('#loading').hide();
                 let totalDeposit = 0;
                 let totalBalance = 0;
@@ -735,7 +735,7 @@ function loadRoomBookings(page = 1, data) {
                 selected_select.append(option);
                 updatePagination(pagination, 'loadRoomBookings');
                 setTimeout(function () {
-                    $('#loading-overlay').css('display', 'none'); 
+                    $('#loading-overlay').css('display', 'none');
                 }, 1000);
             }
         },
@@ -1030,7 +1030,7 @@ $(document).on('click', '.delete_check_in', function () {
             console.log('Error:', error);
         }
     });
-   
+
 
 
 
@@ -1392,7 +1392,7 @@ function findRoomBookingId(id) {
 $('.add-booked-room-form').on('click', function () {
     let selectedRooms = $('#show-booked-room input[type="checkbox"]:checked');
     if (selectedRooms.length === 0) {
-        notify('error', 'Vui lòng chọn đặt phòng');
+        notify('error', 'Vui lòng chọn phòng');
         return;
     }
     let selectedData = []; // Mảng chứa các ID đã chọn
@@ -1501,9 +1501,10 @@ function showBookedRoom(value = "", option_customer_source = "") {
             var tr = "";
             tbody.empty();
             const currentView = localStorage.getItem('viewMode');
-          
-            
+
+
             var data = data.data;
+            console.log(data);
             Object.entries(data).forEach(function ([bookingId, bookingData], index) {
                 let firstRecord = bookingData[0]; let collapseContent = '';
                 let totalGuests = bookingData.reduce((sum, booking) => sum + (booking.guest_count || 0), 0);
@@ -1554,7 +1555,7 @@ function showBookedRoom(value = "", option_customer_source = "") {
 
                                     <tr class="background-tr">
 
-                                        <td class="text-left" colspan="6">${ record['room_change_info'] ? record['room_change_info']['room']['room_number'] : record['room']['room_number']}</td>
+                                        <td class="text-left ${record['status'] === 1 ? 'text-danger' : ''}" colspan="6">${ record['room_change_info'] ? record['room_change_info']['room']['room_number'] : record['room']['room_number']}</td>
                                         <td class="text-right w-10">${formatDateTime(record['checkin_date'])}</td>
                                         <td class="text-right w-10" >${formatDateTime(record['checkout_date'])}</td>
 

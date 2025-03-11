@@ -300,10 +300,10 @@ class BookRoomController extends Controller
                     ->whereDate('start_date', '<=', Carbon::parse($room['dateIn'])->format('Y-m-d'))
                     ->whereDate('end_date', '>=', Carbon::parse($room['dateIn'])->format('Y-m-d'));
                 if ($request->method == 'check_in') {
-                  //  $checkRoom->where('status_code', 3); // đang ở 
+                  //  $checkRoom->where('status_code', 3); // đang ở
                   $checkRoom->whereIn('status_code', [2, 3]);
                 } else {
-                    $checkRoom->whereIn('status_code', [2, 3]); // đã đặt và đang ở 
+                    $checkRoom->whereIn('status_code', [2, 3]); // đã đặt và đang ở
                 }
 
                 $checkRoom = $checkRoom->first();
@@ -922,7 +922,7 @@ class BookRoomController extends Controller
         $data = RoomBooking::query() // Đưa array vào cho dễ đọc
             // ->active()
             ->where('unit_code', unitCode())
-            ->where('status', '=', 0)
+            // ->where('status', '=', 0)
             ->whereDate('checkin_date', '>=', today());
 
         // Lọc theo name nếu có
