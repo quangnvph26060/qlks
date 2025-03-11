@@ -29,7 +29,7 @@ class StatusCodeController extends Controller
         $status = new StatusCode();
         $status->status_code = $request->status_code;
         $status->status_name = $request->status_name;
-        $status->note =  $request->note;
+        $status->note =  $request->note ?? '';
         $status->status_status = $request->status_status;
         $status->unit_code =  unitCode();
         $status->save();
@@ -59,7 +59,7 @@ class StatusCodeController extends Controller
         $status = StatusCode::find($id);
         $status->status_code = $request->status_code;
         $status->status_name = $request->status_name;
-        $status->note =  $request->note;
+        $status->note =  $request->note ?? '';
         $status->status_status = $request->status_status;
         $status->save();
 

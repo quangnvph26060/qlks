@@ -52,4 +52,12 @@ class PremiumServiceController extends Controller
     {
         return PremiumService::changeStatus($id);
     }
+    public function delete($id)
+    {
+        PremiumService::destroy($id);
+        return response()->json([
+            'status' => 'success',
+            'message' => 'Xóa dịch vụ thành công',
+        ]);
+    }
 }

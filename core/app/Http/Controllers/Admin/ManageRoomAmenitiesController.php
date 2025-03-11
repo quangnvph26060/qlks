@@ -6,7 +6,7 @@ use App\Http\Controllers\Controller;
 use App\Models\Amenity;
 use App\Models\Room;
 use App\Models\RoomType;
-
+use App\Models\RoomTypeAmenity;
 use App\Repositories\BaseRepository;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Validator;
@@ -177,5 +177,14 @@ class ManageRoomAmenitiesController extends Controller
             ->distinct()
             ->orderBy('id', 'desc')->paginate(10);
         return view('admin.manage-room-amenities.search', compact('rooms'));
+    }
+    public function delete($id)
+    {
+        $room = RoomTypeAmenity::where('room_id',$id)->delete();
+     
+        return response()->json([
+            'status' => 'success',
+            'message' => 'Xóa tiện nghi thành công',
+        ]);
     }
 }

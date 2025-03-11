@@ -146,7 +146,7 @@
                             <td style="width:20px;">
                                         <svg class="svg_menu_check_in" xmlns="http://www.w3.org/2000/svg" width="30" height="30" viewBox="0 0 21 21"><g fill="currentColor" fill-rule="evenodd"><circle cx="10.5" cy="10.5" r="1"/><circle cx="10.5" cy="5.5" r="1"/><circle cx="10.5" cy="15.5" r="1"/></g></svg>
                             
-                                        <div class="dropdown menu_dropdown_check_in" id="dropdown-menu">
+                                        <div class="dropdown menu_dropdown_check_in" id="dropdown-menu" style="position:fixed">
                                             <div class="dropdown-item"><a
                                             data-id="{{ $item->id }}" class="btn-edit-customer-group btn-edit-group" data-bs-toggle="modal" data-bs-target="#edit-customer-group" style="color:black">
                                                 Sửa nhóm khách hàng

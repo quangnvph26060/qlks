@@ -314,8 +314,8 @@
                 var dataId = $(this).data('id');
                 var rowToDelete = $(`tr[data-id="${dataId}"]`);
                 Swal.fire({
-                    title: 'Xác nhận xóa trạng thái?',
-                    text: 'Bạn có chắc chắn muốn xóa trạng thái này không?',
+                    title: 'Xác nhận xóa cơ sở vật chất?',
+                    text: 'Bạn có chắc chắn muốn xóa cơ sở vật chất này không?',
                     icon: 'warning',
                     showCancelButton: true,
                     confirmButtonText: 'Đồng ý',

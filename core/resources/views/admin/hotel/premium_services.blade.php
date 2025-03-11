@@ -66,7 +66,7 @@
                             </thead>
                             <tbody>
                                 @forelse($premiumServices as $id => $premiumService)
-                                    <tr>
+                                    <tr data-id="{{ $premiumService->id }}">
                                     <td style="width:20px;">
                                     <svg class="svg_menu_check_in" xmlns="http://www.w3.org/2000/svg" width="30" height="30" viewBox="0 0 21 21"><g fill="currentColor" fill-rule="evenodd"><circle cx="10.5" cy="10.5" r="1"/><circle cx="10.5" cy="5.5" r="1"/><circle cx="10.5" cy="15.5" r="1"/></g></svg>
                                         <div class="dropdown menu_dropdown_check_in" id="dropdown-menu" style="position:fixed">
@@ -237,6 +237,39 @@
             });
             $(document).on('click', function() {
                 $('.menu_dropdown').removeClass('show');
+            });
+            $('.icon-delete-room').on('click', function() {
+                var dataId = $(this).data('id');
+                var rowToDelete = $(`tr[data-id="${dataId}"]`);
+                Swal.fire({
+                    title: 'Xác nhận xóa dịch vụ?',
+                    text: 'Bạn có chắc chắn muốn xóa dịch vụ này không?',
+                    icon: 'warning',
+                    showCancelButton: true,
+                    confirmButtonText: 'Đồng ý',
+                    cancelButtonText: 'Hủy bỏ',
+                    reverseButtons: true
+                }).then((result) => {
+                    if (result.isConfirmed) {
+                        // ajax
+                        $.ajax({
+                            url: `{{ route('admin.hotel.premium.service.delete', '') }}/${dataId}`,
+                            type: 'POST',
+                            success: function(data) {
+                                if (data.status ==='success') {
+                                    rowToDelete.remove();
+
+
+                                }
+                            },
+                            error: function(xhr, status, error) {
+                                console.log(xhr.responseText);
+                            }
+                        });
+
+
+                    }
+                });
             });
 
         });

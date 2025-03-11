@@ -204,19 +204,11 @@ class RoomTypeController extends Controller
             $room->status              = $request->status ? 1 : 0;
             $room->unit_code           = unitCode();
             if ($request->hasFile('main_image')) {
-                // $main_images = saveImages($request, 'main_image', 'roomImage', 600, 600);
-                // if ($room->main_image && Storage::disk('public')->exists($room->main_image)) {
-                //     Storage::disk('public')->delete($room->main_image);
-                // }
-                // $room->main_image = $main_images[0];
-                $image = $request->file('main_image');
-                $imageName = time() . '.' . $image->getClientOriginalExtension(); // Tạo tên ảnh duy nhất
-    
-                // Lưu ảnh vào thư mục public/images
-                $imagePath = $image->move(public_path('images'), $imageName);
-    
-                // Lưu thông tin ảnh vào cơ sở dữ liệu
-                $room->main_image = $imageName;
+                $main_images = saveImages($request, 'main_image', 'roomImage', 600, 600);
+                if ($room->main_image && Storage::disk('public')->exists($room->main_image)) {
+                    Storage::disk('public')->delete($room->main_image);
+                }
+                $room->main_image = $main_images[0];
             }
 
             $room->save();
@@ -463,7 +455,45 @@ class RoomTypeController extends Controller
             'message' => 'Thao tác thành công.'
         ]);
     }
+    public function delete($id)
+    {
+        $room = Room::find($id);
 
+        if (!$room) {
+            return response()->json([
+                'status' => false,
+                'message' => 'Dữ liệu không tồn tại trên hệ thống!'
+            ]);
+        }
+
+        if ($room->amenities()->exists()) {
+            return response()->json([
+                'status' => false,
+                'message' => 'Không thể xóa vì phòng đang có tiện nghi.'
+            ]);
+        }
+
+        if ($room->facilities()->exists()) {
+            return response()->json([
+                'status' => false,
+                'message' => 'Không thể xóa vì phòng đang có cơ sở vật chất.'
+            ]);
+        }
+
+        $bookings = BookedRoom::where('room_id', $id)->where('status', 1)->first();
+
+        if ($bookings) {
+            return response()->json([
+                'status' => false,
+                'message' => 'Không thể xóa vì phòng đang được thuê.'
+            ]);
+        }
+        $room->delete();
+        return response()->json([
+            'status' => 'success',
+            'message' => 'Xóa phòng thành công',
+        ]);
+    }
     public function  roomDeleted()
     {
         $pageTitle   = 'Danh sách các phòng đã xóa';

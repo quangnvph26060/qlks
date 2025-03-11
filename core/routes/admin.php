@@ -205,6 +205,7 @@ Route::middleware('admin', 'adminPermission')->group(function () {
             Route::get('edit/{id}', 'edit')->name('edit');
             Route::post('save/{id?}', 'save')->name('save');
             Route::post('status/{id}', 'status')->name('status');
+            Route::post('delete/{id}', 'delete')->name('delete');
 
             Route::get('check-slug', 'checkSlug')->name('check.slug');
             Route::delete('delete/{id}', 'destroy')->name('destroy');
@@ -230,6 +231,8 @@ Route::middleware('admin', 'adminPermission')->group(function () {
             Route::get('', 'index')->name('all');
             Route::post('save/{id?}', 'save')->name('save');
             Route::post('status/{id}', 'status')->name('status');
+            Route::post('delete-preminum/{id}', 'delete')->name('delete');
+
         });
         //Manage amenities with room
         Route::controller('ManageRoomAmenitiesController')->name('room.amenities.')->prefix('roomAmenities')->group(function () {
@@ -239,6 +242,7 @@ Route::middleware('admin', 'adminPermission')->group(function () {
             Route::post('/rooms/update-amenity', 'update')->name('update');
             Route::get('search', 'search')->name('search');
             Route::get('ajax', 'ajax')->name('ajax');
+            Route::post('delete-amenities/{id}', 'delete')->name('delete');
 
 
         });
@@ -250,6 +254,7 @@ Route::middleware('admin', 'adminPermission')->group(function () {
             Route::post('/rooms/update-facility', 'update')->name('update');
             Route::get('search', 'search')->name('search');
             Route::get('ajax', 'ajax')->name('ajax');
+            Route::post('delete-facilities/{id}', 'delete')->name('delete');
 
         });
 
@@ -287,7 +292,7 @@ Route::middleware('admin', 'adminPermission')->group(function () {
             Route::post('/setup/add-facilities', 'store')->name('store');
             Route::get('', 'index')->name('all');
             Route::get('setup/edit-facilities/{id}', 'edit')->name('edit');
-            Route::put('/setup/update-facilities/{id}', 'update')->name('update');    
+            Route::post('/setup/update-facilities/{id}', 'store')->name('update');    
             Route::post('delete-facilities/{id}', 'delete')->name('delete');
             Route::get('search', 'search')->name('search');
 
@@ -296,7 +301,7 @@ Route::middleware('admin', 'adminPermission')->group(function () {
             Route::post('/setup/add-product', 'store')->name('store');
             Route::get('', 'index')->name('all');
             Route::get('setup/edit-setup/{id}', 'edit')->name('edit');
-            Route::put('/setup/update-setup/{id}', 'update')->name('update');    
+            Route::post('/setup/update-setup/{id}', 'update')->name('update');    
             Route::post('delete-setup/{id}', 'delete')->name('delete');
             Route::get('search', 'search')->name('search');
 
@@ -354,6 +359,8 @@ Route::middleware('admin', 'adminPermission')->group(function () {
             Route::post('/rooms/update-product', 'update')->name('update');
             Route::get('search', 'search')->name('search');
             Route::get('ajax', 'ajax')->name('ajax');
+            Route::post('delete-products/{id}', 'delete')->name('delete');
+
 
         });
         Route::controller('CustomerSourceController')->name('room.customer_customer.')->prefix('CustomerSource')->group(function () {

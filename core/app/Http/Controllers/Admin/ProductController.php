@@ -148,6 +148,7 @@ class ProductController extends Controller
 
         try {
             $data = $request->validated();
+            $data['unit_code'] = unitCode();
             $data['image_path'] = $path[0];
             $data['is_published'] = $request->has('is_published') ? 1 : 0;
 
