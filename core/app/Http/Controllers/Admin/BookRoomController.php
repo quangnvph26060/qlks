@@ -461,7 +461,7 @@ class BookRoomController extends Controller
                 } else {
                     $check_in_new                 = new CheckIn();
                     $check_in_new->check_in_id    = $bookingId;
-                    $check_in_new->id_room_booking = null;
+                    $check_in_new->id_room_booking = $request->id_room_booking;
                     $check_in_new->room_code      = $room['room'];
                     $check_in_new->document_date  = now();
                     $check_in_new->checkin_date   = Carbon::parse($room['dateIn']);
