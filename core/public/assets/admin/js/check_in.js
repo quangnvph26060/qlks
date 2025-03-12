@@ -434,13 +434,13 @@ function addRoomInBooking(data, list) {
                                     <div class="d-flex align-items-center justify-content-start" style="gap: 3px">
                                         <input type="date" name="checkInDate" id="date-book-room" class="form-control date-book-room"  value="${formattedDates}" readonly>
 
-                                        <input type="time" name="checkInTime" id="time-book-room" class="form-control time-book-room"  value="${formattedTimes}" readonly>
+                                        <input type="time" name="checkInTime" id="time-book-room" class="form-control time-book-room"  value="${formattedTimes}" >
                                     </div>
                                 </td>
                                 <td>
                                     <div class="d-flex align-items-center justify-content-start" style="gap: 3px">
                                         <input type="date" name="checkOutDate"  class="form-control date-book-room" readonly value="${item.date}">
-                                        <input type="time" name="checkOutTime" id="time-book-room" class="form-control time-book-room" readonly value="${item.room['room_type']['room_type_price']['setup_pricing']['check_out_time']}">
+                                        <input type="time" name="checkOutTime" id="time-book-room" class="form-control time-book-room"  value="${item.room['room_type']['room_type_price']['setup_pricing']['check_out_time']}">
                                     </div>
                                 </td>
                                 <td>
@@ -822,14 +822,14 @@ $(document).on('click', '.booked_room_edit', function () {
                                             <div class="d-flex align-items-center justify-content-start" style="gap: 10px">
                                                 <input type="date" name="checkInDate" id="date-book-room" class="form-control date-book-room"  value="${formattedDates}" readonly>
 
-                                                <input type="time" name="checkInTime" id="time-book-room" class="form-control time-book-room"  value="${formattedTimes}" readonly>
+                                                <input type="time" name="checkInTime" id="time-book-room" class="form-control time-book-room"  value="${formattedTimes}" >
                                             </div>
                                         </td>
                                         <td>
                                             <div class="d-flex align-items-center justify-content-start" style="gap: 10px">
                                                 <input type="date" name="checkOutDate"  class="form-control date-book-room" value="${checkoutDate}" readonly>
 
-                                                <input type="time" name="checkOutTime" id="time-book-room" class="form-control time-book-room"  value="${checkoutTime}" readonly>
+                                                <input type="time" name="checkOutTime" id="time-book-room" class="form-control time-book-room"  value="${checkoutTime}" >
 
                                             </div>
                                         </td>
@@ -1251,13 +1251,13 @@ function findRoomBookingId(id) {
                                 <div class="d-flex align-items-center justify-content-start" style="gap: 3px">
                                     <input type="date" name="checkInDate" id="date-book-room" class="form-control date-book-room"  value="${formattedDates}" readonly>
 
-                                    <input type="time" name="checkInTime" id="time-book-room" class="form-control time-book-room"  value="${formattedTimes}" readonly>
+                                    <input type="time" name="checkInTime" id="time-book-room" class="form-control time-book-room"  value="${formattedTimes}" >
                                 </div>
                             </td>
                             <td>
                                 <div class="d-flex align-items-center justify-content-start" style="gap: 3px">
                                     <input type="date" name="checkOutDate"  class="form-control date-book-room" readonly value="${dateOut}">
-                                    <input type="time" name="checkOutTime" id="time-book-room" class="form-control time-book-room" value="${timeOut}" readonly value="">
+                                    <input type="time" name="checkOutTime" id="time-book-room" class="form-control time-book-room" value="${timeOut}"  value="">
                                 </div>
                             </td>
                             <td>

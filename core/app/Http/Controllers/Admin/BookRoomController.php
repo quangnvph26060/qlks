@@ -480,9 +480,10 @@ class BookRoomController extends Controller
                     $check_in_new->unit_code      = hf('ma_coso');
                     $check_in_new->created_by     = $request->name_staff ??  authAdmin()->id;
                     $check_in_new->save();
-                }
+                } 
+                 saveRoomStatusHistory($room['room'], $dateIn, $dateIn, 3);
             }
-            saveRoomStatusHistory($room['room'], $dateIn, $dateIn, 3);
+          
 
             DB::commit();
             return response()->json(['success' => 'Cập nhật nhận phòng thành công']);

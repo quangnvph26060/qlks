@@ -595,7 +595,7 @@ function addRoomInBooking(data, list) {
                 let totalPrice = 0;
 
                 response.data.forEach(item => {
-                    console.log(item.date);
+                   
                     
                     let date = new Date(item.date);
                     date.setDate(date.getDate() + 1);
@@ -895,14 +895,14 @@ $(document).on('click', '.booked_room_edit', function () {
                                             <div class="d-flex align-items-center justify-content-start" style="gap: 10px">
                                                 <input type="date" name="checkInDate" id="date-book-room" class="form-control date-book-room"  value="${checkinDate}" readonly>
 
-                                                <input type="time" name="checkInTime" id="time-book-room" class="form-control time-book-room"  value="${checkinTime}" readonly>
+                                                <input type="time" name="checkInTime" id="time-book-room" class="form-control time-book-room"  value="${checkinTime}" >
                                             </div>
                                         </td>
                                         <td>
                                             <div class="d-flex align-items-center justify-content-start" style="gap: 10px">
                                                 <input type="date" name="checkOutDate"  class="form-control date-book-room" value="${checkoutDate}" readonly>
 
-                                                <input type="time" name="checkOutTime" id="time-book-room" class="form-control time-book-room"  value="${checkoutTime}" readonly>
+                                                <input type="time" name="checkOutTime" id="time-book-room" class="form-control time-book-room"  value="${checkoutTime}" >
 
                                             </div>
                                         </td>
