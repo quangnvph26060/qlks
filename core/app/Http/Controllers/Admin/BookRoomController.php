@@ -335,7 +335,7 @@ class BookRoomController extends Controller
                
 
                 if ($request->method == 'check_in') {
-                    saveRoomStatusHistory($room['room'], $dateIn, $dateIn, 3);
+                    saveRoomStatusHistory($room['room'], $dateIn, $dateOut, 3);
                 } else {
                     saveRoomStatusHistory($room['room'], $dateIn, $dateIn, 2);
                 }
@@ -600,7 +600,7 @@ class BookRoomController extends Controller
                     if (!empty($roomBooking->room_change)) {
                         return response()->json(['status' => 'error', 'message' => 'Phòng đã có thay đổi, không thể xoá.']);
                     }
-                    saveRoomStatusHistory($roomBooking->room_code, $roomBooking->checkin_date, $roomBooking->checkin_date, 1);
+                    saveRoomStatusHistory($roomBooking->room_code, $roomBooking->checkin_date, $roomBooking->checkout_date, 1);
                     $roomBooking->delete();
                 }
                 return response()->json(['status' => 'success', 'message' => 'Xoá thành công.']);
@@ -630,7 +630,7 @@ class BookRoomController extends Controller
                         return response()->json(['status' => 'error', 'message' => 'Phòng đã có thay đổi, không thể xoá.']);
                     }
 
-                    saveRoomStatusHistory($checkIn->room_code, $checkIn->checkin_date, $checkIn->checkin_date, 1);
+                    saveRoomStatusHistory($checkIn->room_code, $checkIn->checkin_date, $checkIn->checkout_date, 1);
                     $checkIn->delete();
                 }
 

@@ -999,6 +999,7 @@ $(document).on('click', '.delete_check_in', function () {
                         $.ajax({
                             url: url,
                             type: 'POST',
+                            data: JSON.stringify({ method: 'check_in' }),
                             success: function (response) {
                                 if (response.status == 'success') {
                                     notify('success', response.message);
@@ -1501,10 +1502,7 @@ function showBookedRoom(value = "", option_customer_source = "") {
             var tr = "";
             tbody.empty();
             const currentView = localStorage.getItem('viewMode');
-
-
             var data = data.data;
-            console.log(data);
             Object.entries(data).forEach(function ([bookingId, bookingData], index) {
                 let firstRecord = bookingData[0]; let collapseContent = '';
                 let totalGuests = bookingData.reduce((sum, booking) => sum + (booking.guest_count || 0), 0);
@@ -1624,7 +1622,7 @@ $('.add-room-booking').on('click', function () {
     // Lấy giá trị của input checkOutDate
     const checkOutDateValue = $('#date-book-room-date').val();
 
-    showRoom(roomIds, checkInDateValue, checkOutDateValue, '', '')
+    showRoom(roomIds, checkInDateValue, checkInDateValue, '', '')
     $('#addRoomModal').modal('show');
 
     $('#addRoomModal').on('shown.bs.modal', function () {

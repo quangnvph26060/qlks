@@ -2,19 +2,6 @@
 @section('panel')
     <div class="pagination-container mb-1"></div>
     <div class="row">
-        {{-- <div class="col-lg-12">
-            <div class="d-flex justify-content-between mb-3 row order-1">
-                <div class="dt-length col-md-6 col-4">
-                    <select name="example_length" id="perPage" style=" padding: 1px 3px; margin-right: 8px;"
-                        aria-controls="example" class="perPage">
-                        <option value="10">10</option>
-                        <option value="25">25</option>
-                        <option value="50">50</option>
-                        <option value="100">100</option>
-                    </select><label for="perPage"> entries per page</label>
-                </div>
-            </div>
-        </div> --}}
 
         <div class="card b-radius--10 scroll-container-main">
             <div class="card-body p-0">

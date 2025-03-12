@@ -25,7 +25,9 @@ function updateActiveButton() {
         button.classList.remove('active');
     });
 
-    document.querySelector(`.btn-toggle-view[data-view="${savedView}"]`).classList.add('active');
+    document.querySelectorAll(`.btn-toggle-view[data-view="${savedView}"]`).forEach(btn => {
+        btn.classList.add('active');
+    });
 }
 
 document.addEventListener('DOMContentLoaded', updateActiveButton);

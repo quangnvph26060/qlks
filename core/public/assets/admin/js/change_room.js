@@ -166,7 +166,7 @@ $(document).on('click', '.change-room', function () {
 $(document).on('click', '.change-booking-room', function () {
     let selectedRoom = $('input[name="change-room"]:checked'); // Lấy radio đã chọn
     if (selectedRoom.length === 0) {
-        notify('error', 'Vui lòng chọn một phòng để đổi!');
+        notify('error', 'Vui lòng chọn phòng để đổi');
         return;
     }
     let roomId = selectedRoom.data('id');

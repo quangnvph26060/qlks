@@ -705,8 +705,14 @@ class BookingController extends Controller
             $roomBooking->save();
 
             // trạng thái phòng
-            saveRoomStatusHistory($isRoom->id, now(), $roomBooking->checkout_date, 3);
-            saveRoomStatusHistory($roomBooking->room_code, $roomBooking->checkin_date, $roomBooking->checkout_date, 1);
+          
+            if ($roomBooking->id_room_booking) {
+                saveRoomStatusHistory($isRoom->id, now(), $roomBooking->checkin_date, 3); // phòng mới 
+                saveRoomStatusHistory($roomBooking->room_code, $roomBooking->checkin_date, $roomBooking->checkin_date, 1); // phòng cũ 
+            }else{
+                saveRoomStatusHistory($isRoom->id, now(), $roomBooking->checkout_date, 3); // phòng mới 
+                saveRoomStatusHistory($roomBooking->room_code, $roomBooking->checkin_date, $roomBooking->checkout_date, 1); // phòng cũ
+            }
 
 
             DB::commit();
@@ -1129,7 +1135,7 @@ class BookingController extends Controller
             if (!empty($roomBooking->room_change)) {
                 return response()->json(['status' => 'error', 'message' => 'Phòng đã có thay đổi, không thể xoá.']);
             }
-            saveRoomStatusHistory($roomBooking->room_code, $roomBooking->checkin_date, $roomBooking->checkin_date, 1);
+            saveRoomStatusHistory($roomBooking->room_code, $roomBooking->checkin_date, $roomBooking->checkout_date, 1);
             $roomBooking->delete();
         }
         return response()->json(['status' => 'success', 'message' => 'Xoá thành công.']);
