@@ -1,24 +1,12 @@
 @extends('admin.layouts.master_iframe')
 @section('panel')
     <div class="row">
-        {{-- <div class="col-lg-12" style="height: 10px">
-            <div class="d-flex justify-content-between mb-3 row order-1">
-                <div class="dt-length col-md-6 col-4">
-                    <select name="example_length" id="perPage" style=" padding: 1px 3px; margin-right: 8px;"
-                        aria-controls="example" class="perPage">
-                        <option value="10">10</option>
-                        <option value="25">25</option>
-                        <option value="50">50</option>
-                        <option value="100">100</option>
-                    </select><label for="perPage"> entries per page</label>
-                </div>
-            </div>
-        </div> --}}
+
         <div class="pagination-container"></div>
+
         <div class="card b-radius--10 mt-1 scroll-container-main">
             <div class="card-body p-0">
                 <div class="table-responsive--md">
-                    {{-- giữ --}}
                     <table class="table--light style--two table table-striped" id="data-table">
                         <thead>
                             <tr>
@@ -39,19 +27,17 @@
                                 @endcan
                             </tr>
                         </thead>
-                        <tbody>
-                            <thead class="data-table">
-
-                            </thead>
+                        <tbody class="data-table">
                         </tbody>
                     </table>
 
                 </div>
             </div>
+       
+        </div>     
             @include('admin.booking.partials.room_booking')
             @include('admin.booking.partials.room_booking_edit')
             @include('admin.booking.partials.confirm-room')
-        </div>
     </div>
 @endsection
 
@@ -73,7 +59,7 @@
             <div class="form-group position-relative mb-0" style="display: flex;gap: 10px;">
                 <input class="searchInput input-field-search-book" name="booking_code" placeholder="Mã đặt phòng"
                     id="booking_code">
-                    <input class="searchInput input-field-search-book" name="room_name" placeholder="Tên phòng" id="room_name">
+                <input class="searchInput input-field-search-book" name="room_name" placeholder="Tên phòng" id="room_name">
                 {{-- <div class="d-flex" style="gap: 10px">
                     <input type="date" class="form-control " id="date-chon-phong-in" style="height: 35px">
                     <input type="date" class="form-control " id="date-chon-phong-out" style="height: 35px">
@@ -82,21 +68,27 @@
                 <button type="submit" class="btn btn-primary btn-submit-search-book">
                     <i class="las la-search"></i>
                 </button>
-              
-            </div>  
+
+            </div>
             <div style="  position: absolute;  right: 43px; display: flex;    gap: 10px;">
-                <button onclick="toggleView('viewBox')" data-view="viewBox" class="btn btn-primary btn-submit-search-book btn-toggle-view">
+                <button onclick="toggleView('viewBox')" data-view="viewBox"
+                    class="btn btn-primary btn-submit-search-book btn-toggle-view">
                     <svg fill="white" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 16 16" width="24" height="24">
-                        <path fill="white" d="M5.75 7.5h7.5a.75.75 0 0 1 0 1.5h-7.5a.75.75 0 0 1 0-1.5Zm0 5h7.5a.75.75 0 0 1 0 1.5h-7.5a.75.75 0 0 1 0-1.5Zm-4-10h6.5a.75.75 0 0 1 0 1.5h-6.5a.75.75 0 0 1 0-1.5ZM2 14a1 1 0 1 1 0-2 1 1 0 0 1 0 2Zm1-6a1 1 0 1 1-2 0 1 1 0 0 1 2 0Zm10.314-3.082L11.07 2.417A.25.25 0 0 1 11.256 2h4.488a.25.25 0 0 1 .186.417l-2.244 2.5a.25.25 0 0 1-.372 0Z"></path>
+                        <path fill="white"
+                            d="M5.75 7.5h7.5a.75.75 0 0 1 0 1.5h-7.5a.75.75 0 0 1 0-1.5Zm0 5h7.5a.75.75 0 0 1 0 1.5h-7.5a.75.75 0 0 1 0-1.5Zm-4-10h6.5a.75.75 0 0 1 0 1.5h-6.5a.75.75 0 0 1 0-1.5ZM2 14a1 1 0 1 1 0-2 1 1 0 0 1 0 2Zm1-6a1 1 0 1 1-2 0 1 1 0 0 1 2 0Zm10.314-3.082L11.07 2.417A.25.25 0 0 1 11.256 2h4.488a.25.25 0 0 1 .186.417l-2.244 2.5a.25.25 0 0 1-.372 0Z">
+                        </path>
                     </svg>
                 </button>
-                
-                <button onclick="toggleView('viewModel')" data-view="viewModel" class="btn btn-primary btn-submit-search-book btn-toggle-view">
+
+                <button onclick="toggleView('viewModel')" data-view="viewModel"
+                    class="btn btn-primary btn-submit-search-book btn-toggle-view">
                     <svg fill="white" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 16 16" width="16" height="16">
-                        <path fill="white" d="M1.75 2.5h10.5a.75.75 0 0 1 0 1.5H1.75a.75.75 0 0 1 0-1.5Zm4 5h8.5a.75.75 0 0 1 0 1.5h-8.5a.75.75 0 0 1 0-1.5Zm0 5h8.5a.75.75 0 0 1 0 1.5h-8.5a.75.75 0 0 1 0-1.5ZM2.5 7.75v6a.75.75 0 0 1-1.5 0v-6a.75.75 0 0 1 1.5 0Z"></path>
+                        <path fill="white"
+                            d="M1.75 2.5h10.5a.75.75 0 0 1 0 1.5H1.75a.75.75 0 0 1 0-1.5Zm4 5h8.5a.75.75 0 0 1 0 1.5h-8.5a.75.75 0 0 1 0-1.5Zm0 5h8.5a.75.75 0 0 1 0 1.5h-8.5a.75.75 0 0 1 0-1.5ZM2.5 7.75v6a.75.75 0 0 1-1.5 0v-6a.75.75 0 0 1 1.5 0Z">
+                        </path>
                     </svg>
                 </button>
-                
+
             </div>
         </div>
         <div class="modal fade" id="addRoomModal" tabindex="-1" aria-hidden="true" style="overflow: unset">
@@ -216,11 +208,19 @@
                 }
             });
         });
-    
     </script>
 @endpush
 @push('style')
     <style scoped>
+        .table-striped tbody tr:nth-of-type(2n+1) {
+            background-color: rgba(115, 115, 115, 0.05) !important;
+        }
+        .data-table td {
+            height: 30px !important;
+            overflow: hidden;
+            white-space: nowrap;
+        }
+
         .dt-column-title {
             color: white !important;
         }
@@ -239,13 +239,6 @@
 
         .text-center {
             text-align: center;
-        }
-
-        #data-table tbody tr:hover {
-            background-color: #f0f0f0;
-            /* Màu nền khi hover */
-            cursor: pointer;
-            /* Con trỏ chuột đổi thành dạng pointer */
         }
 
         #show-room tr td,

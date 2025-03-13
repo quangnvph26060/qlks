@@ -1,12 +1,14 @@
 @extends('admin.layouts.master_iframe')
 @section('panel')
-    <div class="pagination-container mb-1"></div>
+    
     <div class="row">
+        <div class="pagination-container"></div>
 
-        <div class="card b-radius--10 scroll-container-main">
+        <div class="card b-radius--10 mt-1 scroll-container-main">
+
             <div class="card-body p-0">
                 <div class="table-responsive--md">
-                    <table class="table--light style--two table table-striped" id="data-table">
+                    <table class="table--light style--two table-striped table" id="data-table">
                         <thead>
                             <tr>
                                 <th></th>
@@ -27,10 +29,7 @@
                                 @endcan --}}
                             </tr>
                         </thead>
-                        <tbody>
-                            <thead class="data-table">
-
-                            </thead>
+                        <tbody class="data-table">
                         </tbody>
                     </table>
 

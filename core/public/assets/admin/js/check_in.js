@@ -1514,26 +1514,25 @@ function showBookedRoom(value = "", option_customer_source = "") {
                 const totalDiscount = bookingData.reduce((sum, booking) => sum + parseFloat(booking.discount || 0), 0);
                 const totalAmount = bookingData.reduce((sum, booking) => sum + parseFloat(booking.deposit_amount || 0), 0);
                 bookingData.forEach(function (record, idx) {
-
                     if (idx === 0) {
                         tr += `
 
-                                        <tr data-id="${record['id']}">
-                                            <td>
-                                                <button class="btn btn-link btn-toggle" type="button"
-                                                onclick="toggleRepresentatives('${record['booking_id']}', this)"></button>
-                                            </td>
-                                            <td class="text-left">${record['booking_id']}</td>
-                                            <td class="text-right">${bookingData.length}</td>
-                                            <td class="text-right">${formatDateTime(record['document_date'])}</td>
-                                            <td class="text-left">${record['customer_name'] ? record['customer_name'] : 'N/A'}</td>
-                                            <td class="text-right">${record['phone_number'] ? record['phone_number'] : 'N/A'}</td>
-                                            <td class="text-right">${totalGuests}</td>
-                                            <td class="text-right">${formatCurrency(totalPrice)}</td>
-                                            <td class="text-right">${formatCurrency(totalAmount)}</td>
-                                            <td class="text-right">${formatCurrency(totalDiscount)}</td>
-                                        </tr>
-                                          <tr class="collapse ${currentView === 'viewModel' ? "show" : ""}" id="rep-${firstRecord['booking_id']}">
+                            <tr data-id="${record['id']}">
+                                <td>
+                                    <button class="btn btn-link btn-toggle" type="button"
+                                    onclick="toggleRepresentatives('${record['booking_id']}', this)"></button>
+                                </td>
+                                <td class="text-left">${record['booking_id']}</td>
+                                <td class="text-right">${bookingData.length}</td>
+                                <td class="text-right">${formatDateTime(record['document_date'])}</td>
+                                <td class="text-left">${record['customer_name'] ? record['customer_name'] : 'N/A'}</td>
+                                <td class="text-right">${record['phone_number'] ? record['phone_number'] : 'N/A'}</td>
+                                <td class="text-right">${totalGuests}</td>
+                                <td class="text-right">${formatCurrency(totalPrice)}</td>
+                                <td class="text-right">${formatCurrency(totalAmount)}</td>
+                                <td class="text-right">${formatCurrency(totalDiscount)}</td>
+                            </tr>
+                            <tr class="collapse ${currentView === 'viewModel' ? "show" : ""}" id="rep-${firstRecord['booking_id']}">
                                     <td colspan="12">
                                         <table class="table--light style--two  table">
                                             <thead>
@@ -1578,15 +1577,14 @@ function showBookedRoom(value = "", option_customer_source = "") {
                                     </tr>
 
                                 `;
-
-                    if (idx === bookingData.length - 1) {
-                        tr += `
-                                                </tbody>
-                                            </table>
-                                        </td>
-                                    </tr>
-                                `;
-                    }
+                            if (idx === bookingData.length - 1) {
+                                tr += `
+                                                        </tbody>
+                                                    </table>
+                                                </td>
+                                            </tr>
+                                        `;
+                            }
 
                 });
             });

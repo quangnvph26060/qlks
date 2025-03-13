@@ -1,37 +1,38 @@
 @extends('admin.layouts.master_iframe')
 @section('panel')
     <div class="row">
-        <div class="col-lg-12">
-            <div class="pagination-container"> </div>
-            <div class="card b-radius--10 scroll-container-main">
+       
+        <div class="pagination-container"> </div>
+        
+        <div class="card b-radius--10 scroll-container-main">
 
-                <div class="card-body p-0">
-                    <div class="table-responsive--md table-responsive mt-1">
-                        <table class="table--light style--two table" id="data-table">
-                            <thead>
-                                <tr>
-                                    <th data-table="Hạng phòng">Hạng phòng</th>
-                                    <th data-table="Phòng">Tên phòng</th>
-                                    <th data-table="Ngày">Ngày</th>
-                                    <th data-table="Trạng thái phòng">Trạng thái phòng</th>
-                                    <th data-table="Giá">Giá</th>
-                                    {{-- <th data-table="Thao tác">Thao tác</th> --}}
-                                </tr>
-                            </thead>
+            <div class="card-body p-0">
+                <div class="table-responsive--md table-responsive mt-1">
+                    <table class="table--light style--two table-striped table" id="data-table">
+                        <thead>
+                            <tr>
+                                <th data-table="Hạng phòng">Hạng phòng</th>
+                                <th data-table="Phòng">Tên phòng</th>
+                                <th data-table="Ngày">Ngày</th>
+                                <th data-table="Trạng thái phòng">Trạng thái phòng</th>
+                                <th data-table="Giá">Giá</th>
+                                {{-- <th data-table="Thao tác">Thao tác</th> --}}
+                            </tr>
+                        </thead>
 
-                            <tbody id="show-room">
+                        <tbody id="show-room">
 
-                            </tbody>
-                        </table>
-                    </div>
+                        </tbody>
+                    </table>
                 </div>
-                {{-- @if ($roomStatusHistory->hasPages())
-                    <div class="card-footer py-4">
-                        {{ paginateLinks($roomStatusHistory) }}
-                    </div>
-                @endif --}}
             </div>
+            {{-- @if ($roomStatusHistory->hasPages())
+                <div class="card-footer py-4">
+                    {{ paginateLinks($roomStatusHistory) }}
+                </div>
+            @endif --}}
         </div>
+       
 
     </div>
 
@@ -203,7 +204,7 @@
         }
 
         #data-table td {
-            height: 30px !important;
+            height: 37px !important;
             overflow: hidden;
             white-space: nowrap;
             /* Ngăn xuống dòng để giảm chiều cao */

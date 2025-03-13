@@ -3469,6 +3469,7 @@ tbody tr .address-content p:hover {
 }
 .table.table--light.style--two tbody td{
     border: 1px solid lightgray;
+    padding: 3px !important;
 }
 
 .table td {
@@ -3732,9 +3733,7 @@ table.table--light.style--two thead th {
     padding-right: 25px; */
 }
 
-table.table--light.style--two tbody td {
-    padding: 5px;
-}
+
 
 .customer-details {
     display: -ms-flexbox;

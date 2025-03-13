@@ -223,7 +223,7 @@ aria-hidden="true">
 </div>
 </div>
 <style scoped>
- .table td{
+ /* .table td{
     padding: 15px 5px !important;
- }
+ } */
 </style>

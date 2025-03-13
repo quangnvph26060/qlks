@@ -227,9 +227,6 @@ textarea {
 .table-responsive::-webkit-scrollbar {
     display: none;
 }
-.table td{
-    vertical-align: sub  !important;
-}
 #list-booking tr,#list-booking-edit tr {
     vertical-align: top;
 }
@@ -312,9 +309,7 @@ hr {
     background: #3e454552;
 }
 
-.room-info p {
-    /* color: #7b7777 !important; */
-}
+
 
 .removeServiceBtn,
 .removeProductBtn {

@@ -1,22 +1,9 @@
 @extends('admin.layouts.master_iframe')
 @section('panel')
-<div class="pagination-container mb-1"></div>
+
     <div class="row">
-        {{-- <div class="col-lg-12">
-            <div class="d-flex justify-content-between mb-3 row order-1">
-                <div class="dt-length col-md-6 col-4">
-                    <select name="example_length" id="perPage" style=" padding: 1px 3px; margin-right: 8px;"
-                        aria-controls="example" class="perPage">
-                        <option value="10">10</option>
-                        <option value="25">25</option>
-                        <option value="50">50</option>
-                        <option value="100">100</option>
-                    </select><label for="perPage"> entries per page</label>
-                </div>
-            </div>
-        </div> --}}
-     
-        <div class="card b-radius--10">
+        <div class="pagination-container"></div>
+        <div class="card b-radius--10 scroll-container-main">
             <div class="card-body p-0">
                 <div class="table-responsive--md">
                     <table class="table--light style--two table table-striped" id="data-table">
@@ -34,25 +21,14 @@
                                 <th>@lang('Tổng tiền')</th>
                                 <th>@lang('Đặt cọc')</th>
                                 <th>Giảm giá</th>
-
-                                {{-- @can(['admin.hotel.room.type.edit', 'admin.hotel.room.type.status',
-                                    'admin.hotel.room.type.destroy'])
-                              
-                                @endcan --}}
                             </tr>
                         </thead>
-                        <tbody>
-                            <thead class="data-table">
-
-                            </thead>
+                        <tbody  class="data-table">
                         </tbody>
                     </table>
-
                 </div>
             </div>
-          
         </div>
-     
         {{-- @include('admin.booking.partials.room_booking') --}}
         @include('admin.booking.partials.confirm-room')
         @include('admin.booking.partials.check-in-room')
