@@ -68,6 +68,7 @@ return Application::configure(basePath: dirname(__DIR__))
             'registration.complete' => \App\Http\Middleware\RegistrationStep::class,
             'maintenance'           => \App\Http\Middleware\MaintenanceMode::class,
             'adminPermission'       => \App\Http\Middleware\AdminPermissionMiddleware::class,
+            'verifyToken'           => \App\Http\Middleware\VerifyApiToken::class,
         ]);
 
         $middleware->validateCsrfTokens(

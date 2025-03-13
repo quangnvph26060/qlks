@@ -1,5 +1,6 @@
 <?php
 
+use App\Http\Controllers\Api\UserController;
 use Illuminate\Support\Facades\Route;
 
 /*
@@ -13,37 +14,37 @@ use Illuminate\Support\Facades\Route;
 |
 */
 
-Route::namespace('Api')->name('api.')->group(function(){
+Route::namespace('Api')->name('api.')->group(function () {
 
     Route::controller('AppController')->group(function () {
-        Route::get('general-setting','generalSetting');
-        Route::get('get-countries','getCountries');
-        Route::get('language/{key}','getLanguage');
+        Route::get('general-setting', 'generalSetting');
+        Route::get('get-countries', 'getCountries');
+        Route::get('language/{key}', 'getLanguage');
         Route::get('policies', 'policies');
         Route::get('faq', 'faq');
     });
 
-	Route::namespace('Auth')->group(function(){
-        Route::controller('LoginController')->group(function(){
+    Route::namespace('Auth')->group(function () {
+        Route::controller('LoginController')->group(function () {
             Route::post('login', 'login');
             Route::post('check-token', 'checkToken');
             Route::post('social-login', 'socialLogin');
         });
-		Route::post('register', 'RegisterController@register');
+        Route::post('register', 'RegisterController@register');
 
-        Route::controller('ForgotPasswordController')->group(function(){
+        Route::controller('ForgotPasswordController')->group(function () {
             Route::post('password/email', 'sendResetCodeEmail');
             Route::post('password/verify-code', 'verifyCode');
             Route::post('password/reset', 'reset');
         });
-	});
+    });
 
     Route::middleware('auth:sanctum')->group(function () {
 
         Route::post('user-data-submit', 'UserController@userDataSubmit');
 
         //authorization
-        Route::middleware('registration.complete')->controller('AuthorizationController')->group(function(){
+        Route::middleware('registration.complete')->controller('AuthorizationController')->group(function () {
             Route::get('authorization', 'authorization');
             Route::get('resend-verify/{type}', 'sendVerifyCode');
             Route::post('verify-email', 'emailVerification');
@@ -53,22 +54,22 @@ Route::namespace('Api')->name('api.')->group(function(){
 
         Route::middleware(['check.status'])->group(function () {
 
-            Route::middleware('registration.complete')->group(function(){
-                Route::get('dashboard',function(){
+            Route::middleware('registration.complete')->group(function () {
+                Route::get('dashboard', function () {
                     return auth()->user();
                 });
 
 
-                Route::controller('UserController')->group(function(){
+                Route::controller('UserController')->group(function () {
 
                     Route::post('profile-setting', 'submitProfile');
                     Route::post('change-password', 'submitPassword');
 
-                    Route::get('user-info','userInfo');
+                    Route::get('user-info', 'userInfo');
 
                     //Report
                     Route::any('deposit/history', 'depositHistory');
-                    Route::get('transactions','transactions');
+                    Route::get('transactions', 'transactions');
 
                     Route::post('add-device-token', 'addDeviceToken');
                     Route::get('push-notifications', 'pushNotifications');
@@ -80,11 +81,10 @@ Route::namespace('Api')->name('api.')->group(function(){
                     Route::post('twofactor/disable', 'disable2fa');
 
                     Route::post('delete-account', 'deleteAccount');
-
                 });
 
                 // Payment
-                Route::controller('PaymentController')->group(function(){
+                Route::controller('PaymentController')->group(function () {
                     Route::get('deposit/methods', 'methods');
                     Route::post('deposit/insert', 'depositInsert');
                     Route::post('app/payment/confirm', 'appPaymentConfirm');
@@ -98,10 +98,11 @@ Route::namespace('Api')->name('api.')->group(function(){
                     Route::post('close/{id}', 'closeTicket');
                     Route::get('download/{attachment_id}', 'ticketDownload');
                 });
-
             });
         });
 
         Route::get('logout', 'Auth\LoginController@logout');
     });
 });
+
+    Route::post('/user/store', [UserController::class, 'store']);
