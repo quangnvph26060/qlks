@@ -342,13 +342,23 @@ function saveRoomStatusHistory($room_id, $start_date, $end_date, $status_code)
     $end_date = Carbon::parse($end_date)->format('Y-m-d');
 
     $existingRecords = RoomStatusHistory::where('room_id', $room_id)
-        ->where('start_date', $start_date)
-        ->where('end_date', $end_date)
-        ->get();
+        ->where(function ($query) use ($start_date, $end_date) {
+            $query->whereBetween('start_date', [$start_date, $end_date])
+                ->orWhereBetween('end_date', [$start_date, $end_date])
+                ->orWhere(function ($q) use ($start_date, $end_date) {
+                    $q->where('start_date', '<=', $start_date)
+                        ->where('end_date', '>=', $end_date);
+                });
+        })
+    ->get();
 
     if ($existingRecords->isNotEmpty()) {
-        $existingRecords->each(function ($record) use ($status_code) {
-            $record->update(['status_code' => $status_code]);
+        $existingRecords->each(function ($record) use ($status_code, $start_date, $end_date) {
+            $record->update([
+                'start_date'  => Carbon::parse($start_date),
+                'end_date'    => Carbon::parse($end_date),
+                'status_code' => $status_code
+        ]);
         });
     } else {
         RoomStatusHistory::create([

@@ -100,7 +100,7 @@ class BookingController extends Controller
     //123
     public function getBooking(Request $request)
     {
-        Log::info($request->all());
+      
 
         $perPage = 10;
         $roomBookings = CheckIn::with('room', 'admin')
@@ -497,13 +497,16 @@ class BookingController extends Controller
         }
         // hạng phòng
         $roomType = RoomType::active()->get();
-        // tên phòng
-        $room = Room::active();
-        if ($request->method !== 'change_room') {
-            $room = $room->get();
-        } else {
-            $room = $room->where('id', $request->roomId)->first();
+
+        //  phòng
+        $rooms = Room::active();
+        if ($request->method === 'change_room') {
+            $rooms = $rooms->where('id', $request->roomId)->first();
+        } else{
+              $rooms = $room->get();
         }
+      
+
         $newRecordsUpdated = []; // Khởi tạo mảng mới
 
         foreach ($newRecords as &$item) {
@@ -533,20 +536,19 @@ class BookingController extends Controller
                 'status' => 'success',
                 // 'data'   => $emptyRooms,
                 'data'               => $newRecordsUpdated,
-                'room_number'        => $room,
+                'room_number'        => $rooms,
                 'bookingId'          => $request->bookingId,
                 'roomId'             => $request->roomId,
                 'id'                 => $request->Id,
-                'dateBookingRoomOld' => date("d/m/Y", strtotime($request->dateId)),
+                'dateBookingRoomOld' => date("d/m/Y", strtotime(now())),
             ]);
         }
-        return response()->json([
-            'roomIds' => $request->roomIds,
-            'status' => 'success',
-            // 'data'   => $emptyRooms,
-            'roomType' => $roomType,
-            'room'  => $room,
-            'data'   => $newRecordsUpdated,
+        return response()->json([  
+            'status'        => 'success',
+            'roomIds'       => $request->roomIds,
+            'roomType'      => $roomType,
+            'room'          => $rooms,
+            'data'          => $newRecordsUpdated,
             'option_hang_phong'   => $request->optionHangPhong,
             'option_name_phong'   => $request->optionNamePhong,
             'option_status_phong' => $request->optionStatusPhong,
@@ -650,12 +652,13 @@ class BookingController extends Controller
             $roomBooking = CheckIn::where('room_code', $request->room_old)
                 // ->orWhere('room_change',$request->room_old)
                 ->where('check_in_id', $request->booking_id)
-                //  ->whereDate('checkin_date',$request->date_new)
-                ->with('room')->first();
+                ->whereDate('checkin_date',$request->date_new)
+                ->with('room')
+                ->first();
             if (!$roomBooking) {
                 $roomBooking = CheckIn::where('room_change', $request->room_old)
                     ->where('check_in_id', $request->booking_id)
-                    //->whereDate('checkin_date', $request->date_new)
+                    ->whereDate('checkin_date', $request->date_new) // check có nằm trong khoảng checkin và checkout đó không 
                     ->with('room')
                     ->first();
             }
@@ -670,13 +673,22 @@ class BookingController extends Controller
             if (!$isRoom) {
                 return ApiResponse::error('Không tìm thấy phòng', 200);
             }
-            // $isRoomChange = RoomChange::where('id_check_in', $request->booking_id)
-            //     ->where('old_room_code', $request->room_old)
-            //     // ->where('new_room_code',$request->room_id_new)
-            //     ->whereDate('checkin_date', $request->date_new)->exists();
-            // if ($isRoomChange) {
-            //     return ApiResponse::error('Phòng đã được đổi trong ngày ' . Carbon::parse($request->date_new)->format('d-m-Y'), 200);
-            // }
+            $start_date = Carbon::parse(now())->format('Y-m-d');
+                $end_date = Carbon::parse($roomBooking->checkout_date)->format('Y-m-d');
+
+            $checkRoom = RoomStatusHistory::where('room_id', $request->room_id_new)
+            ->where(function ($query) use ($start_date, $end_date) {
+                $query->whereBetween('start_date', [$start_date, $end_date])
+                    ->orWhereBetween('end_date', [$start_date, $end_date])
+                    ->orWhere(function ($q) use ($start_date, $end_date) {
+                        $q->where('start_date', '<=', $start_date)
+                            ->where('end_date', '>=', $end_date);
+                    });
+            })
+            ->whereIn('status_code',[2,3])->first();
+            if ($checkRoom) {
+                return ApiResponse::error('Phòng '  . $isRoom->room_number .  ' đã được đặt trong ngày ' . Carbon::parse($checkRoom->start_date)->format('d-m-Y'), 200);
+            }
             if ($roomBooking->room_change) {
                 $roomChange = RoomChange::where('id_check_in', $request->booking_id)
                     ->where('new_room_code', $request->room_old)
@@ -711,30 +723,40 @@ class BookingController extends Controller
             // }
             $roomChange->save();
 
-            // if ($roomBooking->id_room_booking) {
-            //         saveRoomStatusHistory($isRoom->id, now(), $roomBooking->checkin_date, 3); // phòng mới 
-            //     if ($roomBooking->room_change) {
-            //         saveRoomStatusHistory($roomBooking->room_change, $roomBooking->checkin_date, $roomBooking->checkin_date, 1); // phòng cũ 
-            //     }else{
-            //         saveRoomStatusHistory($roomBooking->room_code, $roomBooking->checkin_date, $roomBooking->checkin_date, 1); // phòng cũ 
-            //     }
-            // }else{
-            //     saveRoomStatusHistory($isRoom->id, now(), $roomBooking->checkout_date, 3); // phòng mới 
-            //     if ($roomBooking->room_change) {
-            //         saveRoomStatusHistory($roomBooking->room_change, $roomBooking->checkin_date, $roomBooking->checkout_date, 1); // phòng cũ 
-            //     }else{
-            //         saveRoomStatusHistory($roomBooking->room_code, $roomBooking->checkin_date, $roomBooking->checkout_date, 1); // phòng cũ 
-            //     }
-            // }
-            $endDateNewRoom = $roomBooking->id_room_booking ? $roomBooking->checkin_date : $roomBooking->checkout_date;
-            $endDateOldRoom = $roomBooking->checkout_date;
+            if ($roomBooking->id_room_booking) {
+                $daysDifference = Carbon::parse(now())->startOfDay()->diffInDays(Carbon::parse($roomBooking->checkout_date)->startOfDay());
 
-            saveRoomStatusHistory($isRoom->id, now(), $endDateNewRoom, 3);
+                if($daysDifference <= 1){
+                    saveRoomStatusHistory($isRoom->id, now(), $roomBooking->checkin_date, 3); // phòng mới 
+                }else{
+                    $dateOut = Carbon::parse($roomBooking->checkout_date)->subDay();
+                    saveRoomStatusHistory($isRoom->id, now(), $dateOut, 3); // phòng mới 
+                }
 
-            $oldRoomId = $roomBooking->room_change ?: $roomBooking->room_code;
+                if ($roomBooking->room_change) {
+                    saveRoomStatusHistory($roomBooking->room_change, $roomBooking->checkin_date, $roomBooking->checkin_date, 1); // phòng cũ 
+                }else{
+                    if($daysDifference <= 1){
+                        saveRoomStatusHistory($roomBooking->room_code, $roomBooking->checkin_date, $roomBooking->checkin_date, 1);
+                    }else{
+                        saveRoomStatusHistory($roomBooking->room_code, $roomBooking->checkin_date, $roomBooking->checkin_date, 1);
+                    }  
+                }
+            }else{
+                $daysDifference = Carbon::parse(now())->startOfDay()->diffInDays(Carbon::parse($roomBooking->checkout_date)->startOfDay());
+                $dateOut = Carbon::parse($roomBooking->checkout_date)->subDay();
+                if($daysDifference <= 1){
+                    saveRoomStatusHistory($isRoom->id, now(), $roomBooking->checkin_date, 3); // phòng mới 
+                }else{
+                    saveRoomStatusHistory($isRoom->id, now(), $dateOut, 3); // phòng mới 
+                }
 
-            saveRoomStatusHistory($oldRoomId, $roomBooking->checkin_date, $endDateOldRoom, 1);
-            
+                if ($roomBooking->room_change) {
+                    saveRoomStatusHistory($roomBooking->room_change, $roomBooking->checkin_date, $dateOut, 1); // phòng cũ 
+                }else{
+                    saveRoomStatusHistory($roomBooking->room_code, $roomBooking->checkin_date, $dateOut, 1); // phòng cũ 
+                }
+            }
             $roomBooking->room_change = $isRoom->id;
             $roomBooking->save();
 
@@ -795,32 +817,23 @@ class BookingController extends Controller
                 ->whereDate('checkin_date', $data['date'])
                 ->whereNull('room_change')
                 ->first();
-            if ($roomBooking || $checkIn) {
-                Log::info('123');
-                $flag = 'error';
-                $result[] = [
-                    'room_type' => '',
-                    'room' => '',
-                ];
-                return response()->json(['data' => $result, 'status' => $flag]);
-            }
-
-            if (!$room_type || !$room) {
-                $flag = 'error';
-                $result[] = [
-                    'room_type' => '',
-                    'room' => '',
-                ];
-            } else {
-                $flag = 'success';
-                $result[] = [
-                    'room_type' => $room_type,
-                    'room'      => $room,
-                    'date'      => $data['date'],
-
-                ];
-            }
+                if ($roomBooking || $checkIn || !$room_type || !$room) {
+                    $flag = 'success';
+                    $result[] = [
+                        'room_type' => $room_type,
+                        'room'      => $room,
+                        'date'      => $data['date'],
+                    ];
+                } else {
+                    $flag = 'success';
+                    $result[] = [
+                        'room_type' => $room_type,
+                        'room'      => $room,
+                        'date'      => $data['date'],
+                    ];
+                }
         }
+
         return response()->json(['data' => $result, 'status' => $flag]);
     }
 
@@ -1158,7 +1171,13 @@ class BookingController extends Controller
             if (!empty($roomBooking->room_change)) {
                 return response()->json(['status' => 'error', 'message' => 'Phòng đã có thay đổi, không thể xoá.']);
             }
-            saveRoomStatusHistory($roomBooking->room_code, $roomBooking->checkin_date, $roomBooking->checkout_date, 1);
+                $daysDifference = floor(Carbon::parse($roomBooking->checkin_date)->floatDiffInDays(Carbon::parse($roomBooking->checkout_date)));
+                        
+                if($daysDifference == 1){
+                    saveRoomStatusHistory($roomBooking->room_code, $roomBooking->checkin_date, $roomBooking->checkin_date, 1);
+                }else{
+                    saveRoomStatusHistory($roomBooking->room_code, $roomBooking->checkin_date, $roomBooking->checkout_date, 1);
+                }
             $roomBooking->delete();
         }
         return response()->json(['status' => 'success', 'message' => 'Xoá thành công.']);

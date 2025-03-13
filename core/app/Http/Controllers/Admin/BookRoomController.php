@@ -242,26 +242,13 @@ class BookRoomController extends Controller
         DB::beginTransaction();
         try {
             $validator = Validator::make($request->all(), [
-                // 'room_type_id'    => 'required|integer|gt:0',
-                // 'guest_type'      => 'required|in:1,0',
-                // 'guest_name'      => 'nullable|required_if:guest_type,0',
-                // 'email'           => 'required|email',
-                // 'mobile'          => 'nullable|required_if:guest_type,0|regex:/^([0-9]*)$/',
-                // 'address'         => 'nullable|required_if:guest_type,0|string',
                 'name'      => 'nullable|required_if:guest_type,0',
-                // 'room'            => 'required|array',
-                // 'paid_amount'     => 'nullable|numeric|gte:0' // tiền mà khách đã thanh toán trước
             ]);
 
             if ($validator->fails()) {
                 return response()->json(['error' => $validator->errors()->all()]);
             }
-            $guest = [];
-
-
             $bookingId = null;
-            // $bookedRoomData = [];
-            // $totalFare      = 0;
             $tax            = gs('tax'); // thuế
             $uniqueRooms = [];
             $filteredRooms = [];
@@ -296,9 +283,18 @@ class BookRoomController extends Controller
 
                 $is_room = Room::find($room['room']);
 
+                $start_date = Carbon::parse($room['dateIn'])->format('Y-m-d');
+                $end_date = Carbon::parse($room['dateOut'])->format('Y-m-d');
+
                 $checkRoom = RoomStatusHistory::where('room_id', $room['room'])
-                    ->whereDate('start_date', '<=', Carbon::parse($room['dateIn'])->format('Y-m-d'))
-                    ->whereDate('end_date', '>=', Carbon::parse($room['dateIn'])->format('Y-m-d'));
+                    ->where(function ($query) use ($start_date, $end_date) {
+                        $query->whereBetween('start_date', [$start_date, $end_date])
+                            ->orWhereBetween('end_date', [$start_date, $end_date])
+                            ->orWhere(function ($q) use ($start_date, $end_date) {
+                                $q->where('start_date', '<=', $start_date)
+                                    ->where('end_date', '>=', $end_date);
+                            });
+                    });
                 if ($request->method == 'check_in') {
                   //  $checkRoom->where('status_code', 3); // đang ở
                   $checkRoom->whereIn('status_code', [2, 3]);
@@ -312,7 +308,7 @@ class BookRoomController extends Controller
                 if ($checkRoom) {
                     DB::rollBack();
                     return response()->json([
-                        'error' => 'Phòng ' . $is_room['room_number'] . ' đã được đặt trong ngày ' . Carbon::parse($dateIn)->format('d-m-Y')
+                        'error' => 'Phòng ' . $is_room['room_number'] . ' đã được đặt trong ngày ' . Carbon::parse($checkRoom->start_date)->format('d-m-Y')
                     ]);
                 }
 
@@ -335,7 +331,15 @@ class BookRoomController extends Controller
                
 
                 if ($request->method == 'check_in') {
-                    saveRoomStatusHistory($room['room'], $dateIn, $dateOut, 3);
+                    $daysDifference = floor(Carbon::parse($dateIn)->floatDiffInDays(Carbon::parse($dateOut)));
+                  
+                    if($daysDifference <= 1){
+                        saveRoomStatusHistory($room['room'], $dateIn, $dateIn, 3);
+                    }else{
+                        $dateOut = Carbon::parse($dateOut)->subDay();
+                        saveRoomStatusHistory($room['room'], $dateIn, $dateOut, 3);
+                    }
+                    
                 } else {
                     saveRoomStatusHistory($room['room'], $dateIn, $dateIn, 2);
                 }
@@ -457,6 +461,13 @@ class BookRoomController extends Controller
 
                         $checkRoom->status = Status::ROOM_ACTIVE;
                         $checkRoom->save();
+                        $daysDifference = Carbon::parse($dateIn)->startOfDay()->diffInDays(Carbon::parse($dateOut)->startOfDay());
+                        if($daysDifference <= 1){
+                            saveRoomStatusHistory($room['room'], $dateIn, $dateIn, 3);
+                        }else{
+                            $dateOut = Carbon::parse($dateOut)->subDay();
+                            saveRoomStatusHistory($room['room'], $dateIn, $dateOut, 3);
+                        }
                     }
                 } else {
                     $check_in_new                 = new CheckIn();
@@ -464,8 +475,8 @@ class BookRoomController extends Controller
                     $check_in_new->id_room_booking = $request->id_room_booking;
                     $check_in_new->room_code      = $room['room'];
                     $check_in_new->document_date  = now();
-                    $check_in_new->checkin_date   = Carbon::parse($room['dateIn']);
-                    $check_in_new->checkout_date  = Carbon::parse($room['dateOut']);
+                    $check_in_new->checkin_date   = $dateIn;
+                    $check_in_new->checkout_date  = $dateOut;
                     $check_in_new->customer_code  = $customer['customer_code'] ?? $request->customer_code;
                     $check_in_new->customer_name  = $customer['name'] ?? $request->name;
                     $check_in_new->phone_number   = $customer['phone'] ?? $request->phone;
@@ -480,8 +491,17 @@ class BookRoomController extends Controller
                     $check_in_new->unit_code      = hf('ma_coso');
                     $check_in_new->created_by     = $request->name_staff ??  authAdmin()->id;
                     $check_in_new->save();
+                     
+                    $daysDifference = floor(Carbon::parse($dateIn)->floatDiffInDays(Carbon::parse($dateOut)));
+                  
+                    if($daysDifference <= 1){
+                        saveRoomStatusHistory($room['room'], $dateIn, $dateIn, 3);
+                    }else{
+                        $dateOut = Carbon::parse($dateOut)->subDay();
+                        saveRoomStatusHistory($room['room'], $dateIn, $dateOut, 3);
+                    }
                 } 
-                 saveRoomStatusHistory($room['room'], $dateIn, $dateIn, 3);
+             
             }
           
 
@@ -601,7 +621,7 @@ class BookRoomController extends Controller
                     if (!empty($roomBooking->room_change)) {
                         return response()->json(['status' => 'error', 'message' => 'Phòng đã có thay đổi, không thể xoá.']);
                     }
-                    saveRoomStatusHistory($roomBooking->room_code, $roomBooking->checkin_date, $roomBooking->checkout_date, 1);
+                    saveRoomStatusHistory($roomBooking->room_code, $roomBooking->checkin_date, $roomBooking->checkin_date, 1);
                     $roomBooking->delete();
                 }
                 return response()->json(['status' => 'success', 'message' => 'Xoá thành công.']);
@@ -630,8 +650,24 @@ class BookRoomController extends Controller
                     if (!empty($checkIn->room_change)) {
                         return response()->json(['status' => 'error', 'message' => 'Phòng đã có thay đổi, không thể xoá.']);
                     }
-
-                    saveRoomStatusHistory($checkIn->room_code, $checkIn->checkin_date, $checkIn->checkout_date, 1);
+                    $daysDifference = Carbon::parse($checkIn->checkin_date)->startOfDay()->diffInDays(Carbon::parse($checkIn->checkout_date)->startOfDay());
+                    if($checkIn->id_room_booking){
+                        if($daysDifference <= 1){
+                            saveRoomStatusHistory($checkIn->room_code, $checkIn->checkin_date, $checkIn->checkin_date, 1);
+                        }else{
+                            $dateOut = Carbon::parse($checkIn->checkout_date)->subDay();
+                            saveRoomStatusHistory($checkIn->room_code, $checkIn->checkin_date, $dateOut, 1);
+                        }
+                      
+                    }else{
+                     
+                        if($daysDifference <= 1){
+                            saveRoomStatusHistory($checkIn->room_code, $checkIn->checkin_date, $checkIn->checkin_date, 1);
+                        }else{
+                            $dateOut = Carbon::parse($checkIn->checkout_date)->subDay();
+                            saveRoomStatusHistory($checkIn->room_code, $checkIn->checkin_date, $dateOut, 1);
+                        }
+                    }
                     $checkIn->delete();
                 }
 

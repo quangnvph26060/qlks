@@ -126,7 +126,7 @@ function showRoom(data = "", checkInDateValue = "", checkOutDateValue = "", sele
                             <td style="${isFirst ? 'font-weight: bold;' : ''}"class="text-left ${rowClass}"> ${item.check_booked} </td>
                             <td style="${isFirst ? 'font-weight: bold;' : ''}"class="text-right"> ${formatCurrency(item.room_type.room_type_price['unit_price'])} </td>
                             <td>
-                                <input type="checkbox" ${item.status == 1 ? 'disabled' : ''} data-date="${item.date}" data-id="${item.id}" data-room_type_id="${item.room_type_id}" id="checkbox-${item.id}">
+                                <input type="checkbox" ${item.status == 1 ? 'disabled' : ''} ${item.checkbox !== undefined ? 'checked disabled' : ''} data-date="${item.date}" data-id="${item.id}" data-room_type_id="${item.room_type_id}" id="checkbox-${item.id}">
                             </td>
                         </tr>
                     `;
@@ -180,6 +180,7 @@ function showRoom(data = "", checkInDateValue = "", checkOutDateValue = "", sele
         }
     });
 }
+
 $('#selected-name-phong, #selected-hang-phong, #date-chon-phong-out, #date-chon-phong-in, #status-room').on(
     'change',
     function () {
@@ -189,9 +190,12 @@ $('#selected-name-phong, #selected-hang-phong, #date-chon-phong-out, #date-chon-
         const roomIds = [];
         $('#list-booking tr').each(function () {
             const roomId = $(this).attr('data-room-id');
-
-            if (roomId) {
-                roomIds.push(roomId);
+            const dateId = $(this).attr('data-date');
+            if (roomId && dateId) {
+                roomIds.push({
+                    roomId: roomId,
+                    dateId: dateId
+                });
             }
         });
         const checkInDateValue = $('#date-chon-phong-in').val();
@@ -390,7 +394,7 @@ function addRoomInBooking(data, list) {
 
                 const formattedDates = `${yyyys}-${mms}-${dds}`;
                 const formattedTimes = `${hoursss}:${minutesss}`;
-
+                
                 const seenRooms = new Set();
                 let totalPrice = 0;
                 response.data.forEach(item => {
@@ -410,7 +414,7 @@ function addRoomInBooking(data, list) {
                     }
                     seenRooms.add(key);
                     var tr = `
-                            <tr data-room-id="${roomId}"  data-room-type-id="${roomTypeId}">
+                            <tr data-room-id="${roomId}"  data-room-type-id="${roomTypeId}" data-date="${formattedDates}">
                                 <td>
                                     <input type="checkbox">
                                 </td>
@@ -1229,7 +1233,7 @@ function findRoomBookingId(id) {
                         total_deposit_discount += parseFloat(room.discount);
 
                         var tr = `
-                        <tr data-room-booking-id="${room.booking_id}" data-room-id="${room.room_code}"  data-room-type-id="${room.room_type}">
+                        <tr data-room-booking-id="${room.booking_id}" data-room-id="${room.room_code}"  data-room-type-id="${room.room_type}" data-date="${formattedDates}">
                             <td>
                                 <input type="checkbox">
                             </td>
@@ -1613,8 +1617,12 @@ $('.add-room-booking').on('click', function () {
     $('.add-room-list').attr('data-list', 'list-booking');
     $('#list-booking tr').each(function () {
         const roomId = $(this).attr('data-room-id');
-        if (roomId) {
-            roomIds.push(roomId);
+        const dateId = $(this).attr('data-date');
+        if (roomId && dateId) {
+            roomIds.push({
+                roomId: roomId,
+                dateId: dateId
+            });
         }
     });
     const checkInDateValue = $('#date-book-room-booking').val();
@@ -1815,7 +1823,6 @@ $(document).ready(function () {
 });
 
 $(document).on('click', '.add-book-room', function () {
-
     var roomId = $(this).data('id');
     var roomTypeId = $(this).data('room_type_id');
     $('#myModal-booking').modal('show');

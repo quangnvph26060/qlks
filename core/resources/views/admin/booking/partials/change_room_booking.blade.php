@@ -10,7 +10,7 @@
                 <div class="col-3 d-flex justify-content-center align-items-center">
                     <div class="room-box">
                         <div class="room-name d-flex">Phòng: <span class="room-number"> </span></div>
-                        <div class="booking-date d-flex">Ngày đặt: <span class="date"> </span></div>
+                        <div class="booking-date d-flex">Ngày: <span class="date"> </span></div>
                         <input type="hidden" name="room_old" id="room_old">
                         <input type="hidden" name="booking_id" id="booking_id">
                         <input type="hidden" name="id" id="id">

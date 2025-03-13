@@ -6,6 +6,14 @@ $.ajaxSetup({
         'X-CSRF-TOKEN': $('meta[name="csrf-token"]').attr('content')
     }
 });
+const date_booking = new Date();
+const date_yyyy = date_booking.getFullYear();
+const date_mm = String(date_booking.getMonth() + 1).padStart(2, '0');
+const date_dd = String(date_booking.getDate()).padStart(2, '0');
+const date_hour = String(date_booking.getHours()).padStart(2, '0'); // Giờ
+const date_minutes = String(date_booking.getMinutes()).padStart(2, '0'); // Phút
+
+const formattedDates = `${date_yyyy}-${date_mm}-${date_dd}`;
 // allCheckInUrl
 function loadRoomBookings(page = 1, data) {
     $('#loading-overlay').css('display', 'flex');
@@ -90,7 +98,7 @@ function loadRoomBookings(page = 1, data) {
                                         data-name="${record['customer_name']}"
                                         data-room-id="${record['room_change_info'] ? record['room_change_info']['new_room_code'] : record['room_code']}"
                                         data-booking-id="${record['check_in_id']}" 
-                                        data-booking-date="${record['checkin_date']}" 
+                                        data-booking-date="${formattedDates}" 
                                     >Đổi phòng</p>
                                     </td>
                                     <td class="text-left" colspan="6">${record['room']['room_number']}</td>
@@ -166,7 +174,7 @@ $(document).on('click', '.change-room', function () {
 $(document).on('click', '.change-booking-room', function () {
     let selectedRoom = $('input[name="change-room"]:checked'); // Lấy radio đã chọn
     if (selectedRoom.length === 0) {
-        notify('error', 'Vui lòng chọn phòng để đổi');
+        notify('error', 'Vui lòng chọn phòng');
         return;
     }
     let roomId = selectedRoom.data('id');
