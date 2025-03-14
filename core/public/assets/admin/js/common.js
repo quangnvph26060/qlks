@@ -229,10 +229,10 @@ $('.add-room-list').on('click', function () {
 });
 function highlightOddRows(){
         setTimeout(() => {
-            let rows = document.querySelectorAll(".table-striped tbody tr.table-row");
+            let rows = document.querySelectorAll(".table tbody tr.table-row");
             rows.forEach((tr, index) => {
                 if (index % 2 === 0) {
-                    tr.style.backgroundColor = "#f2f2f2"; 
+                    tr.style.backgroundColor = "#f3f3f3"; 
                 }
             });
         }, 1000);
