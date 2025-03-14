@@ -3,23 +3,20 @@
     <div class="row">
         <div class="col-12">
             <div class="row">
-                <div class="col-12">
-                    <div class="emptyArea"></div>
-                </div>
                 <div class="table-responsive--md table-responsive">
                     <table class="table--light style--two table">
                         <thead>
-                        <tr>
-                            <th>Hành động</th>
-                            <th style="width:20px">@lang('STT')</th>
-                            <th>@lang('Mã nguồn')</th>
-                            <th>@lang('Tên nguồn')</th>
-                            <!-- <th>@lang('Mã đơn vị')</th> -->
-                        </tr>
+                            <tr>
+                                <th>Hành động</th>
+                                <th style="width:20px">@lang('STT')</th>
+                                <th>@lang('Mã nguồn')</th>
+                                <th>@lang('Tên nguồn')</th>
+                                <!-- <th>@lang('Mã đơn vị')</th> -->
+                            </tr>
                         </thead>
                         <tbody id="main-table-hotel">
                         @forelse($customer_sources as $id => $item)
-                            <tr data-id="{{ $item->id }}">
+                            <tr data-id="{{ $item->id }}" class="{{$id % 2 !==0 ?'bg-white':'bg-gray'}}">
                             <td style="width:20px;">
                                     <svg class="svg_menu_check_in" xmlns="http://www.w3.org/2000/svg" width="30" height="30" viewBox="0 0 21 21"><g fill="currentColor" fill-rule="evenodd"><circle cx="10.5" cy="10.5" r="1"/><circle cx="10.5" cy="5.5" r="1"/><circle cx="10.5" cy="15.5" r="1"/></g></svg>
                             

@@ -66,25 +66,24 @@
                             </thead>
                             <tbody>
                                 @forelse($rooms as $id => $room)
-                                    <tr>
-                                        @can(['admin.hotel.room.status', 'admin.hotel.room.add'])
+                                    <tr class="{{$id % 2 !==0 ? 'bg-white' : 'bg-gray'}}">
                                         <td style="width:20px;">
-                                        <svg class="svg_menu_check_in" xmlns="http://www.w3.org/2000/svg" width="30" height="30" viewBox="0 0 21 21"><g fill="currentColor" fill-rule="evenodd"><circle cx="10.5" cy="10.5" r="1"/><circle cx="10.5" cy="5.5" r="1"/><circle cx="10.5" cy="15.5" r="1"/></g></svg>
-                            
-                                        <div class="dropdown menu_dropdown_check_in" id="dropdown-menu" style="position:fixed">
-                                            <div class="dropdown-item"><button
-                                            data-resource="{{ $room }}" class="btn-edit-customer editBtn" data-bs-toggle="modal" data-bs-target="#edit-customer" style="color:black">
-                                                Sửa loại phòng
-                                            </button></div>
-                                        
-                                              <div class="dropdown-item booked_room_detail"> <button class=" btn-delete icon-delete-room"
-                                                data-id="{{ $room->id }}" data-modal_title="@lang('Xóa loại phòng')" type="button"
-                                                data-pro="0">Xóa loại phòng</div>
-                              
-                                        </div>
+                                            <svg class="svg_menu_check_in" xmlns="http://www.w3.org/2000/svg" width="30" height="30" viewBox="0 0 21 21"><g fill="currentColor" fill-rule="evenodd"><circle cx="10.5" cy="10.5" r="1"/><circle cx="10.5" cy="5.5" r="1"/><circle cx="10.5" cy="15.5" r="1"/></g></svg>
+                                
+                                            <div class="dropdown menu_dropdown_check_in" id="dropdown-menu" style="position:fixed">
+                                                <div class="dropdown-item"><button
+                                                data-resource="{{ $room }}" class="btn-edit-customer editBtn" data-bs-toggle="modal" data-bs-target="#edit-customer" style="color:black">
+                                                    Sửa loại phòng 
+                                                </button></div>
+                                            
+                                                <div class="dropdown-item booked_room_detail"> <button class=" btn-delete icon-delete-room"
+                                                    data-id="{{ $room->id }}" data-modal_title="@lang('Xóa loại phòng')" type="button"
+                                                    data-pro="0">Xóa loại phòng</div>
+                                
+                                            </div>
                                         </td>
                                          
-                                        @endcan     
+                                             
                                         <td style="text-align:right">
                                             @php
                                             $stt = $rooms->total() - ($rooms->currentPage() - 1) * $rooms->perPage() - $id;

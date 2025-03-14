@@ -3518,6 +3518,13 @@ table th:first-child {
 /* table td:last-child {
   text-align: right;
 } */
+ .bg-white{
+    background-color: #FFFFFF;
+ }
+
+ .bg-gray{
+    background-color: rgb(243, 243, 243);
+ }
 
 table td:first-child {
     text-align: center;

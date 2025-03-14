@@ -157,6 +157,25 @@ function loadRoomBookings(page = 1, data) {
 }
 $(document).ready(function () {
     loadRoomBookings(); // Function to load the room bookings
+    $(document).on('click', '.btn-submit-sync-book', function () {
+        $('#booking_code').val('');
+        $('#room_name').val('');
+        $('#name_book').val('');
+        loadRoomBookings();
+    });
+    // tìm kiếm 
+    $(document).on('click', '.btn-submit-search-book', function () {
+        let bookingCode = $('#booking_code').val();
+        let roomName = $('#room_name').val();
+        let customerName = $('#name_book').val();
+
+        let data = {
+            bookingCode: bookingCode,
+            roomName: roomName,
+            customerName: customerName,
+        }
+        loadRoomBookings(1, data);
+    });
 });
 $(document).on('click', '.change-room', function () {
     let bookingId = $(this).data('booking-id');

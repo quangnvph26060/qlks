@@ -57,7 +57,7 @@
                             </thead>
                             <tbody id="data" >
                             @forelse($rooms as $id => $type)
-                            <tr data-id="{{ $type->id }}">
+                            <tr data-id="{{ $type->id }}" class="{{$id % 2 !==0 ? 'bg-white' : 'bg-gray'}}">
                                 <td>
                                     <button class="btn btn-link btn-toggle" type="button"
                                         onclick=" toggleRepresentatives('{{ $type->id }}', this)"></button>
@@ -281,6 +281,7 @@
                     </button>
                     </a>          
                     <form role="form" enctype="multipart/form-data" action="{{route('admin.hotel.room.type.search')}}">
+                        @csrf
                         <div class="form-group mb-0" style="display: flex;">
                             <input class="searchInput" name="code"
                                    style="height: 35px;border: 1px solid rgb(121, 117, 117, 0.5);"

@@ -54,7 +54,7 @@
         </a>
         <div class="form-group position-relative mb-0" style="display: flex;gap: 10px;">
             <input class="searchInput input-field-search-book" name="booking_code" placeholder="Mã nhận phòng" id="booking_code">
-            <select class="searchInput input-field-search-book"  name="room_code" id="select_room_number"></select>
+            <input class="searchInput input-field-search-book" name="room_name" placeholder="Tên phòng" id="room_name">
           {{-- <div class="d-flex" style="gap: 10px">
             <input type="date" class="form-control " id="date-chon-phong-in" style="height: 35px">
             <input type="date" class="form-control " id="date-chon-phong-out" style="height: 35px">
@@ -221,10 +221,13 @@
 
 @push('style')
     <style scoped>
-           #data-table th {
-                padding: 6px !important;    
-                line-height: 1 !important;
-            }
+        .table .background-tr {
+            height: 30px;
+        }
+        #data-table th {
+            padding: 6px !important;    
+            line-height: 1 !important;
+        }
         #show-room tr td {
             padding: 6px 2px !important;
             line-height: 0;   

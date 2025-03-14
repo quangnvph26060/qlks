@@ -54,7 +54,6 @@ class RoomController extends Controller
             }
             $rooms = $rooms->paginate(10);
 
-
         return view('admin.hotel.rooms', compact('pageTitle', 'rooms', 'keyword','code'));
     }
 

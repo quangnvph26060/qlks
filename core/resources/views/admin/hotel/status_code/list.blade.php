@@ -5,44 +5,48 @@
 
             <div class="card-body">
                 <div class="row">
-                <div class="col-md-12 col-sm-12 d-flex">
-                        <a class="mr-1" href="{{route('admin.hotel.status.code.all')}}">
-                        <button class="btn btn--primary" data-modal_title="Làm mới">
-                            <i class="fa fa-repeat p-1"></i>
-                        </button>
-                         </a>
-                         <a>
-                            <button class="btn btn--primary"  data-modal_title="Thêm mới trạng thái chức năng"  type="button" id="btn-add-status"
-                                    data-bs-toggle="modal" data-bs-target="#status-code"  style="margin-left:10px">
+                    <div class="col-md-12 col-sm-12 d-flex">
+                        <a class="mr-1" href="{{ route('admin.hotel.status.code.all') }}">
+                            <button class="btn btn--primary" data-modal_title="Làm mới">
+                                <i class="fa fa-repeat p-1"></i>
+                            </button>
+                        </a>
+                        <a>
+                            <button class="btn btn--primary" data-modal_title="Thêm mới trạng thái chức năng" type="button"
+                                id="btn-add-status" data-bs-toggle="modal" data-bs-target="#status-code"
+                                style="margin-left:10px">
                                 <i class="las la-plus  p-1"></i>
                             </button>
                         </a>
-                            <form role="form" enctype="multipart/form-data" action="{{route('admin.hotel.status.code.search')}}">
-                                <div class="form-group position-relative mb-0">
-                                    <input class="searchInput" name="status_code"
-                                        style="height: 35px;border: 1px solid rgb(121, 117, 117, 0.5);margin-left: 8px;"
-                                            placeholder="Mã trạng thái">
-                                    <input class="searchInput" name="status_name"
-                                        style="height: 35px;border: 1px solid rgb(121, 117, 117, 0.5); margin-left: 8px;"
-                                        placeholder="Tên trạng thái">
-                                    <a>
-                                    <button type="submit" class="btn btn--primary" style="padding-right:15px;padding-left:15px">
+                        <form role="form" enctype="multipart/form-data"
+                            action="{{ route('admin.hotel.status.code.search') }}">
+                            @csrf
+                            <div class="form-group position-relative mb-0">
+                                <input class="searchInput" name="status_code"
+                                    style="height: 35px;border: 1px solid rgb(121, 117, 117, 0.5);margin-left: 8px;"
+                                    placeholder="Mã trạng thái">
+                                <input class="searchInput" name="status_name"
+                                    style="height: 35px;border: 1px solid rgb(121, 117, 117, 0.5); margin-left: 8px;"
+                                    placeholder="Tên trạng thái">
+                                <a>
+                                    <button type="submit" class="btn btn--primary"
+                                        style="padding-right:15px;padding-left:15px">
                                         <i class="las la-search p-1"></i>
                                     </button>
-                                    </a>
+                                </a>
 
-                                </div>
-                            </form>
+                            </div>
+                        </form>
                     </div>
-                        @if ($status_codes->hasPages())
+                    @if ($status_codes->hasPages())
                         <div class="pager-wrap">
-                                    <div class="k-widget d-flex">
-                                        <div class="pagination-tb" style="font-size: 13px;margin: 0 auto">
-                                            {{ $status_codes->links('pagination::bootstrap-4') }}
-                                        </div>
-                                    </div>
+                            <div class="k-widget d-flex">
+                                <div class="pagination-tb" style="font-size: 13px;margin: 0 auto">
+                                    {{ $status_codes->links('pagination::bootstrap-4') }}
                                 </div>
-                        @endif
+                            </div>
+                        </div>
+                    @endif
                 </div>
             </div>
             <div class="modal fade" id="status-code" tabindex="-1" aria-labelledby="exampleModalLabel" aria-hidden="true">
@@ -51,68 +55,79 @@
             </div>
 
             <div class="row gy-4">
-                <div class="col-12">
-                    <div class="emptyArea"></div>
-                </div>
-                <div class="table-responsive--md table-responsive" style="overflow-x: visible;">
+             
+                <div class="table-responsive--md table-responsive">
                     <table class="table--light style--two table">
                         <thead>
-                        <tr>
-                            <th>Hành động</th>
-                            <th>STT</th>
-                            <th>@lang('Mã trạng thái')</th>
-                            <th>@lang('Tên trạng thái')</th>
-                            <th>@lang('Ghi chú')</th>
-                            <th>@lang('Trạng thái')</th>
-                          
-                        </tr>
+                            <tr>
+                                <th>Hành động</th>
+                                <th>STT</th>
+                                <th>@lang('Mã trạng thái')</th>
+                                <th>@lang('Tên trạng thái')</th>
+                                <th>@lang('Ghi chú')</th>
+                                <th>@lang('Trạng thái')</th>
+
+                            </tr>
                         </thead>
                         <tbody id="main-table-hotel">
-                        @forelse($status_codes as $id => $item)
-                            <tr data-id="{{ $item->id }}">
-                            <td style="width:20px;">
-                                    <svg class="svg_menu_check_in" xmlns="http://www.w3.org/2000/svg" width="30" height="30" viewBox="0 0 21 21"><g fill="currentColor" fill-rule="evenodd"><circle cx="10.5" cy="10.5" r="1"/><circle cx="10.5" cy="5.5" r="1"/><circle cx="10.5" cy="15.5" r="1"/></g></svg>
+                            @forelse($status_codes as $id => $item)
+                                <tr data-id="{{ $item->id }}">
+                                    <td style="width:20px;">
+                                        <svg class="svg_menu_check_in" xmlns="http://www.w3.org/2000/svg" width="30"
+                                            height="30" viewBox="0 0 21 21">
+                                            <g fill="currentColor" fill-rule="evenodd">
+                                                <circle cx="10.5" cy="10.5" r="1" />
+                                                <circle cx="10.5" cy="5.5" r="1" />
+                                                <circle cx="10.5" cy="15.5" r="1" />
+                                            </g>
+                                        </svg>
                                         <div class="dropdown menu_dropdown_check_in" id="dropdown-menu">
-                                            <div class="dropdown-item"><a
-                                            data-id="{{ $item->id }}" class="btn-edit-status" data-bs-toggle="modal" data-bs-target="#status-code" style="color:black">
-                                                Sửa trạng thái
-                                            </a>
+                                            <div class="dropdown-item"><a data-id="{{ $item->id }}"
+                                                    class="btn-edit-status" data-bs-toggle="modal"
+                                                    data-bs-target="#status-code" style="color:black">
+                                                    Sửa trạng thái
+                                                </a>
+                                            </div>
+
+                                            <div class="dropdown-item booked_room_detail"> <button
+                                                    class=" btn-delete icon-delete-room" data-id="{{ $item->id }}"
+                                                    data-modal_title="@lang('Xóa trạng thái')" type="button" data-pro="0">Xóa
+                                                    trạng thái</div>
+
                                         </div>
-                                          
-                                         <div class="dropdown-item booked_room_detail"> <button class=" btn-delete icon-delete-room"
-                                                data-id="{{ $item->id }}" data-modal_title="@lang('Xóa trạng thái')" type="button"
-                                                data-pro="0">Xóa trạng thái</div>
-                              
-                                        </div>
-                                </td>
-                                <td data-label="STT" style="text-align:right">   
-                                    @php
-                                        $stt = $status_codes->total() - ($status_codes->currentPage() - 1) * $status_codes->perPage() - $id;
-                                            @endphp
+                                    </td>
+                                    <td data-label="STT" style="text-align:right">
+                                        @php
+                                            $stt =
+                                                $status_codes->total() -
+                                                ($status_codes->currentPage() - 1) * $status_codes->perPage() -
+                                                $id;
+                                        @endphp
                                         {{ $stt }}
-                                </td>                                 <td>
-                                    {{ $item->status_code }}
-                                </td>
-                                <td>
-                                    {{ $item->status_name }}
-                                </td>
-                                <td>
-                                    {{ $item->note }}
-                                </td>
-                             
-                                <td style="width:50px;text-align: center" class="status-hotel">
-                                        @if($item->status_status == 1)
+                                    </td>
+                                    <td>
+                                        {{ $item->status_code }}
+                                    </td>
+                                    <td>
+                                        {{ $item->status_name }}
+                                    </td>
+                                    <td>
+                                        {{ $item->note }}
+                                    </td>
+
+                                    <td style="width:50px;text-align: center" class="status-hotel">
+                                        @if ($item->status_status == 1)
                                             <i class="fa fa-check" style="color:green;text-align: center"></i>
                                         @else
                                             <i class="fa fa-close" style="color:red;text-align: center"></i>
                                         @endif
-                                </td>
-                            </tr>
-                        @empty
-                            <tr>
-                                <td class="text-center" colspan="100%">{{ __($emptyMessage) }}</td>
-                            </tr>
-                        @endforelse
+                                    </td>
+                                </tr>
+                            @empty
+                                <tr>
+                                    <td class="text-center" colspan="100%">{{ __($emptyMessage) }}</td>
+                                </tr>
+                            @endforelse
                         </tbody>
                     </table>
                 </div>
@@ -128,23 +143,27 @@
 @push('style-lib')
     <link rel="stylesheet" type="text/css" href="{{ asset('assets/admin/css/daterangepicker.css') }}">
     <link rel="stylesheet" href="{{ asset('assets/global/css/modal.css') }}">
-    
+
     <style>
-            .navbar__right{
-                display: none;
-            }
-            #navbar-wrapper{
-                padding: 0px 30px 20px;
-            }
-            .pagination .page-item .page-link, .pagination .page-item span{
-                width: 22px !important;
-                height: auto !important;
-                background-color: #4634ff !important;
-                color: white !important;
-            }
-            .pagination .page-item.active .page-link{
-                background-color: #071251 !important;
-            }
+        .navbar__right {
+            display: none;
+        }
+
+        #navbar-wrapper {
+            padding: 0px 30px 20px;
+        }
+
+        .pagination .page-item .page-link,
+        .pagination .page-item span {
+            width: 22px !important;
+            height: auto !important;
+            background-color: #4634ff !important;
+            color: white !important;
+        }
+
+        .pagination .page-item.active .page-link {
+            background-color: #071251 !important;
+        }
     </style>
 @endpush
 @push('script')
@@ -159,8 +178,7 @@
                             return checkRequired(value); // check trống
                         },
                         'message': generateErrorMessage('MS001')
-                    },
-                    ]
+                    }, ]
                 },
                 'status_name': {
                     'element': document.getElementById('add_status_name'), // id trong input đó
@@ -170,8 +188,7 @@
                             return checkRequired(value);
                         },
                         'message': generateErrorMessage('TTT001')
-                    },
-                    ]
+                    }, ]
                 },
             }
             $(document).on('click', '#click-btn-status-code', function() {
@@ -296,10 +313,14 @@
                             </div>
                             `;
                             $('#modal-dialog').append(rowEdit);
-                            formEconomyEdit.status_code.element = document.getElementById('add_status_code');
-                            formEconomyEdit.status_code.error = document.getElementById('status_code_error');
-                            formEconomyEdit.status_name.element = document.getElementById('add_status_name');
-                            formEconomyEdit.status_name.error = document.getElementById('status_name_error');
+                            formEconomyEdit.status_code.element = document.getElementById(
+                                'add_status_code');
+                            formEconomyEdit.status_code.error = document.getElementById(
+                                'status_code_error');
+                            formEconomyEdit.status_name.element = document.getElementById(
+                                'add_status_name');
+                            formEconomyEdit.status_name.error = document.getElementById(
+                                'status_name_error');
                         }
                     },
                     error: function(xhr, status, error) {
@@ -327,7 +348,7 @@
                             url: `{{ route('admin.hotel.status.code.delete', '') }}/${dataId}`,
                             type: 'POST',
                             success: function(data) {
-                                if (data.status ==='success') {
+                                if (data.status === 'success') {
                                     rowToDelete.remove();
 
 
@@ -343,15 +364,15 @@
                 });
             });
             // chỉnh sửa trạng thái
-            $('.confirmationBtn').on('click', function(){
-                var action =  $(this).data('action');
+            $('.confirmationBtn').on('click', function() {
+                var action = $(this).data('action');
                 var dataId = $(this).data('id');
                 // ajax request
                 $.ajax({
                     url: action,
                     type: 'POST',
                     success: function(data) {
-                        if (data.status ==='success') {
+                        if (data.status === 'success') {
                             let statusCell = $(`tr[data-id="${dataId}"] .status-hotel`);
                             statusCell.html(data.status_html);
                         }
@@ -392,7 +413,6 @@
 
         });
     </script>
-
 @endpush
 
 @push('style')

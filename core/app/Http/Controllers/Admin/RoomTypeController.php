@@ -95,7 +95,6 @@ class RoomTypeController extends Controller
         $room_type = RoomType::where('unit_code',unitCode())->get();
         $pageTitle   = 'Danh sách phòng';
         $rooms = Room::where('unit_code',unitCode())->orderBy('id', 'desc')->paginate(10);
-
         return view('admin.hotel.room_type.list', compact('pageTitle','room_type','rooms'));
     }
     public function create()

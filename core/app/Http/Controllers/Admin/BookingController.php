@@ -169,9 +169,17 @@ class BookingController extends Controller
             ->when(!empty($request->data['customerName']), function ($query) use ($request) {
                 $query->where('customer_name', 'LIKE', '%' . $request->data['customerName'] . '%');
             })
-            ->when(!empty($request->data['roomCode']), function ($query) use ($request) {
-                $query->where('room_code', 'LIKE', '%' . $request->data['roomCode'] . '%');
-            })
+            // ->when(!empty($request->data['roomCode']), function ($query) use ($request) {
+            //     $query->where('room_code', 'LIKE', '%' . $request->data['roomCode'] . '%');
+            // })
+            ->when(
+                !empty($request->data['roomName']),
+                fn($query) => $query->whereHas(
+                    'room',
+                    fn($q) =>
+                    $q->where('room_number', 'LIKE', '%' . $request->data['roomName'] . '%')
+                )
+            )
             ->where('checkout_date', '>', Carbon::now())
             ->orderBy('created_at', 'desc')
             ->get();

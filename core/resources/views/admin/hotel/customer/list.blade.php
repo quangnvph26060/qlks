@@ -10,7 +10,7 @@
                             <table class="table--light style--two table">
                                 <thead>
                                 <tr>
-                                    <th>@lang('Thao tác')</th>
+                                    <th>@lang('Hành động')</th>
                                     <th>@lang('STT')</th>
                                     <th style="width:8%">@lang('Mã KH')</th>
                                     <th>@lang('Tên')</th>
@@ -26,7 +26,7 @@
                                 </thead>
                                 <tbody>
                                 @forelse($customers as $id => $customer)
-                                    <tr data-id="{{ $customer->id }}">
+                                    <tr data-id="{{ $customer->id }}" class={{$id % 2 !== 0 ? 'bg-white' : 'bg-gray'}}>
                                     <td style="width:20px;">
                                             <svg class="svg_menu_check_in" xmlns="http://www.w3.org/2000/svg" width="30" height="30" viewBox="0 0 21 21"><g fill="currentColor" fill-rule="evenodd"><circle cx="10.5" cy="10.5" r="1"/><circle cx="10.5" cy="5.5" r="1"/><circle cx="10.5" cy="15.5" r="1"/></g></svg>
                                 
@@ -50,19 +50,19 @@
                                         {{ $stt }}
                                     </td>
                                     <td>
-                                            <span class="fw-bold code">{{ $customer->customer_code }}</span>
+                                           {{ $customer->customer_code }}
                                     </td>
                                     <td>
-                                            <p class="fw-bold">{{ $customer->name }}</p>
+                                           {{ $customer->name }}
                                     </td>
                                     <td style="text-align:right">
-                                            <p>{{ $customer->phone }}</p>
+                                           {{ $customer->phone }}
                                     </td>
                                     <td>
-                                        <p>{{ $customer->email }}</p>
+                                       {{ $customer->email }}
                                     </td>
                                     <td>
-                                            <p>{{ $customer->address }}</p>
+                                          {{ $customer->address }}
                                     </td>
                                     <td>
                                             @php
