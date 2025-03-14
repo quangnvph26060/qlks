@@ -652,13 +652,15 @@ class BookingController extends Controller
             $roomBooking = CheckIn::where('room_code', $request->room_old)
                 // ->orWhere('room_change',$request->room_old)
                 ->where('check_in_id', $request->booking_id)
-                ->whereDate('checkin_date',$request->date_new)
+                ->whereDate('checkin_date', '<=', $request->date_new)
+                ->whereDate('checkout_date', '>=', $request->date_new)
                 ->with('room')
                 ->first();
             if (!$roomBooking) {
                 $roomBooking = CheckIn::where('room_change', $request->room_old)
                     ->where('check_in_id', $request->booking_id)
-                    ->whereDate('checkin_date', $request->date_new) // check có nằm trong khoảng checkin và checkout đó không 
+                    ->whereDate('checkin_date', '<=', $request->date_new)
+                    ->whereDate('checkout_date', '>=', $request->date_new)
                     ->with('room')
                     ->first();
             }

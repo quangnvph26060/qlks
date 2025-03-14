@@ -3524,7 +3524,7 @@ table td:first-child {
 }
 
 .table-striped tbody tr:nth-of-type(odd) {
-    background-color: rgba(115, 115, 115, 0.05);
+    background-color: rgb(255 255 255 / 5%);
 }
 
 table .user {

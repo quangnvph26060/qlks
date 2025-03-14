@@ -33,11 +33,11 @@
 
                 </div>
             </div>
-       
-        </div>     
-            @include('admin.booking.partials.room_booking')
-            @include('admin.booking.partials.room_booking_edit')
-            @include('admin.booking.partials.confirm-room')
+
+        </div>
+        @include('admin.booking.partials.room_booking')
+        @include('admin.booking.partials.room_booking_edit')
+        @include('admin.booking.partials.confirm-room')
     </div>
 @endsection
 
@@ -208,12 +208,13 @@
                 }
             });
         });
+     
     </script>
 @endpush
 @push('style')
     <style scoped>
-        .table-striped tbody tr:nth-of-type(2n+1) {
-            background-color: rgba(115, 115, 115, 0.05) !important;
+        .table .background-tr {
+            height: 37px;
         }
         .data-table td {
             height: 30px !important;
@@ -323,15 +324,9 @@
             /* Đổi con trỏ thành dấu cấm */
         }
 
-        .pagination-container button:first-child {
-            border-radius: 5px 0 0 5px;
-        }
-
-        .pagination-container button:last-child {
-            border-radius: 0 5px 5px 0;
-        }
-
-
+        #data-table th {
+    padding: 6px !important;    line-height: 1 !important;
+}
         #dropdown-menu {
             left: 108px;
             position: fixed;

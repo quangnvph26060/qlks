@@ -230,15 +230,17 @@
 
 @push('style')
     <style scoped>
-        #data-table tbody tr:hover {
-            background-color: #f0f0f0;
-            cursor: pointer;
+        .table .background-tr{
+            height: 37px;
         }
-
+        #data-table th {
+    padding: 6px !important;    line-height: 1 !important;
+}
         #show-room tr td {
             padding: 6px 2px !important;
             line-height: 0;
         }
+
 
         #dropdown-menu {
             position: fixed;

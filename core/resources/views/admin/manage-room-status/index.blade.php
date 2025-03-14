@@ -7,8 +7,8 @@
         <div class="card b-radius--10 scroll-container-main">
 
             <div class="card-body p-0">
-                <div class="table-responsive--md table-responsive mt-1">
-                    <table class="table--light style--two table-striped table" id="data-table">
+                <div class="table-responsive--md">
+                    <table class="table--light style--two  table" id="data-table">
                         <thead>
                             <tr>
                                 <th data-table="Hạng phòng">Hạng phòng</th>

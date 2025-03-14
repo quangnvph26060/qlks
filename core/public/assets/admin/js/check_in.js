@@ -651,12 +651,12 @@ function loadRoomBookings(page = 1, data) {
 
                         if (idx === 0) {
                             html += `
-                                        <tr data-id="${record['id']}">
+                                        <tr data-id="${record['id']}" class="table-row">
                                             <td>
                                                 <button class="btn btn-link btn-toggle" type="button"
                                                     onclick="toggleRepresentatives('${record['check_in_id']}', this)"></button>
                                             </td>
-                                            <td class="text-center">
+                                            <td class="text-center w-10">
                                                 <svg class="svg_menu_check_in" xmlns="http://www.w3.org/2000/svg" width="30" height="30" viewBox="0 0 21 21"><g fill="currentColor" fill-rule="evenodd"><circle cx="10.5" cy="10.5" r="1"/><circle cx="10.5" cy="5.5" r="1"/><circle cx="10.5" cy="15.5" r="1"/></g></svg>
                                                 <div class="dropdown menu_dropdown_check_in" id="dropdown-menu">
                                                     <div class="dropdown-item booked_room_edit" data-room-id="${record['check_in_id']}">Sửa </div>
@@ -665,13 +665,13 @@ function loadRoomBookings(page = 1, data) {
                                                 </div>
                                             </td>
                                             <td class="text-right">${index + 1}</td>
-                                            <td class="text-left">${record['check_in_id']}</td>
+                                            <td class="text-left w-10">${record['check_in_id']}</td>
 
-                                            <td class="text-right">${bookingData.length}</td>
+                                            <td class="text-right w-10">${bookingData.length}</td>
                                             <td class="text-right">${formatDateTime(record['document_date'])}</td>
                                             <td class="text-left">${record['customer_name'] ? record['customer_name'] : 'N/A'}</td>
                                             <td class="text-right">${record['phone_number'] ? record['phone_number'] : 'N/A'}</td>
-                                            <td class="text-right">${totalGuests}</td>
+                                            <td class="text-right w-10">${totalGuests}</td>
                                             <td class="text-right">${formatCurrency(totalPrice)}</td>
                                             <td class="text-right">${formatCurrency(totalAmount)}</td>
                                             <td class="text-right">${formatCurrency(totalDiscount)}</td>
@@ -737,6 +737,7 @@ function loadRoomBookings(page = 1, data) {
                     }
                 });
                 selected_select.append(option);
+                highlightOddRows();
                 updatePagination(pagination, 'loadRoomBookings');
                 setTimeout(function () {
                     $('#loading-overlay').css('display', 'none');
@@ -1589,18 +1590,7 @@ function showBookedRoom(value = "", option_customer_source = "") {
                 });
             });
             tbody.append(tr);
-            // hạng phòng
-            // var selected_customer_source = $('#selected-customer-source');
-            // selected_customer_source.empty();
-            // let option = `<option value="">Chọn nguồn khách hàng</option>`;
-            // data.customerSourse.forEach(function (item) {
-            //     if (item.id == data.option_customer_source) {
-            //         option += `<option value="${item.source_code}" selected>${item.source_name}</option>`;
-            //     } else {
-            //         option += `<option value="${item.source_code}">${item.source_name}</option>`;
-            //     }
-            // });
-            // selected_customer_source.append(option);
+          
             $('#loading').hide();
         },
         error: function (error) {

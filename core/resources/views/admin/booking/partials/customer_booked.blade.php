@@ -15,7 +15,7 @@
                 </div>
             </div>
             <div class="modal-body overflow-add-room">
-                <table class="table mt-10" id="data-table">
+                <table class="table--light style--two  table mt-10" id="data-table">
                     <thead>
                         <tr>
                             <th data-table="Mã khách hàng" class="text-left">Mã khách hàng</th>

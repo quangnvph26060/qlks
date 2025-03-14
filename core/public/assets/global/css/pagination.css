@@ -20,7 +20,11 @@
     background-color: #4634ff;
     transform: scale(1.05);
 }
-
+.customer-row:hover {
+    background-color: #f0f0f0;
+    cursor: pointer;
+    transition: background-color 0.3s ease-in-out;
+}
 .pagination-container button:disabled {
     background-color: #ddd;
     cursor: not-allowed;

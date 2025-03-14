@@ -227,7 +227,16 @@ $('.add-room-list').on('click', function () {
     });
     addRoomInBooking(selectedCheckboxes, $(`#${dataListValue}`))
 });
-
+function highlightOddRows(){
+        setTimeout(() => {
+            let rows = document.querySelectorAll(".table-striped tbody tr.table-row");
+            rows.forEach((tr, index) => {
+                if (index % 2 === 0) {
+                    tr.style.backgroundColor = "#f2f2f2"; 
+                }
+            });
+        }, 1000);
+}
 function changeRoom(Id, bookingId, roomId, dateId, name) {
     $('#loading').show();
     $.ajax({
