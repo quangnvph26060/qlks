@@ -2,30 +2,6 @@
 @section('panel')
     <div class="row">
         <div class="col-lg-12">
-{{--            <div class="d-flex justify-content-between mb-3 row order-1">--}}
-{{--                <div class="dt-length col-md-6 col-4">--}}
-{{--                    <select name="example_length" id="perPage" style=" padding: 1px 3px; margin-right: 8px;"--}}
-{{--                        aria-controls="example" class="perPage">--}}
-{{--                        <option value="10">10</option>--}}
-{{--                        <option value="25">25</option>--}}
-{{--                        <option value="50">50</option>--}}
-{{--                        <option value="100">100</option>--}}
-{{--                    </select><label for="perPage"> entries per page</label>--}}
-{{--                </div>--}}
-
-{{--                <div class="search col-md-4 col-12" style="text-align: end;">--}}
-{{--                    --}}{{-- <label for="searchInput">Search:</label> --}}
-{{--                    <div class="input-group" style="justify-content: end;">--}}
-{{--                        <input class="searchInput"--}}
-
-{{--                        type="search" placeholder="Tìm kiếm...">--}}
-{{--                        <button type="submit" class="btn btn-primary">--}}
-{{--                            <i class="las la-search"></i>--}}
-{{--                        </button>--}}
-{{--                    </div>--}}
-{{--                </div>--}}
-
-{{--            </div>--}}
             <div class="card b-radius--10">
                 <div class="card-body p-0">
                     <div class="table-responsive--md table-responsive">
@@ -117,10 +93,10 @@
                                 <td data-label="Tên phòng">
                                     {{ $type->room_number }}
                                 </td>
-                                <td data-label="Số người">
+                                <td data-label="Số người" class="w-10">
                                     {{ $type->total_adult }}
                                 </td>
-                                <td data-label="Số giường">
+                                <td data-label="Số giường" class="w-10">
                                     {{ $type->beds }}
                                 </td>
                                 <td data-label="Hình ảnh">     

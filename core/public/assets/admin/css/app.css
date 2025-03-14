@@ -3523,11 +3523,11 @@ table th:first-child {
   text-align: right;
 } */
  .bg-white{
-    background-color: #FFFFFF;
+    background-color: #FFFFFF !important;
  }
 
  .bg-gray{
-    background-color: rgb(243, 243, 243);
+    background-color: rgb(243, 243, 243) !important;
  }
 
 table td:first-child {
@@ -7134,7 +7134,9 @@ a.icon-btn {
     font-size: 18px;
     font-weight: 600;
 }
-
+.w-10{
+    width: 10px !important;
+}
 .w-100 {
     width: 100% !important;
 }
