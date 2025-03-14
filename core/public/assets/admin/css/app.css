@@ -3,6 +3,10 @@
 .text--shadow {
     text-shadow: 1px 2px 5px rgba(0, 0, 0, 0.35);
 }
+* {
+    font-weight: 500;
+}
+
 .menu-active
 {
     transform: rotate(90deg);
@@ -5798,7 +5802,12 @@ th.w-85 {
     background-color: transparent;
     position: relative;
 }
-
+.p-globalNavi__link {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    gap: 7px;
+}
 .navbar__right button i {
     color: #5b6e88;
     text-shadow: 1px 2px 5px rgba(0, 0, 0, 0.15);
@@ -5807,7 +5816,7 @@ th.w-85 {
 .p-globalNavi__item
 {
     list-style-type: none; /* Bỏ dấu chấm */
-    padding: 5px 0px;
+    border-radius: 5px;
     display: inline-block;
     margin-right: 1px;
     --color: #071251;

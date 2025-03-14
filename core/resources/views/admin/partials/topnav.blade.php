@@ -195,18 +195,16 @@
     }
 
     .close-tab {
-        top: 0;
         background: red;
         color: white;
-        font-size: 16px;
         font-weight: bold;
         width: 16px;
         height: 16px;
+        display: flex;
         align-items: center;
         justify-content: center;
         border-radius: 50%;
         cursor: pointer;
-        padding: 1px;
     }
 
 
