@@ -10,14 +10,14 @@
                                                         <div class="dropdown-item booked_room_edit">
                                                         <a class="btn btn-sm btn-outline--primary btn-edit" data-id="{{ $room->id }}"  style="color:black !important;border:none;padding:5px"
                                                                         data-modal_title="@lang('Cập nhật cơ sở vật chất')" type="button">
-                                                                    @lang('Sửa cơ sở vật chất')
+                                                                    @lang('Sửa')
                                                         </a>
                                                         </div>
                                                     
                                                         <div class="dropdown-item booked_room_detail">
                                                         <button class=" btn-delete" data-id="{{ $room->id }}"
                                                             data-modal_title="@lang('Xóa')" type="button">
-                                                                    Xóa cơ sở vật chất
+                                                                    Xóa
                                                         </button>
                                                         </div>
                                             </div>

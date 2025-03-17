@@ -5,7 +5,7 @@
             <div class="card b-radius--10">
                 <div class="card-body p-0">
                     <div class="table-responsive--md table-responsive">
-                        <table class="table--light style--two table table-striped" id="data-table">
+                        <table class="table--light style--two table " id="data-table">
                             <thead>
                                 <tr>
                                     <th></th>
@@ -31,7 +31,7 @@
                                  
                                 </tr>
                             </thead>
-                            <tbody id="data" >
+                            <tbody>
                             @forelse($rooms as $id => $type)
                             <tr data-id="{{ $type->id }}" class="{{$id % 2 !==0 ? 'bg-white' : 'bg-gray'}}">
                                 <td>
@@ -40,12 +40,12 @@
                                 </td>
                                 @can(['admin.hotel.room.type.edit', 'admin.hotel.room.type.status', 'admin.hotel.room.type.destroy'])
                                     <td style="width:20px">
-                                    <svg class="svg_menu_check_in" xmlns="http://www.w3.org/2000/svg" width="30" height="30" viewBox="0 0 21 21"><g fill="currentColor" fill-rule="evenodd"><circle cx="10.5" cy="10.5" r="1"/><circle cx="10.5" cy="5.5" r="1"/><circle cx="10.5" cy="15.5" r="1"/></g></svg>
+                                    <svg class="svg_menu_check_in" xmlns="http://www.w3.org/2000/svg" width="20" height="20" viewBox="0 0 21 21"><g fill="currentColor" fill-rule="evenodd"><circle cx="10.5" cy="10.5" r="1"/><circle cx="10.5" cy="5.5" r="1"/><circle cx="10.5" cy="15.5" r="1"/></g></svg>
                                                     
                                     <div class="dropdown menu_dropdown_check_in" id="dropdown-menu" style="position:fixed">
                                         <div class="dropdown-item booked_room_edit">
                                         <a href="{{ route('admin.hotel.room.type.edit', $type->id) }}" style="color:black;padding:5px">
-                                            Sửa phòng
+                                            Sửa
                                         </a>
                                         </div>
                                         <div class="dropdown-item booked_room">
@@ -66,7 +66,7 @@
                                         </div>
                                         <div class="dropdown-item booked_room_detail"> <button class=" btn-delete icon-delete-room"
                                                 data-id="{{ $type->id }}" data-modal_title="@lang('Xóa trạng thái')" type="button"
-                                                data-pro="0">Xóa phòng</div>
+                                                data-pro="0">Xóa</div>
                               
                                         </div>
                                         </div>
@@ -81,22 +81,22 @@
                                         {{ $stt }}
                                 </td>
                             
-                                <td data-label="Loại phòng">
+                                <td data-label="Loại phòng" class="text-left">
                                     @php
                                         $type_name = \App\Models\RoomType::where('id',$type->room_type_id)->value('name');
                                     @endphp
                                     {{ $type_name }}
                                 </td>  
-                                <td data-label="Mã phòng">
+                                <td data-label="Mã phòng" class="text-left">
                                     {{ $type->code }}
                                 </td>
-                                <td data-label="Tên phòng">
+                                <td data-label="Tên phòng" class="text-left">
                                     {{ $type->room_number }}
                                 </td>
-                                <td data-label="Số người" class="w-10">
+                                <td data-label="Số người" class="w-10 text-right">
                                     {{ $type->total_adult }}
                                 </td>
-                                <td data-label="Số giường" class="w-10">
+                                <td data-label="Số giường" class="w-10 text-right">
                                     {{ $type->beds }}
                                 </td>
                                 <td data-label="Hình ảnh">     
@@ -483,7 +483,9 @@
             background-color: #0056b3;
             border-color: #0056b3;
         }
-
+        #data-table td{
+            height: 37px !important;
+        }
         .btn-toggle.collapsed {
             background-color: red;
             border-color: red;

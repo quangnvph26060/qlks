@@ -7125,7 +7125,17 @@ a.icon-btn {
         padding-top: 25px;
     }
 }
+.text-left {
+    text-align: left !important;
+}
 
+.text-right {
+    text-align: right !important;
+}
+
+.text-center {
+    text-align: center;
+}
 .gateway-thumb .image-upload-wrapper + div {
     display: none;
 }

@@ -75,13 +75,13 @@
                                         <div class="dropdown menu_dropdown_check_in" id="dropdown-menu"  style="position:fixed">
                                             <div class="dropdown-item"><a
                                             data-id="{{ $item->id }}" class="btn-edit-status" data-bs-toggle="modal" data-bs-target="#status-code" style="color:black">
-                                                Sửa cơ sở vật chất
+                                                Sửa
                                             </a>
                                         </div>
                                           
                                          <div class="dropdown-item booked_room_detail"> <button class=" btn-delete icon-delete-room"
                                                 data-id="{{ $item->id }}" data-modal_title="@lang('Xóa trạng thái')" type="button"
-                                                data-pro="0">Xóa cơ sở vật chất</div>
+                                                data-pro="0">Xóa</div>
                               
                                         </div>
                                 </td>

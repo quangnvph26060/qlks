@@ -57,7 +57,7 @@
                                 @if ($rooms->isNotEmpty())
                                     @foreach ($rooms as $id => $room)
                                         @if ($rooms->count() > 0)
-                                            <tr data-id="{{ $room->id }}">
+                                            <tr data-id="{{ $room->id }}" class="{{$id % 2 !==0 ? 'bg-white' : 'bg-gray'}}">
                                             @can('admin.hotel.room.amenities.all')
                                                 
                                                 <td style="width:20px;">

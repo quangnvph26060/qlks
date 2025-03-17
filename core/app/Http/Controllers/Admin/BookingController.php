@@ -169,9 +169,6 @@ class BookingController extends Controller
             ->when(!empty($request->data['customerName']), function ($query) use ($request) {
                 $query->where('customer_name', 'LIKE', '%' . $request->data['customerName'] . '%');
             })
-            // ->when(!empty($request->data['roomCode']), function ($query) use ($request) {
-            //     $query->where('room_code', 'LIKE', '%' . $request->data['roomCode'] . '%');
-            // })
             ->when(
                 !empty($request->data['roomName']),
                 fn($query) => $query->whereHas(
@@ -180,7 +177,7 @@ class BookingController extends Controller
                     $q->where('room_number', 'LIKE', '%' . $request->data['roomName'] . '%')
                 )
             )
-            ->where('checkout_date', '>', Carbon::now())
+            ->where(DB::raw("DATE_SUB(checkout_date, INTERVAL 1 DAY)"), '>', Carbon::now())
             ->orderBy('created_at', 'desc')
             ->get();
         $groupedBookings = $roomBookings->groupBy('check_in_id');

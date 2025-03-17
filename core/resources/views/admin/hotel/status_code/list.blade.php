@@ -71,7 +71,7 @@
                         </thead>
                         <tbody id="main-table-hotel">
                             @forelse($status_codes as $id => $item)
-                                <tr data-id="{{ $item->id }}">
+                                <tr data-id="{{ $item->id }}" class="{{$id % 2 !==0 ? 'bg-white' : 'bg-gray'}}"> 
                                     <td style="width:20px;">
                                         <svg class="svg_menu_check_in" xmlns="http://www.w3.org/2000/svg" width="30"
                                             height="30" viewBox="0 0 21 21">
@@ -84,15 +84,15 @@
                                         <div class="dropdown menu_dropdown_check_in" id="dropdown-menu">
                                             <div class="dropdown-item"><a data-id="{{ $item->id }}"
                                                     class="btn-edit-status" data-bs-toggle="modal"
-                                                    data-bs-target="#status-code" style="color:black">
-                                                    Sửa trạng thái
+                                                    data-bs-target="#status-code" style="color:#5b6e88">
+                                                    Sửa
                                                 </a>
                                             </div>
 
                                             <div class="dropdown-item booked_room_detail"> <button
                                                     class=" btn-delete icon-delete-room" data-id="{{ $item->id }}"
-                                                    data-modal_title="@lang('Xóa trạng thái')" type="button" data-pro="0">Xóa
-                                                    trạng thái</div>
+                                                    data-modal_title="@lang('Xóa trạng thái')" type="button" data-pro="0" style="color:#5b6e88">Xóa
+                                                  </div>
 
                                         </div>
                                     </td>

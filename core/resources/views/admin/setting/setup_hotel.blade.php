@@ -47,14 +47,14 @@
                                                         <a class="btn btn-sm btn-outline--primary btn-edit-hotel"
                                                         data-id="{{ $item->id }}" data-bs-toggle="modal" data-bs-target="#setup-hotel"  style="color:black !important;border:none;padding:5px"
                                                                         data-modal_title="@lang('Cập nhật cơ sở vật chất')" type="button">
-                                                                    @lang('Sửa cơ sở')
+                                                                    @lang('Sửa')
                                                         </a>
                                                         </div>
                                                     
                                                         <div class="dropdown-item booked_room_detail">
                                                         <button class=" btn-delete" data-id="{{ $item->id }}"
                                                             data-modal_title="@lang('Xóa')" type="button">
-                                                                    Xóa cơ sở
+                                                                    Xóa
                                                         </button>
                                                         </div>
                                             </div>

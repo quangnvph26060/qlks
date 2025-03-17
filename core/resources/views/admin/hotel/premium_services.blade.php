@@ -66,7 +66,7 @@
                             </thead>
                             <tbody>
                                 @forelse($premiumServices as $id => $premiumService)
-                                    <tr data-id="{{ $premiumService->id }}">
+                                    <tr data-id="{{ $premiumService->id }}" class="{{$id % 2 !==0 ? 'bg-white' : 'bg-gray'}}">
                                     <td style="width:20px;">
                                     <svg class="svg_menu_check_in" xmlns="http://www.w3.org/2000/svg" width="30" height="30" viewBox="0 0 21 21"><g fill="currentColor" fill-rule="evenodd"><circle cx="10.5" cy="10.5" r="1"/><circle cx="10.5" cy="5.5" r="1"/><circle cx="10.5" cy="15.5" r="1"/></g></svg>
                                         <div class="dropdown menu_dropdown_check_in" id="dropdown-menu" style="position:fixed">
@@ -74,7 +74,7 @@
                                                  <button class="btn btn-sm btn-outline--primary cuModalBtn edit-service"
                                                             data-has_status="1" data-modal_title="@lang('Update Premium Service')"
                                                             data-resource="{{ $premiumService }}" type="button" style="    color: black !important;border: none;">
-                                                            Sửa dịch vụ
+                                                            Sửa
                                                 </button>
                                             </a>
 
@@ -82,7 +82,7 @@
                                           
                                          <div class="dropdown-item booked_room_detail"> <button class="btn-delete icon-delete-room"
                                                 data-id="{{ $premiumService->id }}" data-modal_title="@lang('Xóa khách hàng')" type="button"
-                                                data-pro="0">Xóa dịch vụ</div>
+                                                data-pro="0">Xóa</div>
                               
                                         </div>
                                      </td>

@@ -73,12 +73,12 @@
                                             <div class="dropdown menu_dropdown_check_in" id="dropdown-menu" style="position:fixed">
                                                 <div class="dropdown-item"><button
                                                 data-resource="{{ $room }}" class="btn-edit-customer editBtn" data-bs-toggle="modal" data-bs-target="#edit-customer" style="color:black">
-                                                    Sửa loại phòng 
+                                                    Sửa
                                                 </button></div>
                                             
                                                 <div class="dropdown-item booked_room_detail"> <button class=" btn-delete icon-delete-room"
                                                     data-id="{{ $room->id }}" data-modal_title="@lang('Xóa loại phòng')" type="button"
-                                                    data-pro="0">Xóa loại phòng</div>
+                                                    data-pro="0">Xóa</div>
                                 
                                             </div>
                                         </td>

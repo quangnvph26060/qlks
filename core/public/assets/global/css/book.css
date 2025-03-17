@@ -930,17 +930,7 @@ h5 {
 .search-container p:hover {
     background-color: #0056b3;
 }
-.text-left {
-    text-align: left !important;
-}
 
-.text-right {
-    text-align: right !important;
-}
-
-.text-center {
-    text-align: center;
-}
 #show-customer {
     border-collapse: collapse;
     /* Gộp viền bảng */
