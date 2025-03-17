@@ -4,6 +4,7 @@ namespace App\Http\Controllers\Api;
 
 use App\Constants\Status;
 use App\Http\Controllers\Controller;
+use App\Models\Admin;
 use App\Models\DeviceToken;
 use App\Models\NotificationLog;
 use App\Models\Transaction;
@@ -329,30 +330,29 @@ class UserController extends Controller
     {
         try {
             // Kiểm tra xem email hoặc username đã tồn tại chưa
-            if (User::where('email', $request->email)->exists()) {
+            if (Admin::where('email', $request->email)->exists()) {
                 return response()->json([
                     'success' => false,
                     'message' => 'Email đã tồn tại'
                 ], 400);
             }
 
-            if (User::where('username', $request->username)->exists()) {
+            if (Admin::where('username', $request->username)->exists()) {
                 return response()->json([
                     'success' => false,
                     'message' => 'Username đã tồn tại'
                 ], 400);
             }
 
-            $customer = User::create([
-                // 'full_name' => $request->name,
+            $customer = Admin::create([
+                'name' => $request->name,
                 'username' => $request->username,
                 'email' => $request->email,
                 'mobile' => $request->phone,
                 'password' => $request->password,
                 'status' => 1,
-                'ev' => 0,
-                'sv' => 0,
-                'profile_complete' => 0,
+                'role_id' => 4,
+                'unit_code' => 'coso1'
             ]);
 
             return response()->json([
