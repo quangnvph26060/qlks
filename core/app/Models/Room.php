@@ -59,48 +59,48 @@ class Room extends Model
     {
         return $this->hasMany(RoomImage::class);
     }
-    public function checkroom()
-    {
-        // Kiểm tra nếu có bản ghi trong checkins
-        if ($this->checkins()->exists()) {
-            return $this->checkins;
-        }
+    // public function checkroom()
+    // {
+    //     // Kiểm tra nếu có bản ghi trong checkins
+    //     if ($this->checkins()->exists()) {
+    //         return $this->checkins;
+    //     }
 
-        // Nếu không, trả về booked
-        return $this->booked;
-    }
+    //     // Nếu không, trả về booked
+    //     return $this->booked;
+    // }
 
 
 
-    public function booked()
-    {
-        return $this->hasMany(BookedRoom::class, 'room_id', 'id');
-    }
-    public function checkins()
-    {
-        return $this->hasMany(CheckInRoom::class, 'room_id', 'id');
-    }
+    // public function booked()
+    // {
+    //     return $this->hasMany(BookedRoom::class, 'room_id', 'id');
+    // }
+    // public function checkins()
+    // {
+    //     return $this->hasMany(CheckInRoom::class, 'room_id', 'id');
+    // }
     // public function roomPrice()
     // {
     //     return $this->hasMany(RegularRoomPrice::class, 'room_price_id', 'id');
     // }
-    public function isRoomClean()
-    {
-        return $this->is_clean === 1;
-    }
-    public function getCleanStatusClass()
-    {
-        return $this->isRoomClean() ? 'badge-info' : 'badge-danger';
-    }
+    // public function isRoomClean()
+    // {
+    //     return $this->is_clean === 1;
+    // }
+    // public function getCleanStatusClass()
+    // {
+    //     return $this->isRoomClean() ? 'badge-info' : 'badge-danger';
+    // }
 
-    public function getCleanStatusSvg()
-    {
-        return $this->isRoomClean() ? 'is_clean' : 'no_clean';
-    }
-    public function getCleanStatusText()
-    {
-        return $this->isRoomClean() ? 'Đã dọn' : 'Chưa dọn';
-    }
+    // public function getCleanStatusSvg()
+    // {
+    //     return $this->isRoomClean() ? 'is_clean' : 'no_clean';
+    // }
+    // public function getCleanStatusText()
+    // {
+    //     return $this->isRoomClean() ? 'Đã dọn' : 'Chưa dọn';
+    // }
 
 
     public function updatePrices($data)
@@ -220,5 +220,8 @@ class Room extends Model
     public function  roomBookingChange()
     {
         return $this->hasMany(RoomChange::class, 'new_room_code');
+    }
+    public function  roomBookingHistory(){
+        return $this->hasMany(RoomStatusHistory::class, 'room_id');
     }
 }

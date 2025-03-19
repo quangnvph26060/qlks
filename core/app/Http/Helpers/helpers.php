@@ -338,8 +338,6 @@ function menuActive($routeName, $type = null, $param = null)
 }
 function saveRoomStatusHistory($room_id, $start_date, $end_date, $status_code)
 {
-    $start_date = Carbon::parse($start_date)->format('Y-m-d');
-    $end_date = Carbon::parse($end_date)->format('Y-m-d');
 
     $existingRecords = RoomStatusHistory::where('room_id', $room_id)
         ->where(function ($query) use ($start_date, $end_date) {
@@ -355,16 +353,16 @@ function saveRoomStatusHistory($room_id, $start_date, $end_date, $status_code)
     if ($existingRecords->isNotEmpty()) {
         $existingRecords->each(function ($record) use ($status_code, $start_date, $end_date) {
             $record->update([
-                'start_date'  => Carbon::parse($start_date),
-                'end_date'    => Carbon::parse($end_date),
+                'start_date'  => $start_date,
+                'end_date'    => $end_date,
                 'status_code' => $status_code
         ]);
         });
     } else {
         RoomStatusHistory::create([
             'room_id'     => $room_id,
-            'start_date'  => Carbon::parse($start_date),
-            'end_date'    => Carbon::parse($end_date),
+            'start_date'  => $start_date,
+            'end_date'    => $end_date,
             'unit_code'   => hf('ma_coso'),
             'created_at'  => now(),
             'status_code' => $status_code

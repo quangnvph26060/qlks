@@ -25,7 +25,7 @@
     <link rel="stylesheet" href="{{ asset('assets/admin/css/app.css') }}">
     <link rel="stylesheet" href="{{ asset('assets/admin/css/custom.css') }}">
     <link rel="stylesheet" href="{{ asset('assets/admin/css/detail.css') }}">
-
+    
     @stack('style')
 </head>
 
@@ -46,7 +46,7 @@
     <script src="{{ asset('assets/admin/js/app.js') }}"></script>
     <script src="{{ asset('assets/admin/js/cu-modal.js') }}"></script>
     <script src="{{ asset('assets/admin/js/vendor/sweetalert2@11.js') }}"></script>
-
+    <script src="https://cdn.jsdelivr.net/npm/flatpickr"></script>
 
     {{-- LOAD NIC EDIT --}}
     <script>
@@ -113,8 +113,6 @@
 
         
         const toggleButton = document.getElementById('toggle-btn');
-   
-
         $('#toggle-btn').on('click', () => {
           sidebar.classList.toggle('closed');
           mainContent.classList.toggle('shifted');

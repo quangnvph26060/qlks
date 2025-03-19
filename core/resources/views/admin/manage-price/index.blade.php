@@ -126,9 +126,9 @@
         </div>
     </div>
     @endsection
-    @push('style-lib')
+    {{-- @push('style-lib')
         <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/flatpickr/dist/flatpickr.min.css">
-    @endpush
+    @endpush --}}
     @push('style')
         <link rel="stylesheet" href="{{ asset('assets/global/css/manage-price.css') }}">
         <link rel="stylesheet" href="{{ asset('assets/global/css/pagination.css') }}">
@@ -139,7 +139,7 @@
         <script src="{{ asset('assets/validator/validator.js') }}"></script>
         <script src="{{ asset('assets/admin/js/vendor/sweetalert2@11.js') }}"></script>
         <script src="{{ asset('assets/admin/js/dataTable.js') }}"></script>
-        <script src="https://cdn.jsdelivr.net/npm/flatpickr"></script>
+        {{-- <script src="https://cdn.jsdelivr.net/npm/flatpickr"></script> --}}
         <script src="https://cdn.jsdelivr.net/npm/autonumeric@4.5.4"></script>
         <script src="{{ asset('assets/admin/js/common.js') }}"></script>
         <script>

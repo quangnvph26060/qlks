@@ -401,6 +401,8 @@ Route::middleware('admin', 'adminPermission')->group(function () {
             Route::get('bill-payment/{id}', 'paymentView')->name('payment');
             Route::post('bill-payment/{id}', 'payment')->name('payment');
 
+            Route::get('room-booking-history', 'roomBoookingHistory')->name('room-booking-history');
+
             Route::get('booking-checkout/{id}', 'checkOutPreview')->name('checkout');
             Route::post('booking-checkout/{id}', 'checkOut')->name('checkout');
 

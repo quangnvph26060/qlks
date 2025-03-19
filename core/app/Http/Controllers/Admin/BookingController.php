@@ -472,8 +472,24 @@ class BookingController extends Controller
                 $selectedStatus = null;
 
                 $roomRecords = $filteredResults->filter(function ($item) use ($room, $date) {
-                    return $item->room_id == $room->id && $date >= $item->start_date && $date <= $item->end_date;
+                    $formattedDate = Carbon::parse($date)->format('Y-m-d');
+                    $startDate = Carbon::parse($item->start_date)->format('Y-m-d');
+                    $endDate = Carbon::parse($item->end_date)->format('Y-m-d');
+                
+                    $daysDifference = Carbon::parse($startDate)->diffInDays(Carbon::parse($endDate));
+
+                    if ($daysDifference == 1) {
+                        // Nếu chỉ cách nhau 1 ngày, chỉ kiểm tra startDate
+                        return $item->room_id == $room->id && $formattedDate == $startDate;
+                    } else {
+                        // Nếu cách nhau hơn 1 ngày, kiểm tra trong khoảng start_date -> end_date
+                        $endDate = Carbon::parse($item->end_date)->subDay()->format('Y-m-d');
+
+                        return $item->room_id == $room->id && $formattedDate >= $startDate && $formattedDate <= $endDate;
+                        
+                    }
                 });
+               
                 if ($roomRecords->isNotEmpty()) {
                     $selectedStatus = $roomRecords->sortByDesc('status_code')->first();
                 }
@@ -680,19 +696,22 @@ class BookingController extends Controller
             if (!$isRoom) {
                 return ApiResponse::error('Không tìm thấy phòng', 200);
             }
-            $start_date = Carbon::parse(now())->format('Y-m-d');
-                $end_date = Carbon::parse($roomBooking->checkout_date)->format('Y-m-d');
-
+                 $start_date = Carbon::parse(now());
+                $end_date = Carbon::parse($roomBooking->checkout_date);
+             
             $checkRoom = RoomStatusHistory::where('room_id', $request->room_id_new)
+            ->whereIn('status_code', [2, 3])
+            ->where('end_date', '!=', $end_date) 
             ->where(function ($query) use ($start_date, $end_date) {
-                $query->whereBetween('start_date', [$start_date, $end_date])
-                    ->orWhereBetween('end_date', [$start_date, $end_date])
-                    ->orWhere(function ($q) use ($start_date, $end_date) {
-                        $q->where('start_date', '<=', $start_date)
+                $query->whereBetween('start_date', [$start_date, $end_date]) // start_date nằm trong khoảng
+                      ->orWhereBetween('end_date', [$start_date, $end_date]) // end_date nằm trong khoảng
+                      ->orWhere(function ($q) use ($start_date, $end_date) {
+                          $q->where('start_date', '<=', $start_date) // Bản ghi nằm trọn trong khoảng
                             ->where('end_date', '>=', $end_date);
-                    });
+                      });
             })
-            ->whereIn('status_code',[2,3])->first();
+            ->first();
+       
             if ($checkRoom) {
                 return ApiResponse::error('Phòng '  . $isRoom->room_number .  ' đã được đặt trong ngày ' . Carbon::parse($checkRoom->start_date)->format('d-m-Y'), 200);
             }
@@ -736,8 +755,8 @@ class BookingController extends Controller
                 if($daysDifference <= 1){
                     saveRoomStatusHistory($isRoom->id, now(), $roomBooking->checkin_date, 3); // phòng mới 
                 }else{
-                    $dateOut = Carbon::parse($roomBooking->checkout_date)->subDay();
-                    saveRoomStatusHistory($isRoom->id, now(), $dateOut, 3); // phòng mới 
+                   
+                    saveRoomStatusHistory($isRoom->id, now(), $roomBooking->checkout_date, 3); // phòng mới 
                 }
 
                 if ($roomBooking->room_change) {
@@ -751,17 +770,17 @@ class BookingController extends Controller
                 }
             }else{
                 $daysDifference = Carbon::parse(now())->startOfDay()->diffInDays(Carbon::parse($roomBooking->checkout_date)->startOfDay());
-                $dateOut = Carbon::parse($roomBooking->checkout_date)->subDay();
+            
                 if($daysDifference <= 1){
                     saveRoomStatusHistory($isRoom->id, now(), $roomBooking->checkin_date, 3); // phòng mới 
                 }else{
-                    saveRoomStatusHistory($isRoom->id, now(), $dateOut, 3); // phòng mới 
+                    saveRoomStatusHistory($isRoom->id, now(), $roomBooking->checkout_date, 3); // phòng mới 
                 }
 
                 if ($roomBooking->room_change) {
-                    saveRoomStatusHistory($roomBooking->room_change, $roomBooking->checkin_date, $dateOut, 1); // phòng cũ 
+                    saveRoomStatusHistory($roomBooking->room_change, $roomBooking->checkin_date, $roomBooking->checkout_date, 1); // phòng cũ 
                 }else{
-                    saveRoomStatusHistory($roomBooking->room_code, $roomBooking->checkin_date, $dateOut, 1); // phòng cũ 
+                    saveRoomStatusHistory($roomBooking->room_code, $roomBooking->checkin_date, $roomBooking->checkout_date, 1); // phòng cũ 
                 }
             }
             $roomBooking->room_change = $isRoom->id;
@@ -849,97 +868,13 @@ class BookingController extends Controller
     {
         $emptyMessage   = '';
         $pageTitle      =  'Lễ tân';
-        $Title          =  'Tất cả các phòng';
-
-        $rooms = BookedRoom::active()
-            ->with([
-                'room',
-                'room.roomType',
-                'booking:id,user_id,booking_number',
-                'booking.user:id,firstname,lastname',
-                'usedPremiumService.premiumService:id,name'
-            ]);
-
-        $startDate = $request->startDate ? Carbon::createFromFormat('m/d/Y', $request->startDate)->format('Y-m-d') : null;
-        $endDate = $request->endDate ? Carbon::createFromFormat('m/d/Y', $request->endDate)->format('Y-m-d') : null;
-
-        $rooms->when($startDate && $endDate, function ($query) use ($startDate, $endDate) {
-            $query->whereBetween('booked_for', [$startDate, $endDate]);
-        }, function ($query) {
-            $query->whereDate('booked_for', now()->toDateString());
-        })
-            ->when(!empty($request->roomType), function ($query) use ($request) {
-                $query->where('room_type_id', 'like', '%' . $request->roomType . '%');
-            });
-
-        $rooms = $rooms->get();
-
-
-        $disabledRoomTypeIDs = RoomType::where('status', 0)->pluck('id')->toArray();
-
-
-        $bookedRooms         = $rooms->pluck('room_id')->toArray();
-        $idRoomActive        = RegularRoomPrice::pluck('room_price_id');
-        $emptyRooms          = Room::active()
-            //  ->whereNotIn('id', $bookedRooms)
-            ->whereNotIn('room_type_id', $disabledRoomTypeIDs)
-            // ->whereIn('id', $idRoomActive)
-
-            // 'booked' => function($query){
-            //                 $query->where('status',1)->whereDate('booked_for', '<=', now())->limit(1);
-            //             }
-
-            ->with(['roomType', 'roomType.roomTypePrice', 'roomCheckIn', 'roomBooking'])
-            ->select(['id', 'room_type_id', 'room_number', 'is_clean'])
-            // ->when(!empty($request->roomType), function ($query) use ($request) {
-            //     $query->where('room_type_id', 'like', '%' . $request->roomType . '%');
-            // })
-            ->get();
-        $scope = 'ALL';
-        // dd($emptyRooms);
-        // \Log::info($emptyRooms);
-        $is_method = 'Receptionist';
-
-        $bookings = BookedRoom::active()
-            ->with([
-                'booking',
-                'roomType',
-                'room',
-                'room.roomPricesActive',
-                'usedPremiumService'
-            ])
-            ->whereHas('booking', function ($query) use ($request) {
-                if (!empty($request->codeRoom)) {
-                    $query->where('booking_number', 'like', '%' . $request->codeRoom . '%');
-                }
-
-                if (!empty($request->customer)) {
-                    $user = User::where('username', 'like', '%' . $request->customer . '%')->first();
-                    if ($user) {
-                        $query->where('user_id', $user->id);
-                    } else {
-                        $query->whereRaw('JSON_UNQUOTE(JSON_EXTRACT(guest_details, "$.name")) LIKE ?', ['%' . $request->customer . '%']);
-                    }
-                }
-            })
-            ->when(!empty($request->roomType), function ($query) use ($request) {
-                $query->where('room_type_id', 'like', '%' . $request->roomType . '%');
-            })
-            ->get();
-
-        if (!empty($request->codeRoom) || !empty($request->customer)) {
-            $emptyRooms = [];
-        }
-        // dd($bookings);
-        $userList = User::select('username', 'email', 'mobile', 'address')->get();
-        $is_result = false;
-        if ($request->ajax()) {
-            $is_result = true;
-            return view('admin.booking.partials.empty_rooms', ['dataRooms' => $emptyRooms, 'bookings' => $bookings, 'is_result' => $is_result])->render();
-        }
-        $roomType = RoomType::active()->select('id', 'name')->get();
-        return view('admin.booking.receptionist.list', compact('pageTitle', 'Title', 'emptyRooms', 'bookings', 'emptyMessage', 'userList', 'roomType', 'is_result'));
+        return view('admin.booking.receptionist.index');
     }
+    public function roomBoookingHistory(){
+        $room = Room::with('roomType','roomBookingHistory','roomBookingHistory.roomStatus')->get();
+        return response()->json(['data' => $room, 'status' => 'success']);
+    }
+
 
     public function changeCleanRoom(Request $request)
     {
