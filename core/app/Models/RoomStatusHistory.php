@@ -19,7 +19,7 @@ class RoomStatusHistory extends Model
     public function roomStatus(){
         return $this->hasOne(RoomStatus::class, 'id', 'status_code');
     }
-
+ 
     public function room(){
         return $this->hasOne(Room::class, 'id', 'room_id');
     }

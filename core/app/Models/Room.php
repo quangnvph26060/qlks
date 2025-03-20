@@ -222,6 +222,6 @@ class Room extends Model
         return $this->hasMany(RoomChange::class, 'new_room_code');
     }
     public function  roomBookingHistory(){
-        return $this->hasMany(RoomStatusHistory::class, 'room_id');
+        return $this->hasMany(RoomStatusHistory::class, 'room_id')->whereIn('status_code', [2, 3]);
     }
 }

@@ -1,0 +1,38 @@
+.view-toggle {
+    display: inline-flex;  /* Cho phép co giãn theo nội dung */
+    align-items: center;
+    background: #ffffff;
+    padding: 5px;  /* Tạo khoảng cách cho đẹp hơn */
+    border-radius: 5px;
+    box-shadow: 0 2px 5px rgba(0, 0, 0, 0.2);
+}
+
+button {
+    border: none;
+    background: none;
+    display: flex;
+    align-items: center;
+    cursor: pointer;
+    font-size: 13px;
+    color: #5b6e88;
+    border-radius: 5px;
+    padding: 5px 10px; /* Tạo khoảng cách giữa icon và text */
+    transition: 0.3s;
+    white-space: nowrap; /* Giữ chữ trên 1 dòng */
+}
+
+button .icon {
+    margin-right: 5px;
+}
+
+button.active {
+    background: #4634ff;
+    color: white;
+}
+button.active span {
+    background: #4634ff;
+    color: white;
+}
+button.active .icon{
+    fill: white;
+}
