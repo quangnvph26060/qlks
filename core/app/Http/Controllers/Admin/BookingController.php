@@ -870,8 +870,9 @@ class BookingController extends Controller
         $pageTitle      =  'Lễ tân';
         return view('admin.booking.receptionist.index');
     }
-    public function roomBoookingHistory(){
-        $room = Room::with('roomType','roomBookingHistory','roomBookingHistory.roomStatus')->get();
+    public function roomBoookingHistory(Request $request){
+
+        $room = Room::with('roomType','roomType.roomTypePrice','roomBookingHistory','roomBookingHistory.roomStatus','roomBookingHistory.checkInData','roomBookingHistory.bookingData')->get();
         return response()->json(['data' => $room, 'status' => 'success']);
     }
 

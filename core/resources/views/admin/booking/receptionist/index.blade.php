@@ -18,9 +18,12 @@
         </div>
         <div class="col-md-9" id="booking-time">
             <div style="float: right; gap: 10px;height: 40px;" class="d-flex">
-                <input type="date" id="startDate" class="form-control w-auto" style="height: 40px" placeholder="Từ ngày">
-                    <input type="date" id="endDate" class="form-control w-auto"  style="height: 40px" placeholder="Đến ngày">
-                <p class="btn btn-primary change-room d-flex align-items-center" style="font-size:13px; gap: 5px;"><i class="la la-plus"></i> Đặt phòng</p>
+                <div class="date-input-booking" style="display: flex;gap: 10px;">
+                    <input type="date" id="startDate" class="form-control w-auto" style="height: 40px" placeholder="Từ ngày">
+                    <input type="date" id="endDate" class="form-control w-auto" style="height: 40px" placeholder="Đến ngày">
+                </div>
+                <p class="btn btn-primary change-room d-flex align-items-center" style="font-size:13px; gap: 5px;"><i
+                        class="la la-plus"></i> Đặt phòng</p>
             </div>
         </div>
     </div>
@@ -46,7 +49,6 @@
 @endpush
 @push('style')
     <link rel="stylesheet" href="{{ asset('assets/global/css/system-1.css') }}">
-
     <link rel="stylesheet" href="{{ asset('assets/global/css/view-toggle.css') }}">
     <link rel="stylesheet" href="{{ asset('assets/global/css/grid_main.css') }}">
 @endpush
@@ -62,6 +64,7 @@
 @endpush
 
 <script>
+    var roomBoookingHistory = "{{ route('admin.booking.room-booking-history') }}"
     $(document).ready(function() {
         let dirtyCount = 5; // Ví dụ giá trị
         let incomingCount = 2;
@@ -85,40 +88,39 @@
         let script = document.createElement('script');
         script.id = scriptId;
         script.src = `{{ asset('assets/admin/js/${view}-main.js') }}`;
-        script.onload = function() {
-        };
+        script.onload = function() {};
         document.body.appendChild(script);
     }
-    document.addEventListener("DOMContentLoaded", function () {
-    const buttons = document.querySelectorAll(".view-toggle button");
+    document.addEventListener("DOMContentLoaded", function() {
+        const buttons = document.querySelectorAll(".view-toggle button");
 
-    // Lấy trạng thái lưu trữ từ LocalStorage, mặc định là 'list'
-    let savedView = localStorage.getItem('selectedView') || 'list';
-    setActiveButton(savedView);
+        // Lấy trạng thái lưu trữ từ LocalStorage, mặc định là 'list'
+        let savedView = localStorage.getItem('selectedView') || 'list';
+        setActiveButton(savedView);
 
-    buttons.forEach(button => {
-        button.addEventListener("click", function () {
-            let selectedView = this.getAttribute("onclick").match(/'([^']+)'/)[1];
-            localStorage.setItem('selectedView', selectedView);
-            setActiveButton(selectedView);
+        buttons.forEach(button => {
+            button.addEventListener("click", function() {
+                let selectedView = this.getAttribute("onclick").match(/'([^']+)'/)[1];
+                localStorage.setItem('selectedView', selectedView);
+                setActiveButton(selectedView);
+            });
         });
+
+        function setActiveButton(view) {
+            buttons.forEach(btn => {
+                btn.classList.remove("active");
+                btn.querySelector(".text").style.display = "none";
+            });
+
+            let activeButton = document.querySelector(`[onclick="changeView('${view}')"]`);
+            if (activeButton) {
+                activeButton.classList.add("active");
+                activeButton.querySelector(".text").style.display = "inline";
+            }
+        }
     });
 
-    function setActiveButton(view) {
-        buttons.forEach(btn => {
-            btn.classList.remove("active");
-            btn.querySelector(".text").style.display = "none";
-        });
-
-        let activeButton = document.querySelector(`[onclick="changeView('${view}')"]`);
-        if (activeButton) {
-            activeButton.classList.add("active");
-            activeButton.querySelector(".text").style.display = "inline";
-        }
-    }
-});
-
-    document.addEventListener('DOMContentLoaded', function () {
+    document.addEventListener('DOMContentLoaded', function() {
         let savedView = localStorage.getItem('selectedView') || 'list';
         
         changeView(savedView);
@@ -129,7 +131,17 @@
         document.getElementById(view + 'View').style.display = 'block';
         loadScript(view);
         localStorage.setItem('selectedView', view);
+        // let html  = ""
+        // if(view == 'calendar'){
+        //         html += `
+        //             <input type="date" id="startDate" class="form-control w-auto" style="height: 40px" placeholder="Từ ngày">
+        //                 <input type="date" id="endDate" class="form-control w-auto" style="height: 40px"
+        //                     placeholder="Đến ngày">
+        //         `;
+        // }
+        // document.querySelectorAll('.date-input-booking').forEach(el => {    el.innerHTML = html;});
+
+
+
     }
-
 </script>
-

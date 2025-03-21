@@ -17,9 +17,7 @@
     <script src="https://cdn.jsdelivr.net/npm/fullcalendar@6.1.8/main.min.js"></script>
     <script src="{{ asset('assets/admin/js/common.js') }}"></script>
 @endpush
-<script>
-    var roomBoookingHistory = "{{ route('admin.booking.room-booking-history') }}"
-</script>
+
 
 <style scoped>
     .table-container {

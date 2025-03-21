@@ -1,7 +1,17 @@
 
-console.log('123123');
 let roomHTML = '';
-let gridView = $('#gridView');
+let gridView = $('#grid-main');
+function formatCurrency(amount) {
+    if (!amount || isNaN(amount)) {
+        return '0 VND'; // Nếu amount không hợp lệ, trả về 0 VND
+    }
+
+    const parts = parseFloat(amount).toFixed(2).toString().split('.');
+    const integerPart = parts[0];
+    const formattedInteger = integerPart.replace(/\B(?=(\d{3})+(?!\d))/g, '.');
+
+    return formattedInteger + ' VND';
+}
 $.ajax({
     type: "GET",
     url: roomBoookingHistory,
@@ -22,15 +32,16 @@ $.ajax({
             });
 
             let roomHTML = "";
-            console.log(groupedRooms);
             Object.values(groupedRooms).forEach(group => {
                 roomHTML += `
                         <div class="floor-header" onclick="toggleFloor('${group.code}')">
-                            ${group.name} <span><i class="fas fa-chevron-down"></i></span>
+                            ${group.name} (${group.rooms.length}) <span><i class="fas fa-chevron-down"></i></span>
                         </div>
                         <div id="${group.code}" class="room-grid">
                     `;
-
+                //     <div class="time-info">
+                //     <span class="clock-icon">🕒</span> 97 giờ 11 phút / 1 giờ
+                // </div>
                 group.rooms.forEach(item => {
                     roomHTML += `
                         <div class="room-card ${item.status}">
@@ -41,8 +52,9 @@ $.ajax({
                             <div class="room-number">${item.room_number}</div>
                             <div class="room-info">${item.customer_type || "Không có thông tin"}</div>
                             <div class="time-info">
-                                <span class="clock-icon">🕒</span> 97 giờ 11 phút / 1 giờ
-                            </div>
+                                    ${formatCurrency(item.room_type.room_type_price.unit_price)}
+                            </div>      
+
                         </div>
                     `;
                 });
@@ -51,7 +63,7 @@ $.ajax({
             });
 
             // Đổ vào HTML
-            $("#gridView").html(roomHTML);
+            $("#grid-main").html(roomHTML);
 
         } else {
             reject("Không lấy được dữ liệu");
@@ -63,7 +75,8 @@ $.ajax({
 });
 
 document.addEventListener("DOMContentLoaded", function () {
-    console.log("Lưới JS đã chạy!");
+    const savedView = localStorage.getItem('selectedView') || 'list';
+    console.log(savedView);
 
     // Logic JS cho giao diện dạng Lưới
     document.querySelectorAll(".grid-item").forEach(item => {

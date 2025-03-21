@@ -1,56 +1,34 @@
-{{-- <div class="floor-header" onclick="toggleFloor('floor1')">Tầng 1 <span><i class="fas fa-chevron-down"></i></span></div>
-<div id="floor1" class="room-grid">
-    <div class="room-card clean">
-        <div class="room-name">P.101</div>
-        <div class="room-info">Khách lẻ</div>
-    </div>
-    <div class="room-card dirty">
-        <div class="room-name">P.102</div>
-        <div class="room-info">Chưa dọn</div>
-    </div>
+
+<div id="grid-main" class="scroll-grid">
+
 </div>
-
-<div class="floor-header" onclick="toggleFloor('floor2')">Tầng 2 <span><i class="fas fa-chevron-down"></i></span></div>
-<div id="floor2" class="room-grid">
-    <div class="room-card clean">
-        <div class="room-name">P.201</div>
-        <div class="room-info">Khách lẻ</div>
-    </div>
-    <div class="room-card clean">
-        <div class="room-name">P.201</div>
-        <div class="room-info">Khách lẻ</div>
-    </div>
-    <div class="room-card clean">
-        <div class="room-name">P.201</div>
-        <div class="room-info">Khách lẻ</div>
-    </div>
-    <div class="room-card clean">
-        <div class="room-name">P.201</div>
-        <div class="room-info">Khách lẻ</div>
-    </div>
-    <div class="room-card clean">
-        <div class="room-name">P.201</div>
-        <div class="room-info">Khách lẻ</div>
-    </div>
-    <div class="room-card clean">
-        <div class="room-name">P.201</div>
-        <div class="room-info">Khách lẻ</div>
-    </div>
-    <div class="room-card clean">
-        <div class="room-name">P.201</div>
-        <div class="room-info">Khách lẻ</div>
-    </div>
-    <div class="room-card dirty">
-        <div class="room-name">P.202</div>
-        <div class="room-info">Chưa dọn</div>
-    </div>
-</div> --}}
-
 
 @push('scripts-book')
     <script src="{{ asset('assets/admin/js/grid.js') }}"></script>
-    <script>
-        var roomBoookingHistory = "{{ route('admin.booking.room-booking-history') }}"
-    </script>
+  
+
 @endpush
 
+<style scoped>
+#grid-main {
+    width: 100%;
+    height: 500px; /* Hoặc điều chỉnh theo nhu cầu */
+    overflow: auto; /* Kích hoạt thanh cuộn */
+    white-space: nowrap; /* Ngăn nội dung xuống dòng */
+    scrollbar-width: thin; /* Thanh cuộn mỏng */
+}
+
+/* Scrollbar đẹp hơn (Chỉ áp dụng cho Chrome & Edge) */
+#grid-main::-webkit-scrollbar {
+    width: 8px;
+    height: 8px;
+}
+#grid-main::-webkit-scrollbar-thumb {
+    background: rgba(0, 0, 0, 0.2);
+    border-radius: 4px;
+}
+#grid-main::-webkit-scrollbar-thumb:hover {
+    background: rgba(0, 0, 0, 0.4);
+}
+
+</style>

@@ -133,7 +133,6 @@ document.addEventListener("DOMContentLoaded", function () {
                         });
                     } else { 
                         // ngày
-                        console.log('ngày');
                         
                         dateHeaders.forEach(date => {
                             let cellDate = new Date(date).setHours(0, 0, 0, 0);
