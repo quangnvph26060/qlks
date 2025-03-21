@@ -1,5 +1,6 @@
 
 
+
 function toggleFloor(floorClass) {
     var rows = document.querySelectorAll('.' + floorClass);
     rows.forEach(row => {
@@ -8,89 +9,8 @@ function toggleFloor(floorClass) {
 }
 
 document.addEventListener("DOMContentLoaded", function () {
-    const rooms = [
-        {
-            id: 35,
-            room_type_id: 4,
-            room_number: "P.1",
-            room_booking_history: [
-                { id: 101, room_code: 35, room_status: 2, checkin: "2025-03-18 14:00:00", checkout: "2025-03-21 12:00:00" }
-            ]
-        },
-        {
-            id: 36,
-            room_type_id: 4,
-            room_number: "P.2",
-            room_booking_history: [
-                { id: 102, room_code: 36, room_status: 2, checkin: "2025-03-19 10:00:00", checkout: "2025-03-22 08:00:00" }
-            ]
-        },
-        {
-            id: 38,
-            room_type_id: 5,
-            room_number: "P.3",
-            room_booking_history: [
-                { id: 103, room_code: 38, room_status: 2, checkin: "2025-03-20 00:00:00", checkout: "2025-03-24 10:00:00" }
-            ]
-        },
-        {
-            id: 39,
-            room_type_id: 6,
-            room_number: "P.4",
-            room_booking_history: [
-                { id: 104, room_code: 39, room_status: 2, checkin: "2025-03-20 15:00:00", checkout: "2025-03-23 11:00:00" }
-            ]
-        },
-        {
-            id: 40,
-            room_type_id: 7,
-            room_number: "P.5",
-            room_booking_history: [
-                { id: 105, room_code: 40, room_status: 2, checkin: "2025-03-21 07:00:00", checkout: "2025-03-22 09:00:00" }
-            ]
-        },
-        {
-            id: 41,
-            room_type_id: 7,
-            room_number: "P.6",
-            room_booking_history: [
-                { id: 106, room_code: 41, room_status: 2, checkin: "2025-03-19 12:00:00", checkout: "2025-03-20 10:57:00" }
-            ]
-        },
-        {
-            id: 42,
-            room_type_id: 5,
-            room_number: "P.7",
-            room_booking_history: [
-                { id: 107, room_code: 42, room_status: 2, checkin: "2025-03-20 09:00:00", checkout: "2025-03-25 14:00:00" }
-            ]
-        },
-        {
-            id: 43,
-            room_type_id: 5,
-            room_number: "P.8",
-            room_booking_history: [
-                { id: 108, room_code: 43, room_status: 2, checkin: "2025-03-22 08:00:00", checkout: "2025-03-23 16:00:00" }
-            ]
-        },
-        {
-            id: 44,
-            room_type_id: 4,
-            room_number: "P.9",
-            room_booking_history: [
-                { id: 109, room_code: 44, room_status: 2, checkin: "2025-03-20 06:00:00", checkout: "2025-03-21 04:00:00" }
-            ]
-        },
-        {
-            id: 45,
-            room_type_id: 4,
-            room_number: "P.10",
-            room_booking_history: [
-                { id: 110, room_code: 45, room_status: 2, checkin: "2025-03-23 14:00:00", checkout: "2025-03-24 10:00:00" },
-                { id: 111, room_code: 45, room_status: 2, checkin: "2025-03-25 14:00:00", checkout: "2025-03-25 15:00:00" }
-            ]
-        }
-    ];
+    const savedView = localStorage.getItem('selectedView') || 'list';
+    console.log(savedView);
 
     function getAllDatesInTableBooking() {
         return new Promise((resolve, reject) => {
@@ -159,15 +79,14 @@ document.addEventListener("DOMContentLoaded", function () {
 
             // ✅ Nhóm phòng theo `room_type_id`
             rooms.forEach(room => {
-                console.log(room['room_type']['name']);
-                
+
                 if (!groupedRooms[room['room_type']['name']]) {
                     groupedRooms[room['room_type']['name']] = [];
                 }
                 groupedRooms[room['room_type']['name']].push(room);
             });
 
-            
+
             // 🎨 Render bảng
             for (let roomType in groupedRooms) {
 
@@ -180,8 +99,8 @@ document.addEventListener("DOMContentLoaded", function () {
 
                 groupedRooms[roomType].forEach(room => {
                     let row = `<tr><td class="text-left" >${room.room_number}</td>`;
-                
-                    
+
+
                     if (showHours) {
                         dateHeaders.forEach(hour => {
                             let cellTime = new Date(startDate);
@@ -200,8 +119,8 @@ document.addEventListener("DOMContentLoaded", function () {
                                 }
                                 return cellTime >= checkin && cellTime < checkout;
                             });
-                               
-                                
+
+
                             if (isBooked && bgColor == 2) {
                                 row += `<td  class="room_book" style="background: ${isBooked ? 'lightgreen' : 'transparent'};"></td>`;
                             } else if (isBooked && bgColor == 3) {
@@ -209,13 +128,15 @@ document.addEventListener("DOMContentLoaded", function () {
                             } else if (!isBooked) {
                                 row += `<td style="background: transparent;"></td>`;
                             }
-                           
+                          
 
                         });
-                    } else {
+                    } else { 
+                        // ngày
+                        console.log('ngày');
+                        
                         dateHeaders.forEach(date => {
                             let cellDate = new Date(date).setHours(0, 0, 0, 0);
-
                             // Kiểm tra từng bản ghi đặt phòng
                             let styles = room.room_booking_history.map(booking => {
 
@@ -231,26 +152,30 @@ document.addEventListener("DOMContentLoaded", function () {
                                     color = "#e6454d"; // Màu đỏ nhạt
                                     className = "check_in_room";
                                 }
-
                                 if (color) {
-                                    if (cellDate === checkinDate) {
-                                        let startHour = checkin.getHours();
-                                        let percent = (startHour / 24) * 100;
-                                        return { style: `linear-gradient(to right, transparent ${percent}%, ${color} ${percent}%)`, className };
+                                    let startPercent = ((checkin.getHours() * 60 + checkin.getMinutes()) / (24 * 60)) * 100;
+                                    let endPercent = ((checkout.getHours() * 60 + checkout.getMinutes()) / (24 * 60)) * 100;
+                        
+                                    if (cellDate === checkinDate && cellDate === checkoutDate) {
+                                        // Trường hợp đặt phòng và checkout trong cùng một ngày
+                                        return { style: `linear-gradient(to right, transparent ${startPercent}%, ${color} ${startPercent}%, ${color} ${endPercent}%, transparent ${endPercent}%)`, className };
+                                    } else if (cellDate === checkinDate) {
+                                        // Ngày check-in: bôi màu từ giờ check-in đến hết ngày
+                                        return { style: `linear-gradient(to right, transparent ${startPercent}%, ${color} ${startPercent}%)`, className };
                                     } else if (cellDate === checkoutDate) {
-                                        let endHour = checkout.getHours();
-                                        let percent = (endHour / 24) * 100;
-                                        return { style: `linear-gradient(to right, ${color} ${percent}%, transparent ${percent}%)`, className };
+                                        // Ngày check-out: bôi màu từ đầu ngày đến giờ check-out
+                                        return { style: `linear-gradient(to right, ${color} 0%, ${color} ${endPercent}%, transparent ${endPercent}%)`, className };
                                     } else if (cellDate > checkinDate && cellDate < checkoutDate) {
+                                        // Những ngày ở giữa check-in và check-out: full màu
                                         return { style: color, className };
                                     }
                                 }
                                 return null;
                             }).filter(s => s !== null);
-                        
+
                             let finalStyle = styles.map(s => s.style).join(", ");
                             let finalClass = styles.map(s => s.className).filter(c => c).join(" ");
-                        
+
                             row += `<td class="${finalClass}" style="background: ${finalStyle};"></td>`;
                         });
                     }
@@ -260,12 +185,12 @@ document.addEventListener("DOMContentLoaded", function () {
                 });
 
             }
-
+            updateRealtime();
         } catch (error) {
             console.error("Lỗi khi lấy dữ liệu phòng:", error);
         }
 
-        updateRealtime();
+
     }
 
 
@@ -330,23 +255,56 @@ document.addEventListener("DOMContentLoaded", function () {
 
         checkRealtimeCheckout(now); // Kiểm tra checkout
     }
+    let rooms = null; // Biến lưu danh sách phòng, chỉ cập nhật mỗi 30 phút
+    let lastUpdatedTime = 0; // Thời điểm cập nhật cuối cùng
+    const CHECK_INTERVAL = 30 * 60 * 1000; // 30 phút (milliseconds)
 
-    // 🔥 Kiểm tra nếu realtime chạy qua giờ checkout của phòng nào đó
-    function checkRealtimeCheckout(now) {
-        rooms.forEach(room => {
-            let checkoutTime = new Date(room.checkout);
 
-            // Nếu đã đến giờ checkout và chưa thông báo
-            if (now >= checkoutTime && now - checkoutTime < 60000) {
-                if (!lastAlertedRooms.has(room.id)) {
-                    alert(`⚠️ Phòng ${room.room_number} đã checkout vào ${formatDate(checkoutTime)} lúc ${checkoutTime.getHours()}:${checkoutTime.getMinutes()}`);
-                    lastAlertedRooms.add(room.id); // Đánh dấu đã cảnh báo
-                }
-            }
-        });
+    async function updateRoomsData() {
+        try {
+            rooms = await getAllDatesInTableBooking(); // Gọi API lấy danh sách phòng
+            lastUpdatedTime = Date.now(); // Lưu lại thời gian cập nhật
+        } catch (error) {
+            console.error("Lỗi khi cập nhật danh sách phòng:", error);
+        }
     }
 
-    // 🎯 Bổ sung sự kiện click vào bảng
+    // Gọi API ngay lần đầu tiên khi khởi chạy
+    updateRoomsData();
+
+    // Lập lịch gọi API mỗi 30 phút
+    setInterval(updateRoomsData, CHECK_INTERVAL);
+
+    async function checkRealtimeCheckout(now) {
+
+        try {
+            rooms.forEach(room => {
+                room.room_booking_history.map(booking => {
+                    let checkoutTime = new Date(booking.end_date).getTime(); // Chuyển thành timestamp
+                    let nowTime = now.getTime(); // Chuyển 'now' thành timestamp
+
+                    // Nếu đã đến giờ checkout và trong vòng 1 phút
+                    if (nowTime >= checkoutTime && (nowTime - checkoutTime) < 60000) {
+                        if (!lastAlertedRooms.has(room.id)) {
+
+
+                            // trả phòng muộn 
+
+                            alert(`⚠️ Phòng ${room.room_number} đã checkout vào ${formatDate(new Date(checkoutTime))} lúc ${new Date(checkoutTime).getHours()}:${new Date(checkoutTime).getMinutes()}`);
+                            lastAlertedRooms.add(room.id); // Đánh dấu đã cảnh báo
+                        }
+                    }
+                });
+
+
+            });
+        } catch (error) {
+            console.error("Lỗi khi kiểm tra checkout:", error);
+        }
+    }
+
+
+
     document.getElementById("tableBody").addEventListener("click", (e) => {
         if (e.target.tagName === "TD" && e.target.cellIndex > 0) {
             let roomName = e.target.parentElement.firstChild.textContent.trim();

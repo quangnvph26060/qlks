@@ -1,18 +1,6 @@
-{{-- <table class="table--light table table-bordered mt-3">
-    <thead>
-        <tr id="headerRow">
-            <th>Phòng</th> <!-- Cột đầu tiên là tên phòng -->
-        </tr>
-    </thead>
-    <tbody id="tableBody">
-        <!-- Danh sách phòng -->
-    </tbody>
-</table> --}}
-{{-- <div class="realtime-line" id="realtimeLine">
-    <div class="realtime-time" id="realtimeTime"></div>
-</div> --}}
+
 <div class="table-container">
-    <table class="table table--light  table-bordered table-calendar">
+    <table class="table   table-bordered table-calendar">
         <thead>
             <tr id="headerRow">
                 <th>Phòng</th>
@@ -22,8 +10,6 @@
     </table>
     <div id="realtimeTime" class="realtime-time"></div>
     <div id="realtimeLine" class="realtime-line"></div>
-  
-
 </div>
 @push('script-lib')
     <script src="{{ asset('assets/admin/js/calendar-main.js') }}" defer></script>
@@ -39,7 +25,10 @@
     .table-container {
         position: relative;
     }
-
+#headerRow{
+    background: #4634ff;
+    color: white;
+}
     .realtime-line {
         position: absolute;
         top: 30px;

@@ -16,10 +16,10 @@
                 </button>
             </div>
         </div>
-        <div class="col-md-9">
+        <div class="col-md-9" id="booking-time">
             <div style="float: right; gap: 10px;height: 40px;" class="d-flex">
                 <input type="date" id="startDate" class="form-control w-auto" style="height: 40px" placeholder="Từ ngày">
-                 <input type="date" id="endDate" class="form-control w-auto"  style="height: 40px" placeholder="Đến ngày">
+                    <input type="date" id="endDate" class="form-control w-auto"  style="height: 40px" placeholder="Đến ngày">
                 <p class="btn btn-primary change-room d-flex align-items-center" style="font-size:13px; gap: 5px;"><i class="la la-plus"></i> Đặt phòng</p>
             </div>
         </div>
@@ -98,11 +98,7 @@
     buttons.forEach(button => {
         button.addEventListener("click", function () {
             let selectedView = this.getAttribute("onclick").match(/'([^']+)'/)[1];
-
-            // Cập nhật trạng thái vào LocalStorage
             localStorage.setItem('selectedView', selectedView);
-
-            // Cập nhật UI
             setActiveButton(selectedView);
         });
     });
@@ -123,6 +119,7 @@
 
     document.addEventListener('DOMContentLoaded', function () {
         let savedView = localStorage.getItem('selectedView') || 'list';
+        
         changeView(savedView);
     });
 
