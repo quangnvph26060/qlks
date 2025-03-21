@@ -37,7 +37,7 @@
             @include('admin/booking/receptionist/grid')
         </div>
         <div id="calendarView" class="view" style="display: none;">
-            @include('admin/booking/receptionist/calendar') 
+            @include('admin/booking/receptionist/calendar')
         </div>
     </div>
 @endsection
@@ -46,8 +46,9 @@
 @endpush
 @push('style')
     <link rel="stylesheet" href="{{ asset('assets/global/css/system-1.css') }}">
-    
+
     <link rel="stylesheet" href="{{ asset('assets/global/css/view-toggle.css') }}">
+    <link rel="stylesheet" href="{{ asset('assets/global/css/grid_main.css') }}">
 @endpush
 <script src="https://cdn.jsdelivr.net/npm/tesseract.js"></script>
 
@@ -74,7 +75,7 @@
         $('.status-checkout-line-count').text('Nhận phòng muộn (' + lateCheckinCount + ')');
         $('.status-overdue-line-count').text('Quá giờ trả (' + checkOutCount + ')');
     });
-   
+
     function loadScript(view) {
         let scriptId = 'view-script';
         let oldScript = document.getElementById(scriptId);
@@ -106,7 +107,7 @@
     function setActiveButton(view) {
         buttons.forEach(btn => {
             btn.classList.remove("active");
-            btn.querySelector(".text").style.display = "none"; 
+            btn.querySelector(".text").style.display = "none";
         });
 
         let activeButton = document.querySelector(`[onclick="changeView('${view}')"]`);
@@ -129,6 +130,6 @@
         loadScript(view);
         localStorage.setItem('selectedView', view);
     }
-    
+
 </script>
 
