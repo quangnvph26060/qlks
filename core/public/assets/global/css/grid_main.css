@@ -1,0 +1,129 @@
+
+    .floor-header {
+        font-size: 20px;
+        font-weight: bold;
+        cursor: pointer;
+        padding: 10px;
+        background: #ddd;
+        margin-bottom: 5px;
+        border-radius: 5px;
+        display: flex;
+        justify-content: space-between;
+        align-items: center;
+    }
+
+    .room-grid {
+        display: grid;
+        grid-template-columns: repeat(auto-fit, 200px); /* Cố định mỗi phòng 200px */
+        justify-content: start; /* Canh trái thay vì trải rộng */
+        gap: 15px;
+        margin: 20px 0px;
+    }
+
+
+    .room-status {
+        position: absolute;
+        top: 10px;
+        left: 10px;
+        padding: 5px 10px;
+        font-size: 12px;
+        border-radius: 15px;
+        font-weight: bold;
+    }
+
+    .clean {
+        background-color: #198754;
+        color: white;
+    }
+
+    .dirty {
+        background-color: #dc3545;
+        color: white;
+    }
+
+    .room-name {
+        font-size: 20px;
+        font-weight: bold;
+        margin-top: 10px;
+    }
+
+    .room-info {
+        font-size: 14px;
+        color: #666;
+        margin-top: 5px;
+    }
+
+    .price {
+        font-size: 14px;
+        font-weight: bold;
+        margin-top: 10px;
+    }
+
+    .time-info {
+        font-size: 12px;
+        background: #eee;
+        padding: 5px 10px;
+        border-radius: 5px;
+        display: inline-block;
+        margin-top: 5px;
+    }
+
+    @media (max-width: 768px) {
+        .room-grid {
+            grid-template-columns: repeat(auto-fit, minmax(150px, 1fr));
+        }
+    }
+
+
+    .room-card {
+        background-color: white;
+        color: white;
+        padding: 16px;
+        border-radius: 12px;
+    }
+
+    .room-header {
+        display: flex;
+        justify-content: space-between;
+        align-items: center;
+    }
+
+    .status {
+        background: white;
+        color: #006b66;
+        font-size: 12px;
+        padding: 4px 8px;
+        border-radius: 12px;
+    }
+
+    .menu {
+        cursor: pointer;
+        font-size: 18px;
+    }
+
+    .room-number {
+        color: #000000;
+        font-size: 22px;
+        font-weight: bold;
+        margin-top: 10px;
+    }
+
+    .room-info {
+        font-size: 14px;
+        margin-top: 5px;
+    }
+
+    .time-info {
+        background: #f8e3c4;
+        color: #b35a00;
+        font-size: 12px;
+        padding: 6px;
+        border-radius: 10px;
+        margin-top: 15px;
+        display: inline-block;
+    }
+
+    .clock-icon {
+        margin-right: 5px;
+    }
+
