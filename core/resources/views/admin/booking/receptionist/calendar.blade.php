@@ -15,7 +15,7 @@
     <script src="{{ asset('assets/admin/js/calendar-main.js') }}" defer></script>
     <link href="https://cdn.jsdelivr.net/npm/fullcalendar@6.1.8/main.min.css" rel="stylesheet">
     <script src="https://cdn.jsdelivr.net/npm/fullcalendar@6.1.8/main.min.js"></script>
-    <script src="{{ asset('assets/admin/js/common.js') }}"></script>
+    {{-- <script src="{{ asset('assets/admin/js/common.js') }}"></script> --}}
 @endpush
 
 
@@ -79,9 +79,13 @@
     .highlight-hour,
     .room_book,
     .check_in_room {
-        border-left: none !important;
-        border-right: none !important;
+        /* border-left: none !important;
+        border-right: none !important; */
     }
-
+    .highlight-hour:hover,
+        .room_book:hover,
+        .check_in_room:hover {
+            filter: brightness(1.2);
+        }
    
 </style>
