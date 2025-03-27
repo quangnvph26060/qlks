@@ -36,7 +36,7 @@
     <div class="modal-dialog modal-dialog-centered" role="document" style="width: 100%;">
         <div class="modal-content">
             <div class="modal-header">
-                <h5 class="modal-title" id="myModalLabel-booking">Sửa nhận phòng</h5>
+                <h5 class="modal-title pageModal" id="myModalLabel-booking">Sửa nhận phòng</h5>
                 <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
             </div>
             <div class="modal-body "  style="padding: 5px 12px 12px 5px;">

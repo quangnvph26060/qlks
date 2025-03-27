@@ -18,7 +18,7 @@
         grid-template-columns: repeat(auto-fit, 200px); /* Cố định mỗi phòng 200px */
         justify-content: start; /* Canh trái thay vì trải rộng */
         gap: 15px;
-        margin: 20px 0px;
+        margin: 20px 10px;
     }
 
 
@@ -77,6 +77,7 @@
 
 
     .room-card {
+        cursor: pointer !important;
         background-color: white;
         color: white;
         padding: 16px;
@@ -103,10 +104,13 @@
     }
 
     .room-number {
-        color: #000000;
-        font-size: 22px;
-        font-weight: bold;
-        margin-top: 10px;
+        color: #000000; 
+    font-size: 13px; 
+    margin-top: 10px; 
+    white-space: nowrap; 
+    overflow: hidden; 
+    text-overflow: ellipsis; 
+    max-width: 100%; /* Điều chỉnh nếu cần */
     }
 
     .room-info {

@@ -1,16 +1,27 @@
 
 
+   
+    
 
-function toggleFloor(floorClass) {
-    var rows = document.querySelectorAll('.' + floorClass);
-    rows.forEach(row => {
-        row.style.display = row.style.display === "none" ? "table-row" : "none";
-    });
-}
+// function toggleFloor(floorClass) {
+//     var rows = document.querySelectorAll('.' + floorClass);
+//     rows.forEach(row => {
+//         row.style.display = row.style.display === "none" ? "table-row" : "none";
+//     });
+// }
 
-document.addEventListener("DOMContentLoaded", function () {
+function initGridMain() {
     const savedView = localStorage.getItem('selectedView') || 'list';
-    console.log(savedView);
+  
+        let htmlrow = '';
+        if(savedView === "calendar"){
+            htmlrow = `  <input type="date" id="startDate" class="form-control w-auto" style="height: 40px"
+                        placeholder="Từ ngày">
+                    <input type="date" id="endDate" class="form-control w-auto" style="height: 40px"
+                        placeholder="Đến ngày"></input>`
+            ;
+            document.getElementById('date-input-booking').innerHTML = htmlrow;
+        }
 
     function getAllDatesInTableBooking() {
         return new Promise((resolve, reject) => {
@@ -499,57 +510,18 @@ document.addEventListener("DOMContentLoaded", function () {
             let dateHeaders = document.querySelectorAll("#headerRow th");
             let date = dateHeaders[e.target.cellIndex].textContent.trim();
     
-            let background = e.target.getAttribute("style");
-            let tdWidth = e.target.clientWidth;
-            let clickX = e.offsetX;
-    
-            let colorMessage = "🔲 Bạn đã bấm vào phần không màu!";
-    
-            if (background && background.includes("background:")) {
-                let bgValue = background.match(/background:\s*(.*?);/);
-    
-                if (bgValue && bgValue[1]) {
-                    let bgStyle = bgValue[1].trim();
-    
-                    if (bgStyle === "" || bgStyle === "transparent") {
-                        colorMessage = "🔲 Bạn đã bấm vào phần không màu!";
-                    } else if (bgStyle.startsWith("rgb") || bgStyle.startsWith("#")) {
-                        colorMessage = "📌 Bạn đã bấm vào phần có màu!";
-                    } else if (bgStyle.includes("linear-gradient")) {
-                        let gradientMatch = bgStyle.match(/(transparent|#[0-9A-Fa-f]+|\w+\(\d+,\s*\d+,\s*\d+\))\s*(\d+(\.\d+)?)%/g);
-    
-                        if (gradientMatch && gradientMatch.length > 0) {
-                            let colorRanges = [];
-                            let lastEnd = 0;
-    
-                            for (let i = 0; i < gradientMatch.length; i++) {
-                                let match = gradientMatch[i].match(/(transparent|#[0-9A-Fa-f]+|\w+\(\d+,\s*\d+,\s*\d+\))\s*(\d+(\.\d+)?)%/);
-                                if (match) {
-                                    let color = match[1];
-                                    let percent = parseFloat(match[2]);
-                                    let pixelPos = (percent / 100) * tdWidth;
-    
-                                    if (color !== "transparent") {
-                                        colorRanges.push({ start: lastEnd, end: pixelPos });
-                                    }
-                                    lastEnd = pixelPos;
-                                }
-                            }
-    
-                            let isInColor = colorRanges.some(range => clickX >= range.start && clickX <= range.end);
-                            console.log(isInColor);
-                            
-                            colorMessage = isInColor ? "📌 Bạn đã bấm vào phần có màu!" : "🔲 Bạn đã bấm vào phần không màu!";
-                        }
-                    }
-                }
-            }
-    
+           
+            // Hiển thị thông tin
             if (roomName && date && roomPrice) {
-                alert(`📅 Phòng: ${roomName}, Ngày: ${date}, Giá: ${roomPrice}\n${colorMessage}`);
+                alert(`📅 Phòng: ${roomName}, Ngày: ${date}, Giá: ${roomPrice}`);
             }
         }
     });
+    
+    
+    
+    
+    
     
 
     document.getElementById("startDate").addEventListener("change", generateTable);
@@ -557,4 +529,5 @@ document.addEventListener("DOMContentLoaded", function () {
 
     setInterval(updateRealtime, 1000);
     initDates();
-});
+};
+initGridMain();

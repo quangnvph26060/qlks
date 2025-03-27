@@ -1,6 +1,9 @@
+function initGridMain() {
+    console.log("🚀 initGridMain() đã chạy list!");}
+    initGridMain();
 document.addEventListener("DOMContentLoaded", function() {
     console.log("Danh sách JS đã chạy!");
-    
+
     const buttons = document.querySelectorAll(".view-toggle button");
 
     buttons.forEach(button => {

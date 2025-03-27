@@ -59,7 +59,7 @@
                 <h5 class="modal-title" id="myModalLabel-booking">Đặt phòng</h5>
                 <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
             </div>
-            <div class="modal-body " style="padding: 5px 5px 12px 5px;">
+            <div class="modal-body " style="padding: 5px 5px 12px 15px;">
 
 
                 <form id="bookingForm" action="{{ route('admin.room.book') }}" class="booking-form" method="POST">

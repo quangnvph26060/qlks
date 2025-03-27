@@ -479,7 +479,7 @@ class BookRoomController extends Controller
                         if($daysDifference <= 1){
                             saveRoomStatusHistory($room['room'], $dateIn, $dateOut, 3);
                         }else{
-                            $dateOut = Carbon::parse($dateOut)->subDay();
+                            // $dateOut = Carbon::parse($dateOut)->subDay();
                             saveRoomStatusHistory($room['room'], $dateIn, $dateOut, 3);
                         }
                     }
@@ -787,10 +787,24 @@ class BookRoomController extends Controller
         ]);
     }
     // sửa phòng
-    public function roomBookingEdit($id)
-    {
-        $roomBookings = RoomBooking::with('room', 'room.roomType', 'room.roomType.roomTypePrice', 'room.roomType.roomTypePrice.setupPricing')
-            ->where('booking_id', $id)->get();
+    public function roomBookingEdit(Request $request, $id)
+    {   
+        $pageModal = 'Sửa đặt phòng';
+        $roomBookings = RoomBooking::query(); // Khởi tạo truy vấn
+
+        // Thêm quan hệ cần thiết
+        $roomBookings->with([
+            'room',
+            'room.roomType',
+            'room.roomType.roomTypePrice',
+            'room.roomType.roomTypePrice.setupPricing'
+        ]);
+        if (!empty($request->method)) {
+            $pageModal = 'Đặt phòng';
+            $roomBookings->where('id', $request->id);
+        }
+        $roomBookings->where('booking_id', $id);
+        $roomBookings = $roomBookings->get();
         $groupedBookings = [];
         // \Log::info($roomBookings);
         foreach ($roomBookings as $booking) {
@@ -835,6 +849,7 @@ class BookRoomController extends Controller
             'admin'                  => $admin,
             'customerSourse'         => $customerSourse,
             'option_customer_source' => $customer->group_code ?? "",
+            'pageModal'              => $pageModal,                      
         ]);
     }
     public function checkInUpdate(Request $request)
@@ -952,11 +967,18 @@ class BookRoomController extends Controller
             return response()->json(['error' => 'Đã xảy ra lỗi, không nhận phòng thành công ']);
         }
     }
-    public function checkInEdit($id)
+    public function checkInEdit(Request $request, $id)
     {
 
-        $roomBookings = CheckIn::with('room', 'room.roomType', 'room.roomType.roomTypePrice', 'room.roomType.roomTypePrice.setupPricing')
-            ->where('check_in_id', $id)->get();
+        $pageModal = 'Sửa nhận phòng';
+        $roomBookings = CheckIn::query();
+        $roomBookings->with('room', 'room.roomType', 'room.roomType.roomTypePrice', 'room.roomType.roomTypePrice.setupPricing');
+        if (!empty($request->method)) {
+            $pageModal = 'Nhận phòng';
+            $roomBookings->where('id', $request->id);
+        }
+        $roomBookings->where('check_in_id', $id);
+        $roomBookings = $roomBookings->get();
         $groupedBookings = [];
         foreach ($roomBookings as $booking) {
             $key = $booking->customer_code . '|' . $booking->customer_name . '|' . $booking->email;
@@ -998,6 +1020,7 @@ class BookRoomController extends Controller
             'admin'                  => $admin,
             'customerSourse'         => $customerSourse,
             'option_customer_source' => $customer->group_code ?? "",
+            'pageModal'              => $pageModal,           
         ]);
     }
     // get room booking
