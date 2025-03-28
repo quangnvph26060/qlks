@@ -561,7 +561,6 @@ function initGridMain(key, value) {
                 method: 'LETAN',
             },
             success: function (response) {
-                //123456
                 $('#list-booking-edit').empty();
                 $('#list-booking').empty();
                 $('#list-booking-edit-letan').empty();
