@@ -1,7 +1,7 @@
 @extends('admin.layouts.master_iframe')
 @section('panel')
     <div class="row d-flex align-items-center" style="padding: 10px">
-        <div class="col-md-3">
+        <div class="col-md-6 d-flex" style="justify-content: start;gap:10px;height: 38px;">
             <div class="view-toggle">
                 <button id="listViewBtn" class="active" onclick="changeView('list')">
                     <span class="icon"> <i class="fa-solid fa-bars"></i></span> <span class="text">Danh Sách</span>
@@ -15,8 +15,30 @@
                         style="display: none;">Sơ đồ</span>
                 </button>
             </div>
+            <div class="search-container">
+                <!-- Dropdown (Bên trái) -->
+                <div class="dropdown">
+                    <button class="btn btn-primary dropdown-toggle" type="button" id="dropdownMenuButton" data-bs-toggle="dropdown" aria-expanded="false">
+                        🔹 Tên phòng
+                    </button>
+                    <ul class="dropdown-menu" aria-labelledby="dropdownMenuButton">
+                        <li><a class="dropdown-item active" href="#" data-type="room"> Tên phòng</a></li>
+                        <li><a class="dropdown-item" href="#" data-type="customer"> Khách hàng</a></li>
+                        <li><a class="dropdown-item" href="#" data-type="booking"> Mã đặt phòng</a></li>
+                        <li><a class="dropdown-item" href="#" data-type="channel"> Mã kênh bán</a></li>
+                    </ul>
+                </div>
+            
+                <!-- Ô tìm kiếm (Bên phải) -->
+                <div class="flex-grow-1">
+                    <div class="input-group">
+                        <input id="searchInputBooking"  style="height: 38px" name="room" type="text" class="form-control" placeholder="🔍 Tìm theo tên phòng" aria-label="Search">
+                        <button class="btn btn-primary" id="searchBtn">Tìm kiếm</button>
+                    </div>
+                </div>
+            </div>
         </div>
-        <div class="col-md-9" id="booking-time">
+        <div class="col-md-6" id="booking-time">
             <div style="float: right; gap: 10px;height: 39px;" class="d-flex">
                 <div id="date-input-booking" style="display: flex;gap: 10px;">
                 </div>
@@ -413,7 +435,35 @@
             e.target.value = value;
         }
     });
+    $(document).ready(function() {
+    // Khi chọn tiêu chí tìm kiếm
+    $(".dropdown-item").on("click", function(e) {
+        e.preventDefault();
+        $(".dropdown-item").removeClass("active");
+        $(this).addClass("active");
 
+        let selectedType = $(this).data("type");
+        let selectedText = $(this).text().trim();
+
+        let placeholderText = {
+            customer: "🔍 Tìm theo khách hàng",
+            booking: "🔍 Tìm theo mã đặt phòng",
+            channel: "🔍 Tìm theo mã kênh bán",
+            room: "🔍 Tìm theo tên phòng"
+        };
+
+        $("#dropdownMenuButton").html(selectedText);
+        $("#searchInputBooking").attr("placeholder", placeholderText[selectedType]);
+        $("#searchInputBooking").attr("name", selectedType);
+    });
+
+    // Khi bấm nút tìm kiếm
+    $("#searchBtn").on("click", function() {
+        let searchType = $("#searchInputBooking").attr("name");
+        let searchValue = $("#searchInputBooking").val();
+        initGridMain(searchType,searchValue );
+    });
+});
     $(document).ready(function() {
         let dirtyCount = 5; // Ví dụ giá trị
         let incomingCount = 2;
@@ -1469,7 +1519,36 @@
         list-style-type: none;
         padding: 0;
     }
+    .search-container {
+            display: flex;
+            align-items: center;
+            max-width: 600px;
+            width: 100%;
+        }
 
+        /* Căn chỉnh dropdown */
+        .dropdown-toggle {
+            width: 160px;
+            text-align: left;
+            white-space: nowrap;
+        }
+
+        /* Ô input */
+        .form-control {
+            border-radius: 0 8px 8px 0;
+        }
+
+        /* Dropdown menu */
+        .dropdown-menu {
+            width: 160px;
+        }
+
+        /* Hiệu ứng khi chọn */
+        .dropdown-item.active, 
+        .dropdown-item:hover {
+            background: #0d6efd;
+            color: white;
+        }
     .main-booking-modal {
         background: #ddd;
         padding: 8px 10px;

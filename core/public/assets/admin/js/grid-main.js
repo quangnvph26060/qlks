@@ -85,7 +85,11 @@ function formatCurrencyEdit(amount) {
     const formattedInteger = integerPart.replace(/\B(?=(\d{3})+(?!\d))/g, '.');
     return formattedInteger;
 }
-function initGridMain() {
+
+function initGridMain(key, value) {
+    console.log(key);
+    console.log(value);
+
     let gridView = $('#grid-main');
     const savedView = localStorage.getItem('selectedView') || 'list';
     let htmlrow = '';
@@ -110,7 +114,11 @@ function initGridMain() {
     $.ajax({
         type: "GET",
         url: roomBoookingHistory,
-        data: { date: getCurrentDate() },
+        data: {
+            date: getCurrentDate(),
+            method: key,
+            value: value,
+        },
         success: function (response) {
             if (response.status === 'success') {
                 // resolve(response.data);
@@ -222,7 +230,7 @@ function initGridMain() {
 
 
 };
-initGridMain();
+initGridMain("", "");
 
 
 function initViewScript() {
@@ -469,7 +477,7 @@ function initViewScript() {
                         selectedBookingIds.push(bookingId);
                         $(this).remove();
                     }
-    
+
                 });
                 //  console.log(selectedBookingIds);
                 $.ajax({
@@ -480,7 +488,7 @@ function initViewScript() {
                     },
                     success: function (response) {
                         if (response.status === 'success') {
-                          //  loadRoomBookings();
+                            //  loadRoomBookings();
                             let totalPrice = 0;
                             totalPrice = calculateTotalPrice();
                             $('.total_amount').text(formatCurrency(totalPrice));
@@ -497,7 +505,7 @@ function initViewScript() {
                 });
             }
         });
-    
+
     });
 }
 $(document).ready(initViewScript);
@@ -515,7 +523,7 @@ function initViewScript1() {
         let dataId = $(this).attr("data-booking-id");
         let Id = $(this).attr("data-id");
         var url = checkInEditUrl.replace(':id', dataId);
-    
+
         // $('[id="date-book-room-booking-edit"]').val(formattedDates);
         // $('[id="date-book-room-booking"]').val(formattedDates);
         // $('[id="time-book-room-booking"]').val(formattedTimes);
@@ -599,7 +607,7 @@ function initViewScript1() {
                                                 <div class="d-flex align-items-center justify-content-start" style="gap: 10px">
                                                     <input type="date" name="checkInDate" id="date-book-room" class="form-control date-book-room"  value="${formattedDates}" readonly>
     
-                                                    <input type="time" name="checkInTime" id="time-book-room" class="form-control time-book-room"  value="${formattedTimes}" >
+                                                    <input type="time" name="checkInTime" id="time-book-room" class="form-control time-book-room"  value="${checkinTime}" >
                                                 </div>
                                             </td>
                                             <td>
@@ -794,7 +802,7 @@ function initViewScript1() {
                             if (remainingRows === 0) {
                                 $('#myModal-check-in-edit').modal('hide');
                             }
-                        }else{
+                        } else {
                             Swal.fire({
                                 title: response.message,
                                 text: response.message,
@@ -813,7 +821,7 @@ function initViewScript1() {
                 });
             }
         });
-    
+
     });
     $(document).off("click", ".room-booked").on("click", ".room-booked", function () {
         let roomId = $(this).attr("data-room-id");
@@ -830,8 +838,8 @@ function initViewScript1() {
                 data: JSON.stringify(data),
                 method: 'LETAN',
             },
-            success: function(response) {
-                var tbody =  $('#list-booking');
+            success: function (response) {
+                var tbody = $('#list-booking');
                 tbody.empty();
                 if (response.status === 'success') {
                     const seenRooms = new Set();
@@ -839,34 +847,34 @@ function initViewScript1() {
 
                     response.data.forEach(item => {
 
- // nhân viên
- var selected_select_staff = $('#select-staff');
- selected_select_staff.empty();
- let option_staff = `<option value="">Chọn nhân viên</option>`;
- item.admin.forEach(function(data) {
-     if (data.id == data.option_customer_source) {
-         option_staff +=
-             `<option value="${data.id}" selected>${data.username}</option>`;
-     } else {
-         option_staff +=
-             `<option value="${data.id}">${data.username}</option>`;
-     }
- });
- selected_select_staff.append(option_staff);
- // nguồn khách 
- var selected_customer_source = $('#select-customer-source');
- selected_customer_source.empty();
- let option = `<option value="">Chọn nguồn khách hàng</option>`;
- item.customerSourse.forEach(function(data) {
-     if (data.id == data.option_customer_source) {
-         option +=
-             `<option value="${data.source_code}" selected>${data.source_name}</option>`;
-     } else {
-         option +=
-             `<option value="${data.source_code}">${data.source_name}</option>`;
-     }
- });
- selected_customer_source.append(option);
+                        // nhân viên
+                        var selected_select_staff = $('#select-staff');
+                        selected_select_staff.empty();
+                        let option_staff = `<option value="">Chọn nhân viên</option>`;
+                        item.admin.forEach(function (data) {
+                            if (data.id == data.option_customer_source) {
+                                option_staff +=
+                                    `<option value="${data.id}" selected>${data.username}</option>`;
+                            } else {
+                                option_staff +=
+                                    `<option value="${data.id}">${data.username}</option>`;
+                            }
+                        });
+                        selected_select_staff.append(option_staff);
+                        // nguồn khách 
+                        var selected_customer_source = $('#select-customer-source');
+                        selected_customer_source.empty();
+                        let option = `<option value="">Chọn nguồn khách hàng</option>`;
+                        item.customerSourse.forEach(function (data) {
+                            if (data.id == data.option_customer_source) {
+                                option +=
+                                    `<option value="${data.source_code}" selected>${data.source_name}</option>`;
+                            } else {
+                                option +=
+                                    `<option value="${data.source_code}">${data.source_name}</option>`;
+                            }
+                        });
+                        selected_customer_source.append(option);
                         let date = new Date(item.date);
                         date.setDate(date.getDate() + 1);
                         const roomId = item.room["id"];
@@ -929,20 +937,20 @@ function initViewScript1() {
                     `;
 
                         // tbody.append(tr); 
-                    
-                            tbody.append(tr);
-                        
+
+                        tbody.append(tr);
+
                     })
-                    
+
                     totalPrice = calculateTotalPrice();
 
                     $('#loading').hide();
                     let totalDeposit = 0;
                     let totalBalance = 0;
-                    $('tr').find('input.deposit').on('blur', function() {
+                    $('tr').find('input.deposit').on('blur', function () {
                         let rowTotal = 0;
-                        $('tr').each(function() {
-                            $(this).find('input.deposit').each(function() {
+                        $('tr').each(function () {
+                            $(this).find('input.deposit').each(function () {
                                 let depositValue = $(this).val()
                                     .replace(/[,.]/g, '');
                                 let numericDeposit = parseInt(
@@ -958,10 +966,10 @@ function initViewScript1() {
                         totalBalance = totalPrice - rowTotal - price;
                         $('.total_balance').text(formatCurrency(totalBalance));
                     });
-                    $('tr').find('input.discount').on('blur', function() {
+                    $('tr').find('input.discount').on('blur', function () {
                         let rowTotal = 0;
-                        $('tr').each(function() {
-                            $(this).find('input.discount').each(function() {
+                        $('tr').each(function () {
+                            $(this).find('input.discount').each(function () {
                                 let depositValue = $(this).val()
                                     .replace(/[,.]/g, '');
                                 let numericDeposit = parseInt(
@@ -989,7 +997,7 @@ function initViewScript1() {
                     document.body.classList.remove("modal-open");
                 }
             },
-            error: function(error) {
+            error: function (error) {
                 $('#loading').hide();
                 console.log('Error:', error);
             }

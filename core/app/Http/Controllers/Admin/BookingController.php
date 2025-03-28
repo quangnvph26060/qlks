@@ -914,8 +914,28 @@ class BookingController extends Controller
     public function roomBoookingHistory(Request $request)
     {
         $date = request('date'); // Lấy ngày từ request
-
-        $room = Room::with([
+        $method = request('method'); 
+        $value = request('value'); 
+        $rooms = Room::query();
+        if($method === 'room'&& !empty($value)){
+            $rooms = $rooms->where('room_number', $value);
+        }
+        // Nếu tìm kiếm theo khách hàng
+        if ($method === 'customer' && !empty($value)) {
+            $rooms->whereHas('roomBookingHistory.checkInData', function ($query) use ($value) {
+                $query->where('customer_name', 'LIKE', "%$value%");
+            })->orWhereHas('roomBookingHistory.bookingData', function ($query) use ($value) {
+                $query->where('customer_name', 'LIKE', "%$value%");
+            });
+        }
+        if ($method === 'booking' && !empty($value)) {
+            $rooms->whereHas('roomBookingHistory.checkInData', function ($query) use ($value) {
+                $query->where('id_room_booking', 'LIKE', "%$value%");
+            })->orWhereHas('roomBookingHistory.bookingData', function ($query) use ($value) {
+                $query->where('booking_id', 'LIKE', "%$value%");
+            });
+        }
+        $rooms->with([
             'roomType',
             'roomType.roomTypePrice',
             'roomBookingHistory' => function ($query) use ($date) {
@@ -926,10 +946,10 @@ class BookingController extends Controller
             },
             'roomBookingHistory.roomStatus',
             'roomBookingHistory.checkInData',
-            'roomBookingHistory.bookingData'
-        ])->get();
-
-        return response()->json(['data' => $room, 'status' => 'success']);
+            'roomBookingHistory.bookingData',
+        ]);
+        $rooms = $rooms->get();
+        return response()->json(['data' => $rooms, 'status' => 'success']);
     }
 
 
