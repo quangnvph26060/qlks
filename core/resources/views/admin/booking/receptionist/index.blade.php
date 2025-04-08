@@ -18,7 +18,8 @@
             <div class="search-container">
                 <!-- Dropdown (Bên trái) -->
                 <div class="dropdown">
-                    <button class="btn btn-primary dropdown-toggle" type="button" id="dropdownMenuButton" data-bs-toggle="dropdown" aria-expanded="false">
+                    <button class="btn btn-primary dropdown-toggle" type="button" id="dropdownMenuButton"
+                        data-bs-toggle="dropdown" aria-expanded="false">
                         🔹 Tên phòng
                     </button>
                     <ul class="dropdown-menu" aria-labelledby="dropdownMenuButton">
@@ -28,14 +29,19 @@
                         <li><a class="dropdown-item" href="#" data-type="channel"> Mã kênh bán</a></li>
                     </ul>
                 </div>
-            
+
                 <!-- Ô tìm kiếm (Bên phải) -->
                 <div class="flex-grow-1">
                     <div class="input-group">
-                        <input id="searchInputBooking"  style="height: 38px" name="room" type="text" class="form-control" placeholder="🔍 Tìm theo tên phòng" aria-label="Search">
+                        <input id="searchInputBooking" style="height: 38px" name="room" type="text"
+                            class="form-control" placeholder="🔍 Tìm theo tên phòng" aria-label="Search">
                         <button class="btn btn-primary" id="searchBtn">Tìm kiếm</button>
                     </div>
                 </div>
+                <button class="filter-btn" id="filter-btn">
+                    <i class="fas fa-filter"></i>
+                    <span class="dot"></span>
+                </button>
             </div>
         </div>
         <div class="col-md-6" id="booking-time">
@@ -64,76 +70,74 @@
             @include('admin/booking/receptionist/calendar')
         </div>
 
-       
-
     </div>
     @push('breadcrumb-plugins')
-    <div class="modal fade" id="addRoomModal" tabindex="-1" aria-hidden="true" style="overflow: unset">
-        <div class="modal-dialog modal-dialog-centered" style="top: 4px">
-            <div class="modal-content" style="height: 100vh;">
-                <div class="modal-header">
-                    <h5 class="modal-title">Chọn Phòng</h5>
-                    <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
-                </div>
-                <div class=" mt-2 d-flex mb-2" style="gap: 10px;justify-content: space-around;">
-                    <div class="">
-                        <label for="">Chọn hạng phòng</label>
-                        <select class="form-select" id="selected-hang-phong">
-
-
-                        </select>
+        <div class="modal fade" id="addRoomModal" tabindex="-1" aria-hidden="true" style="overflow: unset">
+            <div class="modal-dialog modal-dialog-centered" style="top: 4px">
+                <div class="modal-content" style="height: 100vh;">
+                    <div class="modal-header">
+                        <h5 class="modal-title">Chọn Phòng</h5>
+                        <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
                     </div>
-                    <div class="">
-                        <label for="">Chọn tên phòng</label>
-                        <select class="form-select" id="selected-name-phong">
+                    <div class=" mt-2 d-flex mb-2" style="gap: 10px;justify-content: space-around;">
+                        <div class="">
+                            <label for="">Chọn hạng phòng</label>
+                            <select class="form-select" id="selected-hang-phong">
 
-                        </select>
-                    </div>
-                    <div class="">
-                        <label for="">Từ ngày</label>
-                        <input type="date" class="form-control " id="date-chon-phong-in" style="height: 38px">
-                    </div>
-                    <div class="">
-                        <label for="">Đến ngày</label>
-                        <input type="date" class="form-control" id="date-chon-phong-out" style="height: 38px">
-                    </div>
-                    <div class="">
-                        <label for="">Trạng thái phòng</label>
-                        <select class="form-select" id="status-room">
-                            <option value="">Chọn trạng tên phòng</option>
-                            <option value="Trống">Trống</option>
-                            <option value="Đã đặt">Đã đặt</option>
-                            <option value="Đã nhận">Đã nhận</option>
-                        </select>
-                    </div>
-                </div>
-                <div class="modal-body overflow-add-room">
-                    <table class=" table--light style--two table">
-                        <thead>
-                            <tr>
-                                <th data-table="Hạng phòng">Hạng phòng</th>
-                                <th data-table="Phòng">Tên phòng</th>
-                                <th data-table="Ngày">Ngày</th>
-                                <th data-table="Trạng thái phòng">Trạng thái phòng</th>
-                                <th data-table="Giá">Giá</th>
-                                <th data-table="Thao tác">Thao tác</th>
-                            </tr>
-                        </thead>
 
-                        <tbody id="show-room">
+                            </select>
+                        </div>
+                        <div class="">
+                            <label for="">Chọn tên phòng</label>
+                            <select class="form-select" id="selected-name-phong">
 
-                        </tbody>
+                            </select>
+                        </div>
+                        <div class="">
+                            <label for="">Từ ngày</label>
+                            <input type="date" class="form-control " id="date-chon-phong-in" style="height: 38px">
+                        </div>
+                        <div class="">
+                            <label for="">Đến ngày</label>
+                            <input type="date" class="form-control" id="date-chon-phong-out" style="height: 38px">
+                        </div>
+                        <div class="">
+                            <label for="">Trạng thái phòng</label>
+                            <select class="form-select" id="status-room">
+                                <option value="">Chọn trạng tên phòng</option>
+                                <option value="Trống">Trống</option>
+                                <option value="Đã đặt">Đã đặt</option>
+                                <option value="Đã nhận">Đã nhận</option>
+                            </select>
+                        </div>
+                    </div>
+                    <div class="modal-body overflow-add-room">
+                        <table class=" table--light style--two table">
+                            <thead>
+                                <tr>
+                                    <th data-table="Hạng phòng">Hạng phòng</th>
+                                    <th data-table="Phòng">Tên phòng</th>
+                                    <th data-table="Ngày">Ngày</th>
+                                    <th data-table="Trạng thái phòng">Trạng thái phòng</th>
+                                    <th data-table="Giá">Giá</th>
+                                    <th data-table="Thao tác">Thao tác</th>
+                                </tr>
+                            </thead>
 
-                    </table>
-                </div>
-                <div class="d-flex justify-content-end" style="gap: 10px;padding: 7px 31px">
-                    <p type="button" data-row="booked" class=" btn-dat-truoc  add-room-list">Lưu
-                    </p>
-                    <p type="button" data-row="booked" class="alert-paragraph close_modal_booked_room">Hủy</p>
+                            <tbody id="show-room">
+
+                            </tbody>
+
+                        </table>
+                    </div>
+                    <div class="d-flex justify-content-end" style="gap: 10px;padding: 7px 31px">
+                        <p type="button" data-row="booked" class=" btn-dat-truoc  add-room-list">Lưu
+                        </p>
+                        <p type="button" data-row="booked" class="alert-paragraph close_modal_booked_room">Hủy</p>
+                    </div>
                 </div>
             </div>
         </div>
-    </div>
         @include('admin.booking.partials.customer_booked')
         @include('admin.booking.partials.room_booking_edit')
         @include('admin.booking.partials.room_booking')
@@ -288,8 +292,8 @@
                                                 <label for="phone" class="form-label ">Nhân viên </label>
                                                 <div class="d-flex align-items-center justify-content-start"
                                                     style="gap: 10px">
-                                                    <select id="select-staff-edit-letan"name="name_staff" class="form-control "
-                                                        style="width: 100%;">
+                                                    <select id="select-staff-edit-letan"name="name_staff"
+                                                        class="form-control " style="width: 100%;">
 
                                                     </select>
                                                 </div>
@@ -393,6 +397,58 @@
                 </div>
             </div>
         </div>
+        <!-- Bộ lọc bên phải -->
+        <div class="filter-sidebar" id="filter-sidebar">
+            <div class="filter-header d-flex justify-content-between">
+                <h3>Bộ lọc</h3>
+                <button class="close-filter">
+                    <i class="fas fa-times" style="font-size:20px"></i>
+                </button>
+            </div>
+            <div class="filter-content">
+                <div class="room-option mt-1">
+                    <p>HẠNG PHÒNG</p>
+                    <hr>
+                    <div class="room-option-main-item">
+
+                        <div class="row">
+                            @foreach ($roomTypes as $roomType)
+                                <span class=" col-md-6 d-flex " style="gap:5px">
+                                    <input type="checkbox" name="room_type" data-id="{{ $roomType->id }}" />
+                                    <p style="font-size:13px">{{ $roomType->name }}</p>
+                                </span>
+                            @endforeach
+                        </div>
+
+                    </div>
+                </div>
+                <div class="room-clean">
+                    <p>TÌNH TRẠNG PHÒNG</p>
+                    <hr>
+                    <div class="room-option-item">
+                        <div class="row">
+                            <span class="col-md-6 d-flex" style="gap:5px">
+                                <input type="checkbox" name="room_clean" data-id = "1" />
+                                <p style="font-size:13px">Sạch</p>
+                            </span>
+                            <span class="col-md-6 d-flex" style="gap:5px">
+                                <input type="checkbox" name="room_clean" data-id = "0"
+                                    style="accent-color: red; border: 1px solid red;">
+                                <p style="font-size:13px">Chưa dọn</p>
+                            </span>
+                        </div>
+                    </div>
+                </div>
+
+            </div>
+            <div class="d-flex justify-content-end action-buttons" style="gap:10px">
+                <button class="btn btn-danger" id="btn-clear-fillter">Bỏ qua</button>
+                <button class="btn btn-primary btn-fillter" id="btn-fillter">Áp dụng</button>
+            </div>
+        </div>
+
+        <!-- Overlay làm mờ nền -->
+        <div class="overlay" id="overlay"></div>
     @endpush
 @endsection
 @push('style-lib')
@@ -436,34 +492,76 @@
         }
     });
     $(document).ready(function() {
-    // Khi chọn tiêu chí tìm kiếm
-    $(".dropdown-item").on("click", function(e) {
-        e.preventDefault();
-        $(".dropdown-item").removeClass("active");
-        $(this).addClass("active");
+        // Khi chọn tiêu chí tìm kiếm
+        $(".dropdown-item").on("click", function(e) {
+            e.preventDefault();
+            $(".dropdown-item").removeClass("active");
+            $(this).addClass("active");
 
-        let selectedType = $(this).data("type");
-        let selectedText = $(this).text().trim();
+            let selectedType = $(this).data("type");
+            let selectedText = $(this).text().trim();
 
-        let placeholderText = {
-            customer: "🔍 Tìm theo khách hàng",
-            booking: "🔍 Tìm theo mã đặt phòng",
-            channel: "🔍 Tìm theo mã kênh bán",
-            room: "🔍 Tìm theo tên phòng"
-        };
+            let placeholderText = {
+                customer: "🔍 Tìm theo khách hàng",
+                booking: "🔍 Tìm theo mã đặt phòng",
+                channel: "🔍 Tìm theo mã kênh bán",
+                room: "🔍 Tìm theo tên phòng"
+            };
 
-        $("#dropdownMenuButton").html(selectedText);
-        $("#searchInputBooking").attr("placeholder", placeholderText[selectedType]);
-        $("#searchInputBooking").attr("name", selectedType);
+            $("#dropdownMenuButton").html(selectedText);
+            $("#searchInputBooking").attr("placeholder", placeholderText[selectedType]);
+            $("#searchInputBooking").attr("name", selectedType);
+        });
+
+        // Khi bấm nút tìm kiếm
+        $("#searchBtn").on("click", function() {
+            let searchType = $("#searchInputBooking").attr("name");
+            let searchValue = $("#searchInputBooking").val();
+            const data = {
+                searchType: searchType,
+                searchValue: searchValue
+            };
+            initGridMain(data);
+        });
+        $("#btn-fillter").on("click", function() {
+            const selectedValuesClean = [];
+            const selectedValuesRoomType = [];
+            $("input[name='room_clean']:checked").each(function() {
+                selectedValuesClean.push($(this).data("id")); // lấy theo data-id
+            });
+            $("input[name='room_type']:checked").each(function() {
+                selectedValuesRoomType.push($(this).data("id")); // lấy theo data-id
+            });
+            const data = {
+                room_clean: selectedValuesClean,
+                room_type: selectedValuesRoomType
+            };
+            initGridMain(data);
+            $('.filter-sidebar').removeClass('open');
+            $('.overlay').removeClass('show');
+        });
+        $('#btn-clear-fillter').on("click", function() {
+            $("input[name='room_clean'], input[name='room_type']").prop("checked", false);
+        });
+
+        function updateFilterDot() {
+            const checkedCount = $("input[type='checkbox']:checked").length;
+            if (checkedCount > 0) {
+                $("#filter-btn .dot").show();
+            } else {
+                $("#filter-btn .dot").hide();
+            }
+        }
+
+        // Gọi hàm khi người dùng click filter hoặc clear filter
+        $("#btn-fillter, #btn-clear-fillter, input[type='checkbox']").on("click", function() {
+            updateFilterDot();
+        });
+
+        // Gọi lần đầu để đảm bảo đúng trạng thái khi load trang
+        updateFilterDot();
+
     });
-
-    // Khi bấm nút tìm kiếm
-    $("#searchBtn").on("click", function() {
-        let searchType = $("#searchInputBooking").attr("name");
-        let searchValue = $("#searchInputBooking").val();
-        initGridMain(searchType,searchValue );
-    });
-});
     $(document).ready(function() {
         let dirtyCount = 5; // Ví dụ giá trị
         let incomingCount = 2;
@@ -478,7 +576,7 @@
         $('.status-overdue-line-count').text('Quá giờ trả (' + checkOutCount + ')');
 
         var validatorForm = {
-            'name': { // passwword thì nên đặt là name trong input đó
+            'name': {
                 'element': document.getElementById('name'), // id trong input đó
                 'error': document.getElementById('name_error'), // thẻ hiển thị lỗi
                 'validations': [{
@@ -486,6 +584,17 @@
                             return checkRequired(value); // check trống
                         },
                         'message': generateErrorMessage('P001', 'Tên')
+                    }, // viết tiếp điều kiện validate vào đây (validations)
+                ]
+            },
+            'select-option-pttt': {
+                'element': document.getElementById('select-option-pttt'), // id trong input đó
+                'error': document.getElementById('select-option-pttt_error'), // thẻ hiển thị lỗi
+                'validations': [{
+                        'func': function(value) {
+                            return checkRequired(value); // check trống
+                        },
+                        'message': generateErrorMessage('P001', 'Phương thức thanh toán')
                     }, // viết tiếp điều kiện validate vào đây (validations)
                 ]
             },
@@ -1248,6 +1357,7 @@
 
     });
 
+
     $(document).on('click', '#btn-search', function() {
         var customerName = $('#name').val();
         let flag = true;
@@ -1359,6 +1469,7 @@
     }
 
     function loadScript(view, callback) {
+
         let scriptId = 'view-script';
         let oldScript = document.getElementById(scriptId);
         if (oldScript) {
@@ -1381,6 +1492,22 @@
 
         document.body.appendChild(script);
     }
+    $(document).ready(function() {
+        $('.filter-btn').on('click', function() {
+            $('.filter-sidebar').addClass('open');
+            $('.overlay').addClass('show');
+        });
+
+        $('.close-filter').on('click', function() {
+            $('.filter-sidebar').removeClass('open');
+            $('.overlay').removeClass('show');
+        });
+
+        $('.overlay').on('click', function() {
+            $('.filter-sidebar').removeClass('open');
+            $(this).removeClass('show');
+        });
+    });
 
 
 
@@ -1481,9 +1608,10 @@
     }
 
     .date-book-room {
-    width: 115px !important;
-    padding: 2px 7px !important;
-}
+        width: 115px !important;
+        padding: 2px 7px !important;
+    }
+
     .adult {
         width: 60px !important;
         height: 30px;
@@ -1519,36 +1647,38 @@
         list-style-type: none;
         padding: 0;
     }
+
     .search-container {
-            display: flex;
-            align-items: center;
-            max-width: 600px;
-            width: 100%;
-        }
+        display: flex;
+        align-items: center;
+        max-width: 600px;
+        width: 100%;
+    }
 
-        /* Căn chỉnh dropdown */
-        .dropdown-toggle {
-            width: 160px;
-            text-align: left;
-            white-space: nowrap;
-        }
+    /* Căn chỉnh dropdown */
+    .dropdown-toggle {
+        width: 160px;
+        text-align: left;
+        white-space: nowrap;
+    }
 
-        /* Ô input */
-        .form-control {
-            border-radius: 0 8px 8px 0;
-        }
+    /* Ô input */
+    .form-control {
+        border-radius: 0 8px 8px 0;
+    }
 
-        /* Dropdown menu */
-        .dropdown-menu {
-            width: 160px;
-        }
+    /* Dropdown menu */
+    .dropdown-menu {
+        width: 160px;
+    }
 
-        /* Hiệu ứng khi chọn */
-        .dropdown-item.active, 
-        .dropdown-item:hover {
-            background: #0d6efd;
-            color: white;
-        }
+    /* Hiệu ứng khi chọn */
+    .dropdown-item.active,
+    .dropdown-item:hover {
+        background: #0d6efd;
+        color: white;
+    }
+
     .main-booking-modal {
         background: #ddd;
         padding: 8px 10px;
@@ -1595,5 +1725,77 @@
     .overflow-add-room {
         overflow-y: scroll;
         height: 529px;
+    }
+
+    .filter-sidebar {
+        position: fixed;
+        top: 0;
+        right: -400px;
+        /* Ẩn khỏi màn hình */
+        width: 400px;
+        height: 100%;
+        background: #fff;
+        box-shadow: -2px 0 6px rgba(0, 0, 0, 0.2);
+        transition: right 0.3s ease;
+        z-index: 2000;
+        padding: 20px;
+    }
+
+    hr {
+        margin: 10px !important;
+    }
+
+    .filter-sidebar .action-buttons {
+        position: absolute;
+        bottom: 1rem;
+        right: 1rem;
+        left: 1rem;
+        display: flex;
+        justify-content: end;
+        gap: 10px;
+    }
+
+
+    .filter-sidebar.open {
+        right: 0;
+    }
+
+    .overlay {
+        position: fixed;
+        top: 0;
+        left: 0;
+        width: 100vw;
+        height: 100vh;
+        background: rgba(0, 0, 0, 0.4);
+        z-index: 1500;
+        display: none;
+    }
+
+
+    .filter-btn {
+        cursor: pointer;
+        background: #fff;
+        border: 1px solid #ccc;
+        padding: 6px 13px;
+        border-radius: 10px;
+        transition: all 0.2s ease;
+        height: 42px;
+        position: relative;
+    }
+
+    .filter-btn .dot {
+        position: absolute;
+        position: absolute;
+        top: 0px;
+        right: -1px;
+        width: 15px;
+        height: 15px;
+        background-color: red;
+        border-radius: 50%;
+        display: none;
+    }
+
+    .filter-btn:hover {
+        background-color: #f5f5f5;
     }
 </style>

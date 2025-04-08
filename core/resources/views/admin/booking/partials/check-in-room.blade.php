@@ -1,49 +1,47 @@
+<div class="row mb-3 justify-content-between">
+    <div class="col-md-9">
+        <div class="d-flex" style="flex-direction: column; gap:20px">
 
-
-        <div class="row mb-3 justify-content-between">
-            <div class="col-md-9">
-                <div class="d-flex" style="flex-direction: column; gap:20px">
-
-                    <div class="modal fade" id="addRoomModal" tabindex="-1" aria-hidden="true">
-                        <div class="modal-dialog modal-dialog-centered">
-                            <div class="modal-content">
-                                <div class="modal-header">
-                                    <h5 class="modal-title">Chọn Phòng</h5>
-                                    <button type="button" class="btn-close" data-bs-dismiss="modal"
-                                        aria-label="Close"></button>
-                                </div>
-
-                            </div>
-                            <div class="modal-body overflow-add-room">
-                                <table class="table table-striped">
-                                    <thead>
-                                        <tr>
-                                            <th data-table="Hạng phòng">Hạng phòng</th>
-                                            <th data-table="Phòng">Phòng</th>
-                                            <th data-table="Giá">Giá</th>
-                                            <th data-table="Thao tác">Thao tác</th>
-
-                                        </tr>
-                                    </thead>
-
-                                    <tbody id="show-room">
-
-                                    </tbody>
-
-                                </table>
-                            </div>
-
+            <div class="modal fade" id="addRoomModal" tabindex="-1" aria-hidden="true">
+                <div class="modal-dialog modal-dialog-centered">
+                    <div class="modal-content">
+                        <div class="modal-header">
+                            <h5 class="modal-title">Chọn Phòng</h5>
+                            <button type="button" class="btn-close" data-bs-dismiss="modal"
+                                aria-label="Close"></button>
                         </div>
+
                     </div>
+                    <div class="modal-body overflow-add-room">
+                        <table class="table table-striped">
+                            <thead>
+                                <tr>
+                                    <th data-table="Hạng phòng">Hạng phòng</th>
+                                    <th data-table="Phòng">Phòng</th>
+                                    <th data-table="Giá">Giá</th>
+                                    <th data-table="Thao tác">Thao tác</th>
+
+                                </tr>
+                            </thead>
+
+                            <tbody id="show-room">
+
+                            </tbody>
+
+                        </table>
+                    </div>
+
                 </div>
-                {{-- <div class="d-flex justify-content-flex-start align-items-end mt-2"
+            </div>
+        </div>
+        {{-- <div class="d-flex justify-content-flex-start align-items-end mt-2"
                     style="gap: 10px">
                     <label>Ghi chú</label>
                     <input name="ghichu" class="input-ghichu"
                         placeholder="Nhập ghi chú..."></input>
                 </div> --}}
-            </div>
-        </div>
+    </div>
+</div>
 
 
 
@@ -80,11 +78,12 @@
                                             {{-- <p class="btn btn--primary "
                                                 style="white-space: nowrap; font-size: 13px" id="btn-search">Tìm
                                                 kiếm</p> --}}
-                                                <p class="btn btn--primary modal--search-booked"
-                                                style="white-space: nowrap; font-size: 13px;" id="btn-search">Chọn đặt phòng</p>
-                                                <p class="btn btn--primary modal--search-customer"
-                                                    style="white-space: nowrap; font-size: 13px;" id="btn-search">Tìm
-                                                    khách</p>
+                                            <p class="btn btn--primary modal--search-booked"
+                                                style="white-space: nowrap; font-size: 13px;" id="btn-search">Chọn đặt
+                                                phòng 123</p>
+                                            <p class="btn btn--primary modal--search-customer"
+                                                style="white-space: nowrap; font-size: 13px;" id="btn-search">Tìm
+                                                khách</p>
                                         </div>
                                         <label for="phone" class="form-label required mt-3">Tên khách hàng</label>
                                         <div class="d-flex">
@@ -94,8 +93,9 @@
                                                 <span class="invalid-feedback d-block"
                                                     style="font-weight: 500"id="name_error"></span>
                                             </div>
-                                            <input type="hidden" name="id_room_booking" id="id_room_booking" class="form-control"  >
-                                         
+                                            <input type="hidden" name="id_room_booking" id="id_room_booking"
+                                                class="form-control">
+
 
                                         </div>
 
@@ -131,11 +131,14 @@
                                         <label for="phone" class="form-label">Nguồn khách</label>
                                         {{-- <input type="text" id="phone" name="phone" class="form-control"
                                             placeholder="Số điện thoại"> --}}
-                                            <select id="select-customer-source" name="customer_source" class="form-control " style="width: 100%;">
-                                            </select>
+                                        <select id="select-customer-source" name="customer_source" class="form-control "
+                                            style="width: 100%;">
+                                        </select>
                                     </div>
-                                    <div class="col-md-8 mb-3 mt-3 d-flex align-items-center result-add-customer" style="gap:10px">
-                                        <input type="checkbox" name="insert_customer"> <p style="font-size: 13px">Lưu thông tin khách</p>
+                                    <div class="col-md-8 mb-3 mt-3 d-flex align-items-center result-add-customer"
+                                        style="gap:10px">
+                                        <input type="checkbox" name="insert_customer">
+                                        <p style="font-size: 13px">Lưu thông tin khách</p>
                                     </div>
                                     <div class="">
                                         <p class="add-room-booking" style="width: 185px;">
@@ -186,8 +189,9 @@
                                         <label for="phone" class="form-label ">Nhân viên </label>
                                         <div class="d-flex align-items-center justify-content-start"
                                             style="gap: 10px">
-                                            <select id="select-staff"name="name_staff"class="form-control " style="width: 100%;">
-                                             
+                                            <select id="select-staff"name="name_staff" class="form-control "
+                                                style="width: 100%;">
+
                                             </select>
                                         </div>
                                     </div>
@@ -263,7 +267,19 @@
                     </div>
                     <hr>
                     <div class="flex-column justify-content-end" style="gap: 10px;">
-                        <div class=" d-flex justify-content-end mb-2">
+                      
+                        <div class=" d-flex justify-content-between mb-2">
+                            <div class="col-md-3">
+                                <select id="select-option-pttt" name="payment_pttt" class="form-control "
+                                    style="width: 100%;">
+                                    <option value="">Chọn phương thức thanh toán</option>
+                                    <option value="Tiền mặt">Tiền mặt</option>
+                                    <option value="Chuyển khoản ngân hàng">Chuyển khoản ngân hàng</option>
+                                    <option value="Thẻ tín dụng">Thẻ tín dụng</option>
+                                </select>
+                                <span class="invalid-feedback d-block"
+                                                    style="font-weight: 500"id="select-option-pttt_error"></span>
+                            </div>
                             <ul class="financial-list">
                                 <li class="financial-item">
                                     <span>Tiền phòng</span>
@@ -282,7 +298,6 @@
                                     <span>Còn lại</span>
                                     <span class="total_balance">0</span>
                                 </li>
-
                             </ul>
                         </div>
                     </div>

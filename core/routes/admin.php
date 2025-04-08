@@ -398,8 +398,8 @@ Route::middleware('admin', 'adminPermission')->group(function () {
         Route::name('booking.')->prefix('booking')->group(function () {
             Route::post('booking-merge/{id}', 'mergeBooking')->name('merge');
 
-            Route::get('bill-payment/{id}', 'paymentView')->name('payment');
-            Route::post('bill-payment/{id}', 'payment')->name('payment');
+            // Route::get('bill-payment/{id}', 'paymentView')->name('payment');
+            // Route::post('bill-payment/{id}', 'payment')->name('payment');
 
             Route::get('room-booking-history', 'roomBoookingHistory')->name('room-booking-history');
 
@@ -435,6 +435,9 @@ Route::middleware('admin', 'adminPermission')->group(function () {
             Route::post('check-check-in/{id}', 'checkCheckIndel')->name('check-check-in-del');
             Route::post('delete-check-in/{id}', 'deleteCheckIn')->name('delete-check-in');
 
+            // list thanh toán 
+            Route::get('payment-view', 'paymentView')->name('payment-view');
+            Route::get('payment', 'paymentList')->name('payment.list');
 
         });
     });

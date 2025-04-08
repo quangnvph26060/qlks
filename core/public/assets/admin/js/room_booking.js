@@ -75,6 +75,17 @@ var validatorForm = {
         }, // viết tiếp điều kiện validate vào đây (validations)
         ]
     },
+     'select-option-pttt': { // passwword thì nên đặt là name trong input đó
+        'element': document.getElementById('select-option-pttt'), // id trong input đó
+        'error': document.getElementById('select-option-pttt_error'), // thẻ hiển thị lỗi
+        'validations': [{
+            'func': function (value) {
+                return checkRequired(value); // check trống
+            },
+            'message': generateErrorMessage('P001', 'Phương thức thanh toán')
+        }, // viết tiếp điều kiện validate vào đây (validations)
+        ]
+    },
 
 }
 var formEconomyEdit = {

@@ -65,129 +65,131 @@
                 <form id="bookingForm" action="{{ route('admin.room.book') }}" class="booking-form" method="POST">
                     @csrf
 
-                 
-                        <h5 class="modal-title" id="myModalLabel-booking">Thông tin khách hàng</h5>
-                        <div class="row">
-                            <div class="col-md-6">
-                                <div class="d-flex flex-column" style="line-height: 0px">
-                                    {{-- <div class="mb-3 mt-2">
+
+                    <h5 class="modal-title" id="myModalLabel-booking">Thông tin khách hàng</h5>
+                    <div class="row">
+                        <div class="col-md-6">
+                            <div class="d-flex flex-column" style="line-height: 0px">
+                                {{-- <div class="mb-3 mt-2">
                                         <label for="email" class="form-label required">Email</label>
                                        <select class="form-select" name="" id="">
                                         <option value="">21</option>
                                         <option value="">2</option>
                                        </select>
                                     </div> --}}
-                                    <div class="customer-input-container">
-                                        <div class="col-md-1" style="margin-left: 10px">
-                                            <p class="btn btn--primary modal--search-customer"
-                                                style="white-space: nowrap; font-size: 13px;" id="btn-search">Tìm
-                                                khách</p>
-                                        </div> 
-                                        <div class="mb-2">
-                                             <label for="phone" class="form-label required mt-3">Tên khách hàng</label>
-                                            <div class="col-md-8">
-                                                <input type="text" name="name" id="name" class="form-control"
-                                                    placeholder="Tên khách hàng">
-                                                <span class="invalid-feedback d-block"
-                                                    style="font-weight: 500"id="name_error"></span>
-                                            </div>
-                                        </div>
-
-                                    
+                                <div class="customer-input-container">
+                                    <div class="col-md-1" style="margin-left: 10px">
+                                        <p class="btn btn--primary modal--search-customer"
+                                            style="white-space: nowrap; font-size: 13px;" id="btn-search">Tìm
+                                            khách</p>
                                     </div>
                                     <div class="mb-2">
+                                        <label for="phone" class="form-label required mt-3">Tên khách hàng</label>
                                         <div class="col-md-8">
-                                            <label for="phone" class="form-label">Số điện thoại</label>
-                                            <input type="text" id="phone" name="phone" class="form-control"
-                                                placeholder="Số điện thoại">
+                                            <input type="text" name="name" id="name" class="form-control"
+                                                placeholder="Tên khách hàng">
+                                            <span class="invalid-feedback d-block"
+                                                style="font-weight: 500"id="name_error"></span>
                                         </div>
-                                        {{-- <select id="selectphone" name="phone" class="form-control select2" style="width: 100%;">
+                                    </div>
+
+
+                                </div>
+                                <div class="mb-2">
+                                    <div class="col-md-8">
+                                        <label for="phone" class="form-label">Số điện thoại</label>
+                                        <input type="text" id="phone" name="phone" class="form-control"
+                                            placeholder="Số điện thoại">
+                                    </div>
+                                    {{-- <select id="selectphone" name="phone" class="form-control select2" style="width: 100%;">
                                                 <option value="">Chọn số điện thoại</option>
 
                                                 <!-- Thêm các số điện thoại khác ở đây -->
                                             </select> --}}
-                                    </div>
-                                    <div class="mb-2">
-                                        <div class="col-md-8">
-                                            <input type="hidden" name="customer_code" id="customer_code">
-                                            <label for="phone" class="form-label">Nguồn khách</label>
-                                            {{-- <input type="text" id="phone" name="phone" class="form-control"
+                                </div>
+                                <div class="mb-2">
+                                    <div class="col-md-8">
+                                        <input type="hidden" name="customer_code" id="customer_code">
+                                        <label for="phone" class="form-label">Nguồn khách</label>
+                                        {{-- <input type="text" id="phone" name="phone" class="form-control"
                                                 placeholder="Số điện thoại"> --}}
-                                                <select id="select-customer-source" name="customer_source" class="form-control " style="width: 100%;">
-                                                </select>
-                                        </div>
-                                    </div>
-                                    <div class="col-md-8 mb-3 mt-3 d-flex align-items-center result-add-customer" style="gap:10px">
-                                        <input type="checkbox" name="insert_customer"> <p style="font-size: 13px">Lưu thông tin khách</p>
-                                    </div>
-                                    <div class="mb-2">
-                                        <p class="add-room-booking" style="width: 185px;">
-                                            <svg xmlns="http://www.w3.org/2000/svg" width="20" height="20"
-                                                viewBox="0 0 24 24">
-                                                <g fill="currentColor" fill-rule="evenodd" clip-rule="evenodd">
-                                                    <path
-                                                        d="M2 12C2 6.477 6.477 2 12 2s10 4.477 10 10s-4.477 10-10 10S2 17.523 2 12Zm10-8a8 8 0 1 0 0 16a8 8 0 0 0 0-16Z" />
-                                                    <path
-                                                        d="M13 7a1 1 0 1 0-2 0v4H7a1 1 0 1 0 0 2h4v4a1 1 0 1 0 2 0v-4h4a1 1 0 1 0 0-2h-4V7Z" />
-                                                </g>
-                                            </svg>
-                                            Chọn thêm phòng
-                                        </p>
+                                        <select id="select-customer-source" name="customer_source" class="form-control "
+                                            style="width: 100%;">
+                                        </select>
                                     </div>
                                 </div>
+                                <div class="col-md-8 mb-3 mt-3 d-flex align-items-center result-add-customer"
+                                    style="gap:10px">
+                                    <input type="checkbox" name="insert_customer">
+                                    <p style="font-size: 13px">Lưu thông tin khách</p>
+                                </div>
+                                <div class="mb-2">
+                                    <p class="add-room-booking" style="width: 185px;">
+                                        <svg xmlns="http://www.w3.org/2000/svg" width="20" height="20"
+                                            viewBox="0 0 24 24">
+                                            <g fill="currentColor" fill-rule="evenodd" clip-rule="evenodd">
+                                                <path
+                                                    d="M2 12C2 6.477 6.477 2 12 2s10 4.477 10 10s-4.477 10-10 10S2 17.523 2 12Zm10-8a8 8 0 1 0 0 16a8 8 0 0 0 0-16Z" />
+                                                <path
+                                                    d="M13 7a1 1 0 1 0-2 0v4H7a1 1 0 1 0 0 2h4v4a1 1 0 1 0 2 0v-4h4a1 1 0 1 0 0-2h-4V7Z" />
+                                            </g>
+                                        </svg>
+                                        Chọn thêm phòng
+                                    </p>
+                                </div>
                             </div>
-                            <div class="col-md-6">
-                                <div class="d-flex flex-column" style="line-height: 0px;">
+                        </div>
+                        <div class="col-md-6">
+                            <div class="d-flex flex-column" style="line-height: 0px;">
 
-                                    <div class="customer-input-container">
-                                        <label for="phone" class="form-label required">Ngày đặt</label>
-                                        <div class="d-flex">
-                                            <div class="col-md-8">
-                                                <div class="d-flex align-items-center justify-content-start"
-                                                    style="gap: 10px">
-                                                    <input type="date" name="checkInDate"
-                                                        id="date-book-room-booking" class="form-control ">
-                                                    <input type="time" name="checkInTime"
-                                                        id="time-book-room-booking" class="form-control ">
-                                                </div>
-                                                {{-- <span class="invalid-feedback d-block"
-                                                    style="font-weight: 500"id="name_error"></span> --}}
+                                <div class="customer-input-container">
+                                    <label for="phone" class="form-label required">Ngày đặt</label>
+                                    <div class="d-flex">
+                                        <div class="col-md-8">
+                                            <div class="d-flex align-items-center justify-content-start"
+                                                style="gap: 10px">
+                                                <input type="date" name="checkInDate" id="date-book-room-booking"
+                                                    class="form-control ">
+                                                <input type="time" name="checkInTime" id="time-book-room-booking"
+                                                    class="form-control ">
                                             </div>
+                                            {{-- <span class="invalid-feedback d-block"
+                                                    style="font-weight: 500"id="name_error"></span> --}}
                                         </div>
                                     </div>
-                                    <div class="col-md-8 mt-3" style="display: none">
-                                        <label for="phone" class="form-label required">Ngày trả</label>
-                                        <div class="d-flex align-items-center justify-content-start"
-                                            style="gap: 10px">
-                                            <input type="date" name="checkOutDate" id="date-book-room-date"
-                                                class="form-control">
-                                            <input type="time" name="checkOutTime" id="time-book-room-date"
-                                                class="form-control">
-                                        </div>
+                                </div>
+                                <div class="col-md-8 mt-3" style="display: none">
+                                    <label for="phone" class="form-label required">Ngày trả</label>
+                                    <div class="d-flex align-items-center justify-content-start" style="gap: 10px">
+                                        <input type="date" name="checkOutDate" id="date-book-room-date"
+                                            class="form-control">
+                                        <input type="time" name="checkOutTime" id="time-book-room-date"
+                                            class="form-control">
                                     </div>
-                                    <div class="col-md-8 mt-3">
-                                        <label for="phone" class="form-label ">Nhân viên </label>
-                                        <div class="d-flex align-items-center justify-content-start"
-                                            style="gap: 10px">
-                                            <select id="select-staff"name="name_staff"class="form-control " style="width: 100%;">
-                                             
-                                            </select>
-                                        </div>
+                                </div>
+                                <div class="col-md-8 mt-3">
+                                    <label for="phone" class="form-label ">Nhân viên </label>
+                                    <div class="d-flex align-items-center justify-content-start" style="gap: 10px">
+                                        <select id="select-staff"name="name_staff" class="form-control "
+                                            style="width: 100%;">
+
+                                        </select>
                                     </div>
                                 </div>
                             </div>
                         </div>
-                        {{-- <datalist id="customer-names">
+                    </div>
+                    {{-- <datalist id="customer-names">
                             @forelse ($userList as $user)
                                 <option value="{{ $user->customer_code }}">
                                 @empty
                                     <p>No items found.</p>
                             @endforelse
                         </datalist> --}}
-                        {{-- <p id="error-message" style="color: red; display: none;">Không tìm thấy email khách hàng phù
+                    {{-- <p id="error-message" style="color: red; display: none;">Không tìm thấy email khách hàng phù
                             hợp
                         </p> --}}
-                  
+
                     <div class="row">
                         <div class="d-flex align-items-center justify-content-between">
                             <h5 class="modal-title" id="myModalLabel-booking">Danh sách phòng</h5>
@@ -246,28 +248,41 @@
                     </div>
                     <hr>
                     <div class="flex-column justify-content-end" style="gap: 10px;">
-                        <div class=" d-flex justify-content-end mb-2">
-                            <ul class="financial-list">
-                                <li class="financial-item">
-                                    <span>Tiền phòng</span>
-                                    <span class="total_amount">0</span>
-                                </li>
-                                <li class="financial-item highlighted">
-                                    <span>Giảm giá</span>
-                                    <span class="total_discount">0</span>
-                                    {{-- <input type="text" id="discountInput" class="custom-input-giam-gia"> --}}
-                                </li>
-                                <li class="financial-item">
-                                    <span>Tiền cọc</span>
-                                    <span class="total_deposit">0</span>
-                                </li>
-                                <li class="financial-item">
-                                    <span>Còn lại</span>
-                                    <span class="total_balance">0</span>
-                                </li>
+                     
+                            <div class=" d-flex justify-content-between mb-2">
+                                <div class="col-md-3">
+                                    <select id="select-option-pttt" name="payment_pttt" class="form-control "
+                                        style="width: 100%;">
+                                        <option value="">Chọn phương thức thanh toán</option>
+                                        <option value="Tiền mặt">Tiền mặt</option>
+                                        <option value="Chuyển khoản ngân hàng">Chuyển khoản ngân hàng</option>
+                                        <option value="Thẻ tín dụng">Thẻ tín dụng</option>
+                                    </select>
+                                    <span class="invalid-feedback d-block"
+                                        style="font-weight: 500"id="select-option-pttt_error"></span>
+                                </div>
+                                <ul class="financial-list">
+                                    <li class="financial-item">
+                                        <span>Tiền phòng</span>
+                                        <span class="total_amount">0</span>
+                                    </li>
+                                    <li class="financial-item highlighted">
+                                        <span>Giảm giá</span>
+                                        <span class="total_discount">0</span>
+                                        {{-- <input type="text" id="discountInput" class="custom-input-giam-gia"> --}}
+                                    </li>
+                                    <li class="financial-item">
+                                        <span>Tiền cọc</span>
+                                        <span class="total_deposit">0</span>
+                                    </li>
+                                    <li class="financial-item">
+                                        <span>Còn lại</span>
+                                        <span class="total_balance">0</span>
+                                    </li>
 
-                            </ul>
-                        </div>
+                                </ul>
+                            </div>
+                        
                     </div>
                     <div class="d-flex justify-content-end" style="gap: 10px;">
                         <button type="button" data-row="booked" class=" btn-dat-truoc btn-book">Lưu</button>
@@ -290,7 +305,6 @@
 <link rel="stylesheet" href="//cdn.datatables.net/2.2.2/css/dataTables.dataTables.min.css">
 <script src="//cdn.datatables.net/2.2.2/js/dataTables.min.js"></script>
 <script>
-   
     document.getElementById("date-book-room-booking").addEventListener("change", function() {
         let checkInDate = new Date(this.value);
         if (!isNaN(checkInDate.getTime())) {
@@ -299,22 +313,21 @@
             document.getElementById("date-book-room-date").value = checkOutDate;
         }
     });
-    document.addEventListener("DOMContentLoaded", function () {
-    function updateScroll() {
-        const listBooking = document.getElementById("list-booking");
-        const rows = listBooking.querySelectorAll("tr");
+    document.addEventListener("DOMContentLoaded", function() {
+        function updateScroll() {
+            const listBooking = document.getElementById("list-booking");
+            const rows = listBooking.querySelectorAll("tr");
 
-        if (rows.length > 3) {
-            listBooking.style.display = "block";
-            listBooking.style.height = "150px"; // Giới hạn chiều cao
-            listBooking.style.overflowY = "auto"; // Hiển thị thanh cuộn
-        } else {
-            listBooking.style.height = "none";
-            listBooking.style.overflowY = "visible"; // Không có thanh cuộn nếu ít hơn hoặc bằng 3 hàng
+            if (rows.length > 3) {
+                listBooking.style.display = "block";
+                listBooking.style.height = "150px"; // Giới hạn chiều cao
+                listBooking.style.overflowY = "auto"; // Hiển thị thanh cuộn
+            } else {
+                listBooking.style.height = "none";
+                listBooking.style.overflowY = "visible"; // Không có thanh cuộn nếu ít hơn hoặc bằng 3 hàng
+            }
         }
-    }
 
-    updateScroll();
-});
-
+        updateScroll();
+    });
 </script>

@@ -1,4 +1,4 @@
-function initGridMain(key, value) {
+function initGridMain(data) {
     const savedView = localStorage.getItem('selectedView') || 'list';
 
     let htmlrow = '';
@@ -16,10 +16,7 @@ function initGridMain(key, value) {
             $.ajax({
                 type: "GET",
                 url: roomBoookingHistory,
-                data: {
-                    method: key,
-                    value: value,
-                },
+                data: {data},
                 success: function (response) {
                     if (response.status === 'success') {
                         resolve(response.data);

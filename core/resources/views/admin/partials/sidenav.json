@@ -183,8 +183,8 @@
                 ],
                 "title": "Thanh toán",
                 "icon": "la la-sign-out transform-rotate-180",
-                "route_name": "admin.booking.canceled.list",
-                "menu_active": "admin.booking.canceled.list"
+                "route_name": "admin.booking.payment-view",
+                "menu_active": "admin.booking.payment-view"
             },
             {
                 "keyword": [

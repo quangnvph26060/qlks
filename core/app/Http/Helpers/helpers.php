@@ -13,6 +13,7 @@ use App\Models\Frontend;
 use App\Models\GeneralSetting;
 use App\Models\HotelFacility;
 use App\Models\Language;
+use App\Models\ReceiptAndPayment;
 use App\Models\Role;
 use App\Models\RoomStatusHistory;
 use App\Notify\Notify;
@@ -368,6 +369,20 @@ function saveRoomStatusHistory($room_id, $start_date, $end_date, $status_code)
             'status_code' => $status_code
         ]);
     }
+}
+function savePayment($booking_id, $checkin_id, $room_price, $deposit_amount, $discount_amount, $total_payment, $payment_method){
+    ReceiptAndPayment::create([
+        'booking_id'       => $booking_id,
+        'checkin_id'       => $checkin_id,
+        'room_price'       => $room_price,
+        'deposit_amount'   => $deposit_amount,  // đặt cọc
+        'discount_amount'  => $discount_amount, // giảm giá
+        'total_payment'    => $total_payment,   // số tiền  thanh toán
+        'payment_method'   => $payment_method,
+        'created_date'     => now(),
+        'unit_code'        => hf('ma_coso')
+    ]);
+       
 }
 function fileUploader($file, $location, $size = null, $old = null, $thumb = null, $filename = null)
 {

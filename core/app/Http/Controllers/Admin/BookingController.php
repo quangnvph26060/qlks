@@ -20,6 +20,7 @@ use App\Models\Admin;
 use App\Models\CheckIn;
 use App\Models\PremiumService;
 use App\Models\Product;
+use App\Models\ReceiptAndPayment;
 use App\Models\RegularRoomPrice;
 use App\Models\RoomBooking;
 use App\Models\RoomPriceRoom;
@@ -909,14 +910,21 @@ class BookingController extends Controller
     {
         $emptyMessage   = '';
         $pageTitle      =  'Lễ tân';
-        return view('admin.booking.receptionist.index');
+        $roomTypes      = RoomType::where('unit_code',unitCode())->where('status',1)->get();
+        return view('admin.booking.receptionist.index',compact('roomTypes'));
     }
     public function roomBoookingHistory(Request $request)
-    {
-        $date = request('date'); // Lấy ngày từ request
-        $method = request('method'); 
-        $value = request('value'); 
+    {   
+        
+        $date      = request('date'); // Lấy ngày từ request
+        $method    = data_get($request->data, 'searchType'); 
+        $value     = data_get($request->data, 'searchValue');
+        $room_type = data_get($request->data, 'room_type');
+        Log::info($room_type);
         $rooms = Room::query();
+        $rooms->when(!empty($room_type), function ($query) use ($room_type) {
+            $query->whereIn('room_type_id', $room_type);
+        });
         if($method === 'room'&& !empty($value)){
             $rooms = $rooms->where('room_number', $value);
         }
@@ -1200,5 +1208,44 @@ class BookingController extends Controller
             $roomBooking->delete();
         }
         return response()->json(['status' => 'success', 'message' => 'Xoá thành công.']);
+    }
+
+    // THANH TOÁN   
+    public function paymentList(Request $request){
+        $perPage = 10;
+        $payments = ReceiptAndPayment::where('unit_code', unitCode())
+        ->when(!empty($request->data['bookingCode']), function ($query) use ($request) {
+            $query->where(function ($q) use ($request) {
+                $q->where('checkin_id', 'LIKE', '%' . $request->data['bookingCode'] . '%')
+                  ->orWhere('booking_id', 'LIKE', '%' . $request->data['bookingCode'] . '%');
+            });
+        })
+        ->orderBy('created_at', 'desc')
+        ->get();
+    
+        $paginatedBookings = new LengthAwarePaginator(
+            $payments->forPage($request->page, $perPage), // Dữ liệu phân trang
+            $payments->count(), // Tổng số bản ghi
+            $perPage, // Số bản ghi mỗi trang
+            $request->page, // Trang hiện tại
+            ['path' => url()->current()] // Đường dẫn phân trang
+        );
+        $rooms = Room::active()->select('id', 'room_number')->get();
+        return response([
+            'status' => 'success',
+            'data' => $paginatedBookings,
+            'rooms' => $rooms,
+            'option_selected' => $request->data['roomCode'] ?? "",
+            'pagination' => [
+                'total' => $paginatedBookings->total(),
+                'current_page' => $paginatedBookings->currentPage(),
+                'last_page' => $paginatedBookings->lastPage(),
+                'per_page' => $paginatedBookings->perPage(),
+            ]
+        ]);
+    }
+    public function paymentView(){
+        $pageTitle = ' Danh sách thanh toán';
+        return view('admin.booking.payment.index', compact('pageTitle'));
     }
 }
