@@ -1747,7 +1747,7 @@
 
     .filter-sidebar .action-buttons {
         position: absolute;
-        bottom: 1rem;
+        bottom: 7rem;
         right: 1rem;
         left: 1rem;
         display: flex;
