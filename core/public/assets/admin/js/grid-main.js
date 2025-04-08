@@ -304,7 +304,7 @@ function initViewScript1() {
         let Id = $(this).attr("data-id");
         var url = checkInEditUrl.replace(':id', dataId);
 
-        // $('[id="date-book-room-booking-edit"]').val(formattedDates);
+     $('[id="date-book-room-booking-edit"]').val(formattedDates);
         // $('[id="date-book-room-booking"]').val(formattedDates);
         // $('[id="time-book-room-booking"]').val(formattedTimes);
         $.ajax({
@@ -419,7 +419,7 @@ function initViewScript1() {
                             });
                         });
                         totalPrice = calculateTotalPrice();
-                        console.log(totalPrice);
+                        $('#date-book-room-booking-edit').val(formattedDates)
                         
 
 
@@ -578,6 +578,8 @@ function initViewScript1() {
                         option_staff += `<option value="${item.id}">${item.username}</option>`;
                     });
                     selected_select_staff.append(option_staff);
+                    console.log(formattedDates);
+                        $('#date-book-room-booking-edit').val(formattedDates)
                     $('#myModal-booking-edit').modal('show').on('shown.bs.modal', function () {
                         $('.name-edit, .phone-edit').val('');
                         $('#list-booking-edit').empty();

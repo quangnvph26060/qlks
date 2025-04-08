@@ -920,11 +920,17 @@ class BookingController extends Controller
         $method    = data_get($request->data, 'searchType'); 
         $value     = data_get($request->data, 'searchValue');
         $room_type = data_get($request->data, 'room_type');
-        Log::info($room_type);
+        $room_clean= data_get($request->data, 'room_clean');
         $rooms = Room::query();
+
         $rooms->when(!empty($room_type), function ($query) use ($room_type) {
             $query->whereIn('room_type_id', $room_type);
         });
+
+        $rooms->when(!empty($room_clean), function ($query) use ($room_clean) {
+            $query->whereIn('is_clean', $room_clean);
+        });
+        
         if($method === 'room'&& !empty($value)){
             $rooms = $rooms->where('room_number', $value);
         }

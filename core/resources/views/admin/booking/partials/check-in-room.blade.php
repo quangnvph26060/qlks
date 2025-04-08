@@ -80,7 +80,7 @@
                                                 kiếm</p> --}}
                                             <p class="btn btn--primary modal--search-booked"
                                                 style="white-space: nowrap; font-size: 13px;" id="btn-search">Chọn đặt
-                                                phòng 123</p>
+                                                phòng</p>
                                             <p class="btn btn--primary modal--search-customer"
                                                 style="white-space: nowrap; font-size: 13px;" id="btn-search">Tìm
                                                 khách</p>
