@@ -56,7 +56,7 @@
     </div>
     <div class="row" style="padding: 10px">
         <div class="col">
-            @include('admin.booking.partials.system-1')
+            {{-- @include('admin.booking.partials.system-1') --}}
         </div>
     </div>
     <div class="row">
@@ -563,17 +563,17 @@
 
     });
     $(document).ready(function() {
-        let dirtyCount = 5; // Ví dụ giá trị
-        let incomingCount = 2;
-        let occupiedCount = 10;
-        let lateCheckinCount = 1;
-        let checkOutCount = 3;
+        // let dirtyCount = 5; // Ví dụ giá trị
+        // let incomingCount = 2;
+        // let occupiedCount = 10;
+        // let lateCheckinCount = 1;
+        // let checkOutCount = 3;
 
-        $('.status-available-line-count').text('Đang trống (' + dirtyCount + ')');
-        $('.status-incoming-line-count').text('Sắp nhận (' + incomingCount + ')');
-        $('.status-occupied-line-count').text('Đang sử dụng (' + occupiedCount + ')');
-        $('.status-checkout-line-count').text('Nhận phòng muộn (' + lateCheckinCount + ')');
-        $('.status-overdue-line-count').text('Quá giờ trả (' + checkOutCount + ')');
+        // $('.status-available-line-count').text('Đang trống (' + dirtyCount + ')');
+        // $('.status-incoming-line-count').text('Sắp nhận (' + incomingCount + ')');
+        // $('.status-occupied-line-count').text('Đang sử dụng (' + occupiedCount + ')');
+        // $('.status-checkout-line-count').text('Nhận phòng muộn (' + lateCheckinCount + ')');
+        // $('.status-overdue-line-count').text('Quá giờ trả (' + checkOutCount + ')');
 
         var validatorForm = {
             'name': {
