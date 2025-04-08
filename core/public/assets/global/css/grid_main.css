@@ -52,6 +52,11 @@
         font-size: 14px;
         color: #666;
         margin-top: 5px;
+            margin-top: 5px;
+            white-space: nowrap;
+            overflow: hidden;
+            text-overflow: ellipsis;
+            max-width: 100%; /* hoặc gán chiều rộng cố định */
     }
 
     .price {
@@ -114,10 +119,7 @@
     max-width: 100%; /* Điều chỉnh nếu cần */
     }
 
-    .room-info {
-        font-size: 14px;
-        margin-top: 5px;
-    }
+  
 
     .time-info {
         background: #f8e3c4;
