@@ -11,6 +11,7 @@ use App\Models\CheckIn;
 use App\Models\CheckInRoom;
 use App\Models\Customer;
 use App\Models\CustomerSource;
+use App\Models\ReceiptAndPayment;
 use App\Models\RoomType;
 use App\Models\Room;
 use App\Models\RoomBooking;
@@ -397,7 +398,8 @@ class BookRoomController extends Controller
         }
     }
     public function roomBookToCheckIn(Request $request)
-    {
+    {   
+        Log::info($request->all());
         DB::beginTransaction();
         try {
             $validator = Validator::make($request->all(), [
@@ -489,12 +491,23 @@ class BookRoomController extends Controller
 
                         $checkRoom->status = Status::ROOM_ACTIVE;
                         $checkRoom->save();
-                        $daysDifference = Carbon::parse($dateIn)->startOfDay()->diffInDays(Carbon::parse($dateOut)->startOfDay());
-                        if($daysDifference <= 1){
-                            saveRoomStatusHistory($room['room'], $dateIn, $dateOut, 3);
-                        }else{
-                            // $dateOut = Carbon::parse($dateOut)->subDay();
-                            saveRoomStatusHistory($room['room'], $dateIn, $dateOut, 3);
+                        saveRoomStatusHistory($room['room'], $dateIn, $dateOut, 3);
+                        $receipt = ReceiptAndPayment::where('booking_id', $request->id_room_booking)->first();
+
+                        if ($receipt) {
+                            $receipt->update([
+                                'checkin_id' => $bookingId,
+                            ]);
+                        } else {
+                            ReceiptAndPayment::create([
+                                'booking_id'  => $request->id_room_booking,
+                                'checkin_id'  => $bookingId,
+                                'room_price'  => $roomPice['unit_price'],
+                                'deposit_amount' => $depositAmount,
+                                'discount_amount' => $discountAmount,
+                                'created_date'     => now(),
+                                'unit_code'        => hf('ma_coso')
+                            ]);
                         }
                     }
                 } else {
@@ -521,20 +534,25 @@ class BookRoomController extends Controller
                     $check_in_new->save();
                      
                     $daysDifference = floor(Carbon::parse($dateIn)->floatDiffInDays(Carbon::parse($dateOut)));
-                  
-                    if($daysDifference <= 1){
-                        saveRoomStatusHistory($room['room'], $dateIn, $dateIn, 3);
-                    }else{
-                        $dateOut = Carbon::parse($dateOut)->subDay();
-                        saveRoomStatusHistory($room['room'], $dateIn, $dateOut, 3);
-                    }
+                    ReceiptAndPayment::where('checkin_id', $bookingId)->update([
+                        'room_price'      => DB::raw('room_price + ' .$roomPice['unit_price']),
+                        'deposit_amount'  => DB::raw('deposit_amount + ' . $depositAmount),
+                        'discount_amount' => DB::raw('discount_amount + ' . $discountAmount),
+                    ]);
+                    saveRoomStatusHistory($room['room'], $dateIn, $dateOut, 3);
+                    // if($daysDifference <= 1){
+                    //     saveRoomStatusHistory($room['room'], $dateIn, $dateIn, 3);
+                    // }else{
+                    //     $dateOut = Carbon::parse($dateOut)->subDay();
+                    //     saveRoomStatusHistory($room['room'], $dateIn, $dateOut, 3);
+                    // }
                 } 
              
             }
           
 
             DB::commit();
-            return response()->json(['success' => 'Nhận phòng thành công']);
+            return response()->json(['status'=>'success', 'success' => 'Cập nhật nhận phòng thành công']);
         } catch (\Exception $e) {
             DB::rollBack();
             Log::error('Có lỗi xảy ra trong quá trình nhận phòng', [
@@ -974,7 +992,7 @@ class BookRoomController extends Controller
                 }
             }
             DB::commit();
-            return response()->json(['success' => 'Cập nhật nhận phòng thành công']);
+            return response()->json(['status'=>'success', 'success' => 'Cập nhật nhận phòng thành công']);
         } catch (\Exception $e) {
             Log::info('Error booking at line ' . $e->getLine() . ' in ' . $e->getFile() . ' : ' . $e->getMessage());
             DB::rollBack();
@@ -986,7 +1004,7 @@ class BookRoomController extends Controller
 
         $pageModal = 'Sửa nhận phòng';
         $roomBookings = CheckIn::query();
-        $roomBookings->with('room', 'room.roomType', 'room.roomType.roomTypePrice', 'room.roomType.roomTypePrice.setupPricing');
+        $roomBookings->with('room', 'room.roomType', 'room.roomType.roomTypePrice', 'room.roomType.roomTypePrice.setupPricing','checkInPayment');
         if (!empty($request->method)) {
             $pageModal = 'Nhận phòng';
             $roomBookings->where('id', $request->id);
@@ -1019,12 +1037,13 @@ class BookRoomController extends Controller
                 'room_number'       => $booking->room->room_number,
                 'guest_count'       => $booking->guest_count,
                 'status'            => $booking->status,
+                'payment'           => $booking->checkInPayment->total_payment ?? 0,
             ];
         }
         // Chuyển về dạng danh sách thay vì array với key
         $groupedBookings = array_values($groupedBookings);
-        $customerSourse = CustomerSource::where('unit_code', unitCode())->get();
-        $admin = Admin::where('unit_code', unitCode())->where('role_id', '!=', 0)->get();
+        $customerSourse  = CustomerSource::where('unit_code', unitCode())->get();
+        $admin           = Admin::where('unit_code', unitCode())->where('role_id', '!=', 0)->get();
         if ($booking->customer_code) {
             $customer = Customer::where('customer_code', $booking->customer_code)->first();
         }

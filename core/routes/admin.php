@@ -439,6 +439,9 @@ Route::middleware('admin', 'adminPermission')->group(function () {
             Route::get('payment-view', 'paymentView')->name('payment-view');
             Route::get('payment', 'paymentList')->name('payment.list');
 
+            // thanh toán 
+            Route::post('payment-room', 'paymentRoom')->name('payment.room');
+
         });
     });
 

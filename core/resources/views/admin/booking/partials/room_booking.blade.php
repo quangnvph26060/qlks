@@ -251,6 +251,10 @@
                      
                             <div class=" d-flex justify-content-between mb-2">
                                 <div class="col-md-3">
+                                    @php 
+                                    $routeName = Route::currentRouteName();
+                                    @endphp
+                                    @if($routeName === 'admin.receptionist.booking.receptionist')
                                     <select id="select-option-pttt" name="payment_pttt" class="form-control "
                                         style="width: 100%;">
                                         <option value="">Chọn phương thức thanh toán</option>
@@ -260,6 +264,7 @@
                                     </select>
                                     <span class="invalid-feedback d-block"
                                         style="font-weight: 500"id="select-option-pttt_error"></span>
+                                        @endif
                                 </div>
                                 <ul class="financial-list">
                                     <li class="financial-item">

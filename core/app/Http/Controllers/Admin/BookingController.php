@@ -846,8 +846,8 @@ class BookingController extends Controller
                 ->whereDate('checkin_date', $roomData['date'])
                 ->whereNull('room_change')
                 ->first();
-                $customerSourse = CustomerSource::where('unit_code', unitCode())->get();
-                $admin = Admin::where('unit_code', unitCode())->where('role_id', '!=', 0)->get();
+            $customerSourse = CustomerSource::where('unit_code', unitCode())->get();
+            $admin = Admin::where('unit_code', unitCode())->where('role_id', '!=', 0)->get();
             if ($roomBooking || $checkIn || !$room_type || !$room) {
                 $flag = 'success';
                 $result[] = [
@@ -910,17 +910,17 @@ class BookingController extends Controller
     {
         $emptyMessage   = '';
         $pageTitle      =  'Lễ tân';
-        $roomTypes      = RoomType::where('unit_code',unitCode())->where('status',1)->get();
-        return view('admin.booking.receptionist.index',compact('roomTypes'));
+        $roomTypes      = RoomType::where('unit_code', unitCode())->where('status', 1)->get();
+        return view('admin.booking.receptionist.index', compact('roomTypes'));
     }
     public function roomBoookingHistory(Request $request)
-    {   
-        
+    {
+
         $date      = request('date'); // Lấy ngày từ request
-        $method    = data_get($request->data, 'searchType'); 
+        $method    = data_get($request->data, 'searchType');
         $value     = data_get($request->data, 'searchValue');
         $room_type = data_get($request->data, 'room_type');
-        $room_clean= data_get($request->data, 'room_clean');
+        $room_clean = data_get($request->data, 'room_clean');
         $rooms = Room::query();
 
         $rooms->when(!empty($room_type), function ($query) use ($room_type) {
@@ -930,8 +930,8 @@ class BookingController extends Controller
         $rooms->when(!empty($room_clean), function ($query) use ($room_clean) {
             $query->whereIn('is_clean', $room_clean);
         });
-        
-        if($method === 'room'&& !empty($value)){
+
+        if ($method === 'room' && !empty($value)) {
             $rooms = $rooms->where('room_number', $value);
         }
         // Nếu tìm kiếm theo khách hàng
@@ -963,10 +963,63 @@ class BookingController extends Controller
             'roomBookingHistory.bookingData',
         ]);
         $rooms = $rooms->get();
+
+        if (request('method') === 'list-room-booking') {
+            $check_ins = RoomBooking::query()
+                ->where('unit_code', unitCode())
+                ->whereDate('checkin_date', '<=', $date)
+                ->whereDate('checkout_date', '>', Carbon::parse($date)->subDay())
+                ->with('room')
+                ->get()
+                ->groupBy('booking_id');
+            return response()->json(['data' => $check_ins, 'status' => 'success']);
+        }
         return response()->json(['data' => $rooms, 'status' => 'success']);
     }
 
+    public function paymentRoom(Request $request)
+    {
 
+        $receipt  = ReceiptAndPayment::where('checkin_id', $request->id_room_booking)->first();
+        $check_ins = CheckIn::where('check_in_id', $request->id_room_booking)->get();
+        $amount = str_replace('.', '', $request->input_pttt);
+        $amount = (int)$amount;
+        if ($receipt) {
+            $receipt->update([
+                'total_payment'   =>  $receipt->total_payment + $amount,       // hoặc giá trị bạn muốn gán
+                'payment_method'  => $request->payment_pttt,      // hoặc giá trị bạn muốn gán
+            ]);
+
+            $due = $receipt->due;
+            if ($due == 0 && $check_ins->count()){
+
+                foreach ($check_ins as $check_in) {
+                    saveRoomStatusHistory($check_in->room_code, $check_in->checkin_date, $check_in->checkout_date, 1);
+                }
+                return response()->json(['status'=>'success', 'success' => 'Trả phòng thành công']);
+            }
+                return response()->json(['status'=>'success', 'success' => 'Thanh toán thành công']);
+        }else{
+            $check_in = CheckIn::where('check_in_id', $request->id_room_booking)->first();
+            $receipt =   ReceiptAndPayment::create([
+                'booking_id'       => $request->id_room_booking,
+                'checkin_id'       => $check_in->check_in_id,
+                'room_price'       => $check_in->total_amount,
+                'deposit_amount'   => $check_in->deposit_amount,  // đặt cọc
+                'discount_amount'  => $check_in->discount_amount, // giảm giá
+                'total_payment'    => $amount,   // số tiền  thanh toán
+                'payment_method'   => $request->payment_pttt,
+                'created_date'     => now(),
+                'unit_code'        => hf('ma_coso')
+            ]);
+            $due = $receipt->due;
+            if ($due == 0 && $check_ins){
+                saveRoomStatusHistory($check_in->room_code, $check_in->checkin_date, $check_in->checkout_date, 1);
+                return response()->json(['status'=>'success', 'success' => 'Trả phòng thành công']);
+            }
+                return response()->json(['status'=>'success', 'success' => 'Thanh toán thành công']);
+        }
+    }
     public function changeCleanRoom(Request $request)
     {
         try {
@@ -1217,18 +1270,19 @@ class BookingController extends Controller
     }
 
     // THANH TOÁN   
-    public function paymentList(Request $request){
+    public function paymentList(Request $request)
+    {
         $perPage = 10;
         $payments = ReceiptAndPayment::where('unit_code', unitCode())
-        ->when(!empty($request->data['bookingCode']), function ($query) use ($request) {
-            $query->where(function ($q) use ($request) {
-                $q->where('checkin_id', 'LIKE', '%' . $request->data['bookingCode'] . '%')
-                  ->orWhere('booking_id', 'LIKE', '%' . $request->data['bookingCode'] . '%');
-            });
-        })
-        ->orderBy('created_at', 'desc')
-        ->get();
-    
+            ->when(!empty($request->data['bookingCode']), function ($query) use ($request) {
+                $query->where(function ($q) use ($request) {
+                    $q->where('checkin_id', 'LIKE', '%' . $request->data['bookingCode'] . '%')
+                        ->orWhere('booking_id', 'LIKE', '%' . $request->data['bookingCode'] . '%');
+                });
+            })
+            ->orderBy('created_at', 'desc')
+            ->get();
+
         $paginatedBookings = new LengthAwarePaginator(
             $payments->forPage($request->page, $perPage), // Dữ liệu phân trang
             $payments->count(), // Tổng số bản ghi
@@ -1250,7 +1304,8 @@ class BookingController extends Controller
             ]
         ]);
     }
-    public function paymentView(){
+    public function paymentView()
+    {
         $pageTitle = ' Danh sách thanh toán';
         return view('admin.booking.payment.index', compact('pageTitle'));
     }

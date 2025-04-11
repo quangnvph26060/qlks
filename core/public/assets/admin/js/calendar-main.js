@@ -117,7 +117,8 @@ function initGridMain(data) {
                             let Id = "";
                             let roomType = "";
                             let isBooked = room.room_booking_history.some(booking => {
-
+                                  
+                                    
                                 let checkin = new Date(booking.start_date);
                                 let checkout = new Date(booking.end_date);
                                 if (booking.status_code == 2) {
@@ -134,12 +135,13 @@ function initGridMain(data) {
                                     }
                                 } else if (booking.status_code == 3) {
                                     bgColor = 3; // Trạng thái 3: Màu đỏ
-                                    bookingId = booking.check_in_data['check_in_id'];
+                                    bookingId = booking.check_in_data['check_in_id']; 
                                 }
                                 return cellTime >= checkin && cellTime < checkout;
                             });
 
-
+                           
+                            
                             if (isBooked && bgColor == 2) {
                                 row += `<td  class="room_book" data-booking="${bookingId}" data-id="${Id}" data-room-type-id="${roomType}"
                                 style="background: ${isBooked ? '#ebb579' : 'transparent'};"></td>`;
@@ -186,16 +188,18 @@ function initGridMain(data) {
                                 } else if (booking.status_code == 3) {
                                     color = "#e6454d";
                                     className = "check_in_room";
-                                    bookingId = booking.check_in_data ? booking.check_in_data['check_in_id'] : "";
-                                    Id = booking.check_in_data ? booking.check_in_data['id'] : "";
-                                    roomType = booking.check_in_data ? booking.check_in_data['room_type_id'] : "";
-                                    // if(booking.check_in_data){
-                                    //     booking?.check_in_data?.forEach(item => {
-                                    //         if(item.room_code == booking.room_id ){
-                                    //             bookingId = item.check_in_id;
-                                    //         }
-                                    //     });
-                                    // }
+                                    // bookingId = booking.check_in_data ? booking.check_in_data['check_in_id'] : "";
+                                    // Id = booking.check_in_data ? booking.check_in_data['id'] : "";
+                                    // roomType = booking.check_in_data ? booking.check_in_data['room_type_id'] : "";
+                                    if(booking.check_in_data){
+                                        booking?.check_in_data?.forEach(item => {
+                                            if(item.room_code == booking.room_id ){
+                                                bookingId = item.check_in_id;
+                                                Id = item.id;
+                                                roomType = item.room_type_id;
+                                            }
+                                        });
+                                    }
                                 }
 
                                 if (color) {
@@ -445,6 +449,8 @@ function initGridMain(data) {
                         console.log('1234');
                         
                     } else {
+                        console.log(bookingId);
+                        
                         checkIn(Id, bookingId);
                         console.log('123');
 

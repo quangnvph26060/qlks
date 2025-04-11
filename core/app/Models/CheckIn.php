@@ -59,4 +59,7 @@ class CheckIn extends Model
                 ->first();
         }
     }
+    public function checkInPayment(){
+        return $this->hasOne(ReceiptAndPayment::class,'checkin_id','check_in_id');
+    }
 }

@@ -153,7 +153,7 @@
                     <div class="modal-body " style="padding: 5px 12px 12px 5px;">
 
 
-                        <form id="bookingForm" action="{{ route('admin.check.in.update') }}" class="booking-form-edit"
+                        <form id="bookingForm" action="" class="booking-form-pttt"
                             method="POST">
                             @csrf
                             <div class="row">
@@ -365,7 +365,20 @@
                             </div>
                             <hr>
                             <div class="flex-column justify-content-end" style="gap: 10px;">
-                                <div class=" d-flex justify-content-end mb-2">
+                                <div class=" d-flex justify-content-between mb-2">
+                                    <div class="col-md-3">
+                              
+                                        <select id="select-option-pttt-main" name="payment_pttt" class="form-control "
+                                            style="width: 100%;">
+                                            <option value="">Chọn phương thức thanh toán</option>
+                                            <option value="Tiền mặt">Tiền mặt</option>
+                                            <option value="Chuyển khoản ngân hàng">Chuyển khoản ngân hàng</option>
+                                            <option value="Thẻ tín dụng">Thẻ tín dụng</option>
+                                        </select>
+                                        <span class="invalid-feedback d-block" id="select-option-pttt_error1" style="font-weight: 500"></span>
+                                  
+    
+                                </div>
                                     <ul class="financial-list">
                                         <li class="financial-item">
                                             <span>Tiền phòng</span>
@@ -380,6 +393,17 @@
                                             <span>Tiền cọc</span>
                                             <span class="total_deposit">0</span>
                                         </li>
+                                        <li class="financial-item" id="select-option-pttt" >
+                                            <span>Khách đã thanh toán</span>
+                                            <span class="total_payment">0</span>
+                                       
+                                        </li>
+                                        <li class="financial-item" id="select-option-pttt" >
+                                            <span>Khách thanh toán</span>
+                                            <input type="text" name="input_pttt" class="money-input css-main-input-pttt" placeholder="0">
+                                       
+                                        </li>
+                                        <span class="invalid-feedback d-block" id="input_pttt_error" style="font-weight: 500"></span>
                                         <li class="financial-item">
                                             <span>Còn lại</span>
                                             <span class="total_balance">0</span>
@@ -389,7 +413,7 @@
                                 </div>
                             </div>
                             <div class="d-flex justify-content-end" style="gap: 10px;">
-                                <button type="button" data-row="booked" class=" btn-dat-truoc btn-book-edit">Lưu</button>
+                                <button type="button"  class=" btn-dat-truoc btn-book-pttt">Lưu</button>
                                 <p type="button" data-row="booked" class="alert-paragraph close_modal">Hủy</p>
                             </div>
                         </form>
@@ -474,6 +498,7 @@
 @endpush
 
 <script>
+    var  checkInUpdateUrl =  "{{ route('admin.check.in.update') }}";
     var deleteCheckin = "{{ route('admin.check.in.delete') }}";
     var deleteRoomEdit = "{{ route('admin.room.booking.delete') }}";
     var searchCustomerUrl = "{{ route('admin.search.customer') }}";
@@ -484,6 +509,9 @@
     var findCustomerUrl = "{{ route('admin.find.customer') }}";
     var roomBookingEditUrl = "{{ route('admin.room.booking.edit', ['id' => ':id']) }}";
     var checkInEditUrl = "{{ route('admin.check.in.edit', ['id' => ':id']) }}";
+    var paymentRoomUrl = "{{route('admin.booking.payment.room')}}";
+    var findRoomBookingIdUrl = '{{ route('admin.find.room.booking') }}';
+    var CheckInUrl = "{{ route('admin.room.booked.check.in') }}";
     document.addEventListener('input', function(e) {
         if (e.target.classList.contains('money-input')) {
             let value = e.target.value.replace(/\D/g, ""); // Xóa ký tự không phải số
@@ -587,17 +615,17 @@
                     }, // viết tiếp điều kiện validate vào đây (validations)
                 ]
             },
-            'select-option-pttt': {
-                'element': document.getElementById('select-option-pttt'), // id trong input đó
-                'error': document.getElementById('select-option-pttt_error'), // thẻ hiển thị lỗi
-                'validations': [{
-                        'func': function(value) {
-                            return checkRequired(value); // check trống
-                        },
-                        'message': generateErrorMessage('P001', 'Phương thức thanh toán')
-                    }, // viết tiếp điều kiện validate vào đây (validations)
-                ]
-            },
+            // 'select-option-pttt': {
+            //     'element': document.getElementById('select-option-pttt'), // id trong input đó
+            //     'error': document.getElementById('select-option-pttt_error'), // thẻ hiển thị lỗi
+            //     'validations': [{
+            //             'func': function(value) {
+            //                 return checkRequired(value); // check trống
+            //             },
+            //             'message': generateErrorMessage('P001', 'Phương thức thanh toán')
+            //         }, 
+            //     ]
+            // },
 
         }
         const date_booking = new Date();
@@ -1661,7 +1689,14 @@
         text-align: left;
         white-space: nowrap;
     }
-
+    .css-main-input-pttt{
+        text-align: right;
+        padding: 1px 4px !important; 
+        border: none;  
+        outline: none;
+        border-radius: 0 !important;
+        border-bottom: 1px solid #000;
+    }
     /* Ô input */
     .form-control {
         border-radius: 0 8px 8px 0;

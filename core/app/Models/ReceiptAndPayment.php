@@ -24,5 +24,9 @@ class ReceiptAndPayment extends Model
         'created_date',
         'unit_code'
     ];
-
+    public function getDueAttribute()
+    {
+        return $this->room_price - $this->deposit_amount - $this->discount_amount - $this->total_payment;
+    }
+    
 }

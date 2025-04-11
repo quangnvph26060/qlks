@@ -40,17 +40,17 @@ var validatorForm = {
         }, // viết tiếp điều kiện validate vào đây (validations)
         ]
     },
-    'select-option-pttt': { // passwword thì nên đặt là name trong input đó
-        'element': document.getElementById('select-option-pttt'), // id trong input đó
-        'error': document.getElementById('select-option-pttt_error'), // thẻ hiển thị lỗi
-        'validations': [{
-            'func': function (value) {
-                return checkRequired(value); // check trống
-            },
-            'message': generateErrorMessage('P001', 'Phương thức thanh toán')
-        }, // viết tiếp điều kiện validate vào đây (validations)
-        ]
-    },
+    // 'select-option-pttt': { 
+    //     'element': document.getElementById('select-option-pttt'), 
+    //     'error': document.getElementById('select-option-pttt_error'),
+    //     'validations': [{
+    //         'func': function (value) {
+    //             return checkRequired(value); // check trống
+    //         },
+    //         'message': generateErrorMessage('P001', 'Phương thức thanh toán')
+    //     },
+    //     ]
+    // },
 }
 var formEconomyEdit = {
     'name': { // passwword thì nên đặt là name trong input đó
@@ -1200,7 +1200,9 @@ $(document).on('click', '.check-in-room', function () {
     var roomTypeId = $(this).data('room_type_id');
     $('#list-booking').empty();
     $('#name, #phone, #name_book').val("");
+    $('#select-option-pttt').hide();
     $('#myModal-booking').modal('show');
+
     allStaffandCustomerSource()
     // $('#myModal-booking-edit').modal('hide');
     hasBookings() ? "" : ($('.total_balance').text(0), $('.total_amount').text(0), $('.total_deposit').text(0));

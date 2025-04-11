@@ -269,16 +269,21 @@
                     <div class="flex-column justify-content-end" style="gap: 10px;">
                       
                         <div class=" d-flex justify-content-between mb-2">
+                          
+                          
                             <div class="col-md-3">
-                                <select id="select-option-pttt" name="payment_pttt" class="form-control "
-                                    style="width: 100%;">
-                                    <option value="">Chọn phương thức thanh toán</option>
-                                    <option value="Tiền mặt">Tiền mặt</option>
-                                    <option value="Chuyển khoản ngân hàng">Chuyển khoản ngân hàng</option>
-                                    <option value="Thẻ tín dụng">Thẻ tín dụng</option>
-                                </select>
-                                <span class="invalid-feedback d-block"
-                                                    style="font-weight: 500"id="select-option-pttt_error"></span>
+                              
+                                    <select id="select-option-pttt" name="payment_pttt" class="form-control "
+                                        style="width: 100%;">
+                                        <option value="">Chọn phương thức thanh toán</option>
+                                        <option value="Tiền mặt">Tiền mặt</option>
+                                        <option value="Chuyển khoản ngân hàng">Chuyển khoản ngân hàng</option>
+                                        <option value="Thẻ tín dụng">Thẻ tín dụng</option>
+                                    </select>
+                                    <span class="invalid-feedback d-block"
+                                                        style="font-weight: 500"id="select-option-pttt_error"></span>
+                              
+
                             </div>
                             <ul class="financial-list">
                                 <li class="financial-item">

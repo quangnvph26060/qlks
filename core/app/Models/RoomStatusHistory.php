@@ -36,12 +36,12 @@ class RoomStatusHistory extends Model
     
     public function checkInData()
     {
-        return $this->hasOne(CheckIn::class, 'checkin_date', 'start_date')
-
-        ->join('room_status_history', function ($join) {
-            $join->on('room_status_history.end_date', '=', 'check_in.checkout_date')
-                 ->whereColumn('check_in.room_code', 'room_status_history.room_id');
-        })
-        ->select('check_in.*');;
+        return $this->hasMany(CheckIn::class, 'checkin_date', 'start_date')
+            ->join('room_status_history', function ($join) {
+                $join->on('room_status_history.end_date', '=', 'check_in.checkout_date')
+                     ->whereColumn('check_in.room_code', 'room_status_history.room_id');
+            })
+            ->select('check_in.*');
     }
+    
 }
