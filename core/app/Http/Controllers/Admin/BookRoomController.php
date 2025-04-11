@@ -455,7 +455,6 @@ class BookRoomController extends Controller
                     ]);
                 }
 
-
                 if (!empty($room['bookingId'])) {
                     $checkRoom = RoomBooking::query()->active();
                     $checkRoom = $checkRoom->where('id', $room['bookingId'])->first();
@@ -512,7 +511,7 @@ class BookRoomController extends Controller
                     }
                 } else {
                     $check_in_new                 = new CheckIn();
-                    $check_in_new->check_in_id    = $bookingId;
+                    $check_in_new->check_in_id    = $bookingId ?? getCode('DP',12);
                     $check_in_new->id_room_booking = $request->id_room_booking;
                     $check_in_new->room_code      = $room['room'];
                     $check_in_new->document_date  = now();
