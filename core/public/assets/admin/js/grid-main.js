@@ -280,6 +280,37 @@ function initGridMain(data, date) {
 
                 // Đổ vào HTML
                 $("#grid-main").html(roomHTML);
+                // tìm kiếm trạng thái phòng
+                if (data.room_status != null) {
+                    var selectedValuesRoomStatus =  data.room_status;
+                    if (selectedValuesRoomStatus.length === 1) {
+                        let filter = selectedValuesRoomStatus[0];
+                        switch (filter) {
+                            case 1:
+                                $(".room-card.room-booking.bg-yellow").hide();
+                                $(".room-card.check_in_data.bg-red").hide();
+                                break;
+                            case 2:
+                                $(".room-card.room-booked").hide();
+                                $(".room-card.check_in_data.bg-red").hide();
+                                break;
+                            case 3:
+                                $(".room-card.room-booked").hide();
+                                $(".room-card.room-booking.bg-yellow").hide();
+                                break;
+                        }
+                    } else if (selectedValuesRoomStatus.length === 2) {
+                        if (selectedValuesRoomStatus.includes(1) && selectedValuesRoomStatus.includes(2)) {
+                            $(".room-card.check_in_data.bg-red").hide();
+                        } else if (selectedValuesRoomStatus.includes(1) && selectedValuesRoomStatus.includes(3)) {
+                            $(".room-card.room-booking.bg-yellow").hide();
+                        } else if (selectedValuesRoomStatus.includes(2) && selectedValuesRoomStatus.includes(3)) {
+                            $(".room-card.room-booked").hide();
+                        }
+                    }
+                   
+                }
+                  // end  tìm kiếm trạng thái phòng
 
             } else {
                 reject("Không lấy được dữ liệu");

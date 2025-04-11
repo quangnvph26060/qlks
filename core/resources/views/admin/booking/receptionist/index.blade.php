@@ -451,6 +451,27 @@
 
                     </div>
                 </div>
+                <div class="room-status_fill">
+                    <p>TRẠNG THÁI PHÒNG</p>
+                    <hr>
+                    <div class="room-option-item">
+                        <div class="row">
+                            <span class=" col-md-6 d-flex " style="gap:5px">
+                                <input type="checkbox" name="room_status" data-id="1" id="room_status">
+                                <p style="font-size:13px">Đang trống</p>
+                            </span>
+                            <span class=" col-md-6 d-flex " style="gap:5px">
+                                <input type="checkbox" name="room_status" data-id="2" id="room_status">
+                                <p style="font-size:13px">Đã đặt</p>
+                            </span>
+                            <span class=" col-md-6 d-flex " style="gap:5px">
+                                <input type="checkbox" name="room_status" data-id="3" id="room_status">
+                                <p style="font-size:13px">Đã nhận</p>
+                            </span>
+
+                        </div>
+                    </div>
+                </div>
                 <div class="room-clean">
                     <p>TÌNH TRẠNG PHÒNG</p>
                     <hr>
@@ -531,7 +552,7 @@
         $(document).on("click", "#dropdownMenuButton", function(e) {
             e.stopPropagation(); // Không cho nổi bọt lên document
             $(".custom-dropdown").not($(this).siblings(".custom-dropdown"))
-        .hide(); // ẩn cái khác nếu có
+                .hide(); // ẩn cái khác nếu có
             $(this).siblings(".custom-dropdown").toggle(); // toggle dropdown này
         });
 
@@ -575,15 +596,20 @@
         $("#btn-fillter").on("click", function() {
             const selectedValuesClean = [];
             const selectedValuesRoomType = [];
+            const selectedValuesRoomStatus = [];
             $("input[name='room_clean']:checked").each(function() {
-                selectedValuesClean.push($(this).data("id")); // lấy theo data-id
+                selectedValuesClean.push($(this).data("id"));
             });
             $("input[name='room_type']:checked").each(function() {
-                selectedValuesRoomType.push($(this).data("id")); // lấy theo data-id
+                selectedValuesRoomType.push($(this).data("id"));
             });
+            $("input[name='room_status']:checked").each(function() {
+                selectedValuesRoomStatus.push($(this).data("id"));
+            });         
             const data = {
                 room_clean: selectedValuesClean,
-                room_type: selectedValuesRoomType
+                room_type: selectedValuesRoomType,
+                 room_status: selectedValuesRoomStatus,
             };
             initGridMain(data);
             $('.filter-sidebar').removeClass('open');
@@ -1801,7 +1827,7 @@
     }
 
     hr {
-        margin: 10px !important;
+        margin: 5px !important;
     }
 
     .filter-sidebar .action-buttons {

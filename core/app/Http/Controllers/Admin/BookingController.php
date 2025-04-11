@@ -916,11 +916,13 @@ class BookingController extends Controller
     public function roomBoookingHistory(Request $request)
     {
 
-        $date      = request('date'); // Lấy ngày từ request
-        $method    = data_get($request->data, 'searchType');
-        $value     = data_get($request->data, 'searchValue');
-        $room_type = data_get($request->data, 'room_type');
-        $room_clean = data_get($request->data, 'room_clean');
+        $date        = request('date'); // Lấy ngày từ request
+        $method      = data_get($request->data, 'searchType');
+        $value       = data_get($request->data, 'searchValue');
+        $room_type   = data_get($request->data, 'room_type');
+        $room_clean  = data_get($request->data, 'room_clean');
+        // $room_status = data_get($request->data, 'room_status');
+        // Log::info($room_status);
         $rooms = Room::query();
 
         $rooms->when(!empty($room_type), function ($query) use ($room_type) {
@@ -957,6 +959,9 @@ class BookingController extends Controller
                     $query->whereDate('start_date', '<=', $date)
                         ->whereDate('end_date', '>', Carbon::parse($date)->subDay());
                 }
+                // if (!empty($room_status)) {
+                //     $query->whereIn('status_code', $room_status);
+                // }
             },
             'roomBookingHistory.roomStatus',
             'roomBookingHistory.checkInData',
@@ -1028,7 +1033,7 @@ class BookingController extends Controller
 
             $room->update(['is_clean' => $room->is_clean == Status::ROOM_CLEAN_ACTIVE ? 0 : 1]);
 
-            //   $this->logCleanRoomAction($room->id, authAdmin()->id);
+               $this->logCleanRoomAction($room->id, authAdmin()->id);
             if($room->is_clean === 1 ){
                 $msg = 'Phòng ' . $room->room_number . ' đã được làm sạch';
             } else{
