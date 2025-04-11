@@ -1023,13 +1023,19 @@ class BookingController extends Controller
     public function changeCleanRoom(Request $request)
     {
         try {
-
-            $room = Room::where('room_number', $request->roomData)->firstOrFail();
+            $room = Room::where('id', $request->id)->firstOrFail();
+             
 
             $room->update(['is_clean' => $room->is_clean == Status::ROOM_CLEAN_ACTIVE ? 0 : 1]);
 
-            $this->logCleanRoomAction($room->id, authAdmin()->id);
-            return ApiResponse::success('', 'success', 200);
+            //   $this->logCleanRoomAction($room->id, authAdmin()->id);
+            if($room->is_clean === 1 ){
+                $msg = 'Phòng ' . $room->room_number . ' đã được làm sạch';
+            } else{
+                $msg = 'Phòng ' . $room->room_number .  ' đã chuyển sang Chưa dọn';
+            }
+         
+            return response()->json(['status'=>'success', 'success' => $msg]);
         } catch (\Illuminate\Database\Eloquent\ModelNotFoundException $e) {
 
             return ApiResponse::error('error', 404);

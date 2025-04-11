@@ -15,7 +15,7 @@ class Room extends Model
     use GlobalStatus, SoftDeletes;
 
     protected $table = 'rooms';
-    // protected $fillable = [ 'is_clean','unit_code'];
+     protected $fillable = [ 'is_clean','unit_code'];
 
     // insert hay get ra đều trả ra đúng mảng 
     protected $casts = [
@@ -103,28 +103,28 @@ class Room extends Model
     // }
 
 
-    public function updatePrices($data)
-    {
-        foreach ($data as $item) {
+    // public function updatePrices($data)
+    // {
+    //     foreach ($data as $item) {
 
 
-            $roomPrice =  RoomPrice::find($item);
-            if (!$roomPrice) {
-                $notify[] = ['error', 'Giá không tồn tại'];
-                return back()->withNotify($notify);
-            }
+    //         $roomPrice =  RoomPrice::find($item);
+    //         if (!$roomPrice) {
+    //             $notify[] = ['error', 'Giá không tồn tại'];
+    //             return back()->withNotify($notify);
+    //         }
 
-            $roomPriceRoooms                    = new RoomPriceRoom();
-            $roomPriceRoooms->room_id           = $this->id;
-            $roomPriceRoooms->price_id          = $roomPrice->id;
-            $roomPriceRoooms->start_date        = $roomPrice->start_date;
-            $roomPriceRoooms->end_date          = $roomPrice->end_date;
-            $roomPriceRoooms->start_time        = $roomPrice->start_time;
-            $roomPriceRoooms->end_time          = $roomPrice->end_time;
-            $roomPriceRoooms->specific_date     = $roomPrice->specific_date;
-            $roomPriceRoooms->save();
-        }
-    }
+    //         $roomPriceRoooms                    = new RoomPriceRoom();
+    //         $roomPriceRoooms->room_id           = $this->id;
+    //         $roomPriceRoooms->price_id          = $roomPrice->id;
+    //         $roomPriceRoooms->start_date        = $roomPrice->start_date;
+    //         $roomPriceRoooms->end_date          = $roomPrice->end_date;
+    //         $roomPriceRoooms->start_time        = $roomPrice->start_time;
+    //         $roomPriceRoooms->end_time          = $roomPrice->end_time;
+    //         $roomPriceRoooms->specific_date     = $roomPrice->specific_date;
+    //         $roomPriceRoooms->save();
+    //     }
+    // }
     public function prices()
     {
         return $this->belongsToMany(RoomPrice::class, 'room_price_rooms', 'room_id', 'price_id')->withPivot('start_date', 'end_date', 'start_time', 'end_time', 'specific_date', 'status');

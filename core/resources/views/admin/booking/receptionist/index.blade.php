@@ -17,18 +17,19 @@
             </div>
             <div class="search-container">
                 <!-- Dropdown (Bên trái) -->
-                <div class="dropdown">
-                    <button class="btn btn-primary dropdown-toggle" type="button" id="dropdownMenuButton"
-                        data-bs-toggle="dropdown" aria-expanded="false">
-                        🔹 Tên phòng
+                <div class="dropdown" style="position: relative; display: inline-block;">
+                    <button class="btn btn-primary" type="button" id="dropdownMenuButton">
+                        Mã kênh bán
                     </button>
-                    <ul class="dropdown-menu" aria-labelledby="dropdownMenuButton">
-                        <li><a class="dropdown-item active" href="#" data-type="room"> Tên phòng</a></li>
-                        <li><a class="dropdown-item" href="#" data-type="customer"> Khách hàng</a></li>
-                        <li><a class="dropdown-item" href="#" data-type="booking"> Mã đặt phòng</a></li>
-                        <li><a class="dropdown-item" href="#" data-type="channel"> Mã kênh bán</a></li>
+                    <ul class="dropdown-menu custom-dropdown"
+                        style="display: none; position: absolute; z-index: 999; top: 100%; left: 0;">
+                        <li><a class="dropdown-item" href="#" data-type="room">Tên phòng</a></li>
+                        <li><a class="dropdown-item" href="#" data-type="customer">Khách hàng</a></li>
+                        <li><a class="dropdown-item" href="#" data-type="booking">Mã đặt phòng</a></li>
+                        <li><a class="dropdown-item active" href="#" data-type="channel">Mã kênh bán</a></li>
                     </ul>
                 </div>
+
 
                 <!-- Ô tìm kiếm (Bên phải) -->
                 <div class="flex-grow-1">
@@ -153,8 +154,7 @@
                     <div class="modal-body " style="padding: 5px 12px 12px 5px;">
 
 
-                        <form id="bookingForm" action="" class="booking-form-pttt"
-                            method="POST">
+                        <form id="bookingForm" action="" class="booking-form-pttt" method="POST">
                             @csrf
                             <div class="row">
                                 <h5 class="modal-title" id="myModalLabel-booking">Thông tin khách hàng</h5>
@@ -367,7 +367,7 @@
                             <div class="flex-column justify-content-end" style="gap: 10px;">
                                 <div class=" d-flex justify-content-between mb-2">
                                     <div class="col-md-3">
-                              
+
                                         <select id="select-option-pttt-main" name="payment_pttt" class="form-control "
                                             style="width: 100%;">
                                             <option value="">Chọn phương thức thanh toán</option>
@@ -375,10 +375,11 @@
                                             <option value="Chuyển khoản ngân hàng">Chuyển khoản ngân hàng</option>
                                             <option value="Thẻ tín dụng">Thẻ tín dụng</option>
                                         </select>
-                                        <span class="invalid-feedback d-block" id="select-option-pttt_error1" style="font-weight: 500"></span>
-                                  
-    
-                                </div>
+                                        <span class="invalid-feedback d-block" id="select-option-pttt_error1"
+                                            style="font-weight: 500"></span>
+
+
+                                    </div>
                                     <ul class="financial-list">
                                         <li class="financial-item">
                                             <span>Tiền phòng</span>
@@ -393,17 +394,19 @@
                                             <span>Tiền cọc</span>
                                             <span class="total_deposit">0</span>
                                         </li>
-                                        <li class="financial-item" id="select-option-pttt" >
+                                        <li class="financial-item" id="select-option-pttt">
                                             <span>Khách đã thanh toán</span>
                                             <span class="total_payment">0</span>
-                                       
+
                                         </li>
-                                        <li class="financial-item" id="select-option-pttt" >
+                                        <li class="financial-item" id="select-option-pttt">
                                             <span>Khách thanh toán</span>
-                                            <input type="text" name="input_pttt" class="money-input css-main-input-pttt" placeholder="0">
-                                       
+                                            <input type="text" name="input_pttt" class="money-input css-main-input-pttt"
+                                                placeholder="0">
+
                                         </li>
-                                        <span class="invalid-feedback d-block" id="input_pttt_error" style="font-weight: 500"></span>
+                                        <span class="invalid-feedback d-block" id="input_pttt_error"
+                                            style="font-weight: 500"></span>
                                         <li class="financial-item">
                                             <span>Còn lại</span>
                                             <span class="total_balance">0</span>
@@ -413,7 +416,7 @@
                                 </div>
                             </div>
                             <div class="d-flex justify-content-end" style="gap: 10px;">
-                                <button type="button"  class=" btn-dat-truoc btn-book-pttt">Lưu</button>
+                                <button type="button" class=" btn-dat-truoc btn-book-pttt">Lưu</button>
                                 <p type="button" data-row="booked" class="alert-paragraph close_modal">Hủy</p>
                             </div>
                         </form>
@@ -421,6 +424,8 @@
                 </div>
             </div>
         </div>
+        {{-- dọn phòng --}}
+        @include('admin/booking/partials/clean_modal')
         <!-- Bộ lọc bên phải -->
         <div class="filter-sidebar" id="filter-sidebar">
             <div class="filter-header d-flex justify-content-between">
@@ -498,7 +503,7 @@
 @endpush
 
 <script>
-    var  checkInUpdateUrl =  "{{ route('admin.check.in.update') }}";
+    var checkInUpdateUrl = "{{ route('admin.check.in.update') }}";
     var deleteCheckin = "{{ route('admin.check.in.delete') }}";
     var deleteRoomEdit = "{{ route('admin.room.booking.delete') }}";
     var searchCustomerUrl = "{{ route('admin.search.customer') }}";
@@ -509,10 +514,11 @@
     var findCustomerUrl = "{{ route('admin.find.customer') }}";
     var roomBookingEditUrl = "{{ route('admin.room.booking.edit', ['id' => ':id']) }}";
     var checkInEditUrl = "{{ route('admin.check.in.edit', ['id' => ':id']) }}";
-    var paymentRoomUrl = "{{route('admin.booking.payment.room')}}";
+    var paymentRoomUrl = "{{ route('admin.booking.payment.room') }}";
     var findRoomBookingIdUrl = '{{ route('admin.find.room.booking') }}';
     var CheckInUrl = "{{ route('admin.room.booked.check.in') }}";
     var roomBook = "{{ route('admin.room.book') }}";
+    var cleanRoomUrl = "{{ route('admin.roomclean.booking.roomclean') }}"
     document.addEventListener('input', function(e) {
         if (e.target.classList.contains('money-input')) {
             let value = e.target.value.replace(/\D/g, ""); // Xóa ký tự không phải số
@@ -521,8 +527,21 @@
         }
     });
     $(document).ready(function() {
+        // Toggle dropdown
+        $(document).on("click", "#dropdownMenuButton", function(e) {
+            e.stopPropagation(); // Không cho nổi bọt lên document
+            $(".custom-dropdown").not($(this).siblings(".custom-dropdown"))
+        .hide(); // ẩn cái khác nếu có
+            $(this).siblings(".custom-dropdown").toggle(); // toggle dropdown này
+        });
+
+        // Đóng dropdown khi click ngoài
+        $(document).on("click", function() {
+            $(".custom-dropdown").hide();
+        });
+
         // Khi chọn tiêu chí tìm kiếm
-        $(".dropdown-item").on("click", function(e) {
+        $(document).on("click", ".dropdown-item", function(e) {
             e.preventDefault();
             $(".dropdown-item").removeClass("active");
             $(this).addClass("active");
@@ -536,6 +555,7 @@
                 channel: "🔍 Tìm theo mã kênh bán",
                 room: "🔍 Tìm theo tên phòng"
             };
+
 
             $("#dropdownMenuButton").html(selectedText);
             $("#searchInputBooking").attr("placeholder", placeholderText[selectedType]);
@@ -741,6 +761,7 @@
         $(document).on('click', '.add-book-room', function() {
             $('#list-booking-edit').empty();
             $('#myModal-booking').modal('show');
+            $('[id="select-option-pttt"]').hide();
             // var roomId = $(this).data('id');
             // var roomTypeId = $(this).data('room_type_id');
             allStaffandCustomerSource()
@@ -988,7 +1009,7 @@
                                 $('#name, #phone, #name_book').val("");
                                 //    loadRoomBookings();
                                 initGridMain();
-                               // window.location.reload();
+                                // window.location.reload();
 
                             } else {
                                 notify('error', response.error);
@@ -1690,14 +1711,16 @@
         text-align: left;
         white-space: nowrap;
     }
-    .css-main-input-pttt{
+
+    .css-main-input-pttt {
         text-align: right;
-        padding: 1px 4px !important; 
-        border: none;  
+        padding: 1px 4px !important;
+        border: none;
         outline: none;
         border-radius: 0 !important;
         border-bottom: 1px solid #000;
     }
+
     /* Ô input */
     .form-control {
         border-radius: 0 8px 8px 0;

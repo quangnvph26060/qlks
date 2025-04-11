@@ -231,7 +231,9 @@ function initGridMain(data, date) {
                                     ? 'text-white'
                                     : ''}">⋮</span>
                                      <div class="dropdown-menu">
-                                        <div class="dropdown-item room_clean">${item.is_clean ? "Chưa dọn" : "Làm sạch"}</div>
+                                        <div class="dropdown-item room_clean" 
+                                        data-name="${item.room_number}"
+                                        data-id="${item.id}" >${item.is_clean ? "Chưa dọn" : "Làm sạch"}</div>
                                         ${status_code == 2 ? `<div class="dropdown-item check_in_room"
                                             data-id   = "${isBooking?.room_code}" 
                                             data-date ="${isBooking?.checkin_date}"
@@ -400,7 +402,44 @@ function initViewScript1() {
     });
     $(document).off("click", ".room_clean").on("click", ".room_clean", function (e) {
         e.stopPropagation();
-        alert('dọn phòng');
+    
+        // Lấy thông tin từ div được bấm
+        const roomName = $(this).data("name"); 
+        const roomId = $(this).data("id"); 
+        const statusText = $(this).text().trim();
+   
+        // Gán vào modal
+        $("#roomStatusModal .modal-body strong").text(roomName);
+        $("#roomStatusModal .modal-body .status-text").text(statusText);
+        $('.change_clean_room_btn').attr('data-id',roomId);
+        // Mở modal
+        const modal = new bootstrap.Modal(document.getElementById("roomStatusModal"));
+        modal.show();
+    });
+    $(document).off("click", ".change_clean_room_btn").on("click", ".change_clean_room_btn", function (e) {
+        const id = $(this).attr("data-id");
+        $.ajax({
+            url: cleanRoomUrl,
+            type: 'POST',
+            data: {
+                id: id,
+            },
+            success: function (data) {
+                if(data.status === 'success'){
+                    notify('success', data.success);
+                    const modal = bootstrap.Modal.getInstance(document.getElementById("roomStatusModal"));
+                    if (modal) modal.hide();
+                    
+                    initGridMain();
+                }
+                
+            },
+            error: function (error) {
+                $('#loading').hide();
+                console.log('Error:', error);
+            }
+        });
+        
     });
     $(document).off("click", ".check_in_room").on("click", ".check_in_room", function (e) {
         e.stopPropagation();
