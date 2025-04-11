@@ -44,7 +44,7 @@ function calculateTotalPrice() {
             payment += price;
         }
     });
- 
+
 
     // let pricediscount = 0;
     // let discountInputValue = $('#discountInput').val();
@@ -71,8 +71,8 @@ function calculateTotalPrice() {
         $(this).text(formatCurrency(payment));
     });
 
-  //  $('#total_balance').text(formatCurrency(totalPrice));
- 
+    //  $('#total_balance').text(formatCurrency(totalPrice));
+
     // $('#total_deposit').text(formatCurrency(totalPrice));
     return totalPrice;
 }
@@ -315,7 +315,6 @@ function validator(selectedOption, inputPtttValue) {
     // Reset lỗi cũ
     $('#select-option-pttt_error1').text('');
     $('#input_pttt_error').text('');
-    console.log(selectedOption);
 
     // Kiểm tra chọn phương thức thanh toán
     if (selectedOption === '') {
@@ -409,6 +408,8 @@ function initViewScript1() {
         $(".btn-book-pttt").attr("data-method", "check_in");
         $('#select-option-pttt_error1').text('');
         $('#input_pttt_error').text('');
+           $('[id="select-option-pttt-main"]').hide();
+                     $('[id="select-option-pttt"]').hide();
         let dataId = $(this).attr("data-id");
         let book = $(this).attr("data-book");
         let date = $(this).attr("data-date");
@@ -422,7 +423,7 @@ function initViewScript1() {
         findRoomBookingId(selectedData)
     });
     function findRoomBookingId(id) {
-
+        $('.booking-form-pttt').attr('action', CheckInUrl);
         $.ajax({
             url: findRoomBookingIdUrl,
             type: 'POST',
@@ -432,12 +433,9 @@ function initViewScript1() {
             success: function (data) {
 
                 $('#myModal-check-in-edit').modal('show').on('shown.bs.modal', function () {
-                    $('[id="select-option-pttt-main"]').hide();
-                    $('[id="select-option-pttt"]').hide();
+                  
                     $('.pageModal').text('Nhận phòng');
-                    $('[id="bookingForm"]').each(function () {
-                        $(this).attr('action', CheckInUrl);
-                    });
+                  
                     let totalPrice, total_deposit_amount, total_deposit_discount = 0;
                     var tbody = $('#list-booking-edit-letan');
                     tbody.empty();
@@ -514,9 +512,6 @@ function initViewScript1() {
 
                     });
                     totalPrice = calculateTotalPrice();
-
-
-
                     $('.total_deposit').text(formatCurrency(total_deposit_amount));
 
                     $('.total_discount').text(formatCurrency(total_deposit_discount));
@@ -602,9 +597,6 @@ function initViewScript1() {
 
                         $('.total_balance').text(formatCurrency(totalBalance));
                     });
-
-
-
                     $('#addBookedRoom').modal('hide');
                     $('#loading').hide();
                 });
@@ -617,92 +609,95 @@ function initViewScript1() {
             }
         });
     }
-    $(document).off("click", ".room_change").on("click", ".room_change", function (e) {
-        e.stopPropagation();
-        alert('Đổi phòng');
-    });
-    $(document).off("click", ".check_in_data").on("click", ".check_in_data", function (e) {
-        e.stopPropagation();
-        if ($(e.target).closest('.menu-btn').length > 0) return;
-        let dataId = $(this).attr("data-booking-id");
-        let Id = $(this).attr("data-id");
-        let dataMethod = $(this).attr("data-method");
-        $(".btn-book-pttt").removeAttr("data-method");
-        var url = checkInEditUrl.replace(':id',
-            dataId);
-            console.log(dataMethod);
+    $(document).ready(function () {
+        $(document).off("click", ".room_change").on("click", ".room_change", function (e) {
+            e.stopPropagation();
+            alert('Đổi phòng');
+        });
+        $(document).off("click", ".check_in_data").on("click", ".check_in_data", function (e) {
+            e.stopPropagation();
+            if ($(e.target).closest('.menu-btn').length > 0) return;
+            let dataId = $(this).attr("data-booking-id");
+            let Id = $(this).attr("data-id");
+
+            var url = checkInEditUrl.replace(':id',
+                dataId);
+            let dataMethod = $(this).attr("data-method");
+            $(".btn-book-pttt").removeAttr("data-method");
+          
+            $('[id="date-book-room-booking-edit"]').val(formattedDates);
+            if (dataMethod == 'payment') {
+                
+                $('.booking-form-pttt').attr('action', paymentRoomUrl);
+                $('[id="select-option-pttt-main"]').show();
+                $('[id="select-option-pttt"]').show();
+                $('#input_pttt').val('');
+            } else {
+                $('.booking-form-pttt').attr('action', checkInUpdateUrl);
+                $('[id="select-option-pttt-main"]').hide();
+                $('[id="select-option-pttt"]').hide();
+            }
+            // $('[id="date-book-room-booking"]').val(formattedDates);
+            // $('[id="time-book-room-booking"]').val(formattedTimes);
             
-        $('[id="date-book-room-booking-edit"]').val(formattedDates);
-        if (dataMethod === 'payment') {
-            $('.booking-form-pttt').attr('action', paymentRoomUrl);
-            $('[id="select-option-pttt-main"]').show();
-            $('[id="select-option-pttt"]').show();
-            $('#input_pttt').val('');
-        } else {
-            $('.booking-form-pttt').attr('action', checkInUpdateUrl);
-            $('[id="select-option-pttt-main"]').hide();
-            $('[id="select-option-pttt"]').hide();
-        }
-        // $('[id="date-book-room-booking"]').val(formattedDates);
-        // $('[id="time-book-room-booking"]').val(formattedTimes);
-        $.ajax({
-            url: url,
-            type: 'POST',
-            data: {
-                method: 'LETAN',
-                id: Id,
-            },
-            success: function (response) {
-                if (response.status == 'success') {
-                    var selected_customer_source = $('#select-customer-source-edit-letan');
+            $.ajax({
+                url: url,
+                type: 'POST',
+                data: {
+                    method: 'LETAN',
+                    id: Id,
+                },
+                success: function (response) {
+                    if (response.status == 'success') {
+                        var selected_customer_source = $('#select-customer-source-edit-letan');
 
-                    selected_customer_source.empty();
-                    let option = `<option value="">Chọn nguồn khách hàng</option>`;
-                    response.customerSourse.forEach(function (item) {
-                        if (item.source_code == response.option_customer_source) {
-                            option += `<option value="${item.source_code}" selected>${item.source_name}</option>`;
-                        } else {
-                            option += `<option value="${item.source_code}">${item.source_name}</option>`;
-                        }
+                        selected_customer_source.empty();
+                        let option = `<option value="">Chọn nguồn khách hàng</option>`;
+                        response.customerSourse.forEach(function (item) {
+                            if (item.source_code == response.option_customer_source) {
+                                option += `<option value="${item.source_code}" selected>${item.source_name}</option>`;
+                            } else {
+                                option += `<option value="${item.source_code}">${item.source_name}</option>`;
+                            }
 
-                    });
-                    //title 
-                    $('.pageModal').text(response.pageModal);
-                    selected_customer_source.append(option);
-                    // nhân viên
-                    var selected_select_staff = $('#select-staff-edit-letan');
-                    selected_select_staff.empty();
-                    let option_staff = `<option value="">Chọn nhân viên</option>`;
-                    response.admin.forEach(function (item) {
-                        option_staff += `<option value="${item.id}">${item.username}</option>`;
-                    });
-                    selected_select_staff.append(option_staff);
-                    $('#myModal-check-in-edit').modal('show').on('shown.bs.modal', function () {
+                        });
+                        //title 
+                        $('.pageModal').text(response.pageModal);
+                        selected_customer_source.append(option);
+                        // nhân viên
+                        var selected_select_staff = $('#select-staff-edit-letan');
+                        selected_select_staff.empty();
+                        let option_staff = `<option value="">Chọn nhân viên</option>`;
+                        response.admin.forEach(function (item) {
+                            option_staff += `<option value="${item.id}">${item.username}</option>`;
+                        });
+                        selected_select_staff.append(option_staff);
+                        $('#myModal-check-in-edit').modal('show').on('shown.bs.modal', function () {
 
-                        $('.name-edit, .phone-edit').val('');
-                        $('#list-booking-edit-letan').empty();
-                        $('#list-booking-edit').empty();
-                        $('#list-booking').empty();
-                        var tbody = $('#list-booking-edit-letan');
-                        let totalPrice, total_deposit_amount, total_deposit_discount = 0;
-                        response.data.forEach(item => {
-                            $('.name-edit').val(item.customer_name);
-                            $('.phone-edit').val(item.phone_number);
+                            $('.name-edit, .phone-edit').val('');
+                            $('#list-booking-edit-letan').empty();
+                            $('#list-booking-edit').empty();
+                            $('#list-booking').empty();
+                            var tbody = $('#list-booking-edit-letan');
+                            let totalPrice, total_deposit_amount, total_deposit_discount = 0;
+                            response.data.forEach(item => {
+                                $('.name-edit').val(item.customer_name);
+                                $('.phone-edit').val(item.phone_number);
 
-                            item.room_bookings.forEach((room, index) => {
-                                if (index === 0) {
-                                    $('.id_room_booking').val(room.booking_id);
-                                }
-                                let [checkinDate, checkinTime] = room.checkin_date.split(' ');
-                                checkinTime = checkinTime.slice(0, 5);
-                                let [checkoutDate, checkoutTime] = room
-                                    .checkout_date.split(' ');
-                                checkoutTime = checkoutTime.slice(0, 5);
-                                total_deposit_amount += parseFloat(room.deposit_amount);
-                                total_deposit_discount += parseFloat(room.discount);
+                                item.room_bookings.forEach((room, index) => {
+                                    if (index === 0) {
+                                        $('.id_room_booking').val(room.booking_id);
+                                    }
+                                    let [checkinDate, checkinTime] = room.checkin_date.split(' ');
+                                    checkinTime = checkinTime.slice(0, 5);
+                                    let [checkoutDate, checkoutTime] = room
+                                        .checkout_date.split(' ');
+                                    checkoutTime = checkoutTime.slice(0, 5);
+                                    total_deposit_amount += parseFloat(room.deposit_amount);
+                                    total_deposit_discount += parseFloat(room.discount);
 
 
-                                var tr = `
+                                    var tr = `
                                         <tr data-room-id="${room.room_id}"
                                         data-room-booking-id="${room.id}"
                                         data-room-type-id="${room.room_type_id}"
@@ -756,225 +751,224 @@ function initViewScript1() {
     
                                         </tr>
                                     `;
-                                tbody.append(tr);
-                            });
-                        });
-                        totalPrice = calculateTotalPrice();
-                        $('#date-book-room-booking-edit').val(formattedDates)
-
-
-
-                        $('.total_deposit').text(formatCurrency(total_deposit_amount));
-                        //$('.total_discount').text(formatCurrency(total_deposit_discount));
-
-                        $('.total_amount').text(formatCurrency(totalPrice));
-                        $('.total_balance').text(formatCurrency(totalPrice));
-                        $('#loading').hide();
-                        let totalDeposit = 0;
-                        let totalBalance = 0;
-
-                        function calculateDepositAndBalance() {
-                            let rowTotal = 0;
-                            let payment = 0;
-                            $('tr').each(function () {
-                                $(this).find('input.deposit').each(function () {
-                                    let depositValue = $(this).val()
-                                        .replace(/[,.]/g, '');
-                                    let numericDeposit = parseInt(
-                                        depositValue) || 0;
-                                    rowTotal += numericDeposit;
+                                    tbody.append(tr);
                                 });
                             });
-                            $('tr').each(function () {
-                                $(this).find('input.payment').each(function () {
-                                    let depositValue = $(this).val()
-                                        .replace(/[,.]/g, '');
-                                    let numericDeposit = parseInt(
-                                        depositValue) || 0;
+                            totalPrice = calculateTotalPrice();
+                            $('#date-book-room-booking-edit').val(formattedDates)
+
+
+
+                            $('.total_deposit').text(formatCurrency(total_deposit_amount));
+                            //$('.total_discount').text(formatCurrency(total_deposit_discount));
+
+                            $('.total_amount').text(formatCurrency(totalPrice));
+                            $('.total_balance').text(formatCurrency(totalPrice));
+                            $('#loading').hide();
+                            let totalDeposit = 0;
+                            let totalBalance = 0;
+
+                            function calculateDepositAndBalance() {
+                                let rowTotal = 0;
+                                let payment = 0;
+                                $('tr').each(function () {
+                                    $(this).find('input.deposit').each(function () {
+                                        let depositValue = $(this).val()
+                                            .replace(/[,.]/g, '');
+                                        let numericDeposit = parseInt(
+                                            depositValue) || 0;
+                                        rowTotal += numericDeposit;
+                                    });
+                                });
+                                $('tr').each(function () {
+                                    $(this).find('input.payment').each(function () {
+                                        let depositValue = $(this).val()
+                                            .replace(/[,.]/g, '');
+                                        let numericDeposit = parseInt(
+                                            depositValue) || 0;
                                         payment += numericDeposit;
+                                    });
                                 });
+                                $('.total_deposit').text(formatCurrency(rowTotal));
+
+                                let priceString = $('.total_discount').text();
+                                let price = parseInt(priceString.replace(/\./g, '')) || 0;
+
+                                $('.total_payment').text(formatCurrency(payment));
+
+                                let paymentString = $('.total_payment').text();
+                                let total_payment = parseInt(paymentString.replace(/\./g, '')) || 0;
+
+                                totalBalance = totalPrice - rowTotal - price - total_payment;
+                                $('.total_balance').text(formatCurrency(totalBalance));
+                                //  $('.total_deposit').text(formatCurrency(price));
+                            }
+
+                            // Chạy khi trang load
+                            $(document).ready(function () {
+                                calculateDepositAndBalance();
                             });
-                            $('.total_deposit').text(formatCurrency(rowTotal));
+                            $(document).on('blur', 'input.deposit', function () {
+                                let rowTotal = 0;
+                                $('tr').each(function () {
+                                    $(this).find('input.deposit').each(function () {
+                                        let depositValue = $(this).val().replace(/[,.]/g, '');
+                                        let numericDeposit = parseInt(depositValue) || 0;
+                                        rowTotal += numericDeposit;
+                                    });
+                                });
 
-                            let priceString = $('.total_discount').text();
-                            let price = parseInt(priceString.replace(/\./g, '')) || 0;
+                                $('.total_deposit').text(formatCurrency(rowTotal));
 
-                            $('.total_payment').text(formatCurrency(payment));
+                                let priceString = $('.total_discount').text();
+                                let price = parseInt(priceString.replace(/\./g, ""), 10);
+                                price = isNaN(price) ? 0 : price;
 
-                            let paymentString = $('.total_payment').text();
-                            let total_payment = parseInt(paymentString.replace(/\./g, '')) || 0;
+                                let total_amount = $('.total_amount').text();
+                                let total_amount_price = parseInt(total_amount.replace(/\./g, '')) || 0;
+                                total_amount_price = isNaN(total_amount_price) ? 0 : total_amount_price;
 
-                            totalBalance = totalPrice - rowTotal - price - total_payment;
-                            $('.total_balance').text(formatCurrency(totalBalance));
-                            //  $('.total_deposit').text(formatCurrency(price));
-                        }
+                                totalBalance = total_amount_price - rowTotal - price;
+                                $('.total_balance').text(formatCurrency(totalBalance));
+                            });
 
-                        // Chạy khi trang load
-                        $(document).ready(function () {
-                            calculateDepositAndBalance();
-                        });
-                        $(document).on('blur', 'input.deposit', function () {
-                            let rowTotal = 0;
-                            $('tr').each(function () {
-                                $(this).find('input.deposit').each(function () {
+                            $(document).on('blur', 'input.discount', function () {
+                                let rowTotal = 0;
+                                $('tr').each(function () {
+                                    $(this).find('input.discount').each(function () {
+                                        let depositValue = $(this).val().replace(/[,.]/g, '');
+                                        let numericDeposit = parseInt(depositValue) || 0;
+                                        rowTotal += numericDeposit;
+                                    });
+                                });
+                                $('.total_discount').text(formatCurrency(rowTotal));
+                                let priceString = $('.total_deposit').text();
+
+                                let price = parseInt(priceString.replace(/\./g, ""), 10);
+                                price = isNaN(price) ? 0 : price;
+                                let total_amount = $('.total_amount').text();
+                                let total_amount_price = parseInt(total_amount.replace(/\./g, '')) || 0;
+                                total_amount_price = isNaN(total_amount_price) ? 0 : total_amount_price;
+                                totalBalance = total_amount_price - rowTotal - price;
+
+
+                                $('.total_balance').text(formatCurrency(totalBalance));
+                            });
+                            $(document).on('blur', 'input.css-main-input-pttt', function () {
+                                let rowTotal = 0;
+
+                                $('input.css-main-input-pttt').each(function () {
                                     let depositValue = $(this).val().replace(/[,.]/g, '');
                                     let numericDeposit = parseInt(depositValue) || 0;
                                     rowTotal += numericDeposit;
                                 });
+
+                                // Cập nhật phần hiển thị tổng (không cập nhật lại input đang nhập)
+                                $('.total_entered_deposit').text(formatCurrency(rowTotal));
+
+                                // Lấy giá trị tiền đã cọc
+                                let priceString = $('.total_deposit').text();
+                                let price = parseInt(priceString.replace(/\./g, "")) || 0;
+
+                                // Tổng tiền cần thanh toán
+                                let total_amount = $('.total_amount').text();
+                                let total_amount_price = parseInt(total_amount.replace(/\./g, '')) || 0;
+
+                                let total_discount = $('.total_discount').text();
+                                let total_discount_price = parseInt(total_discount.replace(/\./g, '')) || 0;
+
+                                let total_payment = $('.total_payment').text();
+                                let total_payment_price = parseInt(total_payment.replace(/\./g, '')) || 0;
+                                // Tính số dư
+                                let totalBalance = total_amount_price - rowTotal - price - total_discount_price - total_payment_price;
+
+                                $('.total_balance').text(formatCurrency(totalBalance));
                             });
 
-                            $('.total_deposit').text(formatCurrency(rowTotal));
-
-                            let priceString = $('.total_discount').text();
-                            let price = parseInt(priceString.replace(/\./g, ""), 10);
-                            price = isNaN(price) ? 0 : price;
-
-                            let total_amount = $('.total_amount').text();
-                            let total_amount_price = parseInt(total_amount.replace(/\./g, '')) || 0;
-                            total_amount_price = isNaN(total_amount_price) ? 0 : total_amount_price;
-
-                            totalBalance = total_amount_price - rowTotal - price;
-                            $('.total_balance').text(formatCurrency(totalBalance));
                         });
+                        // notify('success', response.success);
+                        // loadRoomBookings();
 
-                        $(document).on('blur', 'input.discount', function () {
-                            let rowTotal = 0;
-                            $('tr').each(function () {
-                                $(this).find('input.discount').each(function () {
-                                    let depositValue = $(this).val().replace(/[,.]/g, '');
-                                    let numericDeposit = parseInt(depositValue) || 0;
-                                    rowTotal += numericDeposit;
-                                });
-                            });
-                            $('.total_discount').text(formatCurrency(rowTotal));
-                            let priceString = $('.total_deposit').text();
-
-                            let price = parseInt(priceString.replace(/\./g, ""), 10);
-                            price = isNaN(price) ? 0 : price;
-                            let total_amount = $('.total_amount').text();
-                            let total_amount_price = parseInt(total_amount.replace(/\./g, '')) || 0;
-                            total_amount_price = isNaN(total_amount_price) ? 0 : total_amount_price;
-                            totalBalance = total_amount_price - rowTotal - price;
-
-
-                            $('.total_balance').text(formatCurrency(totalBalance));
-                        });
-                        $(document).on('blur', 'input.css-main-input-pttt', function () {
-                            let rowTotal = 0;
-
-                            $('input.css-main-input-pttt').each(function () {
-                                let depositValue = $(this).val().replace(/[,.]/g, '');
-                                let numericDeposit = parseInt(depositValue) || 0;
-                                rowTotal += numericDeposit;
-                            });
-
-                            // Cập nhật phần hiển thị tổng (không cập nhật lại input đang nhập)
-                            $('.total_entered_deposit').text(formatCurrency(rowTotal));
-
-                            // Lấy giá trị tiền đã cọc
-                            let priceString = $('.total_deposit').text();
-                            let price = parseInt(priceString.replace(/\./g, "")) || 0;
-
-                            // Tổng tiền cần thanh toán
-                            let total_amount = $('.total_amount').text();
-                            let total_amount_price = parseInt(total_amount.replace(/\./g, '')) || 0;
-
-                            let total_discount = $('.total_discount').text();
-                            let total_discount_price = parseInt(total_discount.replace(/\./g, '')) || 0;
-
-                            let total_payment = $('.total_payment').text();
-                            let total_payment_price = parseInt(total_payment.replace(/\./g, '')) || 0;
-                            // Tính số dư
-                            let totalBalance = total_amount_price - rowTotal - price - total_discount_price - total_payment_price;
-
-                            $('.total_balance').text(formatCurrency(totalBalance));
-                        });
-
-                    });
-                    // notify('success', response.success);
-                    // loadRoomBookings();
-
-                } else {
-                    notify('error', response.success);
+                    } else {
+                        notify('error', response.success);
+                    }
+                },
+                error: function (error) {
+                    // notify('error', error.responseJSON.message);
+                    console.log('Error:', error);
                 }
-            },
-            error: function (error) {
-                // notify('error', error.responseJSON.message);
-                console.log('Error:', error);
-            }
+            });
+
         });
+        $(document).off("click", ".room-booking").on("click", ".room-booking", function (e) {
+            if ($(e.target).closest('.menu-btn').length > 0) return;
+            let dataId = $(this).attr("data-booking-id");
+            let Id = $(this).attr("data-id");
+            var url = roomBookingEditUrl.replace(':id',
+                dataId);
+            $.ajax({
+                url: url,
+                type: 'POST',
+                data: {
+                    method: "LETAN",
+                    id: Id,
+                },
+                success: function (response) {
+                    if (response.status == 'success') {
+                        var selected_customer_source = $('#select-customer-source-edit');
+                        selected_customer_source.empty();
+                        let option = `<option value="">Chọn nguồn khách hàng</option>`;
+                        response.customerSourse.forEach(function (item) {
+                            if (item.source_code == response.option_customer_source) {
+                                option += `<option value="${item.source_code}" selected>${item.source_name}</option>`;
+                            } else {
+                                option += `<option value="${item.source_code}">${item.source_name}</option>`;
+                            }
 
-    });
-    $(document).off("click", ".room-booking").on("click", ".room-booking", function (e) {
-        if ($(e.target).closest('.menu-btn').length > 0) return;
-        let dataId = $(this).attr("data-booking-id");
-        let Id = $(this).attr("data-id");
-        var url = roomBookingEditUrl.replace(':id',
-            dataId);
-        $.ajax({
-            url: url,
-            type: 'POST',
-            data: {
-                method: "LETAN",
-                id: Id,
-            },
-            success: function (response) {
-                if (response.status == 'success') {
-                    var selected_customer_source = $('#select-customer-source-edit');
-                    selected_customer_source.empty();
-                    let option = `<option value="">Chọn nguồn khách hàng</option>`;
-                    response.customerSourse.forEach(function (item) {
-                        if (item.source_code == response.option_customer_source) {
-                            option += `<option value="${item.source_code}" selected>${item.source_name}</option>`;
-                        } else {
-                            option += `<option value="${item.source_code}">${item.source_name}</option>`;
-                        }
-
-                    });
-                    //title 
-                    $('.pageModal').text(response.pageModal);
-                    selected_customer_source.append(option);
-                    // nhân viên
-                    var selected_select_staff = $('#select-staff-edit');
-                    selected_select_staff.empty();
-                    let option_staff = `<option value="">Chọn nhân viên</option>`;
-                    response.admin.forEach(function (item) {
-                        option_staff += `<option value="${item.id}">${item.username}</option>`;
-                    });
-                    selected_select_staff.append(option_staff);
-                    console.log(formattedDates);
-                    $('#date-book-room-booking-edit').val(formattedDates)
-                    $('#myModal-booking-edit').modal('show').on('shown.bs.modal', function () {
-                        $('.name-edit, .phone-edit').val('');
-                        $('#list-booking-edit').empty();
-                        $('#list-booking').empty();
-                        $('#list-booking-edit-letan').empty();
-                        var tbody = $('#list-booking-edit');
+                        });
+                        //title 
+                        $('.pageModal').text(response.pageModal);
+                        selected_customer_source.append(option);
+                        // nhân viên
+                        var selected_select_staff = $('#select-staff-edit');
+                        selected_select_staff.empty();
+                        let option_staff = `<option value="">Chọn nhân viên</option>`;
+                        response.admin.forEach(function (item) {
+                            option_staff += `<option value="${item.id}">${item.username}</option>`;
+                        });
+                        selected_select_staff.append(option_staff);
+                        $('#date-book-room-booking-edit').val(formattedDates)
+                        $('#myModal-booking-edit').modal('show').on('shown.bs.modal', function () {
+                            $('.name-edit, .phone-edit').val('');
+                            $('#list-booking-edit').empty();
+                            $('#list-booking').empty();
+                            $('#list-booking-edit-letan').empty();
+                            var tbody = $('#list-booking-edit');
 
 
-                        let totalPrice, total_deposit_amount, total_deposit_discount = 0;
-                        response.data.forEach(item => {
-                            $('.name-edit').val(item.customer_name);
-                            $('.phone-edit').val(item.phone_number);
+                            let totalPrice, total_deposit_amount, total_deposit_discount = 0;
+                            response.data.forEach(item => {
+                                $('.name-edit').val(item.customer_name);
+                                $('.phone-edit').val(item.phone_number);
 
-                            item.room_bookings.forEach((room, index) => {
-                                if (index === 0) {
-                                    $('.booking_id').val(room.booking_id);
-                                }
+                                item.room_bookings.forEach((room, index) => {
+                                    if (index === 0) {
+                                        $('.booking_id').val(room.booking_id);
+                                    }
 
 
 
 
-                                let [checkinDate, checkinTime] = room.checkin_date.split(' ');
-                                checkinTime = checkinTime.slice(0, 5);
-                                let [checkoutDate, checkoutTime] = room
-                                    .checkout_date.split(' ');
-                                checkoutTime = checkoutTime.slice(0, 5);
-                                total_deposit_amount += parseFloat(room.deposit_amount);
-                                total_deposit_discount += parseFloat(room.discount);
+                                    let [checkinDate, checkinTime] = room.checkin_date.split(' ');
+                                    checkinTime = checkinTime.slice(0, 5);
+                                    let [checkoutDate, checkoutTime] = room
+                                        .checkout_date.split(' ');
+                                    checkoutTime = checkoutTime.slice(0, 5);
+                                    total_deposit_amount += parseFloat(room.deposit_amount);
+                                    total_deposit_discount += parseFloat(room.discount);
 
 
-                                var tr = `
+                                    var tr = `
                                         <tr data-room-id="${room.room_id}" data-status="${room.status}"
                                         data-room-booking-id="${room.id}"  data-room-type-id="${room.room_type_id}"  class="${room.status === 1 ? "check_in_status" : ""}">
                                             <td>
@@ -1024,183 +1018,186 @@ function initViewScript1() {
     
                                         </tr>
                                     `;
-                                tbody.append(tr);
-                            });
-                        });
-                        totalPrice = calculateTotalPrice();
-
-
-
-                        $('.total_deposit').text(formatCurrency(total_deposit_amount));
-
-
-                        //$('.total_discount').text(formatCurrency(total_deposit_discount));
-
-                        $('.total_amount').text(formatCurrency(totalPrice));
-                        $('.total_balance').text(formatCurrency(totalPrice));
-                        $('#loading').hide();
-                        let totalDeposit = 0;
-                        let totalBalance = 0;
-
-                        function calculateDepositAndBalance() {
-                            let rowTotal = 0;
-
-                            $('tr').each(function () {
-                                $(this).find('input.deposit').each(function () {
-                                    let depositValue = $(this).val()
-                                        .replace(/[,.]/g, '');
-                                    let numericDeposit = parseInt(
-                                        depositValue) || 0;
-                                    rowTotal += numericDeposit;
+                                    tbody.append(tr);
                                 });
                             });
-                            $('.total_deposit').text(formatCurrency(rowTotal));
+                            totalPrice = calculateTotalPrice();
 
-                            let priceString = $('.total_discount').text();
-                            let price = parseInt(priceString.replace(/\./g, '')) || 0;
 
-                            totalBalance = totalPrice - rowTotal - price;
-                            $('.total_balance').text(formatCurrency(totalBalance));
-                            //  $('.total_deposit').text(formatCurrency(price));
-                        }
 
-                        // Chạy khi trang load
-                        $(document).ready(function () {
-                            calculateDepositAndBalance();
-                        });
-                        $(document).on('blur', 'input.deposit', function () {
-                            let rowTotal = 0;
-                            $('tr').each(function () {
-                                $(this).find('input.deposit').each(function () {
-                                    let depositValue = $(this).val().replace(/[,.]/g, '');
-                                    let numericDeposit = parseInt(depositValue) || 0;
-                                    rowTotal += numericDeposit;
+                            $('.total_deposit').text(formatCurrency(total_deposit_amount));
+
+
+                            //$('.total_discount').text(formatCurrency(total_deposit_discount));
+
+                            $('.total_amount').text(formatCurrency(totalPrice));
+                            $('.total_balance').text(formatCurrency(totalPrice));
+                            $('#loading').hide();
+                            let totalDeposit = 0;
+                            let totalBalance = 0;
+
+                            function calculateDepositAndBalance() {
+                                let rowTotal = 0;
+
+                                $('tr').each(function () {
+                                    $(this).find('input.deposit').each(function () {
+                                        let depositValue = $(this).val()
+                                            .replace(/[,.]/g, '');
+                                        let numericDeposit = parseInt(
+                                            depositValue) || 0;
+                                        rowTotal += numericDeposit;
+                                    });
                                 });
+                                $('.total_deposit').text(formatCurrency(rowTotal));
+
+                                let priceString = $('.total_discount').text();
+                                let price = parseInt(priceString.replace(/\./g, '')) || 0;
+
+                                totalBalance = totalPrice - rowTotal - price;
+                                $('.total_balance').text(formatCurrency(totalBalance));
+                                //  $('.total_deposit').text(formatCurrency(price));
+                            }
+
+                            // Chạy khi trang load
+                            $(document).ready(function () {
+                                calculateDepositAndBalance();
+                            });
+                            $(document).on('blur', 'input.deposit', function () {
+                                let rowTotal = 0;
+                                $('tr').each(function () {
+                                    $(this).find('input.deposit').each(function () {
+                                        let depositValue = $(this).val().replace(/[,.]/g, '');
+                                        let numericDeposit = parseInt(depositValue) || 0;
+                                        rowTotal += numericDeposit;
+                                    });
+                                });
+
+                                $('.total_deposit').text(formatCurrency(rowTotal));
+
+                                let priceString = $('.total_discount').text();
+                                let price = parseInt(priceString.replace(/\./g, ""), 10);
+                                price = isNaN(price) ? 0 : price;
+
+                                let total_amount = $('.total_amount').text();
+                                let total_amount_price = parseInt(total_amount.replace(/\./g, '')) || 0;
+                                total_amount_price = isNaN(total_amount_price) ? 0 : total_amount_price;
+
+                                totalBalance = total_amount_price - rowTotal - price;
+
+
+
+                                $('.total_balance').text(formatCurrency(totalBalance));
                             });
 
-                            $('.total_deposit').text(formatCurrency(rowTotal));
-
-                            let priceString = $('.total_discount').text();
-                            let price = parseInt(priceString.replace(/\./g, ""), 10);
-                            price = isNaN(price) ? 0 : price;
-
-                            let total_amount = $('.total_amount').text();
-                            let total_amount_price = parseInt(total_amount.replace(/\./g, '')) || 0;
-                            total_amount_price = isNaN(total_amount_price) ? 0 : total_amount_price;
-
-                            totalBalance = total_amount_price - rowTotal - price;
-
-
-
-                            $('.total_balance').text(formatCurrency(totalBalance));
-                        });
-
-                        $(document).on('blur', 'input.discount', function () {
-                            let rowTotal = 0;
-                            $('tr').each(function () {
-                                $(this).find('input.discount').each(function () {
-                                    let depositValue = $(this).val().replace(/[,.]/g, '');
-                                    let numericDeposit = parseInt(depositValue) || 0;
-                                    rowTotal += numericDeposit;
+                            $(document).on('blur', 'input.discount', function () {
+                                let rowTotal = 0;
+                                $('tr').each(function () {
+                                    $(this).find('input.discount').each(function () {
+                                        let depositValue = $(this).val().replace(/[,.]/g, '');
+                                        let numericDeposit = parseInt(depositValue) || 0;
+                                        rowTotal += numericDeposit;
+                                    });
                                 });
+                                $('.total_discount').text(formatCurrency(rowTotal));
+                                let priceString = $('.total_deposit').text();
+
+                                let price = parseInt(priceString.replace(/\./g, ""), 10);
+                                price = isNaN(price) ? 0 : price;
+                                let total_amount = $('.total_amount').text();
+                                let total_amount_price = parseInt(total_amount.replace(/\./g, '')) || 0;
+                                total_amount_price = isNaN(total_amount_price) ? 0 : total_amount_price;
+                                totalBalance = total_amount_price - rowTotal - price;
+
+
+                                $('.total_balance').text(formatCurrency(totalBalance));
                             });
-                            $('.total_discount').text(formatCurrency(rowTotal));
-                            let priceString = $('.total_deposit').text();
-
-                            let price = parseInt(priceString.replace(/\./g, ""), 10);
-                            price = isNaN(price) ? 0 : price;
-                            let total_amount = $('.total_amount').text();
-                            let total_amount_price = parseInt(total_amount.replace(/\./g, '')) || 0;
-                            total_amount_price = isNaN(total_amount_price) ? 0 : total_amount_price;
-                            totalBalance = total_amount_price - rowTotal - price;
 
 
-                            $('.total_balance').text(formatCurrency(totalBalance));
+
                         });
+                        // notify('success', response.success);
+                        // loadRoomBookings();
 
-
-
-                    });
-                    // notify('success', response.success);
-                    // loadRoomBookings();
-
-                } else {
-                    notify('error', response.success);
+                    } else {
+                        notify('error', response.success);
+                    }
+                },
+                error: function (error) {
+                    // notify('error', error.responseJSON.message);
+                    console.log('Error:', error);
                 }
-            },
-            error: function (error) {
-                // notify('error', error.responseJSON.message);
-                console.log('Error:', error);
-            }
+            });
         });
-    });
-    $(document).off("click", ".room-booked").on("click", ".room-booked", function (e) {
-        if ($(e.target).closest('.menu-btn').length > 0) return;
-        let roomId = $(this).attr("data-room-id");
-        let roomType = $(this).attr("data-room-type-id");
-        let data = {
-            room: roomId,
-            room_type: roomType,
-            date: formattedDates,
-        }
-        $.ajax({
-            url: checkRoomBookingUrl,
-            type: 'POST',
-            data: {
-                data: JSON.stringify(data),
-                method: 'LETAN',
-            },
-            success: function (response) {
-                var tbody = $('#list-booking');
-                $('#list-booking-edit').empty();
-                $('#list-booking-edit-letan').empty();
-                tbody.empty();
-                if (response.status === 'success') {
-                    const seenRooms = new Set();
-                    let totalPrice = 0;
+        $(document).off("click", ".room-booked").on("click", ".room-booked", function (e) {
+            if ($(e.target).closest('.menu-btn').length > 0) return;
+            let roomId = $(this).attr("data-room-id");
+            let roomType = $(this).attr("data-room-type-id");
+            let data = {
+                room: roomId,
+                room_type: roomType,
+                date: formattedDates,
+            }
+          //  $('.booking-form').attr('action', roomBook);
+            $.ajax({
+                url: checkRoomBookingUrl,
+                type: 'POST',
+                data: {
+                    data: JSON.stringify(data),
+                    method: 'LETAN',
+                },
+                success: function (response) {
+                    var tbody = $('#list-booking');
+                    $('#list-booking-edit').empty();
+                    $('#list-booking-edit-letan').empty();
+                    $('#name').empty();
+                    $('#phone').empty();
+                    tbody.empty();
+                    if (response.status === 'success') {
+                        const seenRooms = new Set();
+                        let totalPrice = 0;
 
-                    response.data.forEach(item => {
-                        // nhân viên
-                        var selected_select_staff = $('#select-staff');
-                        selected_select_staff.empty();
-                        let option_staff = `<option value="">Chọn nhân viên</option>`;
-                        item.admin.forEach(function (data) {
-                            if (data.id == data.option_customer_source) {
-                                option_staff +=
-                                    `<option value="${data.id}" selected>${data.username}</option>`;
-                            } else {
-                                option_staff +=
-                                    `<option value="${data.id}">${data.username}</option>`;
+                        response.data.forEach(item => {
+                            // nhân viên
+                            var selected_select_staff = $('#select-staff');
+                            selected_select_staff.empty();
+                            let option_staff = `<option value="">Chọn nhân viên</option>`;
+                            item.admin.forEach(function (data) {
+                                if (data.id == data.option_customer_source) {
+                                    option_staff +=
+                                        `<option value="${data.id}" selected>${data.username}</option>`;
+                                } else {
+                                    option_staff +=
+                                        `<option value="${data.id}">${data.username}</option>`;
+                                }
+                            });
+                            selected_select_staff.append(option_staff);
+                            // nguồn khách 
+                            var selected_customer_source = $('#select-customer-source');
+                            selected_customer_source.empty();
+                            let option = `<option value="">Chọn nguồn khách hàng</option>`;
+                            item.customerSourse.forEach(function (data) {
+                                if (data.id == data.option_customer_source) {
+                                    option +=
+                                        `<option value="${data.source_code}" selected>${data.source_name}</option>`;
+                                } else {
+                                    option +=
+                                        `<option value="${data.source_code}">${data.source_name}</option>`;
+                                }
+                            });
+                            selected_customer_source.append(option);
+                            let date = new Date(item.date);
+                            date.setDate(date.getDate() + 1);
+                            const roomId = item.room["id"];
+                            const roomTypeId = item.room_type["id"];
+                            const roomDate = item.date;
+                            const key = `${roomId}-${roomTypeId}-${roomDate}`;
+
+                            if (seenRooms.has(key)) {
+                                return;
                             }
-                        });
-                        selected_select_staff.append(option_staff);
-                        // nguồn khách 
-                        var selected_customer_source = $('#select-customer-source');
-                        selected_customer_source.empty();
-                        let option = `<option value="">Chọn nguồn khách hàng</option>`;
-                        item.customerSourse.forEach(function (data) {
-                            if (data.id == data.option_customer_source) {
-                                option +=
-                                    `<option value="${data.source_code}" selected>${data.source_name}</option>`;
-                            } else {
-                                option +=
-                                    `<option value="${data.source_code}">${data.source_name}</option>`;
-                            }
-                        });
-                        selected_customer_source.append(option);
-                        let date = new Date(item.date);
-                        date.setDate(date.getDate() + 1);
-                        const roomId = item.room["id"];
-                        const roomTypeId = item.room_type["id"];
-                        const roomDate = item.date;
-                        const key = `${roomId}-${roomTypeId}-${roomDate}`;
+                            seenRooms.add(key);
 
-                        if (seenRooms.has(key)) {
-                            return;
-                        }
-                        seenRooms.add(key);
-
-                        var tr = `
+                            var tr = `
                         <tr  data-status="0" data-room-id="${roomId}"  data-room-type-id="${roomTypeId}" data-date="${item.date}">
                             <td>
                                 <input type="checkbox">
@@ -1249,162 +1246,163 @@ function initViewScript1() {
                         </tr>
                     `;
 
-                        // tbody.append(tr); 
+                            // tbody.append(tr); 
 
-                        tbody.append(tr);
+                            tbody.append(tr);
 
-                    })
+                        })
 
-                    totalPrice = calculateTotalPrice();
+                        totalPrice = calculateTotalPrice();
 
-                    $('#loading').hide();
-                    let totalDeposit = 0;
-                    let totalBalance = 0;
-                    $('tr').find('input.deposit').on('blur', function () {
-                        let rowTotal = 0;
-                        $('tr').each(function () {
-                            $(this).find('input.deposit').each(function () {
-                                let depositValue = $(this).val()
-                                    .replace(/[,.]/g, '');
-                                let numericDeposit = parseInt(
-                                    depositValue) || 0;
-                                rowTotal += numericDeposit;
-                            });
-                        });
-
-                        $('.total_deposit').text(formatCurrency(rowTotal));
-                        let priceString = $('.total_discount').text();
-                        let price = parseInt(priceString.replace(/\./g, ""), 10);
-                        price = isNaN(price) ? 0 : price;
-                        totalBalance = totalPrice - rowTotal - price;
-                        $('.total_balance').text(formatCurrency(totalBalance));
-                    });
-                    $('tr').find('input.discount').on('blur', function () {
-                        let rowTotal = 0;
-                        $('tr').each(function () {
-                            $(this).find('input.discount').each(function () {
-                                let depositValue = $(this).val()
-                                    .replace(/[,.]/g, '');
-                                let numericDeposit = parseInt(
-                                    depositValue) || 0;
-                                rowTotal += numericDeposit;
-                            });
-                        });
-
-                        $('.total_discount').text(formatCurrency(rowTotal));
-                        let priceString = $('.total_deposit').text();
-                        let price = parseInt(priceString.replace(/\./g, ""), 10);
-                        price = isNaN(price) ? 0 : price;
-                        totalBalance = totalPrice - rowTotal - price;
-                        $('.total_balance').text(formatCurrency(totalBalance));
-                    });
-
-                    $('#addRoomModal').modal('hide');
-                    $('#select-option-pttt').hide();
-                    $('#myModal-booking').modal('show');
-                    document.body.classList.remove("modal-open");
-                } else if (response.status === 'error') {
-                    $('#loading').hide();
-                    var tr = ``;
-                    tbody.append(tr);
-                    $('#addRoomModal').modal('hide');
-                    document.body.classList.remove("modal-open");
-                }
-            },
-            error: function (error) {
-                $('#loading').hide();
-                console.log('Error:', error);
-            }
-        });
-    });
-    $('.delete-room-booking-edit-letan').on('click', function () {
-        let selectedBookingIds = [];
-        Swal.fire({
-            title: 'Bạn có chắc chắn xoá phòng này không',
-            text: 'Bạn có chắc chắn xoá phòng này không',
-            icon: 'warning',
-            showCancelButton: true,
-            confirmButtonText: 'Đồng ý',
-            cancelButtonText: 'Hủy bỏ',
-            reverseButtons: true
-        }).then((result) => {
-            if (result.isConfirmed) {
-                let selectedRows = [];
-                $('#list-booking-edit-letan tr').each(function () {
-                    var checkbox = $(this).find('input[type="checkbox"]');
-                    if (checkbox.prop('checked')) {
-                        var bookingId = $(this).data('room-booking-id');
-                        selectedBookingIds.push(bookingId); $(this).remove();
-                        selectedRows.push($(this));
-                    }
-                });
-                //  console.log(selectedBookingIds);
-                $.ajax({
-                    url: deleteCheckin,
-                    type: 'POST',
-                    data: {
-                        data: JSON.stringify(selectedBookingIds)
-                    },
-                    success: function (response) {
-                        if (response.status === 'success') {
-                            // loadRoomBookings();
-                            $('#myModal-check-in-edit').modal('hide');
-                            window.location.reload();
-                            let totalPrice = 0;
-                            totalPrice = calculateTotalPrice();
-                            $('.total_amount').text(formatCurrency(totalPrice));
-                            // $('#total_balance').text(formatCurrency(totalPrice));
-                            notify('success', response.success);
-                            selectedRows.forEach(row => row.remove());
-                            let remainingRows = $('#list-booking-edit tr').length;
-                            if (remainingRows === 0) {
-                                $('#myModal-check-in-edit').modal('hide');
-                            }
-                        } else {
-                            Swal.fire({
-                                title: response.message,
-                                text: response.message,
-                                icon: 'warning',
-                                showCancelButton: true,
-                                confirmButtonText: 'Đồng ý',
-                                cancelButtonText: 'Hủy bỏ',
-                                reverseButtons: true
-                            })
-                        }
-                    },
-                    error: function (error) {
                         $('#loading').hide();
-                        console.log('Error:', error);
+                        let totalDeposit = 0;
+                        let totalBalance = 0;
+                        $('tr').find('input.deposit').on('blur', function () {
+                            let rowTotal = 0;
+                            $('tr').each(function () {
+                                $(this).find('input.deposit').each(function () {
+                                    let depositValue = $(this).val()
+                                        .replace(/[,.]/g, '');
+                                    let numericDeposit = parseInt(
+                                        depositValue) || 0;
+                                    rowTotal += numericDeposit;
+                                });
+                            });
+
+                            $('.total_deposit').text(formatCurrency(rowTotal));
+                            let priceString = $('.total_discount').text();
+                            let price = parseInt(priceString.replace(/\./g, ""), 10);
+                            price = isNaN(price) ? 0 : price;
+                            totalBalance = totalPrice - rowTotal - price;
+                            $('.total_balance').text(formatCurrency(totalBalance));
+                        });
+                        $('tr').find('input.discount').on('blur', function () {
+                            let rowTotal = 0;
+                            $('tr').each(function () {
+                                $(this).find('input.discount').each(function () {
+                                    let depositValue = $(this).val()
+                                        .replace(/[,.]/g, '');
+                                    let numericDeposit = parseInt(
+                                        depositValue) || 0;
+                                    rowTotal += numericDeposit;
+                                });
+                            });
+
+                            $('.total_discount').text(formatCurrency(rowTotal));
+                            let priceString = $('.total_deposit').text();
+                            let price = parseInt(priceString.replace(/\./g, ""), 10);
+                            price = isNaN(price) ? 0 : price;
+                            totalBalance = totalPrice - rowTotal - price;
+                            $('.total_balance').text(formatCurrency(totalBalance));
+                        });
+
+                        $('#addRoomModal').modal('hide');
+                        $('#select-option-pttt').hide();
+                        $('#myModal-booking').modal('show');
+                        document.body.classList.remove("modal-open");
+                    } else if (response.status === 'error') {
+                        $('#loading').hide();
+                        var tr = ``;
+                        tbody.append(tr);
+                        $('#addRoomModal').modal('hide');
+                        document.body.classList.remove("modal-open");
                     }
-                });
+                },
+                error: function (error) {
+                    $('#loading').hide();
+                    console.log('Error:', error);
+                }
+            });
+        });
+        $('.delete-room-booking-edit-letan').on('click', function () {
+            let selectedBookingIds = [];
+            Swal.fire({
+                title: 'Bạn có chắc chắn xoá phòng này không',
+                text: 'Bạn có chắc chắn xoá phòng này không',
+                icon: 'warning',
+                showCancelButton: true,
+                confirmButtonText: 'Đồng ý',
+                cancelButtonText: 'Hủy bỏ',
+                reverseButtons: true
+            }).then((result) => {
+                if (result.isConfirmed) {
+                    let selectedRows = [];
+                    $('#list-booking-edit-letan tr').each(function () {
+                        var checkbox = $(this).find('input[type="checkbox"]');
+                        if (checkbox.prop('checked')) {
+                            var bookingId = $(this).data('room-booking-id');
+                            selectedBookingIds.push(bookingId); $(this).remove();
+                            selectedRows.push($(this));
+                        }
+                    });
+                    //  console.log(selectedBookingIds);
+                    $.ajax({
+                        url: deleteCheckin,
+                        type: 'POST',
+                        data: {
+                            data: JSON.stringify(selectedBookingIds)
+                        },
+                        success: function (response) {
+                            if (response.status === 'success') {
+                                // loadRoomBookings();
+                                $('#myModal-check-in-edit').modal('hide');
+                                window.location.reload();
+                                let totalPrice = 0;
+                                totalPrice = calculateTotalPrice();
+                                $('.total_amount').text(formatCurrency(totalPrice));
+                                // $('#total_balance').text(formatCurrency(totalPrice));
+                                notify('success', response.success);
+                                selectedRows.forEach(row => row.remove());
+                                let remainingRows = $('#list-booking-edit tr').length;
+                                if (remainingRows === 0) {
+                                    $('#myModal-check-in-edit').modal('hide');
+                                }
+                            } else {
+                                Swal.fire({
+                                    title: response.message,
+                                    text: response.message,
+                                    icon: 'warning',
+                                    showCancelButton: true,
+                                    confirmButtonText: 'Đồng ý',
+                                    cancelButtonText: 'Hủy bỏ',
+                                    reverseButtons: true
+                                })
+                            }
+                        },
+                        error: function (error) {
+                            $('#loading').hide();
+                            console.log('Error:', error);
+                        }
+                    });
+                }
+            });
+
+        });
+        // Toggle dropdown khi click vào .menu-btn
+        $(document).off("click", ".menu-btn").on("click", ".menu-btn", function (e) {
+            e.stopPropagation(); // Ngăn không lan ra sự kiện click cha
+
+            const $card = $(this).closest('.room-card');
+            const $menu = $card.find('.dropdown-menu');
+
+            const isVisible = $menu.is(':visible');
+
+            // Ẩn tất cả menu khác
+            $('.dropdown-menu').hide();
+
+            // Hiển thị nếu chưa hiển thị
+            if (!isVisible) {
+                $menu.show();
             }
         });
 
-    });
-    // Toggle dropdown khi click vào .menu-btn
-    $(document).off("click", ".menu-btn").on("click", ".menu-btn", function (e) {
-        e.stopPropagation(); // Ngăn không lan ra sự kiện click cha
-
-        const $card = $(this).closest('.room-card');
-        const $menu = $card.find('.dropdown-menu');
-
-        const isVisible = $menu.is(':visible');
-
-        // Ẩn tất cả menu khác
-        $('.dropdown-menu').hide();
-
-        // Hiển thị nếu chưa hiển thị
-        if (!isVisible) {
-            $menu.show();
-        }
-    });
-
-    // Ẩn menu nếu click ra ngoài
-    $(document).on("click", function (e) {
-        // Nếu click không nằm trong menu-btn hoặc dropdown-menu thì ẩn
-        if (!$(e.target).closest('.menu-btn, .dropdown-menu').length) {
-            $('.dropdown-menu').hide();
-        }
+        // Ẩn menu nếu click ra ngoài
+        $(document).on("click", function (e) {
+            // Nếu click không nằm trong menu-btn hoặc dropdown-menu thì ẩn
+            if (!$(e.target).closest('.menu-btn, .dropdown-menu').length) {
+                $('.dropdown-menu').hide();
+            }
+        });
     });
 }
 $('.btn-book-pttt').off('click').on('click', function (e) {
@@ -1536,7 +1534,7 @@ $('.booking-form-pttt').on('submit', function (e) {
 
                 let selectedDate = $('#startDate').val();
                 initGridMain('', selectedDate);
-            }else{
+            } else {
                 notify('error', response.error);
             }
         },

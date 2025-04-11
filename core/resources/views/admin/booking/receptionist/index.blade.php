@@ -512,6 +512,7 @@
     var paymentRoomUrl = "{{route('admin.booking.payment.room')}}";
     var findRoomBookingIdUrl = '{{ route('admin.find.room.booking') }}';
     var CheckInUrl = "{{ route('admin.room.booked.check.in') }}";
+    var roomBook = "{{ route('admin.room.book') }}";
     document.addEventListener('input', function(e) {
         if (e.target.classList.contains('money-input')) {
             let value = e.target.value.replace(/\D/g, ""); // Xóa ký tự không phải số
@@ -986,8 +987,8 @@
                                 $('#list-booking').empty();
                                 $('#name, #phone, #name_book').val("");
                                 //    loadRoomBookings();
-
-                                window.location.reload();
+                                initGridMain();
+                               // window.location.reload();
 
                             } else {
                                 notify('error', response.error);
