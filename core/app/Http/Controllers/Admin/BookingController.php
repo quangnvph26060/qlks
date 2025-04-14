@@ -915,14 +915,14 @@ class BookingController extends Controller
     }
     public function roomBoookingHistory(Request $request)
     {
-
-        $date        = request('date'); // Lấy ngày từ request
+        
+        $date        = request('date') ?? data_get($request->data, 'date'); // Lấy ngày từ request
         $method      = data_get($request->data, 'searchType');
         $value       = data_get($request->data, 'searchValue');
         $room_type   = data_get($request->data, 'room_type');
         $room_clean  = data_get($request->data, 'room_clean');
         // $room_status = data_get($request->data, 'room_status');
-        // Log::info($room_status);
+        Log::info($date);
         $rooms = Room::query();
 
         $rooms->when(!empty($room_type), function ($query) use ($room_type) {

@@ -540,6 +540,15 @@
     var CheckInUrl = "{{ route('admin.room.booked.check.in') }}";
     var roomBook = "{{ route('admin.room.book') }}";
     var cleanRoomUrl = "{{ route('admin.roomclean.booking.roomclean') }}"
+
+    const date_booking = new Date();
+    const date_yyyy = date_booking.getFullYear();
+    const date_mm = String(date_booking.getMonth() + 1).padStart(2, '0');
+    const date_dd = String(date_booking.getDate()).padStart(2, '0');
+    const date_hour = String(date_booking.getHours()).padStart(2, '0'); // Giờ
+    const date_minutes = String(date_booking.getMinutes()).padStart(2, '0'); // Phút
+
+    const formattedDates = `${date_yyyy}-${date_mm}-${date_dd}`;
     document.addEventListener('input', function(e) {
         if (e.target.classList.contains('money-input')) {
             let value = e.target.value.replace(/\D/g, ""); // Xóa ký tự không phải số
@@ -607,9 +616,10 @@
                 selectedValuesRoomStatus.push($(this).data("id"));
             });         
             const data = {
-                room_clean: selectedValuesClean,
-                room_type: selectedValuesRoomType,
-                 room_status: selectedValuesRoomStatus,
+                date:           formattedDates,
+                room_clean:     selectedValuesClean,
+                room_type:      selectedValuesRoomType,
+                room_status:    selectedValuesRoomStatus,
             };
             initGridMain(data);
             $('.filter-sidebar').removeClass('open');
@@ -1034,7 +1044,8 @@
                                 $('#list-booking').empty();
                                 $('#name, #phone, #name_book').val("");
                                 //    loadRoomBookings();
-                                initGridMain();
+                                let selectedDate = $('#startDate').val();
+                                initGridMain('', selectedDate);
                                 // window.location.reload();
 
                             } else {

@@ -211,7 +211,7 @@ function initGridMain(data, date) {
 
                         }
                         // console.log(isBooking);
-
+                        
                         roomHTML += `
                         <div class="room-card ${item.status} ${flag}     ${status_code == 2
                                 ? 'bg-yellow'
@@ -234,6 +234,11 @@ function initGridMain(data, date) {
                                         <div class="dropdown-item room_clean" 
                                         data-name="${item.room_number}"
                                         data-id="${item.id}" >${item.is_clean ? "Chưa dọn" : "Làm sạch"}</div>
+                                        ${status_code == null ?  
+                                               `<div class="dropdown-item room_clean" 
+                                            data-name=""
+                                            data-id="" >Nhận phòng</div>`
+                                            : ""}
                                         ${status_code == 2 ? `<div class="dropdown-item check_in_room"
                                             data-id   = "${isBooking?.room_code}" 
                                             data-date ="${isBooking?.checkin_date}"
@@ -281,7 +286,9 @@ function initGridMain(data, date) {
                 // Đổ vào HTML
                 $("#grid-main").html(roomHTML);
                 // tìm kiếm trạng thái phòng
-                if (data.room_status != null) {
+               
+                
+                if (data.room_status && data.room_status != null) {
                     var selectedValuesRoomStatus =  data.room_status;
                     if (selectedValuesRoomStatus.length === 1) {
                         let filter = selectedValuesRoomStatus[0];
@@ -461,7 +468,8 @@ function initViewScript1() {
                     const modal = bootstrap.Modal.getInstance(document.getElementById("roomStatusModal"));
                     if (modal) modal.hide();
                     
-                    initGridMain();
+                    let selectedDate = $('#startDate').val();
+                    initGridMain('', selectedDate);
                 }
                 
             },
