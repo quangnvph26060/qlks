@@ -232,7 +232,8 @@ Route::middleware('admin', 'adminPermission')->group(function () {
             Route::post('save/{id?}', 'save')->name('save');
             Route::post('status/{id}', 'status')->name('status');
             Route::post('delete-preminum/{id}', 'delete')->name('delete');
-
+            Route::get('get-all-service', 'getAllService')->name('get-all-service');
+            Route::post('store-service', 'storeServices')->name('store-service');
         });
         //Manage amenities with room
         Route::controller('ManageRoomAmenitiesController')->name('room.amenities.')->prefix('roomAmenities')->group(function () {
@@ -530,6 +531,7 @@ Route::middleware('admin', 'adminPermission')->group(function () {
         Route::post('add', 'addService')->name('save');
         Route::post('add-product', 'addProduct')->name('save-product');
         Route::post('delete/{id}', 'delete')->name('delete');
+       
     });
 
     // Manage Booking Request

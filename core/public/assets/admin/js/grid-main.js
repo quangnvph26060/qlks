@@ -147,6 +147,14 @@ var validatorPTTT = {
     },
 }
 function initGridMain(data, date) {
+    const date_booking = new Date();
+    const date_yyyy = date_booking.getFullYear();
+    const date_mm = String(date_booking.getMonth() + 1).padStart(2, '0');
+    const date_dd = String(date_booking.getDate()).padStart(2, '0');
+    const date_hour = String(date_booking.getHours()).padStart(2, '0'); // Giờ
+    const date_minutes = String(date_booking.getMinutes()).padStart(2, '0'); // Phút
+
+    const formattedDates = `${date_yyyy}-${date_mm}-${date_dd}`;
     $.ajax({
         type: "GET",
         url: roomBoookingHistory,
@@ -182,6 +190,8 @@ function initGridMain(data, date) {
                     //     <span class="clock-icon">🕒</span> 97 giờ 11 phút / 1 giờ
                     // </div>
                     group.rooms.forEach(item => {
+                        //    console.log(item);
+
                         let isBooking = null;
                         let status_code = null;
                         let flag = 'room-booked';
@@ -197,8 +207,15 @@ function initGridMain(data, date) {
                                     }
 
                                 } else if (booking.check_in_data) {
+                                    let room_code = "";
                                     booking.check_in_data.forEach(k => {
-                                        if (k.room_code == item.id) {
+                                        //  check liên quan đổi phòng
+                                        if (k.room_change != null) {
+                                            room_code = k.room_change;
+                                        } else {
+                                            room_code = k.room_code;
+                                        }
+                                        if (room_code == item.id) {
                                             isBooking = k; // Lưu bản ghi nếu tìm thấy
                                             flag = 'check_in_data';
                                         }
@@ -211,13 +228,13 @@ function initGridMain(data, date) {
 
                         }
                         // console.log(isBooking);
-                        
+
                         roomHTML += `
                         <div class="room-card ${item.status} ${flag}     ${status_code == 2
                                 ? 'bg-yellow'
                                 : status_code == 3
                                     ? 'bg-red'
-                                    : ''}" 
+                                    : ''}"
                             data-booking-id="${isBooking?.booking_id ?? isBooking?.check_in_id ?? ''}"
                             data-id="${isBooking?.id ?? ''}"
                             data-room-id="${isBooking?.room_code ?? item.id}"
@@ -234,11 +251,11 @@ function initGridMain(data, date) {
                                         <div class="dropdown-item room_clean" 
                                         data-name="${item.room_number}"
                                         data-id="${item.id}" >${item.is_clean ? "Chưa dọn" : "Làm sạch"}</div>
-                                        ${status_code == null ?  
-                                               `<div class="dropdown-item room_clean" 
-                                            data-name=""
-                                            data-id="" >Nhận phòng</div>`
-                                            : ""}
+                                        ${status_code == null ?
+                                `<div class="dropdown-item check_in_now"
+                                        data-room-type-id = "${item?.room_type_id}"
+                                        data-room-id = "${item?.id}" >Nhận phòng</div>`
+                                : ""}
                                         ${status_code == 2 ? `<div class="dropdown-item check_in_room"
                                             data-id   = "${isBooking?.room_code}" 
                                             data-date ="${isBooking?.checkin_date}"
@@ -246,8 +263,16 @@ function initGridMain(data, date) {
                             }
                                         ${status_code == 3
                                 ? `
-                                                <div class="dropdown-item add_product_service" data-id="${isBooking?.booking_id ?? isBooking?.check_in_id ?? ''}">Thêm sản phẩm, dịch vụ</div>
-                                                <div class="dropdown-item room_change">Đổi Phòng</div>
+                                                <div class="dropdown-item add_product_service"  
+                                                 data-room-id="${isBooking?.room_change_info ? isBooking?.room_change_info?.new_room_code : item?.id}" 
+                                                 data-coustomer="${isBooking?.customer_name ?? ''}" data-room = "${item?.room_number}" data-id="${isBooking?.booking_id ?? isBooking?.check_in_id ?? ''}">Thêm sản phẩm, dịch vụ</div>
+                                                <div class="dropdown-item room_change"
+                                                data-id="${isBooking?.id}"
+                                                 data-name="${isBooking?.customer_name ?? ''}"
+                                                 data-room-id="${isBooking?.room_change_info ? isBooking?.room_change_info?.new_room_code : item?.id}"
+                                                 data-booking-id="${isBooking?.booking_id ?? isBooking?.check_in_id ?? ''}"
+                                                 data-booking-date="${formattedDates}"
+                                                >Đổi Phòng</div>
                                                 <div class="dropdown-item check_in_data" data-method="payment"   
                                                     data-booking-id="${isBooking?.booking_id ?? isBooking?.check_in_id ?? ''}"
                                                     data-id="${isBooking?.id ?? ''}"
@@ -258,7 +283,7 @@ function initGridMain(data, date) {
                             }
                                     </div>
                             </div>
-                            <div class="room-number
+                            <div class="room-number-name
                             ${status_code == 2
                                 ? 'text-white'
                                 : status_code == 3
@@ -279,17 +304,16 @@ function initGridMain(data, date) {
                         </div>
                     `;
                     });
-
                     roomHTML += `</div>`;
                 });
 
                 // Đổ vào HTML
                 $("#grid-main").html(roomHTML);
                 // tìm kiếm trạng thái phòng
-               
-                
+
+
                 if (data.room_status && data.room_status != null) {
-                    var selectedValuesRoomStatus =  data.room_status;
+                    var selectedValuesRoomStatus = data.room_status;
                     if (selectedValuesRoomStatus.length === 1) {
                         let filter = selectedValuesRoomStatus[0];
                         switch (filter) {
@@ -315,9 +339,9 @@ function initGridMain(data, date) {
                             $(".room-card.room-booked").hide();
                         }
                     }
-                   
+
                 }
-                  // end  tìm kiếm trạng thái phòng
+                // end  tìm kiếm trạng thái phòng
 
             } else {
                 reject("Không lấy được dữ liệu");
@@ -349,27 +373,7 @@ $(document).on('change', '#startDate', function () {
     initGridMain('', selectedDate);
 });
 
-function validator(selectedOption, inputPtttValue) {
-    let isValid = true;
 
-    // Reset lỗi cũ
-    $('#select-option-pttt_error1').text('');
-    $('#input_pttt_error').text('');
-
-    // Kiểm tra chọn phương thức thanh toán
-    if (selectedOption === '') {
-        $('#select-option-pttt_error1').text('Vui lòng chọn phương thức thanh toán');
-        isValid = false;
-    }
-
-    // Kiểm tra ô nhập số tiền
-    if (!inputPtttValue || inputPtttValue.trim() === '') {
-        $('#input_pttt_error').text('Vui lòng nhập số tiền');
-        isValid = false;
-    }
-
-    return isValid;
-}
 
 function initViewScript() {
 
@@ -436,20 +440,48 @@ function initViewScript1() {
     const formattedTimes = `${date_hour}:${date_minutes}`;
     $(document).off("click", ".add_product_service").on("click", ".add_product_service", function (e) {
         e.stopPropagation();
-        alert('Thêm sản phẩm, dịch vụ');
+        $('#selectedItems').empty();
+        selectedItems = [];
+        $.ajax({
+            url: getAllService,
+            type: 'GET',
+            data: {
+                search: "",
+            },
+            success: function (data) {
+                if (data.status === 'success') {
+                    renderList(data.data)
+
+                }
+
+            },
+            error: function (error) {
+                $('#loading').hide();
+                console.log('Error:', error);
+            }
+        });
+
+        
+        const modal = new bootstrap.Modal(document.getElementById('serviceModal'));
+        $('.service-room-number').text($(this).data("room"));
+        $('#room_code_service').val($(this).data("room-id"));
+        $('#check_in_id_service').val($(this).data("id"));
+        $('.service-customer').text($(this).data("coustomer"));
+        modal.show();
     });
+
     $(document).off("click", ".room_clean").on("click", ".room_clean", function (e) {
         e.stopPropagation();
-    
+
         // Lấy thông tin từ div được bấm
-        const roomName = $(this).data("name"); 
-        const roomId = $(this).data("id"); 
+        const roomName = $(this).data("name");
+        const roomId = $(this).data("id");
         const statusText = $(this).text().trim();
-   
+
         // Gán vào modal
         $("#roomStatusModal .modal-body strong").text(roomName);
         $("#roomStatusModal .modal-body .status-text").text(statusText);
-        $('.change_clean_room_btn').attr('data-id',roomId);
+        $('.change_clean_room_btn').attr('data-id', roomId);
         // Mở modal
         const modal = new bootstrap.Modal(document.getElementById("roomStatusModal"));
         modal.show();
@@ -463,39 +495,42 @@ function initViewScript1() {
                 id: id,
             },
             success: function (data) {
-                if(data.status === 'success'){
+                if (data.status === 'success') {
                     notify('success', data.success);
                     const modal = bootstrap.Modal.getInstance(document.getElementById("roomStatusModal"));
                     if (modal) modal.hide();
-                    
+
                     let selectedDate = $('#startDate').val();
                     initGridMain('', selectedDate);
                 }
-                
+
             },
             error: function (error) {
                 $('#loading').hide();
                 console.log('Error:', error);
             }
         });
-        
+
     });
+
     $(document).off("click", ".check_in_room").on("click", ".check_in_room", function (e) {
         e.stopPropagation();
         let selectedData = [];
         $(".btn-book-pttt").attr("data-method", "check_in");
         $('#select-option-pttt_error1').text('');
         $('#input_pttt_error').text('');
-           $('[id="select-option-pttt-main"]').hide();
-                     $('[id="select-option-pttt"]').hide();
+        $('[id="select-option-pttt-main"]').hide();
+        $('[id="select-option-pttt"]').hide();
         let dataId = $(this).attr("data-id");
         let book = $(this).attr("data-book");
         let date = $(this).attr("data-date");
+        let room_type = $(this).attr("data-room-type");
         selectedData.push({
             id: dataId,         // Lấy data-id
             book: book,         // Lấy data-book
             date: date,         // Lấy ngày check-in
-            room_code: dataId   // Lấy loại phòng
+            room_code: dataId,   // Lấy loại phòng
+            room_type: room_type
         });
 
         findRoomBookingId(selectedData)
@@ -511,9 +546,9 @@ function initViewScript1() {
             success: function (data) {
 
                 $('#myModal-check-in-edit').modal('show').on('shown.bs.modal', function () {
-                  
+
                     $('.pageModal').text('Nhận phòng');
-                  
+
                     let totalPrice, total_deposit_amount, total_deposit_discount = 0;
                     var tbody = $('#list-booking-edit-letan');
                     tbody.empty();
@@ -690,8 +725,19 @@ function initViewScript1() {
     $(document).ready(function () {
         $(document).off("click", ".room_change").on("click", ".room_change", function (e) {
             e.stopPropagation();
-            alert('Đổi phòng');
+            let bookingId = $(this).data('booking-id');
+            let roomId = $(this).data('room-id');
+            let dateId = $(this).data('booking-date');
+            let Id = $(this).data('id');
+            let name = $(this).data('name');
+            changeRoom(Id, bookingId, roomId, dateId, name)
+            $('#changeRoomModal').modal('show');
+            $('#changeRoomModal').on('shown.bs.modal', function () {
+                document.body.classList.add('modal-open');
+                $('#changeRoomModal').addClass('z__index-mod');
+            });
         });
+
         $(document).off("click", ".check_in_data").on("click", ".check_in_data", function (e) {
             e.stopPropagation();
             if ($(e.target).closest('.menu-btn').length > 0) return;
@@ -702,10 +748,12 @@ function initViewScript1() {
                 dataId);
             let dataMethod = $(this).attr("data-method");
             $(".btn-book-pttt").removeAttr("data-method");
-          
+
+            $('[id="select-option-pttt_error1"]').text('');
+            $('[id="input_pttt_error"]').text('');
+
             $('[id="date-book-room-booking-edit"]').val(formattedDates);
             if (dataMethod == 'payment') {
-                
                 $('.booking-form-pttt').attr('action', paymentRoomUrl);
                 $('[id="select-option-pttt-main"]').show();
                 $('[id="select-option-pttt"]').show();
@@ -717,13 +765,14 @@ function initViewScript1() {
             }
             // $('[id="date-book-room-booking"]').val(formattedDates);
             // $('[id="time-book-room-booking"]').val(formattedTimes);
-            
+
             $.ajax({
                 url: url,
                 type: 'POST',
                 data: {
                     method: 'LETAN',
                     id: Id,
+                    key: 'LETAN',
                 },
                 success: function (response) {
                     if (response.status == 'success') {
@@ -1206,7 +1255,27 @@ function initViewScript1() {
                 }
             });
         });
+        $(document).off("click", ".check_in_now").on("click", ".check_in_now", function (e) {
+            e.stopPropagation();
+            let roomId = $(this).attr("data-room-id");
+            let roomType = $(this).attr("data-room-type-id");
+            $(".btn-book").attr("data-method", "check_in");
+            let data = {
+                room: roomId,
+                room_type: roomType,
+                date: formattedDates,
+                method: 'CHECKIN'
+            }
+            checkRoomBooking(data);
+        });
         $(document).off("click", ".room-booked").on("click", ".room-booked", function (e) {
+            $(".btn-dat-truoc.btn-book").each(function () {
+                // Kiểm tra nếu có thuộc tính data-method là 'check_in'
+                if ($(this).attr("data-method") === "check_in") {
+                    // Xóa thuộc tính data-method
+                    $(this).removeAttr("data-method");
+                }
+            });
             if ($(e.target).closest('.menu-btn').length > 0) return;
             let roomId = $(this).attr("data-room-id");
             let roomType = $(this).attr("data-room-type-id");
@@ -1215,7 +1284,158 @@ function initViewScript1() {
                 room_type: roomType,
                 date: formattedDates,
             }
-          //  $('.booking-form').attr('action', roomBook);
+            //  $('.booking-form').attr('action', roomBook);
+            checkRoomBooking(data)
+        });
+        $(document).on('click', '.change-booking-room', function () {
+            let selectedRoom = $('input[name="change-room"]:checked'); // Lấy radio đã chọn
+            if (selectedRoom.length === 0) {
+                notify('error', 'Vui lòng chọn phòng');
+                return;
+            }
+            let roomId = selectedRoom.data('id');
+            let roomTypeId = selectedRoom.data('room_type_id');
+            let date = selectedRoom.data('date');
+
+            let roomNew = {
+                room_id: roomId,
+                room_type_id: roomTypeId,
+                date: date
+            }
+            // Xóa các input cũ để tránh trùng lặp
+            $('#btn-change-booking-room input[name="room_id_new"]').remove();
+            $('#btn-change-booking-room input[name="room_type_id_new"]').remove();
+            $('#btn-change-booking-room input[name="date_new"]').remove();
+
+            $('#btn-change-booking-room').append(`
+                <input type="hidden" name="room_id_new" value="${roomNew.room_id}">
+                <input type="hidden" name="room_type_id_new" value="${roomNew.room_type_id}">
+                <input type="hidden" name="date_new" value="${roomNew.date}">
+            `);
+            $('#btn-change-booking-room').submit();
+
+        });
+        $('#btn-change-booking-room').on('submit', function (e) {
+            e.preventDefault();
+            let formData = $(this).serializeArray();
+            let formObject = {};
+            formData.forEach(function (field) {
+                formObject[field.name] = field.value;
+            });
+            formData.push({
+                name: 'choice',
+                value: 'room_booking',
+            });
+            let url = $(this).attr('action');
+            $.ajax({
+                type: "POST",
+                url: url,
+                data: formData,
+                success: function (response) {
+                    if (response.status === 'success') {
+                        notify('success', response.data);
+                        $('#changeRoomModal').modal('hide');
+                        let selectedDate = $('#startDate').val();
+                        initGridMain('', selectedDate);
+                    }
+                    //  else {
+                    //     notify('error', response.message);
+                    //     // changeRoom(Id, bookingId, roomId, dateId);
+                    // }
+                },
+            });
+
+        });
+        function formatDatee(inputDate) {
+            // Chia chuỗi ngày thành các phần tử: năm, tháng, ngày
+            var parts = inputDate.split('-');
+            // Định dạng lại chuỗi ngày
+            var formattedDate = parts[2] + '/' + parts[1] + '/' + parts[0];
+            return formattedDate;
+        }
+        function changeRoom(Id, bookingId, roomId, dateId, name) {
+            $('#loading').show();
+            $.ajax({
+                url: showRoomUrl,
+                type: 'POST',
+                data: {
+                    Id: Id,
+                    bookingId: bookingId,
+                    roomId: roomId,
+                    dateId: dateId,
+                    method: 'change_room',
+                },
+                success: function (data) {
+                    // <p data-id="${ item.id }" data-room_type_id="${ item.room_type_id }" class="add-book-room" id="add-book-room">Đặt phòng</p>
+                    var tbody = $('#show-room-change');
+
+                    if (data.status === 'success') {
+                        const dataNew = Object.values(data.data);
+                        let seenRooms = new Set();
+                        tbody.empty();
+                        dataNew.forEach(function (item) {
+                            let rowClass = '';
+                            let isFirst = !seenRooms.has(item.room_number);
+                            seenRooms.add(item.room_number);
+                            // Nếu không phải bản ghi đầu tiên, đặt class theo trạng thái
+                            if (!isFirst) {
+
+                                if (item.check_booked === 'Đã nhận') {
+                                    rowClass = "background-red";
+                                } else if (item.check_booked === 'Đã đặt') {
+                                    rowClass = 'background-yellow';
+                                } else if (item.check_booked === 'Trống') {
+                                    rowClass = "background-primary";
+                                }
+                            } else {
+                                if (item.check_booked === 'Đã nhận') {
+                                    rowClass = "background-red";
+                                } else if (item.check_booked === 'Đã đặt') {
+                                    rowClass = 'background-yellow';
+                                } else if (item.check_booked === 'Trống') {
+                                    rowClass = "background-primary";
+                                }
+                                else {
+                                    rowClass = "background-white";
+                                }
+                            }
+                            let firstRowClass = isFirst ? "first-row" : "";
+                            var tr = `
+                                <tr class="${firstRowClass}">
+                                    <td style="${isFirst ? 'font-weight: bold;' : ''}" class="text-left"> ${item.room_type['name']} </td>
+                                    <td style="${isFirst ? 'font-weight: bold;' : ''}"class="text-left"> ${item.room_number} </td>
+                                    <td style="${isFirst ? 'font-weight: bold;' : ''}"class="text-left"> ${formatDatee(item.date)} </td>
+                                    <td style="${isFirst ? 'font-weight: bold;' : ''}"class="text-left w-10  ${rowClass} "> ${item.check_booked} </td>
+                                    <td style="${isFirst ? 'font-weight: bold;' : ''}"class="text-right"> ${formatCurrency(item.room_type.room_type_price['unit_price'])} </td>
+                                    <td class="text-center">
+                                        <input type="radio" name="change-room" ${item.status == 1 ? 'disabled' : ''}
+                                            data-date="${item.date}"
+                                            data-id="${item.id}"
+                                            data-room_type_id="${item.room_type_id}" 
+                                            id="checkbox-${item.id}">
+                                    </td>
+                                </tr>
+                            `;
+                            tbody.append(tr);
+
+                        });
+                        $('.room-number').text(`${data.room_number['room_number']}`);
+                        $('.date').text(` ${data.dateBookingRoomOld}`);
+                        $('#room_old').val(data.roomId);
+                        $('#booking_id').val(data.bookingId);
+                        $('.customer-name').text(name);
+                        $('.booking-id').text(data.bookingId);
+                        $('#id').val(data.id);
+                    }
+                    $('#loading').hide();
+                },
+                error: function (error) {
+                    $('#loading').hide();
+                    console.log('Error:', error);
+                }
+            });
+        }
+        function checkRoomBooking(data) {
             $.ajax({
                 url: checkRoomBookingUrl,
                 type: 'POST',
@@ -1227,8 +1447,8 @@ function initViewScript1() {
                     var tbody = $('#list-booking');
                     $('#list-booking-edit').empty();
                     $('#list-booking-edit-letan').empty();
-                    $('#name').empty();
-                    $('#phone').empty();
+                    $('[id="name"]').val('');
+                    $('[id="phone"]').val('');
                     tbody.empty();
                     if (response.status === 'success') {
                         const seenRooms = new Set();
@@ -1262,8 +1482,10 @@ function initViewScript1() {
                                         `<option value="${data.source_code}">${data.source_name}</option>`;
                                 }
                             });
+
                             selected_customer_source.append(option);
                             let date = new Date(item.date);
+                            let timeBookRoom = "";
                             date.setDate(date.getDate() + 1);
                             const roomId = item.room["id"];
                             const roomTypeId = item.room_type["id"];
@@ -1274,7 +1496,14 @@ function initViewScript1() {
                                 return;
                             }
                             seenRooms.add(key);
+                            console.log();
 
+                            if (response.title != "") {
+                                $('.title-check-in').text(response.title);
+                                timeBookRoom = formattedTimes;
+                            } else {
+                                timeBookRoom = item.room['room_type']['room_type_price']['setup_pricing']['check_in_time'];
+                            }
                             var tr = `
                         <tr  data-status="0" data-room-id="${roomId}"  data-room-type-id="${roomTypeId}" data-date="${item.date}">
                             <td>
@@ -1298,7 +1527,7 @@ function initViewScript1() {
                                 <div class="d-flex align-items-center justify-content-start" style="gap: 3px">
                                     <input type="date" name="checkInDate" id="date-book-room" class="form-control date-book-room"  value="${item.date}" readonly>
 
-                                    <input type="time" name="checkInTime" id="time-book-room" class="form-control time-book-room"   value="${item.room['room_type']['room_type_price']['setup_pricing']['check_in_time']}">
+                                    <input type="time" name="checkInTime" id="time-book-room" class="form-control time-book-room"   value="${timeBookRoom}">
                                 </div>
                             </td>
                             <td>
@@ -1391,7 +1620,7 @@ function initViewScript1() {
                     console.log('Error:', error);
                 }
             });
-        });
+        }
         $('.delete-room-booking-edit-letan').on('click', function () {
             let selectedBookingIds = [];
             Swal.fire({
@@ -1482,10 +1711,31 @@ function initViewScript1() {
             }
         });
     });
+
 }
 $('.btn-book-pttt').off('click').on('click', function (e) {
     e.preventDefault();
+    function validator(selectedOption, inputPtttValue) {
+        let isValid = true;
 
+        // Reset lỗi cũ
+        $('#select-option-pttt_error1').text('');
+        $('#input_pttt_error').text('');
+
+        // Kiểm tra chọn phương thức thanh toán
+        if (selectedOption === '') {
+            $('#select-option-pttt_error1').text('Vui lòng chọn phương thức thanh toán');
+            isValid = false;
+        }
+
+        // Kiểm tra ô nhập số tiền
+        if (!inputPtttValue || inputPtttValue.trim() === '') {
+            $('#input_pttt_error').text('Vui lòng nhập số tiền');
+            isValid = false;
+        }
+
+        return isValid;
+    }
     const selectedOption = $('#select-option-pttt-main').val();
     const inputPtttValue = $('#input_pttt').val();
     const dataMethod = $(this).data('method');
@@ -1539,6 +1789,191 @@ function getDatesBetween(checkInDate, checkInTime, checkOutDate, checkOutTime, r
     }
     return dates;
 }
+function filterItems(category) {
+    currentFilter = category;
+    document.querySelectorAll('.btn-group .btn').forEach(btn => btn.classList.remove('active'));
+    event.target.classList.add('active');
+    const allItems = document.querySelectorAll('#productList .col');
+    allItems.forEach(item => {
+        if (category === 'Tất cả') {
+            item.style.display = 'block'; // Hiện hết
+        } else if (item.classList.contains(category)) {
+            item.style.display = 'block'; // Hiện đúng loại được chọn
+        } else {
+            item.style.display = 'none'; // Ẩn loại không được chọn
+        }
+    });
+}
+
+
+const productList = document.getElementById('productList');
+const selectedItemsBox = document.getElementById('selectedItems');
+const searchInput = document.getElementById('searchInput');
+
+let currentFilter = 'Tất cả';
+let selectedItems = [];
+
+function renderList(data) {
+    if (!Array.isArray(data)) {
+        console.warn('renderList nhận data không hợp lệ:', data);
+        return;
+    }
+
+    const search = searchInput.value?.toLowerCase() ?? '';
+    
+    if (data.length > 0) {
+        const filtered = data.filter(item =>
+            (currentFilter === 'Tất cả' || item.category === currentFilter) &&
+            item.name.toLowerCase().includes(search)
+        );
+
+        productList.innerHTML = filtered.map(item => `
+            <div class="col ${item.type}">
+              <div class="service-product-item" onclick='selectItem(${JSON.stringify(item)})'>
+                <img src="#" class="service-product-img">
+                <div><strong>${item.name}</strong></div>
+                <div>${formatCurrency(item.price)}</div>
+              </div>
+            </div>
+        `).join('');
+    } else {
+        productList.innerHTML = '<p>Không có dữ liệu.</p>';
+    }
+}
+
+window.selectItem = function (item) {
+    const existing = selectedItems.find(i => i.name === item.name);
+    if (existing) {
+        existing.quantity += 1;
+    } else {
+        selectedItems.push({ ...item, quantity: 1 });
+    }
+    renderSelected();
+}
+function renderSelected() {
+  
+    
+    if (selectedItems.length === 0) {
+        selectedItemsBox.innerHTML = '<div class="text-muted">Chưa có dịch vụ, sản phẩm</div>';
+        return;
+    }
+    selectedItemsBox.innerHTML = selectedItems.map((item, index) => `
+        <div class="row align-items-center border rounded p-2 mb-2 bg-white gx-2" data-id="${item.id}" data-type="${item.type}">
+          <div class="col-md-4 fw-bold text-dark">${item.name}</div>
+          <div class="col-md-2 text-end text-primary no-wrap">${formatCurrency(item.price)}</div>
+          <div class="col-md-4 d-flex align-items-center justify-content-center gap-1">
+            <button class="btn btn-sm btn-outline-secondary" onclick="changeQty(${index}, -1)">-</button>
+            <input type="number" min="1" value="${item.quantity}" onchange="updateQty(${index}, this.value)" class="form-control form-control-sm text-center" style="width: 60px;">
+            <button class="btn btn-sm btn-outline-secondary" onclick="changeQty(${index}, 1)">+</button>
+          </div>
+          <div class="col-md-2 text-center">
+            <button class="btn btn-sm btn-outline-danger" onclick="removeItem(${index})">✕</button>
+          </div>
+        </div>
+      `).join('');
+}
+
+window.updateQty = function (index, qty) {
+    let quantity = parseInt(qty);
+    if (isNaN(quantity) || quantity < 1) quantity = 1;
+    selectedItems[index].quantity = quantity;
+    renderSelected();
+}
+
+window.changeQty = function (index, delta) {
+    let newQty = selectedItems[index].quantity + delta;
+    if (newQty < 1) newQty = 1;
+    selectedItems[index].quantity = newQty;
+    renderSelected();
+}
+
+window.removeItem = function (index) {
+    selectedItems.splice(index, 1);
+    renderSelected();
+}
+
+searchInput.addEventListener('input', renderList);
+renderList();
+
+let debounceTimer;
+$('#searchServiceInput').on('input', function () {
+    const value = $(this).val();
+
+    clearTimeout(debounceTimer); // xóa timer cũ nếu người dùng vẫn đang gõ
+
+    debounceTimer = setTimeout(function () {
+        $.ajax({
+            url: getAllService,
+            type: 'GET',
+            data: {
+                search: value,
+            },
+            success: function (data) {
+                if (data.status === 'success') {
+                    renderList(data.data)
+                }
+            },
+            error: function (error) {
+                $('#loading').hide();
+                console.log('Error:', error);
+            }
+        });
+    }, 300); // chờ 300ms sau lần gõ cuối cùng
+});
+$('.btn-add-service').on('click', function () {
+    let grouped = {
+        premium_service: [],
+        product: [],
+        checkin_id: $('#check_in_id_service').val(),
+        room_code: $('#room_code_service').val(),
+    };
+
+    $('#selectedItems .row').each(function () {
+        const type = $(this).data('type');
+        const id = $(this).data('id');
+        const qty = $(this).find('input[type="number"]').val();
+
+        // Lấy giá từ cột thứ 2 (có class text-primary), bỏ "VND" và dấu chấm
+        let priceText = $(this).find('.text-primary').text().trim(); // VD: "30.000 VND"
+        let price = parseInt(priceText.replace(/\./g, '').replace(/[^0-9]/g, ''));
+
+        if (grouped[type]) {
+            grouped[type].push({
+                id: id,
+                quantity: parseInt(qty),
+                price: price
+            });
+        } else {
+            grouped[type] = [{
+                id: id,
+                quantity: parseInt(qty),
+                price: price
+            }];
+        }
+    });
+
+    $.ajax({
+        url: storeService,
+        type: 'POST',
+        data: {
+            data: grouped,
+        },
+        success: function (data) {
+            if (data.status === 'success') {
+                notify('success', data.message);
+                $('#serviceModal').modal('hide');
+            }
+
+        },
+        error: function (error) {
+            $('#loading').hide();
+            console.log('Error:', error);
+        }
+    });
+});
+
+
+
 $('.booking-form-pttt').on('submit', function (e) {
     e.preventDefault();
     let formData = $(this).serializeArray();

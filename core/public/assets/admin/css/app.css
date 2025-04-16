@@ -3153,7 +3153,9 @@ label {
 .form-group {
     margin-bottom: 15px;
 }
-
+.no-wrap {
+    white-space: nowrap;
+  }
 input:not([type="radio"]),
 textarea {
     padding: 10px 20px;

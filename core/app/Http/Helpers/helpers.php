@@ -349,7 +349,7 @@ function saveRoomStatusHistory($room_id, $start_date, $end_date, $status_code)
                         ->where('end_date', '>=', $end_date);
                 });
         })
-    ->get();
+        ->get();
 
     if ($existingRecords->isNotEmpty()) {
         $existingRecords->each(function ($record) use ($status_code, $start_date, $end_date) {
@@ -357,7 +357,7 @@ function saveRoomStatusHistory($room_id, $start_date, $end_date, $status_code)
                 'start_date'  => $start_date,
                 'end_date'    => $end_date,
                 'status_code' => $status_code
-        ]);
+            ]);
         });
     } else {
         RoomStatusHistory::create([
@@ -370,7 +370,8 @@ function saveRoomStatusHistory($room_id, $start_date, $end_date, $status_code)
         ]);
     }
 }
-function savePayment($booking_id, $checkin_id, $room_price, $deposit_amount, $discount_amount, $total_payment, $payment_method){
+function savePayment($booking_id, $checkin_id, $room_price, $deposit_amount, $discount_amount, $total_payment, $payment_method)
+{
     ReceiptAndPayment::create([
         'booking_id'       => $booking_id,
         'checkin_id'       => $checkin_id,
@@ -382,7 +383,6 @@ function savePayment($booking_id, $checkin_id, $room_price, $deposit_amount, $di
         'created_date'     => now(),
         'unit_code'        => hf('ma_coso')
     ]);
-       
 }
 function fileUploader($file, $location, $size = null, $old = null, $thumb = null, $filename = null)
 {

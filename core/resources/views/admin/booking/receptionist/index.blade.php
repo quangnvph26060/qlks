@@ -18,15 +18,18 @@
             <div class="search-container">
                 <!-- Dropdown (Bên trái) -->
                 <div class="dropdown" style="position: relative; display: inline-block;">
-                    <button class="btn btn-primary" type="button" id="dropdownMenuButton">
+                    <button class="btn btn-primary demo" type="button" id="dropdownMenuButton">
                         Mã kênh bán
                     </button>
                     <ul class="dropdown-menu custom-dropdown"
                         style="display: none; position: absolute; z-index: 999; top: 100%; left: 0;">
-                        <li><a class="dropdown-item" href="#" data-type="room">Tên phòng</a></li>
-                        <li><a class="dropdown-item" href="#" data-type="customer">Khách hàng</a></li>
-                        <li><a class="dropdown-item" href="#" data-type="booking">Mã đặt phòng</a></li>
-                        <li><a class="dropdown-item active" href="#" data-type="channel">Mã kênh bán</a></li>
+                        <li><a class="dropdown-item click-dropdown-item" href="#" data-type="room">Tên phòng</a></li>
+                        <li><a class="dropdown-item click-dropdown-item" href="#" data-type="customer">Khách hàng</a>
+                        </li>
+                        <li><a class="dropdown-item click-dropdown-item" href="#" data-type="booking">Mã đặt phòng</a>
+                        </li>
+                        <li><a class="dropdown-item click-dropdown-item active" href="#" data-type="channel">Mã kênh
+                                bán</a></li>
                     </ul>
                 </div>
 
@@ -142,6 +145,8 @@
         @include('admin.booking.partials.customer_booked')
         @include('admin.booking.partials.room_booking_edit')
         @include('admin.booking.partials.room_booking')
+        @include('admin.booking.partials.change_room_booking')
+        @include('admin.booking.partials.modal_service')
         <div class="modal fade" id="myModal-check-in-edit" tabindex="-1" role="dialog"
             aria-labelledby="myModalLabel-booking" aria-hidden="true">
 
@@ -539,7 +544,9 @@
     var findRoomBookingIdUrl = '{{ route('admin.find.room.booking') }}';
     var CheckInUrl = "{{ route('admin.room.booked.check.in') }}";
     var roomBook = "{{ route('admin.room.book') }}";
-    var cleanRoomUrl = "{{ route('admin.roomclean.booking.roomclean') }}"
+    var cleanRoomUrl  = "{{ route('admin.roomclean.booking.roomclean') }}"
+    var getAllService = "{{ route('admin.hotel.premium.service.get-all-service') }}";
+    var storeService  = "{{ route('admin.hotel.premium.service.store-service') }}";
 
     const date_booking = new Date();
     const date_yyyy = date_booking.getFullYear();
@@ -571,9 +578,9 @@
         });
 
         // Khi chọn tiêu chí tìm kiếm
-        $(document).on("click", ".dropdown-item", function(e) {
+        $(document).on("click", ".click-dropdown-item", function(e) {
             e.preventDefault();
-            $(".dropdown-item").removeClass("active");
+            $(".click-dropdown-item").removeClass("active");
             $(this).addClass("active");
 
             let selectedType = $(this).data("type");
@@ -614,19 +621,20 @@
             });
             $("input[name='room_status']:checked").each(function() {
                 selectedValuesRoomStatus.push($(this).data("id"));
-            });         
+            });
             const data = {
-                date:           formattedDates,
-                room_clean:     selectedValuesClean,
-                room_type:      selectedValuesRoomType,
-                room_status:    selectedValuesRoomStatus,
+                date: formattedDates,
+                room_clean: selectedValuesClean,
+                room_type: selectedValuesRoomType,
+                room_status: selectedValuesRoomStatus,
             };
             initGridMain(data);
             $('.filter-sidebar').removeClass('open');
             $('.overlay').removeClass('show');
         });
         $('#btn-clear-fillter').on("click", function() {
-            $("input[name='room_clean'], input[name='room_type']").prop("checked", false);
+            $("input[name='room_clean'], input[name='room_type'], input[name='room_status']").prop(
+                "checked", false);
         });
 
         function updateFilterDot() {
@@ -930,10 +938,19 @@
         // add
         $('.btn-book').on('click', function() {
             const dataRowValue = $(this).data('row');
-            $('.booking-form').data('row', dataRowValue);
-            if (validateAllFields(validatorForm)) {
-                $('.booking-form').submit(); // Gửi form
+            const method = $(this).data('method');
+
+            if (method == "check_in") {
+                $('.booking-form').data('method', 'check_in');
+                $('.booking-form').submit();
+            } else {
+                $('.booking-form').data('row', dataRowValue);
+                $('.booking-form').data('method', 'booked_room');
+                if (validateAllFields(validatorForm)) {
+                    $('.booking-form').submit(); // Gửi form
+                }
             }
+
         });
         $('.booking-form').on('submit', function(e) {
             e.preventDefault();
@@ -1006,9 +1023,10 @@
                         });
                     });
                 })
+                const methodValue = $(this).data('method') || 'default_value';
                 formData.push({
                     name: 'method',
-                    value: 'booked_room',
+                    value: methodValue,
                 });
 
                 // formData.push({
