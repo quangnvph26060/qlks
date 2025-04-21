@@ -22,11 +22,12 @@ class ReceiptAndPayment extends Model
         'total_payment',
         'payment_method',
         'created_date',
-        'unit_code'
+        'unit_code',
+        'room_code'
     ];
     public function getDueAttribute()
     {
-        return $this->room_price - $this->deposit_amount - $this->discount_amount - $this->total_payment;
+        return $this->room_price  + $this->service_fee - $this->deposit_amount - $this->discount_amount - $this->total_payment;
     }
     
 }

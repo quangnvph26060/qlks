@@ -55,11 +55,14 @@ class CheckIn extends Model
     public function getRoomChangeInfoAttribute() {
         if($this->room_change != null) {
             return RoomChange::where('id_check_in', $this->check_in_id)
-                ->where('new_room_code', $this->room_change)->with('room') ->orderBy('updated_at', 'desc')
+                ->where('new_room_code', $this->room_change)->with('room')->orderBy('updated_at', 'desc')
                 ->first();
         }
     }
-    public function checkInPayment(){
-        return $this->hasOne(ReceiptAndPayment::class,'checkin_id','check_in_id');
-    }
+    public function getCheckInPaymentAttribute()
+{
+    return ReceiptAndPayment::where('checkin_id', $this->check_in_id)
+        ->where('room_code', $this->room_code)
+        ->first();
+}
 }

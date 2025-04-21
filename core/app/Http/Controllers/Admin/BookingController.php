@@ -816,6 +816,7 @@ class BookingController extends Controller
 
         $roomData = json_decode($request->data, true);
         $result = [];
+        $lastTimePerRoom = [];
         $totalPrice = 0;
         if (isset($request->method)) {
             $room_type = RoomType::find($roomData['room_type']);
@@ -834,6 +835,17 @@ class BookingController extends Controller
                 ->first();
             $customerSourse = CustomerSource::where('unit_code', unitCode())->get();
             $admin = Admin::where('unit_code', unitCode())->where('role_id', '!=', 0)->get();
+
+            $roomId = $roomData['room'];
+            if (!isset($lastTimePerRoom[$roomId])) {
+                // Nếu là lần đầu gặp phòng này, gán giờ bắt đầu là 11:00
+                $checkinTime = Carbon::now()->setSeconds(0);
+            } else {
+                $checkinTime = $lastTimePerRoom[$roomId]->copy()->addMinutes(1);
+            }
+            $lastTimePerRoom[$roomId] = $checkinTime;
+            $fullCheckinDate = $checkinTime->format('H:i:s');
+
             if ($roomBooking || $checkIn || !$room_type || !$room) {
                 $flag = 'success';
                 $result[] = [
@@ -841,7 +853,8 @@ class BookingController extends Controller
                     'room'                   => $room,
                     'date'                   => $roomData['date'],
                     'admin'                  => $admin,
-                    'customerSourse'         => $customerSourse,
+                    'customerSourse'         => $customerSourse,   
+                    'checkin_datetime'       => $fullCheckinDate
                 ];
             } else {
                 $flag = 'success';
@@ -850,10 +863,12 @@ class BookingController extends Controller
                     'room'                   => $room,
                     'date'                   => $roomData['date'],
                     'admin'                  => $admin,
-                    'customerSourse'         => $customerSourse,
+                    'customerSourse'         => $customerSourse,   
+                    'checkin_datetime'       => $fullCheckinDate
                 ];
             }
         } else {
+         
             foreach ($roomData as $data) {
                 $room_type = RoomType::find($data['room_type']);
 
@@ -869,12 +884,24 @@ class BookingController extends Controller
                     ->whereDate('checkin_date', $data['date'])
                     ->whereNull('room_change')
                     ->first();
+
+                $roomId = $data['room'];
+                if (!isset($lastTimePerRoom[$roomId])) {
+                    // Nếu là lần đầu gặp phòng này, gán giờ bắt đầu là 11:00
+                    $checkinTime = Carbon::now()->setSeconds(0);
+                } else {
+                    $checkinTime = $lastTimePerRoom[$roomId]->copy()->addMinutes(1);
+                }
+                $lastTimePerRoom[$roomId] = $checkinTime;
+                $fullCheckinDate = $checkinTime->format('H:i:s');
+
                 if ($roomBooking || $checkIn || !$room_type || !$room) {
                     $flag = 'success';
                     $result[] = [
                         'room_type' => $room_type,
                         'room'      => $room,
                         'date'      => $data['date'],
+                        'checkin_datetime' => $fullCheckinDate
                     ];
                 } else {
                     $flag = 'success';
@@ -882,16 +909,17 @@ class BookingController extends Controller
                         'room_type' => $room_type,
                         'room'      => $room,
                         'date'      => $data['date'],
+                        'checkin_datetime' => $fullCheckinDate
                     ];
                 }
             }
         }
 
         $title = '';
-        if(isset($roomData['method'])){
+        if (isset($roomData['method'])) {
             $title = 'Nhận phòng';
         }
-        return response()->json(['data' => $result, 'status' => $flag,'title'=> $title]);
+        return response()->json(['data' => $result, 'status' => $flag, 'title' => $title]);
     }
 
 
@@ -904,7 +932,7 @@ class BookingController extends Controller
     }
     public function roomBoookingHistory(Request $request)
     {
-        
+
         $date        = request('date') ?? data_get($request->data, 'date'); // Lấy ngày từ request
         $method      = data_get($request->data, 'searchType');
         $value       = data_get($request->data, 'searchValue');
@@ -973,63 +1001,100 @@ class BookingController extends Controller
 
     public function paymentRoom(Request $request)
     {
-
-        $receipt  = ReceiptAndPayment::where('checkin_id', $request->id_room_booking)->first();
-        $check_ins = CheckIn::where('check_in_id', $request->id_room_booking)->get();
+        $roomJson = $request->room[0]; // đây là chuỗi JSON
+        $roomData = json_decode($roomJson, true); // chuyển thành mảng PHP
+         
+        $totalService = str_replace('.', '', $request->total_service);
+        $totalService = (int)$totalService;
+        $roomId = $roomData['room']; // lấy room
+        $receipt  = ReceiptAndPayment::where('checkin_id', $request->id_room_booking)->where('room_code',$roomId)->first();
+        // $check_ins = CheckIn::where('check_in_id', $request->id_room_booking)->get();
+        $checkIns = CheckIn::where('check_in_id', $request->id_room_booking)->where('room_code',$roomId)->get();
         $amount = str_replace('.', '', $request->input_pttt);
         $amount = (int)$amount;
+        $deposit = str_replace('.', '', $request->deposit);
+        $deposit = (int)$deposit;
+        if($amount <= 0) {
+            return response()->json([
+                'status'=> 'error',
+                'msg'   => 'Vui lòng nhập số tiền thanh toán',
+            ]);
+        }
         if ($receipt) {
             $receipt->update([
                 'total_payment'   =>  $receipt->total_payment + $amount,       // hoặc giá trị bạn muốn gán
                 'payment_method'  => $request->payment_pttt,      // hoặc giá trị bạn muốn gán
+                'service_fee'     => $totalService,
+                'deposit_amount'  => $deposit,              // đặt cọc
             ]);
 
             $due = $receipt->due;
-            if ($due == 0 && $check_ins->count()){
+            Log::info( $due );
+            if ($due == 0 && $checkIns->count()) {
 
-                foreach ($check_ins as $check_in) {
-                    saveRoomStatusHistory($check_in->room_code, $check_in->checkin_date, $check_in->checkout_date, 1);
+                foreach ($checkIns as $check_in) {
+                    if ($check_in->room_change != null) {
+                        saveRoomStatusHistory($check_in->room_change, $check_in->checkin_date, $check_in->checkout_date, 1);
+                    } else {
+                        saveRoomStatusHistory($check_in->room_code, $check_in->checkin_date, $check_in->checkout_date, 1);
+                    }
                 }
-                return response()->json(['status'=>'success', 'success' => 'Trả phòng thành công']);
+                return response()->json(['status' => 'success', 'success' => 'Trả phòng thành công']);
             }
-                return response()->json(['status'=>'success', 'success' => 'Thanh toán thành công']);
-        }else{
-            $check_in = CheckIn::where('check_in_id', $request->id_room_booking)->first();
-            $receipt =   ReceiptAndPayment::create([
-                'booking_id'       => $request->id_room_booking,
-                'checkin_id'       => $check_in->check_in_id,
-                'room_price'       => $check_in->total_amount,
-                'deposit_amount'   => $check_in->deposit_amount,  // đặt cọc
-                'discount_amount'  => $check_in->discount_amount, // giảm giá
-                'total_payment'    => $amount,   // số tiền  thanh toán
+            return response()->json(['status' => 'success', 'success' => 'Thanh toán thành công']);
+        } else {
+            // Lấy tất cả các bản ghi có cùng check_in_id
+            // Tính tổng total_amount, deposit_amount và discount_amount
+            $totalAmount      = $checkIns->sum('total_amount');
+            $totalDeposit     = $checkIns->sum('deposit_amount');
+            $totalDiscount    = $checkIns->sum('discount_amount');
+            // Tạo phiếu thu chi
+            $receipt = ReceiptAndPayment::create([
+                'booking_id'       => "",
+                'checkin_id'       => $request->id_room_booking, // hoặc chọn 1 ID cụ thể nếu cần
+                'room_price'       => $totalAmount,        // tổng tiền phòng
+                'room_code'        => $roomId,
+                'deposit_amount'   => $totalDeposit,       // tổng đặt cọc
+                'discount_amount'  => $totalDiscount,      // tổng giảm giá
+                'total_payment'    => $amount,             // tổng tiền cần thanh toán
                 'payment_method'   => $request->payment_pttt,
+                'service_fee'      => $totalService,
+                'deposit_amount'   => $deposit, 
                 'created_date'     => now(),
                 'unit_code'        => hf('ma_coso')
             ]);
             $due = $receipt->due;
-            if ($due == 0 && $check_ins){
-                saveRoomStatusHistory($check_in->room_code, $check_in->checkin_date, $check_in->checkout_date, 1);
-                return response()->json(['status'=>'success', 'success' => 'Trả phòng thành công']);
+            Log::info($receipt);
+            Log::info($checkIns);
+            if ($due == 0 && $checkIns) {
+                foreach ($checkIns as $check_in) {
+                    if ($check_in->room_change != null) {
+                        saveRoomStatusHistory($check_in->room_change, $check_in->checkin_date, $check_in->checkout_date, 1);
+                    } else {
+                        saveRoomStatusHistory($check_in->room_code, $check_in->checkin_date, $check_in->checkout_date, 1);
+                    }
+                }
+                return response()->json(['status' => 'success', 'success' => 'Trả phòng thành công']);
             }
-                return response()->json(['status'=>'success', 'success' => 'Thanh toán thành công']);
+            return response()->json(['status' => 'success', 'success' => 'Thanh toán thành công']);
         }
     }
     public function changeCleanRoom(Request $request)
     {
         try {
             $room = Room::where('id', $request->id)->firstOrFail();
-             
+
 
             $room->update(['is_clean' => $room->is_clean == Status::ROOM_CLEAN_ACTIVE ? 0 : 1]);
 
-               $this->logCleanRoomAction($room->id, authAdmin()->id);
-            if($room->is_clean === 1 ){
+            $this->logCleanRoomAction($room->id, authAdmin()->id);
+            if ($room->is_clean === 1) {
                 $msg = 'Phòng ' . $room->room_number . ' đã được làm sạch';
-            } else{
+            } else {
                 $msg = 'Phòng ' . $room->room_number .  ' đã chuyển sang Chưa dọn';
             }
-         
-            return response()->json(['status'=>'success', 'success' => $msg]);
+
+            return response()->json(['status' => 'success', 'success' => $msg]);
         } catch (\Illuminate\Database\Eloquent\ModelNotFoundException $e) {
 
             return ApiResponse::error('error', 404);

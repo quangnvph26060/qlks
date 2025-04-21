@@ -17,6 +17,7 @@ function calculateTotalPrice() {
     let totalDeposit = 0;
     let totalDiscount = 0;
     let payment = 0;
+    let service = 0;
     $('#list-booking, #list-booking-edit, #list-booking-edit-letan').find('p#price').each(function () {
         let priceString = $(this).attr('data-price');
         let price = parseFloat(priceString.replace(' VND', '').replace(',', '.'));
@@ -44,6 +45,13 @@ function calculateTotalPrice() {
             payment += price;
         }
     });
+    $('#list-booking-edit-letan').find('input.total_service').each(function () {
+        let priceString = $(this).val(); // Lấy giá trị nhập trong input
+        let price = parseFloat(priceString.replace(/[,.]/g, '')); // Loại bỏ ký tự không phải số
+        if (!isNaN(price)) {
+            service += price;
+        }
+    });
 
 
     // let pricediscount = 0;
@@ -54,7 +62,7 @@ function calculateTotalPrice() {
     //     pricediscount = isNaN(pricediscount) ? 0 : pricediscount;
     // }
     $('.total_balance').each(function () {
-        $(this).text(formatCurrency(totalPrice - totalDeposit - totalDiscount - payment)); // tiền còn lại
+        $(this).text(formatCurrency((totalPrice - totalDeposit - totalDiscount - payment))); // tiền còn lại
     });
 
     $('.total_amount').each(function () {
@@ -177,7 +185,7 @@ function initGridMain(data, date) {
                     }
                     groupedRooms[item.room_type_id].rooms.push(item);
                 });
-
+                let selectedDate = $('#startDate').val();
                 let roomHTML = "";
                 Object.values(groupedRooms).forEach(group => {
                     roomHTML += `
@@ -198,15 +206,8 @@ function initGridMain(data, date) {
                         if (item.room_booking_history.length > 0 && item.room_booking_history) {
                             item.room_booking_history.forEach(booking => {
                                 status_code = booking.status_code;
+                                if (Array.isArray(booking.check_in_data) && booking.check_in_data.length > 0) {
 
-                                if (Array.isArray(booking.booking_data) && booking.booking_data.length > 0) {
-                                    let matchingBooking = booking.booking_data.find(booking_data => booking_data.room_code == item.id);
-                                    if (matchingBooking) {
-                                        isBooking = matchingBooking; // Lưu bản ghi nếu tìm thấy
-                                        flag = 'room-booking';
-                                    }
-
-                                } else if (booking.check_in_data) {
                                     let room_code = "";
                                     booking.check_in_data.forEach(k => {
                                         //  check liên quan đổi phòng
@@ -215,26 +216,47 @@ function initGridMain(data, date) {
                                         } else {
                                             room_code = k.room_code;
                                         }
-                                        if (room_code == item.id) {
+                                        if (room_code == item.id && k?.checkin_date.split(' ')[0] === selectedDate) {
                                             isBooking = k; // Lưu bản ghi nếu tìm thấy
                                             flag = 'check_in_data';
                                         }
                                     });
 
-                                } else {
+                                }
+                                else if (Array.isArray(booking.booking_data) && booking.booking_data.length > 0) {
+                                    let matchingBooking = booking.booking_data.find(booking_data => booking_data.room_code == item.id);
+                                    if (matchingBooking && matchingBooking?.checkin_date.split(' ')[0] === selectedDate) {
+                                        isBooking = matchingBooking; // Lưu bản ghi nếu tìm thấy
+                                        flag = 'room-booking';
+                                    }
+                                }
+                                else {
                                     isBooking = '';
                                 }
+
+
+
                             });
 
                         }
-                        // console.log(isBooking);
+                        // const button = document.getElementById("add-service-room-booking");
+                        // if(status_code == 3 && isBooking?.checkin_date.split(' ')[0] === selectedDate ){
+                        //     button.dataset.roomId = isBooking?.room_change_info ? isBooking?.room_change_info?.new_room_code : item?.id;
+                        //     button.dataset.coustomer = isBooking?.customer_name ?? "";
+                        //     button.dataset.room = item?.room_number;
+                        //     button.dataset.id = isBooking?.booking_id ?? isBooking?.check_in_id ?? "";
+                        // }
+                     //   console.log(isBooking);
 
                         roomHTML += `
-                        <div class="room-card ${item.status} ${flag}     ${status_code == 2
+                        <div class="room-card ${item.status} ${flag}     
+                        ${status_code == 2 && isBooking?.checkin_date.split(' ')[0] === selectedDate
                                 ? 'bg-yellow'
-                                : status_code == 3
+                                : status_code == 3 && isBooking?.checkin_date.split(' ')[0] === selectedDate
                                     ? 'bg-red'
-                                    : ''}"
+                                    : ''
+                            }"
+                        
                             data-booking-id="${isBooking?.booking_id ?? isBooking?.check_in_id ?? ''}"
                             data-id="${isBooking?.id ?? ''}"
                             data-room-id="${isBooking?.room_code ?? item.id}"
@@ -242,9 +264,9 @@ function initGridMain(data, date) {
            
                             <div class="room-header">
                             <span class="status">${item.is_clean ? "✨ Sạch" : "🚨 Chưa dọn"}</span>
-                                <span class="menu-btn  ${status_code == 2
+                                <span class="menu-btn  ${status_code == 2 && isBooking?.checkin_date.split(' ')[0] === selectedDate
                                 ? 'text-white'
-                                : status_code == 3
+                                : status_code == 3 && isBooking?.checkin_date.split(' ')[0] === selectedDate
                                     ? 'text-white'
                                     : ''}">⋮</span>
                                      <div class="dropdown-menu">
@@ -256,27 +278,34 @@ function initGridMain(data, date) {
                                         data-room-type-id = "${item?.room_type_id}"
                                         data-room-id = "${item?.id}" >Nhận phòng</div>`
                                 : ""}
-                                        ${status_code == 2 ? `<div class="dropdown-item check_in_room"
+                                        ${status_code == 2 && isBooking?.checkin_date.split(' ')[0] === selectedDate ? `<div class="dropdown-item check_in_room"
                                             data-id   = "${isBooking?.room_code}" 
                                             data-date ="${isBooking?.checkin_date}"
                                             data-book ="${isBooking?.booking_id ?? isBooking?.check_in_id ?? ''}">Nhận phòng</div>` : ''
                             }
-                                        ${status_code == 3
+                                        ${status_code == 3 && isBooking?.checkin_date.split(' ')[0] === selectedDate
                                 ? `
                                                 <div class="dropdown-item add_product_service"  
-                                                 data-room-id="${isBooking?.room_change_info ? isBooking?.room_change_info?.new_room_code : item?.id}" 
-                                                 data-coustomer="${isBooking?.customer_name ?? ''}" data-room = "${item?.room_number}" data-id="${isBooking?.booking_id ?? isBooking?.check_in_id ?? ''}">Thêm sản phẩm, dịch vụ</div>
+                                                    data-room-id="${isBooking?.room_change_info ? isBooking?.room_change_info?.new_room_code : item?.id}" 
+                                                    data-coustomer="${isBooking?.customer_name ?? ''}" 
+                                                    data-room = "${item?.room_number}" 
+                                                    data-id="${isBooking?.booking_id ?? isBooking?.check_in_id ?? ''}">
+                                                    Thêm sản phẩm, dịch vụ</div>
+
                                                 <div class="dropdown-item room_change"
-                                                data-id="${isBooking?.id}"
-                                                 data-name="${isBooking?.customer_name ?? ''}"
-                                                 data-room-id="${isBooking?.room_change_info ? isBooking?.room_change_info?.new_room_code : item?.id}"
-                                                 data-booking-id="${isBooking?.booking_id ?? isBooking?.check_in_id ?? ''}"
-                                                 data-booking-date="${formattedDates}"
-                                                >Đổi Phòng</div>
+                                                    data-id="${isBooking?.id}"
+                                                    data-name="${isBooking?.customer_name ?? ''}"
+                                                    data-room-id="${isBooking?.room_change_info ? isBooking?.room_change_info?.new_room_code : item?.id}"
+                                                    data-booking-id="${isBooking?.booking_id ?? isBooking?.check_in_id ?? ''}"
+                                                    data-booking-date="${formattedDates}"
+                                                    >Đổi Phòng</div>
+
                                                 <div class="dropdown-item check_in_data" data-method="payment"   
                                                     data-booking-id="${isBooking?.booking_id ?? isBooking?.check_in_id ?? ''}"
-                                                    data-id="${isBooking?.id ?? ''}"
-                                                    data-room-id="${isBooking?.room_code ?? item.id}"
+                                                    data-id="${isBooking?.id ?? ''}"  
+                                                    data-room = "${item?.room_number}" 
+                                                    data-coustomer="${isBooking?.customer_name ?? ''}" 
+                                                    data-room-id="${isBooking?.room_change_info ? isBooking?.room_change_info?.new_room_code : item?.id}"
                                                     data-room-type-id="${item.room_type_id}">
                                                     Thanh toán</div>`
                                 : ''
@@ -284,16 +313,16 @@ function initGridMain(data, date) {
                                     </div>
                             </div>
                             <div class="room-number-name
-                            ${status_code == 2
+                            ${status_code == 2 && isBooking?.checkin_date.split(' ')[0] === selectedDate
                                 ? 'text-white'
-                                : status_code == 3
+                                : status_code == 3 && isBooking?.checkin_date.split(' ')[0] === selectedDate
                                     ? 'text-white'
                                     : ''}
                              
                             ">${item.room_number}</div>
-                            <div class="room-info    ${status_code == 2
+                            <div class="room-info    ${status_code == 2 && isBooking?.checkin_date.split(' ')[0] === selectedDate
                                 ? 'text-white'
-                                : status_code == 3
+                                : status_code == 3 && isBooking?.checkin_date.split(' ')[0] === selectedDate
                                     ? 'text-white'
                                     : ''}">${isBooking?.customer_name ??
                                     isBooking?.customer_name ?? " "}</div>
@@ -428,6 +457,7 @@ function initViewScript() {
     });
 }
 $(document).ready(initViewScript);
+let selectedItems = [];
 function initViewScript1() {
     const date_booking = new Date();
     const date_yyyy = date_booking.getFullYear();
@@ -438,7 +468,7 @@ function initViewScript1() {
 
     const formattedDates = `${date_yyyy}-${date_mm}-${date_dd}`;
     const formattedTimes = `${date_hour}:${date_minutes}`;
-    $(document).off("click", ".add_product_service").on("click", ".add_product_service", function (e) {
+    $(document).off("click", ".add_product_service, .add-service-booking").on("click", ".add_product_service, .add-service-booking", function (e) {
         e.stopPropagation();
         $('#selectedItems').empty();
         selectedItems = [];
@@ -447,10 +477,27 @@ function initViewScript1() {
             type: 'GET',
             data: {
                 search: "",
+                room_code: $(this).data('room-id'),
+                check_in_id: $(this).data('id'),
             },
             success: function (data) {
                 if (data.status === 'success') {
                     renderList(data.data)
+                    let total_service = 0;
+                    if (data.serviceInRoom && data.serviceInRoom.length > 0) {
+                        selectedItems = data.serviceInRoom.map(item => {
+                            return {
+                                ...item,
+                                quantity: item.quantity,
+                                name: item?.product?.name ?? item?.service?.name,
+                                id: item?.product?.id ?? item?.service?.id,
+                            };
+                        });
+                        renderSelected();
+                    }else{
+                        selectedItemsBox.innerHTML = '<div class="text-muted">Chưa có dịch vụ, sản phẩm</div>';
+                        $('.total_product_service_display').text(0);
+                    }
 
                 }
 
@@ -461,7 +508,7 @@ function initViewScript1() {
             }
         });
 
-        
+
         const modal = new bootstrap.Modal(document.getElementById('serviceModal'));
         $('.service-room-number').text($(this).data("room"));
         $('#room_code_service').val($(this).data("room-id"));
@@ -521,6 +568,7 @@ function initViewScript1() {
         $('#input_pttt_error').text('');
         $('[id="select-option-pttt-main"]').hide();
         $('[id="select-option-pttt"]').hide();
+        $('[id="total_payment_display"]').hide();
         let dataId = $(this).attr("data-id");
         let book = $(this).attr("data-book");
         let date = $(this).attr("data-date");
@@ -601,7 +649,7 @@ function initViewScript1() {
                                         </div>
                                     </td>
                                     <td>
-                                         <p id="price" data-price="${room.total_amount}">${formatCurrency(room.total_amount)}</p>
+                                         <p id="price" class="d-flex justify-content-center" data-price="${room.total_amount}">${formatCurrency(room.total_amount)}</p>
                                     </td>
                                     <td>
                                       <input type="text" class="form-control deposit number-input money-input"
@@ -752,16 +800,28 @@ function initViewScript1() {
             $('[id="select-option-pttt_error1"]').text('');
             $('[id="input_pttt_error"]').text('');
 
+            const button = document.getElementById("add-service-room-booking");
+            button.dataset.roomId = $(this).attr("data-room-id");
+            button.dataset.coustomer = $(this).attr("data-coustomer");
+            button.dataset.room = $(this).attr("data-room");
+            button.dataset.id = $(this).attr("data-booking-id");
+
+
+
             $('[id="date-book-room-booking-edit"]').val(formattedDates);
             if (dataMethod == 'payment') {
                 $('.booking-form-pttt').attr('action', paymentRoomUrl);
                 $('[id="select-option-pttt-main"]').show();
                 $('[id="select-option-pttt"]').show();
+                $('[id="total_payment_display"]').show();
+                $('#add-service-room-booking').show();
                 $('#input_pttt').val('');
             } else {
                 $('.booking-form-pttt').attr('action', checkInUpdateUrl);
                 $('[id="select-option-pttt-main"]').hide();
                 $('[id="select-option-pttt"]').hide();
+                $('#add-service-room-booking').hide();
+                $('[id="total_payment_display"]').hide();
             }
             // $('[id="date-book-room-booking"]').val(formattedDates);
             // $('[id="time-book-room-booking"]').val(formattedTimes);
@@ -776,6 +836,7 @@ function initViewScript1() {
                 },
                 success: function (response) {
                     if (response.status == 'success') {
+                        let total_service = 0;
                         var selected_customer_source = $('#select-customer-source-edit-letan');
 
                         selected_customer_source.empty();
@@ -822,7 +883,7 @@ function initViewScript1() {
                                     checkoutTime = checkoutTime.slice(0, 5);
                                     total_deposit_amount += parseFloat(room.deposit_amount);
                                     total_deposit_discount += parseFloat(room.discount);
-
+                                    total_service = room.total_service; // tổng tiền dịch vụ
 
                                     var tr = `
                                         <tr data-room-id="${room.room_id}"
@@ -861,7 +922,7 @@ function initViewScript1() {
                                                 </div>
                                             </td>
                                             <td>
-                                                <p id="price" data-price="${room.total_amount}">${formatCurrency(room.total_amount)}</p>
+                                                <p id="price" class="d-flex justify-content-center" data-price="${room.total_amount}">${formatCurrency(room.total_amount)}</p>
                                             </td>
                                             <td>
                                                 <input type="text" class="form-control deposit number-input money-input"  name="deposit" value="${formatCurrencyEdit(room.deposit_amount)}" placeholder="0">
@@ -875,7 +936,9 @@ function initViewScript1() {
                                             <td class="d-none">
                                                 <input type="text" name="payment" class="form-control money-input payment" value="${formatCurrencyEdit(room.payment)}" id="payment">
                                             </td>
-    
+                                            <td class="d-none">
+                                                <input type="text" name="total_service" class="form-control money-input total_service" value="${formatCurrencyEdit(room.total_service ?? 0)}" id="total_service">
+                                            </td>
                                         </tr>
                                     `;
                                     tbody.append(tr);
@@ -883,6 +946,11 @@ function initViewScript1() {
                             });
                             totalPrice = calculateTotalPrice();
                             $('#date-book-room-booking-edit').val(formattedDates)
+                            // tổng tiền dịch vụ 
+                            let intValueService = parseInt($('#total_service').val().replace(/\./g, ''));
+
+
+                            $('.total_service_display').text(formatCurrency(intValueService));
 
 
 
@@ -925,8 +993,8 @@ function initViewScript1() {
 
                                 let paymentString = $('.total_payment').text();
                                 let total_payment = parseInt(paymentString.replace(/\./g, '')) || 0;
-
-                                totalBalance = totalPrice - rowTotal - price - total_payment;
+                                let totalSerive = parseInt(total_service);
+                                totalBalance = totalPrice - rowTotal - price - total_payment + totalSerive;
                                 $('.total_balance').text(formatCurrency(totalBalance));
                                 //  $('.total_deposit').text(formatCurrency(price));
                             }
@@ -945,17 +1013,31 @@ function initViewScript1() {
                                     });
                                 });
 
+                                let total_deposit = $('.total_deposit').text();
+                                let total_deposit_price = parseInt(total_deposit.replace(/\./g, '')) || 0;
+
+                                if (total_deposit_price == rowTotal) {
+                                    return;
+                                }
                                 $('.total_deposit').text(formatCurrency(rowTotal));
 
                                 let priceString = $('.total_discount').text();
                                 let price = parseInt(priceString.replace(/\./g, ""), 10);
                                 price = isNaN(price) ? 0 : price;
-
+                                // tiền phòng
                                 let total_amount = $('.total_amount').text();
                                 let total_amount_price = parseInt(total_amount.replace(/\./g, '')) || 0;
                                 total_amount_price = isNaN(total_amount_price) ? 0 : total_amount_price;
-
-                                totalBalance = total_amount_price - rowTotal - price;
+                                // giảm giá
+                                let total_discount = $('.total_discount').text();
+                                let total_discount_price = parseInt(total_discount.replace(/\./g, '')) || 0;
+                                // đã thanh toán
+                                let total_payment = $('.total_payment').text();
+                                let total_payment_price = parseInt(total_payment.replace(/\./g, '')) || 0;
+                                // tiên dich vụ
+                                let total_service = $('.total_service_display').text();
+                                let total_service_price = parseInt(total_service.replace(/\./g, '')) || 0;
+                                totalBalance = total_amount_price + total_service_price - rowTotal - price - total_discount_price - total_payment_price;
                                 $('.total_balance').text(formatCurrency(totalBalance));
                             });
 
@@ -968,6 +1050,11 @@ function initViewScript1() {
                                         rowTotal += numericDeposit;
                                     });
                                 });
+                                let total_payment = $('.total_payment').text();
+                                let total_payment_price = parseInt(total_payment.replace(/\./g, '')) || 0;
+                                if (total_payment_price == rowTotal) {
+                                    return;
+                                }
                                 $('.total_discount').text(formatCurrency(rowTotal));
                                 let priceString = $('.total_deposit').text();
 
@@ -976,11 +1063,22 @@ function initViewScript1() {
                                 let total_amount = $('.total_amount').text();
                                 let total_amount_price = parseInt(total_amount.replace(/\./g, '')) || 0;
                                 total_amount_price = isNaN(total_amount_price) ? 0 : total_amount_price;
-                                totalBalance = total_amount_price - rowTotal - price;
+                                // giảm giá
+                                let total_discount = $('.total_discount').text();
+                                let total_discount_price = parseInt(total_discount.replace(/\./g, '')) || 0;
+                                // đã thanh toán
+
+                                // tiên dich vụ
+                                let total_service = $('.total_service_display').text();
+                                let total_service_price = parseInt(total_service.replace(/\./g, '')) || 0;
+
+                                // tính số dư 
+                                totalBalance = total_amount_price - rowTotal - price - total_discount_price - total_payment_price + total_service_price;
 
 
                                 $('.total_balance').text(formatCurrency(totalBalance));
                             });
+                            // khách thanh toán
                             $(document).on('blur', 'input.css-main-input-pttt', function () {
                                 let rowTotal = 0;
 
@@ -1006,8 +1104,11 @@ function initViewScript1() {
 
                                 let total_payment = $('.total_payment').text();
                                 let total_payment_price = parseInt(total_payment.replace(/\./g, '')) || 0;
+                                // tiên dich vụ
+                                let total_service = $('.total_service_display').text();
+                                let total_service_price = parseInt(total_service.replace(/\./g, '')) || 0;
                                 // Tính số dư
-                                let totalBalance = total_amount_price - rowTotal - price - total_discount_price - total_payment_price;
+                                let totalBalance = total_amount_price - rowTotal - price - total_discount_price - total_payment_price + total_service_price;
 
                                 $('.total_balance').text(formatCurrency(totalBalance));
                             });
@@ -1130,7 +1231,7 @@ function initViewScript1() {
                                                 </div>
                                             </td>
                                             <td>
-                                                <p id="price" data-price="${room.total_amount}">${formatCurrency(room.total_amount)}</p>
+                                                <p id="price" class="d-flex justify-content-center" data-price="${room.total_amount}">${formatCurrency(room.total_amount)}</p>
                                             </td>
                                             <td>
                                                 <input type="text" class="form-control deposit number-input money-input"  name="deposit" value="${formatCurrencyEdit(room.deposit_amount)}" placeholder="0">
@@ -1266,7 +1367,9 @@ function initViewScript1() {
                 date: formattedDates,
                 method: 'CHECKIN'
             }
-            checkRoomBooking(data);
+            $('.title-check-in').text('Nhận phòng');
+            let checkin = 'check_in_now';
+            checkRoomBooking(checkin, data);
         });
         $(document).off("click", ".room-booked").on("click", ".room-booked", function (e) {
             $(".btn-dat-truoc.btn-book").each(function () {
@@ -1285,7 +1388,9 @@ function initViewScript1() {
                 date: formattedDates,
             }
             //  $('.booking-form').attr('action', roomBook);
-            checkRoomBooking(data)
+            let booked = 'room-booked';
+            $('.title-check-in').text('Đặt phòng');
+            checkRoomBooking(booked, data)
         });
         $(document).on('click', '.change-booking-room', function () {
             let selectedRoom = $('input[name="change-room"]:checked'); // Lấy radio đã chọn
@@ -1435,7 +1540,7 @@ function initViewScript1() {
                 }
             });
         }
-        function checkRoomBooking(data) {
+        function checkRoomBooking(key, data) {
             $.ajax({
                 url: checkRoomBookingUrl,
                 type: 'POST',
@@ -1484,25 +1589,43 @@ function initViewScript1() {
                             });
 
                             selected_customer_source.append(option);
-                            let date = new Date(item.date);
+                            let roomDate = "";
+                            let selectedDate = $('#startDate').val();
+                            let date = ""
+                            if (key === 'check_in_now') {
+                                date = new Date(item.date);
+                                date.setDate(date.getDate() + 1);
+                                roomDate = item.date;
+                            } else if (key === 'room-booked') {
+
+                                date = new Date(selectedDate);
+                                date.setDate(date.getDate() + 1);
+                                roomDate = item.date;
+                            }
+
                             let timeBookRoom = "";
-                            date.setDate(date.getDate() + 1);
+
                             const roomId = item.room["id"];
                             const roomTypeId = item.room_type["id"];
-                            const roomDate = item.date;
-                            const key = `${roomId}-${roomTypeId}-${roomDate}`;
 
-                            if (seenRooms.has(key)) {
+                            const roomKey = `${roomId}-${roomTypeId}-${roomDate}`;
+
+
+                            if (seenRooms.has(roomKey)) {
                                 return;
                             }
-                            seenRooms.add(key);
-                            console.log();
+                            seenRooms.add(roomKey);
 
                             if (response.title != "") {
                                 $('.title-check-in').text(response.title);
                                 timeBookRoom = formattedTimes;
                             } else {
-                                timeBookRoom = item.room['room_type']['room_type_price']['setup_pricing']['check_in_time'];
+                                console.log(item.date);
+                                console.log(item.room['room_type']['room_type_price']['setup_pricing']['check_in_time']);
+                                // checkin_datetime
+                                //  timeBookRoom = item.room['room_type']['room_type_price']['setup_pricing']['check_in_time'];
+                                //   item.room['room_type']['room_type_price']['setup_pricing']['check_out_time']
+                                timeBookRoom = item.checkin_datetime;
                             }
                             var tr = `
                         <tr  data-status="0" data-room-id="${roomId}"  data-room-type-id="${roomTypeId}" data-date="${item.date}">
@@ -1525,7 +1648,7 @@ function initViewScript1() {
                             </td>
                              <td>
                                 <div class="d-flex align-items-center justify-content-start" style="gap: 3px">
-                                    <input type="date" name="checkInDate" id="date-book-room" class="form-control date-book-room"  value="${item.date}" readonly>
+                                    <input type="date" name="checkInDate" id="date-book-room" class="form-control date-book-room"  value="${key == 'room-booked' ? selectedDate : item.date}" readonly>
 
                                     <input type="time" name="checkInTime" id="time-book-room" class="form-control time-book-room"   value="${timeBookRoom}">
                                 </div>
@@ -1534,12 +1657,12 @@ function initViewScript1() {
                                 <div class="d-flex align-items-center justify-content-start" style="gap: 3px">
                                     <input type="date" name="checkOutDate"  class="form-control date-book-room" readonly  value="${date.toISOString().split('T')[0]}">
 
-                                    <input type="time" name="checkOutTime" id="time-book-room" class="form-control time-book-room"  value="${item.room['room_type']['room_type_price']['setup_pricing']['check_out_time']}">
+                                    <input type="time" name="checkOutTime" id="time-book-room" class="form-control time-book-room"  value="${timeBookRoom}">
 
                                 </div>
                             </td>
                             <td>
-                                 <p id="price" data-price="${item.room['room_type']['room_type_price']['unit_price']}">${formatCurrency(item.room['room_type']['room_type_price']['unit_price'])}</p>
+                                 <p id="price" class="d-flex justify-content-center" data-price="${item.room['room_type']['room_type_price']['unit_price']}">${formatCurrency(item.room['room_type']['room_type_price']['unit_price'])}</p>
                             </td>
                             <td>
                                   <input type="text" class="form-control deposit number-input money-input"  name="deposit"  placeholder="0">
@@ -1729,7 +1852,7 @@ $('.btn-book-pttt').off('click').on('click', function (e) {
         }
 
         // Kiểm tra ô nhập số tiền
-        if (!inputPtttValue || inputPtttValue.trim() === '') {
+        if (!inputPtttValue || inputPtttValue.trim() === '' || inputPtttValue <= 0) {
             $('#input_pttt_error').text('Vui lòng nhập số tiền');
             isValid = false;
         }
@@ -1811,7 +1934,7 @@ const selectedItemsBox = document.getElementById('selectedItems');
 const searchInput = document.getElementById('searchInput');
 
 let currentFilter = 'Tất cả';
-let selectedItems = [];
+
 
 function renderList(data) {
     if (!Array.isArray(data)) {
@@ -1820,7 +1943,7 @@ function renderList(data) {
     }
 
     const search = searchInput.value?.toLowerCase() ?? '';
-    
+
     if (data.length > 0) {
         const filtered = data.filter(item =>
             (currentFilter === 'Tất cả' || item.category === currentFilter) &&
@@ -1830,7 +1953,7 @@ function renderList(data) {
         productList.innerHTML = filtered.map(item => `
             <div class="col ${item.type}">
               <div class="service-product-item" onclick='selectItem(${JSON.stringify(item)})'>
-                <img src="#" class="service-product-img">
+                <img src="https://encrypted-tbn0.gstatic.com/images?q=tbn:ANd9GcRhFX4Bsx5WvQfDXoJsgXQQG-ae0GpzcPcmkQ&s" class="service-product-img">
                 <div><strong>${item.name}</strong></div>
                 <div>${formatCurrency(item.price)}</div>
               </div>
@@ -1841,6 +1964,7 @@ function renderList(data) {
     }
 }
 
+
 window.selectItem = function (item) {
     const existing = selectedItems.find(i => i.name === item.name);
     if (existing) {
@@ -1850,24 +1974,121 @@ window.selectItem = function (item) {
     }
     renderSelected();
 }
+
+$(document).on('click', '.remove-btn-service', function () {
+    let index = $(this).data('index');
+    let dataId = $(this).data('id');
+    let dataCheckIn = $(this).data('check-in-id');
+    let roomId = $(this).data('room-id');
+    Swal.fire({
+        title: 'Bạn có chắc chắn xoá dịch vụ này không',
+        text: 'Bạn có chắc chắn xoá dịch vụ này không',
+        icon: 'warning',
+        showCancelButton: true,
+        confirmButtonText: 'Đồng ý',
+        cancelButtonText: 'Hủy bỏ',
+        reverseButtons: true
+    }).then((result) => {
+        if (result.isConfirmed) {
+            if (dataCheckIn !== 'undefined' && roomId !== 'undefined' && dataId !== 'undefined') {
+                $.ajax({
+                    url: deleteService,
+                    type: 'POST',
+                    data: {
+                        id_service: dataId,
+                        check_in_id: dataCheckIn,
+                        room_id: roomId,
+                    },
+                    success: function (response) {
+                        if (response.status === 'success') {
+                            notify('success', response.message);
+                            selectedItems.splice(index, 1);
+                            renderSelected();
+                            // cập nhật lại giá tiền  123456
+                            let totalPrice = 0;
+                            totalPrice = calculateTotalPrice();
+
+                            $('.total_service_display').text(formatCurrency(response.total_service));  // hiển thị lại tổng tiền dịch vụ
+
+                            let totalpayment = $('.total_payment').text();
+                            let total_payment = parseInt(totalpayment.replace(/\./g, '')) || 0;
+                            // giảm giá
+                            let total_discount = $('.total_discount').text();
+                            let total_discount_price = parseInt(total_discount.replace(/\./g, '')) || 0;
+                            // tiên dich vụ
+                            let total_service = $('.total_service_display').text();
+                            let total_service_price = parseInt(total_service.replace(/\./g, '')) || 0;
+                            let priceString = $('.total_deposit').text();
+                            // đặt cọc
+                            let price = parseInt(priceString.replace(/\./g, ""), 10);
+                            price = isNaN(price) ? 0 : price;
+                            totalBalance = totalPrice + total_service_price - price - total_payment - total_discount_price;
+                            $('.total_balance').text(formatCurrency(totalBalance));
+                        }
+                    },
+                    error: function (error) {
+                        $('#loading').hide();
+                        console.log('Error:', error);
+                    }
+                });
+            } else {
+                selectedItems.splice(index, 1);
+                renderSelected();
+
+            }
+        }
+    });
+
+
+});
+
 function renderSelected() {
-  
-    
+    let totalPrice = 0;
     if (selectedItems.length === 0) {
         selectedItemsBox.innerHTML = '<div class="text-muted">Chưa có dịch vụ, sản phẩm</div>';
+        $('.total_product_service_display').text(0);
         return;
     }
+    console.log(selectedItems);
+    
+    let sumService = selectedItems.reduce((sum, item) => {
+        const value = parseFloat(item.price * item.quantity);
+        return sum + (isNaN(value) ? 0 : value);
+    }, 0);
+
+    $('.total_product_service_display').text(formatCurrency(sumService));
+    totalPrice = calculateTotalPrice();
+
+    let totalpayment = $('.total_payment').text(); // tổng thanh toán
+    let total_payment = parseInt(totalpayment.replace(/\./g, '')) || 0;
+    // giảm giá
+    let total_discount = $('.total_discount').text();
+    let total_discount_price = parseInt(total_discount.replace(/\./g, '')) || 0;
+    // tiên dich vụ
+
+    let priceString = $('.total_deposit').text();
+    // đặt cọc
+    let price = parseInt(priceString.replace(/\./g, ""), 10);
+    price = isNaN(price) ? 0 : price;
+
+    totalBalance = totalPrice + sumService - total_payment - price - total_discount_price;
+    $('.total_balance').text(formatCurrency(totalBalance));
+
     selectedItemsBox.innerHTML = selectedItems.map((item, index) => `
-        <div class="row align-items-center border rounded p-2 mb-2 bg-white gx-2" data-id="${item.id}" data-type="${item.type}">
+        <div class="row align-items-center border rounded p-1 mb-2 bg-white gx-1" data-id="${item.id}" data-type="${item.type}">
           <div class="col-md-4 fw-bold text-dark">${item.name}</div>
-          <div class="col-md-2 text-end text-primary no-wrap">${formatCurrency(item.price)}</div>
-          <div class="col-md-4 d-flex align-items-center justify-content-center gap-1">
-            <button class="btn btn-sm btn-outline-secondary" onclick="changeQty(${index}, -1)">-</button>
-            <input type="number" min="1" value="${item.quantity}" onchange="updateQty(${index}, this.value)" class="form-control form-control-sm text-center" style="width: 60px;">
-            <button class="btn btn-sm btn-outline-secondary" onclick="changeQty(${index}, 1)">+</button>
-          </div>
-          <div class="col-md-2 text-center">
-            <button class="btn btn-sm btn-outline-danger" onclick="removeItem(${index})">✕</button>
+            <div class="col-md-2 text-end text-primary no-wrap price-service">${formatCurrency(item.price)}</div>
+                <div class="col-md-4 d-flex align-items-center justify-content-center gap-1">
+                    <button class="btn btn-sm btn-outline-secondary" onclick="changeQty(${index}, -1)">-</button>
+                        <input type="number" min="1" value="${item.quantity}" onchange="updateQty(${index}, this.value)" class="form-control form-control-sm text-center" style="width: 60px;">
+                    <button class="btn btn-sm btn-outline-secondary" onclick="changeQty(${index}, 1)">+</button>
+                </div>
+            <div class="col-md-2 text-center">
+            <button class="btn btn-sm btn-outline-danger remove-btn-service"
+             data-id="${item?.product_id ?? item?.service_id}" 
+             data-check-in-id="${item?.check_in_id}" 
+             data-room-id="${item?.room_code}"
+             data-index="${index}">✕</button>
           </div>
         </div>
       `).join('');
@@ -1887,10 +2108,6 @@ window.changeQty = function (index, delta) {
     renderSelected();
 }
 
-window.removeItem = function (index) {
-    selectedItems.splice(index, 1);
-    renderSelected();
-}
 
 searchInput.addEventListener('input', renderList);
 renderList();
@@ -1962,6 +2179,17 @@ $('.btn-add-service').on('click', function () {
             if (data.status === 'success') {
                 notify('success', data.message);
                 $('#serviceModal').modal('hide');
+                const calcTotal = (arr) => {
+                    return arr.reduce((sum, item) => {
+                        const subtotal = parseFloat(item.price) * parseInt(item.quantity);
+                        return sum + (isNaN(subtotal) ? 0 : subtotal);
+                    }, 0);
+                };
+                const totalPremium = calcTotal(grouped.premium_service);
+                const totalProduct = calcTotal(grouped.product);
+                const grandTotal = totalPremium + totalProduct;
+                $('.total_service_display').text(formatCurrency(grandTotal)); // hiển thị 
+                $('#total_service').val(grandTotal);
             }
 
         },

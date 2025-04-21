@@ -15,6 +15,7 @@ use App\Models\ReceiptAndPayment;
 use App\Models\RoomType;
 use App\Models\Room;
 use App\Models\RoomBooking;
+use App\Models\RoomServiceProduct;
 use App\Models\RoomStatusHistory;
 use App\Models\RoomTypePrice;
 use App\Models\User;
@@ -356,18 +357,6 @@ class BookRoomController extends Controller
                     ->first();
                   
                 if ($checkRoom) {
-                    // Log::info($checkRoom);
-                    // $startDateFromDB = Carbon::parse($checkRoom['start_date']); 
-                    // $yourDate = Carbon::parse($start_date); // biến cần so sánh
-
-                    // $diffInDays = $startDateFromDB->diffInDays($yourDate, false);
-
-                    // if ($diffInDays == 1 && $room['room'] == $checkRoom['room_id']) {
-                    //     Log::info("Ngày: ".  $checkRoom['start_date']);
-                    // } else {
-                    //     Log::info("Không đúng 1 ngày: $diffInDays");
-                     
-                    // }
 
                      DB::rollBack();
                   
@@ -403,6 +392,7 @@ class BookRoomController extends Controller
                 } else {
                     saveRoomStatusHistory($room['room'], $dateIn, $dateOut, 2);
                 }
+
                 // tổng tiền của phòng
                 $sumPrice += $roomPice['unit_price'];
                 // TỔNG GIẢM GIÁ
@@ -429,15 +419,17 @@ class BookRoomController extends Controller
                 $check_in->created_by     = $request->name_staff ??  authAdmin()->id;
 
                 $check_in->save();
-            } // end foreach
-            $payment_pttt = $request->payment_pttt;
-            if ($totalDeposit > 0 || $totalDiscount > 0) {
-                if ($request->method == 'check_in') {
-                    savePayment('', $bookingId, $sumPrice, $totalDeposit, $totalDiscount, 0, $payment_pttt);
-                } else {
-                    savePayment($bookingId, '', $sumPrice, $totalDeposit, $totalDiscount, 0, $payment_pttt);
+
+                $payment_pttt = $request->payment_pttt;
+                if ($totalDeposit > 0 || $totalDiscount > 0) {
+                    if ($request->method == 'check_in') {
+                        savePayment('', $bookingId,  $roomPice['unit_price'],$room['room'], $totalDeposit, $totalDiscount, 0, $payment_pttt);
+                    } else {
+                        savePayment($bookingId, '',  $roomPice['unit_price'],$room['room'], $totalDeposit, $totalDiscount, 0, $payment_pttt);
+                    }
                 }
-            }
+            } // end foreach
+          
             DB::commit();
             return response()->json(['success' => 'Đặt phòng thành công']);
         } catch (\Exception $e) {
@@ -552,13 +544,14 @@ class BookRoomController extends Controller
                             ]);
                         } else {
                             ReceiptAndPayment::create([
-                                'booking_id'  => $request->id_room_booking,
-                                'checkin_id'  => $bookingId,
-                                'room_price'  => $roomPice['unit_price'],
-                                'deposit_amount' => $depositAmount,
-                                'discount_amount' => $discountAmount,
-                                'created_date'     => now(),
-                                'unit_code'        => hf('ma_coso')
+                                'booking_id'        => $request->id_room_booking,
+                                'checkin_id'        => $bookingId,
+                                'room_price'        => $roomPice['unit_price'],
+                                'room_code'         => $checkRoom['room_change'] ?? $checkRoom['room_code'],
+                                'deposit_amount'    => $depositAmount,
+                                'discount_amount'   => $discountAmount,
+                                'created_date'      => now(),
+                                'unit_code'         => hf('ma_coso')
                             ]);
                         }
                     }
@@ -1044,7 +1037,7 @@ class BookRoomController extends Controller
             DB::commit();
             return response()->json(['status' => 'success', 'success' => 'Cập nhật nhận phòng thành công']);
         } catch (\Exception $e) {
-            Log::info('Error booking at line ' . $e->getLine() . ' in ' . $e->getFile() . ' : ' . $e->getMessage());
+           // Log::info('Error booking at line ' . $e->getLine() . ' in ' . $e->getFile() . ' : ' . $e->getMessage());
             DB::rollBack();
             return response()->json(['error' => 'Đã xảy ra lỗi, không nhận phòng thành công ']);
         }
@@ -1054,7 +1047,7 @@ class BookRoomController extends Controller
         $pageModal    = 'Sửa nhận phòng';
         $keyMethod    = $request->key;
         $roomBookings = CheckIn::query();
-        $roomBookings->with('room', 'room.roomType', 'room.roomType.roomTypePrice', 'room.roomType.roomTypePrice.setupPricing', 'checkInPayment');
+        $roomBookings->with('room', 'room.roomType', 'room.roomType.roomTypePrice', 'room.roomType.roomTypePrice.setupPricing');
         if (!empty($request->method)) {
             $pageModal = 'Nhận phòng';
             $roomBookings->where('id', $request->id);
@@ -1090,7 +1083,7 @@ class BookRoomController extends Controller
                     'room_number'       => $booking->room_change_info['room']['room_number'],
                     'guest_count'       => $booking->room_change_info['guest_count'],
                     'status'            => $booking->status,
-                    'payment'           => $booking->checkInPayment->total_payment ?? 0,
+                    'payment'           => $booking->check_in_payment->total_payment ?? 0,
                 ];
             } else {
                 $groupedBookings[$key]['room_bookings'][] = [
@@ -1107,7 +1100,8 @@ class BookRoomController extends Controller
                     'room_number'       => $booking->room->room_number,
                     'guest_count'       => $booking->guest_count,
                     'status'            => $booking->status,
-                    'payment'           => $booking->checkInPayment->total_payment ?? 0,
+                    'payment'           => $booking->check_in_payment->total_payment ?? 0,
+                    'total_service'     => RoomServiceProduct::where('check_in_id', $id)->where('room_code',$booking->room->id)->sum('total_payment'),
                 ];
             }
         }
@@ -1151,7 +1145,7 @@ class BookRoomController extends Controller
             'data' => $groupedBookings,
         ]);
     }
-    //123
+   
     public function findRoomBookingId(Request $request)
     {
         $data = [];
@@ -1162,6 +1156,7 @@ class BookRoomController extends Controller
                 ->where('unit_code', unitCode())
                 ->where('room_code', $item['id'])
                 ->where('booking_id', $item['book'])
+                ->where('checkin_date',$item['date'])
                 ->with(['room', 'room.roomType', 'customer' => function ($query) {
                     $query->whereNotNull('customer_code'); // Chỉ lấy khách hàng có mã customer_code
                 }])
@@ -1171,7 +1166,8 @@ class BookRoomController extends Controller
                     // ->active()
                     ->where('unit_code', unitCode())
                     ->where('room_change', $item['id'])
-                    ->where('booking_id', $item['book'])
+                    ->where('booking_id', $item['book'])  
+                    ->where('checkin_date',$item['date'])
                     ->with(['room', 'room.roomType', 'customer' => function ($query) {
                         $query->whereNotNull('customer_code'); // Chỉ lấy khách hàng có mã customer_code
                     }])
@@ -1184,7 +1180,6 @@ class BookRoomController extends Controller
 
 
         foreach ($roomBooking as $roomBook) {
-            Log::info($roomBook['room_change_info']);
             $bookingId = $roomBook['booking_id'];
             if (!isset($data[$bookingId])) {
                 $data[$bookingId] = [

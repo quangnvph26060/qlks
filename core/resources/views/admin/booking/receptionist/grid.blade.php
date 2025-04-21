@@ -15,7 +15,9 @@
     .bg-red {
         background: #e6454d;
     }
-
+    .swal2-container {
+        z-index: 9999999 !important;
+    }
     #grid-main {
         width: 100%;
         height: 100vh;

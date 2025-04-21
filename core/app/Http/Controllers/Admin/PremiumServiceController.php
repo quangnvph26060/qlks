@@ -5,9 +5,12 @@ namespace App\Http\Controllers\Admin;
 use App\Http\Controllers\Controller;
 use App\Models\PremiumService;
 use App\Models\Product;
+use App\Models\ReceiptAndPayment;
 use App\Models\RoomServiceProduct;
 use App\Repositories\BaseRepository;
 use Illuminate\Http\Request;
+use Illuminate\Support\Facades\DB;
+use Illuminate\Support\Facades\Log;
 
 class PremiumServiceController extends Controller
 {
@@ -64,7 +67,23 @@ class PremiumServiceController extends Controller
     }
     public function getAllService(Request $request)
     {
-        $input = $request->input('search'); // ví dụ lấy input từ request
+        $input = $request->input('search');
+        $room_code = $request->input('room_code');
+        $check_in_id = $request->input('check_in_id');
+        $serviceInRoom = RoomServiceProduct::where('unit_code', unitCode())
+            ->where('room_code', $room_code)
+            ->where('check_in_id', $check_in_id)
+            ->with('product', 'service')->get();
+
+        $serviceInRoom->each(function ($item) {
+            if (!is_null($item->product)) {
+                $item->type = 'product';
+            } elseif (!is_null($item->service)) {
+                $item->type = 'premium_service';
+            } else {
+                $item->type = null; // fallback nếu cần
+            }
+        });
 
         $premiumServices = PremiumService::query()
             ->active()
@@ -86,7 +105,7 @@ class PremiumServiceController extends Controller
             return $item;
         });
 
-        $products = $products->select('id', 'name', 'selling_price as price')->get()->map(function ($item) {
+        $products = $products->select('id', 'name', 'selling_price as price','image_path')->get()->map(function ($item) {
             $item->type = 'product';
             return $item;
         });
@@ -96,7 +115,7 @@ class PremiumServiceController extends Controller
         ));
 
 
-        return response()->json(['status' => 'success', 'data' => $data]);
+        return response()->json(['status' => 'success', 'data' => $data, 'serviceInRoom' => $serviceInRoom]);
     }
     public function storeServices(Request $request)
     {
@@ -104,21 +123,21 @@ class PremiumServiceController extends Controller
         $roomCode    = $request->data['room_code'];
         $bookingDate = now();
         $creator     = authAdmin()->id;
-    
+
         $products  = $request->data['product'] ?? [];
         $services  = $request->data['premium_service'] ?? [];
-    
+
         foreach ($products as $product) {
             $existing = RoomServiceProduct::where('check_in_id', $checkInId)
                 ->where('room_code', $roomCode)
                 ->where('product_id', $product['id'])
                 ->whereNull('service_id')
                 ->first();
-    
+
             if ($existing) {
-                $existing->quantity      += $product['quantity'];
+                $existing->quantity       = $product['quantity'];
                 $existing->price          = $product['price'];
-                $existing->total_payment  = $existing->quantity * $existing->price;
+                $existing->total_payment  = $product['quantity'] * $existing->price;
                 $existing->updated_at     = now();
                 $existing->save();
             } else {
@@ -138,18 +157,18 @@ class PremiumServiceController extends Controller
                 ]);
             }
         }
-    
+
         foreach ($services as $service) {
             $existing = RoomServiceProduct::where('check_in_id', $checkInId)
                 ->where('room_code', $roomCode)
                 ->where('service_id', $service['id'])
                 ->whereNull('product_id')
                 ->first();
-    
+
             if ($existing) {
-                $existing->quantity      += $service['quantity'];
+                $existing->quantity       = $service['quantity'];
                 $existing->price          = $service['price'];
-                $existing->total_payment  = $existing->quantity * $existing->price;
+                $existing->total_payment  = $service['quantity'] * $existing->price;
                 $existing->updated_at     = now();
                 $existing->save();
             } else {
@@ -169,11 +188,65 @@ class PremiumServiceController extends Controller
                 ]);
             }
         }
-    
+
         return response()->json([
             'status'  => 'success',
             'message' => 'Thêm dịch vụ thành công!',
         ]);
     }
-    
+    public function deleteService(Request $request)
+    {
+        DB::beginTransaction();
+        try {
+            $checkInId = $request->input('check_in_id');
+            $roomCode = $request->input('room_id');
+            $serviceId = $request->input('id_service');
+
+            $service = RoomServiceProduct::where('check_in_id', $checkInId)
+                ->where('room_code', $roomCode)
+                ->where(function ($query) use ($serviceId) {
+                    $query->where('product_id', $serviceId)
+                        ->orWhere('service_id', $serviceId);
+                })
+                ->first();
+            if (!$service) {
+                return response()->json([
+                    'status' => 'error',
+                    'message' => 'Dịch vụ không tồn tại hoặc đã bị xoá trước đó.'
+                ], 404);
+            }
+            // cập nhật lại bên thanh toán
+            $receiptAndPayment = ReceiptAndPayment::where('checkin_id', $service->check_in_id)
+                ->where('room_code', $service->room_code)
+                ->first();
+            // cập nhật lại giá dịch vụ 
+            if ($receiptAndPayment) {
+                if($receiptAndPayment->service_fee !== null && $receiptAndPayment->service_fee != 0){
+                    $newServiceFee = $receiptAndPayment->service_fee - $service->total_payment;
+                    $receiptAndPayment->update([
+                        'service_fee' => $newServiceFee
+                    ]);
+                }
+               
+            }
+
+            $service->delete();
+            DB::commit();
+            return response()->json([
+                'status' => 'success',
+                'message' => 'Xoá dịch vụ thành công.',
+                'total_service' => RoomServiceProduct::where('check_in_id', $checkInId)
+                ->where('room_code', $roomCode)->sum('total_payment'),
+            ]);
+          
+        } catch (\Exception $e) {
+            Log::error('Lỗi xoá dịch vụ: ' . $e->getMessage());
+            DB::rollBack();
+            return response()->json([
+                'status' => 'error',
+                'message' => 'Đã xảy ra lỗi trong quá trình xoá dịch vụ.',
+                'error' => $e->getMessage()
+            ], 500);
+        }
+    }
 }

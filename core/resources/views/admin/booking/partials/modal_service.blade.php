@@ -1,4 +1,4 @@
-<div class="modal fade" id="serviceModal" tabindex="-1">
+<div class="modal fade" id="serviceModal" tabindex="-1" style="z-index: 100000">
     <div class="modal-dialog modal-xl modal-dialog-centered">
         <div class="modal-content" style="width: 60%;">
             <div class="modal-header">
@@ -29,11 +29,21 @@
                     <!-- Right: Danh sách đã chọn -->
                     <div class="col-md-8">
                         <h6><strong class="service-room-number"></strong></h6>
-                        <div class="service-selected-list" id="selectedItems">
+                        <div class="service-selected-list px-2 py-2" id="selectedItems">
                             <div class="text-muted">Chưa có dịch vụ, sản phẩm</div>
+                        </div>
+                        <div class="row">
+                            <div class="col-md-5 py-2 ">
+                                 <p class="fw-bold text-dark">Tổng cộng: </p>
+                            </div>
+                            <div class="col-md-7 py-2">
+                             <p class="total_product_service_display">  </p>
                         </div>
                     </div>
                 </div>
+              
+            </div>
+          
             </div>
             <div class="modal-footer">
                 <button class="btn btn-secondary" data-bs-dismiss="modal">Bỏ qua</button>
@@ -77,6 +87,7 @@
     .service-selected-list {
         max-height: 300px;
         overflow-y: auto;
+        height: 300px;
     }
 
     .service-selected-list input[type="number"] {

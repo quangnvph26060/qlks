@@ -234,6 +234,8 @@ Route::middleware('admin', 'adminPermission')->group(function () {
             Route::post('delete-preminum/{id}', 'delete')->name('delete');
             Route::get('get-all-service', 'getAllService')->name('get-all-service');
             Route::post('store-service', 'storeServices')->name('store-service');
+            Route::post('delete-service', 'deleteService')->name('delete-service');
+            
         });
         //Manage amenities with room
         Route::controller('ManageRoomAmenitiesController')->name('room.amenities.')->prefix('roomAmenities')->group(function () {

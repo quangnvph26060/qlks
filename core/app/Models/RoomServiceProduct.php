@@ -20,4 +20,11 @@ class RoomServiceProduct extends Model
         'unit_code',
         'price',
     ];
+    public function product(){
+        return $this->hasOne(Product::class, 'id', 'product_id');
+
+    }
+    public function  service(){
+        return $this->hasOne(PremiumService::class, 'id','service_id');
+    }
 }

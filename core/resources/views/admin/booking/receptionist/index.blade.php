@@ -248,7 +248,7 @@
                                                 <input type="checkbox" name="insert_customer">
                                                 <p style="font-size: 13px">Lưu thông tin khách</p>
                                             </div>
-                                            <div class="">
+                                            <div class="d-flex justify-content-start" style="gap: 10px">
                                                 <p class="add-room-booking-edit" style="width: 185px;">
                                                     <svg xmlns="http://www.w3.org/2000/svg" width="20" height="20"
                                                         viewBox="0 0 24 24">
@@ -260,6 +260,18 @@
                                                         </g>
                                                     </svg>
                                                     Chọn thêm phòng
+                                                </p>
+                                                <p id="add-service-room-booking" class="add-service-booking" style="width: 204px;">
+                                                    <svg xmlns="http://www.w3.org/2000/svg" width="20" height="20"
+                                                        viewBox="0 0 24 24">
+                                                        <g fill="currentColor" fill-rule="evenodd" clip-rule="evenodd">
+                                                            <path
+                                                                d="M2 12C2 6.477 6.477 2 12 2s10 4.477 10 10s-4.477 10-10 10S2 17.523 2 12Zm10-8a8 8 0 1 0 0 16a8 8 0 0 0 0-16Z" />
+                                                            <path
+                                                                d="M13 7a1 1 0 1 0-2 0v4H7a1 1 0 1 0 0 2h4v4a1 1 0 1 0 2 0v-4h4a1 1 0 1 0 0-2h-4V7Z" />
+                                                        </g>
+                                                    </svg>
+                                                    Thêm dịch vụ sản phẩm
                                                 </p>
                                             </div>
                                         </div>
@@ -398,6 +410,11 @@
                                         <li class="financial-item">
                                             <span>Tiền cọc</span>
                                             <span class="total_deposit">0</span>
+                                        </li>
+                                        <li class="financial-item" id="total_payment_display">
+                                            <span>Tổng tiền sản phẩm, dịch vụ</span>
+                                            <span class="total_service_display">0</span>
+
                                         </li>
                                         <li class="financial-item" id="select-option-pttt">
                                             <span>Khách đã thanh toán</span>
@@ -547,6 +564,7 @@
     var cleanRoomUrl  = "{{ route('admin.roomclean.booking.roomclean') }}"
     var getAllService = "{{ route('admin.hotel.premium.service.get-all-service') }}";
     var storeService  = "{{ route('admin.hotel.premium.service.store-service') }}";
+    var deleteService = "{{route('admin.hotel.premium.service.delete-service') }}";
 
     const date_booking = new Date();
     const date_yyyy = date_booking.getFullYear();
@@ -939,10 +957,12 @@
         $('.btn-book').on('click', function() {
             const dataRowValue = $(this).data('row');
             const method = $(this).data('method');
-
+            
             if (method == "check_in") {
                 $('.booking-form').data('method', 'check_in');
-                $('.booking-form').submit();
+                if (validateAllFields(validatorForm)) {
+                    $('.booking-form').submit(); // Gửi form
+                }
             } else {
                 $('.booking-form').data('row', dataRowValue);
                 $('.booking-form').data('method', 'booked_room');
@@ -1167,7 +1187,8 @@
                                 return;
                             }
                             seenRooms.add(key);
-
+                            // item.room['room_type']['room_type_price']['setup_pricing']['check_in_time']
+                            // item.room['room_type']['room_type_price']['setup_pricing']['check_out_time']
                             var tr = `
                             <tr  data-status="0" data-room-id="${roomId}"  data-room-type-id="${roomTypeId}" data-date="${item.date}">
                                 <td>
@@ -1191,14 +1212,14 @@
                                     <div class="d-flex align-items-center justify-content-start" style="gap: 3px">
                                         <input type="date" name="checkInDate" id="date-book-room" class="form-control date-book-room"  value="${item.date}" readonly>
 
-                                        <input type="time" name="checkInTime" id="time-book-room" class="form-control time-book-room"   value="${item.room['room_type']['room_type_price']['setup_pricing']['check_in_time']}">
+                                        <input type="time" name="checkInTime" id="time-book-room" class="form-control time-book-room"   value="${item.checkin_datetime}">
                                     </div>
                                 </td>
                                 <td>
                                     <div class="d-flex align-items-center justify-content-start" style="gap: 3px">
                                         <input type="date" name="checkOutDate"  class="form-control date-book-room" readonly  value="${date.toISOString().split('T')[0]}">
 
-                                        <input type="time" name="checkOutTime" id="time-book-room" class="form-control time-book-room"  value="${item.room['room_type']['room_type_price']['setup_pricing']['check_out_time']}">
+                                        <input type="time" name="checkOutTime" id="time-book-room" class="form-control time-book-room"  value="${item.checkin_datetime}">
 
                                     </div>
                                 </td>
@@ -1800,12 +1821,14 @@
     }
 
     .add-room-booking,
-    .add-room-booking-edit {
+    .add-room-booking-edit,
+    .add-service-booking {
         padding: 4px 10px;
         border: 1px solid #337ab7;
         border-radius: 8px;
         cursor: pointer;
         color: #337ab7;
+        white-space: nowrap;
     }
 
     .modal-content {
