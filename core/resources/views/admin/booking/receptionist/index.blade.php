@@ -564,8 +564,8 @@
     var cleanRoomUrl  = "{{ route('admin.roomclean.booking.roomclean') }}"
     var getAllService = "{{ route('admin.hotel.premium.service.get-all-service') }}";
     var storeService  = "{{ route('admin.hotel.premium.service.store-service') }}";
-    var deleteService = "{{route('admin.hotel.premium.service.delete-service') }}";
-
+    var deleteService = "{{ route('admin.hotel.premium.service.delete-service') }}";
+    var showCurrency = "{{ format_currency() }}";
     const date_booking = new Date();
     const date_yyyy = date_booking.getFullYear();
     const date_mm = String(date_booking.getMonth() + 1).padStart(2, '0');

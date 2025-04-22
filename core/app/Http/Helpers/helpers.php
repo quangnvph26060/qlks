@@ -139,7 +139,9 @@ function getAmount($amount, $length = 2)
     $amount = round($amount ?? 0, $length);
     return $amount + 0;
 }
-
+function format_currency(){
+    return gs('cur_text');
+}
 function showAmount($amount, $decimal = 0, $separate = true, $exceptZeros = false, $currencyFormat = true)
 { //ban đầu $decimal = 2;
     $separator = '';

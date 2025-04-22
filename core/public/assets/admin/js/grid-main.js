@@ -86,14 +86,14 @@ function calculateTotalPrice() {
 }
 function formatCurrency(amount) {
     if (!amount || isNaN(amount)) {
-        return '0 VND'; // Nếu amount không hợp lệ, trả về 0 VND
+        return '0' + showCurrency;
     }
 
     const parts = parseFloat(amount).toFixed(2).toString().split('.');
     const integerPart = parts[0];
     const formattedInteger = integerPart.replace(/\B(?=(\d{3})+(?!\d))/g, '.');
 
-    return formattedInteger + ' VND';
+    return formattedInteger +  showCurrency;
 }
 function formatCurrencyEdit(amount) {
     const parts = amount.toString().split('.');
