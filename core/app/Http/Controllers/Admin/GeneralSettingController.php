@@ -398,7 +398,7 @@ class GeneralSettingController extends Controller
         }
 
         // Đảo ngược trạng thái của khách sạn
-        $newStatus = $hotel->trang_thai == 1 ? 0 : 1;
+        $newStatus = $hotel->trang_thai == Status::ENABLE ? Status::DISABLE : Status::ENABLE;
 
         $hotel->update(['trang_thai' => $newStatus]);
         $statusHtml = $newStatus == 1 ? '<span class="badge badge--success">Hoạt động</span>' : '<span class="badge badge--danger">Không hoạt động</span>';

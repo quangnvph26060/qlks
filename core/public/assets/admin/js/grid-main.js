@@ -2004,7 +2004,10 @@ $(document).on('click', '.remove-btn-service', function () {
                             notify('success', response.message);
                             selectedItems.splice(index, 1);
                             renderSelected();
-                            // cập nhật lại giá tiền  123456
+                          
+                            
+                            $('#total_service').val(response.total_service);
+                            // cập nhật lại giá tiền
                             let totalPrice = 0;
                             totalPrice = calculateTotalPrice();
 
@@ -2049,7 +2052,6 @@ function renderSelected() {
         $('.total_product_service_display').text(0);
         return;
     }
-    console.log(selectedItems);
     
     let sumService = selectedItems.reduce((sum, item) => {
         const value = parseFloat(item.price * item.quantity);
