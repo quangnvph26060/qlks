@@ -41,28 +41,31 @@ class CheckIn extends Model
         'created_by',
         'discount'
     ];
-    public function room() {
-        return $this->belongsTo(Room::class,'room_code');
+    public function room()
+    {
+        return $this->belongsTo(Room::class, 'room_code');
     }
 
-    public function admin() {
-        return $this->belongsTo(Admin::class,'created_by');
+    public function admin()
+    {
+        return $this->belongsTo(Admin::class, 'created_by');
     }
     public function due()
     {
         return $this->total_amount - $this->deposit_amount;
     }
-    public function getRoomChangeInfoAttribute() {
-        if($this->room_change != null) {
+    public function getRoomChangeInfoAttribute()
+    {
+        if ($this->room_change != null) {
             return RoomChange::where('id_check_in', $this->check_in_id)
                 ->where('new_room_code', $this->room_change)->with('room')->orderBy('updated_at', 'desc')
                 ->first();
         }
     }
     public function getCheckInPaymentAttribute()
-{
-    return ReceiptAndPayment::where('checkin_id', $this->check_in_id)
-        ->where('room_code', $this->room_code)
-        ->first();
-}
+    {
+        return ReceiptAndPayment::where('checkin_id', $this->check_in_id)
+            ->where('room_code', $this->room_code)
+            ->sum('total_payment');
+    }
 }

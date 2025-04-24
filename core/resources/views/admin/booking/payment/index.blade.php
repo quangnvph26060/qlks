@@ -12,14 +12,16 @@
                             <tr>
                                 <th>@lang('STT')</th>
                                 <th>@lang('Hành động')</th>
-                                <th>@lang('Mã đặt phòng')</th>
+                                <th>@lang('Mã thanh toán')</th>
                                 <th>@lang('Mã nhận phòng')</th>
                                 <th>@lang('Ngày chứng từ')</th>
                                 <th>@lang('Tiền phòng')</th>
+                                <th>@lang('Tiền dịch vụ')</th>
                                 <th>@lang('Đặt cọc')</th>
                                 <th>@lang('Giảm giá')</th>
                                 <th>@lang('Khách đã trả')</th>
                                 <th>@lang('Phương thức thanh toán')</th>
+                                <th>@lang('Trạng thái')</th>
                                 @can(['admin.hotel.room.type.edit', 'admin.hotel.room.type.status',
                                     'admin.hotel.room.type.destroy'])
                                 @endcan
@@ -155,7 +157,23 @@
                 </div>
             </div>
         </div>
-
+        <div class="modal fade" id="paymentModal" tabindex="-1" aria-labelledby="paymentModalLabel" aria-hidden="true">
+            <div class="modal-dialog mt-3" style="max-width: 30%;">
+                <div class="modal-content p-2">
+                    <div class="modal-header">
+                        <h5 class="modal-title">Thanh toán</h5>
+                        <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+                    </div>
+                    <div class="modal-body">
+                        <ul class="list-unstyled " id="payment-info">
+                          
+                        </ul>
+                      
+                    </div>
+                </div>
+            </div>
+        </div>
+        
         @include('admin.booking.partials.change_room_booking')
         @include('admin.booking.partials.customer_booked')
     @endpush
@@ -184,6 +202,7 @@
         var deleteRoomEdit = '{{ route('admin.room.booking.delete') }}';
         var searchCustomerUrl = '{{ route('admin.search.customer') }}';
         var paymentUrl = '{{ route('admin.booking.payment.list') }}';
+        var paymentFind = '{{ route('admin.booking.payment.find') }}';
         var roomBookingEditUrl = "{{ route('admin.room.booking.edit', ['id' => ':id']) }}";
         var bookingDetailUrl = "{{ route('admin.booking.details', ['id' => ':id']) }}";
         var checkInUrl = "{{ route('admin.room.check.in', ['id' => ':id']) }}";
@@ -205,7 +224,6 @@
                 }
             });
         });
-     
     </script>
 @endpush
 @push('style')
@@ -213,6 +231,7 @@
         .table .background-tr {
             height: 37px;
         }
+
         .data-table td {
             height: 30px !important;
             overflow: hidden;
@@ -322,8 +341,10 @@
         }
 
         #data-table th {
-    padding: 6px !important;    line-height: 1 !important;
-}
+            padding: 6px !important;
+            line-height: 1 !important;
+        }
+
         #dropdown-menu {
             left: 108px;
             position: fixed;

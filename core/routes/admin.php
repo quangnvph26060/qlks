@@ -441,7 +441,7 @@ Route::middleware('admin', 'adminPermission')->group(function () {
             // list thanh toán 
             Route::get('payment-view', 'paymentView')->name('payment-view');
             Route::get('payment', 'paymentList')->name('payment.list');
-
+            Route::get('find-payment', 'findPayment')->name('payment.find');
             // thanh toán 
             Route::post('payment-room', 'paymentRoom')->name('payment.room');
 

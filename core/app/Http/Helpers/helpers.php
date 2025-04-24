@@ -15,6 +15,7 @@ use App\Models\HotelFacility;
 use App\Models\Language;
 use App\Models\ReceiptAndPayment;
 use App\Models\Role;
+use App\Models\RoomServiceProduct;
 use App\Models\RoomStatusHistory;
 use App\Notify\Notify;
 use Carbon\Carbon;
@@ -139,7 +140,8 @@ function getAmount($amount, $length = 2)
     $amount = round($amount ?? 0, $length);
     return $amount + 0;
 }
-function format_currency(){
+function format_currency()
+{
     return gs('cur_text');
 }
 function showAmount($amount, $decimal = 0, $separate = true, $exceptZeros = false, $currencyFormat = true)
@@ -375,6 +377,7 @@ function saveRoomStatusHistory($room_id, $start_date, $end_date, $status_code)
 function savePayment($booking_id, $checkin_id, $room_price, $room_code, $deposit_amount, $discount_amount, $total_payment, $payment_method)
 {
     ReceiptAndPayment::create([
+        'payment_id'       => getCode('TT', 12),
         'booking_id'       => $booking_id,
         'checkin_id'       => $checkin_id,
         'room_price'       => $room_price,
@@ -387,6 +390,12 @@ function savePayment($booking_id, $checkin_id, $room_price, $room_code, $deposit
         'unit_code'        => hf('ma_coso')
     ]);
 }
+function updateRoomService($checkIn, $roomIdOld, $roomIdNew) {
+    RoomServiceProduct::where('check_in_id', $checkIn)
+        ->where('room_code', $roomIdOld)
+        ->update(['room_code' => $roomIdNew]);
+}
+
 function fileUploader($file, $location, $size = null, $old = null, $thumb = null, $filename = null)
 {
     $fileManager           = new FileManager($file);

@@ -544,6 +544,7 @@ class BookRoomController extends Controller
                             ]);
                         } else {
                             ReceiptAndPayment::create([
+                                'payment_id'       => getCode('TT',12),
                                 'booking_id'        => $request->id_room_booking,
                                 'checkin_id'        => $bookingId,
                                 'room_price'        => $roomPice['unit_price'],
@@ -1083,7 +1084,8 @@ class BookRoomController extends Controller
                     'room_number'       => $booking->room_change_info['room']['room_number'],
                     'guest_count'       => $booking->room_change_info['guest_count'],
                     'status'            => $booking->status,
-                    'payment'           => $booking->check_in_payment->total_payment ?? 0,
+                    'payment'           => $booking->check_in_payment ?? 0,
+                    'total_service'     => RoomServiceProduct::where('check_in_id', $id)->where('room_code',$booking->room_change_info['new_room_code'])->sum('total_payment'),
                 ];
             } else {
                 $groupedBookings[$key]['room_bookings'][] = [
@@ -1100,7 +1102,7 @@ class BookRoomController extends Controller
                     'room_number'       => $booking->room->room_number,
                     'guest_count'       => $booking->guest_count,
                     'status'            => $booking->status,
-                    'payment'           => $booking->check_in_payment->total_payment ?? 0,
+                    'payment'           => $booking->check_in_payment ?? 0,
                     'total_service'     => RoomServiceProduct::where('check_in_id', $id)->where('room_code',$booking->room->id)->sum('total_payment'),
                 ];
             }
