@@ -105,12 +105,12 @@ function initGridMain(data,date) {
 
                         <td class="w-20" style="position: relative;">
                             <div class="d-flex" style="gap:10px;align-items: anchor-center;">
-                                    <button  style="height:37px" class="btn ${firstItem.paid_amount > 0 ? 'btn-success' : 'btn-primary'} ">
+                                    <button  style="height:25px; display:flex" class="btn ${firstItem.paid_amount > 0 ? 'btn-success' : 'btn-primary'} ">
                                         ${firstItem.paid_amount > 0 ? 'Thanh toán' : 'Trả phòng'}
                                     </button>
-                                    <button class="menu-toggle-btn"  data-room-id="${items.room_code}" data-booking="${bookingId}" style="">⋮</button>
+                                    <button class="menu-toggle-btn"  ${items.length} data-booking="${bookingId}" style="">⋮</button>
                             </div>
-                            <div class="room-action-menu menu-main-list" data-booking="${bookingId}" data-room-id="${items.room_code}">
+                            <div class="room-action-menu menu-main-list" data-booking="${bookingId}" ${items.length}>
                                 <div class="dropdown-item">Thêm sản phẩm, dịch vụ</div>
                                 <div class="dropdown-item">Sửa đặt phòng</div>
                                 <div class="dropdown-item">Hủy đặt phòng</div>
@@ -136,12 +136,12 @@ function initGridMain(data,date) {
                                 <td class="text-right">${formatCurrency( parseFloat(item.discount || 0) + parseFloat(item.deposit_amount || 0))}</td>
                                 <td class="w-20" style="position: relative;">
                                     <div class="d-flex" style="gap:10px;align-items: anchor-center;">
-                                            <button style="height:37px" class="btn ${firstItem.paid_amount > 0 ? 'btn-success' : 'btn-primary'}">
+                                            <button style="height:25px; display:flex" class="btn ${firstItem.paid_amount > 0 ? 'btn-success' : 'btn-primary'}">
                                                 ${firstItem.paid_amount > 0 ? 'Thanh toán' : 'Trả phòng'}
                                             </button>
-                                            <button class="menu-toggle-btn" data-booking="${bookingId}">⋮</button>
+                                            <button class="menu-toggle-btn" data-booking="${bookingId}" data-room-id="${item.room_code}">⋮</button>
                                     </div>
-                                    <div class="room-action-menu menu-main-list" data-booking="${bookingId}" >
+                                    <div class="room-action-menu menu-main-list" data-booking="${bookingId}" data-room-id="${item.room_code}">
                                         <div class="dropdown-item">Thêm sản phẩm, dịch vụ</div>
                                         <div class="dropdown-item">Sửa đặt phòng</div>
                                         <div class="dropdown-item">Hủy đặt phòng</div>
@@ -178,8 +178,21 @@ function initGridMain(data,date) {
 $(document).on("click", ".menu-toggle-btn", function (e) {
     e.stopPropagation();
     const bookingId = $(this).data("booking");
-    $(".room-action-menu").hide(); // ẩn hết menu cũ
-    $(`.room-action-menu[data-booking="${bookingId}"]`).toggle(); // toggle menu của booking đang chọn
+    const roomId = $(this).data("room-id");
+
+    // Ẩn tất cả menu cũ
+    $(".room-action-menu").hide();
+
+    // Hiện menu tương ứng với cả bookingId và roomId
+    $(`.room-action-menu[data-booking="${bookingId}"][data-room-id="${roomId}"]`).toggle();
+});
+$(document).on("click", ".menu-toggle-btn", function (e) {
+    e.stopPropagation();
+    const bookingId = $(this).data("booking");
+
+    $(".room-action-menu").hide();
+
+    $(`.room-action-menu[data-booking="${bookingId}"]`).toggle();
 });
 
 // Ẩn menu khi click ra ngoài

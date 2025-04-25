@@ -1603,7 +1603,7 @@
         }
         let script = document.createElement('script');
         script.id = scriptId;
-        script.type = 'module';
+        // script.type = 'module';
         script.src = `{{ asset('assets/admin/js/${view}-main.js') }}?t=${new Date().getTime()}`;
         script.onload = function() {
             if (typeof initViewScript === "function") {

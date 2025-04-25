@@ -1069,6 +1069,7 @@ class BookRoomController extends Controller
                 ];
             }
             if ($keyMethod == 'LETAN' && !empty($booking->room_change_info)) {
+             //   Log::info($booking);
 
                 $groupedBookings[$key]['room_bookings'][] = [
                     'id'                => $booking->id,
@@ -1088,6 +1089,8 @@ class BookRoomController extends Controller
                     'total_service'     => RoomServiceProduct::where('check_in_id', $id)->where('room_code',$booking->room_change_info['new_room_code'])->sum('total_payment'),
                 ];
             } else {
+             //   Log::info('chưa đổi lần nào ');
+             //   Log::info($booking);
                 $groupedBookings[$key]['room_bookings'][] = [
                     'id'                => $booking->id,
                     'booking_id'        => $booking->check_in_id,

@@ -456,6 +456,7 @@ function initViewScript() {
 
     });
 }
+let selectedItems  = [];
 $(document).ready(initViewScript);
 // let selectedItems = []; 123
 function initViewScriptGird() {
@@ -1687,7 +1688,6 @@ function initViewScriptGird() {
                         $('#loading').hide();
                         let totalDeposit = 0;
                         let totalBalance = 0;
-                        $('.total_deposit').text(formatCurrency(totalDeposit));
                         $('tr').find('input.deposit').on('blur', function () {
                             let rowTotal = 0;
                             $('tr').each(function () {

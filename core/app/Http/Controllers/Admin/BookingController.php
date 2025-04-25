@@ -755,6 +755,10 @@ class BookingController extends Controller
             if ($roomBooking->id_room_booking) { // đặt phòng trước 
                 Log::info('đặt phòng trước ');
                 saveRoomStatusHistory($isRoom->id, now(), $roomBooking->checkout_date, 3); // phòng mới 
+                updateRoomService($request->booking_id,$roomBooking->room_change ?? $roomBooking->room_code,$isRoom->id);
+                ReceiptAndPayment::where('checkin_id', $request->booking_id)
+                ->where('room_code',$roomBooking->room_change ?? $roomBooking->room_code)
+                ->update(['room_code'=>$isRoom->id]);
                 if ($roomBooking->room_change) {
                     Log::info('Đã đổi rồi');
                     saveRoomStatusHistory($roomBooking->room_change, $roomBooking->checkin_date, $roomBooking->checkout_date, 1); // phòng cũ 
@@ -764,8 +768,11 @@ class BookingController extends Controller
             } else { // nhận phòng luôn
                 Log::info('Nhận phòng luôn');
                 saveRoomStatusHistory($isRoom->id, now(), $roomBooking->checkout_date, 3);
+                ReceiptAndPayment::where('checkin_id', $request->booking_id)
+                ->where('room_code',$roomBooking->room_change ?? $roomBooking->room_code)
+                ->update(['room_code'=>$isRoom->id]);
                 // các sản phẩm dịch vụ các phòng cũng đổi sang phòng mới
-                updateRoomService($request->booking_id,$roomBooking->room_code ?? $roomBooking->room_change,$isRoom->id);
+                updateRoomService($request->booking_id,$roomBooking->room_change ?? $roomBooking->room_code  ,$isRoom->id);
                 if ($roomBooking->room_change) {
                     Log::info('Đã đổi rồi');
                     saveRoomStatusHistory($roomBooking->room_change, $roomBooking->checkin_date, $roomBooking->checkout_date, 1); // phòng cũ 
