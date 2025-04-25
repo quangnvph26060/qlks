@@ -26,7 +26,6 @@ function calculateTotalPrice() {
     $('#list-booking, #list-booking-edit, #list-booking-edit-letan').find('input.deposit').each(function () {
         let priceString = $(this).val(); // Lấy giá trị nhập trong input
         let price = parseFloat(priceString.replace(/[,.]/g, '')); // Loại bỏ ký tự không phải số
-
         if (!isNaN(price)) {
             totalDeposit += price;
         }
@@ -69,12 +68,15 @@ function calculateTotalPrice() {
         $(this).text(formatCurrency(totalPrice));
     });
     // giảm giá
-
+    
     $('.total_discount').each(function () {
-
         $(this).text(formatCurrency(totalDiscount));
     });
-
+    // đặt cọc
+    $('.total_deposit').each(function () {
+        $(this).text(formatCurrency(totalDeposit));
+    });
+    
     $('.total_payment').each(function () {
         $(this).text(formatCurrency(payment));
     });
@@ -1621,8 +1623,8 @@ function initViewScriptGird() {
                                 $('.title-check-in').text(response.title);
                                 timeBookRoom = formattedTimes;
                             } else {
-                                console.log(item.date);
-                                console.log(item.room['room_type']['room_type_price']['setup_pricing']['check_in_time']);
+                             //   console.log(item.date);
+                             //   console.log(item.room['room_type']['room_type_price']['setup_pricing']['check_in_time']);
                                 // checkin_datetime
                                 //  timeBookRoom = item.room['room_type']['room_type_price']['setup_pricing']['check_in_time'];
                                 //   item.room['room_type']['room_type_price']['setup_pricing']['check_out_time']
@@ -1699,8 +1701,6 @@ function initViewScriptGird() {
                                     rowTotal += numericDeposit;
                                 });
                             });
-
-
                             $('.total_deposit').text(formatCurrency(rowTotal));
                             let priceString = $('.total_discount').text();
                             let price = parseInt(priceString.replace(/\./g, ""), 10);
