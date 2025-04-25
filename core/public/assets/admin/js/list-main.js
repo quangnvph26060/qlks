@@ -36,7 +36,6 @@ function formatDate(date) {
 $(document).ready(function () {
     const savedView = localStorage.getItem('selectedView') || 'list';
     let htmlrow = '';
-
     if (savedView === "calendar") {
         htmlrow = `
             <input type="date" id="startDate" class="form-control w-auto" style="height: 40px" placeholder="Từ ngày">
@@ -109,9 +108,9 @@ function initGridMain(data,date) {
                                     <button  style="height:37px" class="btn ${firstItem.paid_amount > 0 ? 'btn-success' : 'btn-primary'} ">
                                         ${firstItem.paid_amount > 0 ? 'Thanh toán' : 'Trả phòng'}
                                     </button>
-                                    <button class="menu-toggle-btn" data-booking="${bookingId}" style="">⋮</button>
+                                    <button class="menu-toggle-btn"  data-room-id="${items.room_code}" data-booking="${bookingId}" style="">⋮</button>
                             </div>
-                            <div class="room-action-menu menu-main-list" data-booking="${bookingId}">
+                            <div class="room-action-menu menu-main-list" data-booking="${bookingId}" data-room-id="${items.room_code}">
                                 <div class="dropdown-item">Thêm sản phẩm, dịch vụ</div>
                                 <div class="dropdown-item">Sửa đặt phòng</div>
                                 <div class="dropdown-item">Hủy đặt phòng</div>

@@ -93,7 +93,7 @@ function formatCurrency(amount) {
     const integerPart = parts[0];
     const formattedInteger = integerPart.replace(/\B(?=(\d{3})+(?!\d))/g, '.');
 
-    return formattedInteger +  showCurrency;
+    return formattedInteger + showCurrency;
 }
 function formatCurrencyEdit(amount) {
     const parts = amount.toString().split('.');
@@ -246,7 +246,7 @@ function initGridMain(data, date) {
                         //     button.dataset.room = item?.room_number;
                         //     button.dataset.id = isBooking?.booking_id ?? isBooking?.check_in_id ?? "";
                         // }
-                     //   console.log(isBooking);
+                        //   console.log(isBooking);
 
                         roomHTML += `
                         <div class="room-card ${item.status} ${flag}     
@@ -457,8 +457,8 @@ function initViewScript() {
     });
 }
 $(document).ready(initViewScript);
-let selectedItems = [];
-function initViewScript1() {
+// let selectedItems = []; 123
+function initViewScriptGird() {
     const date_booking = new Date();
     const date_yyyy = date_booking.getFullYear();
     const date_mm = String(date_booking.getMonth() + 1).padStart(2, '0');
@@ -494,7 +494,7 @@ function initViewScript1() {
                             };
                         });
                         renderSelected();
-                    }else{
+                    } else {
                         selectedItemsBox.innerHTML = '<div class="text-muted">Chưa có dịch vụ, sản phẩm</div>';
                         $('.total_product_service_display').text(0);
                     }
@@ -1687,6 +1687,7 @@ function initViewScript1() {
                         $('#loading').hide();
                         let totalDeposit = 0;
                         let totalBalance = 0;
+                        $('.total_deposit').text(formatCurrency(totalDeposit));
                         $('tr').find('input.deposit').on('blur', function () {
                             let rowTotal = 0;
                             $('tr').each(function () {
@@ -1698,6 +1699,7 @@ function initViewScript1() {
                                     rowTotal += numericDeposit;
                                 });
                             });
+
 
                             $('.total_deposit').text(formatCurrency(rowTotal));
                             let priceString = $('.total_discount').text();
@@ -1929,9 +1931,9 @@ function filterItems(category) {
 }
 
 
-const productList = document.getElementById('productList');
-const selectedItemsBox = document.getElementById('selectedItems');
-const searchInput = document.getElementById('searchInput');
+let productList = document.getElementById('productList');
+let selectedItemsBox = document.getElementById('selectedItems');
+let searchInput = document.getElementById('searchInput');
 
 let currentFilter = 'Tất cả';
 
@@ -2004,8 +2006,8 @@ $(document).on('click', '.remove-btn-service', function () {
                             notify('success', response.message);
                             selectedItems.splice(index, 1);
                             renderSelected();
-                          
-                            
+
+
                             $('#total_service').val(response.total_service);
                             // cập nhật lại giá tiền
                             let totalPrice = 0;
@@ -2052,7 +2054,7 @@ function renderSelected() {
         $('.total_product_service_display').text(0);
         return;
     }
-    
+
     let sumService = selectedItems.reduce((sum, item) => {
         const value = parseFloat(item.price * item.quantity);
         return sum + (isNaN(value) ? 0 : value);
@@ -2283,4 +2285,4 @@ $('.booking-form-pttt').on('submit', function (e) {
         },
     });
 });
-$(document).ready(initViewScript1);
+$(document).ready(initViewScriptGird);

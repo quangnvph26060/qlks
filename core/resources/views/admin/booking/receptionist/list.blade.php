@@ -1,4 +1,4 @@
-<div>
+<div class="card b-radius--10 scroll-container-main">
     <table class="table--light style--two table">
         <thead>
             <tr>
@@ -40,6 +40,7 @@
     }
 
     .menu-toggle-btn {
+        line-height: 1;
         font-size: 30px;
         padding: 0px 0px 0px;
         margin-left: 4px;

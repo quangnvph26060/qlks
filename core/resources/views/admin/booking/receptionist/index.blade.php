@@ -1603,13 +1603,14 @@
         }
         let script = document.createElement('script');
         script.id = scriptId;
+        script.type = 'module';
         script.src = `{{ asset('assets/admin/js/${view}-main.js') }}?t=${new Date().getTime()}`;
         script.onload = function() {
             if (typeof initViewScript === "function") {
                 initViewScript(); // Gọi lại hàm này sau khi script được tải
             }
-            if (typeof initViewScript1 === "function") {
-                initViewScript1(); // Gọi lại hàm này sau khi script được tải
+            if (typeof initViewScriptGird === "function") {
+                initViewScriptGird(); // Gọi lại hàm này sau khi script được tải
             }
             if (typeof callback === "function") {
                 callback();

@@ -8,8 +8,8 @@ function initGridMain(data) {
                     <input type="date" id="endDate" class="form-control w-auto" style="height: 40px"
                         placeholder="Đến ngày"></input>`
             ;
-        document.getElementById('date-input-booking').innerHTML = htmlrow;
     }
+    $('#date-input-booking').html(htmlrow);
 
     function getAllDatesInTableBooking() {
         return new Promise((resolve, reject) => {
