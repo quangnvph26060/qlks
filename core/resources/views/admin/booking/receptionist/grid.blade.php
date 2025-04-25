@@ -20,7 +20,7 @@
     }
     #grid-main {
         width: 100%;
-        height: 100vh;
+        height: 110vh;
         overflow: auto;
         white-space: nowrap;
         scrollbar-width: thin;
