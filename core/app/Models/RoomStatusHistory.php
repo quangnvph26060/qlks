@@ -39,7 +39,16 @@ class RoomStatusHistory extends Model
         return $this->hasMany(CheckIn::class, 'checkin_date', 'start_date')
             ->join('room_status_history', function ($join) {
                 $join->on('room_status_history.end_date', '=', 'check_in.checkout_date')
-                     ->whereColumn('check_in.room_code', 'room_status_history.room_id');
+                    //  ->whereColumn('check_in.room_change', 'room_status_history.room_id');
+                    ->where(function ($query) {
+                        $query->whereNotNull('check_in.room_change') // Nếu room_change có giá trị
+                              ->whereColumn('room_status_history.room_id', '=', 'check_in.room_change');
+                    })
+                    // Nếu room_change là null, so sánh với room_code
+                    ->orWhere(function ($query) {
+                        $query->whereNull('check_in.room_change')  // Nếu room_change là null
+                              ->whereColumn('room_status_history.room_id', '=', 'check_in.room_code'); // So sánh với room_code
+                    });
             })
             ->select('check_in.*');
     }
