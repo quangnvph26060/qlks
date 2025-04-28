@@ -634,6 +634,7 @@ function initViewScriptGird() {
         $(".btn-book-pttt").attr("data-method", "check_in");
         $('#select-option-pttt_error1').text('');
         $('#input_pttt_error').text('');
+        $('#add-service-room-booking').hide();
         $('[id="select-option-pttt-main"]').hide();
         $('[id="select-option-pttt"]').hide();
         $('[id="total_payment_display"]').hide();
