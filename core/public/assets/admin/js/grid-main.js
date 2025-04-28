@@ -68,7 +68,7 @@ function calculateTotalPrice() {
         $(this).text(formatCurrency(totalPrice));
     });
     // giảm giá
-    
+
     $('.total_discount').each(function () {
         $(this).text(formatCurrency(totalDiscount));
     });
@@ -76,7 +76,7 @@ function calculateTotalPrice() {
     $('.total_deposit').each(function () {
         $(this).text(formatCurrency(totalDeposit));
     });
-    
+
     $('.total_payment').each(function () {
         $(this).text(formatCurrency(payment));
     });
@@ -458,7 +458,7 @@ function initViewScript() {
 
     });
 }
-let selectedItems  = [];
+let selectedItems = [];
 $(document).ready(initViewScript);
 // let selectedItems = []; 123
 function initViewScriptGird() {
@@ -603,6 +603,28 @@ function initViewScriptGird() {
                     let totalPrice, total_deposit_amount, total_deposit_discount = 0;
                     var tbody = $('#list-booking-edit-letan');
                     tbody.empty();
+                    // nhân viên
+                    var selected_select_staff = $('#select-staff-edit-letan');
+                     selected_select_staff.empty();
+                    let option_staff = `<option value="">Chọn nhân viên</option>`;
+                    data.admin.forEach(function (item) {
+                        option_staff += `<option value="${item.id}">${item.username}</option>`;
+                    });
+                    selected_select_staff.append(option_staff);
+
+                    // khách hàng
+                    var selected_customer_source = $('#select-customer-source-edit-letan');
+                    selected_customer_source.empty();
+                    let option = `<option value="">Chọn nguồn khách hàng</option>`;
+                    data.customerSourse.forEach(function (item) {
+                        if (item.source_code == data.option_customer_source) {
+                            option += `<option value="${item.source_code}" selected>${item.source_name}</option>`;
+                        } else {
+                            option += `<option value="${item.source_code}">${item.source_name}</option>`;
+                        }
+
+                    });
+                    selected_customer_source.append(option);
                     data.data.forEach(function (item) {
                         $('input[name="name"]').val(item.customer_name);
                         $('input[name="phone"]').val(item.phone_number);
@@ -675,6 +697,7 @@ function initViewScriptGird() {
                         });
 
                     });
+
                     totalPrice = calculateTotalPrice();
                     $('.total_deposit').text(formatCurrency(total_deposit_amount));
 
@@ -1623,8 +1646,8 @@ function initViewScriptGird() {
                                 $('.title-check-in').text(response.title);
                                 timeBookRoom = formattedTimes;
                             } else {
-                             //   console.log(item.date);
-                             //   console.log(item.room['room_type']['room_type_price']['setup_pricing']['check_in_time']);
+                                //   console.log(item.date);
+                                //   console.log(item.room['room_type']['room_type_price']['setup_pricing']['check_in_time']);
                                 // checkin_datetime
                                 //  timeBookRoom = item.room['room_type']['room_type_price']['setup_pricing']['check_in_time'];
                                 //   item.room['room_type']['room_type_price']['setup_pricing']['check_out_time']

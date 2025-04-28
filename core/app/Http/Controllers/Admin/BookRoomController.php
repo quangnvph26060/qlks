@@ -1150,7 +1150,7 @@ class BookRoomController extends Controller
             'data' => $groupedBookings,
         ]);
     }
-   
+
     public function findRoomBookingId(Request $request)
     {
         $data = [];
@@ -1211,9 +1211,18 @@ class BookRoomController extends Controller
             ];
         }
         $data = array_values($data);
+        $customerSourse = CustomerSource::where('unit_code', unitCode())->get();
+        $admin = Admin::where('unit_code', unitCode())->where('role_id', '!=', 0)->get();
+      //  Log::info($roomBooking[0]['customer_code']);
+        if ($roomBooking[0]['customer_code']) {
+            $customer = Customer::where('customer_code', $roomBooking[0]['customer_code'])->first();
+        }
         return response()->json([
-            'status' => 'success',
-            'data' => $data,
+            'status'                 => 'success',
+            'data'                   => $data,
+            'admin'                  => $admin,
+            'customerSourse'         => $customerSourse,
+            'option_customer_source' => $customer->group_code ?? "",
         ]);
     }
 }
