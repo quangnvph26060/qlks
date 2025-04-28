@@ -273,7 +273,7 @@
                                                     </svg>
                                                     Chọn thêm phòng
                                                 </p>
-                                                <p id="add-service-room-booking" class="add-service-booking" style="width: 204px;">
+                                                <p id="add-service-room-booking" class="add_product_service_payment" style="width: 204px;">
                                                     <svg xmlns="http://www.w3.org/2000/svg" width="20" height="20"
                                                         viewBox="0 0 24 24">
                                                         <g fill="currentColor" fill-rule="evenodd" clip-rule="evenodd">
@@ -1838,7 +1838,7 @@
     }
 
     .add-room-booking,
-    .add-room-booking-edit,
+    .add-room-booking-edit, .add_product_service_payment,
     .add-service-booking {
         padding: 4px 10px;
         border: 1px solid #337ab7;

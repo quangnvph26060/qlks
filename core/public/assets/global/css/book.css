@@ -101,7 +101,7 @@ body.modal-open {
     text-overflow: ellipsis;
     white-space: nowrap;
 }
-.add-room-booking, .add-room-booking-edit{
+.add-room-booking, .add_product_service{
    
     padding: 4px 10px;
     border: 1px solid #337ab7;

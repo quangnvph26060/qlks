@@ -475,17 +475,78 @@ function initViewScriptGird() {
 
     const formattedDates = `${date_yyyy}-${date_mm}-${date_dd}`;
     const formattedTimes = `${date_hour}:${date_minutes}`;
-    $(document).off("click", ".add_product_service, .add-service-booking").on("click", ".add_product_service, .add-service-booking", function (e) {
+    $(document).off("click", ".add_product_service_payment").on("click", ".add_product_service_payment", function (e) {
         e.stopPropagation();
+    
+        const button = document.getElementById("add-service-room-booking");
+    
+        button.setAttribute('data-room-id', $(this).attr('data-room-id'));
+        button.setAttribute('data-coustomer', $(this).attr('data-coustomer'));
+        button.setAttribute('data-room', $(this).attr('data-room'));
+        button.setAttribute('data-id', $(this).attr('data-id'));
+        console.log($(this).attr('data-id'));
+        
+        $('#add-service-room-booking').off("click").on("click", function() {
+            var roomId = $(this).attr('data-room-id');
+            var checkInId = $(this).attr('data-id');
+            $.ajax({
+                url: getAllService,
+                type: 'GET',
+                data: {
+                    search: "",
+                    room_code: roomId,
+                    check_in_id: checkInId,
+                },
+                success: function (data) {
+                    if (data.status === 'success') {
+                        renderList(data.data)
+                        let total_service = 0;
+                        if (data.serviceInRoom && data.serviceInRoom.length > 0) {
+                            selectedItems = data.serviceInRoom.map(item => {
+                                return {
+                                    ...item,
+                                    quantity: item.quantity,
+                                    name: item?.product?.name ?? item?.service?.name,
+                                    id: item?.product?.id ?? item?.service?.id,
+                                };
+                            });
+                            renderSelected();
+                        } else {
+                            selectedItemsBox.innerHTML = '<div class="text-muted">Chưa có dịch vụ, sản phẩm</div>';
+                            $('.total_product_service_display').text(0);
+                        }
+    
+                    }
+    
+                },
+                error: function (error) {
+                    $('#loading').hide();
+                    console.log('Error:', error);
+                }
+            });
+            const modal = new bootstrap.Modal(document.getElementById('serviceModal'));
+            $('.service-room-number').text($(this).attr('data-room'));
+            $('#room_code_service').val($(this).data("room-id"));
+            $('#check_in_id_service').val($(this).data("id"));
+            $('.service-customer').text($(this).data("coustomer"));
+            modal.show();
+          
+        });
+    });
+    $(document).off("click", ".add_product_service").on("click", ".add_product_service", function (e) {
+     e.stopPropagation();
         $('#selectedItems').empty();
         selectedItems = [];
+        var roomId = $(this).data('room-id');
+     
+        var checkInId = $(this).data('id');
         $.ajax({
             url: getAllService,
             type: 'GET',
             data: {
                 search: "",
-                room_code: $(this).data('room-id'),
-                check_in_id: $(this).data('id'),
+                room_code: roomId,
+                check_in_id: checkInId,
             },
             success: function (data) {
                 if (data.status === 'success') {
@@ -831,10 +892,12 @@ function initViewScriptGird() {
             $('[id="input_pttt_error"]').text('');
 
             const button = document.getElementById("add-service-room-booking");
-            button.dataset.roomId = $(this).attr("data-room-id");
-            button.dataset.coustomer = $(this).attr("data-coustomer");
-            button.dataset.room = $(this).attr("data-room");
-            button.dataset.id = $(this).attr("data-booking-id");
+
+            button.setAttribute('data-room-id', $(this).attr('data-room-id'));
+            button.setAttribute('data-coustomer', $(this).attr('data-coustomer'));
+            button.setAttribute('data-room', $(this).attr('data-room'));
+            button.setAttribute('data-id', $(this).attr('data-booking-id'));
+            
 
 
 
