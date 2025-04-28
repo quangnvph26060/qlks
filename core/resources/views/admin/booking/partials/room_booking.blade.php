@@ -290,7 +290,7 @@
                         
                     </div>
                     <div class="d-flex justify-content-end" style="gap: 10px;">
-                        <button type="button" data-row="booked" class=" btn-dat-truoc btn-book">Lưu</button>
+                        <button type="button" data-row="booked" class="btn-dat-truoc btn-book">Lưu</button>
                         <p type="button" data-row="booked" class="alert-paragraph close_modal">Hủy</p>
                     </div>
                 </form>

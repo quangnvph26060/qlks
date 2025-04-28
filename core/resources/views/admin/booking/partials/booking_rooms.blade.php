@@ -209,7 +209,7 @@ aria-hidden="true">
                             <div class="col-md-3 text-end datphong">
                                 <button type="button" data-row="checkin" class=" btn-primary-2 btn-confirm">Nhận
                                     phòng</button>
-                                <button type="button" data-row="booked" class=" btn-dat-truoc btn-book">Đặt
+                                <button type="button" data-row="booked" class="btn-dat-truoc btn-book">Đặt
                                     trước</button>
                             </div>
 

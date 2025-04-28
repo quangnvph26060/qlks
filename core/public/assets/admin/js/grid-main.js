@@ -208,8 +208,9 @@ function initGridMain(data, date) {
                         if (item.room_booking_history.length > 0 && item.room_booking_history) {
                             item.room_booking_history.forEach(booking => {
                                 status_code = booking.status_code;
-                                if (Array.isArray(booking.check_in_data) && booking.check_in_data.length > 0) {
-
+                                if (Array.isArray(booking.check_in_data) && booking.check_in_data.length > 0 && booking.status_code == 3 ) {
+                                  
+                                    
                                     let room_code = "";
                                     booking.check_in_data.forEach(k => {
                                         //  check liên quan đổi phòng
@@ -225,7 +226,7 @@ function initGridMain(data, date) {
                                     });
 
                                 }
-                                else if (Array.isArray(booking.booking_data) && booking.booking_data.length > 0) {
+                                else if (Array.isArray(booking.booking_data) && booking.booking_data.length > 0  && booking.status_code == 2) {
                                     let matchingBooking = booking.booking_data.find(booking_data => booking_data.room_code == item.id);
                                     if (matchingBooking && matchingBooking?.checkin_date.split(' ')[0] === selectedDate) {
                                         isBooking = matchingBooking; // Lưu bản ghi nếu tìm thấy
@@ -1398,13 +1399,7 @@ function initViewScriptGird() {
             checkRoomBooking(checkin, data);
         });
         $(document).off("click", ".room-booked").on("click", ".room-booked", function (e) {
-            $(".btn-dat-truoc.btn-book").each(function () {
-                // Kiểm tra nếu có thuộc tính data-method là 'check_in'
-                if ($(this).attr("data-method") === "check_in") {
-                    // Xóa thuộc tính data-method
-                    $(this).removeAttr("data-method");
-                }
-            });
+            $(".btn-book").attr("data-method", "");
             if ($(e.target).closest('.menu-btn').length > 0) return;
             let roomId = $(this).attr("data-room-id");
             let roomType = $(this).attr("data-room-type-id");

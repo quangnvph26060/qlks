@@ -438,7 +438,7 @@
                                 </div>
                             </div>
                             <div class="d-flex justify-content-end" style="gap: 10px;">
-                                <button type="button" class=" btn-dat-truoc btn-book-pttt">Lưu</button>
+                                <button type="button" class="btn-dat-truoc btn-book-pttt">Lưu</button>
                                 <p type="button" data-row="booked" class="alert-paragraph close_modal">Hủy</p>
                             </div>
                         </form>
@@ -954,10 +954,9 @@
             });
         });
         // add
-        $('.btn-book').on('click', function() {
+        $(document).off("click", ".btn-book").on("click", ".btn-book", function (e) {
             const dataRowValue = $(this).data('row');
-            const method = $(this).data('method');
-            
+            const method = $(this).attr('data-method');
             if (method == "check_in") {
                 $('.booking-form').data('method', 'check_in');
                 if (validateAllFields(validatorForm)) {
@@ -1084,7 +1083,7 @@
                                 //    loadRoomBookings();
                                 let selectedDate = $('#startDate').val();
                                 initGridMain('', selectedDate);
-                                // window.location.reload();
+                             // window.location.reload();
 
                             } else {
                                 notify('error', response.error);
