@@ -163,7 +163,7 @@ function initGridMain(data, date) {
     const date_dd = String(date_booking.getDate()).padStart(2, '0');
     const date_hour = String(date_booking.getHours()).padStart(2, '0'); // Giờ
     const date_minutes = String(date_booking.getMinutes()).padStart(2, '0'); // Phút
-
+    $('#loading-overlay').css('display', 'flex');
     const formattedDates = `${date_yyyy}-${date_mm}-${date_dd}`;
     $.ajax({
         type: "GET",
@@ -373,6 +373,9 @@ function initGridMain(data, date) {
                     }
 
                 }
+                setTimeout(function () {
+                    $('#loading-overlay').css('display', 'none');
+                }, 1000);
                 // end  tìm kiếm trạng thái phòng
 
             } else {

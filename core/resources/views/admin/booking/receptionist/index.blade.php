@@ -46,6 +46,10 @@
                     <i class="fas fa-filter"></i>
                     <span class="dot"></span>
                 </button>
+                <button class="reload-btn" id="reload-btn">
+                    <i class="fas fa-sync-alt"></i>
+                  
+                </button>
             </div>
         </div>
         <div class="col-md-6" id="booking-time">
@@ -74,6 +78,14 @@
             @include('admin/booking/receptionist/calendar')
         </div>
 
+        <div id="loading-overlay" style="display: none;">
+            <svg xmlns="http://www.w3.org/2000/svg" width="50" height="50" viewBox="0 0 24 24">
+                <path fill="currentColor" d="M12 2A10 10 0 1 0 22 12A10 10 0 0 0 12 2Zm0 18a8 8 0 1 1 8-8A8 8 0 0 1 12 20Z" opacity=".5"></path>
+                <path fill="currentColor" d="M20 12h2A10 10 0 0 0 12 2V4A8 8 0 0 1 20 12Z">
+                  <animateTransform attributeName="transform" dur="1s" from="0 12 12" repeatCount="indefinite" to="360 12 12" type="rotate"></animateTransform>
+                </path>
+              </svg>
+        </div>
     </div>
     @push('breadcrumb-plugins')
         <div class="modal fade" id="addRoomModal" tabindex="-1" aria-hidden="true" style="overflow: unset">
@@ -1633,6 +1645,11 @@
             $('.filter-sidebar').removeClass('open');
             $(this).removeClass('show');
         });
+        $('.reload-btn').on('click', function() {
+          
+            let selectedDate = $('#startDate').val();
+            initGridMain('', selectedDate);
+        });
     });
 
 
@@ -1909,7 +1926,7 @@
     }
 
 
-    .filter-btn {
+    .filter-btn,.reload-btn {
         cursor: pointer;
         background: #fff;
         border: 1px solid #ccc;

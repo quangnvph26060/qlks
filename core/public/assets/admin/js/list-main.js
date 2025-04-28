@@ -68,6 +68,7 @@ $(document).ready(function () {
     $('#endDate').val(formatDate(futureDate)); // Chỉ set nếu có endDate
 });
 function initGridMain(data,date) {
+    $('#loading-overlay').css('display', 'flex');
     $.ajax({
         type: "GET",
         url: roomBoookingHistory,
@@ -163,7 +164,9 @@ function initGridMain(data,date) {
                     const bookingId = $(this).data("booking");
                     $(`.room-detail-row[data-parent="${bookingId}"]`).toggle();
                 });
-
+                setTimeout(function () {
+                    $('#loading-overlay').css('display', 'none');
+                }, 1000);
             } else {
                 reject("Không lấy được dữ liệu");
             }

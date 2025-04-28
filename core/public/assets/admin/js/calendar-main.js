@@ -12,6 +12,7 @@ function initGridMain(data) {
     $('#date-input-booking').html(htmlrow);
 
     function getAllDatesInTableBooking() {
+        $('#loading-overlay').css('display', 'flex');
         return new Promise((resolve, reject) => {
             $.ajax({
                 type: "GET",
@@ -20,6 +21,9 @@ function initGridMain(data) {
                 success: function (response) {
                     if (response.status === 'success') {
                         resolve(response.data);
+                        setTimeout(function () {
+                            $('#loading-overlay').css('display', 'none');
+                        }, 1000);
                     } else {
                         reject("Không lấy được dữ liệu");
                     }
