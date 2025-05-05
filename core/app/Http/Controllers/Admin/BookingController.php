@@ -1106,12 +1106,23 @@ class BookingController extends Controller
         $amount = (int)str_replace('.', '', $request->input_pttt);
         $deposit = (int)str_replace('.', '', $request->deposit);
 
+        $errors = [];
+
+        if ($request->payment_pttt == "") {
+            $errors['payment_pttt'] = 'Vui lòng chọn phương thức thanh toán';
+        }
+        
         if ($amount <= 0) {
+            $errors['amount'] = 'Vui lòng nhập số tiền thanh toán';
+        }
+        
+        if (!empty($errors)) {
             return response()->json([
-                'status' => 'error',
-                'msg'    => 'Vui lòng nhập số tiền thanh toán',
+                "status" => "error",
+                "errors" => $errors
             ]);
         }
+        
 
         // Lấy thông tin check-in
         $checkIns = CheckIn::where('check_in_id', $checkinId)->where('id', $roomData['bookingId'])->get();

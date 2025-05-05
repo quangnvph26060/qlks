@@ -54,10 +54,15 @@ class ReceiptAndPayment extends Model
     {
         return Attribute::get(function () {
             return CheckIn::where('check_in_id', $this->checkin_id)
-                ->where('room_code', $this->room_code)
+                ->where('room_change', $this->room_code)
                 ->where('unit_code', unitCode())
-                ->first();
+                ->first()
+                ?? CheckIn::where('check_in_id', $this->checkin_id)
+                    ->where('room_code', $this->room_code)
+                    ->where('unit_code', unitCode())
+                    ->first();
         });
+        
     }
 
 }

@@ -919,12 +919,16 @@ class BookRoomController extends Controller
         if ($booking->customer_code) {
             $customer = Customer::where('customer_code', $booking->customer_code)->first();
         }
+        if ($booking->created_by) {
+            $is_admin = Admin::where('id', $booking->created_by)->first();
+        }
         return response()->json([
             'status'                 => 'success',
             'data'                   => $groupedBookings,
             'admin'                  => $admin,
             'customerSourse'         => $customerSourse,
             'option_customer_source' => $customer->group_code ?? "",
+            'option_admin'           => $is_admin['name'],
             'pageModal'              => $pageModal,
         ]);
     }
@@ -1217,12 +1221,16 @@ class BookRoomController extends Controller
         if ($roomBooking[0]['customer_code']) {
             $customer = Customer::where('customer_code', $roomBooking[0]['customer_code'])->first();
         }
+        if ($roomBooking[0]['created_by']) {
+            $is_admin = Admin::where('id', $roomBooking[0]['created_by'])->first();
+        }
         return response()->json([
             'status'                 => 'success',
             'data'                   => $data,
             'admin'                  => $admin,
             'customerSourse'         => $customerSourse,
             'option_customer_source' => $customer->group_code ?? "",
+            'option_admin'           => $is_admin['name'],
         ]);
     }
 }

@@ -462,7 +462,9 @@ function initViewScript() {
 
     });
 }
-let selectedItems = [];
+if (typeof selectedItems === 'undefined') {
+    let selectedItems = [];
+  }
 $(document).ready(initViewScript);
 // let selectedItems = []; 123
 function initViewScriptGird() {
@@ -663,8 +665,10 @@ function initViewScriptGird() {
             success: function (data) {
 
                 $('#myModal-check-in-edit').modal('show').on('shown.bs.modal', function () {
-
+                    $('[id="date-book-room-booking-edit"]').val(formattedDates);
                     $('.pageModal').text('Nhận phòng');
+
+                
 
                     let totalPrice, total_deposit_amount, total_deposit_discount = 0;
                     var tbody = $('#list-booking-edit-letan');
@@ -674,7 +678,12 @@ function initViewScriptGird() {
                      selected_select_staff.empty();
                     let option_staff = `<option value="">Chọn nhân viên</option>`;
                     data.admin.forEach(function (item) {
-                        option_staff += `<option value="${item.id}">${item.username}</option>`;
+                        if(item.name === data.option_admin){
+                            option_staff += `<option value="${item.id}" selected>${item.username}</option>`;
+                        }else{
+                            option_staff += `<option value="${item.id}">${item.username}</option>`;
+                        }
+                       
                     });
                     selected_select_staff.append(option_staff);
 
@@ -706,7 +715,9 @@ function initViewScriptGird() {
                             let [dateOut, timeOut] = checkoutDateTime.split(" ");
                             total_deposit_amount += parseFloat(room.deposit_amount);
                             total_deposit_discount += parseFloat(room.discount);
-
+                            // $('.total_amount').text('');
+                            // $('.total_deposit').text('');
+                            // $('.total_discount').text('');
                             var tr = `
                                 <tr data-room-booking-id="${room.booking_id}" data-room-id="${room.room_code}"  data-room-type-id="${room.room_type}" data-date="${formattedDates}">
                                     <td>
@@ -766,7 +777,6 @@ function initViewScriptGird() {
 
                     totalPrice = calculateTotalPrice();
                     $('.total_deposit').text(formatCurrency(total_deposit_amount));
-
                     $('.total_discount').text(formatCurrency(total_deposit_discount));
 
                     $('.total_amount').text(formatCurrency(totalPrice));
@@ -1222,6 +1232,11 @@ function initViewScriptGird() {
             });
 
         });
+        $('#myModal-booking-edit').on('hidden.bs.modal', function () {
+           $('#list-booking-edit').empty('');
+         
+        });
+          
         $(document).off("click", ".room-booking").on("click", ".room-booking", function (e) {
             if ($(e.target).closest('.menu-btn').length > 0) return;
             let dataId = $(this).attr("data-booking-id");
@@ -1251,15 +1266,23 @@ function initViewScriptGird() {
                         //title 
                         $('.pageModal').text(response.pageModal);
                         selected_customer_source.append(option);
+
                         // nhân viên
                         var selected_select_staff = $('#select-staff-edit');
                         selected_select_staff.empty();
                         let option_staff = `<option value="">Chọn nhân viên</option>`;
                         response.admin.forEach(function (item) {
-                            option_staff += `<option value="${item.id}">${item.username}</option>`;
+                            if(item.name === response.option_admin){
+                                option_staff += `<option value="${item.id}" selected>${item.username}</option>`;
+                            }else{
+                                option_staff += `<option value="${item.id}">${item.username}</option>`;
+                            }
+                            
                         });
                         selected_select_staff.append(option_staff);
-                        $('#date-book-room-booking-edit').val(formattedDates)
+
+                        $('#date-book-room-booking-edit').val(formattedDates);
+
                         $('#myModal-booking-edit').modal('show').on('shown.bs.modal', function () {
                             $('.name-edit, .phone-edit').val('');
                             $('#list-booking-edit').empty();
@@ -1508,7 +1531,8 @@ function initViewScriptGird() {
             $('#btn-change-booking-room').submit();
 
         });
-        $('#btn-change-booking-room').on('submit', function (e) {
+        $(document).off('submit', '#btn-change-booking-room')
+        .on('submit', '#btn-change-booking-room', function (e) {
             e.preventDefault();
             let formData = $(this).serializeArray();
             let formObject = {};
@@ -1816,7 +1840,7 @@ function initViewScriptGird() {
                         $('#addRoomModal').modal('hide');
                         $('#select-option-pttt').hide();
                         $('#myModal-booking').modal('show');
-                        document.body.classList.remove("modal-open");
+                        document.body.classList.remove("modal-open"); 
                     } else if (response.status === 'error') {
                         $('#loading').hide();
                         var tr = ``;
@@ -2016,11 +2040,11 @@ function filterItems(category) {
 }
 
 
-let productList = document.getElementById('productList');
-let selectedItemsBox = document.getElementById('selectedItems');
-let searchInput = document.getElementById('searchInput');
+var productList = document.getElementById('productList');
+var selectedItemsBox = document.getElementById('selectedItems');
+var searchInput = document.getElementById('searchInput');
 
-let currentFilter = 'Tất cả';
+var currentFilter = 'Tất cả';
 
 
 function renderList(data) {
@@ -2201,7 +2225,7 @@ window.changeQty = function (index, delta) {
 searchInput.addEventListener('input', renderList);
 renderList();
 
-let debounceTimer;
+var debounceTimer;
 $('#searchServiceInput').on('input', function () {
     const value = $(this).val();
 
@@ -2365,7 +2389,8 @@ $('.booking-form-pttt').on('submit', function (e) {
                 let selectedDate = $('#startDate').val();
                 initGridMain('', selectedDate);
             } else {
-                notify('error', response.error);
+                $('#input_pttt_error').text(response.errors['amount'] ?? "");
+                $('#select-option-pttt_error1').text(response.errors['payment_pttt'] ?? "");
             }
         },
     });

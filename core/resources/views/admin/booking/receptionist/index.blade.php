@@ -1095,7 +1095,7 @@
                                 //    loadRoomBookings();
                                 let selectedDate = $('#startDate').val();
                                 initGridMain('', selectedDate);
-                             // window.location.reload();
+                                // window.location.reload();
 
                             } else {
                                 notify('error', response.error);
