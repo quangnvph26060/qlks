@@ -18,7 +18,8 @@ class CheckIn extends Model
 
     public $timestamps = true; // Sử dụng `created_at` và `updated_at`
 
-    protected $appends = ['room_change_info'];
+    protected $appends = ['room_change_info', 'check_in_payment','check_in_service_products'];
+
 
     protected $fillable = [
         'check_in_id',
@@ -65,6 +66,12 @@ class CheckIn extends Model
     public function getCheckInPaymentAttribute()
     {
         return ReceiptAndPayment::where('checkin_id', $this->check_in_id)
+            ->where('room_code', $this->room_change ?? $this->room_code)
+            ->sum('total_payment');
+    }
+    public function getCheckInServiceProductsAttribute()
+    {
+        return RoomServiceProduct::where('check_in_id', $this->check_in_id)
             ->where('room_code', $this->room_change ?? $this->room_code)
             ->sum('total_payment');
     }

@@ -3,15 +3,14 @@
         <thead>
             <tr>
                 <th>STT</th>
+                <th class="w-30">Hành động</th>
                 <th>Mã đặt phòng</th>
-
                 <th>Phòng</th>
                 <th>Khách hàng</th>
                 <th>Giờ nhận</th>
                 <th>Giờ trả</th>
                 <th>Tổng cộng</th>
                 <th>Khách đã trả</th>
-                <th></th>
             </tr>
         </thead>
         <tbody id="booking-table">
@@ -25,6 +24,20 @@
     <script src="{{ asset('assets/admin/js/list-main.js') }}"></script>
 @endpush
 <style scoped>
+    .status-clean {
+        font-size: 11px !important;
+        padding: 4px 8px;
+        border-radius: 12px;
+    }
+
+    .w-30 {
+        width: 30px;
+    }
+
+    .main-row {
+        line-height: 1.2;
+    }
+
     .room-action-menu .dropdown-item {
         padding: 8px 12px;
         cursor: pointer;
@@ -49,7 +62,8 @@
     .menu-main-list {
         display: none;
         position: absolute;
-        right: 59px;
+        right: -122px;
+        top: 40px;
         background: white;
         box-shadow: 0 2px 6px rgba(0, 0, 0, 0.2);
         border-radius: 4px;

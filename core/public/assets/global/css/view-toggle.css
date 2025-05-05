@@ -26,11 +26,11 @@ button .icon {
 }
 
 button.active {
-    background: #4634ff;
+    background: #004C87;
     color: white;
 }
 button.active span {
-    background: #4634ff;
+    background: #004C87;
     color: white;
 }
 button.active .icon{

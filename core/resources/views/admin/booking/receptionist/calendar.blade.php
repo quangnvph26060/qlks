@@ -23,7 +23,7 @@
         position: relative;
     }
 #headerRow{
-    background: #4634ff;
+    background: #004C87;
     color: white;
 }
     .realtime-line {

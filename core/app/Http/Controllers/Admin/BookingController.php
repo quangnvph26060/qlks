@@ -1004,13 +1004,38 @@ class BookingController extends Controller
         $rooms = $rooms->get();
 
         if (request('method') === 'list-room-booking') {
-            $check_ins = RoomBooking::query()
-                ->where('unit_code', unitCode())
-                ->whereDate('checkin_date', '<=', $date)
-                ->whereDate('checkout_date', '>', Carbon::parse($date)->subDay())
-                ->with('room')
-                ->get()
-                ->groupBy('booking_id');
+            $check_ins = Room::query();
+            $check_ins->when(!empty($room_type), function ($query) use ($room_type) {
+                $query->whereIn('room_type_id', $room_type);
+            });
+    
+            $check_ins->when(!empty($room_clean), function ($query) use ($room_clean) {
+                $query->whereIn('is_clean', $room_clean);
+            });
+            $check_ins = $check_ins->whereHas('roomBookingHistory');
+            
+            $check_ins->with([
+                'roomBookingHistory' => function ($query) use ($date) {
+                    if (!empty($date)) {
+                        $query->whereDate('start_date', '<=', $date)
+                            ->whereDate('end_date', '>', Carbon::parse($date)->subDay());
+                    }
+                    // if (!empty($room_status)) {
+                    //     $query->whereIn('status_code', $room_status);
+                    // }
+                },
+                'roomBookingHistory.roomStatus',
+                'roomBookingHistory.checkInData',
+                'roomBookingHistory.bookingData',
+            ]);   
+            $check_ins = $check_ins->get();
+            // $check_ins = RoomBooking::query()
+            //     ->where('unit_code', unitCode())
+            //     ->whereDate('checkin_date', '<=', $date)
+            //     ->whereDate('checkout_date', '>', Carbon::parse($date)->subDay())
+            //     ->with('room')
+            //     ->get()
+            //     ->groupBy('booking_id');
             return response()->json(['data' => $check_ins, 'status' => 'success']);
         }
         return response()->json(['data' => $rooms, 'status' => 'success']);

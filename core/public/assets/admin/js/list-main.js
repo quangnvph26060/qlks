@@ -81,80 +81,97 @@ function initGridMain(data,date) {
             if (response.status === 'success') {
                 let roomHTML = '';
                 let stt = 1;
+                response.data.forEach(item=>{
 
-                Object.entries(response.data).forEach(([bookingId, items]) => {
-                    let firstItem = items[0];
-                    let roomCount = items.length;
-                    let totalAmount = items.reduce((sum, item) => sum + parseFloat(item.total_amount), 0);
-                   // let totalWithExtras = parseFloat(firstItem.discount || 0) + parseFloat(firstItem.deposit_amount || 0);
-                    let totalWithExtras =items.reduce((sum, item) => sum + parseFloat(item.deposit_amount) + parseFloat(item.discount), 0);
-                    // dòng chính
-                    roomHTML += `
-                      <tr class="main-row" data-booking="${bookingId}">
-                        <td>${stt++}</td>
-                        <td>${bookingId}</td>
-                        <td>
-                        ${roomCount > 1
-                        ? `<a href="#" class="toggle-rooms" data-booking="${bookingId}">${roomCount} phòng ⮟</a>`
-                        : `<span>${firstItem.room.room_number}</span>`}
-                        </td>
-                        <td>${firstItem.customer_name} <br> ${firstItem.phone_number}</td>
-                        <td class="w-10">${formatDateTime(firstItem.checkin_date)}</td>
-                        <td class="w-10">${formatDateTime(firstItem.checkout_date)}</td>
-                        <td class="text-right">${formatCurrency(totalAmount)}</td>
-                        <td class="text-right">${totalWithExtras.toLocaleString()} VND</td>
+                    let dem = stt++;
+                    item.room_booking_history.forEach(booked => {
+                            
+                        if(booked['status_code'] == 3 && booked['check_in_data'].length > 0){
+                            
+                            booked['check_in_data'].forEach(checkIn =>{
+                                if(booked['room_id']  === checkIn['room_code']){
+                                           roomHTML += `
+                                              <tr class="main-row" data-booking="${checkIn['check_in_id']}">
+                                                <td>${dem}</td>
+                                                  <td class="w-20" style="position: relative;">
+                                                    <div class="d-flex align-items-center justify-content-center" style="gap:10px;">
+                                                         
+                                                            <button class="menu-toggle-btn"  data-booking="${checkIn['check_in_id']}">
+                                                                <svg class="" xmlns="http://www.w3.org/2000/svg" width="30" height="30" viewBox="0 0 21 21"><g fill="currentColor" fill-rule="evenodd"><circle cx="10.5" cy="10.5" r="1"></circle><circle cx="10.5" cy="5.5" r="1"></circle><circle cx="10.5" cy="15.5" r="1"></circle></g></svg>
+                                                            </button>
+                                                    </div>
+                                                    <div class="room-action-menu menu-main-list" data-booking="${checkIn['check_in_id']}">
+                                                        <div class="dropdown-item room_clean"  data-id="${item.id}"> ${item['is_clean'] == 1 ? 'Chưa dọn' : 'Làm sạch' }</div>
+                                                        <div class="dropdown-item">Thêm sản phẩm, dịch vụ</div>
+                                                        <div class="dropdown-item">Đổi phòng</div>
+                                                        <div class="dropdown-item">Thanh toán</div>
+                                                    </div>
+                                                </td>
+                                                <td>${checkIn['check_in_id']}</td>
+                                                <td>
+                                                    <span>${item['room_number']}</span>
+                                                <br>  <span class="status-clean">${item['is_clean'] == 1 ? "✨ Sạch" : "🚨 Chưa dọn"}</span></td>
+                                                
+                                                
+                                                <td>${checkIn['customer_name']} <br> ${checkIn['phone_number'] ?? 'N/A'}</td>
+                                                <td class="w-10">${formatDateTime(checkIn['checkin_date'])}</td>
+                                                <td class="w-10">${formatDateTime(checkIn['checkout_date'])}</td>
+                                                <td class="text-right">
+                                                    ${formatCurrency(
+                                                        Number(checkIn['total_amount']) + Number(checkIn['check_in_service_products'])
+                                                    )}
+                                                </td>
 
-                        <td class="w-20" style="position: relative;">
-                            <div class="d-flex" style="gap:10px;align-items: anchor-center;">
-                                    <button  style="height:25px; display:flex" class="btn ${firstItem.paid_amount > 0 ? 'btn-success' : 'btn-primary'} ">
-                                        ${firstItem.paid_amount > 0 ? 'Thanh toán' : 'Trả phòng'}
-                                    </button>
-                                    <button class="menu-toggle-btn"  ${items.length} data-booking="${bookingId}" style="">⋮</button>
-                            </div>
-                            <div class="room-action-menu menu-main-list" data-booking="${bookingId}" ${items.length}>
-                                <div class="dropdown-item">Thêm sản phẩm, dịch vụ</div>
-                                <div class="dropdown-item">Sửa đặt phòng</div>
-                                <div class="dropdown-item">Hủy đặt phòng</div>
-                            </div>
-                        </td>
+                                                <td class="text-right">${formatCurrency(checkIn['check_in_payment'])}</td>
+                                              
 
-                      </tr>
-                    `;
-
-                    // dòng con
-                    if (roomCount > 1) {
-                        items.forEach(item => {
-                            roomHTML += `
-                              <tr class="room-detail-row" data-parent="${bookingId}" style="display: none;">
-                                  <td></td>
-                                   <td></td>
+                                              </tr>
+                                            `;
                                    
-                                <td><span>${item.room.room_number}</span></td>
-                                 <td>${item.customer_name} <br> ${item.phone_number}</td>
-                                <td class="w-10">${formatDateTime(item.checkin_date)}</td>
-                                <td class="w-10">${formatDateTime(item.checkout_date)}</td>
-                                <td class="text-right">${formatCurrency(item.total_amount)}</td>
-                                <td class="text-right">${formatCurrency( parseFloat(item.discount || 0) + parseFloat(item.deposit_amount || 0))}</td>
-                                <td class="w-20" style="position: relative;">
-                                    <div class="d-flex" style="gap:10px;align-items: anchor-center;">
-                                            <button style="height:25px; display:flex" class="btn ${firstItem.paid_amount > 0 ? 'btn-success' : 'btn-primary'}">
-                                                ${firstItem.paid_amount > 0 ? 'Thanh toán' : 'Trả phòng'}
-                                            </button>
-                                            <button class="menu-toggle-btn" data-booking="${bookingId}" data-room-id="${item.room_code}">⋮</button>
-                                    </div>
-                                    <div class="room-action-menu menu-main-list" data-booking="${bookingId}" data-room-id="${item.room_code}">
-                                        <div class="dropdown-item">Thêm sản phẩm, dịch vụ</div>
-                                        <div class="dropdown-item">Sửa đặt phòng</div>
-                                        <div class="dropdown-item">Hủy đặt phòng</div>
-                                    </div>
-                                </td>
+                                    
+                                }   
+                            })
+                            
+                        }else if(booked['status_code'] == 2 && booked['booking_data'].length > 0){
+                            booked['booking_data'].forEach(checkIn =>{
+                                if(booked['room_id']  === checkIn['room_code']){
+                                           roomHTML += `
+                                              <tr class="main-row" data-booking="${checkIn['booking_id']}">
+                                                <td>${dem}</td>
+                                                 <td class="w-20" style="position: relative;">
+                                                    <div class="d-flex align-items-center justify-content-center" style="gap:10px;">
+                                                          
+                                                            <button class="menu-toggle-btn"   data-booking="${checkIn['booking_id']}">
+                                                            <svg class="" xmlns="http://www.w3.org/2000/svg" width="30" height="30" viewBox="0 0 21 21"><g fill="currentColor" fill-rule="evenodd"><circle cx="10.5" cy="10.5" r="1"></circle><circle cx="10.5" cy="5.5" r="1"></circle><circle cx="10.5" cy="15.5" r="1"></circle></g></svg>
+                                                            </button>
+                                                    </div>
+                                                    <div class="room-action-menu menu-main-list" data-booking="${checkIn['booking_id']}">
+                                                        <div class="dropdown-item room_clean"  data-id="${item.id}" > ${item['is_clean'] == 1 ? 'Chưa dọn' : 'Làm sạch' }</div>
+                                                        <div class="dropdown-item">Nhận phòng</div>
+                                                        <div class="dropdown-item">Hủy phòng</div>
+                                                    </div>
+                                                </td>
+                                                <td>${checkIn['booking_id']}</td>
+                                                <td>${item['room_number']} <br>  <span class="status-clean">${item['is_clean'] == 1 ? "✨ Sạch" : "🚨 Chưa dọn"}</span></td>
+                                                <td>${checkIn['customer_name']} <br> ${checkIn['phone_number'] ?? 'N/A'}</td>
+                                                <td class="w-10">${formatDateTime(checkIn['checkin_date'])}</td>
+                                                <td class="w-10">${formatDateTime(checkIn['checkout_date'])}</td>
+                                                <td class="text-right">${formatCurrency(checkIn['total_amount'])}</td>
+                                                    <td class="text-right">${formatCurrency(checkIn['check_in_payment'])}</td>
+                                               
+                                              
 
-                              </tr>
-                            `;
-                        });
-                    }
-                });
-
+                                              </tr>
+                                            `;
+                                   
+                                    
+                                }   
+                            })
+                        }
+                    });
+                    
+                    
+                })
                 // Gắn vào DOM
                 $("#booking-table").html(roomHTML);
 
@@ -177,6 +194,48 @@ function initGridMain(data,date) {
     });
 
 }
+$(document).off("click", ".room_clean").on("click", ".room_clean", function (e) {
+    e.stopPropagation();
+
+    // Lấy thông tin từ div được bấm
+    const roomName = $(this).data("name");
+    const roomId = $(this).data("id");
+    const statusText = $(this).text().trim();
+
+    // Gán vào modal
+    $("#roomStatusModal .modal-body strong").text(roomName);
+    $("#roomStatusModal .modal-body .status-text").text(statusText);
+    $('.change_clean_room_btn').attr('data-id', roomId);
+    // Mở modal
+    const modal = new bootstrap.Modal(document.getElementById("roomStatusModal"));
+    modal.show();
+});
+$(document).off("click", ".change_clean_room_btn").on("click", ".change_clean_room_btn", function (e) {
+    const id = $(this).attr("data-id");
+    $.ajax({
+        url: cleanRoomUrl,
+        type: 'POST',
+        data: {
+            id: id,
+        },
+        success: function (data) {
+            if (data.status === 'success') {
+                notify('success', data.success);
+                const modal = bootstrap.Modal.getInstance(document.getElementById("roomStatusModal"));
+                if (modal) modal.hide();
+
+                let selectedDate = $('#startDate').val();
+                initGridMain('', selectedDate);
+            }
+
+        },
+        error: function (error) {
+            $('#loading').hide();
+            console.log('Error:', error);
+        }
+    });
+
+});
 // Toggle menu dropdown
 $(document).on("click", ".menu-toggle-btn", function (e) {
     e.stopPropagation();

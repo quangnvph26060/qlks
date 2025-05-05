@@ -194,15 +194,15 @@ class Room extends Model
         //return $this->code;
     }
 
-    public function roomPriceDayNow($date)
-    {
-        return RoomPricePerDay::where('room_price_id', $this->id)->where('date', $date)->first();
-    }
+    // public function roomPriceDayNow($date)
+    // {
+    //     return RoomPricePerDay::where('room_price_id', $this->id)->where('date', $date)->first();
+    // }
 
-    public function roomPriceDayOfWeekNow($dayofweek)
-    {
-        return RoomPriceDayOfWeek::where('room_price_id', $this->id)->where('day_of_week', $dayofweek)->first();
-    }
+    // public function roomPriceDayOfWeekNow($dayofweek)
+    // {
+    //     return RoomPriceDayOfWeek::where('room_price_id', $this->id)->where('day_of_week', $dayofweek)->first();
+    // }
 
 
     public function bookedRooms()
@@ -223,5 +223,5 @@ class Room extends Model
     }
     public function  roomBookingHistory(){
         return $this->hasMany(RoomStatusHistory::class, 'room_id')->whereIn('status_code', [2, 3]);
-    }
+    }   
 }

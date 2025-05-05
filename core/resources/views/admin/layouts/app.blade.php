@@ -33,15 +33,15 @@
                         <div>
                     <button data-toggle="menu" class="btn btn-primary btn-menu" id="btn-menu" style="margin-top: 15px;display:none">
                         <i class="fa fa-list"></i></button>
-                          <div id="list-menu" style="width: 150px;right: 0;background:white; position: fixed;z-index: 9999999;margin-top:15px;display: none;">
+                          <div id="list-menu" class="main_menu_top">
                         <ul>
-                        <li class="border-bottom p-1"><a href="{{ route('admin.system.update') }}">Update Available</a></li>
+                        {{-- <li class="border-bottom p-1"><a href="{{ route('admin.system.update') }}">Update Available</a></li>
                         <li class="border-bottom p-1"><a href="{{ route('admin.request.booking.all') }}">Yêu cầu đặt phòng</a></li>
                         <li class="border-bottom p-1"><a href="{{ route('admin.request.booking.all') }}">Services</a></li>
-                        <li class="border-bottom p-1"><a a href="{{ route('home') }}">Visit Website</a></li>
-                        <li class="border-bottom p-1"><a a href="{{ route('admin.profile') }}">Hồ sơ</a></li>
-                        <li class="border-bottom p-1"><a a href="{{ route('admin.password') }}">Mật khẩu</a></li>
-                        <li class="p-1"><a a href="{{ route('admin.logout') }}">Đăng xuất</a></li>
+                        <li class="border-bottom p-1"><a  href="{{ route('home') }}">Visit Website</a></li>
+                        <li class="border-bottom p-1"><a  href="{{ route('admin.profile') }}">Hồ sơ</a></li>
+                        <li class="border-bottom p-1"><a  href="{{ route('admin.password') }}">Mật khẩu</a></li> --}}
+                        <li class="p-1"><a class="text-white" href="{{ route('admin.logout') }}">Đăng xuất</a></li>
 
                         </ul>
                     </div>
@@ -75,6 +75,20 @@
     </div>
 @endsection
 <style>
+    .main_menu_top li {
+        color: white !important;
+        background:#005AA1;
+        border-radius: 5px;
+    }
+    .main_menu_top{
+        width: 150px;
+      
+         position: fixed;
+        z-index: 9999999;
+        margin-top:15px;
+        display: none;
+       right: 20px;
+    }
     .menu-item-container {
         position: relative;
         overflow-x: hidden;

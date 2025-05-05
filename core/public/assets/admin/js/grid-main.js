@@ -486,7 +486,6 @@ function initViewScriptGird() {
         button.setAttribute('data-coustomer', $(this).attr('data-coustomer'));
         button.setAttribute('data-room', $(this).attr('data-room'));
         button.setAttribute('data-id', $(this).attr('data-id'));
-        console.log($(this).attr('data-id'));
         
         $('#add-service-room-booking').off("click").on("click", function() {
             var roomId = $(this).attr('data-room-id');
