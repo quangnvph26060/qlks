@@ -619,7 +619,8 @@ function addRoomInBooking(data, list) {
                         return;
                     }
                     seenRooms.add(key);
-
+                    const timeDateOut = targetId === 'list-booking-edit' ? item.room['room_type']['room_type_price']['setup_pricing']['check_out_time'] : item.checkin_datetime;
+                    const timeDateIn = targetId === 'list-booking-edit' ? item.room['room_type']['room_type_price']['setup_pricing']['check_in_time'] : item.checkin_datetime;
                     var tr = `
                             <tr  data-status="0" data-room-id="${roomId}"  data-room-type-id="${roomTypeId}" data-date="${item.date}">
                                 <td>
@@ -643,14 +644,18 @@ function addRoomInBooking(data, list) {
                                     <div class="d-flex align-items-center justify-content-start" style="gap: 3px">
                                         <input type="date" name="checkInDate" id="date-book-room" class="form-control date-book-room"  value="${item.date}" readonly>
 
-                                        <input type="time" name="checkInTime" id="time-book-room" class="form-control time-book-room"   value="${item.room['room_type']['room_type_price']['setup_pricing']['check_in_time']}">
+                                        <input type="time" name="checkInTime" id="time-book-room" class="form-control time-book-room"
+                                           value="${timeDateIn}">
                                     </div>
                                 </td>
                                 <td>
                                     <div class="d-flex align-items-center justify-content-start" style="gap: 3px">
                                         <input type="date" name="checkOutDate"  class="form-control date-book-room" readonly  value="${date.toISOString().split('T')[0]}">
+                                        
 
-                                        <input type="time" name="checkOutTime" id="time-book-room" class="form-control time-book-room"  value="${item.room['room_type']['room_type_price']['setup_pricing']['check_out_time']}">
+                                        <input type="time" name="checkOutTime" id="time-book-room"
+                                         class="form-control time-book-room"  
+                                         value="${timeDateIn}">
 
                                     </div>
                                 </td>
