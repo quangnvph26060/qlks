@@ -1646,7 +1646,7 @@
             $(this).removeClass('show');
         });
         $('.reload-btn').on('click', function() {
-          
+            window.location.reload();
             let selectedDate = $('#startDate').val();
             initGridMain('', selectedDate);
         });
