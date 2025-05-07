@@ -305,7 +305,7 @@ $('.delete-room-booking-edit').on('click', function () {
                         if (remainingRows === 0) {
                             $('#myModal-check-in-edit').modal('hide');
                         }
-                    }else{
+                    } else {
                         Swal.fire({
                             title: response.message,
                             text: response.message,
@@ -385,12 +385,12 @@ function addRoomInBooking(data, list) {
         },
         success: function (response) {
             var tbody = list;
-           
+
             let targetId = list[0]?.id;
-                targetId === 'list-booking-edit'
-                    ?  $('#list-booking').empty()
-                    : targetId === 'list-booking'
-                    ?  $('#list-booking-edit').empty()
+            targetId === 'list-booking-edit'
+                ? $('#list-booking').empty()
+                : targetId === 'list-booking'
+                    ? $('#list-booking-edit').empty()
                     : null;
 
             if (response.status === 'success') {
@@ -404,12 +404,12 @@ function addRoomInBooking(data, list) {
 
                 const formattedDates = `${yyyys}-${mms}-${dds}`;
                 const formattedTimes = `${hoursss}:${minutesss}`;
-                
+
                 const seenRooms = new Set();
                 let totalPrice = 0;
                 response.data.forEach(item => {
                     let date = new Date(item.date);
-                    if(item.date == formattedDates ){
+                    if (item.date == formattedDates) {
                         item.date = new Date(item.date);
                         item.date.setDate(item.date.getDate() + 1);
                         item.date = item.date.toISOString().split('T')[0];
@@ -418,7 +418,7 @@ function addRoomInBooking(data, list) {
                     const roomId = item.room["id"];
                     const roomTypeId = item.room_type["id"];
                     const key = `${roomId}-${roomTypeId}`;
-                        
+
                     if (seenRooms.has(key)) {
                         return;
                     }
@@ -714,7 +714,7 @@ function loadRoomBookings(page = 1, data) {
 
                                     <td class="text-right w-10" >${record['guest_count']}</td>
                                   <td class="text-right w-10">
-                                                        ${ formatCurrency(record['total_amount'])}
+                                                        ${formatCurrency(record['total_amount'])}
                                                     </td>
                                     <td class="text-right w-10">${formatCurrency(record['deposit_amount'])}</td>
                                     <td class="text-right w-10">${formatCurrency(record['discount'])}</td>
@@ -1244,9 +1244,26 @@ function findRoomBookingId(id) {
                         let [dateOut, timeOut] = checkoutDateTime.split(" ");
                         total_deposit_amount += parseFloat(room.deposit_amount);
                         total_deposit_discount += parseFloat(room.discount);
+                        // Tìm xem có room nào trong mảng có cùng room_code
+                        const hasSameRoomCode = item.rooms.some(r => r !== room && r.room_code === room.room_code);
 
+                        let datePart = '', timePart = '';
+
+                        if (hasSameRoomCode) {
+                            [datePart, timePart] = room.checkin_date.split(' ');
+                        } else {
+                            const dateOnly = formattedDates;
+                            const now = new Date();
+                            const currentHour = String(now.getHours()).padStart(2, '0');
+                            const currentMinute = String(now.getMinutes()).padStart(2, '0');
+                            const currentTime = `${currentHour}:${currentMinute}`;
+                    
+                            datePart = dateOnly;
+                            timePart = currentTime;
+                        }
+                        
                         var tr = `
-                        <tr data-room-booking-id="${room.booking_id}" data-room-id="${room.room_code}"  data-room-type-id="${room.room_type}" data-date="${formattedDates}">
+                        <tr data-room-booking-id="${room.booking_id}" data-room-id="${room.room_code}"  data-room-type-id="${room.room_type}" data-date="${datePart}">
                             <td>
                                 <input type="checkbox">
                             </td>
@@ -1266,9 +1283,9 @@ function findRoomBookingId(id) {
                             </td>
                              <td>
                                 <div class="d-flex align-items-center justify-content-start" style="gap: 3px">
-                                    <input type="date" name="checkInDate" id="date-book-room" class="form-control date-book-room"  value="${formattedDates}" readonly>
+                                    <input type="date" name="checkInDate" id="date-book-room" class="form-control date-book-room"  value="${datePart}" readonly>
 
-                                    <input type="time" name="checkInTime" id="time-book-room" class="form-control time-book-room"  value="${formattedTimes}" >
+                                    <input type="time" name="checkInTime" id="time-book-room" class="form-control time-book-room"  value="${timePart}" >
                                 </div>
                             </td>
                             <td>
@@ -1565,24 +1582,24 @@ function showBookedRoom(value = "", option_customer_source = "") {
                                             <tbody id="room-booking-detail">
                                     `;
                     }
-                        tr += `
+                    tr += `
 
                                     <tr class="background-tr">
 
-                                        <td class="text-left ${record['status'] === 1 ? 'text-danger' : ''}" colspan="6">${ record['room_change_info'] ? record['room_change_info']['room']['room_number'] : record['room']['room_number']}</td>
+                                        <td class="text-left ${record['status'] === 1 ? 'text-danger' : ''}" colspan="6">${record['room_change_info'] ? record['room_change_info']['room']['room_number'] : record['room']['room_number']}</td>
                                         <td class="text-right w-10">${formatDateTime(record['checkin_date'])}</td>
                                         <td class="text-right w-10" >${formatDateTime(record['checkout_date'])}</td>
 
                                         <td class="text-right w-10" >${record['guest_count']}</td>
                                         <td class="text-right w-10">
-                                          ${ record['room_change_info'] ? formatCurrency(record['room_change_info']['total_amount']) : formatCurrency(record['total_amount'])}
+                                          ${record['room_change_info'] ? formatCurrency(record['room_change_info']['total_amount']) : formatCurrency(record['total_amount'])}
                                         </td>
                                         <td class="text-right w-10">${formatCurrency(record['deposit_amount'])}</td>
                                         <td class="text-right w-10">${formatCurrency(record['discount'])}</td>
                                         <td class="text-right">${record['note']}</td>
                                         <td clas="text-center" style="text-align: center;">
                                             <input type="checkbox" data-book="${firstRecord['booking_id']}"
-                                             data-date="${record['checkin_date']}" data-id="${ record['room_change'] ?? record['room_code']}"
+                                             data-date="${record['checkin_date']}" data-id="${record['room_change'] ?? record['room_code']}"
                                              data-room_type_id="${record['room']['room_type_id']}"
                                              ${record['status'] === 1 ? 'disabled' : ''}
                                               id="checkbox-${record['room_code']}">
@@ -1590,19 +1607,19 @@ function showBookedRoom(value = "", option_customer_source = "") {
                                     </tr>
 
                                 `;
-                            if (idx === bookingData.length - 1) {
-                                tr += `
+                    if (idx === bookingData.length - 1) {
+                        tr += `
                                                         </tbody>
                                                     </table>
                                                 </td>
                                             </tr>
                                         `;
-                            }
+                    }
 
                 });
             });
             tbody.append(tr);
-          
+
             $('#loading').hide();
         },
         error: function (error) {
@@ -1874,11 +1891,11 @@ $(document).on('click', '.change-room', function () {
     let now = new Date();
 
     let dateId = now.getFullYear() + "-" +
-    ("0" + (now.getMonth() + 1)).slice(-2) + "-" +
-    ("0" + now.getDate()).slice(-2) + " " +
-    ("0" + now.getHours()).slice(-2) + ":" +
-    ("0" + now.getMinutes()).slice(-2) + ":" +
-    ("0" + now.getSeconds()).slice(-2);
+        ("0" + (now.getMonth() + 1)).slice(-2) + "-" +
+        ("0" + now.getDate()).slice(-2) + " " +
+        ("0" + now.getHours()).slice(-2) + ":" +
+        ("0" + now.getMinutes()).slice(-2) + ":" +
+        ("0" + now.getSeconds()).slice(-2);
     let Id = $(this).data('id');
     changeRoom(Id, bookingId, roomId, dateId)
     $('#changeRoomModal').modal('show');
@@ -1902,7 +1919,7 @@ $(document).on('click', '.change-booking-room', function () {
         room_type_id: roomTypeId,
         date: date
     }
-     // Xóa các input cũ để tránh trùng lặp
+    // Xóa các input cũ để tránh trùng lặp
     $('#btn-change-booking-room input[name="room_id_new"]').remove();
     $('#btn-change-booking-room input[name="room_type_id_new"]').remove();
     $('#btn-change-booking-room input[name="date_new"]').remove();

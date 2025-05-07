@@ -95,12 +95,11 @@ function initGridMain(data,date) {
                                                 <td>${dem}</td>
                                                   <td class="w-20" style="position: relative;">
                                                     <div class="d-flex align-items-center justify-content-center" style="gap:10px;">
-                                                         
-                                                            <button class="menu-toggle-btn"  data-booking="${checkIn['check_in_id']}">
+                                                            <button class="menu-toggle-btn" data-id="${checkIn['id']}" data-booking="${checkIn['check_in_id']}">
                                                                 <svg class="" xmlns="http://www.w3.org/2000/svg" width="30" height="30" viewBox="0 0 21 21"><g fill="currentColor" fill-rule="evenodd"><circle cx="10.5" cy="10.5" r="1"></circle><circle cx="10.5" cy="5.5" r="1"></circle><circle cx="10.5" cy="15.5" r="1"></circle></g></svg>
                                                             </button>
                                                     </div>
-                                                    <div class="room-action-menu menu-main-list" data-booking="${checkIn['check_in_id']}">
+                                                    <div class="room-action-menu menu-main-list" data-id="${checkIn['id']}" data-booking="${checkIn['check_in_id']}">
                                                         <div class="dropdown-item room_clean"  data-id="${item.id}"> ${item['is_clean'] == 1 ? 'Chưa dọn' : 'Làm sạch' }</div>
                                                         <div class="dropdown-item">Thêm sản phẩm, dịch vụ</div>
                                                         <div class="dropdown-item">Đổi phòng</div>
@@ -141,11 +140,11 @@ function initGridMain(data,date) {
                                                  <td class="w-20" style="position: relative;">
                                                     <div class="d-flex align-items-center justify-content-center" style="gap:10px;">
                                                           
-                                                            <button class="menu-toggle-btn"   data-booking="${checkIn['booking_id']}">
+                                                            <button class="menu-toggle-btn" data-id="${checkIn['id']}"  data-booking="${checkIn['booking_id']}">
                                                             <svg class="" xmlns="http://www.w3.org/2000/svg" width="30" height="30" viewBox="0 0 21 21"><g fill="currentColor" fill-rule="evenodd"><circle cx="10.5" cy="10.5" r="1"></circle><circle cx="10.5" cy="5.5" r="1"></circle><circle cx="10.5" cy="15.5" r="1"></circle></g></svg>
                                                             </button>
                                                     </div>
-                                                    <div class="room-action-menu menu-main-list" data-booking="${checkIn['booking_id']}">
+                                                    <div class="room-action-menu menu-main-list" data-id="${checkIn['id']}" data-booking="${checkIn['booking_id']}">
                                                         <div class="dropdown-item room_clean"  data-id="${item.id}" > ${item['is_clean'] == 1 ? 'Chưa dọn' : 'Làm sạch' }</div>
                                                         <div class="dropdown-item">Nhận phòng</div>
                                                         <div class="dropdown-item">Hủy phòng</div>

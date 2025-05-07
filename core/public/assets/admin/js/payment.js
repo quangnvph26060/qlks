@@ -116,7 +116,7 @@ function loadRoomBookings(page = 1, data) {
         success: function (response) {
 
             if (response.status === 'success') {
-                var data = response.data.data;
+                var data = response.data;
                 var pagination = response.pagination;
                 const currentView = localStorage.getItem('viewMode');
                 $('.data-table').html('');
@@ -145,8 +145,6 @@ function loadRoomBookings(page = 1, data) {
                                     </tr>`
 
                 });
-                // <td class="text-left">${record['customer_name'] ? record['customer_name'] : 'N/A'}</td>
-                // <td class="text-right">${record['phone_number'] ? record['phone_number'] : 'N/A'}</td>
                 $('.data-table').append(html);
                 var selected_select = $('#select_room_number');
                 selected_select.empty();

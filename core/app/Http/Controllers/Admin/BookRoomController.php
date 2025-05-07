@@ -487,14 +487,11 @@ class BookRoomController extends Controller
                             });
                     })
                     ->first();
-
-
+                    Log::info($room);
 
                 if ($checkRoom) {
                     DB::rollBack();
-                    // return response()->json([
-                    //     'error' => 'Phòng ' . $is_room['room_number'] . ' đã được đặt trong ngày ' . Carbon::parse($dateIn)->format('d-m-Y')
-                    // ]);
+                  
                     return response()->json([
                         'error' => 'Phòng ' . $is_room['room_number'] . ' đã được đặt khoảng ngày ' . Carbon::parse($start_date)->format('d/m/Y') . ' - ' . Carbon::parse($end_date)->format('d/m/Y')
                     ]);
@@ -579,7 +576,6 @@ class BookRoomController extends Controller
                     $check_in_new->created_by     = $request->name_staff ??  authAdmin()->id;
                     $check_in_new->save();
 
-                    $daysDifference = floor(Carbon::parse($dateIn)->floatDiffInDays(Carbon::parse($dateOut)));
                     ReceiptAndPayment::where('checkin_id', $bookingId)->update([
                         'room_price'      => DB::raw('room_price + ' . $roomPice['unit_price']),
                         'deposit_amount'  => DB::raw('deposit_amount + ' . $depositAmount),
