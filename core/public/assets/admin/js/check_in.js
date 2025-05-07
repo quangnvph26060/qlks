@@ -1229,6 +1229,40 @@ function findRoomBookingId(id) {
                 let totalPrice, total_deposit_amount, total_deposit_discount = 0;
                 var tbody = $('#list-booking');
                 tbody.empty();
+
+
+
+
+                // nhân viên
+                var selected_select_staff = $('#select-staff');
+                selected_select_staff.empty();
+               let option_staff = `<option value="">Chọn nhân viên</option>`;
+               data.admin.forEach(function (item) {
+                   if(item.name === data.option_admin){
+                       option_staff += `<option value="${item.id}" selected>${item.username}</option>`;
+                   }else{
+                       option_staff += `<option value="${item.id}">${item.username}</option>`;
+                   }
+                  
+               });
+               selected_select_staff.append(option_staff);
+
+               // khách hàng
+               console.log(data.customerSourse);
+               
+               var selected_customer_source = $('#select-customer-source');
+               selected_customer_source.empty();
+               let option = `<option value="">Chọn nguồn khách hàng</option>`;
+               data.customerSourse.forEach(function (item) {
+                   if (item.source_code == data.option_customer_source) {
+                       option += `<option value="${item.source_code}" selected>${item.source_name}</option>`;
+                   } else {
+                       option += `<option value="${item.source_code}">${item.source_name}</option>`;
+                   }
+
+               });
+               selected_customer_source.append(option);
+
                 data.data.forEach(function (item) {
                     $('input[name="name"]').val(item.customer_name);
                     $('input[name="phone"]').val(item.phone_number);
@@ -1261,7 +1295,8 @@ function findRoomBookingId(id) {
                             datePart = dateOnly;
                             timePart = currentTime;
                         }
-                        
+                            console.log(room.note);
+                            
                         var tr = `
                         <tr data-room-booking-id="${room.booking_id}" data-room-id="${room.room_code}"  data-room-type-id="${room.room_type}" data-date="${datePart}">
                             <td>
@@ -1310,7 +1345,7 @@ function findRoomBookingId(id) {
                                     name="discount"  placeholder="0"     oninput="formatMoneyInput(this)">
                             </td>
                             <td>
-                                <input type="text" name="note_room" class="form-control note_room" value="" id="note" value="${room.note}">
+                                <input type="text" name="note_room" class="form-control note_room"  id="note" value="${room.note}">
                             </td>
                         </tr>
                     `;

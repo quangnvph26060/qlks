@@ -213,13 +213,21 @@ function initGridMain(data, date) {
                                     
                                     let room_code = "";
                                     booking.check_in_data.forEach(k => {
+                                       
+                                        
                                         //  check liên quan đổi phòng
                                         if (k.room_change != null) {
                                             room_code = k.room_change;
                                         } else {
                                             room_code = k.room_code;
                                         }
-                                        if (room_code == item.id && k?.checkin_date.split(' ')[0] === selectedDate) {
+                                        // console.log(selectedDate);
+                                        // console.log('checkin' + k?.checkin_date.split(' ')[0]);
+                                        
+                                        if (room_code == item.id &&
+                                            selectedDate >= k?.checkin_date.split(' ')[0] &&
+                                            selectedDate < k?.checkout_date.split(' ')[0]
+                                            ) {
                                             isBooking = k; // Lưu bản ghi nếu tìm thấy
                                             flag = 'check_in_data';
                                         }
@@ -250,12 +258,13 @@ function initGridMain(data, date) {
                         //     button.dataset.id = isBooking?.booking_id ?? isBooking?.check_in_id ?? "";
                         // }
                         //   console.log(isBooking);
-
+                        const checkTime =  selectedDate >= isBooking?.checkin_date.split(' ')[0]  &&
+                        selectedDate < isBooking?.checkout_date.split(' ')[0];
                         roomHTML += `
                         <div class="room-card ${item.status} ${flag}     
-                        ${status_code == 2 && isBooking?.checkin_date.split(' ')[0] === selectedDate
+                        ${status_code == 2 && checkTime
                                 ? 'bg-yellow'
-                                : status_code == 3 && isBooking?.checkin_date.split(' ')[0] === selectedDate
+                                :   status_code == 3 && checkTime
                                     ? 'bg-red'
                                     : ''
                             }"
@@ -267,9 +276,9 @@ function initGridMain(data, date) {
            
                             <div class="room-header">
                             <span class="status">${item.is_clean ? "✨ Sạch" : "🚨 Chưa dọn"}</span>
-                                <span class="menu-btn  ${status_code == 2 && isBooking?.checkin_date.split(' ')[0] === selectedDate
+                                <span class="menu-btn  ${status_code == 2 && checkTime
                                 ? 'text-white'
-                                : status_code == 3 && isBooking?.checkin_date.split(' ')[0] === selectedDate
+                                : status_code == 3 && checkTime
                                     ? 'text-white'
                                     : ''}">⋮</span>
                                      <div class="dropdown-menu">
@@ -281,12 +290,12 @@ function initGridMain(data, date) {
                                         data-room-type-id = "${item?.room_type_id}"
                                         data-room-id = "${item?.id}" >Nhận phòng</div>`
                                 : ""}
-                                        ${status_code == 2 && isBooking?.checkin_date.split(' ')[0] === selectedDate ? `<div class="dropdown-item check_in_room"
+                                        ${status_code == 2 && checkTime ? `<div class="dropdown-item check_in_room"
                                             data-id   = "${isBooking?.room_code}" 
                                             data-date ="${isBooking?.checkin_date}"
                                             data-book ="${isBooking?.booking_id ?? isBooking?.check_in_id ?? ''}">Nhận phòng</div>` : ''
                             }
-                                        ${status_code == 3 && isBooking?.checkin_date.split(' ')[0] === selectedDate
+                                        ${status_code == 3 && checkTime
                                 ? `
                                                 <div class="dropdown-item add_product_service"  
                                                     data-room-id="${isBooking?.room_change_info ? isBooking?.room_change_info?.new_room_code : item?.id}" 
@@ -316,16 +325,16 @@ function initGridMain(data, date) {
                                     </div>
                             </div>
                             <div class="room-number-name
-                            ${status_code == 2 && isBooking?.checkin_date.split(' ')[0] === selectedDate
+                            ${status_code == 2 && checkTime
                                 ? 'text-white'
-                                : status_code == 3 && isBooking?.checkin_date.split(' ')[0] === selectedDate
+                                : status_code == 3 && checkTime
                                     ? 'text-white'
                                     : ''}
                              
                             ">${item.room_number}</div>
-                            <div class="room-info    ${status_code == 2 && isBooking?.checkin_date.split(' ')[0] === selectedDate
+                            <div class="room-info    ${status_code == 2 && checkTime
                                 ? 'text-white'
-                                : status_code == 3 && isBooking?.checkin_date.split(' ')[0] === selectedDate
+                                : status_code == 3 && checkTime
                                     ? 'text-white'
                                     : ''}">${isBooking?.customer_name ??
                                     isBooking?.customer_name ?? " "}</div>
@@ -648,7 +657,8 @@ function initViewScriptGird() {
             book: book,         // Lấy data-book
             date: date,         // Lấy ngày check-in
             room_code: dataId,   // Lấy loại phòng
-            room_type: room_type
+            room_type: room_type,
+            method:"LETAN"
         });
 
         findRoomBookingId(selectedData)
@@ -717,6 +727,23 @@ function initViewScriptGird() {
                             // $('.total_amount').text('');
                             // $('.total_deposit').text('');
                             // $('.total_discount').text('');
+                            const hasSameRoomCode = item.rooms.some(r => r !== room && r.room_code === room.room_code);
+
+                            let datePart = '', timePart = '';
+    
+                            if (hasSameRoomCode) {
+                                [datePart, timePart] = room.checkin_date.split(' ');
+                            } else {
+                                const dateOnly = formattedDates;
+                                const now = new Date();
+                                const currentHour = String(now.getHours()).padStart(2, '0');
+                                const currentMinute = String(now.getMinutes()).padStart(2, '0');
+                                const currentTime = `${currentHour}:${currentMinute}`;
+                        
+                                datePart = dateOnly;
+                                timePart = currentTime;
+                            }
+                            
                             var tr = `
                                 <tr data-room-booking-id="${room.booking_id}" data-room-id="${room.room_code}"  data-room-type-id="${room.room_type}" data-date="${formattedDates}">
                                     <td>
@@ -738,9 +765,9 @@ function initViewScriptGird() {
                                     </td>
                                      <td>
                                         <div class="d-flex align-items-center justify-content-start" style="gap: 3px">
-                                           <input type="date" name="checkInDate" id="date-book-room" class="form-control date-book-room"  value="${formattedDates}" readonly>
+                                           <input type="date" name="checkInDate" id="date-book-room" class="form-control date-book-room"  value="${datePart}" readonly>
 
-                                    <input type="time" name="checkInTime" id="time-book-room" class="form-control time-book-room"  value="${formattedTimes}" >
+                                    <input type="time" name="checkInTime" id="time-book-room" class="form-control time-book-room"  value="${timePart}" >
                                         </div>
                                     </td>
                                     <td>
@@ -1880,7 +1907,8 @@ function initViewScriptGird() {
                         url: deleteCheckin,
                         type: 'POST',
                         data: {
-                            data: JSON.stringify(selectedBookingIds)
+                            data: JSON.stringify(selectedBookingIds),
+                            method: "LETAN",
                         },
                         success: function (response) {
                             if (response.status === 'success') {
@@ -1891,7 +1919,7 @@ function initViewScriptGird() {
                                 totalPrice = calculateTotalPrice();
                                 $('.total_amount').text(formatCurrency(totalPrice));
                                 // $('#total_balance').text(formatCurrency(totalPrice));
-                                notify('success', response.success);
+                                notify('success', response.message);
                                 selectedRows.forEach(row => row.remove());
                                 let remainingRows = $('#list-booking-edit tr').length;
                                 if (remainingRows === 0) {
@@ -1947,6 +1975,8 @@ function initViewScriptGird() {
 
 }
 $('.btn-book-pttt').off('click').on('click', function (e) {
+    console.log('123');
+    
     e.preventDefault();
     function validator(selectedOption, inputPtttValue) {
         let isValid = true;
@@ -2315,6 +2345,7 @@ $('.btn-add-service').on('click', function () {
 
 
 $('.booking-form-pttt').on('submit', function (e) {
+    let selectedBookingIds = [];
     e.preventDefault();
     let formData = $(this).serializeArray();
     let formObject = {};
@@ -2323,12 +2354,17 @@ $('.booking-form-pttt').on('submit', function (e) {
     });
     let url = $(this).attr('action');
     var roomData = [];
+    var filteredRoomData = [];
+    const method = $('.btn-book-pttt').attr('data-method');
+  
     $('#list-booking-edit-letan tr').each(function () {
 
-        // var status = $(this).data('status');
-        // if (status !== 0) {
-        //     return;
-        // }
+        var checkbox = $(this).find('input[type="checkbox"]');
+        if (checkbox.prop('checked')) {
+            var bookingId = $(this).data('room-booking-id');
+            selectedBookingIds.push(bookingId);
+           // $(this).remove();
+        }
         var roomBookingId = $(this).data('room-booking-id');
         var roomId = $(this).data('room-id');
         var roomTypeId = $(this).data('room-type-id');
@@ -2362,8 +2398,22 @@ $('.booking-form-pttt').on('submit', function (e) {
             discount: discount,
             roomBookingId: roomBookingId,
         });
+        if(method == "check_in"){
+            if (selectedBookingIds.length === 0) {
+                notify('error','Vui lòng chọn phòng')
+                return; // Dừng xử lý tiếp theo
+            } 
+            filteredRoomData = roomData.filter(item => selectedBookingIds.includes(item.roomBookingId));
+        }else{
+            filteredRoomData = roomData;
+        }
+       
+        
+       
+        
     });
-    roomData.forEach(function (item) {
+
+    filteredRoomData.forEach(function (item) {
         const roomDates = getDatesBetween(item['checkInDate'], item['checkInTime'],
             item['checkOutDate'], item['checkOutTime'], item['roomId'], item['roomTypeId'],
             item['adult'], item['note'], item['deposit'], item['discount'], item['roomBookingId']);
