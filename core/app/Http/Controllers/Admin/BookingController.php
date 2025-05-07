@@ -181,7 +181,7 @@ class BookingController extends Controller
                     $q->where('room_number', 'LIKE', '%' . $request->data['roomName'] . '%')
                 )
             )
-            ->where(DB::raw("DATE_SUB(checkout_date, INTERVAL 1 DAY)"), '>', Carbon::now())
+         //   ->where(DB::raw("DATE_SUB(checkout_date, INTERVAL 1 DAY)"), '>', Carbon::now())
             ->orderBy('created_at', 'desc')
             ->get();
         $groupedBookings   = $roomBookings->groupBy('check_in_id');
