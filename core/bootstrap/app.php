@@ -15,15 +15,17 @@ return Application::configure(basePath: dirname(__DIR__))
         using: function () {
             Route::namespace('App\Http\Controllers')->group(function () {
                 // Định nghĩa các route với middleware
+                Route::middleware(['web'])
+                ->namespace('Admin')
+                // ->prefix('admin')
+                ->name('admin.')
+                ->group(base_path('routes/admin.php'));
+
                 Route::prefix('api')
                     ->middleware(['api', 'maintenance'])
                     ->group(base_path('routes/api.php'));
 
-                Route::middleware(['web'])
-                    ->namespace('Admin')
-                    ->prefix('admin')
-                    ->name('admin.')
-                    ->group(base_path('routes/admin.php'));
+             
 
                 Route::middleware(['web', 'maintenance'])
                     ->namespace('Gateway')

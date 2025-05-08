@@ -26,7 +26,7 @@ class LoginController extends Controller
      *
      * @var string
      */
-    public $redirectTo = 'admin';
+    public $redirectTo = '/';
 
     /**
      * Show the application's login form.

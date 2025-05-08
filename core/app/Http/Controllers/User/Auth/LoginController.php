@@ -27,7 +27,6 @@ class LoginController extends Controller
 
     public function showLoginForm()
     {
-
         $pageTitle = "Login";
         Intended::identifyRoute();
         return view('Template::user.auth.login', compact('pageTitle'));
