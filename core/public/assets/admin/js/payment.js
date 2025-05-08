@@ -31,55 +31,63 @@ $(document).ready(function () {
     $(document).on('click', '.click_modal_payment', function () {
         let status = $(this).data('status');
         let dataId = $(this).data('id');
-        // ajax
+    
+        // Dọn nội dung cũ
+        $('#payment-info').html('<p>Đang tải...</p>');
+    
         $.ajax({
-            url: paymentFind, // Adjust this to your route
+            url: paymentFind,
             type: 'GET',
-            data: {
-                id: dataId,
-            },
+            data: { id: dataId },
             success: function (response) {
-                if(response.status === 'success'){
+                if (response.status === 'success') {
                     $('#paymentModal').modal('show');
-                   
-                    var  html = `
-                          <li class="d-flex justify-content-between mb-2">
-                                <span>Ngày chứng từ</span><strong id="date">${formatDateTime(response.data['created_date'])}</strong>
-                            </li>
-                            <li class="d-flex justify-content-between mb-2">
-                                <span>Mã thanh toán</span><strong id="trx">${response.data['payment_id']}</strong>
-                            </li>
-                            <li class="d-flex justify-content-between mb-2">
-                                <span>Họ tên</span><strong id="username" class="text-primary">${response.data['check_in']['customer_name']}</strong>
-                            </li>
-                            <li class="d-flex justify-content-between mb-2">
-                                <span>Phương thức thanh toán</span><strong id="method_detail">${response.data['payment_method']}</strong>
-                            </li>
-                            <li class="d-flex justify-content-between mb-2">
-                                <span>Tiền thanh toán</span><strong><span id="amount">${formatCurrency(response.data['total_payment'])}</span></strong>
-                            </li>
-                            <li class="d-flex justify-content-between mb-2">
-                                <span>Tiền đặt cọc</span><strong><span id="amount">${formatCurrency(response.data['deposit_amount'])}</span></strong>
-                            </li>
-                            <li class="d-flex justify-content-between mb-2">
-                                <span>Tiền dịch vụ</span><strong><span id="amount">${formatCurrency(response.data['service_fee'])}</span></strong>
-                            </li>
-                            <li class="d-flex justify-content-between align-items-center">
-                                <span>Trạng thái</span>${response.data['status_badge']}
-                            </li>
-                              <hr>
-                        <button class="btn btn-primary mt-2 btn-confirm-payment" data-id="${response.data['id']}" style="float: right">Lưu</button>
-
-                    `
-                    document.getElementById('payment-info').innerHTML = html;
+    
+                    const data = response.data;
+    
+                    const html = `
+                        <li class="d-flex justify-content-between mb-2">
+                            <span>Ngày chứng từ</span><strong>${formatDateTime(data['created_date'])}</strong>
+                        </li>
+                        <li class="d-flex justify-content-between mb-2">
+                            <span>Mã thanh toán</span><strong>${data['payment_id'] ?? ""}</strong>
+                        </li>
+                        <li class="d-flex justify-content-between mb-2">
+                            <span>Họ tên</span>
+                            <strong class="text-primary">
+                                ${data['check_in']?.['customer_name'] ?? data['room_booking']['customer_name']}
+                            </strong>
+                        </li>
+                        <li class="d-flex justify-content-between mb-2">
+                            <span>Phương thức thanh toán</span><strong>${data['payment_method'] ?? "N/A"}</strong>
+                        </li>
+                        <li class="d-flex justify-content-between mb-2">
+                            <span>Tiền thanh toán</span><strong>${formatCurrency(data['total_payment'])}</strong>
+                        </li>
+                        <li class="d-flex justify-content-between mb-2">
+                            <span>Tiền đặt cọc</span><strong>${formatCurrency(data['deposit_amount'])}</strong>
+                        </li>
+                        <li class="d-flex justify-content-between mb-2">
+                            <span>Tiền dịch vụ</span><strong>${formatCurrency(data['service_fee'])}</strong>
+                        </li>
+                        <li class="d-flex justify-content-between align-items-center">
+                            <span>Trạng thái</span>${data['status_badge']}
+                        </li>
+                        <hr>
+                        <button class="btn btn-primary mt-2 btn-confirm-payment" data-id="${data['id']}" style="float: right">Lưu</button>
+                    `;
+    
+                    // Cập nhật nội dung
+                    $('#payment-info').html(html);
                 }
             },
             error: function (xhr, status, error) {
                 console.error("AJAX request failed: " + error);
+                $('#payment-info').html('<p class="text-danger">Không thể tải dữ liệu thanh toán.</p>');
             }
         });
-     
     });
+    
     
     $(document).on('click', '.btn-confirm-payment', function () {
       var id = $(this).data('id');
@@ -140,7 +148,7 @@ function loadRoomBookings(page = 1, data) {
                                         <td class="text-right">${formatCurrency(record['deposit_amount'])}</td>
                                         <td class="text-right">${formatCurrency(record['discount_amount'])}</td>
                                         <td class="text-right">${formatCurrency(record['total_payment'])}</td>
-                                        <td class="text-left">${record['payment_method']}</td>
+                                        <td class="text-left">${record['payment_method'] ?? "N/A"}</td>
                                         <td class="text-left">${record['status_badge']}</td>
                                     </tr>`
 

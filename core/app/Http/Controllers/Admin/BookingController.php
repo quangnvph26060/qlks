@@ -181,7 +181,7 @@ class BookingController extends Controller
                     $q->where('room_number', 'LIKE', '%' . $request->data['roomName'] . '%')
                 )
             )
-         //   ->where(DB::raw("DATE_SUB(checkout_date, INTERVAL 1 DAY)"), '>', Carbon::now())
+            //   ->where(DB::raw("DATE_SUB(checkout_date, INTERVAL 1 DAY)"), '>', Carbon::now())
             ->orderBy('created_at', 'desc')
             ->get();
         $groupedBookings   = $roomBookings->groupBy('check_in_id');
@@ -722,9 +722,9 @@ class BookingController extends Controller
                 $roomChange = RoomChange::where('id_check_in', $request->booking_id)
                     ->where('new_room_code', $request->room_old)
                     ->first();
-                    // if (!$roomChange) {
-                    //     $roomChange = new RoomChange();
-                    // }
+                // if (!$roomChange) {
+                //     $roomChange = new RoomChange();
+                // }
             } else {
                 $roomChange = new RoomChange();
             }
@@ -1463,26 +1463,26 @@ class BookingController extends Controller
         $perPage = 10;
 
         $rooms = Room::active()->select('id', 'room_number')->get();
-      
-        $payments = ReceiptAndPayment::where('unit_code', unitCode())
-    ->when(!empty($request->data['bookingCode']), function ($query) use ($request) {
-        $query->where('payment_id', 'LIKE', '%' . $request->data['bookingCode'] . '%');
-    })
-    ->orderBy('created_at', 'desc')
-    ->paginate($perPage); // tự động lấy page từ query string
 
-return response([
-    'status' => 'success',
-    'data' => $payments->items(),
-    'rooms' => $rooms,
-    'option_selected' => $request->data['roomCode'] ?? "",
-    'pagination' => [
-        'total' => $payments->total(),
-        'current_page' => $payments->currentPage(),
-        'last_page' => $payments->lastPage(),
-        'per_page' => $payments->perPage(),
-    ]
-]);
+        $payments = ReceiptAndPayment::where('unit_code', unitCode())
+            ->when(!empty($request->data['bookingCode']), function ($query) use ($request) {
+                $query->where('payment_id', 'LIKE', '%' . $request->data['bookingCode'] . '%');
+            })
+            ->orderBy('created_at', 'desc')
+            ->paginate($perPage);
+
+        return response([
+            'status' => 'success',
+            'data' => $payments->items(),
+            'rooms' => $rooms,
+            'option_selected' => $request->data['roomCode'] ?? "",
+            'pagination' => [
+                'total' => $payments->total(),
+                'current_page' => $payments->currentPage(),
+                'last_page' => $payments->lastPage(),
+                'per_page' => $payments->perPage(),
+            ]
+        ]);
     }
     public function paymentView()
     {

@@ -30,7 +30,7 @@ class ReceiptAndPayment extends Model
         'status',
         'payment_id',
     ];
-    protected $appends = ['status_badge','check_in'];
+    protected $appends = ['status_badge','check_in','room_booking'];
 
     public function getDueAttribute()
     {
@@ -58,6 +58,16 @@ class ReceiptAndPayment extends Model
                 ->where('unit_code', unitCode())
                 ->first()
                 ?? CheckIn::where('check_in_id', $this->checkin_id)
+                    ->where('room_code', $this->room_code)
+                    ->where('unit_code', unitCode())
+                    ->first();
+        });
+        
+    }
+    public function roomBooking(): Attribute
+    {
+        return Attribute::get(function () {
+            return RoomBooking::where('booking_id', $this->booking_id)
                     ->where('room_code', $this->room_code)
                     ->where('unit_code', unitCode())
                     ->first();
