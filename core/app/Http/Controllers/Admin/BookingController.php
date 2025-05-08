@@ -722,6 +722,9 @@ class BookingController extends Controller
                 $roomChange = RoomChange::where('id_check_in', $request->booking_id)
                     ->where('new_room_code', $request->room_old)
                     ->first();
+                    // if (!$roomChange) {
+                    //     $roomChange = new RoomChange();
+                    // }
             } else {
                 $roomChange = new RoomChange();
             }

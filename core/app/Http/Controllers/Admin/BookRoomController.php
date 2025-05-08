@@ -727,7 +727,7 @@ class BookRoomController extends Controller
         }
         try {
             return DB::transaction(function () use ($ids, $method) {
-                $model = $method == "LETAN" ? new RoomBooking() : new CheckIn(); 
+                $model = $method == "LETAN" ? new  CheckIn() : new RoomBooking(); 
                 $checkIns = $model::whereIn('id', $ids)->get();
 
                 if ($checkIns->isEmpty()) {

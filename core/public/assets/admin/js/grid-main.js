@@ -1882,6 +1882,7 @@ function initViewScriptGird() {
             });
         }
         $('.delete-room-booking-edit-letan').on('click', function () {
+          
             let selectedBookingIds = [];
             Swal.fire({
                 title: 'Bạn có chắc chắn xoá phòng này không',
@@ -1902,7 +1903,6 @@ function initViewScriptGird() {
                             selectedRows.push($(this));
                         }
                     });
-                    //  console.log(selectedBookingIds);
                     $.ajax({
                         url: deleteCheckin,
                         type: 'POST',
