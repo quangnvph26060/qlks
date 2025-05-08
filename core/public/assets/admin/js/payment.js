@@ -31,10 +31,10 @@ $(document).ready(function () {
     $(document).on('click', '.click_modal_payment', function () {
         let status = $(this).data('status');
         let dataId = $(this).data('id');
-    
+
         // Dọn nội dung cũ
         $('#payment-info').html('<p>Đang tải...</p>');
-    
+
         $.ajax({
             url: paymentFind,
             type: 'GET',
@@ -42,9 +42,9 @@ $(document).ready(function () {
             success: function (response) {
                 if (response.status === 'success') {
                     $('#paymentModal').modal('show');
-    
+
                     const data = response.data;
-    
+
                     const html = `
                         <li class="d-flex justify-content-between mb-2">
                             <span>Ngày chứng từ</span><strong>${formatDateTime(data['created_date'])}</strong>
@@ -76,7 +76,7 @@ $(document).ready(function () {
                         <hr>
                         <button class="btn btn-primary mt-2 btn-confirm-payment" data-id="${data['id']}" style="float: right">Lưu</button>
                     `;
-    
+
                     // Cập nhật nội dung
                     $('#payment-info').html(html);
                 }
@@ -87,29 +87,29 @@ $(document).ready(function () {
             }
         });
     });
-    
-    
+
+
     $(document).on('click', '.btn-confirm-payment', function () {
-      var id = $(this).data('id');
-      $.ajax({
-        url: paymentFind, // Adjust this to your route
-        type: 'GET',
-        data: {
-            id: id,
-            method: 'payment'
-        },
-        success: function (response) {
-            if(response.status === 'success'){
-                notify('success', response.msg);
-                $('#paymentModal').modal('hide');
-                loadRoomBookings() ;
+        var id = $(this).data('id');
+        $.ajax({
+            url: paymentFind, // Adjust this to your route
+            type: 'GET',
+            data: {
+                id: id,
+                method: 'payment'
+            },
+            success: function (response) {
+                if (response.status === 'success') {
+                    notify('success', response.msg);
+                    $('#paymentModal').modal('hide');
+                    loadRoomBookings();
+                }
+            },
+            error: function (xhr, status, error) {
+                console.error("AJAX request failed: " + error);
             }
-        },
-        error: function (xhr, status, error) {
-            console.error("AJAX request failed: " + error);
-        }
-    });
-      
+        });
+
     })
 });
 function loadRoomBookings(page = 1, data) {
@@ -141,7 +141,10 @@ function loadRoomBookings(page = 1, data) {
                                             </div>
                                         </td>
                                         <td class="text-left w-10">${record['payment_id']}</td>
-                                         <td class="text-left w-10">${record['checkin_id']}</td>
+                                        <td class="text-left w-10">
+                                            ${record['checkin_id'] ? record['checkin_id'] : record['booking_id']}
+                                        </td>
+
                                         <td class="text-left">${formatDateTime(record['created_date'])}</td>
                                         <td class="text-right">${formatCurrency(record['room_price'])}</td>
                                         <td class="text-right">${formatCurrency(record['service_fee'])}</td>

@@ -541,17 +541,19 @@ class BookRoomController extends Controller
                                 'checkin_id' => $bookingId,
                             ]);
                         } else {
-                            ReceiptAndPayment::create([
-                                'payment_id'       => getCode('TT', 12),
-                                'booking_id'        => $request->id_room_booking,
-                                'checkin_id'        => $bookingId,
-                                'room_price'        => $roomPice['unit_price'],
-                                'room_code'         => $checkRoom['room_change'] ?? $checkRoom['room_code'],
-                                'deposit_amount'    => $depositAmount,
-                                'discount_amount'   => $discountAmount,
-                                'created_date'      => now(),
-                                'unit_code'         => hf('ma_coso')
-                            ]);
+                            if ($discountAmount > 0 || $depositAmount > 0) {
+                                ReceiptAndPayment::create([
+                                    'payment_id'       => getCode('TT', 12),
+                                    'booking_id'        => $request->id_room_booking,
+                                    'checkin_id'        => $bookingId,
+                                    'room_price'        => $roomPice['unit_price'],
+                                    'room_code'         => $checkRoom['room_change'] ?? $checkRoom['room_code'],
+                                    'deposit_amount'    => $depositAmount,
+                                    'discount_amount'   => $discountAmount,
+                                    'created_date'      => now(),
+                                    'unit_code'         => hf('ma_coso')
+                                ]);
+                            }
                         }
                     }
                 } else {
