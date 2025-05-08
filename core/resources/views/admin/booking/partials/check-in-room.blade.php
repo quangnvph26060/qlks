@@ -90,7 +90,7 @@
                                             <div class="col-md-8">
                                                 <input type="text" name="name" id="name" class="form-control"
                                                     placeholder="Tên khách hàng">
-                                                <span class="invalid-feedback d-block"
+                                                <span class="mt-3 invalid-feedback d-block"
                                                     style="font-weight: 500"id="name_error"></span>
                                             </div>
                                             <input type="hidden" name="id_room_booking" id="id_room_booking"
@@ -117,9 +117,11 @@
                                         </div> --}}
                                     </div>
                                     <div class="col-md-8 mt-3">
-                                        <label for="phone" class="form-label">Số điện thoại</label>
+                                        <label for="phone" class="form-label required ">Số điện thoại </label>
                                         <input type="text" id="phone" name="phone" class="form-control"
                                             placeholder="Số điện thoại">
+                                            <span class="mt-3 invalid-feedback d-block"
+                                            style="font-weight: 500"id="phone_error"></span>
                                         {{-- <select id="selectphone" name="phone" class="form-control select2" style="width: 100%;">
                                                 <option value="">Chọn số điện thoại</option>
 

@@ -1975,7 +1975,7 @@ function initViewScriptGird() {
 
 }
 $('.btn-book-pttt').off('click').on('click', function (e) {
-    console.log('123');
+
     
     e.preventDefault();
     function validator(selectedOption, inputPtttValue) {
@@ -2002,8 +2002,46 @@ $('.btn-book-pttt').off('click').on('click', function (e) {
     const selectedOption = $('#select-option-pttt-main').val();
     const inputPtttValue = $('#input_pttt').val();
     const dataMethod = $(this).data('method');
+    var validatorForm = {
+        'name_edit': { // passwword thì nên đặt là name trong input đó
+            'element': document.getElementById('name_edit'), // id trong input đó
+            'error': document.getElementById('name_error_edit'), // thẻ hiển thị lỗi
+            'validations': [{
+                'func': function (value) {
+                    return checkRequired(value); // check trống
+                },
+                'message': generateErrorMessage('P001', 'Tên')
+            }, // viết tiếp điều kiện validate vào đây (validations)
+            ]
+        },
+       'phone': { // passwword thì nên đặt là name trong input đó
+            'element': document.getElementById('phone'), // id trong input đó
+            'error': document.getElementById('phone_error'), // thẻ hiển thị lỗi
+            'validations': [
+                {
+                    'func': function (value) {
+                        return checkRequired(value); // check trống
+                    },
+                    'message': generateErrorMessage('P001', 'Số điện thoại')
+                }, {
+                    'func': function (value) {
+                        return checkInteger(value); // check trống
+                    },
+                    'message': generateErrorMessage('SDT002', 'Số điện thoại')
+                },
+            ]
+        },
+    }
+    function checkInteger(value) {
+        if (value.match(/^\d+$/)) {
+            return true;
+        }
+        return false;
+    }
     if (dataMethod === "check_in") {
-        $('.booking-form-pttt').submit();
+        if (checkInteger) {
+            $('.booking-form-pttt').submit();
+        }
     } else {
         if (validator(selectedOption, inputPtttValue)) {
             $('.booking-form-pttt').submit(); // Gửi form nếu hợp lệ
@@ -2343,7 +2381,32 @@ $('.btn-add-service').on('click', function () {
 });
 
 
+function validatePhone(value) {
+    const allErrors = document.querySelectorAll("[id='phone_error']");
+    const phoneInputs = document.querySelectorAll("input[name='phone']");
+    const trimmed = value.trim();
 
+    let isValid = true;
+
+    allErrors.forEach((errorSpan, index) => {
+        const input = phoneInputs[index];
+
+        if (trimmed === "") {
+            errorSpan.textContent = "Số điện thoại không để trống.";
+            input.classList.add("is-invalid");
+            isValid = false;
+        } else if (!/^\d+$/.test(trimmed)) {
+            errorSpan.textContent = "Số điện thoại chỉ được chứa chữ số.";
+            input.classList.add("is-invalid");
+            isValid = false;
+        } else {
+            errorSpan.textContent = "";
+            input.classList.remove("is-invalid");
+        }
+    });
+
+    return isValid;
+}
 $('.booking-form-pttt').on('submit', function (e) {
     let selectedBookingIds = [];
     e.preventDefault();
@@ -2352,6 +2415,10 @@ $('.booking-form-pttt').on('submit', function (e) {
     formData.forEach(function (field) {
         formObject[field.name] = field.value;
     });
+    if (!validatePhone(formData[3]['value'])) {
+        return;
+    }
+    
     let url = $(this).attr('action');
     var roomData = [];
     var filteredRoomData = [];

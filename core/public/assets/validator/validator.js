@@ -9,6 +9,7 @@ function checkRequired(value) {
     }
     return true;
 }
+// check number
 function checkInteger(value) {
     if (value.match(/^\d+$/)) {
         return true;

@@ -48,7 +48,7 @@
                 </button>
                 <button class="reload-btn" id="reload-btn">
                     <i class="fas fa-sync-alt"></i>
-                  
+
                 </button>
             </div>
         </div>
@@ -80,11 +80,13 @@
 
         <div id="loading-overlay" style="display: none;">
             <svg xmlns="http://www.w3.org/2000/svg" width="50" height="50" viewBox="0 0 24 24">
-                <path fill="currentColor" d="M12 2A10 10 0 1 0 22 12A10 10 0 0 0 12 2Zm0 18a8 8 0 1 1 8-8A8 8 0 0 1 12 20Z" opacity=".5"></path>
+                <path fill="currentColor" d="M12 2A10 10 0 1 0 22 12A10 10 0 0 0 12 2Zm0 18a8 8 0 1 1 8-8A8 8 0 0 1 12 20Z"
+                    opacity=".5"></path>
                 <path fill="currentColor" d="M20 12h2A10 10 0 0 0 12 2V4A8 8 0 0 1 20 12Z">
-                  <animateTransform attributeName="transform" dur="1s" from="0 12 12" repeatCount="indefinite" to="360 12 12" type="rotate"></animateTransform>
+                    <animateTransform attributeName="transform" dur="1s" from="0 12 12" repeatCount="indefinite"
+                        to="360 12 12" type="rotate"></animateTransform>
                 </path>
-              </svg>
+            </svg>
         </div>
     </div>
     @push('breadcrumb-plugins')
@@ -225,9 +227,11 @@
                                             </div> --}}
                                             </div>
                                             <div class="col-md-8 ">
-                                                <label for="phone" class="form-label">Số điện thoại</label>
+                                                <label for="phone" class="form-label required">Số điện thoại</label>
                                                 <input type="text" id="phone" name="phone"
                                                     class="form-control phone-edit" placeholder="Số điện thoại">
+                                                <span class="mt-3 invalid-feedback d-block"
+                                                    style="font-weight: 500"id="phone_error"></span>
                                             </div>
 
                                             {{-- <div class="mb-3">
@@ -273,7 +277,8 @@
                                                     </svg>
                                                     Chọn thêm phòng
                                                 </p>
-                                                <p id="add-service-room-booking" class="add_product_service_payment" style="width: 204px;">
+                                                <p id="add-service-room-booking" class="add_product_service_payment"
+                                                    style="width: 204px;">
                                                     <svg xmlns="http://www.w3.org/2000/svg" width="20" height="20"
                                                         viewBox="0 0 24 24">
                                                         <g fill="currentColor" fill-rule="evenodd" clip-rule="evenodd">
@@ -573,9 +578,9 @@
     var findRoomBookingIdUrl = '{{ route('admin.find.room.booking') }}';
     var CheckInUrl = "{{ route('admin.room.booked.check.in') }}";
     var roomBook = "{{ route('admin.room.book') }}";
-    var cleanRoomUrl  = "{{ route('admin.roomclean.booking.roomclean') }}"
+    var cleanRoomUrl = "{{ route('admin.roomclean.booking.roomclean') }}"
     var getAllService = "{{ route('admin.hotel.premium.service.get-all-service') }}";
-    var storeService  = "{{ route('admin.hotel.premium.service.store-service') }}";
+    var storeService = "{{ route('admin.hotel.premium.service.store-service') }}";
     var deleteService = "{{ route('admin.hotel.premium.service.delete-service') }}";
     var showCurrency = "{{ format_currency() }}";
     const date_booking = new Date();
@@ -700,28 +705,15 @@
 
         var validatorForm = {
             'name': {
-                'element': document.getElementById('name'), // id trong input đó
-                'error': document.getElementById('name_error'), // thẻ hiển thị lỗi
+                'element': document.getElementById('name'),
+                'error': document.getElementById('name_error'),
                 'validations': [{
-                        'func': function(value) {
-                            return checkRequired(value); // check trống
-                        },
-                        'message': generateErrorMessage('P001', 'Tên')
-                    }, // viết tiếp điều kiện validate vào đây (validations)
-                ]
+                    'func': function(value) {
+                        return checkRequired(value);
+                    },
+                    'message': generateErrorMessage('P001', 'Tên')
+                }, ]
             },
-            // 'select-option-pttt': {
-            //     'element': document.getElementById('select-option-pttt'), // id trong input đó
-            //     'error': document.getElementById('select-option-pttt_error'), // thẻ hiển thị lỗi
-            //     'validations': [{
-            //             'func': function(value) {
-            //                 return checkRequired(value); // check trống
-            //             },
-            //             'message': generateErrorMessage('P001', 'Phương thức thanh toán')
-            //         }, 
-            //     ]
-            // },
-
         }
         const date_booking = new Date();
         const date_yyyy = date_booking.getFullYear();
@@ -966,9 +958,10 @@
             });
         });
         // add
-        $(document).off("click", ".btn-book").on("click", ".btn-book", function (e) {
+        $(document).off("click", ".btn-book").on("click", ".btn-book", function(e) {
             const dataRowValue = $(this).data('row');
             const method = $(this).attr('data-method');
+
             if (method == "check_in") {
                 $('.booking-form').data('method', 'check_in');
                 if (validateAllFields(validatorForm)) {
@@ -983,6 +976,36 @@
             }
 
         });
+
+        function validatePhone(value) {
+            const allErrors = document.querySelectorAll("[id='phone_error']");
+            const phoneInputs = document.querySelectorAll("input[name='phone']");
+            const trimmed = value.trim();
+
+            let isValid = true;
+
+            allErrors.forEach((errorSpan, index) => {
+                const input = phoneInputs[index];
+
+                if (trimmed === "") {
+                    errorSpan.textContent = "Số điện thoại không để trống.";
+                    input.classList.add("is-invalid");
+                    isValid = false;
+                } else if (!/^\d+$/.test(trimmed)) {
+                    errorSpan.textContent = "Số điện thoại chỉ được chứa chữ số.";
+                    input.classList.add("is-invalid");
+                    isValid = false;
+                } else {
+                    errorSpan.textContent = "";
+                    input.classList.remove("is-invalid");
+                }
+            });
+
+            return isValid;
+        }
+
+
+
         $('.booking-form').on('submit', function(e) {
             e.preventDefault();
             let formData = $(this).serializeArray();
@@ -990,7 +1013,9 @@
             formData.forEach(function(field) {
                 formObject[field.name] = field.value;
             });
-
+            if (!validatePhone(formData[2]['value'])) {
+                    return;
+                }
             let queryString = $.param(formObject);
 
             const params = new URLSearchParams(queryString);
@@ -1015,16 +1040,16 @@
                 var deposit = $(this).closest('tr').find('input[name="deposit"]').val();
                 var discount = $(this).closest('tr').find('input[name="discount"]').val();
                 // console.log(roomId, roomTypeId, checkInDate, checkInTime, checkOutDate, checkOutTime, adult, note);
-                const errorDiv = document.querySelector('.message-error');
+                // const errorDiv = document.querySelector('.message-error');
 
-                if (new Date(checkOutDate) < new Date(checkInDate)) {
+                // if (new Date(checkOutDate) < new Date(checkInDate)) {
 
-                    errorDiv.textContent = `Ngày trả phòng phải lớn hơn ngày nhận phòng`;
-                    errorDiv.classList.add('alert', 'alert-danger');
-                    errorDiv.style.display = 'block';
-                    hasError = false;
-                    return false;
-                }
+                //     errorDiv.textContent = `Ngày trả phòng phải lớn hơn ngày nhận phòng`;
+                //     errorDiv.classList.add('alert', 'alert-danger');
+                //     errorDiv.style.display = 'block';
+                //     hasError = false;
+                //     return false;
+                // }
                 roomData.push({
                     roomId: roomId,
                     roomTypeId: roomTypeId,
@@ -1079,7 +1104,9 @@
                     }
 
                 });
-                // Kiểm tra th��i gian check-in với th��i gian hiện tại
+               
+
+
                 let url = $(this).attr('action');
                 if (shouldSubmit) {
                     $.ajax({
@@ -1838,7 +1865,8 @@
     }
 
     .add-room-booking,
-    .add-room-booking-edit, .add_product_service_payment,
+    .add-room-booking-edit,
+    .add_product_service_payment,
     .add-service-booking {
         padding: 4px 10px;
         border: 1px solid #337ab7;
@@ -1926,7 +1954,8 @@
     }
 
 
-    .filter-btn,.reload-btn {
+    .filter-btn,
+    .reload-btn {
         cursor: pointer;
         background: #fff;
         border: 1px solid #ccc;

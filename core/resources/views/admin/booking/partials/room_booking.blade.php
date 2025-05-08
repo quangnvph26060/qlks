@@ -84,22 +84,24 @@
                                             khách</p>
                                     </div>
                                     <div class="mb-2">
-                                        <label for="phone" class="form-label required mt-3">Tên khách hàng</label>
+                                        <label for="name" class="form-label required mt-3">Tên khách hàng</label>
                                         <div class="col-md-8">
                                             <input type="text" name="name" id="name" class="form-control"
                                                 placeholder="Tên khách hàng">
-                                            <span class="invalid-feedback d-block"
+                                            <span class="mt-3 invalid-feedback d-block"
                                                 style="font-weight: 500"id="name_error"></span>
                                         </div>
                                     </div>
 
 
                                 </div>
-                                <div class="mb-2">
+                                <div class="mb-2 mt-2">
                                     <div class="col-md-8">
-                                        <label for="phone" class="form-label">Số điện thoại</label>
-                                        <input type="text" id="phone" name="phone" class="form-control"
+                                        <label for="phone" class="form-label required ">Số điện thoại</label>
+                                        <input type="text"  id="phone" name="phone" class="form-control"
                                             placeholder="Số điện thoại">
+                                        <span class="mt-3 invalid-feedback d-block"
+                                            style="font-weight: 500"id="phone_error"></span>
                                     </div>
                                     {{-- <select id="selectphone" name="phone" class="form-control select2" style="width: 100%;">
                                                 <option value="">Chọn số điện thoại</option>
@@ -107,10 +109,10 @@
                                                 <!-- Thêm các số điện thoại khác ở đây -->
                                             </select> --}}
                                 </div>
-                                <div class="mb-2">
+                                <div class="mb-2 mt-2">
                                     <div class="col-md-8">
                                         <input type="hidden" name="customer_code" id="customer_code">
-                                        <label for="phone" class="form-label">Nguồn khách</label>
+                                        <label for="customer_source" class="form-label">Nguồn khách</label>
                                         {{-- <input type="text" id="phone" name="phone" class="form-control"
                                                 placeholder="Số điện thoại"> --}}
                                         <select id="select-customer-source" name="customer_source" class="form-control "
@@ -248,13 +250,13 @@
                     </div>
                     <hr>
                     <div class="flex-column justify-content-end" style="gap: 10px;">
-                     
-                            <div class=" d-flex justify-content-between mb-2">
-                                <div class="col-md-3">
-                                    @php 
+
+                        <div class=" d-flex justify-content-between mb-2">
+                            <div class="col-md-3">
+                                @php
                                     $routeName = Route::currentRouteName();
-                                    @endphp
-                                    @if($routeName === 'admin.receptionist.booking.receptionist')
+                                @endphp
+                                @if ($routeName === 'admin.receptionist.booking.receptionist')
                                     <select id="select-option-pttt" name="payment_pttt" class="form-control "
                                         style="width: 100%;">
                                         <option value="">Chọn phương thức thanh toán</option>
@@ -264,30 +266,30 @@
                                     </select>
                                     <span class="invalid-feedback d-block"
                                         style="font-weight: 500"id="select-option-pttt_error"></span>
-                                        @endif
-                                </div>
-                                <ul class="financial-list">
-                                    <li class="financial-item">
-                                        <span>Tiền phòng</span>
-                                        <span class="total_amount">0</span>
-                                    </li>
-                                    <li class="financial-item highlighted">
-                                        <span>Giảm giá</span>
-                                        <span class="total_discount">0</span>
-                                        {{-- <input type="text" id="discountInput" class="custom-input-giam-gia"> --}}
-                                    </li>
-                                    <li class="financial-item">
-                                        <span>Tiền cọc</span>
-                                        <span class="total_deposit">0</span>
-                                    </li>
-                                    <li class="financial-item">
-                                        <span>Còn lại</span>
-                                        <span class="total_balance">0</span>
-                                    </li>
-
-                                </ul>
+                                @endif
                             </div>
-                        
+                            <ul class="financial-list">
+                                <li class="financial-item">
+                                    <span>Tiền phòng</span>
+                                    <span class="total_amount">0</span>
+                                </li>
+                                <li class="financial-item highlighted">
+                                    <span>Giảm giá</span>
+                                    <span class="total_discount">0</span>
+                                    {{-- <input type="text" id="discountInput" class="custom-input-giam-gia"> --}}
+                                </li>
+                                <li class="financial-item">
+                                    <span>Tiền cọc</span>
+                                    <span class="total_deposit">0</span>
+                                </li>
+                                <li class="financial-item">
+                                    <span>Còn lại</span>
+                                    <span class="total_balance">0</span>
+                                </li>
+
+                            </ul>
+                        </div>
+
                     </div>
                     <div class="d-flex justify-content-end" style="gap: 10px;">
                         <button type="button" data-row="booked" class="btn-dat-truoc btn-book">Lưu</button>

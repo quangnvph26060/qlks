@@ -75,6 +75,23 @@ var validatorForm = {
         }, // viết tiếp điều kiện validate vào đây (validations)
         ]
     },
+    'phone': { // passwword thì nên đặt là name trong input đó
+        'element': document.getElementById('phone'), // id trong input đó
+        'error': document.getElementById('phone_error'), // thẻ hiển thị lỗi
+        'validations': [
+            {
+                'func': function (value) {
+                    return checkRequired(value); // check trống
+                },
+                'message': generateErrorMessage('P001', 'Số điện thoại')
+            }, {
+                'func': function (value) {
+                    return checkInteger(value); // check trống
+                },
+                'message': generateErrorMessage('SDT002', 'Số điện thoại')
+            },
+        ]
+    },
     //  'select-option-pttt': { // passwword thì nên đặt là name trong input đó
     //     'element': document.getElementById('select-option-pttt'), // id trong input đó
     //     'error': document.getElementById('select-option-pttt_error'), // thẻ hiển thị lỗi
@@ -594,20 +611,20 @@ function addRoomInBooking(data, list) {
         },
         success: function (response) {
             var tbody = list;
-           
+
             let targetId = list[0]?.id;
-                targetId === 'list-booking-edit' 
-                    ?  $('#list-booking').empty()
-                    : targetId === 'list-booking' 
-                    ?  $('#list-booking-edit').empty()
+            targetId === 'list-booking-edit'
+                ? $('#list-booking').empty()
+                : targetId === 'list-booking'
+                    ? $('#list-booking-edit').empty()
                     : null;
             if (response.status === 'success') {
                 const seenRooms = new Set();
                 let totalPrice = 0;
 
                 response.data.forEach(item => {
-                   
-                    
+
+
                     let date = new Date(item.date);
                     date.setDate(date.getDate() + 1);
                     const roomId = item.room["id"];
@@ -673,17 +690,17 @@ function addRoomInBooking(data, list) {
                                 </td>
                             </tr>
                         `;
-                      
-                       // tbody.append(tr); 
+
+                    // tbody.append(tr); 
                     const tableSelector = targetId === 'list-booking-edit' ? '#list-booking-edit' : '#list-booking';
                     let isDuplicate = $(`${tableSelector} tr`).filter(function () {
-                        return $(this).attr('data-room-id') == roomId 
-                        && $(this).attr('data-room-type-id') == roomTypeId
-                        && $(this).attr('data-date') == item.date;
+                        return $(this).attr('data-room-id') == roomId
+                            && $(this).attr('data-room-type-id') == roomTypeId
+                            && $(this).attr('data-date') == item.date;
                     }).length > 0;
-                    
+
                     if (!isDuplicate) {
-                        tbody.append(tr); 
+                        tbody.append(tr);
                     }
                 })
                 totalPrice = calculateTotalPrice();
@@ -1676,7 +1693,11 @@ function loadRoomBookings(page = 1, data) {
                                                     </td>
                                                     <td class="text-right w-10">${formatCurrency(record['deposit_amount'])}</td>
                                                     <td class="text-right w-10">${formatCurrency(record['discount'])}</td>
-                                                    <td class="text-left">${record['note']}</td>
+                                                    <td class="text-left" style="width: 500px">
+                                                    ${record['note']?.trim().slice(0, 30)}
+
+                                                    </td>
+
                                                 </tr>
 
                             `;
@@ -1704,7 +1725,7 @@ function loadRoomBookings(page = 1, data) {
                         option += `<option value="${item.id}">${item.room_number}</option>`;
                     }
                 });
-                selected_select.append(option);  
+                selected_select.append(option);
                 highlightOddRows();
                 updatePagination(pagination, 'loadRoomBookings');
                 setTimeout(function () {

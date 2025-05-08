@@ -40,6 +40,23 @@ var validatorForm = {
         }, // viết tiếp điều kiện validate vào đây (validations)
         ]
     },
+    'phone': { // passwword thì nên đặt là name trong input đó
+        'element': document.getElementById('phone'), // id trong input đó
+        'error': document.getElementById('phone_error'), // thẻ hiển thị lỗi
+        'validations': [
+            {
+                'func': function (value) {
+                    return checkRequired(value); // check trống
+                },
+                'message': generateErrorMessage('P001', 'Số điện thoại')
+            }, {
+                'func': function (value) {
+                    return checkInteger(value); // check trống
+                },
+                'message': generateErrorMessage('SDT002', 'Số điện thoại')
+            },
+        ]
+    },
     // 'select-option-pttt': { 
     //     'element': document.getElementById('select-option-pttt'), 
     //     'error': document.getElementById('select-option-pttt_error'),
@@ -62,6 +79,23 @@ var formEconomyEdit = {
             },
             'message': generateErrorMessage('P001', 'Tên')
         }, // viết tiếp điều kiện validate vào đây (validations)
+        ]
+    },
+    'phone': { // passwword thì nên đặt là name trong input đó
+        'element': document.getElementById('phone'), // id trong input đó
+        'error': document.getElementById('phone_error'), // thẻ hiển thị lỗi
+        'validations': [
+            {
+                'func': function (value) {
+                    return checkRequired(value); // check trống
+                },
+                'message': generateErrorMessage('P001', 'Số điện thoại')
+            }, {
+                'func': function (value) {
+                    return checkInteger(value); // check trống
+                },
+                'message': generateErrorMessage('SDT002', 'Số điện thoại')
+            },
         ]
     },
 
@@ -355,7 +389,7 @@ $(document).on('click', '#btn-search', function () {
             },
             error: function (xhr, status, error) {
 
-                // alert('Có lỗi xảy ra khi lưu ghi chú!');
+
             }
         });
     }
@@ -718,7 +752,9 @@ function loadRoomBookings(page = 1, data) {
                                                     </td>
                                     <td class="text-right w-10">${formatCurrency(record['deposit_amount'])}</td>
                                     <td class="text-right w-10">${formatCurrency(record['discount'])}</td>
-                                    <td class="text-right">${record['note']}</td>
+                                    <td class="text-left" style="width: 500px">
+                                        ${record['note']?.trim().slice(0, 30)}
+                                    </td>
                                 </tr>
 
                             `;
@@ -1236,32 +1272,32 @@ function findRoomBookingId(id) {
                 // nhân viên
                 var selected_select_staff = $('#select-staff');
                 selected_select_staff.empty();
-               let option_staff = `<option value="">Chọn nhân viên</option>`;
-               data.admin.forEach(function (item) {
-                   if(item.name === data.option_admin){
-                       option_staff += `<option value="${item.id}" selected>${item.username}</option>`;
-                   }else{
-                       option_staff += `<option value="${item.id}">${item.username}</option>`;
-                   }
-                  
-               });
-               selected_select_staff.append(option_staff);
+                let option_staff = `<option value="">Chọn nhân viên</option>`;
+                data.admin.forEach(function (item) {
+                    if (item.name === data.option_admin) {
+                        option_staff += `<option value="${item.id}" selected>${item.username}</option>`;
+                    } else {
+                        option_staff += `<option value="${item.id}">${item.username}</option>`;
+                    }
 
-               // khách hàng
-               console.log(data.customerSourse);
-               
-               var selected_customer_source = $('#select-customer-source');
-               selected_customer_source.empty();
-               let option = `<option value="">Chọn nguồn khách hàng</option>`;
-               data.customerSourse.forEach(function (item) {
-                   if (item.source_code == data.option_customer_source) {
-                       option += `<option value="${item.source_code}" selected>${item.source_name}</option>`;
-                   } else {
-                       option += `<option value="${item.source_code}">${item.source_name}</option>`;
-                   }
+                });
+                selected_select_staff.append(option_staff);
 
-               });
-               selected_customer_source.append(option);
+                // khách hàng
+                console.log(data.customerSourse);
+
+                var selected_customer_source = $('#select-customer-source');
+                selected_customer_source.empty();
+                let option = `<option value="">Chọn nguồn khách hàng</option>`;
+                data.customerSourse.forEach(function (item) {
+                    if (item.source_code == data.option_customer_source) {
+                        option += `<option value="${item.source_code}" selected>${item.source_name}</option>`;
+                    } else {
+                        option += `<option value="${item.source_code}">${item.source_name}</option>`;
+                    }
+
+                });
+                selected_customer_source.append(option);
 
                 data.data.forEach(function (item) {
                     $('input[name="name"]').val(item.customer_name);
@@ -1291,12 +1327,12 @@ function findRoomBookingId(id) {
                             const currentHour = String(now.getHours()).padStart(2, '0');
                             const currentMinute = String(now.getMinutes()).padStart(2, '0');
                             const currentTime = `${currentHour}:${currentMinute}`;
-                    
+
                             datePart = dateOnly;
                             timePart = currentTime;
                         }
-                            console.log(room.note);
-                            
+                        console.log(room.note);
+
                         var tr = `
                         <tr data-room-booking-id="${room.booking_id}" data-room-id="${room.room_code}"  data-room-type-id="${room.room_type}" data-date="${datePart}">
                             <td>
@@ -1631,7 +1667,10 @@ function showBookedRoom(value = "", option_customer_source = "") {
                                         </td>
                                         <td class="text-right w-10">${formatCurrency(record['deposit_amount'])}</td>
                                         <td class="text-right w-10">${formatCurrency(record['discount'])}</td>
-                                        <td class="text-right">${record['note']}</td>
+                                        <td class="text-right w-10">
+                                            ${record['note']}
+                                        </td>
+
                                         <td clas="text-center" style="text-align: center;">
                                             <input type="checkbox" data-book="${firstRecord['booking_id']}"
                                              data-date="${record['checkin_date']}" data-id="${record['room_change'] ?? record['room_code']}"
