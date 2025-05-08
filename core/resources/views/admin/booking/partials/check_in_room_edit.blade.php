@@ -99,7 +99,7 @@
                                         <input type="text" id="phone" name="phone" class="form-control phone-edit"
                                             placeholder="Số điện thoại">
                                             <span class="mt-3 invalid-feedback d-block"
-                                            style="font-weight: 500"id="phone_error"></span>s
+                                            style="font-weight: 500"id="phone_error"></span>
                                     </div>
                                   
                                     {{-- <div class="mb-3">

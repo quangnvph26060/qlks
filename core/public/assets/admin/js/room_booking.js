@@ -876,7 +876,13 @@ $(document).on('click', '.booked_room_edit', function () {
                 selected_select_staff.empty();
                 let option_staff = `<option value="">Chọn nhân viên</option>`;
                 response.admin.forEach(function (item) {
-                    option_staff += `<option value="${item.id}">${item.username}</option>`;
+                    console.log(item);
+                    
+                    if (item.name == response.option_admin) {
+                        option_staff += `<option value="${item.id}" selected>${item.username}</option>`;
+                    } else {
+                        option_staff += `<option value="${item.id}">${item.username}</option>`;
+                    }
                 });
                 selected_select_staff.append(option_staff);
                 $('#myModal-booking-edit').modal('show').on('shown.bs.modal', function () {
@@ -1687,12 +1693,12 @@ function loadRoomBookings(page = 1, data) {
                                                     <td class="text-right w-10">${formatDateTime(record['checkin_date'])}</td>
                                                     <td class="text-right w-10" >${formatDateTime(record['checkout_date'])}</td>
 
-                                                    <td class="text-right w-10" >${record['guest_count']}</td>
-                                                    <td class="text-right w-10">
+                                                    <td class="text-right " style="width: 50px">${record['guest_count']}</td>
+                                                    <td class="text-right " style="width: 100px">
                                                         ${formatCurrency(record['total_amount'])}
                                                     </td>
-                                                    <td class="text-right w-10">${formatCurrency(record['deposit_amount'])}</td>
-                                                    <td class="text-right w-10">${formatCurrency(record['discount'])}</td>
+                                                    <td class="text-right "style="width: 100px">${formatCurrency(record['deposit_amount'])}</td>
+                                                    <td class="text-right "style="width: 100px">${formatCurrency(record['discount'])}</td>
                                                     <td class="text-left" style="width: 500px">
                                                     ${record['note']?.trim().slice(0, 30)}
 

@@ -81,23 +81,23 @@ var formEconomyEdit = {
         }, // viết tiếp điều kiện validate vào đây (validations)
         ]
     },
-    'phone': { // passwword thì nên đặt là name trong input đó
-        'element': document.getElementById('phone'), // id trong input đó
-        'error': document.getElementById('phone_error'), // thẻ hiển thị lỗi
-        'validations': [
-            {
-                'func': function (value) {
-                    return checkRequired(value); // check trống
-                },
-                'message': generateErrorMessage('P001', 'Số điện thoại')
-            }, {
-                'func': function (value) {
-                    return checkInteger(value); // check trống
-                },
-                'message': generateErrorMessage('SDT002', 'Số điện thoại')
-            },
-        ]
-    },
+    // 'phone': { // passwword thì nên đặt là name trong input đó
+    //     'element': document.getElementById('phone'), // id trong input đó
+    //     'error': document.getElementById('phone_error'), // thẻ hiển thị lỗi
+    //     'validations': [
+    //         {
+    //             'func': function (value) {
+    //                 return checkRequired(value); // check trống
+    //             },
+    //             'message': generateErrorMessage('P001', 'Số điện thoại')
+    //         }, {
+    //             'func': function (value) {
+    //                 return checkInteger(value); // check trống
+    //             },
+    //             'message': generateErrorMessage('SDT002', 'Số điện thoại')
+    //         },
+    //     ]
+    // },
 
 }
 
