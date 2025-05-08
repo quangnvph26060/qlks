@@ -676,6 +676,7 @@
         text-overflow: ellipsis;
     }
     .limitname{
+        color: white !important;
         display: inline-block;
         max-width: 120px;
         white-space: nowrap;

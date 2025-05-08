@@ -9,7 +9,7 @@
                             <div class="login-wrapper__top">
                                 <h3 class="title text-white font-size-login">@lang('Chào mừng đến với')
                                     {{-- <strong>{{ __(gs('site_name')) }}</strong> --}}
-                                    TravelViet
+                                    Fasthotel
                                 </h3>
                                 <p class="text-white">
                                     {{ $pageTitle }}

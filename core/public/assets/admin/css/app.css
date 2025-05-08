@@ -5908,10 +5908,10 @@ th.w-85 {
     flex-wrap: wrap;
     align-items: center;
 }
-
+/* 
 .navbar__action-list li {
     margin-right: 10px;
-}
+} */
 
 @media (max-width: 575px) {
     .navbar__action-list li {

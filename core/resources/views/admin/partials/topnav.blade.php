@@ -73,12 +73,12 @@
                 </li>
             @endcan
 
-            <li>
+            {{-- <li>
                 <button type="button" class="primary--layer" data-bs-toggle="tooltip" data-bs-placement="bottom"
                     title="@lang('Visit Website')">
                     <a href="{{ route('home') }}" target="_blank"><i class="las la-globe"></i></a>
                 </button>
-            </li>
+            </li> --}}
             <li class="dropdown">
                 <button type="button" class="primary--layer notification-bell" data-bs-toggle="dropdown"
                     data-display="static" aria-haspopup="true" aria-expanded="false">

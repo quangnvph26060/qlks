@@ -64,7 +64,7 @@
                                                 <td data-label="Cơ sở vật chất" >
                                                     @if ($room->facilities->count() > 0)
                                                         @foreach ($room->facilities as $item)
-                                                            <span class="badge {{ getRandomColor() }}">{{ $item->title }}</span>
+                                                            <span class="badge {{ getRandomColor() }}" style="color:white !important">{{ $item->title }}</span>
                                                         @endforeach
                                                     @else
                                                         <p>Chưa có cơ sở vật chất nào </p>

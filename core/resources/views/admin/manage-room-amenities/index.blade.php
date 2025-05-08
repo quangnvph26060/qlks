@@ -95,7 +95,7 @@
                                                 <td>
                                                     @if ($room->amenities->count() > 0)
                                                         @foreach ($room->amenities as $item)
-                                                            <span class="badge {{ getRandomColor() }}">{{ $item->title }}</span>
+                                                            <span class="badge {{ getRandomColor() }}" style="color:white !important">{{ $item->title }}</span>
                                                         @endforeach
                                                     @else
                                                         <p>Chưa có tiện nghi nào !</p>
