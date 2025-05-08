@@ -396,9 +396,9 @@ class BookRoomController extends Controller
                 // tổng tiền của phòng
                 $sumPrice += $roomPice['unit_price'];
                 // TỔNG GIẢM GIÁ
-                $totalDiscount += $discountAmount;
+               // $totalDiscount += $discountAmount;
                 // TỔNG ĐẶT CỌC 
-                $totalDeposit += $depositAmount;
+              //  $totalDeposit += $depositAmount;
 
                 $check_in->room_code      = $room['room'];
                 $check_in->document_date  = now();
@@ -421,11 +421,13 @@ class BookRoomController extends Controller
                 $check_in->save();
 
                 $payment_pttt = $request->payment_pttt;
-                if ($totalDeposit > 0 || $totalDiscount > 0) {
+                if ($discountAmount > 0 || $depositAmount > 0) {
                     if ($request->method == 'check_in') {
-                        savePayment('', $bookingId,  $roomPice['unit_price'], $room['room'], $totalDeposit, $totalDiscount, 0, $payment_pttt);
+                        savePayment('', $bookingId,  $roomPice['unit_price'],
+                         $room['room'], $depositAmount, $discountAmount, 0, $payment_pttt);
                     } else {
-                        savePayment($bookingId, '',  $roomPice['unit_price'], $room['room'], $totalDeposit, $totalDiscount, 0, $payment_pttt);
+                        savePayment($bookingId, '',  $roomPice['unit_price'],
+                         $room['room'], $depositAmount, $discountAmount, 0, $payment_pttt);
                     }
                 }
             } // end foreach
