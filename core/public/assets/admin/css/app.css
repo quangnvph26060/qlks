@@ -6653,7 +6653,7 @@ th.w-85 {
     left: 0;
     width: 100%;
     height: 100%;
-    background-color: #1e157d;
+    /* background-color: #1e157d; */
     opacity: 0.57;
     z-index: -1;
 }
