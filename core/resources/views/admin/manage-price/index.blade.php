@@ -5,7 +5,7 @@
             <table class="table table-bordered table--light style--two  table-striped" id="data-table">
                 <thead>
                     <tr>
-                        <th>Mã hạng Phòng</th>
+                        <th>Mã loại Phòng</th>
                         <th class="small-column">Mã Giá</th>
                         <th>Thời gian hiệu lực</th>
                         <th>Đơn giá</th>
@@ -45,7 +45,7 @@
                         <div class="row">
                             <div class="row-box col-6">
                                 <div class="box">
-                                    <label for="dayType" class="form-label">Mã hạng phòng</label>
+                                    <label for="dayType" class="form-label">Mã loại phòng</label>
                                     <select class="form-select" id="room_type_id" name="room_type_id">
                                         <option value="">Chọn mã phòng</option>
                                         @foreach ($rooms as $room)
@@ -163,7 +163,7 @@
                                 'func': function(value) {
                                     return checkRequired(value); // check trống
                                 },
-                                'message': generateErrorMessage('P001', 'Mã hạng phòng')
+                                'message': generateErrorMessage('P001', 'Mã loại phòng')
                             }, // viết tiếp điều kiện validate vào đây (validations)
                         ]
                     },

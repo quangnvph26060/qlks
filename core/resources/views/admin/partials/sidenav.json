@@ -1,25 +1,7 @@
 {
     "dashboard": {
         "keyword": [
-            "Dashboard",
-            "Home",
-            "Panel",
-            "Admin",
-            "Control center",
-            "Overview",
-            "Main hub",
-            "Management hub",
-            "Administrative hub",
-            "Central hub",
-            "Command center",
-            "Administrator portal",
-            "Centralized interface",
-            "Admin console",
-            "Management dashboard",
-            "Main screen",
-            "Administrative dashboard",
-            "Command dashboard",
-            "Main control panel"
+            "Dashboard"
         ],
         "title": "Thống kê",
         "icon": "las la-home",
@@ -54,7 +36,6 @@
                 "route_name": "admin.hotel.room.all",
                 "menu_active": "admin.hotel.room.all"
             },
-
             {
                 "keyword": [
                     "Danh mục phòng"
@@ -67,7 +48,6 @@
                     "admin.hotel.room.type.edit"
                 ]
             },
-
             {
                 "keyword": [
                     "Danh mục dịch vụ cao cấp",
@@ -108,7 +88,6 @@
                 ],
                 "title": "Danh mục người dùng",
                 "route_name": "admin.users.active",
-
                 "menu_active": "admin.users.active"
             },
             {
@@ -142,7 +121,6 @@
                 "title": "Danh mục trạng thái",
                 "route_name": "admin.hotel.status.code.all",
                 "menu_active": "admin.hotel.status.code.all"
-
             }
         ]
     },
@@ -162,7 +140,6 @@
             },
             {
                 "keyword": [
-
                     "Nhận phòng"
                 ],
                 "title": "Nhận phòng",
@@ -201,13 +178,13 @@
                 "title": "Lễ Tân",
                 "icon": "fas fa-user-tie",
                 "route_name": "admin.receptionist.booking.receptionist",
-                "menu_active": ["admin.receptionist.booking.receptionist",
-                                "admin.delayed.booking.checkout",
-                                "admin.delayed.booking.checkin",
-                                "admin.booking.todays.booked"
-                                ]
+                "menu_active": [
+                    "admin.receptionist.booking.receptionist",
+                    "admin.delayed.booking.checkout",
+                    "admin.delayed.booking.checkin",
+                    "admin.booking.todays.booked"
+                ]
             }
-
         ]
     },
     "manage_report": {
@@ -226,15 +203,22 @@
             },
             {
                 "keyword": [
-
                     "Báo cáo doanh số"
                 ],
                 "title": "Báo cáo doanh số",
                 "route_name": "admin.manage.priceroomtype.all",
                 "menu_active": "admin.manage.priceroomtype.all"
             }
-
         ]
+    },
+     "employee_manager": {
+        "keyword": [
+            "Quản lý nhân viên"
+        ],
+        "title": "Quản lý nhân viên",
+        "icon": "las la-users",
+          "route_name": "admin.staff.index",
+        "menu_active": "admin.staff.index"
     },
     "general_settings": {
         "title": "Cài đặt chung",
@@ -306,18 +290,8 @@
                 "title": "Cài đặt mã",
                 "route_name": "admin.hotel.setup.code.all",
                 "menu_active": "admin.hotel.setup.code.all"
-            },
-            {
-                "keyword": [
-                    "Danh mục nhân viên"
-                ],
-                "title": "Danh mục nhân viên",
-                "route_name": "admin.staff.index",
-                "menu_active": "admin.staff.index"
             }
-
         ]
     }
-
-
+   
 }

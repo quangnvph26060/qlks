@@ -1,4 +1,4 @@
-@extends('admin.layouts.app')
+@extends('admin.layouts.master_iframe')
 @section('panel')
     <form action="{{ route('admin.roles.save', @$role->id) }}" method="post">
         @csrf

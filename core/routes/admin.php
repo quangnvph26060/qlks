@@ -35,6 +35,7 @@ Route::middleware('admin', 'adminPermission')->prefix('admin')->group(function (
         Route::post('update', [FeeController::class, 'update'])->name('update');
     });
     Route::controller('AdminController')->group(function () {
+        Route::get('display', 'display')->name('display');
         Route::get('dashboard', 'dashboard')->name('dashboard');
         Route::get('chart/booking-report', 'bookingReport')->name('chart.booking');
         Route::get('chart/payment-report', 'paymentReport')->name('chart.payment');

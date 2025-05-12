@@ -48,8 +48,8 @@ class ManagePriceListController extends Controller
             'price_validity_period' => 'required',
         ], [
             // Custom thông báo lỗi
-            'room_type_id.required' => 'Vui lòng chọn mã hạng phòng.',
-            'room_type_id.exists' => 'Mã hạng phòng không tồn tại.',
+            'room_type_id.required' => 'Vui lòng chọn mã loại phòng.',
+            'room_type_id.exists' => 'Mã loại phòng không tồn tại.',
             'setup_pricing_id.required' => 'Vui lòng chọn mã giá.',
             'setup_pricing_id.exists' => 'Mã giá không tồn tại.',
         ]);

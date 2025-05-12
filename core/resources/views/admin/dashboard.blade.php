@@ -1,5 +1,21 @@
-@extends('admin.layouts.app')
+@extends('admin.layouts.master_iframe')
+@php
+$widget = [];
+        $widget['today_booked']             = 123;
+        $widget['today_available']          = 123;
+        $widget['total']                    = 2;
+        $widget['active']                   = 1;
+        $widget['pending_checkin']          = 3;
+        $widget['delayed_checkout']         = 4;
+        $widget['upcoming_checkin']         = 23;
+        $widget['upcoming_checkout']        = 324;
 
+        $widget['total_users']              = 234;
+        $widget['verified_users']           = 44;
+        $widget['email_unverified_users']   = 555;
+        $widget['mobile_unverified_users']  = 66;
+
+@endphp
 @section('panel')
     <div class="row gy-4">
         <div class="col-xxl-3 col-sm-6">
@@ -130,139 +146,7 @@
 @endpush
 
 @push('script')
-    <script>
-        "use strict";
-
-        const start = moment().subtract(14, 'days');
-        const end = moment();
-
-        const dateRangeOptions = {
-            startDate: start,
-            endDate: end,
-            ranges: {
-                'Today': [moment(), moment()],
-                'Yesterday': [moment().subtract(1, 'days'), moment().subtract(1, 'days')],
-                'Last 7 Days': [moment().subtract(6, 'days'), moment()],
-                'Last 15 Days': [moment().subtract(14, 'days'), moment()],
-                'Last 30 Days': [moment().subtract(30, 'days'), moment()],
-                'This Month': [moment().startOf('month'), moment().endOf('month')],
-                'Last Month': [moment().subtract(1, 'month').startOf('month'), moment().subtract(1, 'month').endOf('month')],
-                'Last 6 Months': [moment().subtract(6, 'months').startOf('month'), moment().endOf('month')],
-                'This Year': [moment().startOf('year'), moment().endOf('year')],
-            },
-            maxDate: moment()
-        }
-
-        const changeDatePickerText = (element, startDate, endDate) => {
-            $(element).html(startDate.format('MMMM D, YYYY') + ' - ' + endDate.format('MMMM D, YYYY'));
-        }
-
-        let bookingReport = barChart(
-            document.querySelector("#bookingReportArea"),
-            @json(__(gs('cur_sym'))),
-            [{
-                name: 'Deposited',
-                data: []
-            }],
-            [],
-        );
-
-        let paymentReport = lineChart(
-            document.querySelector("#paymentReportArea"),
-            [{
-                    name: "Plus Transactions",
-                    data: []
-                },
-                {
-                    name: "Minus Transactions",
-                    data: []
-                }
-            ],
-            []
-        );
-
-
-        const bookingReportChart = (startDate, endDate) => {
-
-            const data = {
-                start_date: startDate.format('YYYY-MM-DD'),
-                end_date: endDate.format('YYYY-MM-DD')
-            }
-
-            const url = @json(route('admin.chart.booking'));
-
-            $.get(url, data,
-                function(data, status) {
-                    if (status == 'success') {
-                        bookingReport.updateSeries(data.data);
-                        bookingReport.updateOptions({
-                            xaxis: {
-                                categories: data.created_on,
-                            }
-                        });
-                    }
-                }
-            );
-        }
-
-        const paymentReportChart = (startDate, endDate) => {
-
-            const data = {
-                start_date: startDate.format('YYYY-MM-DD'),
-                end_date: endDate.format('YYYY-MM-DD')
-            }
-
-            const url = @json(route('admin.chart.payment'));
-
-
-            $.get(url, data,
-                function(data, status) {
-                    if (status == 'success') {
-
-
-                        paymentReport.updateSeries(data.data);
-                        paymentReport.updateOptions({
-                            xaxis: {
-                                categories: data.created_on,
-                            }
-                        });
-                    }
-                }
-            );
-        }
-
-
-
-        $('#bookingDatePicker').daterangepicker(dateRangeOptions, (start, end) => changeDatePickerText('#bookingDatePicker span', start, end));
-        $('#paymentDatePicker').daterangepicker(dateRangeOptions, (start, end) => changeDatePickerText('#paymentDatePicker span', start, end));
-
-        changeDatePickerText('#bookingDatePicker span', start, end);
-        changeDatePickerText('#paymentDatePicker span', start, end);
-
-        bookingReportChart(start, end);
-        paymentReportChart(start, end);
-
-        $('#bookingDatePicker').on('apply.daterangepicker', (event, picker) => bookingReportChart(picker.startDate, picker.endDate));
-        $('#paymentDatePicker').on('apply.daterangepicker', (event, picker) => paymentReportChart(picker.startDate, picker.endDate));
-
-        piChart(
-            document.getElementById('userBrowserChart'),
-            @json(@$chart['user_browser_counter']->keys()),
-            @json(@$chart['user_browser_counter']->flatten())
-        );
-
-        piChart(
-            document.getElementById('userOsChart'),
-            @json(@$chart['user_os_counter']->keys()),
-            @json(@$chart['user_os_counter']->flatten())
-        );
-
-        piChart(
-            document.getElementById('userCountryChart'),
-            @json(@$chart['user_country_counter']->keys()),
-            @json(@$chart['user_country_counter']->flatten())
-        );
-    </script>
+  
 @endpush
 @push('style')
     <style>

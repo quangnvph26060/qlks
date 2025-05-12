@@ -19,170 +19,97 @@
 
 <!-- navbar-wrapper start -->
 <nav class="navbar-wrapper bg--dark d-flex flex-wrap top-menu">
-        <div style="width: 97%">
-        {{-- <button type="button" class="res-sidebar-open-btn me-3"><i class="las la-bars"></i></button>
-        <form class="navbar-search">
-            <input type="search" name="#0" class="navbar-search-field" id="searchInput" autocomplete="off" placeholder="@lang('Tìm kiếm ở đây...')">
-            <i class="las la-search"></i>
-            <ul class="search-list"></ul>
-        </form> --}}
-         
-        <!-- <div class="nav-tabss">
-            <nav>
-                <ul class="d-flex main__tabs-list horizontal-scroll" id="horizontal-scroll">
-                </ul>
-            </nav>
-        </div> -->
-    </div>
-         
-        <div>
-            
-              <button data-toggle="menu" class="btn btn-primary btn-menu" style="float: right;margin-top: 20px;margin-right: -20px;display:none">
-            <i class="fa fa-list"></i></button>
-        </div>
-   
-  
     <div style="align-items: baseline;" class="navbar__right">
-<!--        
-  <div id="menu-btn" style="float: right;z-index: 9999;">
-    <ul>
-      <li class="border-bottom p-1"><a href="{{ route('admin.system.update') }}">Update Available</a></li>
-      <li class="border-bottom p-1"><a href="{{ route('admin.request.booking.all') }}">Yêu cầu đặt phòng</a></li>
-      <li class="border-bottom p-1"><a href="{{ route('admin.request.booking.all') }}">Services</a></li>
-      <li class="border-bottom p-1"><a a href="{{ route('home') }}">Visit Website</a></li>
-      <li class="border-bottom p-1"><a a href="{{ route('admin.profile') }}">Hồ sơ</a></li>
-      <li class="border-bottom p-1"><a a href="{{ route('admin.password') }}">Mật khẩu</a></li>
-      <li class="p-1"><a a href="{{ route('admin.logout') }}">Đăng xuất</a></li>
 
-    </ul>
-  </div> -->
-        <button type="button" class="res-sidebar-open-btn me-3"><i class="las la-bars"></i></button>
-        <ul class="navbar__action-list">
-
-            {{-- @if (version_compare(gs('available_version'), systemDetails()['version'], '>'))
-                @can('admin.system.update')
-                    <li><button type="button" class="primary--layer" data-bs-toggle="tooltip" data-bs-placement="bottom" title="@lang('Update Available')"><a href="{{ route('admin.system.update') }}" class="primary--layer"><i class="las la-download text--warning"></i></a> </button></li>
-                @endcan
-            @endif --}}
-            @can('admin.request.booking.all')
+        {{-- <button type="button" class="res-sidebar-open-btn me-3"><i class="las la-bars"></i></button> --}}
+        <ul class="navbar__action-list d-flex justify-content-between">
+            <div id="tabs" class="tab-container" style="display: flex; gap: 8px; margin-bottom: 10px;"></div>
+            <div id="frame" style="position: relative;"></div>
+            <div class="d-flex" style="margin-bottom: 12px">
                 <li>
-                    <a class="btn btn--danger booking-req me-2 me-md-3" href="{{ route('admin.request.booking.all') }}">
-                        @lang('Yêu cầu đặt phòng') <small
-                            class="fw-bold px-2 rounded bg-light text--danger">{{ $bookingRequestCount }}</small>
+                    <a class="btn btn--danger booking-req me-2 me-md-3" style="white-space: nowrap;"
+                        href="{{ route('admin.receptionist.booking.receptionist') }}">
+                        Lễ tân
                     </a>
                 </li>
-            @endcan
+                <li class="dropdown d-flex profile-dropdown">
+                    <button type="button" data-bs-toggle="dropdown" data-display="static" aria-haspopup="true"
+                        aria-expanded="false">
+                        <span class="navbar-user">
+                            <span class="navbar-user__thumb"><img
+                                    src="{{ getImage(getFilePath('adminProfile') . '/' . auth()->guard('admin')->user()->image, getFileSize('adminProfile')) }}"
+                                    alt="image"></span>
+                            <span class="navbar-user__info">
+                                <span class="navbar-user__name">{{ auth()->guard('admin')->user()->username }}</span>
+                            </span>
+                            <span class="icon"><i class="las la-chevron-circle-down"></i></span>
+                        </span>
+                    </button>
+                    <div class="dropdown-menu dropdown-menu--sm p-0 border-0 box--shadow1 dropdown-menu-right">
+                        <a href="{{ route('admin.profile') }}"
+                            class="dropdown-menu__item d-flex align-items-center px-3 py-2">
+                            <i class="dropdown-menu__icon las la-user-circle"></i>
+                            <span class="dropdown-menu__caption">@lang('Hồ sơ')</span>
+                        </a>
 
-            {{-- <li>
-                <button type="button" class="primary--layer" data-bs-toggle="tooltip" data-bs-placement="bottom"
-                    title="@lang('Visit Website')">
-                    <a href="{{ route('home') }}" target="_blank"><i class="las la-globe"></i></a>
-                </button>
-            </li> --}}
-            <li class="dropdown">
-                <button type="button" class="primary--layer notification-bell" data-bs-toggle="dropdown"
-                    data-display="static" aria-haspopup="true" aria-expanded="false">
-                    <span data-bs-toggle="tooltip" data-bs-placement="bottom" title="@lang('Unread Notifications')">
-                        <i class="las la-bell @if ($adminNotificationCount > 0) icon-left-right @endif"></i>
-                    </span>
-                    @if ($adminNotificationCount > 0)
-                        <span
-                            class="notification-count">{{ $adminNotificationCount <= 9 ? $adminNotificationCount : '9+' }}</span>
-                    @endif
-                </button>
-                <div class="dropdown-menu dropdown-menu--md p-0 border-0 box--shadow1 dropdown-menu-right">
-                    <div class="dropdown-menu__header">
-                        <span class="caption">@lang('Notification')</span>
-                        @if ($adminNotificationCount > 0)
-                            <p>@lang('You have') {{ $adminNotificationCount }} @lang('unread notification')</p>
-                        @endif
+                        <a href="{{ route('admin.password') }}"
+                            class="dropdown-menu__item d-flex align-items-center px-3 py-2">
+                            <i class="dropdown-menu__icon las la-key"></i>
+                            <span class="dropdown-menu__caption">@lang('Mật khẩu')</span>
+                        </a>
+                        <a href="{{ route('admin.setting.system') }}"
+                            class="dropdown-menu__item d-flex align-items-center px-3 py-2">
+                            <i class="dropdown-menu__icon las la-cog"></i>
+
+                            <span class="dropdown-menu__caption">@lang('Thiết lập hệ thống')</span>
+                        </a>
+                        <a href="{{ route('admin.logout') }}"
+                            class="dropdown-menu__item d-flex align-items-center px-3 py-2">
+                            <i class="dropdown-menu__icon las la-sign-out-alt"></i>
+                            <span class="dropdown-menu__caption">@lang('Đăng xuất')</span>
+                        </a>
                     </div>
-                    <div
-                        class="dropdown-menu__body @if (blank($adminNotifications)) d-flex justify-content-center align-items-center @endif">
-                        @forelse($adminNotifications as $notification)
-                            <a href="{{ can('admin.notification.read') ? route('admin.notification.read', $notification->id) : 'javascript:void(0)' }}"
-                                class="dropdown-menu__item">
-                                <div class="navbar-notifi">
-                                    <div class="navbar-notifi__right">
-                                        <h6 class="notifi__title">{{ __($notification->title) }}</h6>
-                                        <span class="time"><i class="far fa-clock"></i>
-                                            {{ diffForHumans($notification->created_at) }}</span>
-                                    </div>
-                                </div>
-                            </a>
-                        @empty
-                            <div class="empty-notification text-center">
-                                <img src="{{ getImage('assets/images/empty_list.png') }}" alt="empty">
-                                <p class="mt-3">@lang('Không tìm thấy thông báo chưa đọc')</p>
-                            </div>
-                        @endforelse
-                    </div>
-                    @can('admin.notifications')
-                        <div class="dropdown-menu__footer">
-                            <a href="{{ route('admin.notifications') }}" class="view-all-message">@lang('Xem tất cả thông báo')</a>
-                        </div>
-                    @endcan
-                </div>
-            </li>
-            @can('admin.setting.system')
-                <li>
-                    <button type="button" class="primary--layer" data-bs-toggle="tooltip" data-bs-placement="bottom"
-                        title="@lang('Thiết lập hệ thống')">
-                        <a href="{{ route('admin.setting.system') }}"><i class="las la-wrench"></i></a>
+                    <button type="button" class="breadcrumb-nav-open ms-2 d-none">
+                        <i class="las la-sliders-h"></i>
                     </button>
                 </li>
-            @endcan
-            <li class="dropdown d-flex profile-dropdown">
-                <button type="button" data-bs-toggle="dropdown" data-display="static" aria-haspopup="true"
-                    aria-expanded="false">
-                    <span class="navbar-user">
-                        <span class="navbar-user__thumb"><img
-                                src="{{ getImage(getFilePath('adminProfile') . '/' . auth()->guard('admin')->user()->image, getFileSize('adminProfile')) }}"
-                                alt="image"></span>
-                        <span class="navbar-user__info">
-                            <span class="navbar-user__name">{{ auth()->guard('admin')->user()->username }}</span>
-                        </span>
-                        <span class="icon"><i class="las la-chevron-circle-down"></i></span>
-                    </span>
-                </button>
-                <div class="dropdown-menu dropdown-menu--sm p-0 border-0 box--shadow1 dropdown-menu-right">
-                    <a href="{{ route('admin.profile') }}"
-                        class="dropdown-menu__item d-flex align-items-center px-3 py-2">
-                        <i class="dropdown-menu__icon las la-user-circle"></i>
-                        <span class="dropdown-menu__caption">@lang('Hồ sơ')</span>
-                    </a>
-
-                    <a href="{{ route('admin.password') }}"
-                        class="dropdown-menu__item d-flex align-items-center px-3 py-2">
-                        <i class="dropdown-menu__icon las la-key"></i>
-                        <span class="dropdown-menu__caption">@lang('Mật khẩu')</span>
-                    </a>
-
-                    <a href="{{ route('admin.logout') }}"
-                        class="dropdown-menu__item d-flex align-items-center px-3 py-2">
-                        <i class="dropdown-menu__icon las la-sign-out-alt"></i>
-                        <span class="dropdown-menu__caption">@lang('Đăng xuất')</span>
-                    </a>
-                </div>
-                <button type="button" class="breadcrumb-nav-open ms-2 d-none">
-                    <i class="las la-sliders-h"></i>
-                </button>
-            </li>
+            </div>
         </ul>
     </div>
 </nav>
 <!-- navbar-wrapper end -->
 <style scoped>
-    /* background-color: #4634ff59 !important; */
+    .tab-btn {
+        border: 1px solid #fff !important;
+        background: #333;
+        color: white;
+        padding: 6px 10px;
+        border: none;
+        border-radius: 4px;
+        cursor: pointer;
+    }
+
+    .la-times {
+        font-size: 13px !important;
+    }
+
+    .tab-btn.active-tab {
+        background: #004C87;
+    }
+
+    .tab-btn:hover {
+        background: #004C87;
+    }
+
     .nav-item {
         border: 1px solid;
         position: relative;
         border-radius: 6px;
     }
-    
+
     .nav-tabss {
         position: relative;
-        bottom:  -16px;
+        bottom: -16px;
     }
 
     .nav-link-tabs {
@@ -207,26 +134,52 @@
         cursor: pointer;
     }
 
+    .tab-container {
+        display: flex;
+        gap: 8px;
+        margin-bottom: 10px;
+        overflow-x: auto;
+        white-space: nowrap;
+        padding-bottom: 4px;
+        /* Để không bị cắt shadow/tab */
+        scrollbar-width: none;
+        /* Firefox */
+    }
+
+    /* Để ẩn scrollbar nếu muốn, hoặc tùy chỉnh cho đẹp */
+    .tab-container::-webkit-scrollbar {
+        display: none;
+    }
+
+    .tab-container::-webkit-scrollbar-thumb {
+        background-color: #ccc;
+        border-radius: 10px;
+    }
+
+
 
 
     .nav-item.active {
         background-color: #4634ff59 !important;
         color: white;
     }
+
     .main__tabs-list {
-    display: flex;
-/*    width: 90%;
-*/    overflow-x: auto;
-/*    white-space: nowrap; 
-*/    padding-bottom: 5px;
-        scrollbar-width: thin; 
+        display: flex;
+        /*    width: 90%;
+*/
+        overflow-x: auto;
+        /*    white-space: nowrap;
+*/
+        padding-bottom: 5px;
+        scrollbar-width: thin;
         scrollbar-color: #071251 transparent;
     }
 
     .nav-item {
-        flex: 0 0 auto; /* Đảm bảo các <li> không bị co lại */
+        flex: 0 0 auto;
+        /* Đảm bảo các <li> không bị co lại */
     }
-
 </style>
 @push('script')
     <script>
@@ -254,13 +207,14 @@
                 </div>
             </li>`
         }
+
         function renderTabs() {
             if (localStorage.getItem('activeDataIds')) {
                 activeDataIds = JSON.parse(localStorage.getItem('activeDataIds'));
                 activeDataIds.forEach(function(item) {
                     Object.keys(item).forEach(function(key) {
 
-                        var html = `<li class="nav-item click-tabs mt-2 ${routeName === key ?'active':''}" role="presentation">
+                        var html = `<li class="nav-item click-tabs mt-2 ${routeName === key ? 'active': ''}" role="presentation">
                         <a class="nav-link-tabs" data-key="${key}">${item[key]}</a>
                         <span class="close-tab" data-key="${key}">X</span>
                         </li>`;
@@ -303,12 +257,189 @@
                 })
             })
         });
-   
 
-  
+        $('ul > li > a.nav-link').click(function(e) {
+            $('.menu-header').css('display', 'block');
+
+            e.preventDefault();
+            var seen = {};
+            var getItem = $(this).text();
+            var getURL = $(this).attr('href');
+            if (seen[getURL]) {
+                ($this).empty();
+            } else {
+                $('.p-globalNavi__item').removeClass('m-active');
+                var myEle = document.getElementById(getURL);
+                var parts = getURL.split('/');
+                var lastSegment = parts.pop() || parts.pop();
+                if (myEle == null) {
+
+                    $("#home").after(
+                        " <li class=\"p-globalNavi__item m-active\"><a class=\"p-globalNavi__link text-white tabs\" id=" +
+                        getURL + " >" + getItem +
+                        "<i class=\"close-tab fa fa-close\"></i><span class=\"sr-only\">(current)<\/span><\/a><\/li> "
+                    );
+                } else {
+                    document.getElementById(getURL).click();
+                    document.getElementById(getURL).scrollIntoView({
+                        behavior: 'smooth'
+                    });
+                }
+            }
+            // $('.top-menu').css('display', 'none');
+            $('.top-menu').removeClass('d-flex');
+            $('#dropdownButton').css('display', 'block');
+            // const scrollLeftButton = document.getElementById('arrow-left');
+            // const scrollRightButton = document.getElementById('arrow-right');
+            // const scrollContent = document.getElementById('menu');
+            // const maxScrollLeft = scrollContent.scrollWidth - scrollContent.clientWidth;
+            // const currentScrollLeft = scrollContent.scrollLeft;
+
+            // if (currentScrollLeft === 0) {
+            //     scrollLeftButton.style.display = 'none';
+            // } else {
+            //     scrollLeftButton.style.display = 'block';
+            // }
+
+            // // Nếu cuộn đến cuối (không thể cuộn phải nữa), ẩn mũi tên phải
+            // if (currentScrollLeft === maxScrollLeft) {
+            //     scrollRightButton.style.display = 'none';
+            // } else {
+            //     scrollRightButton.style.display = 'block';
+            // }
+            // $('.btn-menu').css('display', 'block');
+        });
 
 
+
+
+        function loadIframe(url) {
+            if (url === "javascript:void(0)") {
+                return; // Nếu URL là "javascript:void(0)", không xử lý
+            }
+
+            const parts = url.split('/');
+           
+
+            const tabId = parts.pop() || parts.pop();
+            const iframeId = tabId;
+            const menuTitle = $("a[href='" + url + "']").find(".menu-title").text();
+            console.log(menuTitle);
+            
+            // Kiểm tra tab tồn tại chưa
+            if ($('#tab-' + tabId).length === 0) {
+                // Thêm tab mới
+                $('#tabs').append(`
+            <button id="tab-${tabId}" class="tab-btn" onclick="switchTab('${iframeId}')">
+                ${menuTitle} <span onclick="closeTab(event, '${iframeId}')" style="margin-left: 4px; cursor: pointer;"> <i class="las la-times"></i></span>
+            </button>
+            `);
+
+                // Thêm iframe mới
+                $('#frame').append(`
+            <iframe name="main" id="${iframeId}" class="frame vh-100" 
+                src="${url}"
+                style="width: calc(100% - 265px); right: 1; position: fixed; z-index: 999; margin-top: 33px; border: none; display: none;">
+            </iframe>
+            `);
+            }
+
+            // Chuyển sang tab đó
+            switchTab(iframeId);
+        }
+
+        function switchTab(iframeId) {
+            $('.frame').hide();
+            $('iframe#' + iframeId).show();
+
+            // Đổi style active cho tab
+            $('.tab-btn').removeClass('active-tab');
+            $('#tab-' + iframeId).addClass('active-tab');
+        }
+
+        function closeTab(event, iframeId) {
+            event.stopPropagation(); // Ngăn chặn sự kiện bọt biển
+            $('#' + iframeId).remove(); // Xóa iframe
+            $('#tab-' + iframeId).remove(); // Xóa tab
+        }
+
+
+
+
+        $(document).on('click', '.p-globalNavi__link', function() {
+            $('.p-globalNavi__item').removeClass('m-active');
+            var id = $(this).attr('id');
+            $(this).parent().addClass('m-active');
+            $('iframe').css({
+                'z-index': '999',
+                'display': 'none'
+            });
+            var parts = id.split('/');
+            var lastSegment = parts.pop() || parts.pop();
+            $('iframe#' + lastSegment + '').css({
+                'z-index': '10000',
+                'display': 'block'
+            });
+        });
+        $(document).on('click', '.close-tab', function() {
+            var parent = $(this).parent().prop('id');
+            var parts = parent.split('/');
+            var lastSegment = parts.pop() || parts.pop();
+            $('iframe#' + lastSegment + '').remove();
+            document.getElementById(parent).parentElement.remove();
+            const menu = document.querySelector('.p-globalNavi__list');
+            const navItemExists = menu.querySelector('.p-globalNavi__item') !== null;
+            if (navItemExists) {
+                $(this).closest('.p-globalNavi__item').remove();
+            } else {
+
+                $('.top-menu').css('display', 'flex');
+                //   $('.navbar__right').css({'display':'flex','width':'70%','margin-top':'20px'});
+                $('.btn-menu').css('display', 'none');
+                $('.p-globalNavi__list').css('display', 'none');
+            }
+        });
+        $(".sidebar-submenu li").on("click", function() {
+            if ($(this).hasClass('m-active')) {
+                $(this).removeClass('m-active');
+                $('.has-arrow').removeClass('active');
+            } else {
+                $('.has-arrow').removeClass('active');
+                $(".sidebar-submenu li").removeClass('m-active');
+                $(this).addClass('m-active');
+                $(this).find('.has-arrow').addClass('active');
+            }
+
+        });
+        const tabContainer = document.querySelector('.tab-container');
+
+        let isDown = false;
+        let startX;
+        let scrollLeft;
+
+        tabContainer.addEventListener('mousedown', (e) => {
+            isDown = true;
+            tabContainer.classList.add('dragging');
+            startX = e.pageX - tabContainer.offsetLeft;
+            scrollLeft = tabContainer.scrollLeft;
+        });
+
+        tabContainer.addEventListener('mouseleave', () => {
+            isDown = false;
+            tabContainer.classList.remove('dragging');
+        });
+
+        tabContainer.addEventListener('mouseup', () => {
+            isDown = false;
+            tabContainer.classList.remove('dragging');
+        });
+
+        tabContainer.addEventListener('mousemove', (e) => {
+            if (!isDown) return;
+            e.preventDefault();
+            const x = e.pageX - tabContainer.offsetLeft;
+            const walk = (x - startX) * 2; // tốc độ kéo
+            tabContainer.scrollLeft = scrollLeft - walk;
+        });
     </script>
-
- 
 @endpush
