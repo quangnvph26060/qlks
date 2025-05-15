@@ -16,7 +16,9 @@ class CheckAdminSubdomain
         // Lấy subdomain
         if (str_ends_with($host, $baseDomain)) {
             $subdomain = str_replace('.' . $baseDomain, '', $host);
-
+             if ($subdomain === 'app') {
+            return $next($request);
+        }
             if ($subdomain && $subdomain !== 'www') {
                 // Check trong bảng admins
                 $exists = Admin::where('username', $subdomain)->exists();
