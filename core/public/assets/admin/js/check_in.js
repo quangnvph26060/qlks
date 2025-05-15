@@ -324,7 +324,8 @@ $('.delete-room-booking-edit').on('click', function () {
                 url: deleteCheckin,
                 type: 'POST',
                 data: {
-                    data: JSON.stringify(selectedBookingIds)
+                    data: JSON.stringify(selectedBookingIds),
+                    method: "LETAN",
                 },
                 success: function (response) {
                     if (response.status === 'success') {

@@ -11,7 +11,6 @@
     "manage_category": {
         "title": "Danh Mục",
         "icon": "las la-city",
-        "menu_active": "admin.hotel*",
         "submenu": [
             {
                 "keyword": [
@@ -30,9 +29,9 @@
             },
             {
                 "keyword": [
-                    "Danh mục hạng phòng"
+                    "Danh mục loại phòng"
                 ],
-                "title": "Danh mục hạng phòng",
+                "title": "Danh mục loại phòng",
                 "route_name": "admin.hotel.room.all",
                 "menu_active": "admin.hotel.room.all"
             },
@@ -170,20 +169,6 @@
                 "title": "Chi phí",
                 "route_name": "admin.booking.checked.out.list",
                 "menu_active": "admin.booking.checked.out.list"
-            },
-            {
-                "keyword": [
-                    "Lễ tân"
-                ],
-                "title": "Lễ Tân",
-                "icon": "fas fa-user-tie",
-                "route_name": "admin.receptionist.booking.receptionist",
-                "menu_active": [
-                    "admin.receptionist.booking.receptionist",
-                    "admin.delayed.booking.checkout",
-                    "admin.delayed.booking.checkin",
-                    "admin.booking.todays.booked"
-                ]
             }
         ]
     },
@@ -200,15 +185,8 @@
                 "icon": "la la-hand-o-right",
                 "route_name": "admin.manage.room.status",
                 "menu_active": "admin.manage.room.status"
-            },
-            {
-                "keyword": [
-                    "Báo cáo doanh số"
-                ],
-                "title": "Báo cáo doanh số",
-                "route_name": "admin.manage.priceroomtype.all",
-                "menu_active": "admin.manage.priceroomtype.all"
             }
+           
         ]
     },
      "employee_manager": {
@@ -256,8 +234,8 @@
                     "Cài đặt gia hạn"
                 ],
                 "title": "Cài đặt gia hạn",
-                "route_name": "admin.roles.index",
-                "menu_active": "admin.roles.index"
+                "route_name": "admin.roles.add",
+                "menu_active": "admin.roles.add"
             },
             {
                 "keyword": [

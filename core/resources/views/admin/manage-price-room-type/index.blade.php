@@ -2,7 +2,7 @@
 @section('panel')
     <div class="row">
 
-       
+
 
         <div class="table-responsive--md table-responsive">
             <table class=" table-bordered table--light style--two table table-striped" id="data-table">
@@ -92,9 +92,16 @@
     <!-- Modal -->
     @can('')
         @push('breadcrumb-plugins')
-            <button type="button" class="btn btn-outline--primary btn-add">
-                <i class="las la-plus"></i>
-            </button>
+            <div class="d-flex" style="gap: 5px">
+                 @can(['admin.manage.modalAdd','admin.manage.addPriceRoomType'])
+                    <button type="button" class="btn btn--primary btn-sm mt-1 btn-add">
+                        <i class="las la-plus"></i>
+                    </button>
+                 @endcan
+                <a class="btn mt-1 btn-sm btn--primary btn-submit-sync-price">
+                    <i class="las la-sync"></i>
+                </a>
+            </div>
         @endpush
     @endcan
     <div class="modal fade" id="pricingModal" tabindex="-1" aria-labelledby="pricingModalLabel" aria-hidden="true">
@@ -138,7 +145,9 @@
             dateFormat: "Y-m-d",
         });
 
-
+        $('.btn-submit-sync-price').on('click', function() {
+            location.reload();
+        });
         // click modal btn-add
         $(document).ready(function() {
             var dayTypeElement = document.getElementById('dayType');
@@ -204,8 +213,8 @@
                 price_requirement_value(selectedValue, checkboxList, priceRequirementInput)
             });
 
-          //  price_requirement_value(selectedValue, checkboxList, priceRequirementInput)
-            function price_requirement_value(selectedValue, checkboxList, priceRequirementInput){
+            //  price_requirement_value(selectedValue, checkboxList, priceRequirementInput)
+            function price_requirement_value(selectedValue, checkboxList, priceRequirementInput) {
                 if (selectedValue === 'holiday') {
                     checkboxList.innerHTML = `
 
@@ -365,13 +374,13 @@
             // });
             // btn-setupPrice
             $(document).on('click', '.btn-setupPrice', function() {
-                if ( validateAllFields(formEconomyEdit)) {
+                if (validateAllFields(formEconomyEdit)) {
                     document.getElementById('btn-setupPrice-submit').submit();
                 }
             });
-             // btn-setupPrice
-             $(document).on('click', '.btn-setupPrice-edit', function() {
-                if ( validateAllFields(formEconomyEdit)) {
+            // btn-setupPrice
+            $(document).on('click', '.btn-setupPrice-edit', function() {
+                if (validateAllFields(formEconomyEdit)) {
                     document.getElementById('btn-setupPrice-submit-edit').submit();
                 }
             });
@@ -387,25 +396,38 @@
                     method: 'GET',
                     success: function(response) {
                         $('#loading').hide();
-                       $('.add-pricing').append(response.content);
-                        formEconomyEdit.priceCode.element = document.getElementById('priceCode');
-                        formEconomyEdit.priceCode.error = document.getElementById('priceCode_error');
-                        formEconomyEdit.priceName.element = document.getElementById('priceName');
-                        formEconomyEdit.priceName.error = document.getElementById('priceName_error');
-                        formEconomyEdit.priceNote.element = document.getElementById('priceNote');
-                        formEconomyEdit.priceNote.error = document.getElementById('priceNote_error');
+                        $('.add-pricing').append(response.content);
+                        formEconomyEdit.priceCode.element = document.getElementById(
+                        'priceCode');
+                        formEconomyEdit.priceCode.error = document.getElementById(
+                            'priceCode_error');
+                        formEconomyEdit.priceName.element = document.getElementById(
+                        'priceName');
+                        formEconomyEdit.priceName.error = document.getElementById(
+                            'priceName_error');
+                        formEconomyEdit.priceNote.element = document.getElementById(
+                        'priceNote');
+                        formEconomyEdit.priceNote.error = document.getElementById(
+                            'priceNote_error');
                         // formEconomyEdit.startDate.element = document.getElementById('startDate');
                         // formEconomyEdit.startDate.error = document.getElementById('startDate_error');
                         // formEconomyEdit.endDate.element = document.getElementById('endDate');
                         // formEconomyEdit.endDate.error = document.getElementById('endDate_error');
-                        formEconomyEdit.checkInTime.element = document.getElementById('checkInTime');
-                        formEconomyEdit.checkInTime.error = document.getElementById('checkInTime_error');
-                        formEconomyEdit.checkOutTime.element = document.getElementById('checkOutTime');
-                        formEconomyEdit.checkOutTime.error = document.getElementById('checkOutTime_error');
-                        formEconomyEdit.roundTime.element = document.getElementById('roundTime');
-                        formEconomyEdit.roundTime.error = document.getElementById('roundTime_error');
+                        formEconomyEdit.checkInTime.element = document.getElementById(
+                            'checkInTime');
+                        formEconomyEdit.checkInTime.error = document.getElementById(
+                            'checkInTime_error');
+                        formEconomyEdit.checkOutTime.element = document.getElementById(
+                            'checkOutTime');
+                        formEconomyEdit.checkOutTime.error = document.getElementById(
+                            'checkOutTime_error');
+                        formEconomyEdit.roundTime.element = document.getElementById(
+                        'roundTime');
+                        formEconomyEdit.roundTime.error = document.getElementById(
+                            'roundTime_error');
                         formEconomyEdit.dayType.element = document.getElementById('dayType');
-                        formEconomyEdit.dayType.error = document.getElementById('dayType_error');
+                        formEconomyEdit.dayType.error = document.getElementById(
+                        'dayType_error');
                     },
                     error: function(xhr, status, error) {
                         $('#loading').hide();
@@ -429,24 +451,37 @@
                     success: function(data) {
                         $('#loading').hide();
                         $('.add-pricing').append(data.content);
-                        formEconomyEdit.priceCode.element = document.getElementById('priceCode');
-                        formEconomyEdit.priceCode.error = document.getElementById('priceCode_error');
-                        formEconomyEdit.priceName.element = document.getElementById('priceName');
-                        formEconomyEdit.priceName.error = document.getElementById('priceName_error');
-                        formEconomyEdit.priceNote.element = document.getElementById('priceNote');
-                        formEconomyEdit.priceNote.error = document.getElementById('priceNote_error');
+                        formEconomyEdit.priceCode.element = document.getElementById(
+                        'priceCode');
+                        formEconomyEdit.priceCode.error = document.getElementById(
+                            'priceCode_error');
+                        formEconomyEdit.priceName.element = document.getElementById(
+                        'priceName');
+                        formEconomyEdit.priceName.error = document.getElementById(
+                            'priceName_error');
+                        formEconomyEdit.priceNote.element = document.getElementById(
+                        'priceNote');
+                        formEconomyEdit.priceNote.error = document.getElementById(
+                            'priceNote_error');
                         // formEconomyEdit.startDate.element = document.getElementById('startDate');
                         // formEconomyEdit.startDate.error = document.getElementById('startDate_error');
                         // formEconomyEdit.endDate.element = document.getElementById('endDate');
                         // formEconomyEdit.endDate.error = document.getElementById('endDate_error');
-                        formEconomyEdit.checkInTime.element = document.getElementById('checkInTime');
-                        formEconomyEdit.checkInTime.error = document.getElementById('checkInTime_error');
-                        formEconomyEdit.checkOutTime.element = document.getElementById('checkOutTime');
-                        formEconomyEdit.checkOutTime.error = document.getElementById('checkOutTime_error');
-                        formEconomyEdit.roundTime.element = document.getElementById('roundTime');
-                        formEconomyEdit.roundTime.error = document.getElementById('roundTime_error');
+                        formEconomyEdit.checkInTime.element = document.getElementById(
+                            'checkInTime');
+                        formEconomyEdit.checkInTime.error = document.getElementById(
+                            'checkInTime_error');
+                        formEconomyEdit.checkOutTime.element = document.getElementById(
+                            'checkOutTime');
+                        formEconomyEdit.checkOutTime.error = document.getElementById(
+                            'checkOutTime_error');
+                        formEconomyEdit.roundTime.element = document.getElementById(
+                        'roundTime');
+                        formEconomyEdit.roundTime.error = document.getElementById(
+                            'roundTime_error');
                         formEconomyEdit.dayType.element = document.getElementById('dayType');
-                        formEconomyEdit.dayType.error = document.getElementById('dayType_error');
+                        formEconomyEdit.dayType.error = document.getElementById(
+                        'dayType_error');
 
                     },
                     error: function(xhr, status, error) {

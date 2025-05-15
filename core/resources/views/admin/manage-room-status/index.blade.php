@@ -8,7 +8,7 @@
 
             <div class="card-body p-0">
                 <div class="table-responsive--md">
-                    <table class="table--light style--two  table" id="data-table">
+                    <table class="table--light style--two  table mb-4" id="data-table">
                         <thead>
                             <tr>
                                 <th data-table="Hạng phòng">Hạng phòng</th>

@@ -27,10 +27,10 @@ class StatusCodeController extends Controller
             'status_name' => 'required|string',
         ]);
         $status = new StatusCode();
-        $status->status_code = $request->status_code;
+         $status->status_code = $request->status_code;
         $status->status_name = $request->status_name;
         $status->note =  $request->note ?? '';
-        $status->status_status = $request->status_status;
+     
         $status->unit_code =  unitCode();
         $status->save();
         $notify[] = ['success', 'Thêm trạng thái chức năng thành công'];
@@ -60,7 +60,7 @@ class StatusCodeController extends Controller
         $status->status_code = $request->status_code;
         $status->status_name = $request->status_name;
         $status->note =  $request->note ?? '';
-        $status->status_status = $request->status_status;
+       
         $status->save();
 
         $notify[] = ['success', 'Cập nhật trạng thái chức năng thành công'];

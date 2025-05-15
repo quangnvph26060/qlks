@@ -610,7 +610,7 @@ class BookRoomController extends Controller
     }
     public function bookEdit(Request $request)
     {
-        //123456
+        
         DB::beginTransaction();
         try {
             $validator      = Validator::make($request->all(), [
@@ -620,11 +620,10 @@ class BookRoomController extends Controller
             if ($validator->fails()) {
                 return response()->json(['error' => $validator->errors()->all()]);
             }
-            $guest = [];
-            $bookingId = null;
-
-            $tax            = gs('tax'); // thuế
-            $firstBookingId = null;
+            if (!is_array($request->room)) {
+                 return response()->json(['error' => 'Phòng đã được nhận rồi không cập nhật được']);
+               // return redirect()->back()->with('error', 'Dữ liệu phòng không hợp lệ hoặc chưa được chọn!');
+            }
             foreach ($request->room as $index => $item) {
                 $room = json_decode($item, true);
 

@@ -121,7 +121,7 @@ class GeneralSettingController extends Controller
             try {
                 fileUploader($request->logo, $path, filename: 'logo.png');
             } catch (\Exception $exp) {
-                \Log::info('Không thể tải logo lên' . $exp);
+                // Log::info('Không thể tải logo lên' . $exp);
                 $notify[] = ['error', 'Không thể tải logo lên'];
                 return back()->withNotify($notify);
             }

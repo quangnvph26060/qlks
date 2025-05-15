@@ -11,6 +11,7 @@
                                 <i class="fa fa-repeat p-1"></i>
                             </button>
                         </a>
+                        @can('admin.hotel.status.code.store')
                         <a>
                             <button class="btn btn--primary" data-modal_title="Thêm mới trạng thái chức năng" type="button"
                                 id="btn-add-status" data-bs-toggle="modal" data-bs-target="#status-code"
@@ -18,6 +19,7 @@
                                 <i class="las la-plus  p-1"></i>
                             </button>
                         </a>
+                        @endcan
                         <form role="form" enctype="multipart/form-data"
                             action="{{ route('admin.hotel.status.code.search') }}">
                             @csrf
@@ -55,7 +57,7 @@
             </div>
 
             <div class="row gy-4">
-             
+
                 <div class="table-responsive--md table-responsive">
                     <table class="table--light style--two table">
                         <thead>
@@ -71,7 +73,7 @@
                         </thead>
                         <tbody id="main-table-hotel">
                             @forelse($status_codes as $id => $item)
-                                <tr data-id="{{ $item->id }}" class="{{$id % 2 !==0 ? 'bg-white' : 'bg-gray'}}"> 
+                                <tr data-id="{{ $item->id }}" class="{{ $id % 2 !== 0 ? 'bg-white' : 'bg-gray' }}">
                                     <td style="width:20px;">
                                         <svg class="svg_menu_check_in" xmlns="http://www.w3.org/2000/svg" width="30"
                                             height="30" viewBox="0 0 21 21">
@@ -82,18 +84,21 @@
                                             </g>
                                         </svg>
                                         <div class="dropdown menu_dropdown_check_in" id="dropdown-menu">
-                                            <div class="dropdown-item"><a data-id="{{ $item->id }}"
-                                                    class="btn-edit-status" data-bs-toggle="modal"
-                                                    data-bs-target="#status-code" style="color:#5b6e88">
-                                                    Sửa
-                                                </a>
-                                            </div>
-
-                                            <div class="dropdown-item booked_room_detail"> <button
-                                                    class=" btn-delete icon-delete-room" data-id="{{ $item->id }}"
-                                                    data-modal_title="@lang('Xóa trạng thái')" type="button" data-pro="0" style="color:#5b6e88">Xóa
-                                                  </div>
-
+                                            @can(['admin.hotel.status.code.edit','admin.hotel.status.code.update'])
+                                                <div class="dropdown-item"><a data-id="{{ $item->id }}"
+                                                        class="btn-edit-status" data-bs-toggle="modal"
+                                                        data-bs-target="#status-code" style="color:#5b6e88">
+                                                        Sửa
+                                                    </a>
+                                                </div>
+                                            @endcan
+                                            @can('admin.hotel.status.code.delete')
+                                                <div class="dropdown-item booked_room_detail"> <button
+                                                        class=" btn-delete icon-delete-room" data-id="{{ $item->id }}"
+                                                        data-modal_title="@lang('Xóa trạng thái')" type="button" data-pro="0"
+                                                        style="color:#5b6e88">Xóa
+                                                </div>
+                                            @endcan
                                         </div>
                                     </td>
                                     <td data-label="STT" style="text-align:right">

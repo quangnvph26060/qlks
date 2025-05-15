@@ -19,53 +19,48 @@ class ManageRoomAmenitiesController extends Controller
     {
         $this->repository = new BaseRepository(new Room());
     }
-    // public function index()
-    // {
-    //     $rooms = Room::where('status' , 1)->get();
-    //     $amenities = Amenity::where('status' , 1)->get();
-    //     $pageTitle = 'Danh sách tiện ghi của phòng';
-    //     $search = request()->get('search');
-    //     $perPage = request()->get('perPage', 10);
-    //     $orderBy = request()->get('orderBy', 'id');
-    //     $columns = [
-    //         'id',
-    //         'code',
-    //         'room_type_id',
-    //         'room_number',
-    //         'description',
-    //     ];
-    //     $relations = ['amenities', 'roomType'];
-    //     $searchColumns = [
-    //         'code',
-    //     ];
-    //     $relationSearchColumns = [];
-
-    //     $response = $this->repository
-    //         ->customPaginate(
-    //             $columns,
-    //             $relations,
-    //             $perPage,
-    //             $orderBy,
-    //             $search,
-    //             [],
-    //             $searchColumns,
-    //             $relationSearchColumns
-    //         );
-
-    //     if (request()->ajax()) {
-    //         return response()->json([
-    //             'results' => view('admin.table.manage-amenity-room', compact('response'))->render(),
-    //             'pagination' => view('vendor.pagination.custom', compact('response'))->render(),
-    //         ]);
-    //     }
-    //     return view('admin.manage-room-amenities.index', compact('rooms', 'amenities','pageTitle'));
-    // }
     public function index()
     {
         $room_type = RoomType::where('unit_code',unitCode())->get();
-        $rooms = Room::where('unit_code',unitCode())->where('status' , 1)->paginate(10);
-        $amenities = Amenity::get();
+        $rooms = Room::where('status' , 1)->get();
+        $amenities = Amenity::where('status' , 1)->get();
         $pageTitle = 'Danh sách tiện ghi của phòng';
+        $search = request()->get('search');
+        $perPage = request()->get('perPage', 10);
+        $orderBy = request()->get('orderBy', 'id');
+        $columns = [
+            'id',
+            'code',
+            'room_type_id',
+            'room_number',
+            'description',
+        ];
+        $relations = ['amenities', 'roomType'];
+           $requiredRelations = ['amenities'];
+        $searchColumns = [
+            'code',
+        ];
+        $relationSearchColumns = [];
+
+        $response = $this->repository
+            ->customPaginate(
+                $columns,
+                $relations,
+                $requiredRelations,
+                $perPage,
+                $orderBy,
+                $search,
+                [],
+                $searchColumns,
+                $relationSearchColumns
+            );
+
+        if (request()->ajax()) {
+            return response()->json([
+                'results' => view('admin.table.manage-amenity-room', compact('response'))->render(),
+                'pagination' => view('vendor.pagination.custom', compact('response'))->render(),
+            ]);
+        }
         return view('admin.manage-room-amenities.index', compact('rooms', 'amenities','pageTitle','room_type'));
     }
     public function search(Request $request)

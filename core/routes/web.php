@@ -87,6 +87,6 @@ Route::controller('SiteController')->group(function () {
     Route::post('send-booking-request', 'sendBookingRequest')->name('request.booking');
 
     Route::get('/{slug}', 'pages')->name('pages');
-    Route::get('/a', 'index')->name('home');
+    Route::get('/trangchu', 'index')->name('home');
     Route::post('subscribe', 'subscribe')->name('subscribe');
 });

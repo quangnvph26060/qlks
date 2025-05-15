@@ -28,30 +28,34 @@ class PremiumServiceController extends Controller
     }
 
     public function save(Request $request, $id = 0)
-    {
-        $request->validate([
-            'code' => 'unique:premium_services,code|max:6',
-            'name'       => 'required|string|max:255|unique:premium_services,name,' . $id,
-            'cost'       => 'required|integer|gt:0'
-        ]);
+{
+    $request->validate([
+        'code' => 'required|string|max:3|unique:premium_services,code,' . $id,
+        'name' => 'required|string|max:255|unique:premium_services,name,' . $id,
+        'cost' => 'required'
+    ]);
 
-        if ($id) {
-            $premiumService         = PremiumService::findOrFail($id);
-            $notification          = 'Dịch vụ đã được cập nhật thành công';
-        } else {
-            $premiumService = new PremiumService();
-            $notification  = 'Dịch vụ đã được thêm thành công';
-        }
+    $cost = str_replace('.', '', $request->cost);
+    $cost = (int) $cost;
 
-        $premiumService->code = $request->code;
-        $premiumService->name = $request->name;
-        $premiumService->cost = $request->cost;
-
-        $premiumService->save();
-
-        $notify[] = ['success', $notification];
-        return back()->withNotify($notify);
+    if ($id) {
+        $premiumService = PremiumService::findOrFail($id);
+        $notification = 'Dịch vụ đã được cập nhật thành công';
+    } else {
+        $premiumService = new PremiumService();
+        $notification = 'Dịch vụ đã được thêm thành công';
     }
+
+    $premiumService->code = $request->code;
+    $premiumService->name = $request->name;
+    $premiumService->cost = $cost;
+
+    $premiumService->save();
+
+    $notify[] = ['success', $notification];
+    return back()->withNotify($notify);
+}
+
 
     public function status($id)
     {
@@ -105,7 +109,7 @@ class PremiumServiceController extends Controller
             return $item;
         });
 
-        $products = $products->select('id', 'name', 'selling_price as price','image_path')->get()->map(function ($item) {
+        $products = $products->select('id', 'name', 'selling_price as price', 'image_path')->get()->map(function ($item) {
             $item->type = 'product';
             return $item;
         });
@@ -221,13 +225,12 @@ class PremiumServiceController extends Controller
                 ->first();
             // cập nhật lại giá dịch vụ 
             if ($receiptAndPayment) {
-                if($receiptAndPayment->service_fee !== null && $receiptAndPayment->service_fee != 0){
+                if ($receiptAndPayment->service_fee !== null && $receiptAndPayment->service_fee != 0) {
                     $newServiceFee = $receiptAndPayment->service_fee - $service->total_payment;
                     $receiptAndPayment->update([
                         'service_fee' => $newServiceFee
                     ]);
                 }
-               
             }
 
             $service->delete();
@@ -236,9 +239,8 @@ class PremiumServiceController extends Controller
                 'status' => 'success',
                 'message' => 'Xoá dịch vụ thành công.',
                 'total_service' => RoomServiceProduct::where('check_in_id', $checkInId)
-                ->where('room_code', $roomCode)->sum('total_payment'),
+                    ->where('room_code', $roomCode)->sum('total_payment'),
             ]);
-          
         } catch (\Exception $e) {
             Log::error('Lỗi xoá dịch vụ: ' . $e->getMessage());
             DB::rollBack();

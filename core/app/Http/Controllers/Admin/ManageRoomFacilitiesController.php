@@ -20,57 +20,59 @@ class ManageRoomFacilitiesController extends Controller
     {
         $this->repository = new BaseRepository(new Room());
     }
-    // public function index()
-    // {
-    //     $rooms = Room::where('status', 1)->get();
-    //     $facilities = Facility::where('status', 1)->get();
-    //     $pageTitle = 'Danh sách cơ sở vật chất của phòng';
-    //     $search = request()->get('search');
-    //     $perPage = request()->get('perPage', 10);
-    //     $orderBy = request()->get('orderBy', 'id');
-    //     $columns = [
-    //         'id',
-    //         'code',
-    //         'room_type_id',
-    //         'room_number',
-    //         'description'
-    //     ];
-    //     $relations = ['facilities', 'roomType'];
-    //     $searchColumns = [
-    //         'code',
-    //     ];
-    //     $relationSearchColumns = [];
-
-    //     $response = $this->repository
-    //         ->customPaginate(
-    //             $columns,
-    //             $relations,
-    //             $perPage,
-    //             $orderBy,
-    //             $search,
-    //             [],
-    //             $searchColumns,
-    //             $relationSearchColumns
-    //         );
-
-    //     if (request()->ajax()) {
-    //         return response()->json([
-    //             'results' => view('admin.table.manage-facility-room', compact('response'))->render(),
-    //             'pagination' => view('vendor.pagination.custom', compact('response'))->render(),
-    //         ]);
-    //     }
-    //     return view('admin.manage-room-facilities.index', compact('rooms', 'facilities', 'pageTitle'));
-    // }
     public function index()
     {
-        $rooms = Room::where('unit_code',unitCode())->where('status' , 1)->paginate(10);
-        $room_type = RoomType::where('unit_code',unitCode())->get();
-
+        $rooms = Room::where('status', 1)->get();
         $facilities = Facility::where('status', 1)->get();
         $pageTitle = 'Danh sách cơ sở vật chất của phòng';
-        
-        return view('admin.manage-room-facilities.index', compact('rooms','room_type', 'facilities', 'pageTitle'));
+        $search = request()->get('search');
+        $perPage = request()->get('perPage', 10);
+        $orderBy = request()->get('orderBy', 'id');
+        $columns = [
+            'id',
+            'code',
+            'room_type_id',
+            'room_number',
+            'description'
+        ];
+        $relations = ['facilities', 'roomType'];
+        $requiredRelations = ['facilities'];
+        $searchColumns = [
+            'code',
+        ];
+        $relationSearchColumns = [];
+
+        $response = $this->repository
+            ->customPaginate(
+                $columns,
+                $relations,
+                $requiredRelations,
+                $perPage,
+                $orderBy,
+                $search,
+                [],
+                $searchColumns,
+                $relationSearchColumns
+            );
+        $room_type = RoomType::where('unit_code',unitCode())->get();
+        if (request()->ajax()) {
+            return response()->json([
+                'results' => view('admin.table.manage-facility-room', compact('response'))->render(),
+                'pagination' => view('vendor.pagination.custom', compact('response'))->render(),
+            ]);
+        }
+        return view('admin.manage-room-facilities.index', compact('rooms', 'facilities', 'pageTitle','room_type'));
     }
+    // public function index()
+    // {
+    //     $rooms = Room::where('unit_code',unitCode())->where('status' , 1)->paginate(10);
+    //     $room_type = RoomType::where('unit_code',unitCode())->get();
+
+    //     $facilities = Facility::where('status', 1)->get();
+    //     $pageTitle = 'Danh sách cơ sở vật chất của phòng';
+        
+    //     return view('admin.manage-room-facilities.index', compact('rooms','room_type', 'facilities', 'pageTitle'));
+    // }
     public function search(Request $request)
     {
         if($request->input('room_type_id') == '' && $request->input('code') == '')

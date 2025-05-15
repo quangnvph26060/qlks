@@ -3,7 +3,7 @@
     <div class="align-items-center justify-content-center mt-1">
         <div class="d-flex">
             <div class="text-center mb-2">
-                <p class="small text-muted">
+                <p class="small text-muted d-none">
                     {!! __('Showing') !!}
                     <span class="fw-semibold">{{ $response->firstItem() }}</span>
                     {!! __('to') !!}

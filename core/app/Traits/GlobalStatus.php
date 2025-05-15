@@ -16,7 +16,7 @@ trait GlobalStatus
         } else {
             $query->$column = Status::ENABLE;
         }
-        $message       = keyToTitle($column). ' changed successfully';
+        $message       = 'Cập nhật trạng thái thành công';
 
         $query->save();
         $notify[] = ['success', $message];

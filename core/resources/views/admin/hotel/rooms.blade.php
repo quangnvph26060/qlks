@@ -1,49 +1,49 @@
 @extends('admin.layouts.master_iframe')
 
 @push('breadcrumb-plugins')
-<div class="card-body mt-1">
-            <div class="row">
-        
-              <div class="col-md-12 d-flex">
+    <div class="card-body mt-1">
+        <div class="row">
+
+            <div class="col-md-12 d-flex">
                 <a class="mr-1" href="{{ route('admin.hotel.room.all') }}">
-                <button class="btn btn--primary" data-modal_title="Làm mới">
-                                        <i class="fa fa-repeat p-1"></i>
+                    <button class="btn btn--primary" data-modal_title="Làm mới">
+                        <i class="fa fa-repeat p-1"></i>
                     </button>
                 </a>
-                <a>
-                <button class="btn btn--primary" data-bs-target="#addModal" data-bs-toggle="modal"
-                        style="margin-left:10px">
+                @can('admin.hotel.room.add')
+                    <a>
+                        <button class="btn btn--primary" data-bs-target="#addModal" data-bs-toggle="modal"
+                            style="margin-left:10px">
                             <i class="las la-plus p-1"></i>
-                    </button>
-                </a>       
-                
-                <form role="form" enctype="multipart/form-data" action="{{ route('admin.hotel.room.all') }}" method="GET" id="searchForm" >
-                        <div class="form-group position-relative mb-0">
-                             <input placeholder="Nhập Mã/Tên loại phòng"
-                                            style="height: 35px;border: 1px solid rgb(121, 117, 117, 0.5);margin-left: 8px;"
-                                            name="keyword"
-                                id="searchInput"
-                                value="{{ request('keyword') }}">
-                                    
-                                <a>
-                                    <button type="submit" class="btn btn--primary">
-                                            <i class="las la-search p-1"></i>
-                                    </button>
-                                </a>
-                         </div>
-                 </form>
-        </div>
-        @if ($rooms->hasPages())
+                        </button>
+                    </a>
+                @endcan
+                <form role="form" enctype="multipart/form-data" action="{{ route('admin.hotel.room.all') }}"
+                    method="GET" id="searchForm">
+                    <div class="form-group position-relative mb-0">
+                        <input placeholder="Nhập Mã/Tên loại phòng"
+                            style="height: 35px;border: 1px solid rgb(121, 117, 117, 0.5);margin-left: 8px;" name="keyword"
+                            id="searchInput" value="{{ request('keyword') }}">
+
+                        <a>
+                            <button type="submit" class="btn btn--primary">
+                                <i class="las la-search p-1"></i>
+                            </button>
+                        </a>
+                    </div>
+                </form>
+            </div>
+            @if ($rooms->hasPages())
                 <div class="pager-wrap">
-                            <div class="k-widget d-flex">
-                                <div class="pagination-tb" style="font-size: 13px;margin: 0 auto">
-                                    {{ $rooms->links('pagination::bootstrap-4') }}
-                                </div>
-                            </div>
+                    <div class="k-widget d-flex">
+                        <div class="pagination-tb" style="font-size: 13px;margin: 0 auto">
+                            {{ $rooms->links('pagination::bootstrap-4') }}
                         </div>
-                @endif
+                    </div>
+                </div>
+            @endif
+        </div>
     </div>
-</div>
     {{-- <x-search-form filter='yes' /> --}}
 @endpush
 @section('panel')
@@ -52,10 +52,10 @@
             <div class="card b-radius--10">
                 <div class="card-body p-0">
                     <div class="table-responsive--md table-responsive" style="overflow-x: auto;">
-                        <table class="table--light style--two table" >
+                        <table class="table--light style--two table">
                             <thead>
                                 <tr>
-                                @can(['admin.hotel.room.status', 'admin.hotel.room.add'])
+                                    @can(['admin.hotel.*'])
                                         <th>@lang('Hành động')</th>
                                     @endcan
                                     <th style="width:50px">@lang('STT')</th>
@@ -66,40 +66,54 @@
                             </thead>
                             <tbody>
                                 @forelse($rooms as $id => $room)
-                                    <tr class="{{$id % 2 !==0 ? 'bg-white' : 'bg-gray'}}">
-                                        <td style="width:20px;">
-                                            <svg class="svg_menu_check_in" xmlns="http://www.w3.org/2000/svg" width="30" height="30" viewBox="0 0 21 21"><g fill="currentColor" fill-rule="evenodd"><circle cx="10.5" cy="10.5" r="1"/><circle cx="10.5" cy="5.5" r="1"/><circle cx="10.5" cy="15.5" r="1"/></g></svg>
-                                
-                                            <div class="dropdown menu_dropdown_check_in" id="dropdown-menu" style="position:fixed">
-                                                <div class="dropdown-item"><button
-                                                data-resource="{{ $room }}" class="btn-edit-customer editBtn" data-bs-toggle="modal" data-bs-target="#edit-customer" style="color:black">
-                                                    Sửa
-                                                </button></div>
-                                            
-                                                <div class="dropdown-item booked_room_detail"> <button class=" btn-delete icon-delete-room"
-                                                    data-id="{{ $room->id }}" data-modal_title="@lang('Xóa loại phòng')" type="button"
-                                                    data-pro="0">Xóa</div>
-                                
-                                            </div>
-                                        </td>
-                                         
-                                             
+                                    <tr class="{{ $id % 2 !== 0 ? 'bg-white' : 'bg-gray' }}">
+                                        @can('admin.hotel.*')
+                                            <td style="width:20px;">
+
+                                                <svg class="svg_menu_check_in" xmlns="http://www.w3.org/2000/svg" width="30"
+                                                    height="30" viewBox="0 0 21 21">
+                                                    <g fill="currentColor" fill-rule="evenodd">
+                                                        <circle cx="10.5" cy="10.5" r="1" />
+                                                        <circle cx="10.5" cy="5.5" r="1" />
+                                                        <circle cx="10.5" cy="15.5" r="1" />
+                                                    </g>
+                                                </svg>
+
+                                                <div class="dropdown menu_dropdown_check_in" id="dropdown-menu"
+                                                    style="position:fixed">
+                                                    @can('admin.hotel.room.update')
+                                                        <div class="dropdown-item"><button data-resource="{{ $room }}"
+                                                                class="btn-edit-customer editBtn" data-bs-toggle="modal"
+                                                                data-bs-target="#edit-customer" style="color:black">
+                                                                Sửa
+                                                            </button></div>
+                                                    @endcan
+                                                    @can('admin.hotel.room.delete')
+                                                        <div class="dropdown-item booked_room_detail">
+                                                            <button class="btn-delete icon-delete-room"
+                                                                data-id="{{ $room->id }}" data-modal_title="@lang('Xóa loại phòng')"
+                                                                type="button" data-pro="0">Xóa</button>
+                                                        </div>
+                                                    @endcan
+                                                </div>
+
+                                            </td>
+                                        @endcan
+
                                         <td style="text-align:right">
-                                            @php
-                                            $stt = $rooms->total() - ($rooms->currentPage() - 1) * $rooms->perPage() - $id;
-                                            @endphp
-                                            {{ $stt }}
+                                            {{ $id + 1 }}
                                         </td>
                                         <td> {{ $room->code ?? 'Chưa có mã phòng' }}</td>
                                         <td>{{ __($room->name) }}</td>
 
                                         <td style="width:50px;text-align: center">
-                                        @if($room->status == 1)
-                                            <i class="fa fa-check" style="color:green;text-align: center"></i>
-                                        @else
-                                            <i class="fa fa-close" style="color:red;text-align: center"></i>
-                                        @endif</td>                                        
-                              
+                                            @if ($room->status == 1)
+                                                <i class="fa fa-check" style="color:green;text-align: center"></i>
+                                            @else
+                                                <i class="fa fa-close" style="color:red;text-align: center"></i>
+                                            @endif
+                                        </td>
+
                                     </tr>
                                 @empty
                                     <tr>
@@ -110,7 +124,7 @@
                         </table>
                     </div>
                 </div>
-       
+
             </div>
         </div>
     </div>
@@ -120,7 +134,7 @@
             <div class="modal-dialog" role="document">
                 <div class="modal-content">
                     <div class="modal-header">
-                        <h5 class="modal-title">@lang('Thêm loại phòng mới')</h5>
+                        <h5 class="modal-title">@lang('Thêm loại phòng ')</h5>
                         <button aria-label="Close" class="close" data-bs-dismiss="modal" type="button">
                             <i class="las la-times"></i>
                         </button>
@@ -156,7 +170,7 @@
                             </div>
                         </div>
                         <div class="modal-footer">
-                            <button class="btn btn--primary w-100 h-45" type="submit">@lang('Lưu lại')</button>
+                            <button class="btn btn--primary w-100 h-45" type="submit">@lang('Lưu')</button>
                         </div>
                     </form>
                 </div>
@@ -169,7 +183,7 @@
             <div class="modal-dialog" role="document">
                 <div class="modal-content">
                     <div class="modal-header">
-                        <h5 class="modal-title">@lang('Update Room')</h5>
+                        <h5 class="modal-title">@lang('Cập nhật loại phòng')</h5>
                         <button aria-label="Close" class="close" data-bs-dismiss="modal" type="button">
                             <i class="las la-times"></i>
                         </button>
@@ -205,7 +219,7 @@
                             </div>
                         </div>
                         <div class="modal-footer">
-                            <button class="btn btn--primary w-100 h-45" type="submit">@lang('Lưu lại')</button>
+                            <button class="btn btn--primary w-100 h-45" type="submit">@lang('Lưu')</button>
                         </div>
                     </form>
                 </div>
@@ -214,8 +228,7 @@
     @endcan
 
     @can('admin.hotel.room.search')
-
-@endcan
+    @endcan
 
     @can('admin.hotel.room.status')
         <x-confirmation-modal />
@@ -278,18 +291,23 @@
             margin-top: 5px;
             text-align: center;
         }
-        #navbar-wrapper{
-                padding: 0px 30px 20px;
-            }
-            .pagination .page-item .page-link, .pagination .page-item span{
-                width: 22px !important;
-                height: auto !important;
-                background-color: #4634ff !important;
-                color: white !important;
-            }
-            .pagination .page-item.active .page-link{
-                background-color: #071251 !important;
-            }
+
+        #navbar-wrapper {
+            padding: 0px 30px 20px;
+        }
+
+        .pagination .page-item .page-link,
+        .pagination .page-item span {
+            width: 22px !important;
+            height: auto !important;
+            background-color: #4634ff !important;
+            color: white !important;
+        }
+
+        .pagination .page-item.active .page-link {
+            background-color: #071251 !important;
+        }
+
         .preview-image {
             position: absolute;
             top: 0;
@@ -316,6 +334,9 @@
     <script>
         "use strict";
 
+
+
+        const APP_URL = "{{ config('app.url') }}";
         $('.select2-multi-select').select2({
             placeholder: "Select options",
             // tags: false,
@@ -349,7 +370,6 @@
         $('.editBtn').on('click', function() {
             let modal = $('#editModal');
             let resource = $(this).data('resource');
-            console.log(resource);
 
             let route = `{{ route('admin.hotel.room.update', '') }}/${resource.id}`;
             modal.find('form').attr('action', route);
@@ -359,7 +379,8 @@
 
             // Hiển thị hình ảnh cũ nếu có
             let showImage = modal.find('#showImage');
-            showImage.attr('src', 'http://quanlykhachsan.test/storage/' + resource.main_image);
+            // showImage.attr('src', 'http://quanlykhachsan.test/storage/' + resource.main_image);
+            showImage.attr('src', APP_URL + '/storage/' + resource.main_image);
             showImage.show();
 
             // Đặt lại file input
@@ -451,7 +472,7 @@
                 $('.menu_dropdown').removeClass('show');
             });
 
-            });
+        });
         $('#main_image').on('change', function(event) {
             const input = event.target;
             const preview = document.getElementById('preview');
@@ -478,60 +499,59 @@
             }
         });
         $(document).on('click', '.btn-delete', function() {
-                let id = $(this).data('id');
-                Swal.fire({
-                    title: 'Xóa loại phòng',
-                    text: 'Bạn có chắc chắn không?',
-                    icon: 'warning',
-                    showCancelButton: true,
-                    confirmButtonColor: '#3085d6',
-                    cancelButtonColor: '#d33',
-                    confirmButtonText: 'Đồng ý',
-                    cancelButtonText: 'Huỷ'
-                }).then((result) => {
-                    if (result.isConfirmed) {
-                        $.ajax({
-                            type: "POST",
-                            url: "{{ route('admin.hotel.room.delete', ':id') }}"
-                                .replace(':id', id),
-                            success: function(response) {
-                                if (response.status === 'success') {
-                                    notify('success', response.message);
-                                    location.reload();
-                                } else {
-
-                                }
+            let id = $(this).data('id');
+            Swal.fire({
+                title: 'Xóa loại phòng',
+                text: 'Bạn có chắc chắn không?',
+                icon: 'warning',
+                showCancelButton: true,
+                confirmButtonColor: '#3085d6',
+                cancelButtonColor: '#d33',
+                confirmButtonText: 'Đồng ý',
+                cancelButtonText: 'Huỷ'
+            }).then((result) => {
+                if (result.isConfirmed) {
+                    $.ajax({
+                        url: `{{ route('admin.hotel.room.delete', ['id' => '__id__']) }}`
+                            .replace(
+                                '__id__', id),
+                        type: "DELETE",
+                        success: function(response) {
+                            if (response.status === 'success') {
+                                notify('success', response.message);
                             }
-                        });
-                    }
-                })
+                        }
+                    });
+                }
             })
+        })
     </script>
 
-<script>
-    function handleSearchClear() {
-        const searchInput = document.getElementById('searchInput');
-        if (searchInput.value === '') {
-            window.location.href = '{{ route('admin.hotel.room.all') }}';
+    <script>
+        function handleSearchClear() {
+            const searchInput = document.getElementById('searchInput');
+            if (searchInput.value === '') {
+                window.location.href = '{{ route('admin.hotel.room.all') }}';
+            }
         }
-    }
-</script>
+    </script>
 @endpush
 
 @push('style')
-   <style>
-     @media (max-width: 768px) {
-        #searchForm{
-            order: 2;
-            width: 100% !important;
-            margin-top: 15px !important;
+    <style>
+        @media (max-width: 768px) {
+            #searchForm {
+                order: 2;
+                width: 100% !important;
+                margin-top: 15px !important;
+            }
+
+            .breadcrumb-plugins>button {
+                order: 1;
+                width: 100% !important;
+                margin-right: 3rem !important;
+                margin-left: 3rem !important;
+            }
         }
-        .breadcrumb-plugins>button{
-            order: 1;
-            width: 100% !important;
-            margin-right: 3rem !important;
-            margin-left: 3rem !important;
-        }
-    }
-   </style>
+    </style>
 @endpush

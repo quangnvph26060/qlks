@@ -97,10 +97,10 @@
                                     </div>
                                     <div class="col-md-8 ">
                                         <label for="phone" class="form-label required">Số điện thoại</label>
-                                        <input type="text" id="phone" name="phone" class="form-control phone-edit"
+                                        <input type="text" id="phone_edit" name="phone" class="form-control phone-edit"
                                             placeholder="Số điện thoại">
                                             <span class="mt-3 invalid-feedback d-block"
-                                            style="font-weight: 500"id="phone_error"></span>
+                                            style="font-weight: 500"id="phone_edit_error"></span>
                                     </div>
                                   
                                     {{-- <div class="mb-3">

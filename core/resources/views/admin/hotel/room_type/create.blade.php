@@ -430,10 +430,10 @@
 @endsection
 
 @push('breadcrumb-plugins')
-    @if (@$roomType)
+    {{-- @if (@$roomType)
         <a href="{{ route('room.type.details', $roomType->room_number) }}" class="btn btn-sm btn-outline--dark"
             target="_blank"><i class="las la-eye"></i>@lang('Quick View')</a>
-    @endif
+    @endif --}}
     @can('admin.hotel.room.type.all')
         <x-back route="{{ route('admin.hotel.room.type.all') }}" />
     @endcan

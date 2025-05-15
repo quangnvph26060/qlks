@@ -117,6 +117,23 @@ var formEconomyEdit = {
         }, // viết tiếp điều kiện validate vào đây (validations)
         ]
     },
+     'phone': { // passwword thì nên đặt là name trong input đó
+        'element': document.getElementById('phone_edit'), // id trong input đó
+        'error': document.getElementById('phone_edit_error'), // thẻ hiển thị lỗi
+        'validations': [
+            {
+                'func': function (value) {
+                    return checkRequired(value); // check trống
+                },
+                'message': generateErrorMessage('P001', 'Số điện thoại')
+            }, {
+                'func': function (value) {
+                    return checkInteger(value); // check trống
+                },
+                'message': generateErrorMessage('SDT002', 'Số điện thoại')
+            },
+        ]
+    },
 
 }
 
@@ -141,92 +158,11 @@ $('[name=guest_type]').on('change', function () {
     }
 });
 
-
-// $('.formRoomSearch').on('submit', function(e) {
-//     e.preventDefault();
-
-//     let searchDate = $('[name=date]').val();
-//     if (searchDate.split(" - ").length < 2) {
-//         notify('error', `@lang('Ngày nhận phòng và ngày trả phòng phải được cung cấp khi đặt phòng.')`);
-//         return false;
-//     }
-
-//      resetDOM();
-//     let formData = $(this).serialize();
-//     let url = $(this).attr('action');
-
-//     $.ajax({
-//         type: "get",
-//         url: url,
-//         data: formData,
-//         success: function(response) {
-//             $('.bookingInfo').html('');
-//             $('.booking-wrapper').addClass('d-none');
-//             if (response.error) {
-//                 notify('error', response.error);
-//             } else if (response.html.error) {
-//                 notify('error', response.html.error);
-//             } else {
-//                 $('.bookingInfo').html(response.html);
-//                 let roomTypeId = $('[name=room_type]').val();
-//                 $('[name=room_type_id]').val(roomTypeId);
-
-
-//                 $('.booking-wrapper').removeClass('d-none');
-//             }
-//         },
-//         processData: false,
-//         contentType: false,
-//     });
-// });
-
-// function resetDOM() {
-//     $(document).find('.orderListItem').remove();
-//     $('.totalFare').data('amount', 0);
-//     $('.totalFare').text(`0 {{ __(gs()->cur_text) }}`);
-//     $('.taxCharge').text('0');
-//     $('[name=tax_charge]').val('0');
-//     $('.grandTotalFare').text(`0 {{ __(gs()->cur_text) }}`);
-//     $('[name=total_amount]').val('0');
-//     $('[name=paid_amount]').val('');
-//     $('[name=room_type_id]').val('');
-// }
-
 $(document).on('click', '.confirmBookingBtn', function () {
     var modal = $('#confirmBookingModal');
     modal.modal('show');
 });
 
-// $('.btn-confirm').on('click', function() {
-//     $('#confirmBookingModal').modal('hide');
-//     $('.booking-form').submit();
-// });
-
-// $('.booking-form').on('submit', function(e) {
-//     e.preventDefault();
-//     let formData = $(this).serialize();
-//     let url = $(this).attr('action');
-//     $.ajax({
-//         type: "POST",
-//         url: url,
-//         data: formData,
-//         success: function(response) {
-//             if (response.success) {
-//                 notify('success', response.success);
-//                 $('.bookingInfo').html('');
-//                 $('.booking-wrapper').addClass('d-none');
-//                 $(document).find('.orderListItem').remove();
-//                 $('.orderList').addClass('d-none');
-//                 $('.formRoomSearch').trigger('reset');
-//             } else {
-//                 notify('error', response.error);
-//             }
-//         },
-//     });
-// });
-// $('.select2-basic').select2({
-//     dropdownParent: $('.select2-parent')
-// });
 $(document).ready(function () {
 
 
@@ -264,18 +200,14 @@ function showRoom(data = "", checkInDateValue = "", checkOutDateValue = "", sele
             optionStatusPhong: selectedOptionStatusPhong,
         },
         success: function (data) {
-            // <p data-id="${ item.id }" data-room_type_id="${ item.room_type_id }" class="add-book-room" id="add-book-room">Đặt phòng</p>
             var tbody = $('#show-room');
-
             let seenRooms = new Set();
             tbody.empty();
             data.data.forEach(function (item) {
                 let rowClass = '';
                 let isFirst = !seenRooms.has(item.room_number);
                 seenRooms.add(item.room_number);
-                // Nếu không phải bản ghi đầu tiên, đặt class theo trạng thái
                 if (!isFirst) {
-
                     if (item.check_booked === 'Đã nhận') {
                         rowClass = "background-red";
                     } else if (item.check_booked === 'Đã đặt') {
@@ -876,7 +808,7 @@ $(document).on('click', '.booked_room_edit', function () {
                 selected_select_staff.empty();
                 let option_staff = `<option value="">Chọn nhân viên</option>`;
                 response.admin.forEach(function (item) {
-                    console.log(item);
+                   
                     
                     if (item.name == response.option_admin) {
                         option_staff += `<option value="${item.id}" selected>${item.username}</option>`;
@@ -1442,10 +1374,10 @@ $('.booking-form-edit').on('submit', function (e) {
     let queryString = $.param(formObject);
 
     const params = new URLSearchParams(queryString);
-    const checkInDate = params.get('checkInDate');
-    const checkInTime = params.get('checkInTime');
+    // const checkInDate = params.get('checkInDate');
+    // const checkInTime = params.get('checkInTime');
     var roomData = []; // Mảng để chứa thông tin các phòng
-    const dataRowValue = $(this).data('row'); // Lấy giá trị data-row đã thiết lập trước đó
+    // const dataRowValue = $(this).data('row'); // Lấy giá trị data-row đã thiết lập trước đó
 
 
 
@@ -1522,8 +1454,8 @@ $('.booking-form-edit').on('submit', function (e) {
             if (item.name === 'room[]') {
                 const data = item.value;
                 let dataArray = JSON.parse(data);
-                const timeCheckIn = dataArray['dateIn'];
-                const timeCheckOut = dataArray['dateOut'];
+                // const timeCheckIn = dataArray['dateIn'];
+                // const timeCheckOut = dataArray['dateOut'];
                 // const resultData = validator(timeCheckIn, timeCheckOut, dataRowValue);
                 // if (!resultData) {
                 //     shouldSubmit = false;

@@ -10,7 +10,7 @@ Route::namespace('Auth')->group(function () {
     Route::middleware('admin.guest')->group(function () {
         Route::controller('LoginController')->group(function () {
             Route::get('/', 'showLoginForm')->name('login');
-            Route::post('/', 'login')->name('login');
+            Route::post('/', 'login')->name('login.submit');
             Route::get('logout', 'logout')->middleware('admin')->withoutMiddleware('admin.guest')->name('logout');
         });
 
@@ -72,6 +72,7 @@ Route::middleware('admin', 'adminPermission')->prefix('admin')->group(function (
         Route::get('add', 'add')->name('add');
         Route::get('edit/{id}', 'edit')->name('edit');
         Route::post('save/{id?}', 'save')->name('save');
+        Route::post('delete/{id}', 'save')->name('delete');
     });
 
     // Users Manager
@@ -224,7 +225,7 @@ Route::middleware('admin', 'adminPermission')->prefix('admin')->group(function (
             Route::post('update/{id}', 'addRoom')->name('update');
             Route::post('update/status/{id}', 'status')->name('status');
             //delete
-            Route::post('delete/{id}', 'delete')->name('delete');
+            Route::delete('delete/{id}', 'delete')->name('delete');
         });
 
         //Premium Services
@@ -262,14 +263,14 @@ Route::middleware('admin', 'adminPermission')->prefix('admin')->group(function (
 
         });
 
-        Route::controller('StatusCodeController')->name('status.code.')->prefix('status-codes')->group(function () {
-            Route::get('', 'index')->name('all');
-            Route::post('/status/add-status', 'store')->name('store');
-            Route::get('status/edit-status/{id}', 'edit')->name('edit');
-            Route::post('/status/update-status/{id}', 'update')->name('update');
-            Route::post('status/{id}', 'status')->name('status');
-            Route::post('delete-status/{id}', 'delete')->name('delete');
-        });
+        // Route::controller('StatusCodeController')->name('status.code.')->prefix('status-codes')->group(function () {
+        //     Route::get('', 'index')->name('all');
+        //     Route::post('/status/add-status', 'store')->name('store');
+        //     Route::get('status/edit-status/{id}', 'edit')->name('edit');
+        //     Route::post('/status/update-status/{id}', 'update')->name('update');
+        //     Route::post('status/{id}', 'status')->name('status');
+        //     Route::post('delete-status/{id}', 'delete')->name('delete');
+        // });
 
 
         Route::controller('SetupController')->name('setup.code.')->prefix('setup')->group(function () {
@@ -371,7 +372,7 @@ Route::middleware('admin', 'adminPermission')->prefix('admin')->group(function (
             Route::get('', 'index')->name('all');
         });
         Route::controller('CustomerController')->name('customer.')->prefix('Customer')->group(function () {
-            Route::get('', 'index')->name('all');
+            // Route::get('', 'index')->name('all');
         });
     });
 
@@ -408,7 +409,7 @@ Route::middleware('admin', 'adminPermission')->prefix('admin')->group(function (
             Route::get('room-booking-history', 'roomBoookingHistory')->name('room-booking-history');
 
             Route::get('booking-checkout/{id}', 'checkOutPreview')->name('checkout');
-            Route::post('booking-checkout/{id}', 'checkOut')->name('checkout');
+            Route::post('booking-checkout/{id}', 'checkOut')->name('checkout.submit');
 
             Route::get('booked-rooms/{id}', 'bookedRooms')->name('booked.rooms');
 
@@ -423,7 +424,7 @@ Route::middleware('admin', 'adminPermission')->prefix('admin')->group(function (
             Route::post('get-room-type', 'getRoomType')->name('getRoomType');
 
 
-            Route::post('show-room', 'showRoom')->name('showRoom');
+            Route::post('show-room', 'showRoom')->name('showRoom.submit');
             Route::post('change-room-booking','changeRoom')->name('changeRoomBooking');
             // Route::post('change-check-in','changeCheckIn')->name('changeCheckIn');
             Route::get('serviceproduct/{id}', 'bookingserviceproduct')->name('serviceproduct');
@@ -495,11 +496,11 @@ Route::middleware('admin', 'adminPermission')->prefix('admin')->group(function (
             Route::post('key/handover/{id}', 'handoverKey')->name('key.handover');
             Route::post('booking-merge/{id}', 'mergeBooking')->name('merge');
             Route::get('bill-payment/{id}', 'paymentView')->name('payment');
-            Route::post('bill-payment/{id}', 'payment')->name('payment');// thanh toán trước
+            Route::post('bill-payment/{id}', 'payment')->name('payment.submit');// thanh toán trước
             Route::post('add-charge/{id}', 'addExtraCharge')->name('extra.charge.add'); // thêm phụ phí
             Route::post('subtract-charge/{id}', 'subtractExtraCharge')->name('extra.charge.subtract'); // trừ chi phí
-            Route::get('booking-checkout/{id}', 'checkOutPreview')->name('checkout');
-            Route::post('booking-checkout/{id}', 'checkOut')->name('checkout');
+            // Route::get('booking-checkout/{id}', 'checkOutPreview')->name('checkout');
+            // Route::post('booking-checkout/{id}', 'checkOut')->name('checkout');
             Route::get('premium-service/details/{id}', 'premiumServiceDetail')->name('service.details');
             Route::get('booking-invoice/{id}', 'generateInvoice')->name('invoice');
         });
@@ -576,32 +577,32 @@ Route::middleware('admin', 'adminPermission')->prefix('admin')->group(function (
         });
     });
 
-    Route::prefix('transaction')->name('transaction.')->group(function () {
-        Route::get('', [TransactionController::class, 'index'])->name('index');
-        Route::get('add', [TransactionController::class, 'add'])->name('add');
-        Route::post('store', [TransactionController::class, 'store'])->name('store');
-        Route::get('detail/{id}', [TransactionController::class, 'edit'])->name('edit');
-        Route::put('update/{id}', [TransactionController::class, 'update'])->name('update');
-        Route::get('delete/{id}', [TransactionController::class, 'delete'])->name('delete');
-        Route::post('change-status/{id}', [TransactionController::class, 'changeTransactionStatus'])->name('changeStatus');
-    });
-    // price in room
-    Route::prefix('price')->name('price.')->group(function () {
-        Route::post('/switchPrice', [PriceController::class, 'switchPrice'])->name('switchPrice');
-        Route::get('/roomPricePerDay', [PriceController::class, 'roomPricePerDay'])->name('roomPricePerDay');
-        Route::get('/roomPricePerDayOfWeek', [PriceController::class, 'roomPricePerDayOfWeek'])->name('roomPricePerDayOfWeek');
-        Route::post('/updatePriceDate', [PriceController::class, 'updatePriceDate'])->name('updatePriceDate');
-        Route::get('/priceHours', [PriceController::class, 'priceHours'])->name('priceHours');
-        Route::get('/priceweek', [PriceController::class, 'priceweek'])->name('priceweek');
-        Route::get('/roomPricePerDayNew', [PriceController::class, 'roomPricePerDayNew'])->name('roomPricePerDayNew');
-        Route::get('/rooms', [PriceController::class, 'rooms'])->name('rooms');
-        // Route::get('add', [TransactionController::class, 'add'])->name('add');
-        // Route::post('store', [TransactionController::class, 'store'])->name('store');
-        // Route::get('detail/{id}', [TransactionController::class, 'edit'])->name('edit');
-        // Route::put('update/{id}', [TransactionController::class, 'update'])->name('update');
-        // Route::get('delete/{id}', [TransactionController::class, 'delete'])->name('delete');
-        // Route::post('change-status/{id}', [TransactionController::class, 'changeTransactionStatus'])->name('changeStatus');
-    });
+    // Route::prefix('transaction')->name('transaction.')->group(function () {
+    //     Route::get('', [TransactionController::class, 'index'])->name('index');
+    //     Route::get('add', [TransactionController::class, 'add'])->name('add');
+    //     Route::post('store', [TransactionController::class, 'store'])->name('store');
+    //     Route::get('detail/{id}', [TransactionController::class, 'edit'])->name('edit');
+    //     Route::put('update/{id}', [TransactionController::class, 'update'])->name('update');
+    //     Route::get('delete/{id}', [TransactionController::class, 'delete'])->name('delete');
+    //     Route::post('change-status/{id}', [TransactionController::class, 'changeTransactionStatus'])->name('changeStatus');
+    // });
+    // // price in room
+    // Route::prefix('price')->name('price.')->group(function () {
+    //     Route::post('/switchPrice', [PriceController::class, 'switchPrice'])->name('switchPrice');
+    //     Route::get('/roomPricePerDay', [PriceController::class, 'roomPricePerDay'])->name('roomPricePerDay');
+    //     Route::get('/roomPricePerDayOfWeek', [PriceController::class, 'roomPricePerDayOfWeek'])->name('roomPricePerDayOfWeek');
+    //     Route::post('/updatePriceDate', [PriceController::class, 'updatePriceDate'])->name('updatePriceDate');
+    //     Route::get('/priceHours', [PriceController::class, 'priceHours'])->name('priceHours');
+    //     Route::get('/priceweek', [PriceController::class, 'priceweek'])->name('priceweek');
+    //     Route::get('/roomPricePerDayNew', [PriceController::class, 'roomPricePerDayNew'])->name('roomPricePerDayNew');
+    //     Route::get('/rooms', [PriceController::class, 'rooms'])->name('rooms');
+    //     // Route::get('add', [TransactionController::class, 'add'])->name('add');
+    //     // Route::post('store', [TransactionController::class, 'store'])->name('store');
+    //     // Route::get('detail/{id}', [TransactionController::class, 'edit'])->name('edit');
+    //     // Route::put('update/{id}', [TransactionController::class, 'update'])->name('update');
+    //     // Route::get('delete/{id}', [TransactionController::class, 'delete'])->name('delete');
+    //     // Route::post('change-status/{id}', [TransactionController::class, 'changeTransactionStatus'])->name('changeStatus');
+    // });
 
 
     // DEPOSIT SYSTEM
@@ -656,51 +657,51 @@ Route::middleware('admin', 'adminPermission')->prefix('admin')->group(function (
         Route::get('get-keys', 'getKeys')->name('get.key');
     });
 
-    Route::controller('GeneralSettingController')->group(function () {
+    // Route::controller('GeneralSettingController')->group(function () {
 
-        Route::get('system-setting', 'systemSetting')->name('setting.system');
+    //     Route::get('system-setting', 'systemSetting')->name('setting.system');
 
-        // General Setting
-        Route::get('general-setting', 'general')->name('setting.general');
-        Route::post('general-setting-update', 'generalUpdate')->name('setting.update');
+    //     // General Setting
+    //     Route::get('general-setting', 'general')->name('setting.general');
+    //     Route::post('general-setting-update', 'generalUpdate')->name('setting.update');
 
-        Route::get('setting/social/credentials', 'socialiteCredentials')->name('setting.socialite.credentials');
-        Route::post('setting/social/credentials/update/{key}', 'updateSocialiteCredential')->name('setting.socialite.credentials.update');
-        Route::post('setting/social/credentials/status/{key}', 'updateSocialiteCredentialStatus')->name('setting.socialite.credentials.status.update');
+    //     Route::get('setting/social/credentials', 'socialiteCredentials')->name('setting.socialite.credentials');
+    //     Route::post('setting/social/credentials/update/{key}', 'updateSocialiteCredential')->name('setting.socialite.credentials.update');
+    //     Route::post('setting/social/credentials/status/{key}', 'updateSocialiteCredentialStatus')->name('setting.socialite.credentials.status.update');
 
-        //configuration
-        Route::get('setting/system-configuration', 'systemConfiguration')->name('setting.system.configuration');
-        Route::post('setting/system-configuration-submit', 'systemConfigurationSubmit')->name('setting.system.configuration.submit');
+    //     //configuration
+    //     Route::get('setting/system-configuration', 'systemConfiguration')->name('setting.system.configuration');
+    //     Route::post('setting/system-configuration-submit', 'systemConfigurationSubmit')->name('setting.system.configuration.submit');
 
-        // Logo-Icon
-        Route::get('setting/logo-icon', 'logoIcon')->name('setting.logo.icon');
-        Route::post('setting-update/logo-icon', 'logoIconUpdate')->name('setting.update.logo.icon');
+    //     // Logo-Icon
+    //     Route::get('setting/logo-icon', 'logoIcon')->name('setting.logo.icon');
+    //     Route::post('setting-update/logo-icon', 'logoIconUpdate')->name('setting.update.logo.icon');
 
-        //Custom CSS
-        Route::get('custom-css', 'customCss')->name('setting.custom.css');
-        Route::post('custom-css-submit', 'customCssSubmit')->name('setting.custom.css.submit');
+    //     //Custom CSS
+    //     Route::get('custom-css', 'customCss')->name('setting.custom.css');
+    //     Route::post('custom-css-submit', 'customCssSubmit')->name('setting.custom.css.submit');
 
-        Route::get('sitemap', 'sitemap')->name('setting.sitemap');
-        Route::post('sitemap-submit', 'sitemapSubmit')->name('setting.sitemap.submit');
+    //     Route::get('sitemap', 'sitemap')->name('setting.sitemap');
+    //     Route::post('sitemap-submit', 'sitemapSubmit')->name('setting.sitemap.submit');
 
-        Route::get('robot', 'robot')->name('setting.robot');
-        Route::post('robot-submit', 'robotSubmit')->name('setting.robot.submit');
+    //     Route::get('robot', 'robot')->name('setting.robot');
+    //     Route::post('robot-submit', 'robotSubmit')->name('setting.robot.submit');
 
-        //Cookie
-        Route::get('cookie', 'cookie')->name('setting.cookie');
-        Route::post('cookie-submit', 'cookieSubmit')->name('setting.cookie.submit');
+    //     //Cookie
+    //     Route::get('cookie', 'cookie')->name('setting.cookie');
+    //     Route::post('cookie-submit', 'cookieSubmit')->name('setting.cookie.submit');
 
-        //maintenance_mode
-        Route::get('maintenance-mode', 'maintenanceMode')->name('maintenance.mode');
-        Route::post('maintenance-mode-submit', 'maintenanceModeSubmit')->name('maintenance.mode.submit');
+    //     //maintenance_mode
+    //     Route::get('maintenance-mode', 'maintenanceMode')->name('maintenance.mode');
+    //     Route::post('maintenance-mode-submit', 'maintenanceModeSubmit')->name('maintenance.mode.submit');
 
-        // Route::get('setup-hotel', 'setupHotel')->name('setting.setup.hotel');
-        // Route::post('setup-hotel', 'addHotel')->name('setting.setup.add.hotel');
-        // Route::post('edit-setup-hotel/{id}', 'editHotel')->name('setting.setup.edit.hotel');
-        // Route::post('update-setup-hotel/{id}', 'updateHotel')->name('setting.setup.update.hotel');
-        // Route::post('status-setup-hotel/{id}', 'statusHotel')->name('setting.setup.status.hotel');
-        // Route::post('delete-setup-hotel/{id}', 'deleteHotel')->name('setting.setup.delete.hotel');
-    });
+    //     // Route::get('setup-hotel', 'setupHotel')->name('setting.setup.hotel');
+    //     // Route::post('setup-hotel', 'addHotel')->name('setting.setup.add.hotel');
+    //     // Route::post('edit-setup-hotel/{id}', 'editHotel')->name('setting.setup.edit.hotel');
+    //     // Route::post('update-setup-hotel/{id}', 'updateHotel')->name('setting.setup.update.hotel');
+    //     // Route::post('status-setup-hotel/{id}', 'statusHotel')->name('setting.setup.status.hotel');
+    //     // Route::post('delete-setup-hotel/{id}', 'deleteHotel')->name('setting.setup.delete.hotel');
+    // });
 
     //Notification Setting
     Route::name('setting.notification.')->controller('NotificationController')->prefix('notification')->group(function () {
@@ -755,35 +756,35 @@ Route::middleware('admin', 'adminPermission')->prefix('admin')->group(function (
     // SEO
     Route::get('seo', 'FrontendController@seoEdit')->name('seo');
     // Frontend
-    Route::name('frontend.')->prefix('frontend')->group(function () {
+    // Route::name('frontend.')->prefix('frontend')->group(function () {
 
-        Route::controller('FrontendController')->group(function () {
-            Route::get('index', 'index')->name('index');
-            Route::get('templates', 'templates')->name('templates');
-            Route::post('templates', 'templatesActive')->name('templates.active');
-            Route::get('frontend-sections/{key?}', 'frontendSections')->name('sections');
-            Route::post('frontend-content/{key}', 'frontendContent')->name('sections.content');
-            Route::get('frontend-element/{key}/{id?}', 'frontendElement')->name('sections.element');
-            Route::get('frontend-slug-check/{key}/{id?}', 'frontendElementSlugCheck')->name('sections.element.slug.check');
-            Route::get('frontend-element-seo/{key}/{id}', 'frontendSeo')->name('sections.element.seo');
-            Route::post('frontend-element-seo-update/{key}/{id}', 'frontendSeoUpdate')->name('sections.element.seo.update');
-            Route::post('remove/{id}', 'remove')->name('remove');
-        });
+    //     Route::controller('FrontendController')->group(function () {
+    //         Route::get('index', 'index')->name('index');
+    //         Route::get('templates', 'templates')->name('templates');
+    //         Route::post('templates', 'templatesActive')->name('templates.active');
+    //         Route::get('frontend-sections/{key?}', 'frontendSections')->name('sections');
+    //         Route::post('frontend-content/{key}', 'frontendContent')->name('sections.content');
+    //         Route::get('frontend-element/{key}/{id?}', 'frontendElement')->name('sections.element');
+    //         Route::get('frontend-slug-check/{key}/{id?}', 'frontendElementSlugCheck')->name('sections.element.slug.check');
+    //         Route::get('frontend-element-seo/{key}/{id}', 'frontendSeo')->name('sections.element.seo');
+    //         Route::post('frontend-element-seo-update/{key}/{id}', 'frontendSeoUpdate')->name('sections.element.seo.update');
+    //         Route::post('remove/{id}', 'remove')->name('remove');
+    //     });
 
-        // Page Builder
-        Route::controller('PageBuilderController')->group(function () {
-            Route::get('manage-pages', 'managePages')->name('manage.pages');
-            Route::get('manage-pages/check-slug/{id?}', 'checkSlug')->name('manage.pages.check.slug');
-            Route::post('manage-pages', 'managePagesSave')->name('manage.pages.save');
-            Route::post('manage-pages/update', 'managePagesUpdate')->name('manage.pages.update');
-            Route::post('manage-pages/delete/{id}', 'managePagesDelete')->name('manage.pages.delete');
-            Route::get('manage-section/{id}', 'manageSection')->name('manage.section');
-            Route::post('manage-section/{id}', 'manageSectionUpdate')->name('manage.section.update');
+    //     // Page Builder
+    //     Route::controller('PageBuilderController')->group(function () {
+    //         Route::get('manage-pages', 'managePages')->name('manage.pages');
+    //         Route::get('manage-pages/check-slug/{id?}', 'checkSlug')->name('manage.pages.check.slug');
+    //         Route::post('manage-pages', 'managePagesSave')->name('manage.pages.save');
+    //         Route::post('manage-pages/update', 'managePagesUpdate')->name('manage.pages.update');
+    //         Route::post('manage-pages/delete/{id}', 'managePagesDelete')->name('manage.pages.delete');
+    //         Route::get('manage-section/{id}', 'manageSection')->name('manage.section');
+    //         Route::post('manage-section/{id}', 'manageSectionUpdate')->name('manage.section.update');
 
-            Route::get('manage-seo/{id}', 'manageSeo')->name('manage.pages.seo');
-            Route::post('manage-seo/{id}', 'manageSeoStore')->name('manage.pages.seo.store');
-        });
-    });
+    //         Route::get('manage-seo/{id}', 'manageSeo')->name('manage.pages.seo');
+    //         Route::post('manage-seo/{id}', 'manageSeoStore')->name('manage.pages.seo.store');
+    //     });
+    // });
 
     Route::get('/checkhours', [GeneralSettingController::class, 'checkhours'])->name('checkhours');
 

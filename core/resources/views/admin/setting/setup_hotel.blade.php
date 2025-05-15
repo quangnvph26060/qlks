@@ -5,12 +5,14 @@
             <div class="card-body">
                 <div class="row">
                     <div class="col-md-12 col-sm-12">
-                        <div class="form-group position-relative mt-1" id="btn-add-hotel">
-                        <button type="button" class="btn btn--primary btn-add "
-                            data-bs-toggle="modal" data-bs-target="#setup-hotel">
-                                <i class="las la-plus p-1"></i>
-                            </button>
-                        </div>
+                        @can(['admin.hotel.setting.setup.add.hotel'])
+                            <div class="form-group position-relative mt-1" id="btn-add-hotel">
+                                <button type="button" class="btn btn--primary btn-add " data-bs-toggle="modal"
+                                    data-bs-target="#setup-hotel">
+                                    <i class="las la-plus p-1"></i>
+                                </button>
+                            </div>
+                        @endcan
                     </div>
                 </div>
             </div>
@@ -38,33 +40,45 @@
                         </thead>
                         <tbody id="main-table-hotel">
                             @forelse($hotels as $id => $item)
-                                <tr data-id="{{ $item->id }}" class="{{$id % 2 !== 0 ? 'bg-white' : 'bg-gray' }}">
-                                <td style="width:20px">
-                                                    <svg class="svg_menu_check_in" xmlns="http://www.w3.org/2000/svg" width="30" height="30" viewBox="0 0 21 21"><g fill="currentColor" fill-rule="evenodd"><circle cx="10.5" cy="10.5" r="1"/><circle cx="10.5" cy="5.5" r="1"/><circle cx="10.5" cy="15.5" r="1"/></g></svg>
-                                                                    
-                                                    <div class="dropdown menu_dropdown_check_in" id="dropdown-menu" style="position:fixed">
-                                                        <div class="dropdown-item booked_room_edit">
+                                <tr data-id="{{ $item->id }}" class="{{ $id % 2 !== 0 ? 'bg-white' : 'bg-gray' }}">
+                                    <td style="width:20px">
+                                        <svg class="svg_menu_check_in" xmlns="http://www.w3.org/2000/svg" width="30"
+                                            height="30" viewBox="0 0 21 21">
+                                            <g fill="currentColor" fill-rule="evenodd">
+                                                <circle cx="10.5" cy="10.5" r="1" />
+                                                <circle cx="10.5" cy="5.5" r="1" />
+                                                <circle cx="10.5" cy="15.5" r="1" />
+                                            </g>
+                                        </svg>
+                                        @can(['admin.hotel.*'])
+                                            <div class="dropdown menu_dropdown_check_in" id="dropdown-menu"
+                                                style="position:fixed">
+                                                @can(['admin.hotel.setting.setup.edit.hotel'])
+                                                    <div class="dropdown-item booked_room_edit">
                                                         <a class="btn btn-sm btn-outline--primary btn-edit-hotel"
-                                                        data-id="{{ $item->id }}" data-bs-toggle="modal" data-bs-target="#setup-hotel"  style="color:black !important;border:none;padding:5px"
-                                                                        data-modal_title="@lang('Cập nhật cơ sở vật chất')" type="button">
-                                                                    @lang('Sửa')
+                                                            data-id="{{ $item->id }}" data-bs-toggle="modal"
+                                                            data-bs-target="#setup-hotel"
+                                                            style="color:black !important;border:none;padding:5px"
+                                                            data-modal_title="@lang('Cập nhật cơ sở vật chất')" type="button">
+                                                            Sửa
                                                         </a>
-                                                        </div>
-                                                    
-                                                        <div class="dropdown-item booked_room_detail">
-                                                        <button class=" btn-delete" data-id="{{ $item->id }}"
-                                                            data-modal_title="@lang('Xóa')" type="button">
-                                                                    Xóa
-                                                        </button>
-                                                        </div>
+                                                    </div>
+                                                @endcan
+                                                  @can(['admin.hotel.setting.setup.delete.hotel'])
+                                                <div class="dropdown-item hotel_delete">
+                                                    <button class=" btn-delete-hotel icon-delete-room"
+                                                        data-id="{{ $item->id }}" data-modal_title="@lang('Xóa')"
+                                                        type="button">
+                                                        Xóa
+                                                    </button>
+                                                </div>
+                                                @endcan
                                             </div>
-
-                                            </td>
-                                     <td data-label="STT" style="text-align:right;width:20px">
-                                                @php
-                                                $stt = $hotels->total() - ($hotels->currentPage() - 1) * $hotels->perPage() - $id;
-                                                    @endphp
-                                                {{ $stt }}
+                                        @endcan
+                                    </td>
+                                    <td data-label="STT" style="text-align:right;width:20px">
+                                       
+                                        {{ $id + 1 }}
                                     </td>
                                     <td>
                                         {{ $item->ma_coso }}
@@ -74,14 +88,14 @@
                                         {{ $item->ten_coso }}
                                     </td>
                                     <td style="width:50px;text-align: center" class="status-hotel">
-                                        @if($item->trang_thai == 1)
+                                        @if ($item->trang_thai == 1)
                                             <i class="fa fa-check" style="color:green;text-align: center"></i>
                                         @else
                                             <i class="fa fa-close" style="color:red;text-align: center"></i>
                                         @endif
-                                </td>
-                               
-                               
+                                    </td>
+
+
                                 </tr>
                             @empty
                                 <tr>
@@ -115,18 +129,18 @@
     <link rel="stylesheet" type="text/css" href="{{ asset('assets/admin/css/daterangepicker.css') }}">
     <link rel="stylesheet" href="{{ asset('assets/global/css/modal.css') }}">
     <style>
-          
-          .pagination .page-item .page-link, .pagination .page-item span{
-              width: 22px !important;
-              height: auto !important;
-              background-color: #4634ff !important;
-              color: white !important;
-          }
-          .pagination .page-item.active .page-link{
-              background-color: #071251 !important;
-          }
+        .pagination .page-item .page-link,
+        .pagination .page-item span {
+            width: 22px !important;
+            height: auto !important;
+            background-color: #4634ff !important;
+            color: white !important;
+        }
 
-  </style>
+        .pagination .page-item.active .page-link {
+            background-color: #071251 !important;
+        }
+    </style>
 @endpush
 @push('script')
     <script src="{{ asset('assets/admin/js/highlighter22.js') }}"></script>
@@ -274,10 +288,14 @@
                             </div>
                             `;
                             $('#modal-dialog').append(rowEdit);
-                            formEconomyEdit.ma_coso.element = document.getElementById('ma_coso');
-                            formEconomyEdit.ma_coso.error = document.getElementById('ma_coso_error');
-                            formEconomyEdit.ten_coso.element = document.getElementById('ten_coso');
-                            formEconomyEdit.ten_coso.error = document.getElementById('ten_coso_error');
+                            formEconomyEdit.ma_coso.element = document.getElementById(
+                                'ma_coso');
+                            formEconomyEdit.ma_coso.error = document.getElementById(
+                                'ma_coso_error');
+                            formEconomyEdit.ten_coso.element = document.getElementById(
+                                'ten_coso');
+                            formEconomyEdit.ten_coso.error = document.getElementById(
+                                'ten_coso_error');
                         }
                     },
                     error: function(xhr, status, error) {
@@ -305,7 +323,7 @@
                             url: `{{ route('admin.hotel.setting.setup.delete.hotel', '') }}/${dataId}`,
                             type: 'POST',
                             success: function(data) {
-                                if (data.status ==='success') {
+                                if (data.status === 'success') {
                                     rowToDelete.remove();
 
 
@@ -321,15 +339,15 @@
                 });
             });
             // chỉnh sửa trạng thái
-            $('.confirmationBtn').on('click', function(){
-                var action =  $(this).data('action');
+            $('.confirmationBtn').on('click', function() {
+                var action = $(this).data('action');
                 var dataId = $(this).data('id');
                 // ajax request
                 $.ajax({
                     url: action,
                     type: 'POST',
                     success: function(data) {
-                        if (data.status ==='success') {
+                        if (data.status === 'success') {
                             let statusCell = $(`tr[data-id="${dataId}"] .status-hotel`);
                             statusCell.html(data.status_html);
                         }
@@ -368,7 +386,7 @@
                 $('.menu_dropdown').removeClass('show');
             });
 
-            });
+        });
     </script>
     {{-- <script>
         (function($) {

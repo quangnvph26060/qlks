@@ -14,9 +14,9 @@ class CustomerController extends Controller
 {
     public function index()
     {
-        $code = SetupCode::where('menu_name','Danh mục khách hàng')->where('unit_code',unitCode())->value('code');
-        $count = Customer::where('unit_code',unitCode())->count();
-        $code = $code ? $code.$count+1 : '';
+        $code   = SetupCode::where('menu_name','Danh mục khách hàng')->where('unit_code',unitCode())->value('code');
+        $count  = Customer::where('unit_code',unitCode())->count();
+        $code   = $code ? $code.$count+1 : '';
         $pageTitle = '';
         $customers = Customer::where('unit_code',unitCode())->orderBy('id', 'desc')->paginate(10);
         $unit_codes = HotelFacility::select('ma_coso')->get();
@@ -45,7 +45,7 @@ class CustomerController extends Controller
         $customer->group_code = $request->group_code ?? '';
         $customer->note = $request->note ?? '';
         $customer->status = $request->status;
-        $customer->source_code = $request->source_code;
+        // $customer->source_code = $request->source_code;
         $customer->unit_code =  unitCode();
         $customer->save();
         $notify[] = ['success', 'Thêm khách hàng thành công'];
@@ -80,7 +80,7 @@ class CustomerController extends Controller
                 $customer->address = $request->address ?? '';
                 $customer->group_code = $request->group_code ?? '';
                 $customer->note = $request->note ?? '';
-                $customer->source_code = $request->source_code;
+                // $customer->source_code = $request->source_code;
                 $customer->status = $request->status;
                 // $customer->unit_code =  $request->unit_code;
                 $customer->save();
@@ -101,7 +101,7 @@ class CustomerController extends Controller
             $customer->address = $request->address ?? '';
             $customer->group_code = $request->group_code ?? '';
             $customer->note = $request->note ?? '';
-            $customer->source_code = $request->source_code;
+            // $customer->source_code = $request->source_code;
             $customer->status = $request->status;
             // $customer->unit_code =  $request->unit_code;
             $customer->save();

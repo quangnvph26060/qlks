@@ -27,7 +27,7 @@
     </div>
     @can('')
         @push('breadcrumb-plugins')
-            <button type="button" class="btn btn-outline--primary btn-add">
+            <button type="button" class="btn btn--primary btn-add">
                 <i class="las la-plus"></i>
             </button>
         @endpush

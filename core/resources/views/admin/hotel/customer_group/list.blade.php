@@ -70,8 +70,7 @@
 
 
                                 <div class="modal-footer">
-                                    <button type="submit" class="btn btn-primary"
-                                        id="btn-edit-customer-group">Lưu</button>
+                                    <button type="submit" class="btn btn-primary" id="btn-edit-customer-group">Lưu</button>
                                 </div>
                             </form>
                         </div>
@@ -80,7 +79,7 @@
                 </div>
             </div>
             <div class="row gy-4">
-             
+
                 <div class="table-responsive--md  table-responsive">
                     <table class="table--light style--two table">
                         <thead>
@@ -90,12 +89,12 @@
                                 <th>@lang('Mã nhóm KH')</th>
                                 <th>@lang('Tên nhóm KH')</th>
                                 <!-- <th>@lang('Ghi chú')</th>
-                                <th>@lang('Trạng thái')</th> -->
+                                    <th>@lang('Trạng thái')</th> -->
                             </tr>
                         </thead>
                         <tbody id="main-table-hotel">
                             @forelse($customer_groups as $id => $item)
-                                <tr data-id="{{ $item->id }}" class="{{$id % 2 !==0 ?'bg-white':'bg-gray'}}">
+                                <tr data-id="{{ $item->id }}" class="{{ $id % 2 !== 0 ? 'bg-white' : 'bg-gray' }}">
                                     <td style="width:20px;">
                                         <svg class="svg_menu_check_in" xmlns="http://www.w3.org/2000/svg" width="30"
                                             height="30" viewBox="0 0 21 21">
@@ -108,16 +107,21 @@
 
                                         <div class="dropdown menu_dropdown_check_in" id="dropdown-menu"
                                             style="position:fixed">
-                                            <div class="dropdown-item"><a data-id="{{ $item->id }}"
-                                                    class="btn-edit-customer-group btn-edit-group" data-bs-toggle="modal"
-                                                    data-bs-target="#edit-customer-group" style="color:black">
-                                                    Sửa nhóm khách hàng
-                                                </a></div>
-
+                                            @can(['admin.hotel.customer.group.edit','admin.hotel.customer.group.update'])
+                                                <div class="dropdown-item">
+                                                    <a data-id="{{ $item->id }}"
+                                                        class="btn-edit-customer-group btn-edit-group" data-bs-toggle="modal"
+                                                        data-bs-target="#edit-customer-group" style="color:black">
+                                                        Sửa
+                                                    </a>
+                                                </div>
+                                            @endcan
+                                            @can('admin.hotel.customer.group.delete')
                                             <div class="dropdown-item booked_room_detail"> <button
                                                     class=" btn-delete icon-delete-room" data-id="{{ $item->id }}"
                                                     data-modal_title="@lang('Xóa nhóm khách hàng')" type="button"
-                                                    data-pro="0">Xóa nhóm khách hàng</div>
+                                                    data-pro="0">Xóa</div>
+                                                    @endcan
 
                                         </div>
                                     </td>
@@ -152,49 +156,48 @@
         </div>
     </div>
     @push('breadcrumb-plugins')
-    <div class="card-body">
-        <div class="row">
-            <div class="col-md-12 col-sm-12 d-flex">
-                <a class="mr-1" href="{{ route('admin.hotel.customer.group.all') }}">
-                    <button class="btn btn--primary" data-modal_title="Làm mới">
-                        <i class="fa fa-repeat p-1"></i>
-                    </button>
-                </a>
-                <a>
-                    <button class="btn btn--primary" data-modal_title="Thêm mới nhóm khách hàng" type="button"
-                        data-bs-toggle="modal" data-bs-target="#group-code" style="margin-left:10px">
-                        <i class="las la-plus p-1"></i>
-                    </button>
-                </a>
-                <form role="form" enctype="multipart/form-data"
-                    action="{{ route('admin.hotel.customer.group.search') }}">
-                    <div class="form-group position-relative mb-0">
-                        <input class="searchInput" name="group_code"
-                            style="height: 35px;border: 1px solid rgb(121, 117, 117, 0.5);margin-left: 8px;"
-                            placeholder="Mã nhóm khách">
-                        <input class="searchInput" name="group_name"
-                            style="height: 35px;border: 1px solid rgb(121, 117, 117, 0.5); margin-left: 8px;"
-                            placeholder="Tên nhóm khách">
-                        <a>
-                            <button type="submit" class="btn btn--primary"
-                                style="padding-right:15px;padding-left:15px">
-                                <i class="las la-search p-1"></i>
-                            </button>
-                        </a>
-                    </div>
-                </form>
-            </div>
-            @if ($customer_groups->hasPages())
-                <div class="pager-wrap">
-                    <div class="k-widget d-flex">
-                        <div class="pagination-tb" style="font-size: 13px;margin: 0 auto">
-                            {{ $customer_groups->links('pagination::bootstrap-4') }}
+        <div class="card-body">
+            <div class="row">
+                <div class="col-md-12 col-sm-12 d-flex">
+                    <a class="mr-1" href="{{ route('admin.hotel.customer.group.all') }}">
+                        <button class="btn btn--primary" data-modal_title="Làm mới">
+                            <i class="fa fa-repeat p-1"></i>
+                        </button>
+                    </a>
+                    <a>
+                        <button class="btn btn--primary" data-modal_title="Thêm mới nhóm khách hàng" type="button"
+                            data-bs-toggle="modal" data-bs-target="#group-code" style="margin-left:10px">
+                            <i class="las la-plus p-1"></i>
+                        </button>
+                    </a>
+                    <form role="form" enctype="multipart/form-data"
+                        action="{{ route('admin.hotel.customer.group.search') }}">
+                        <div class="form-group position-relative mb-0">
+                            <input class="searchInput" name="group_code"
+                                style="height: 35px;border: 1px solid rgb(121, 117, 117, 0.5);margin-left: 8px;"
+                                placeholder="Mã nhóm khách">
+                            <input class="searchInput" name="group_name"
+                                style="height: 35px;border: 1px solid rgb(121, 117, 117, 0.5); margin-left: 8px;"
+                                placeholder="Tên nhóm khách">
+                            <a>
+                                <button type="submit" class="btn btn--primary" style="padding-right:15px;padding-left:15px">
+                                    <i class="las la-search p-1"></i>
+                                </button>
+                            </a>
+                        </div>
+                    </form>
+                </div>
+                @if ($customer_groups->hasPages())
+                    <div class="pager-wrap">
+                        <div class="k-widget d-flex">
+                            <div class="pagination-tb" style="font-size: 13px;margin: 0 auto">
+                                {{ $customer_groups->links('pagination::bootstrap-4') }}
+                            </div>
                         </div>
                     </div>
-                </div>
-            @endif
+                @endif
+            </div>
         </div>
-    </div>
     @endpush
 @endsection
 @push('style-lib')

@@ -10,7 +10,7 @@
                                                         <div class="dropdown-item">
                                                         <a class="btn btn-sm btn-outline--primary btn-edit" data-id="{{ $room->id }}"
                                                             data-modal_title="@lang('Cập nhật tiện nghi')" type="button" style="color:black !important;border:none;padding:5px">
-                                                            Sửa tiện nghi
+                                                            Sửa
                                                         </a>
                                                     </div>    
                                                                     

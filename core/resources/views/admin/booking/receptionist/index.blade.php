@@ -572,10 +572,10 @@
     var checkRoomBookingUrl = "{{ route('admin.booking.checkRoomBooking') }}";
     var getCustomerStaff = "{{ route('admin.get.customer.staff') }}";
     var findCustomerUrl = "{{ route('admin.find.customer') }}";
-    var roomBookingEditUrl = "{{ route('admin.room.booking.edit', ['id' => ':id']) }}";
+    var roomBookingEditUrl = "{{ route('admin.room.booking.edit', ['id' => ':id']) }}"; // sửa đặt phòng
     var checkInEditUrl = "{{ route('admin.check.in.edit', ['id' => ':id']) }}";
     var paymentRoomUrl = "{{ route('admin.booking.payment.room') }}";
-    var findRoomBookingIdUrl = '{{ route('admin.find.room.booking') }}';
+    var findRoomBookingIdUrl = '{{ route("admin.find.room.booking") }}';
     var CheckInUrl = "{{ route('admin.room.booked.check.in') }}";
     var roomBook = "{{ route('admin.room.book') }}";
     var cleanRoomUrl = "{{ route('admin.roomclean.booking.roomclean') }}"

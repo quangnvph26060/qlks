@@ -33,15 +33,16 @@ class RoomController extends Controller
 
 
         // $rooms =  $rooms->paginate(getPaginate());
-        $count = RoomType::where('unit_code',unitCode())->count();
-        $code = SetupCode::where('menu_name','Danh mục hạng phòng')->where('unit_code',unitCode())->value('code');
-        $code = $code ? $code.$count+1 : '';
+
+        $count = RoomType::where('unit_code', unitCode())->count();
+        $code = SetupCode::where('menu_name', 'Danh mục hạng phòng')->where('unit_code', unitCode())->value('code');
+        $code = $code ? $code . $count + 1 : '';
         $keyword = $request->input('keyword');
 
         $columns = Schema::getColumnListing('room_types');
 
         $rooms = RoomType::query()
-            ->where('unit_code',unitCode())
+            ->where('unit_code', unitCode())
             ->when($keyword, function ($query) use ($keyword, $columns) {
                 $query->where(function ($query) use ($keyword, $columns) {
                     foreach ($columns as $column) {
@@ -49,12 +50,12 @@ class RoomController extends Controller
                     }
                 });
             })->orderBy('created_at');
-            if (request()->status == Status::ENABLE || request()->status == Status::DISABLE) {
-                $rooms = $rooms->filter(['status']);
-            }
-            $rooms = $rooms->paginate(10);
+        if (request()->status == Status::ENABLE || request()->status == Status::DISABLE) {
+            $rooms = $rooms->filter(['status']);
+        }
+        $rooms = $rooms->paginate(10);
 
-        return view('admin.hotel.rooms', compact('pageTitle', 'rooms', 'keyword','code'));
+        return view('admin.hotel.rooms', compact('pageTitle', 'rooms', 'keyword', 'code'));
     }
 
     public function status($id)
@@ -71,7 +72,7 @@ class RoomController extends Controller
     {
         $request->validate([
             // 'code' => 'max:6|unique:room_types,code,'.$id,
-            'name' => 'required|unique:room_types,name,'.$id,
+            'name' => 'required|unique:room_types,name,' . $id,
             'main_image' => 'mimes:jpg|nullable',
         ]);
 
@@ -117,10 +118,11 @@ class RoomController extends Controller
             //     $room->save();
             // }
             $roomType = new RoomType();
-            $roomType->name = $request->name;
-            $roomType->slug = \Str::slug($roomType->name);
-            $roomType->code  = $request->code;
-            $roomType->status = $request->status;
+            $roomType->name      = $request->name;
+            $roomType->slug      = \Str::slug($roomType->name);
+            $roomType->code      = $request->code;
+            $roomType->status    = $request->status;
+            $roomType->unit_code = unitCode();
             if ($request->hasFile('main_image')) {
                 $main_images = saveImages($request, 'main_image', 'roomTypeImage', 600, 600);
                 if ($roomType->main_image && Storage::disk('public')->exists($roomType->main_image)) {
@@ -157,13 +159,19 @@ class RoomController extends Controller
         $notify[] = ['success', $message];
         return back()->withNotify($notify);
     }
-    public function delete($id){
+    public function delete($id)
+    {
         $roomType = RoomType::findOrFail($id);
-        if($roomType->main_image && Storage::disk('public')->exists($roomType->main_image)){
-            Storage::disk('public')->delete($roomType->main_image);
-        }
+        
+        // if ($roomType->main_image && Storage::disk('public')->exists($roomType->main_image)) {
+        //     Storage::disk('public')->delete($roomType->main_image);
+        // }
+
         $roomType->delete();
-        // response
-        return   response()->json(['status' => 'success', 'message' => 'Loại phòng đã được xóa thành công']);
+
+        return response()->json([
+            'status' => 'success',
+            'message' => 'Loại phòng đã được xóa thành công'
+        ]);
     }
 }

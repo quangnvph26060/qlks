@@ -17,7 +17,7 @@ class Role extends Model
     public static function hasPermission($code = null)
     {
         $admin = Auth::guard('admin')->user();
-       
+        // tài khoản có id = 1 là admin đầu tiên
         if ($admin->id == 1) {
             return true;
         }

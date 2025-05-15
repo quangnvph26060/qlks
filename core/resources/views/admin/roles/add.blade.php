@@ -2,6 +2,11 @@
 @section('panel')
     <form action="{{ route('admin.roles.save', @$role->id) }}" method="post">
         @csrf
+        <button class="btn btn--primary mb-1" type="button"
+    onclick="window.location.href='{{ route('admin.roles.index') }}'">
+    <i class="las la-arrow-left"></i> Quay lại
+</button>
+
         <div class="row gy-4">
             <div class="col-lg-12">
                 <div class="card">
@@ -15,10 +20,10 @@
                 </div>
             </div>
 
-            <div class="col-12">
+            <div class="col-12 mb-4">
                 <div class="card">
                     <div class="card-header">
-                        <h5 class="card-title">@lang('Đặt quyền')</h5>
+                        <h5 class="card-title">@lang('Đặc quyền')</h5>
                     </div>
                     <div class="card-body">
                         <div class="">
@@ -35,8 +40,12 @@
                                                     <div class="d-flex flex-wrap gap-3">
                                                         @foreach ($permissionGroup as $permission)
                                                             <div class="custom-control custom-checkbox form-check-primary">
-                                                                <input class="custom-control-input" id="customCheck{{ $permission->id }}" name="permissions[]" type="checkbox" value="{{ $permission->id }}">
-                                                                <label class="custom-control-label" for="customCheck{{ $permission->id }}">{{ $permission->name }}</label>
+                                                                <input class="custom-control-input"
+                                                                    id="customCheck{{ $permission->id }}"
+                                                                    name="permissions[]" type="checkbox"
+                                                                    value="{{ $permission->id }}">
+                                                                <label class="custom-control-label"
+                                                                    for="customCheck{{ $permission->id }}">{{ $permission->name }}</label>
                                                             </div>
                                                         @endforeach
                                                     </div>
@@ -45,17 +54,19 @@
                                         </div>
                                     </div>
                                 @endforeach
+                                @can('admin.roles.save')
+                                    <div class="col-lg-12">
+                                        <button class="btn btn--primary h-45 w-100" type="submit">@lang('Lưu')</button>
+                                    </div>
+                                @endcan
                             </div>
                         </div>
                     </div>
                 </div>
+
             </div>
 
-            @can('admin.roles.save')
-                <div class="col-lg-12">
-                    <button class="btn btn--primary h-45 w-100" type="submit">@lang('Submit')</button>
-                </div>
-            @endcan
+
         </div>
     </form>
 @endsection

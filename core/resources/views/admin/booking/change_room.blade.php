@@ -6,7 +6,7 @@
         <div class="card b-radius--10 scroll-container-main">
             <div class="card-body p-0">
                 <div class="table-responsive--md">
-                    <table class="table--light style--two table" id="data-table">
+                    <table class="table--light style--two table mb-4" id="data-table">
                         <thead>
                             <tr>
                                 <th></th>

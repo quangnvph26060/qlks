@@ -7,29 +7,35 @@ use App\Models\Permission;
 use App\Models\Role;
 use Illuminate\Http\Request;
 
-class RolesController extends Controller {
+class RolesController extends Controller
+{
 
-    public function index() {
+    public function index()
+    {
         $roles = Role::all();
         $pageTitle = "Tất cả vai trò";
         return view('admin.roles.index', compact('roles', 'pageTitle'));
     }
 
-    public function add() {
+    public function add()
+    {
         $pageTitle = "Thêm mới vai trò";
         $permissionGroups = Permission::all()->groupBy('group');
         return view('admin.roles.add', compact('pageTitle', 'permissionGroups'));
     }
 
-    public function edit($id) {
+    public function edit($id)
+    {
         $pageTitle = "Sửa vai trò";
         $role = Role::with('permissions')->findOrFail($id);
         $permissions = $role->permissions->pluck('pivot.permission_id');
         $permissionGroups = Permission::all()->groupBy('group');
+        // dd($permissionGroups);
         return view('admin.roles.add', compact('pageTitle', 'permissionGroups', 'role', 'permissions'));
     }
 
-    public function save(Request $request, $id = 0) {
+    public function save(Request $request, $id = 0)
+    {
         $request->validate([
             'name'          => 'required|string',
             'permissions'   => 'nullable|array',
@@ -49,5 +55,14 @@ class RolesController extends Controller {
         $role->permissions()->sync($request->permissions);
         $notify[] = ['success', $notification];
         return back()->withNotify($notify);
+    }
+    public function delete($id)
+    {
+        $role = Role::findOrFail($id);
+
+        $role->permissions()->detach();
+        $role->delete();
+
+        return redirect()->back()->with('success', 'Xoá vai trò thành công');
     }
 }

@@ -23,57 +23,60 @@ class ManageRoomProductController extends Controller
     {
         $this->repository = new BaseRepository(new Room());
     }
-    // public function index()
-    // {
-    //     $rooms = Room::where('status', 1)->get();
-    //     $products = Product::where('is_published', 1)->where('stock', '>', 0)->get();
-    //     $pageTitle = 'Danh sách sản phẩm của phòng';
-    //     $search = request()->get('search');
-    //     $perPage = request()->get('perPage', 10);
-    //     $orderBy = request()->get('orderBy', 'id');
-    //     $columns = [
-    //         'id',
-    //         'code',
-    //         'room_type_id',
-    //         'room_number',
-    //         'description'
-    //     ];
-    //     $relations = ['products', 'roomType'];
-    //     $searchColumns = [
-    //         'code',
-    //     ];
-    //     $relationSearchColumns = [];
-
-    //     $response = $this->repository
-    //         ->customPaginate(
-    //             $columns,
-    //             $relations,
-    //             $perPage,
-    //             $orderBy,
-    //             $search,
-    //             [],
-    //             $searchColumns,
-    //             $relationSearchColumns
-    //         );
-
-    //     if (request()->ajax()) {
-    //         return response()->json([
-    //             'results' => view('admin.table.manage-product-room', compact('response'))->render(),
-    //             'pagination' => view('vendor.pagination.custom', compact('response'))->render(),
-    //         ]);
-    //     }
-
-    //     return view('admin.manage-room-products.index', compact('rooms', 'products', 'pageTitle'));
-    // }
     public function index()
     {
-        $rooms = Room::where('unit_code',unitCode())->where('status' , 1)->paginate(10);
+        $rooms = Room::where('status', 1)->get();
         $products = Product::where('is_published', 1)->where('stock', '>', 0)->get();
         $pageTitle = 'Danh sách sản phẩm của phòng';
-        $room_type = RoomType::where('unit_code',unitCode())->get();
+        $search = request()->get('search');
+        $perPage = request()->get('perPage', 10);
+        $orderBy = request()->get('orderBy', 'id');
+        $columns = [
+            'id',
+            'code',
+            'room_type_id',
+            'room_number',
+            'description'
+        ];
+        $relations = ['products', 'roomType'];
+        $requiredRelations = ['products'];
+        $searchColumns = [
+            'code',
+        ];
+        $relationSearchColumns = [];
 
-        return view('admin.manage-room-products.index', compact('rooms','room_type', 'products', 'pageTitle'));
+        $response = $this->repository
+            ->customPaginate(
+                $columns,
+                $relations,
+                $requiredRelations,
+                $perPage,
+                $orderBy,
+                $search,
+                [],
+                $searchColumns,
+                $relationSearchColumns,
+                
+            );
+        $room_type = RoomType::where('unit_code',unitCode())->get();
+        if (request()->ajax()) {
+            return response()->json([
+                'results' => view('admin.table.manage-product-room', compact('response'))->render(),
+                'pagination' => view('vendor.pagination.custom', compact('response'))->render(),
+            ]);
+        }
+
+        return view('admin.manage-room-products.index', compact('rooms', 'products', 'pageTitle','room_type'));
     }
+    // public function index()
+    // {
+    //     $rooms = Room::where('unit_code',unitCode())->where('status' , 1)->paginate(10);
+    //     $products = Product::where('is_published', 1)->where('stock', '>', 0)->get();
+    //     $pageTitle = 'Danh sách sản phẩm của phòng';
+    //     $room_type = RoomType::where('unit_code',unitCode())->get();
+
+    //     return view('admin.manage-room-products.index', compact('rooms','room_type', 'products', 'pageTitle'));
+    // }
     public function store(Request $request)
     {
 
@@ -155,18 +158,24 @@ class ManageRoomProductController extends Controller
         $quantities = $request->stock;
 
         if ($productIds || $quantities) {
-            $syncData = [];
-            foreach ($productIds as $index => $productId) {
-                $syncData[$productId] = ['quantity' => $quantities[$index]];
-                $syncedProducts = $room->products()
-                    ->where('room_id', $request->room_id)
-                    ->where('product_id', $productId)->first()->pivot;
-                $product = Product::find($productId);
-                $product->update(['stock' => $product->stock + $syncedProducts->quantity - $quantities[$index]]);
-            }
+    $syncData = [];
 
-            $room->products()->sync($syncData);
-        } else {
+    foreach ($productIds as $index => $productId) {
+        $existingProduct = $room->products()->where('product_id', $productId)->first();
+        $oldQuantity = $existingProduct?->pivot->quantity ?? 0;
+
+        $syncData[$productId] = ['quantity' => $quantities[$index]];
+
+        $product = Product::find($productId);
+        $product->update([
+            'stock' => $product->stock + $oldQuantity - $quantities[$index]
+        ]);
+    }
+
+    $room->products()->sync($syncData);
+}
+
+        else {
             $currentProducts = $room->products()->get();
 
             foreach ($currentProducts as $product) {

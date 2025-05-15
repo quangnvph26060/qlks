@@ -22,6 +22,7 @@ class BaseRepository
     public function customPaginate(
         $columns = ['*'],
         $relations = [],
+        $requiredRelations = [],
         $perPage = 10,
         $orderBy = null,
         $search = null,
@@ -35,6 +36,13 @@ class BaseRepository
     ) {
         // Khởi tạo query với các quan hệ
         $query = $this->model->query()->with($relations);
+
+        // Áp dụng điều kiện has() với những quan hệ bắt buộc phải có
+        if (!empty($requiredRelations)) {
+            foreach ($requiredRelations as $relation) {
+                $query->has($relation);
+            }
+        }
 
         // Áp dụng tìm kiếm
         if ($search && !empty($searchColumns)) {

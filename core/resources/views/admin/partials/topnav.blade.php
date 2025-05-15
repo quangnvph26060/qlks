@@ -57,12 +57,12 @@
                             <i class="dropdown-menu__icon las la-key"></i>
                             <span class="dropdown-menu__caption">@lang('Mật khẩu')</span>
                         </a>
-                        <a href="{{ route('admin.setting.system') }}"
+                        {{-- <a href="{{ route('admin.setting.system') }}"
                             class="dropdown-menu__item d-flex align-items-center px-3 py-2">
                             <i class="dropdown-menu__icon las la-cog"></i>
 
                             <span class="dropdown-menu__caption">@lang('Thiết lập hệ thống')</span>
-                        </a>
+                        </a> --}}
                         <a href="{{ route('admin.logout') }}"
                             class="dropdown-menu__item d-flex align-items-center px-3 py-2">
                             <i class="dropdown-menu__icon las la-sign-out-alt"></i>
@@ -324,7 +324,6 @@
             const tabId = parts.pop() || parts.pop();
             const iframeId = tabId;
             const menuTitle = $("a[href='" + url + "']").find(".menu-title").text();
-            console.log(menuTitle);
             
             // Kiểm tra tab tồn tại chưa
             if ($('#tab-' + tabId).length === 0) {

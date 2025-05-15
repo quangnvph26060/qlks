@@ -4,10 +4,10 @@
 
         <div class="pagination-container"></div>
 
-        <div class="card b-radius--10 mt-1 scroll-container-main">
+        <div class="card b-radius--10 mt-1 scroll-container-main ">
             <div class="card-body p-0">
                 <div class="table-responsive--md">
-                    <table class="table--light style--two table" id="data-table">
+                    <table class="table--light style--two table mb-4" id="data-table">
                         <thead>
                             <tr>
                                 <th></th>
@@ -182,18 +182,18 @@
 
 @push('script')
     <script>
-        var showRoomUrl = "{{ route('admin.booking.showRoom') }}";
+        var showRoomUrl = "{{ route('admin.booking.showRoom') }}"; // chọn thêm phòng
         var checkRoomBookingUrl = '{{ route('admin.booking.checkRoomBooking') }}';
         var deleteRoomEdit = '{{ route('admin.room.booking.delete') }}';
-        var searchCustomerUrl = '{{ route('admin.search.customer') }}';
+        var searchCustomerUrl = '{{ route('admin.search.customer') }}'; // tìm khách
         var roomBookingUrl = '{{ route('admin.room.booking') }}';
         var roomBookingEditUrl = "{{ route('admin.room.booking.edit', ['id' => ':id']) }}";
         var bookingDetailUrl = "{{ route('admin.booking.details', ['id' => ':id']) }}";
         var checkInUrl = "{{ route('admin.room.check.in', ['id' => ':id']) }}";
         var deleteBookedRoomUrl = "{{ route('admin.booking.delete-booked-room', ['id' => ':id']) }}";
-        var checkBookedRoomUrl = "{{ route('admin.booking.check-booked-room-del', ['id' => ':id']) }}";
-        var findCustomerUrl = '{{ route('admin.find.customer') }}';
-        var getCustomerStaff = "{{ route('admin.get.customer.staff') }}";
+        var checkBookedRoomUrl = "{{ route('admin.booking.check-booked-room-del', ['id' => ':id']) }}"; // xoá đặt phòng
+        var findCustomerUrl = '{{ route("admin.find.customer") }}'; // chọn khách
+        var getCustomerStaff = "{{ route('admin.get.customer.staff') }}"; // nguồn khách
         var changeRoomBooking = "{{ route('admin.booking.changeRoomBooking') }}";
     </script>
 
