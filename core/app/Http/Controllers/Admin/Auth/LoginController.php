@@ -4,7 +4,7 @@ namespace App\Http\Controllers\Admin\Auth;
 use App\Http\Controllers\Controller;
 use Illuminate\Foundation\Auth\AuthenticatesUsers;
 use Illuminate\Http\Request;
-
+use Illuminate\Support\Facades\Cache;
 
 class LoginController extends Controller
 {
@@ -66,7 +66,7 @@ class LoginController extends Controller
         }
 
 
-     //   Onumoti::getData();
+        //   Onumoti::getData();
 
         // If the class is using the ThrottlesLogins trait, we can automatically throttle
         // the login attempts for this application. We'll key this by the username and
@@ -92,6 +92,7 @@ class LoginController extends Controller
 
     public function logout(Request $request)
     {
+        Cache::forget('Unit_code');
         $this->guard('admin')->logout();
         $request->session()->invalidate();
         return $this->loggedOut($request) ?: redirect($this->redirectTo);

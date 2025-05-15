@@ -71,6 +71,7 @@ return Application::configure(basePath: dirname(__DIR__))
             'maintenance'           => \App\Http\Middleware\MaintenanceMode::class,
             'adminPermission'       => \App\Http\Middleware\AdminPermissionMiddleware::class,
             'verifyToken'           => \App\Http\Middleware\VerifyApiToken::class,
+            'check.admin.subdomain' => \App\Http\Middleware\CheckAdminSubdomain::class,
         ]);
 
         $middleware->validateCsrfTokens(

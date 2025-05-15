@@ -29,7 +29,7 @@ Route::namespace('Auth')->group(function () {
     });
 });
 
-Route::middleware('admin', 'adminPermission')->prefix('admin')->group(function () {
+Route::domain('{domain}.fasthotel.vn')->middleware('admin', 'adminPermission','check.admin.subdomain')->prefix('admin')->group(function () {
     Route::prefix('fee')->name('fee.')->group(function () {
         Route::get('', [FeeController::class, 'index'])->name('index');
         Route::post('update', [FeeController::class, 'update'])->name('update');

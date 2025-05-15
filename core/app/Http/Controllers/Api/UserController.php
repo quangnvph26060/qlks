@@ -351,7 +351,7 @@ class UserController extends Controller
                 'mobile' => $request->phone,
                 'password' => $request->password,
                 'status' => 1,
-                'role_id' => 4,
+                'role_id' => 1,
                 'unit_code' => 'coso1'
             ]);
 
