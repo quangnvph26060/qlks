@@ -7,7 +7,7 @@ use App\Http\Controllers\Admin\TransactionController;
 use Illuminate\Support\Facades\Route;
 
 Route::namespace('Auth')->domain('{domain}.fasthotel.vn')->group(function () {
-    Route::middleware('admin.guest')->group(function () {
+    Route::middleware('admin.guest','check.admin.subdomain')->group(function () {
         Route::controller('LoginController')->group(function () {
             Route::get('/', 'showLoginForm')->name('login');
             Route::post('/', 'login')->name('login.submit');
