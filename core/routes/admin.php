@@ -6,6 +6,11 @@ use App\Http\Controllers\Admin\PriceController;
 use App\Http\Controllers\Admin\TransactionController;
 use Illuminate\Support\Facades\Route;
 
+
+
+
+
+///
 Route::namespace('Auth')->domain('{domain}.fasthotel.vn')->group(function () {
     Route::middleware('admin.guest','check.admin.subdomain')->group(function () {
         Route::controller('LoginController')->group(function () {

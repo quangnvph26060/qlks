@@ -7,6 +7,7 @@ use Illuminate\Http\Request;
 use App\Models\Admin;
 use Illuminate\Support\Facades\Cache;
 
+////
 class CheckAdminSubdomain
 {
     public function handle(Request $request, Closure $next)
