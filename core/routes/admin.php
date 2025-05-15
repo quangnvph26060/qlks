@@ -6,7 +6,7 @@ use App\Http\Controllers\Admin\PriceController;
 use App\Http\Controllers\Admin\TransactionController;
 use Illuminate\Support\Facades\Route;
 
-Route::namespace('Auth')->group(function () {
+Route::namespace('Auth')->domain('{domain}.fasthotel.vn')->group(function () {
     Route::middleware('admin.guest')->group(function () {
         Route::controller('LoginController')->group(function () {
             Route::get('/', 'showLoginForm')->name('login');
