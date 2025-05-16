@@ -2,7 +2,7 @@
 namespace App\Http\Controllers\Admin\Auth;
 
 use App\Http\Controllers\Controller;
-use Illuminate\Foundation\Auth\AuthenticatesUsers;
+use App\Traits\AuthenticatesUsers;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Cache;
 
@@ -76,7 +76,10 @@ class LoginController extends Controller
             $this->fireLockoutEvent($request);
             return $this->sendLockoutResponse($request);
         }
-
+        // check username to subdomain in login 
+        if (!$this->canLoginBySubdomain($request)) {
+            abort(403, 'Bạn không có quyền đăng nhập tại subdomain này');
+        }
         if ($this->attemptLogin($request)) {
             return $this->sendLoginResponse($request);
         }

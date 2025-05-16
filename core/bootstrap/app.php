@@ -17,7 +17,7 @@ return Application::configure(basePath: dirname(__DIR__))
                 // Định nghĩa các route với middleware
                 Route::middleware(['web'])
                 ->namespace('Admin')
-                // ->prefix('admin')
+                //  ->prefix('admin')
                 ->name('admin.')
                 ->group(base_path('routes/admin.php'));
 
@@ -48,6 +48,7 @@ return Application::configure(basePath: dirname(__DIR__))
             \Illuminate\Routing\Middleware\SubstituteBindings::class,
             \App\Http\Middleware\LanguageMiddleware::class,
             \App\Http\Middleware\ActiveTemplateMiddleware::class,
+            \App\Http\Middleware\CheckAdminSubdomain::class, // check subdomain 
         ]);
 
         // Định nghĩa alias cho middleware
@@ -71,7 +72,6 @@ return Application::configure(basePath: dirname(__DIR__))
             'maintenance'           => \App\Http\Middleware\MaintenanceMode::class,
             'adminPermission'       => \App\Http\Middleware\AdminPermissionMiddleware::class,
             'verifyToken'           => \App\Http\Middleware\VerifyApiToken::class,
-            'check.admin.subdomain' => \App\Http\Middleware\CheckAdminSubdomain::class,
         ]);
 
         $middleware->validateCsrfTokens(

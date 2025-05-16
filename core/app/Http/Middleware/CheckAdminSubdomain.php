@@ -7,14 +7,13 @@ use Illuminate\Http\Request;
 use App\Models\Admin;
 use Illuminate\Support\Facades\Cache;
 
-////
 class CheckAdminSubdomain
 {
     public function handle(Request $request, Closure $next)
     {
         $host = $request->getHost(); // ví dụ: huhu.fasthotel.vn
-        $baseDomain = 'fasthotel.vn';
 
+        $baseDomain = config('domain.base_domain');
         // Kiểm tra nếu domain là dạng *.fasthotel.vn
         if (str_ends_with($host, $baseDomain)) {
             $subdomain = str_replace('.' . $baseDomain, '', $host);
@@ -28,8 +27,8 @@ class CheckAdminSubdomain
             if ($subdomain && $subdomain !== 'www') {
                 // Dùng cache để giảm truy vấn DB
                 $cacheKey = 'subdomain_check_' . $subdomain;
-                $authLifetime = config('session.lifetime'); // đơn vị: phút
-                $exists = Cache::remember($cacheKey, now()->addMinutes($authLifetime), function () use ($subdomain) {
+
+                $exists = Cache::remember($cacheKey, 300, function () use ($subdomain) {
                     return Admin::where('username', $subdomain)->exists();
                 });
 

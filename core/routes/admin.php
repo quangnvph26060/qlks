@@ -12,7 +12,7 @@ use Illuminate\Support\Facades\Route;
 
 ///
 Route::namespace('Auth')->domain('{domain}.fasthotel.vn')->group(function () {
-    Route::middleware('admin.guest','check.admin.subdomain')->group(function () {
+    Route::middleware('admin.guest')->group(function () {
         Route::controller('LoginController')->group(function () {
             Route::get('/', 'showLoginForm')->name('login');
             Route::post('/', 'login')->name('login.submit');
@@ -34,7 +34,7 @@ Route::namespace('Auth')->domain('{domain}.fasthotel.vn')->group(function () {
     });
 });
 
-Route::domain('{domain}.fasthotel.vn')->middleware('admin', 'adminPermission','check.admin.subdomain')->prefix('admin')->group(function () {
+Route::domain('{domain}.fasthotel.vn')->middleware('admin', 'adminPermission')->prefix('admin')->group(function () {
     Route::prefix('fee')->name('fee.')->group(function () {
         Route::get('', [FeeController::class, 'index'])->name('index');
         Route::post('update', [FeeController::class, 'update'])->name('update');
@@ -192,18 +192,18 @@ Route::domain('{domain}.fasthotel.vn')->middleware('admin', 'adminPermission','c
             Route::post('delete-setup-hotel/{id}', 'deleteHotel')->name('setting.setup.delete.hotel');
         });
         //Bed Type
-        Route::controller('BedTypeController')->name('bed.')->prefix('bed-list')->group(function () {
-            Route::get('', 'index')->name('all');
-            Route::post('save/{id?}', 'save')->name('save');
-            Route::post('delete/{id}', 'delete')->name('delete');
-        });
+        // Route::controller('BedTypeController')->name('bed.')->prefix('bed-list')->group(function () {
+        //     Route::get('', 'index')->name('all');
+        //     Route::post('save/{id?}', 'save')->name('save');
+        //     Route::post('delete/{id}', 'delete')->name('delete');
+        // });
 
-        //facility
-        Route::controller('FacilityController')->name('facility.')->prefix('facilities')->group(function () {
-            Route::get('', 'index')->name('all');
-            Route::post('save/{id?}', 'save')->name('save');
-            Route::post('status/{id}', 'status')->name('status');
-        });
+        // //facility
+        // Route::controller('FacilityController')->name('facility.')->prefix('facilities')->group(function () {
+        //     Route::get('', 'index')->name('all');
+        //     Route::post('save/{id?}', 'save')->name('save');
+        //     Route::post('status/{id}', 'status')->name('status');
+        // });
 
         //Room Type
         Route::controller('RoomTypeController')->name('room.type.')->prefix('room-type')->group(function () {

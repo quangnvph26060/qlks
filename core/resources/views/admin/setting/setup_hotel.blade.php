@@ -64,20 +64,20 @@
                                                         </a>
                                                     </div>
                                                 @endcan
-                                                  @can(['admin.hotel.setting.setup.delete.hotel'])
-                                                <div class="dropdown-item hotel_delete">
-                                                    <button class=" btn-delete-hotel icon-delete-room"
-                                                        data-id="{{ $item->id }}" data-modal_title="@lang('Xóa')"
-                                                        type="button">
-                                                        Xóa
-                                                    </button>
-                                                </div>
+                                                @can(['admin.hotel.setting.setup.delete.hotel'])
+                                                    <div class="dropdown-item hotel_delete">
+                                                        <button class=" btn-delete-hotel icon-delete-room"
+                                                            data-id="{{ $item->id }}" data-modal_title="@lang('Xóa')"
+                                                            type="button">
+                                                            Xóa
+                                                        </button>
+                                                    </div>
                                                 @endcan
                                             </div>
                                         @endcan
                                     </td>
                                     <td data-label="STT" style="text-align:right;width:20px">
-                                       
+
                                         {{ $id + 1 }}
                                     </td>
                                     <td>
@@ -240,12 +240,13 @@
             // sửa
             $('.btn-edit-hotel').on('click', function() {
                 var dataId = $(this).data('id');
+
                 // ajax request
                 $.ajax({
                     url: `{{ route('admin.hotel.setting.setup.edit.hotel', '') }}/${dataId}`,
                     type: 'POST',
                     success: function(data) {
-                        if (data.status === 'success') {
+                        if (data.status == 'success') {
 
                             let rowEdit = '';
                             $('#modal-dialog').empty();

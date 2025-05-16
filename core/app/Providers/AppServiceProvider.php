@@ -20,6 +20,7 @@ use Illuminate\Support\ServiceProvider;
 use Illuminate\Database\Eloquent\Builder;
 use Illuminate\Support\Facades\URL;
 use Illuminate\Support\Facades\Request;
+
 class AppServiceProvider extends ServiceProvider
 {
     /**
@@ -35,17 +36,17 @@ class AppServiceProvider extends ServiceProvider
      */
     public function boot(): void
     {
-         $host = Request::getHost(); // ví dụ: user1.fasthotel.vn
-    $parts = explode('.', $host);
-    $subdomain = $parts[0] ?? null;
+        $host = Request::getHost(); // ví dụ: user1.fasthotel.vn
+        $parts = explode('.', $host);
+        $subdomain = $parts[0] ?? null;
 
-    // Gán mặc định nếu có subdomain
-    if ($subdomain && $subdomain !== 'www') {
-        URL::defaults(['domain' => $subdomain]);
-    }
+        // Gán mặc định nếu có subdomain
+        if ($subdomain && $subdomain !== 'www') {
+            URL::defaults(['domain' => $subdomain]);
+        }
         if (env('APP_ENV') !== 'local') {
-			URL::forceScheme('https');
-		}
+            URL::forceScheme('https');
+        }
         if (!cache()->get('SystemInstalled')) {
             $envFilePath = base_path('.env');
             if (!file_exists($envFilePath)) {
@@ -112,12 +113,10 @@ class AppServiceProvider extends ServiceProvider
 
             $wishListRooms = new RoomCollection($wishLists);
 
-          
+
             $view->with([
                 'wishLists' => $wishListRooms,
             ]);
         });
-
-
     }
 }
