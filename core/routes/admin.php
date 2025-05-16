@@ -11,7 +11,7 @@ use Illuminate\Support\Facades\Route;
 
 
 ///
-Route::namespace('Auth')->domain('{domain}.fasthotel.vn')->group(function () {
+Route::namespace('Auth')->group(function () {
     Route::middleware('admin.guest')->group(function () {
         Route::controller('LoginController')->group(function () {
             Route::get('/', 'showLoginForm')->name('login');
@@ -34,7 +34,7 @@ Route::namespace('Auth')->domain('{domain}.fasthotel.vn')->group(function () {
     });
 });
 
-Route::domain('{domain}.fasthotel.vn')->middleware('admin', 'adminPermission')->prefix('admin')->group(function () {
+Route::middleware('admin', 'adminPermission')->prefix('admin')->group(function () {
     Route::prefix('fee')->name('fee.')->group(function () {
         Route::get('', [FeeController::class, 'index'])->name('index');
         Route::post('update', [FeeController::class, 'update'])->name('update');

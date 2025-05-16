@@ -347,7 +347,7 @@ class GeneralSettingController extends Controller
         $notify[] = ['success', 'Thêm cơ sở thành công'];
         return back()->withNotify($notify);
     }
-    public function editHotel($subdomain, $id)
+    public function editHotel( $id)
     {  
         if (!$id) {
             $notify[] = ['error', 'Không tìm thấy cơ sở'];
@@ -360,7 +360,7 @@ class GeneralSettingController extends Controller
         ]);
     }
 
-    public function updateHotel($subdomain, $id, Request $request)
+    public function updateHotel( $id, Request $request)
     {
         $request->validate([
             'ma_coso' => 'required|string',
@@ -377,7 +377,7 @@ class GeneralSettingController extends Controller
         $notify[] = ['success', 'Cập nhật cơ sở thành công'];
         return back()->withNotify($notify);
     }
-    public function deleteHotel($subdomain,$id)
+    public function deleteHotel($id)
     {
         HotelFacility::destroy($id);
         return response()->json([
@@ -386,7 +386,7 @@ class GeneralSettingController extends Controller
         ]);
     }
     // status
-    public function statusHotel($subdomain, $id)
+    public function statusHotel( $id)
     {
         $hotel = HotelFacility::find($id);
 

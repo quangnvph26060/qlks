@@ -100,13 +100,14 @@ class RoomController extends Controller
             $roomType->code  = $request->code;
             $roomType->status = $request->status;
             $roomType->unit_code = unitCode();
-            if ($request->hasFile('main_image')) {
-                $main_images = saveImages($request, 'main_image', 'roomTypeImage', 600, 600);
-                if ($roomType->main_image && Storage::disk('public')->exists($roomType->main_image)) {
-                    Storage::disk('public')->delete($roomType->main_image);
-                }
-                $roomType->main_image = $main_images[0];
-            }
+              $roomType->main_image = "";
+            // if ($request->hasFile('main_image')) {
+            //     $main_images = saveImages($request, 'main_image', 'roomTypeImage', 600, 600);
+            //     if ($roomType->main_image && Storage::disk('public')->exists($roomType->main_image)) {
+            //         Storage::disk('public')->delete($roomType->main_image);
+            //     }
+            //     $roomType->main_image = $main_images[0];
+            // }
             $roomType->save();
             $message = 'Phòng đã được cập nhật thành công';
         } else {
@@ -123,13 +124,14 @@ class RoomController extends Controller
             $roomType->code      = $request->code;
             $roomType->status    = $request->status;
             $roomType->unit_code = unitCode();
-            if ($request->hasFile('main_image')) {
-                $main_images = saveImages($request, 'main_image', 'roomTypeImage', 600, 600);
-                if ($roomType->main_image && Storage::disk('public')->exists($roomType->main_image)) {
-                    Storage::disk('public')->delete($roomType->main_image);
-                }
-                $roomType->main_image = $main_images[0];
-            }
+             $roomType->main_image = "";
+            // if ($request->hasFile('main_image')) {
+            //     $main_images = saveImages($request, 'main_image', 'roomTypeImage', 600, 600);
+            //     if ($roomType->main_image && Storage::disk('public')->exists($roomType->main_image)) {
+            //         Storage::disk('public')->delete($roomType->main_image);
+            //     }
+            //     $roomType->main_image = $main_images[0];
+            // }
             // dd($roomType);
             $roomType->save();
 
