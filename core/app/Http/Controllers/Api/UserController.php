@@ -12,6 +12,7 @@ use App\Models\User;
 use Illuminate\Database\QueryException;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Hash;
+use Illuminate\Support\Facades\Log;
 use Illuminate\Validation\Rules\Password;
 use Illuminate\Support\Facades\Validator;
 use Illuminate\Validation\Rule;
@@ -330,19 +331,19 @@ class UserController extends Controller
     {
         try {
             // Kiểm tra xem email hoặc username đã tồn tại chưa
-            if (Admin::where('email', $request->email)->exists()) {
-                return response()->json([
-                    'success' => false,
-                    'message' => 'Email đã tồn tại'
-                ], 400);
-            }
+            // if (Admin::where('email', $request->email)->exists()) {
+            //     return response()->json([
+            //         'success' => false,
+            //         'message' => 'Email đã tồn tại'
+            //     ], 400);
+            // }
 
-            if (Admin::where('username', $request->username)->exists()) {
-                return response()->json([
-                    'success' => false,
-                    'message' => 'Username đã tồn tại'
-                ], 400);
-            }
+            // if (Admin::where('username', $request->username)->exists()) {
+            //     return response()->json([
+            //         'success' => false,
+            //         'message' => 'Username đã tồn tại'
+            //     ], 400);
+            // }
 
             $customer = Admin::create([
                 'name' => $request->name,
@@ -367,5 +368,34 @@ class UserController extends Controller
                 'error' => $e->getMessage(),
             ], 500);
         }
+    }
+
+    public function deleteAdmin(Request $request)
+    {
+
+        $email = $request->input('email');
+
+        if (!$email) {
+            return response()->json([
+                'success' => false,
+                'message' => 'Email không được để trống',
+            ], 400);
+        }
+
+        $admin = Admin::where('email', $email)->first();
+
+        if ($admin == null) {
+            return response()->json([
+                'success' => false,
+                'message' => 'Không tìm thấy admin với email đã cho',
+            ], 404);
+        }
+
+        $admin->delete();
+
+        return response()->json([
+            'success' => true,
+            'message' => 'Xóa admin thành công',
+        ], 200);
     }
 }
