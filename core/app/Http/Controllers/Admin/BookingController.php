@@ -527,7 +527,7 @@ class BookingController extends Controller
         if ($request->method === 'change_room') {
             $rooms = $rooms->where('id', $request->roomId)->first();
         } else {
-            $rooms = $room->get();
+            $rooms = $rooms->get();
         }
 
 

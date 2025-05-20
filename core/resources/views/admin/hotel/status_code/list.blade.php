@@ -103,10 +103,8 @@
                                     </td>
                                     <td data-label="STT" style="text-align:right">
                                         @php
-                                            $stt =
-                                                $status_codes->total() -
-                                                ($status_codes->currentPage() - 1) * $status_codes->perPage() -
-                                                $id;
+                                           $stt = ($status_codes->currentPage() - 1) * $status_codes->perPage() + $id + 1;
+
                                         @endphp
                                         {{ $stt }}
                                     </td>

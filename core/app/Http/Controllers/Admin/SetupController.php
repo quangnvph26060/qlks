@@ -29,7 +29,8 @@ class SetupController extends Controller
         $setup = new SetupCode();
         $setup->code = $request->code ?? '';
         $setup->menu_name = $request->menu_name ?? '';
-        $setup->unit_code =  unitCode();
+        $setup->unit_code =  hf('ma_coso');
+        $setup->subdomain =  subdomain();
         $setup->save();
         $notify[] = ['success', 'Thêm mã mặc định thành công'];
         return back()->withNotify($notify);

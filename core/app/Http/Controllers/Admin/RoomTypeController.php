@@ -107,9 +107,9 @@ class RoomTypeController extends Controller
         $facilities  = Facility::active()->get();
         $bedTypes    = BedType::all();
         $roomTypes   = RoomType::pluck('name', 'id');
-        $prices      = RoomPrice::active()->pluck('name', 'id');
+        // $prices      = RoomPrice::active()->pluck('name', 'id');
 
-        return view('admin.hotel.room_type.create', compact('pageTitle','code', 'amenities', 'facilities', 'bedTypes', 'roomTypes', 'prices'));
+        return view('admin.hotel.room_type.create', compact('pageTitle','code', 'amenities', 'facilities', 'bedTypes', 'roomTypes'));
     }
 
     public function edit($id)

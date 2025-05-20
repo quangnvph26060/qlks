@@ -88,40 +88,51 @@ class ManageRoomAmenitiesController extends Controller
         $pageTitle = 'Danh sách tiện ghi của phòng';
         return view('admin.manage-room-amenities.index', compact('rooms', 'amenities','pageTitle','room_type','code'));
     }
-    public function addAmenitiesToTheRoom(Request $request)
-    {
-        $validator = Validator::make(
-            $request->all(),
-            [
-                'room_id' => 'required',
-                'amenities_id' => 'required|array',
-                'amenities_id.*' => 'exists:amenities,id',
-            ],
-            [
-                'room_id.required' => 'Vui lòng chọn phòng.',
-                'amenities_id.required' => 'Vui lòng chọn tiện nghi.',
-                'amenities_id.array' => 'Danh sách tiện nghi không hợp lệ.',
-                'amenities_id.*.exists' => 'Một hoặc nhiều tiện nghi không tồn tại.',
-            ]
-        );
-        if ($validator->fails()) {
-            return response()->json([
-                'status' => false,
-                'message' => $validator->errors()->first(),
-                'key' => $validator->errors()->keys()[0],
-            ]);
-        }
+   public function addAmenitiesToTheRoom(Request $request)
+{
+    $validator = Validator::make(
+        $request->all(),
+        [
+            'room_id' => 'required',
+            'amenities_id' => 'required|array',
+            'amenities_id.*' => 'exists:amenities,id',
+        ],
+        [
+            'room_id.required' => 'Vui lòng chọn phòng.',
+            'amenities_id.required' => 'Vui lòng chọn tiện nghi.',
+            'amenities_id.array' => 'Danh sách tiện nghi không hợp lệ.',
+            'amenities_id.*.exists' => 'Một hoặc nhiều tiện nghi không tồn tại.',
+        ]
+    );
 
-        $room = Room::find($request->room_id);
-        if ($room) {
-            $room->amenities()->sync($request->amenities_id);
-        }
-
+    if ($validator->fails()) {
         return response()->json([
-            'status' => true,
-            'message' => 'Thao tác thành công!'
+            'status' => false,
+            'message' => $validator->errors()->first(),
+            'key' => $validator->errors()->keys()[0],
         ]);
     }
+
+    $room = Room::find($request->room_id);
+    if ($room) {
+        // Xoá các tiện nghi hiện tại
+        $room->amenities()->detach();
+
+        // Lặp để gắn lại với unit_code và subdomain
+        foreach ($request->amenities_id as $amenityId) {
+            $room->amenities()->attach($amenityId, [
+                'unit_code' => hf('ma_coso'),
+                'subdomain' => subdomain(),
+            ]);
+        }
+    }
+
+    return response()->json([
+        'status' => true,
+        'message' => 'Thao tác thành công!'
+    ]);
+}
+
 
     public function edit($id)
     {
