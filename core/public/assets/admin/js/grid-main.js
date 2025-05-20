@@ -471,11 +471,9 @@ function initViewScript() {
 
     });
 }
-if (typeof selectedItems === 'undefined') {
-    let selectedItems = [];
-}
+let selectedItems = [];
 $(document).ready(initViewScript);
-// let selectedItems = []; 123
+// let selectedItems = [];
 function initViewScriptGird() {
     const date_booking = new Date();
     const date_yyyy = date_booking.getFullYear();
@@ -2180,6 +2178,7 @@ function renderList(data) {
     }
 
     const search = searchInput.value?.toLowerCase() ?? '';
+    productList.innerHTML = '';
 
     if (data.length > 0) {
         const filtered = data.filter(item =>
@@ -2187,19 +2186,31 @@ function renderList(data) {
             item.name.toLowerCase().includes(search)
         );
 
-        productList.innerHTML = filtered.map(item => `
-            <div class="col ${item.type}">
-              <div class="service-product-item" onclick='selectItem(${JSON.stringify(item)})'>
+        filtered.forEach(item => {
+            const col = document.createElement('div');
+            col.className = `col ${item.type}`;
+
+            const product = document.createElement('div');
+            product.className = 'service-product-item';
+
+            product.innerHTML = `
                 <img src="https://encrypted-tbn0.gstatic.com/images?q=tbn:ANd9GcRhFX4Bsx5WvQfDXoJsgXQQG-ae0GpzcPcmkQ&s" class="service-product-img">
                 <div><strong>${item.name}</strong></div>
                 <div>${formatCurrency(item.price)}</div>
-              </div>
-            </div>
-        `).join('');
+            `;
+
+            product.addEventListener('click', () => {
+                selectItem(item);
+            });
+
+            col.appendChild(product);
+            productList.appendChild(col);
+        });
     } else {
         productList.innerHTML = '<p>Không có dữ liệu.</p>';
     }
 }
+
 
 
 window.selectItem = function (item) {

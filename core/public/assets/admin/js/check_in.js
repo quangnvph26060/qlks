@@ -1355,9 +1355,9 @@ function findRoomBookingId(id) {
                             </td>
                              <td>
                                 <div class="d-flex align-items-center justify-content-start" style="gap: 3px">
-                                    <input type="date" name="checkInDate" id="date-book-room" class="form-control date-book-room"  value="${datePart}" readonly>
+                                    <input type="date" name="checkInDate" id="date-book-room" class="form-control date-book-room"  value="${dateIn}" readonly>
 
-                                    <input type="time" name="checkInTime" id="time-book-room" class="form-control time-book-room"  value="${timePart}" >
+                                    <input type="time" name="checkInTime" id="time-book-room" class="form-control time-book-room"  value="${timeIn}" >
                                 </div>
                             </td>
                             <td>
