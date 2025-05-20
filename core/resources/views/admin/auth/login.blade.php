@@ -75,7 +75,8 @@
                 @csrf
                 <div class="form-group">
                     <label class="text-dark">@lang('Mã cơ sở')</label>
-                    <input type="text"  class="form-control" value="{{ old('unit_code') }}" name="unit_code" required>
+                    {{-- <input type="text"  class="form-control" value="{{ old('unit_code') }}" name="unit_code" required> --}}
+                     <input type="text"  class="form-control" value="coso1" name="unit_code" readonly>
                 </div>
                 <div class="form-group">
                     <label class="text-dark">@lang('Tài khoản')</label>

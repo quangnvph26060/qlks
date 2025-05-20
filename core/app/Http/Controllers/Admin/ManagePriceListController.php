@@ -25,6 +25,7 @@ class ManagePriceListController extends Controller
 
     public function priceList(Request $request)
     {
+        
         $input = $request->name;
         $pageTitle = 'Danh sách giá loại phòng'; 
        
@@ -69,6 +70,7 @@ class ManagePriceListController extends Controller
                 'extra_person_price'         => (float) str_replace('.', '', $validatedData['too_many_people']),
                 'price_validity_period'      => $validatedData['price_validity_period'],
                 'unit_code'                  => hf('ma_coso'),
+                'subdomain'                  =>subdomain(),
             ]);
             $notify[] = ['success', 'Thêm thành công'];
             return back()->withNotify($notify);
@@ -309,6 +311,7 @@ class ManagePriceListController extends Controller
             $priceRoomType->check_out_time       = $validatedData['check_out_time'];
             $priceRoomType->round_time           = $validatedData['round_time'];
             $priceRoomType->unit_code            = hf('ma_coso');
+            $priceRoomType->subdomain            = subdomain();
             if (is_array($validatedData['price_requirement'])) {
                 // Loại bỏ các giá trị null trong mảng
                 $priceRequirements = array_filter($validatedData['price_requirement'], function($value) {

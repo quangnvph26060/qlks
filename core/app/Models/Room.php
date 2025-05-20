@@ -4,18 +4,20 @@ namespace App\Models;
 
 use App\Constants\Status;
 use App\Traits\GlobalStatus;
+use App\Traits\BelongsToTenant;
 use Carbon\Carbon;
 use Illuminate\Database\Eloquent\Model;
 use Illuminate\Database\Eloquent\Casts\Attribute;
 use Illuminate\Database\Eloquent\SoftDeletes;
 use Carbon\CarbonPeriod;
 use App\Models\RoomChange;
+
 class Room extends Model
 {
-    use GlobalStatus, SoftDeletes;
+    use GlobalStatus, SoftDeletes, BelongsToTenant;
 
     protected $table = 'rooms';
-     protected $fillable = [ 'is_clean','unit_code'];
+    protected $fillable = ['is_clean', 'unit_code'];
 
     // insert hay get ra đều trả ra đúng mảng 
     protected $casts = [
@@ -39,7 +41,8 @@ class Room extends Model
     // }
     public function amenities()
     {
-        return $this->belongsToMany(Amenity::class, 'room_amenities', 'room_id', 'amenities_id')->withTimestamps();
+        return $this->belongsToMany(Amenity::class, 'room_amenities', 'room_id', 'amenities_id')->withTimestamps()
+            ->withPivot(['unit_code', 'subdomain']);;
     }
 
     public function products()
@@ -47,13 +50,20 @@ class Room extends Model
         return $this->belongsToMany(Product::class, 'room_products', 'room_id', 'product_id')->withPivot('quantity');
     }
 
+    // public function facilities()
+    // {
+    //     return $this->belongsToMany(Facility::class, 'room_facilities', 'room_id', 'facility_id')->withTimestamps();
+    // }
     public function facilities()
     {
-        return $this->belongsToMany(Facility::class, 'room_facilities', 'room_id', 'facility_id')->withTimestamps();
+        return $this->belongsToMany(Facility::class, 'room_facilities', 'room_id', 'facility_id')
+            ->withTimestamps()
+            ->withPivot(['unit_code', 'subdomain']);
     }
+
     public function roomType()
     {
-        return $this->belongsTo(RoomType::class);
+        return $this->belongsTo(RoomType::class, 'room_type_id');
     }
     public function images()
     {
@@ -221,7 +231,8 @@ class Room extends Model
     {
         return $this->hasMany(RoomChange::class, 'new_room_code');
     }
-    public function  roomBookingHistory(){
+    public function  roomBookingHistory()
+    {
         return $this->hasMany(RoomStatusHistory::class, 'room_id')->whereIn('status_code', [2, 3]);
-    }   
+    }
 }

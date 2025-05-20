@@ -45,7 +45,6 @@ class BookRoomController extends Controller
         $perPage = 10;
         $roomBookings = RoomBooking::query()
             ->with('admin', 'room')
-            ->where('unit_code', unitCode())
             ->when(!empty($request->data['bookingCode']), function ($query) use ($request) {
                 $query->where('booking_id', 'LIKE', '%' . $request->data['bookingCode'] . '%');
             })
@@ -319,6 +318,7 @@ class BookRoomController extends Controller
                 // kiểm tra khách hàng
                 if (!empty($request->insert_customer)) {
                     $customer = $this->add_guest($request->name, $request->phone, $request->customer_source);
+                 
                 }
 
                 // đặt cọc của từng phòng
@@ -396,9 +396,9 @@ class BookRoomController extends Controller
                 // tổng tiền của phòng
                 $sumPrice += $roomPice['unit_price'];
                 // TỔNG GIẢM GIÁ
-               // $totalDiscount += $discountAmount;
+                // $totalDiscount += $discountAmount;
                 // TỔNG ĐẶT CỌC 
-              //  $totalDeposit += $depositAmount;
+                //  $totalDeposit += $depositAmount;
 
                 $check_in->room_code      = $room['room'];
                 $check_in->document_date  = now();
@@ -416,6 +416,7 @@ class BookRoomController extends Controller
                 $check_in->note           = $room['note'];
                 $check_in->user_source    = $request->customer_source;
                 $check_in->unit_code      = hf('ma_coso');
+                $check_in->subdomain      = subdomain();
                 $check_in->created_by     = $request->name_staff ??  authAdmin()->id;
 
                 $check_in->save();
@@ -423,11 +424,27 @@ class BookRoomController extends Controller
                 $payment_pttt = $request->payment_pttt;
                 if ($discountAmount > 0 || $depositAmount > 0) {
                     if ($request->method == 'check_in') {
-                        savePayment('', $bookingId,  $roomPice['unit_price'],
-                         $room['room'], $depositAmount, $discountAmount, 0, $payment_pttt);
+                        savePayment(
+                            '',
+                            $bookingId,
+                            $roomPice['unit_price'],
+                            $room['room'],
+                            $depositAmount,
+                            $discountAmount,
+                            0,
+                            $payment_pttt
+                        );
                     } else {
-                        savePayment($bookingId, '',  $roomPice['unit_price'],
-                         $room['room'], $depositAmount, $discountAmount, 0, $payment_pttt);
+                        savePayment(
+                            $bookingId,
+                            '',
+                            $roomPice['unit_price'],
+                            $room['room'],
+                            $depositAmount,
+                            $discountAmount,
+                            0,
+                            $payment_pttt
+                        );
                     }
                 }
             } // end foreach
@@ -610,7 +627,7 @@ class BookRoomController extends Controller
     }
     public function bookEdit(Request $request)
     {
-        
+
         DB::beginTransaction();
         try {
             $validator      = Validator::make($request->all(), [
@@ -621,8 +638,8 @@ class BookRoomController extends Controller
                 return response()->json(['error' => $validator->errors()->all()]);
             }
             if (!is_array($request->room)) {
-                 return response()->json(['error' => 'Phòng đã được nhận rồi không cập nhật được']);
-               // return redirect()->back()->with('error', 'Dữ liệu phòng không hợp lệ hoặc chưa được chọn!');
+                return response()->json(['error' => 'Phòng đã được nhận rồi không cập nhật được']);
+                // return redirect()->back()->with('error', 'Dữ liệu phòng không hợp lệ hoặc chưa được chọn!');
             }
             foreach ($request->room as $index => $item) {
                 $room = json_decode($item, true);
@@ -794,6 +811,8 @@ class BookRoomController extends Controller
         }
     }
 
+    // lưu thông tin khách đặt
+
     protected function add_guest($name, $phone, $customer_source)
     {
         $existingUser = Customer::where('name', $name);
@@ -811,12 +830,15 @@ class BookRoomController extends Controller
                 'updated_at' => now()
             ]);
         } else {
-            // Nếu chưa tồn tại, tạo mới
+            do {
+                $code = getCode('KH', 6);
+            } while (Customer::where('customer_code', $code)->exists());
             $existingUser = Customer::create([
-                'customer_code' => getCode('KH', 6),
+                'customer_code' => $code,
                 'name'          => $name,
                 'phone'         => $phone,
                 'unit_code'     => hf('ma_coso'),
+                'subdomain'     => subdomain(),
                 'group_code'    => $customer_source,
                 'created_at'    => now(),
                 'updated_at'    => now()

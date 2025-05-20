@@ -13,7 +13,8 @@ class HotelFacility extends Model
     protected $fillable = [
         'ma_coso', 
         'ten_coso',
-        'trang_thai', 
+        'trang_thai',
+        'sudodmain'
     ];
     public function styleStatus(){
         return $this->trang_thai == 1 ? '<span class="badge badge--success">Hoạt động</span>' : '<span class="badge badge--danger">Không hoạt động</span>';

@@ -43,7 +43,7 @@
                 {{ $stt }}
             </th>
             <td data-label="Mã phòng">{{ $room->code }}</td>
-            <td data-label="Loại phòng">{{ $room->roomType->name }}</td>
+            <td data-label="Loại phòng">{{ $room->roomType->nme }}</td>
             <td data-label="Số phòng">{{ $room->room_number }}</td>
             <th data-label="Cơ sở vật chất" class="d-flex justify-content-start" style="gap:5px">
                 @if ($room->facilities->count() > 0)

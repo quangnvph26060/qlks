@@ -369,6 +369,7 @@ function saveRoomStatusHistory($room_id, $start_date, $end_date, $status_code)
             'start_date'  => $start_date,
             'end_date'    => $end_date,
             'unit_code'   => hf('ma_coso'),
+            'subdomain'   => subdomain(),
             'created_at'  => now(),
             'status_code' => $status_code
         ]);
@@ -387,10 +388,12 @@ function savePayment($booking_id, $checkin_id, $room_price, $room_code, $deposit
         'total_payment'    => $total_payment,   // số tiền  thanh toán
         'payment_method'   => $payment_method,
         'created_date'     => now(),
-        'unit_code'        => hf('ma_coso')
+        'unit_code'        => hf('ma_coso'),
+        'subdomain'        => subdomain(),
     ]);
 }
-function updateRoomService($checkIn, $roomIdOld, $roomIdNew) {
+function updateRoomService($checkIn, $roomIdOld, $roomIdNew)
+{
     RoomServiceProduct::where('check_in_id', $checkIn)
         ->where('room_code', $roomIdOld)
         ->update(['room_code' => $roomIdNew]);
@@ -569,13 +572,41 @@ function hf($key = null) // hotel_facilities
 function unitCode()
 {
     $unit = Cache::get('Unit_code');
+
     if (!$unit) {
         $admin = Auth::guard('admin')->user();
-        $unit_code = $admin->unit_code;
-        Cache::put('Unit_code', $unit_code);
-        $unit = $unit_code;
+
+        if ($admin && isset($admin->unit_code)) {
+            $unit_code = $admin->unit_code;
+            Cache::put('Unit_code', $unit_code);
+            $unit = $unit_code;
+        } else {
+            // Nếu chưa login thì return null luôn
+            return null;
+        }
     }
+
     return $unit;
+}
+
+function subdomain()
+{
+    $subdomain = Cache::get('Subdomain');
+
+    if (!$subdomain) {
+        $admin = Auth::guard('admin')->user();
+
+        if ($admin && isset($admin->subdomain)) {
+            $sub_domain = $admin->subdomain;
+            Cache::put('Subdomain', $sub_domain);
+            $subdomain = $sub_domain;
+        } else {
+            // Trường hợp chưa login hoặc không có subdomain
+            return null;
+        }
+    }
+
+    return $subdomain;
 }
 // end setting and setup hotels
 function isImage($string)

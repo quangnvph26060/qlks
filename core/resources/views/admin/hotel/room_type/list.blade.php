@@ -36,62 +36,65 @@
                                                 onclick=" toggleRepresentatives('{{ $type->id }}', this)">
                                             </button>
                                         </td>
-                                       
-                                            <td style="width:20px">
-                                                <svg class="svg_menu_check_in" xmlns="http://www.w3.org/2000/svg" width="30"
-                                                    height="30" viewBox="0 0 21 21">
-                                                    <g fill="currentColor" fill-rule="evenodd">
-                                                        <circle cx="10.5" cy="10.5" r="1" />
-                                                        <circle cx="10.5" cy="5.5" r="1" />
-                                                        <circle cx="10.5" cy="15.5" r="1" />
-                                                    </g>
-                                                </svg>
 
-                                                <div class="dropdown menu_dropdown_check_in" id="dropdown-menu"
-                                                    style="position:fixed">
-                                                    @can('admin.hotel.room.type.edit')
-                                                        <div class="dropdown-item booked_room_edit">
-                                                            <a href="{{ route('admin.hotel.room.type.edit', $type->id) }}"
-                                                                style="color:black;padding:5px">
-                                                                Sửa
-                                                            </a>
-                                                        </div>
-                                                    @endcan
-                                                    @can('admin.hotel.room.type.status')
-                                                        <div class="dropdown-item booked_room">
+                                        <td style="width:20px">
+                                            <svg class="svg_menu_check_in" xmlns="http://www.w3.org/2000/svg" width="30"
+                                                height="30" viewBox="0 0 21 21">
+                                                <g fill="currentColor" fill-rule="evenodd">
+                                                    <circle cx="10.5" cy="10.5" r="1" />
+                                                    <circle cx="10.5" cy="5.5" r="1" />
+                                                    <circle cx="10.5" cy="15.5" r="1" />
+                                                </g>
+                                            </svg>
 
-                                                            @if ($type->status == 0)
-                                                                <button class=" confirmationBtn"
-                                                                    data-action="{{ route('admin.hotel.room.type.status', $type->id) }}"
-                                                                    data-question="@lang('Bạn có chắc chắn muốn bật loại phòng này không?')">
-                                                                    Hoạt động
-                                                                </button>
-                                                            @else
-                                                                <button class="confirmationBtn"
-                                                                    data-action="{{ route('admin.hotel.room.type.status', $type->id) }}"
-                                                                    data-question="@lang('Bạn có chắc chắn muốn vô hiệu hóa loại phòng này không?')">
-                                                                    Tắt hoạt động
-                                                                </button>
-                                                            @endif
+                                            <div class="dropdown menu_dropdown_check_in" id="dropdown-menu"
+                                                style="position:fixed">
+                                                @can('admin.hotel.room.type.edit')
+                                                    <div class="dropdown-item booked_room_edit">
+                                                        <a href="{{ route('admin.hotel.room.type.edit', $type->id) }}"
+                                                            style="color:black;padding:5px">
+                                                            Sửa
+                                                        </a>
+                                                    </div>
+                                                @endcan
+                                                @can('admin.hotel.room.type.status')
+                                                    <div class="dropdown-item booked_room">
 
-                                                        </div>
-                                                    @endcan
-                                                    @can('admin.hotel.room.type.delete')
-                                                        <div class="dropdown-item booked_room_detail"> <button
-                                                                class=" btn-delete icon-delete-room" data-id="{{ $type->id }}"
-                                                                data-modal_title="@lang('Xóa trạng thái')" type="button"
-                                                                data-pro="0">Xóa</div>
-                                                    @endcan
+                                                        @if ($type->status == 0)
+                                                            <button class=" confirmationBtn"
+                                                                data-action="{{ route('admin.hotel.room.type.status', $type->id) }}"
+                                                                data-question="@lang('Bạn có chắc chắn muốn bật loại phòng này không?')">
+                                                                Hoạt động
+                                                            </button>
+                                                        @else
+                                                            <button class="confirmationBtn"
+                                                                data-action="{{ route('admin.hotel.room.type.status', $type->id) }}"
+                                                                data-question="@lang('Bạn có chắc chắn muốn vô hiệu hóa loại phòng này không?')">
+                                                                Tắt hoạt động
+                                                            </button>
+                                                        @endif
 
-                                                </div>
+                                                    </div>
+                                                @endcan
+                                                @can('admin.hotel.room.type.delete')
+                                                    <div class="dropdown-item booked_room_detail"> <button
+                                                            class=" btn-delete icon-delete-room" data-id="{{ $type->id }}"
+                                                            data-modal_title="@lang('Xóa trạng thái')" type="button"
+                                                            data-pro="0">Xóa</div>
+                                                @endcan
 
-                        </div>
+                                            </div>
+
                     </div>
+                </div>
 
-                    </td>
-              
+                </td>
+
                 <td data-label="STT" style="text-align:right">
-                    {{ $id + 1 }}
+                    @php
+                        $stt = ($rooms->currentPage() - 1) * $rooms->perPage() + $id + 1;
+                    @endphp
+                    {{ $stt }}
                 </td>
 
                 <td data-label="Loại phòng" class="text-left">

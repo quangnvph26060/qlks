@@ -270,7 +270,8 @@
                             if (response.status === 'success') {
                                 var data = response.data;
                                 var html = '';
-
+                                console.log(data);
+                                
                                 data.forEach(element => {
                                     const startDate = new Date(
                                         `${element.setup_pricing['effective_start_date']}`);

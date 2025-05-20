@@ -4,10 +4,10 @@ namespace App\Models;
 
 use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\Model;
-
+use App\Traits\BelongsToTenant;
 class Customer extends Model
 {
-    use HasFactory;
+    use HasFactory,BelongsToTenant;
     protected $table = 'customer';
     protected $fillable = [
         'customer_code',
@@ -22,6 +22,7 @@ class Customer extends Model
         'status',
         'created_at',
         'updated_at',
+        'subdomain',
     ];
     public function styleStatus(){
         return $this->status == 1 ? '<span class="badge badge--success">Hoạt động</span>' : '<span class="badge badge--danger">Không hoạt động</span>';

@@ -3,10 +3,10 @@
 namespace App\Models;
 use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\Model;
-
+use App\Traits\BelongsToTenant;
 class RoomChange extends Model
 {
-    use HasFactory;
+    use HasFactory,BelongsToTenant;
 
     protected $table = 'room_change';
     protected $primaryKey = 'id';

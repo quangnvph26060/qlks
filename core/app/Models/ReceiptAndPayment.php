@@ -7,10 +7,10 @@ use Illuminate\Database\Eloquent\Casts\Attribute;
 use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\Model;
 use Illuminate\Database\Eloquent\Relations\HasOne;
-
+use App\Traits\BelongsToTenant;
 class ReceiptAndPayment extends Model
 {
-    use HasFactory;
+    use HasFactory,BelongsToTenant;
 
     protected $table = 'receipts_and_payments';
 
@@ -29,6 +29,7 @@ class ReceiptAndPayment extends Model
         'room_code',
         'status',
         'payment_id',
+        'subdomain'
     ];
     protected $appends = ['status_badge','check_in','room_booking'];
 

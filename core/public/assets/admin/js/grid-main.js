@@ -208,13 +208,13 @@ function initGridMain(data, date) {
                         if (item.room_booking_history.length > 0 && item.room_booking_history) {
                             item.room_booking_history.forEach(booking => {
                                 status_code = booking.status_code;
-                                if (Array.isArray(booking.check_in_data) && booking.check_in_data.length > 0 && booking.status_code == 3 ) {
-                                  
-                                    
+                                if (Array.isArray(booking.check_in_data) && booking.check_in_data.length > 0 && booking.status_code == 3) {
+
+
                                     let room_code = "";
                                     booking.check_in_data.forEach(k => {
-                                       
-                                        
+
+
                                         //  check liên quan đổi phòng
                                         if (k.room_change != null) {
                                             room_code = k.room_change;
@@ -223,18 +223,18 @@ function initGridMain(data, date) {
                                         }
                                         // console.log(selectedDate);
                                         // console.log('checkin' + k?.checkin_date.split(' ')[0]);
-                                        
+
                                         if (room_code == item.id &&
                                             selectedDate >= k?.checkin_date.split(' ')[0] &&
                                             selectedDate < k?.checkout_date.split(' ')[0]
-                                            ) {
+                                        ) {
                                             isBooking = k; // Lưu bản ghi nếu tìm thấy
                                             flag = 'check_in_data';
                                         }
                                     });
 
                                 }
-                                else if (Array.isArray(booking.booking_data) && booking.booking_data.length > 0  && booking.status_code == 2) {
+                                else if (Array.isArray(booking.booking_data) && booking.booking_data.length > 0 && booking.status_code == 2) {
                                     let matchingBooking = booking.booking_data.find(booking_data => booking_data.room_code == item.id);
                                     if (matchingBooking && matchingBooking?.checkin_date.split(' ')[0] === selectedDate) {
                                         isBooking = matchingBooking; // Lưu bản ghi nếu tìm thấy
@@ -258,13 +258,13 @@ function initGridMain(data, date) {
                         //     button.dataset.id = isBooking?.booking_id ?? isBooking?.check_in_id ?? "";
                         // }
                         //   console.log(isBooking);
-                        const checkTime =  selectedDate >= isBooking?.checkin_date.split(' ')[0]  &&
-                        selectedDate < isBooking?.checkout_date.split(' ')[0];
+                        const checkTime = selectedDate >= isBooking?.checkin_date.split(' ')[0] &&
+                            selectedDate < isBooking?.checkout_date.split(' ')[0];
                         roomHTML += `
                         <div class="room-card ${item.status} ${flag}     
                         ${status_code == 2 && checkTime
                                 ? 'bg-yellow'
-                                :   status_code == 3 && checkTime
+                                : status_code == 3 && checkTime
                                     ? 'bg-red'
                                     : ''
                             }"
@@ -473,7 +473,7 @@ function initViewScript() {
 }
 if (typeof selectedItems === 'undefined') {
     let selectedItems = [];
-  }
+}
 $(document).ready(initViewScript);
 // let selectedItems = []; 123
 function initViewScriptGird() {
@@ -488,15 +488,15 @@ function initViewScriptGird() {
     const formattedTimes = `${date_hour}:${date_minutes}`;
     $(document).off("click", ".add_product_service_payment").on("click", ".add_product_service_payment", function (e) {
         e.stopPropagation();
-    
+
         const button = document.getElementById("add-service-room-booking");
-    
+
         button.setAttribute('data-room-id', $(this).attr('data-room-id'));
         button.setAttribute('data-coustomer', $(this).attr('data-coustomer'));
         button.setAttribute('data-room', $(this).attr('data-room'));
         button.setAttribute('data-id', $(this).attr('data-id'));
-        
-        $('#add-service-room-booking').off("click").on("click", function() {
+
+        $('#add-service-room-booking').off("click").on("click", function () {
             var roomId = $(this).attr('data-room-id');
             var checkInId = $(this).attr('data-id');
             $.ajax({
@@ -525,9 +525,9 @@ function initViewScriptGird() {
                             selectedItemsBox.innerHTML = '<div class="text-muted">Chưa có dịch vụ, sản phẩm</div>';
                             $('.total_product_service_display').text(0);
                         }
-    
+
                     }
-    
+
                 },
                 error: function (error) {
                     $('#loading').hide();
@@ -540,15 +540,15 @@ function initViewScriptGird() {
             $('#check_in_id_service').val($(this).data("id"));
             $('.service-customer').text($(this).data("coustomer"));
             modal.show();
-          
+
         });
     });
     $(document).off("click", ".add_product_service").on("click", ".add_product_service", function (e) {
-     e.stopPropagation();
+        e.stopPropagation();
         $('#selectedItems').empty();
         selectedItems = [];
         var roomId = $(this).data('room-id');
-     
+
         var checkInId = $(this).data('id');
         $.ajax({
             url: getAllService,
@@ -647,6 +647,8 @@ function initViewScriptGird() {
         $('#add-service-room-booking').hide();
         $('[id="select-option-pttt-main"]').hide();
         $('[id="select-option-pttt"]').hide();
+        $('[id="print_invoice"]').hide();
+        $('[id="checkout_room"]').hide();
         $('[id="total_payment_display"]').hide();
         let dataId = $(this).attr("data-id");
         let book = $(this).attr("data-book");
@@ -658,7 +660,7 @@ function initViewScriptGird() {
             date: date,         // Lấy ngày check-in
             room_code: dataId,   // Lấy loại phòng
             room_type: room_type,
-            method:"LETAN"
+            method: "LETAN"
         });
 
         findRoomBookingId(selectedData)
@@ -677,22 +679,22 @@ function initViewScriptGird() {
                     $('[id="date-book-room-booking-edit"]').val(formattedDates);
                     $('.pageModal').text('Nhận phòng');
 
-                
+
 
                     let totalPrice, total_deposit_amount, total_deposit_discount = 0;
                     var tbody = $('#list-booking-edit-letan');
                     tbody.empty();
                     // nhân viên
                     var selected_select_staff = $('#select-staff-edit-letan');
-                     selected_select_staff.empty();
+                    selected_select_staff.empty();
                     let option_staff = `<option value="">Chọn nhân viên</option>`;
                     data.admin.forEach(function (item) {
-                        if(item.name === data.option_admin){
+                        if (item.name === data.option_admin) {
                             option_staff += `<option value="${item.id}" selected>${item.username}</option>`;
-                        }else{
+                        } else {
                             option_staff += `<option value="${item.id}">${item.username}</option>`;
                         }
-                       
+
                     });
                     selected_select_staff.append(option_staff);
 
@@ -730,7 +732,7 @@ function initViewScriptGird() {
                             const hasSameRoomCode = item.rooms.some(r => r !== room && r.room_code === room.room_code);
 
                             let datePart = '', timePart = '';
-    
+
                             if (hasSameRoomCode) {
                                 [datePart, timePart] = room.checkin_date.split(' ');
                             } else {
@@ -739,11 +741,11 @@ function initViewScriptGird() {
                                 const currentHour = String(now.getHours()).padStart(2, '0');
                                 const currentMinute = String(now.getMinutes()).padStart(2, '0');
                                 const currentTime = `${currentHour}:${currentMinute}`;
-                        
+
                                 datePart = dateOnly;
                                 timePart = currentTime;
                             }
-                            
+
                             var tr = `
                                 <tr data-room-booking-id="${room.booking_id}" data-room-id="${room.room_code}"  data-room-type-id="${room.room_type}" data-date="${formattedDates}">
                                     <td>
@@ -913,6 +915,59 @@ function initViewScriptGird() {
                 $('#changeRoomModal').addClass('z__index-mod');
             });
         });
+        //123
+        $(document).off("click", ".btn-checkout-room").on("click", ".btn-checkout-room", function (e) {
+            e.preventDefault();
+
+            let mainRoomBookingId = $('#id_room_booking').val();
+
+            let selectedBookingIds = [];
+            let roomData = [];
+
+            $('#list-booking-edit-letan tr').each(function () {
+                let checkbox = $(this).find('input[type="checkbox"]');
+                let isChecked = checkbox.prop('checked');
+
+                let bookingId = $(this).data('room-booking-id');
+                let roomId = $(this).data('room-id');
+
+                if (isChecked) {
+                    selectedBookingIds.push(bookingId);
+                }
+
+                roomData.push({
+                    roomId: roomId,
+                    roomBookingId: bookingId
+                });
+            });
+
+
+
+            $.ajax({
+                url: checkOutRoomUrl,
+                type: 'POST',
+                data: {
+                    mainRoomBookingId: mainRoomBookingId,
+                    selectedBookingIds: selectedBookingIds,
+                    roomData: roomData
+                },
+                success: function (data) {
+                    if (data.status == 'success') {
+                        notify('success', data.success);
+                        $('#myModal-check-in-edit').modal('hide');
+                        let selectedDate = $('#startDate').val();
+                        initGridMain('', selectedDate);
+                    } else {
+                        notify('error', data.error);
+                    }
+                },
+                error: function (error) {
+                    $('#loading').hide();
+                    console.log('Error:', error);
+                }
+            });
+        });
+
 
         $(document).off("click", ".check_in_data").on("click", ".check_in_data", function (e) {
             e.stopPropagation();
@@ -934,7 +989,7 @@ function initViewScriptGird() {
             button.setAttribute('data-coustomer', $(this).attr('data-coustomer'));
             button.setAttribute('data-room', $(this).attr('data-room'));
             button.setAttribute('data-id', $(this).attr('data-booking-id'));
-            
+
 
 
 
@@ -943,6 +998,8 @@ function initViewScriptGird() {
                 $('.booking-form-pttt').attr('action', paymentRoomUrl);
                 $('[id="select-option-pttt-main"]').show();
                 $('[id="select-option-pttt"]').show();
+                $('[id="print_invoice"]').show();
+                $('[id="checkout_room"]').show();
                 $('[id="total_payment_display"]').show();
                 $('#add-service-room-booking').show();
                 $('#input_pttt').val('');
@@ -950,6 +1007,8 @@ function initViewScriptGird() {
                 $('.booking-form-pttt').attr('action', checkInUpdateUrl);
                 $('[id="select-option-pttt-main"]').hide();
                 $('[id="select-option-pttt"]').hide();
+                $('[id="print_invoice"]').hide();
+                $('[id="checkout_room"]').hide();
                 $('#add-service-room-booking').hide();
                 $('[id="total_payment_display"]').hide();
             }
@@ -1259,10 +1318,10 @@ function initViewScriptGird() {
 
         });
         $('#myModal-booking-edit').on('hidden.bs.modal', function () {
-           $('#list-booking-edit').empty('');
-         
+            $('#list-booking-edit').empty('');
+
         });
-          
+
         $(document).off("click", ".room-booking").on("click", ".room-booking", function (e) {
             if ($(e.target).closest('.menu-btn').length > 0) return;
             let dataId = $(this).attr("data-booking-id");
@@ -1298,12 +1357,12 @@ function initViewScriptGird() {
                         selected_select_staff.empty();
                         let option_staff = `<option value="">Chọn nhân viên</option>`;
                         response.admin.forEach(function (item) {
-                            if(item.name === response.option_admin){
+                            if (item.name === response.option_admin) {
                                 option_staff += `<option value="${item.id}" selected>${item.username}</option>`;
-                            }else{
+                            } else {
                                 option_staff += `<option value="${item.id}">${item.username}</option>`;
                             }
-                            
+
                         });
                         selected_select_staff.append(option_staff);
 
@@ -1558,37 +1617,37 @@ function initViewScriptGird() {
 
         });
         $(document).off('submit', '#btn-change-booking-room')
-        .on('submit', '#btn-change-booking-room', function (e) {
-            e.preventDefault();
-            let formData = $(this).serializeArray();
-            let formObject = {};
-            formData.forEach(function (field) {
-                formObject[field.name] = field.value;
-            });
-            formData.push({
-                name: 'choice',
-                value: 'room_booking',
-            });
-            let url = $(this).attr('action');
-            $.ajax({
-                type: "POST",
-                url: url,
-                data: formData,
-                success: function (response) {
-                    if (response.status === 'success') {
-                        notify('success', response.data);
-                        $('#changeRoomModal').modal('hide');
-                        let selectedDate = $('#startDate').val();
-                        initGridMain('', selectedDate);
-                    }
-                    //  else {
-                    //     notify('error', response.message);
-                    //     // changeRoom(Id, bookingId, roomId, dateId);
-                    // }
-                },
-            });
+            .on('submit', '#btn-change-booking-room', function (e) {
+                e.preventDefault();
+                let formData = $(this).serializeArray();
+                let formObject = {};
+                formData.forEach(function (field) {
+                    formObject[field.name] = field.value;
+                });
+                formData.push({
+                    name: 'choice',
+                    value: 'room_booking',
+                });
+                let url = $(this).attr('action');
+                $.ajax({
+                    type: "POST",
+                    url: url,
+                    data: formData,
+                    success: function (response) {
+                        if (response.status === 'success') {
+                            notify('success', response.data);
+                            $('#changeRoomModal').modal('hide');
+                            let selectedDate = $('#startDate').val();
+                            initGridMain('', selectedDate);
+                        }
+                        //  else {
+                        //     notify('error', response.message);
+                        //     // changeRoom(Id, bookingId, roomId, dateId);
+                        // }
+                    },
+                });
 
-        });
+            });
         function formatDatee(inputDate) {
             // Chia chuỗi ngày thành các phần tử: năm, tháng, ngày
             var parts = inputDate.split('-');
@@ -1866,7 +1925,7 @@ function initViewScriptGird() {
                         $('#addRoomModal').modal('hide');
                         $('#select-option-pttt').hide();
                         $('#myModal-booking').modal('show');
-                        document.body.classList.remove("modal-open"); 
+                        document.body.classList.remove("modal-open");
                     } else if (response.status === 'error') {
                         $('#loading').hide();
                         var tr = ``;
@@ -1882,7 +1941,7 @@ function initViewScriptGird() {
             });
         }
         $('.delete-room-booking-edit-letan').on('click', function () {
-          
+
             let selectedBookingIds = [];
             Swal.fire({
                 title: 'Bạn có chắc chắn xoá phòng này không',
@@ -1976,7 +2035,7 @@ function initViewScriptGird() {
 }
 $('.btn-book-pttt').off('click').on('click', function (e) {
 
-    
+
     e.preventDefault();
     function validator(selectedOption, inputPtttValue) {
         let isValid = true;
@@ -2014,7 +2073,7 @@ $('.btn-book-pttt').off('click').on('click', function (e) {
             }, // viết tiếp điều kiện validate vào đây (validations)
             ]
         },
-       'phone': { // passwword thì nên đặt là name trong input đó
+        'phone': { // passwword thì nên đặt là name trong input đó
             'element': document.getElementById('phone'), // id trong input đó
             'error': document.getElementById('phone_error'), // thẻ hiển thị lỗi
             'validations': [
@@ -2407,6 +2466,7 @@ function validatePhone(value) {
 
     return isValid;
 }
+//123 thanh toán
 $('.booking-form-pttt').on('submit', function (e) {
     let selectedBookingIds = [];
     e.preventDefault();
@@ -2418,19 +2478,19 @@ $('.booking-form-pttt').on('submit', function (e) {
     if (!validatePhone(formData[3]['value'])) {
         return;
     }
-    
+
     let url = $(this).attr('action');
     var roomData = [];
     var filteredRoomData = [];
     const method = $('.btn-book-pttt').attr('data-method');
-  
+
     $('#list-booking-edit-letan tr').each(function () {
 
         var checkbox = $(this).find('input[type="checkbox"]');
         if (checkbox.prop('checked')) {
             var bookingId = $(this).data('room-booking-id');
             selectedBookingIds.push(bookingId);
-           // $(this).remove();
+            // $(this).remove();
         }
         var roomBookingId = $(this).data('room-booking-id');
         var roomId = $(this).data('room-id');
@@ -2465,19 +2525,19 @@ $('.booking-form-pttt').on('submit', function (e) {
             discount: discount,
             roomBookingId: roomBookingId,
         });
-        if(method == "check_in"){
+        if (method == "check_in") {
             if (selectedBookingIds.length === 0) {
-                notify('error','Vui lòng chọn phòng')
+                notify('error', 'Vui lòng chọn phòng')
                 return; // Dừng xử lý tiếp theo
-            } 
+            }
             filteredRoomData = roomData.filter(item => selectedBookingIds.includes(item.roomBookingId));
-        }else{
+        } else {
             filteredRoomData = roomData;
         }
-       
-        
-       
-        
+
+
+
+
     });
 
     filteredRoomData.forEach(function (item) {
@@ -2500,7 +2560,8 @@ $('.booking-form-pttt').on('submit', function (e) {
 
             if (response.status === 'success') {
                 notify('success', response.success);
-                $('#myModal-check-in-edit').modal('hide');
+                // $('#myModal-check-in-edit').modal('hide');
+              $('#input_pttt').val('');
 
                 let selectedDate = $('#startDate').val();
                 initGridMain('', selectedDate);

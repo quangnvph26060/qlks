@@ -12,7 +12,7 @@ class RolesController extends Controller
 
     public function index()
     {
-        $roles = Role::all();
+        $roles = Role::where('unit_code',hf('ma_coso'))->where('subdomain',subdomain())->get();
         $pageTitle = "Tất cả vai trò";
         return view('admin.roles.index', compact('roles', 'pageTitle'));
     }
@@ -50,6 +50,8 @@ class RolesController extends Controller
             $notification = 'Vai trò mới đã được cập nhật thành công';
         }
         $role->name = $request->name;
+        $role->unit_code = hf('ma_coso');
+        $role->subdomain = subdomain();
         $role->save();
 
         $role->permissions()->sync($request->permissions);

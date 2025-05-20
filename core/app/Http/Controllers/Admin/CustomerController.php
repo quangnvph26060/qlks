@@ -14,19 +14,19 @@ class CustomerController extends Controller
 {
     public function index()
     {
-        $code   = SetupCode::where('menu_name','Danh mục khách hàng')->where('unit_code',unitCode())->value('code');
-        $count  = Customer::where('unit_code',unitCode())->count();
-        $code   = $code ? $code.$count+1 : '';
+        $code   = SetupCode::where('menu_name', 'Danh mục khách hàng')->value('code');
+        $count  = Customer::count();
+        $code   = $code ? $code . $count + 1 : '';
         $pageTitle = '';
-        $customers = Customer::where('unit_code',unitCode())->orderBy('id', 'desc')->paginate(10);
-        $unit_codes = HotelFacility::select('ma_coso')->get();
-        return view('admin.hotel.customer.list', compact('pageTitle', 'customers', 'unit_codes','code'));
+        $customers = Customer::orderBy('id', 'desc')->paginate(10);
+        $unit_codes = HotelFacility::select('ma_coso')->where('subdomain', subdomain())->get();
+        return view('admin.hotel.customer.list', compact('pageTitle', 'customers', 'unit_codes', 'code'));
     }
 
-//    public function index(){
-//        $pageTitle = "Quản lý khách hàng";
-//        return view('admin.customer.index', compact('pageTitle'));
-//    }
+    //    public function index(){
+    //        $pageTitle = "Quản lý khách hàng";
+    //        return view('admin.customer.index', compact('pageTitle'));
+    //    }
     public function store(Request $request)
     {
         $request->validate([
@@ -34,7 +34,7 @@ class CustomerController extends Controller
             'customer_code' => 'required|string',
             'name' => 'required|string',
             // 'phone' => 'required|numeric',
-           
+
         ]);
         $customer = new Customer();
         $customer->customer_code = $request->customer_code;
@@ -47,6 +47,7 @@ class CustomerController extends Controller
         $customer->status = $request->status;
         // $customer->source_code = $request->source_code;
         $customer->unit_code =  unitCode();
+        $customer->subdomain =  subdomain();
         $customer->save();
         $notify[] = ['success', 'Thêm khách hàng thành công'];
         return back()->withNotify($notify);
@@ -70,11 +71,9 @@ class CustomerController extends Controller
         ]);
         $customer = Customer::find($id);
         $code = $customer->customer_code;
-        $bookings = RoomBooking::where('customer_code', $code)->where('unit_code',unitCode())->first();
-        if($bookings)
-        {
-            if($request->customer_code == $customer->customer_code)
-            {
+        $bookings = RoomBooking::where('customer_code', $code)->where('unit_code', unitCode())->first();
+        if ($bookings) {
+            if ($request->customer_code == $customer->customer_code) {
                 $customer->phone = $request->phone ?? '';
                 $customer->email = $request->email ?? '';
                 $customer->address = $request->address ?? '';
@@ -85,15 +84,10 @@ class CustomerController extends Controller
                 // $customer->unit_code =  $request->unit_code;
                 $customer->save();
                 $notify[] = ['success', 'Cập nhật khách hàng thành công'];
-            }
-            else
-            {
+            } else {
                 $notify[] = ['error', 'Khách hàng đang có đơn hàng, không thể cập nhật'];
             }
-        
-        }
-        else
-        {
+        } else {
             $customer->customer_code = $request->customer_code;
             $customer->name = $request->name;
             $customer->phone = $request->phone ?? '';
@@ -107,29 +101,26 @@ class CustomerController extends Controller
             $customer->save();
             $notify[] = ['success', 'Cập nhật khách hàng thành công'];
         }
-       
+
         return back()->withNotify($notify);
     }
     public function delete($id)
     {
         $customer = Customer::find($id);
         $code = $customer->customer_code;
-        $bookings = RoomBooking::where('customer_code', $code)->where('unit_code',unitCode())->first();
+        $bookings = RoomBooking::where('customer_code', $code)->where('unit_code', unitCode())->first();
         if ($bookings) {
             return response()->json([
                 'status' => 'error',
                 'message' => 'Không thể xóa vì khách hàng đã có đơn hàng'
             ]);
-        }
-        else
-        {
+        } else {
             Customer::destroy($id);
             return response()->json([
                 'status' => 'success',
                 'message' => 'Xóa khách hàng thành công',
             ]);
         }
-       
     }
     public function status($id)
     {
@@ -152,36 +143,32 @@ class CustomerController extends Controller
             'message' => 'Cập nhật trạng thái chức năng thành công',
             'status_html' => $statusHtml,
         ]);
-        
     }
     public function search(Request $request)
     {
-        $code = SetupCode::where('menu_name','Danh mục khách hàng')->where('unit_code',unitCode())->value('code');
-        $count = Customer::where('unit_code',unitCode())->count();
-        $code = $code.$count;
+        $code = SetupCode::where('menu_name', 'Danh mục khách hàng')->value('code');
+        $count = Customer::count();
+        $code = $code . $count;
         $pageTitle = '';
-        if($request->input('customer_code') == '' && $request->input('name') == '' && $request->input('phone') == '' && $request->input('address') == '')
-        {
+        if ($request->input('customer_code') == '' && $request->input('name') == '' && $request->input('phone') == '' && $request->input('address') == '') {
             $customers = Customer::orderBy('id', 'desc')->paginate(10);
-        }
-        else
-        {
+        } else {
             $customers = Customer::select('*')
-//                ->where(function ($query) use ($request) {
-//                    $query ->where('customer_code','LIKE', '%'.$request->input('customer_code').'%');
-//                })
-                ->where('customer_code','LIKE', '%'.$request->input('customer_code').'%')
-                ->where('name','LIKE', '%'.$request->input('name').'%')
-                ->where('phone','LIKE', '%'.$request->input('phone').'%')
-                ->where('address','LIKE', '%'.$request->input('address').'%')
-                ->where('unit_code',unitCode())
+                //                ->where(function ($query) use ($request) {
+                //                    $query ->where('customer_code','LIKE', '%'.$request->input('customer_code').'%');
+                //                })
+                ->where('customer_code', 'LIKE', '%' . $request->input('customer_code') . '%')
+                ->where('name', 'LIKE', '%' . $request->input('name') . '%')
+                ->where('phone', 'LIKE', '%' . $request->input('phone') . '%')
+                ->where('address', 'LIKE', '%' . $request->input('address') . '%')
+
                 ->orderBy('id', 'desc')->paginate(10);
         }
         $customer_code = $request->input('customer_code');
         $name =  $request->input('name');
         $phone = $request->input('phone');
         $address = $request->input('address');
-        return view('admin.hotel.customer.list', compact('pageTitle', 'customers','customer_code','name','address','phone','code'));
+        return view('admin.hotel.customer.list', compact('pageTitle', 'customers', 'customer_code', 'name', 'address', 'phone', 'code'));
     }
     public function checkCode(Request $request)
     {
@@ -191,26 +178,20 @@ class CustomerController extends Controller
         // $user_delete = $customer->onlyTrashed()->select('customer_code')->where('customer_code', $customer_code)->first();
         if (!empty($user)) {
             return 1;
-        }
-        else
-        {
+        } else {
             return 2;
         }
-       
     }
-    public function getCustomer(Request $request,$id)
+    public function getCustomer(Request $request, $id)
     {
         $customer = Customer::find($id);
         $code = $customer->customer_code;
-        $bookings = RoomBooking::where('customer_code', $code)->where('unit_code',unitCode())->first();
+        $bookings = RoomBooking::where('customer_code', $code)->where('unit_code', unitCode())->first();
         // $user_delete = $customer->onlyTrashed()->select('customer_code')->where('customer_code', $customer_code)->first();
         if (!empty($bookings)) {
             return 1;
-        }
-        else
-        {
+        } else {
             return 2;
         }
-       
     }
 }

@@ -101,7 +101,9 @@ trait AuthenticatesUsers
      */
     protected function credentials(Request $request)
     {
-        return $request->only($this->username(), 'password', 'unit_code');
+        $credentials = $request->only($this->username(), 'password', 'unit_code');
+        $credentials['subdomain'] = $this->getSubdomainFromHost($request->getHost());
+        return $credentials;
     }
     protected function canLoginBySubdomain(Request $request)
     {

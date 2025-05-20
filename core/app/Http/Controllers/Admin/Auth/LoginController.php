@@ -77,9 +77,9 @@ class LoginController extends Controller
             return $this->sendLockoutResponse($request);
         }
         // check username to subdomain in login 
-        if (!$this->canLoginBySubdomain($request)) {
-            abort(403, 'Bạn không có quyền đăng nhập tại subdomain này');
-        }
+        // if (!$this->canLoginBySubdomain($request)) {
+        //     abort(403, 'Bạn không có quyền đăng nhập tại subdomain này');
+        // }
         if ($this->attemptLogin($request)) {
             return $this->sendLoginResponse($request);
         }
@@ -96,6 +96,7 @@ class LoginController extends Controller
     public function logout(Request $request)
     {
         Cache::forget('Unit_code');
+        Cache::forget('Subdomain');
         $this->guard('admin')->logout();
         $request->session()->invalidate();
         return $this->loggedOut($request) ?: redirect($this->redirectTo);

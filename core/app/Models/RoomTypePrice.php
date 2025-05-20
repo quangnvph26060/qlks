@@ -4,10 +4,11 @@ namespace App\Models;
 
 use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\Model;
+use App\Traits\BelongsToTenant;
 
 class RoomTypePrice extends Model
 {
-    use HasFactory;
+    use HasFactory,BelongsToTenant;
     protected $table = 'room_type_price';
 
     protected $fillable = [
@@ -19,6 +20,7 @@ class RoomTypePrice extends Model
         'auto_calculate',
         'unit_code',
         'price_validity_period',
+        'subdomain',
     ];
     public function setupPricing(){
         return $this->belongsTo(SetupPricing::class, 'setup_pricing_id', 'id');

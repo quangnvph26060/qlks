@@ -16,6 +16,7 @@ class PremiumServiceController extends Controller
 {
     public function index(Request $request)
     {
+       
         $input         = $request->name;
         $pageTitle     = 'Dịch vụ cao cấp';
         // PremiumService::latest()->paginate(getPaginate());
@@ -74,8 +75,7 @@ class PremiumServiceController extends Controller
         $input = $request->input('search');
         $room_code = $request->input('room_code');
         $check_in_id = $request->input('check_in_id');
-        $serviceInRoom = RoomServiceProduct::where('unit_code', unitCode())
-            ->where('room_code', $room_code)
+        $serviceInRoom = RoomServiceProduct:: where('room_code', $room_code)
             ->where('check_in_id', $check_in_id)
             ->with('product', 'service')->get();
 
@@ -90,8 +90,8 @@ class PremiumServiceController extends Controller
         });
 
         $premiumServices = PremiumService::query()
-            ->active()
-            ->where('unit_code', unitCode());
+            ->active();
+           
 
         if (!empty($input)) {
             $premiumServices->where('name', 'like', '%' . $input . '%');

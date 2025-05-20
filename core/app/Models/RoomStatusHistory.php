@@ -3,10 +3,11 @@
 namespace App\Models;
 
 use Illuminate\Database\Eloquent\Model;
+use App\Traits\BelongsToTenant;
 
 class RoomStatusHistory extends Model
 {
-    //
+    use BelongsToTenant;
     protected $table = 'room_status_history';
 
     protected $fillable = [
@@ -15,12 +16,15 @@ class RoomStatusHistory extends Model
         'start_date',
         'end_date',
         'unit_code',
+        'subdomain'
     ];
-    public function roomStatus(){
+    public function roomStatus()
+    {
         return $this->hasOne(RoomStatus::class, 'id', 'status_code');
     }
- 
-    public function room(){
+
+    public function room()
+    {
         return $this->hasOne(Room::class, 'id', 'room_id');
     }
     public function bookingData()
@@ -28,12 +32,12 @@ class RoomStatusHistory extends Model
         return $this->hasMany(RoomBooking::class, 'checkin_date', 'start_date')
             ->join('room_status_history', function ($join) {
                 $join->on('room_status_history.end_date', '=', 'room_booking.checkout_date')
-                     ->whereColumn('room_booking.room_code', 'room_status_history.room_id');
+                    ->whereColumn('room_booking.room_code', 'room_status_history.room_id');
             })
             ->select('room_booking.*');
     }
-    
-    
+
+
     public function checkInData()
     {
         return $this->hasMany(CheckIn::class, 'checkin_date', 'start_date')
@@ -42,15 +46,14 @@ class RoomStatusHistory extends Model
                     //  ->whereColumn('check_in.room_change', 'room_status_history.room_id');
                     ->where(function ($query) {
                         $query->whereNotNull('check_in.room_change') // Nếu room_change có giá trị
-                              ->whereColumn('room_status_history.room_id', '=', 'check_in.room_change');
+                            ->whereColumn('room_status_history.room_id', '=', 'check_in.room_change');
                     })
                     // Nếu room_change là null, so sánh với room_code
                     ->orWhere(function ($query) {
                         $query->whereNull('check_in.room_change')  // Nếu room_change là null
-                              ->whereColumn('room_status_history.room_id', '=', 'check_in.room_code'); // So sánh với room_code
+                            ->whereColumn('room_status_history.room_id', '=', 'check_in.room_code'); // So sánh với room_code
                     });
             })
             ->select('check_in.*');
     }
-    
 }

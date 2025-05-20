@@ -4,12 +4,13 @@ namespace App\Models;
 
 use App\Constants\Status;
 use App\Traits\GlobalStatus;
+use App\Traits\BelongsToTenant;
 use Illuminate\Database\Eloquent\Model;
 use Illuminate\Database\Eloquent\Casts\Attribute;
 
 class RoomType extends Model
 {
-    use GlobalStatus;
+    use GlobalStatus, BelongsToTenant;
 
 
     protected $table = 'room_types';

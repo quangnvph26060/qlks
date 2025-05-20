@@ -92,16 +92,16 @@ class RoomTypeController extends Controller
     // }
     public function index()
     {
-        $room_type = RoomType::where('unit_code',unitCode())->get();
+        $room_type = RoomType::all();
         $pageTitle   = 'Danh sách phòng';
-        $rooms = Room::where('unit_code',unitCode())->orderBy('id', 'desc')->paginate(10);
+        $rooms = Room::orderBy('id', 'desc')->paginate(10);
         return view('admin.hotel.room_type.list', compact('pageTitle','room_type','rooms'));
     }
     public function create()
     {
         $pageTitle   = 'Thêm phòng';
-        $count = Room::where('unit_code',unitCode())->count();
-        $code = SetupCode::where('menu_name','Danh mục phòng')->where('unit_code',unitCode())->value('code');
+        $count = Room::count();
+        $code = SetupCode::where('menu_name','Danh mục phòng')->value('code');
         $code = $code ? $code.$count+1 : '';
         $amenities   = Amenity::active()->get();
         $facilities  = Facility::active()->get();
@@ -140,7 +140,6 @@ class RoomTypeController extends Controller
     {
 
         $room_type = Room::select('*')
-            ->where('unit_code',unitCode())
 
             ->where(function($q) use ($request) {
         
@@ -202,6 +201,7 @@ class RoomTypeController extends Controller
             $room->is_clean            = Status::ROOM_CLEAN_ACTIVE;
             $room->status              = $request->status ? 1 : 0;
             $room->unit_code           = unitCode();
+            $room->subdomain           = subdomain();
             if ($request->hasFile('main_image')) {
                 $main_images = saveImages($request, 'main_image', 'roomImage', 600, 600);
                 if ($room->main_image && Storage::disk('public')->exists($room->main_image)) {
@@ -315,7 +315,7 @@ class RoomTypeController extends Controller
                 ->where('rooms.status','LIKE', '%'.$request->input('status').'%')
                 ->orderBy('id', 'desc')->paginate(10);
         }
-        $room_type = RoomType::where('unit_code',unitCode())->get();
+        $room_type = RoomType::all();
         $code =  $request->input('code');
 
         $pageTitle   = 'Danh sách phòng';

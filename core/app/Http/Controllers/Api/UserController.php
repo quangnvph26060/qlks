@@ -352,7 +352,8 @@ class UserController extends Controller
                 'password' => $request->password,
                 'status' => 1,
                 'role_id' => 1,
-                'unit_code' => 'coso1'
+                'unit_code' => 'coso1',
+                'subdomain' => $request->username
             ]);
 
             return response()->json([

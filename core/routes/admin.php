@@ -451,6 +451,7 @@ Route::middleware('admin', 'adminPermission')->prefix('admin')->group(function (
             Route::get('find-payment', 'findPayment')->name('payment.find');
             // thanh toán 
             Route::post('payment-room', 'paymentRoom')->name('payment.room');
+            Route::post('check-out-room', 'checkOutRoom')->name('check.out.room');
 
         });
     });

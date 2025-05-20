@@ -4,10 +4,11 @@ namespace App\Models;
 
 use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\Model;
+use App\Traits\BelongsToTenant;
 
 class RoomBooking extends Model
 {
-    use HasFactory;
+    use HasFactory,BelongsToTenant;
     protected $table = 'room_booking';
     protected $appends = ['room_change_info'];
 

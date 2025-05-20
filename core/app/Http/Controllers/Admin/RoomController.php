@@ -17,7 +17,6 @@ class RoomController extends Controller
 {
     public function index(Request $request)
     {
-
         $pageTitle = 'Tất cả các loại phòng';
         // $roomTypes = RoomType::get();
         // $rooms     = RoomType::orderByDesc('created_at');
@@ -34,7 +33,7 @@ class RoomController extends Controller
 
         // $rooms =  $rooms->paginate(getPaginate());
 
-        $count = RoomType::where('unit_code', unitCode())->count();
+        $count = RoomType::count();
         $code = SetupCode::where('menu_name', 'Danh mục hạng phòng')->where('unit_code', unitCode())->value('code');
         $code = $code ? $code . $count + 1 : '';
         $keyword = $request->input('keyword');
@@ -42,7 +41,6 @@ class RoomController extends Controller
         $columns = Schema::getColumnListing('room_types');
 
         $rooms = RoomType::query()
-            ->where('unit_code', unitCode())
             ->when($keyword, function ($query) use ($keyword, $columns) {
                 $query->where(function ($query) use ($keyword, $columns) {
                     foreach ($columns as $column) {
@@ -54,6 +52,7 @@ class RoomController extends Controller
             $rooms = $rooms->filter(['status']);
         }
         $rooms = $rooms->paginate(10);
+       
 
         return view('admin.hotel.rooms', compact('pageTitle', 'rooms', 'keyword', 'code'));
     }
@@ -100,6 +99,7 @@ class RoomController extends Controller
             $roomType->code  = $request->code;
             $roomType->status = $request->status;
             $roomType->unit_code = unitCode();
+                $roomType->subdomain = subdomain();
               $roomType->main_image = "";
             // if ($request->hasFile('main_image')) {
             //     $main_images = saveImages($request, 'main_image', 'roomTypeImage', 600, 600);
@@ -124,6 +124,7 @@ class RoomController extends Controller
             $roomType->code      = $request->code;
             $roomType->status    = $request->status;
             $roomType->unit_code = unitCode();
+                 $roomType->subdomain = subdomain();
              $roomType->main_image = "";
             // if ($request->hasFile('main_image')) {
             //     $main_images = saveImages($request, 'main_image', 'roomTypeImage', 600, 600);

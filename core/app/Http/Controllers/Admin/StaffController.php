@@ -13,7 +13,10 @@ class StaffController extends Controller {
 
     public function index() {
         $pageTitle = 'Tất cả nhân viên';
-        $allStaff = Admin::where('id', '!=', 1)->with('role')->paginate(getPaginate());
+        // $allStaff = Admin::where('id', '!=', 1)->with('role')->paginate(getPaginate());
+        $allStaff = Admin::where('id', '!=', auth('admin')->user()->id)->with('role')
+        ->where('unit_code',hf('ma_coso'))
+        ->where('subdomain',subdomain())->paginate(getPaginate());
         $roles = Role::all();
         return view('admin.staff.index', compact('pageTitle', 'allStaff', 'roles'));
     }
@@ -37,6 +40,8 @@ class StaffController extends Controller {
         $staff->username    = $request->username;
         $staff->email       = $request->email;
         $staff->role_id     = $request->role_id;
+        $staff->unit_code   = hf('ma_coso');
+        $staff->subdomain   = subdomain();
         $staff->password    = $request->password ? Hash::make($request->password) : $staff->password;
         $staff->save();
         $notify[] = ['success', $message];

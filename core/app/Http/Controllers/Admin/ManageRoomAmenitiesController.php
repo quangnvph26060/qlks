@@ -21,8 +21,8 @@ class ManageRoomAmenitiesController extends Controller
     }
     public function index()
     {
-        $room_type = RoomType::where('unit_code',unitCode())->get();
-        $rooms = Room::where('status' , 1)->get();
+        $room_type = RoomType::all();
+        $rooms     = Room::where('status' , 1)->get();
         $amenities = Amenity::where('status' , 1)->get();
         $pageTitle = 'Danh sách tiện ghi của phòng';
         $search = request()->get('search');

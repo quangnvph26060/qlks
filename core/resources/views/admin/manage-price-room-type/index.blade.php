@@ -10,12 +10,12 @@
                     <tr>
                         <th>Mã giá</th>
                         <th>Tên giá</th>
-                        <th class="small-column">Giá trị</th>
+                        <th class="small-column">Ngày thực hiện</th>
                         {{-- <th>Thời gian hiệu lực</th> --}}
-                        <th>Thời gian nhận / trả</th>
+                        {{-- <th>Thời gian nhận / trả</th> --}}
                         <th>Làm tròn</th>
                         <th>Mô tả</th>
-                        <th>Mã đơn vị</th>
+                        {{-- <th>Mã đơn vị</th> --}}
                         <th>Thao tác</th>
                     </tr>
                 </thead>
@@ -105,7 +105,8 @@
         @endpush
     @endcan
     <div class="modal fade" id="pricingModal" tabindex="-1" aria-labelledby="pricingModalLabel" aria-hidden="true">
-        <div class="modal-dialog modal-lg add-pricing" style="margin-left: 380px">
+       <div class="modal-dialog modal-lg modal-dialog-centered add-pricing">
+
 
         </div>
     </div>
@@ -599,15 +600,14 @@
                             // <td>${formatDate(startDate)} - ${ formatDate(endDate) 	}</td>
                             html += `
                                 <tr data-id="${element.id}">
-                                    <td>${element.price_code}</td>
+                                    <td class="text-left">${element.price_code}</td>
                                     <td>${element.price_name}</td>
                                     <td>${formattedData}</td>
 
-                                    <td>${element.check_in_time} / ${element.check_out_time}</td>
-                                    <td>${element.round_time	}</td>
+                                    <td class="text-right">${element.round_time	}</td>
                                     <td>${element.description	}</td>
 
-                                    <td>${element.unit_code	}</td>
+                                   
                                     <td>
                                         <a class="btn btn-sm btn-outline--primary btn-edit-setup-pricing"
                                             data-id="${element.id}">

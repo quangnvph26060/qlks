@@ -5,6 +5,8 @@ namespace App\Http\Middleware;
 use Closure;
 use Illuminate\Http\Request;
 use App\Models\Admin;
+
+use Illuminate\Support\Facades\Auth;
 use Illuminate\Support\Facades\Cache;
 
 class CheckAdminSubdomain
@@ -12,12 +14,11 @@ class CheckAdminSubdomain
     public function handle(Request $request, Closure $next)
     {
         $host = $request->getHost(); // ví dụ: huhu.fasthotel.vn
-
         $baseDomain = config('domain.base_domain');
         // Kiểm tra nếu domain là dạng *.fasthotel.vn
         if (str_ends_with($host, $baseDomain)) {
             $subdomain = str_replace('.' . $baseDomain, '', $host);
-
+          
             // Bỏ qua nếu là app.fasthotel.vn
             if ($subdomain === 'app') {
                 return $next($request);
@@ -29,7 +30,7 @@ class CheckAdminSubdomain
                 $cacheKey = 'subdomain_check_' . $subdomain;
 
                 $exists = Cache::remember($cacheKey, 300, function () use ($subdomain) {
-                    return Admin::where('username', $subdomain)->exists();
+                    return Admin::where('subdomain', $subdomain)->exists();
                 });
 
                 if (!$exists) {

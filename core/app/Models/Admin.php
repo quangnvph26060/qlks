@@ -3,6 +3,7 @@
 namespace App\Models;
 ///
 use App\Traits\GlobalStatus;
+use App\Traits\BelongsToTenant;
 use Illuminate\Foundation\Auth\User as Authenticatable;
 class Admin extends Authenticatable
 {

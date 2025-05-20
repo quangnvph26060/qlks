@@ -455,6 +455,8 @@
                                 </div>
                             </div>
                             <div class="d-flex justify-content-end" style="gap: 10px;">
+                                 <button type="button"  id="checkout_room" class="btn btn-primary btn-checkout-room">Trả phòng</button>
+                                  <button type="button" id="print_invoice" class="btn btn-success">In hoá đơn</button>
                                 <button type="button" class="btn-dat-truoc btn-book-pttt">Lưu</button>
                                 <p type="button" data-row="booked" class="alert-paragraph close_modal">Hủy</p>
                             </div>
@@ -575,6 +577,7 @@
     var roomBookingEditUrl = "{{ route('admin.room.booking.edit', ['id' => ':id']) }}"; // sửa đặt phòng
     var checkInEditUrl = "{{ route('admin.check.in.edit', ['id' => ':id']) }}";
     var paymentRoomUrl = "{{ route('admin.booking.payment.room') }}";
+    var checkOutRoomUrl = "{{ route('admin.booking.check.out.room') }}";
     var findRoomBookingIdUrl = '{{ route("admin.find.room.booking") }}';
     var CheckInUrl = "{{ route('admin.room.booked.check.in') }}";
     var roomBook = "{{ route('admin.room.book') }}";
