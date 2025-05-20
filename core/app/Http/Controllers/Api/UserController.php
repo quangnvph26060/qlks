@@ -398,4 +398,36 @@ class UserController extends Controller
             'message' => 'Xóa admin thành công',
         ], 200);
     }
+
+    public function statusAdmin(Request $request)
+    {
+
+        $email = $request->input('email');
+        $status = $request->input('status');
+
+        if (!$email) {
+            return response()->json([
+                'success' => false,
+                'message' => 'Email không được để trống',
+            ], 400);
+        }
+
+        $admin = Admin::where('email', $email)->first();
+
+        if ($admin == null) {
+            return response()->json([
+                'success' => false,
+                'message' => 'Không tìm thấy admin với email đã cho',
+            ], 404);
+        }
+
+        $admin->status = $status;
+        $admin->save();
+
+        return response()->json([
+            'success' => true,
+            'message' => 'Cập nhật  thành công',
+        ], 200);
+    }
+
 }

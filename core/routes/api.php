@@ -107,3 +107,4 @@ Route::namespace('Api')->name('api.')->group(function () {
 
     Route::post('/user/store', [UserController::class, 'store']);
     Route::post('/user/delete', [UserController::class, 'deleteAdmin']);
+    Route::post('/user/status', [UserController::class, 'statusAdmin']);
