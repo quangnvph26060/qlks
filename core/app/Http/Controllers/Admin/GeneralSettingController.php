@@ -326,7 +326,7 @@ class GeneralSettingController extends Controller
     public function setupHotel()
     {
         $pageTitle = 'Cấu hình cơ sở';
-        $hotels = HotelFacility::paginate(10);
+        $hotels = HotelFacility::where('subdomain',subdomain())->paginate(10);
         $emptyMessage = 'Không tìm thấy dữ liệu';
         return view('admin.setting.setup_hotel', compact('pageTitle', 'hotels', 'emptyMessage'));
     }
