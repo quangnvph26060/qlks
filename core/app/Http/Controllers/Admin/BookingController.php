@@ -748,7 +748,7 @@ class BookingController extends Controller
             $roomChange->discount           = $roomBooking->discount;
             $roomChange->note               = "Đổi phòng từ " . ($isRoomOld->room_number ?? optional($roomBooking->room)->room_number) . " sang {$isRoom->room_number}";
             $roomChange->unit_code          = unitCode();
-            $roomChange->subdoamin          = subdomain();
+            $roomChange->subdomain          = subdomain();
             $roomChange->created_by         = authAdmin()->id;
             // check nếu lại đổi phòng ngược lại
             // if ($roomBooking->room_code == $isRoom->id) {
