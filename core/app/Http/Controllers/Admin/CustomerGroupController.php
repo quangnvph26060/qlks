@@ -28,7 +28,8 @@ class CustomerGroupController extends Controller
         $group = new CustomerGroup();
         $group->group_code = $request->group_code;
         $group->group_name = $request->group_name;
-        $group->unit_code =  unitCode();
+        $group->unit_code  =  unitCode();
+        $group->subdomain  = subdomain();
         $group->save();
         $notify[] = ['success', 'Thêm nhóm khách hàng thành công'];
         return back()->withNotify($notify);
@@ -53,6 +54,8 @@ class CustomerGroupController extends Controller
         $group = CustomerGroup::find($id);
         $group->group_code = $request->group_code;
         $group->group_name = $request->group_name;
+          $group->unit_code  =  unitCode();
+        $group->subdomain  = subdomain();
         // $source->unit_code =  $request->unit_code;
         $group->save();
         $notify[] = ['success', 'Cập nhật nhóm khách hàng thành công'];

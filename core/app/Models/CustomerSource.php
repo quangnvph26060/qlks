@@ -15,5 +15,6 @@ class CustomerSource extends Model
         'unit_code',
         'created_at',
         'updated_at',
+        'subdomain',
     ];
 }
