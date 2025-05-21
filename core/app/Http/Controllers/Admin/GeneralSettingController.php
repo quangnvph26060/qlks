@@ -326,7 +326,7 @@ class GeneralSettingController extends Controller
     public function setupHotel()
     {
         $pageTitle = 'Cấu hình cơ sở';
-        $hotels = HotelFacility::where('subdomain',subdomain())->paginate(10);
+        $hotels = HotelFacility::where('subdomain', subdomain())->paginate(10);
         $emptyMessage = 'Không tìm thấy dữ liệu';
         return view('admin.setting.setup_hotel', compact('pageTitle', 'hotels', 'emptyMessage'));
     }
@@ -345,9 +345,14 @@ class GeneralSettingController extends Controller
         // save
         $hotel->save();
         // Chỉ lưu cache nếu trạng thái là 1 và chưa có cache
-        if ($hotel->trang_thai == 1 && !Cache::has('HotelFacility')) {
-            Cache::put('HotelFacility', $hotel);
+        if ($hotel->trang_thai == 1) {
+            $cacheKey = 'HotelFacility_' . $hotel->subdomain;
+
+            if (!Cache::has($cacheKey)) {
+                Cache::put($cacheKey, $hotel);
+            }
         }
+
         $notify[] = ['success', 'Thêm cơ sở thành công'];
         return back()->withNotify($notify);
     }

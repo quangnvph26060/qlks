@@ -558,17 +558,27 @@ function gs($key = null)
 }
 function hf($key = null) // hotel_facilities
 {
-    $general = Cache::get('HotelFacility');
-    if (!$general) {
-        $general = HotelFacility::active()->first();
-        Cache::put('HotelFacility', $general);
+    $subdomain = subdomain(); 
+
+    if (!$subdomain) {
+        return null;
     }
+
+    $cacheKey = 'HotelFacility_' . $subdomain;
+
+    $general = Cache::get($cacheKey);
+    if (!$general) {
+        $general = HotelFacility::where('subdomain', $subdomain)->active()->first();
+        Cache::put($cacheKey, $general);
+    }
+
     if ($key) {
         return @$general->$key;
     }
 
     return $general;
 }
+
 // ma cơ sở 
 function unitCode()
 {
