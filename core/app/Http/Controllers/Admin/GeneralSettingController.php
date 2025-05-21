@@ -340,6 +340,7 @@ class GeneralSettingController extends Controller
         $hotel = new HotelFacility();
         $hotel->ma_coso = $request->ma_coso;
         $hotel->ten_coso = $request->ten_coso;
+        $hotel->subdomain =  subdomain();
         $hotel->trang_thai =  $request->hotelStatus;
         // save
         $hotel->save();

@@ -592,25 +592,17 @@ function unitCode()
 
 function subdomain()
 {
-    // $admin = Auth::guard('admin')->user();
     $admin = auth('admin')->user();
-
     if (!$admin || !isset($admin->subdomain)) {
-        // Trường hợp chưa login hoặc không có subdomain
+     
         return null;
     }
-
-    // Tạo key riêng cho từng admin
     $cacheKey = 'Subdomain_' . $admin->id;
-
-    // Kiểm tra cache
     $subdomain = Cache::get($cacheKey);
-
     if (!$subdomain) {
         $subdomain = $admin->subdomain;
-        Cache::put($cacheKey, $subdomain, now()->addMinutes(60)); // hoặc bạn có thể set thời gian khác
+        Cache::put($cacheKey, $subdomain, now()->addMinutes(60));
     }
-
     return $subdomain;
 }
 
