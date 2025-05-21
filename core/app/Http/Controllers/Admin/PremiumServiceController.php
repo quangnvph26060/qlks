@@ -61,7 +61,7 @@ class PremiumServiceController extends Controller
         }
         $premiumService->code = $request->code;
         $premiumService->name = $request->name;
-        $premiumService->unit_code = hf('ma_coso');
+        $premiumService->unit_code = unitCode();
         $premiumService->subdomain = subdomain();
         $premiumService->cost = $cost;
 

@@ -81,14 +81,7 @@
                 "route_name": "admin.hotel.room.product.all",
                 "menu_active": "admin.hotel.room.product.all"
             },
-            {
-                "keyword": [
-                    "Danh mục người dùng"
-                ],
-                "title": "Danh mục người dùng",
-                "route_name": "admin.users.active",
-                "menu_active": "admin.users.active"
-            },
+           
             {
                 "keyword": [
                     "Danh mục khách hàng"
