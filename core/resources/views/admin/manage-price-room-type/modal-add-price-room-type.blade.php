@@ -51,7 +51,7 @@
                         </div>
                     </div> --}}
 
-                    <div class="row">
+                    {{-- <div class="row">
                         <div class="col-lg-6">
                             <label for="startDate" class="form-label">Thời gian nhận</label>
                             <input type="time" class="form-control" id="checkInTime" name="check_in_time">
@@ -64,7 +64,7 @@
                             <span class="invalid-feedback d-block" style="font-weight: 500"
                                 id="checkOutTime_error"></span>
                         </div>
-                    </div>
+                    </div> --}}
 
                     <div class="row">
                         <div class="box">

@@ -300,39 +300,7 @@
                         }, // viết tiếp điều kiện validate vào đây (validations)
                     ]
                 },
-                'checkInTime': { // passwword thì nên đặt là name trong input đó
-                    'element': document.getElementById('checkInTime'), // id trong input đó
-                    'error': document.getElementById('checkInTime_error'), // thẻ hiển thị lỗi
-                    'validations': [{
-                            'func': function(value) {
-                                return checkRequired(value); // check trống
-                            },
-                            'message': generateErrorMessage('P001', 'Thời gian nhận')
-                        }, // viết tiếp điều kiện validate vào đây (validations)
-                    ]
-                },
-                'checkOutTime': { // passwword thì nên đặt là name trong input đó
-                    'element': document.getElementById('checkOutTime'), // id trong input đó
-                    'error': document.getElementById('checkOutTime_error'), // thẻ hiển thị lỗi
-                    'validations': [{
-                            'func': function(value) {
-                                return checkRequired(value); // check trống
-                            },
-                            'message': generateErrorMessage('P001', 'Thời gian từ')
-                        }, // viết tiếp điều kiện validate vào đây (validations)
-                    ]
-                },
-                'dayType': { // passwword thì nên đặt là name trong input đó
-                    'element': document.getElementById('dayType'), // id trong input đó
-                    'error': document.getElementById('dayType_error'), // thẻ hiển thị lỗi
-                    'validations': [{
-                            'func': function(value) {
-                                return checkRequired(value); // check trống
-                            },
-                            'message': generateErrorMessage('P001', 'Hình thức')
-                        }, // viết tiếp điều kiện validate vào đây (validations)
-                    ]
-                },
+               
                 'roundTime': { // passwword thì nên đặt là name trong input đó
                     'element': document.getElementById('roundTime'), // id trong input đó
                     'error': document.getElementById('roundTime_error'), // thẻ hiển thị lỗi
@@ -414,14 +382,7 @@
                         // formEconomyEdit.startDate.error = document.getElementById('startDate_error');
                         // formEconomyEdit.endDate.element = document.getElementById('endDate');
                         // formEconomyEdit.endDate.error = document.getElementById('endDate_error');
-                        formEconomyEdit.checkInTime.element = document.getElementById(
-                            'checkInTime');
-                        formEconomyEdit.checkInTime.error = document.getElementById(
-                            'checkInTime_error');
-                        formEconomyEdit.checkOutTime.element = document.getElementById(
-                            'checkOutTime');
-                        formEconomyEdit.checkOutTime.error = document.getElementById(
-                            'checkOutTime_error');
+                   
                         formEconomyEdit.roundTime.element = document.getElementById(
                         'roundTime');
                         formEconomyEdit.roundTime.error = document.getElementById(
@@ -468,14 +429,7 @@
                         // formEconomyEdit.startDate.error = document.getElementById('startDate_error');
                         // formEconomyEdit.endDate.element = document.getElementById('endDate');
                         // formEconomyEdit.endDate.error = document.getElementById('endDate_error');
-                        formEconomyEdit.checkInTime.element = document.getElementById(
-                            'checkInTime');
-                        formEconomyEdit.checkInTime.error = document.getElementById(
-                            'checkInTime_error');
-                        formEconomyEdit.checkOutTime.element = document.getElementById(
-                            'checkOutTime');
-                        formEconomyEdit.checkOutTime.error = document.getElementById(
-                            'checkOutTime_error');
+                      
                         formEconomyEdit.roundTime.element = document.getElementById(
                         'roundTime');
                         formEconomyEdit.roundTime.error = document.getElementById(
