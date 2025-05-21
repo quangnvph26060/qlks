@@ -333,7 +333,7 @@
 @push('script')
     <script>
         "use strict";
-
+     
 
 
         const APP_URL = "{{ config('app.url') }}";
@@ -379,8 +379,10 @@
 
             // Hiển thị hình ảnh cũ nếu có
             let showImage = modal.find('#showImage');
-            // showImage.attr('src', 'http://quanlykhachsan.test/storage/' + resource.main_image);
-            showImage.attr('src', APP_URL + '/storage/' + resource.main_image);
+
+           showImage.attr('src', APP_URL + '/storage/' + resource.main_image);
+            console.log('Full image URL:', APP_URL + '/storage/' + resource.main_image);
+
             showImage.show();
 
             // Đặt lại file input
@@ -519,6 +521,7 @@
                         success: function(response) {
                             if (response.status === 'success') {
                                 notify('success', response.message);
+                                window.location.reload();
                             }
                         }
                     });

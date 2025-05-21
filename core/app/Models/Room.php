@@ -8,13 +8,12 @@ use App\Traits\BelongsToTenant;
 use Carbon\Carbon;
 use Illuminate\Database\Eloquent\Model;
 use Illuminate\Database\Eloquent\Casts\Attribute;
-use Illuminate\Database\Eloquent\SoftDeletes;
 use Carbon\CarbonPeriod;
 use App\Models\RoomChange;
 
 class Room extends Model
 {
-    use GlobalStatus, SoftDeletes, BelongsToTenant;
+    use GlobalStatus, BelongsToTenant;
 
     protected $table = 'rooms';
     protected $fillable = ['is_clean', 'unit_code'];
@@ -135,10 +134,10 @@ class Room extends Model
     //         $roomPriceRoooms->save();
     //     }
     // }
-    public function prices()
-    {
-        return $this->belongsToMany(RoomPrice::class, 'room_price_rooms', 'room_id', 'price_id')->withPivot('start_date', 'end_date', 'start_time', 'end_time', 'specific_date', 'status');
-    }
+    // public function prices()
+    // {
+    //     return $this->belongsToMany(RoomPrice::class, 'room_price_rooms', 'room_id', 'price_id')->withPivot('start_date', 'end_date', 'start_time', 'end_time', 'specific_date', 'status');
+    // }
     public function scopeActive($query)
     {
         return $query->where([

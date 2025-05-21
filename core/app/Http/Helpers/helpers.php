@@ -20,6 +20,7 @@ use App\Models\RoomStatusHistory;
 use App\Notify\Notify;
 use Carbon\Carbon;
 use Illuminate\Support\Facades\Cache;
+use Illuminate\Support\Facades\Log;
 use Illuminate\Support\Str;
 use Intervention\Image\Drivers\Gd\Driver;
 use Intervention\Image\ImageManager;
@@ -764,44 +765,63 @@ function updateMail($data)
  * @param string $directory
  * @return string|null
  */
-function saveImages($request, string $inputName, string $directory = 'images', $width = 150, $height = 150): ?array
-{
-    $paths = [];
+if (!function_exists('saveImages')) {
+    /**
+     * Lưu ảnh vào storage, resize và trả về mảng đường dẫn ảnh
+     *
+     * @param \Illuminate\Http\Request $request
+     * @param string $inputName
+     * @param string $directory
+     * @param int $width
+     * @param int $height
+     * @return array|null
+     */
+    function saveImages($request, string $inputName, string $directory = 'images', $width = 150, $height = 150): ?array
+    {
+        $paths = [];
 
-    // Kiểm tra xem có file không
-    if ($request->hasFile($inputName)) {
-        // Lấy tất cả các file hình ảnh
-        $images = $request->file($inputName);
+        if ($request->hasFile($inputName)) {
+            $images = $request->file($inputName);
 
-        if (!is_array($images)) {
-            $images = [$images]; // Đưa vào mảng nếu chỉ có 1 ảnh
+            if (!is_array($images)) {
+                $images = [$images];
+            }
+
+            $manager = new ImageManager(new Driver());
+
+            foreach ($images as $image) {
+                try {
+                    // Kiểm tra file ảnh hợp lệ
+                    if (!$image->isValid() || !str_starts_with($image->getMimeType(), 'image/')) {
+                        Log::warning('File không hợp lệ hoặc không phải ảnh: ' . $image->getClientOriginalName());
+                        continue;
+                    }
+
+                    // Đọc nội dung ảnh từ stream
+                    $img = $manager->read($image->getContent());
+
+                    $img->resize($width, $height, function ($constraint) {
+                        $constraint->aspectRatio();
+                        $constraint->upsize();
+                    });
+
+                    $filename = time() . uniqid() . '.' . $image->getClientOriginalExtension();
+                    $path = $directory . '/' . $filename;
+
+                    Storage::put($path, (string) $img->encode());
+
+                    $paths[] = $path;
+
+                } catch (\Exception $e) {
+                    Log::error('Lỗi lưu ảnh: ' . $e->getMessage());
+                }
+            }
+
+            return $paths;
         }
 
-        // Tạo instance của ImageManager
-        $manager = new ImageManager(new Driver());
-
-        foreach ($images as $image) {
-            // Đọc hình ảnh từ đường dẫn thực
-            $img = $manager->read($image->getRealPath());
-
-            // Thay đổi kích thước
-            $img->resize($width, $height);
-
-            // Tạo tên file duy nhất
-            $filename = time() . uniqid() . '.' . $image->getClientOriginalExtension();
-
-            // Lưu hình ảnh đã được thay đổi kích thước vào storage
-            Storage::put($directory . '/' . $filename, $img->encode());
-
-            // Lưu đường dẫn vào mảng
-            $paths[] = $directory . '/' . $filename;
-        }
-
-        // Trả về danh sách các đường dẫn
-        return $paths;
+        return null;
     }
-
-    return null;
 }
 
 function getRandomColor()

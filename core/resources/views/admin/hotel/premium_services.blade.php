@@ -149,7 +149,10 @@
                         <div class="modal-body">
                             <div class="form-group">
                                 <label> @lang('Mã dịch vụ')</label>
-                                <input class="form-control" name="code" required type="text" value="{{ old('code') }}">
+                               
+                                <input class="form-control"  type="text" name="code" required value="{{ old('code') ?? $code ?? '' }}"
+>
+
                             </div>
                             <div class="form-group">
                                 <label> @lang('Tên dịch vụ')</label>
@@ -159,8 +162,8 @@
                             <div class="form-group">
                                 <label> @lang('Giá')</label>
                                 <div class="input-group">
-                                    <input class="form-control money-input" name="cost" required step="0.01"
-                                        type="number" value="{{ old('cost') }}">
+                                    <input class="form-control money-input" name="cost" required 
+                                        type="text" value="{{ old('cost') }}">
                                     <span class="input-group-text"> {{ gs()->cur_text }}</span>
                                 </div>
                             </div>
@@ -281,7 +284,7 @@
                             success: function(data) {
                                 if (data.status === 'success') {
                                     rowToDelete.remove();
-
+                                    window.location.reload();
 
                                 }
                             },

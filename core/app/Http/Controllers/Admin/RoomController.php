@@ -11,6 +11,7 @@ use App\Http\Controllers\Controller;
 use Illuminate\Support\Facades\Schema;
 use Illuminate\Support\Facades\Storage;
 use App\Models\SetupCode;
+use Illuminate\Support\Str;
 
 
 class RoomController extends Controller
@@ -18,28 +19,11 @@ class RoomController extends Controller
     public function index(Request $request)
     {
         $pageTitle = 'Tất cả các loại phòng';
-        // $roomTypes = RoomType::get();
-        // $rooms     = RoomType::orderByDesc('created_at');
-        // $prices = RoomPrice::active()->pluck('name', 'id');
-
-
-        // if (request()->status == Status::ENABLE || request()->status == Status::DISABLE) {
-        //     $rooms = $rooms->filter(['status']);
-        // }
-
-
-        //    $rooms =  $rooms->with('images')->orderBy('room_number', 'asc')->paginate(getPaginate());
-
-
-        // $rooms =  $rooms->paginate(getPaginate());
-
         $count = RoomType::count();
-        $code = SetupCode::where('menu_name', 'Danh mục hạng phòng')->where('unit_code', unitCode())->value('code');
+        $code = SetupCode::where('menu_name', 'Danh mục loại phòng')->value('code');
         $code = $code ? $code . $count + 1 : '';
         $keyword = $request->input('keyword');
-
         $columns = Schema::getColumnListing('room_types');
-
         $rooms = RoomType::query()
             ->when($keyword, function ($query) use ($keyword, $columns) {
                 $query->where(function ($query) use ($keyword, $columns) {
@@ -52,7 +36,6 @@ class RoomController extends Controller
             $rooms = $rooms->filter(['status']);
         }
         $rooms = $rooms->paginate(10);
-       
 
         return view('admin.hotel.rooms', compact('pageTitle', 'rooms', 'keyword', 'code'));
     }
@@ -62,7 +45,6 @@ class RoomController extends Controller
         $room = RoomType::findOrFail($id);
         $room->status = $room->status == Status::ENABLE ? Status::DISABLE : Status::ENABLE;
         $room->save();
-
         $notify[] = ['success', 'Cập nhật trạng thái thành công!'];
         return back()->withNotify($notify);
     }
@@ -70,20 +52,13 @@ class RoomController extends Controller
     public function addRoom(Request $request, $id = 0)
     {
         $request->validate([
-            // 'code' => 'max:6|unique:room_types,code,'.$id,
             'name' => 'required|unique:room_types,name,' . $id,
-            'main_image' => 'mimes:jpg|nullable',
+            'main_image' => 'image|nullable',
         ]);
 
-        // $room = Room::where('room_type_id',$request)->where('code',$request->code)->first();
-        // if($room){
-        //     $notify[] = ['error', "Mã phòng đã tồn tại"];
-        //     return back()->withNotify($notify);
-        // }
         if ($id) {
             $existsRoom = RoomType::where('name', $request->name)->where('id', '!=', $id)->exists();
         } else {
-            //  $existsRoom = Room::whereIn('room_number', $request->room_numbers)->count();
             $existsRoom = RoomType::where('name', $request->name)->first();
         }
 
@@ -91,84 +66,54 @@ class RoomController extends Controller
             $notify[] = ['error', "Số phòng yêu cầu đã tồn tại"];
             return back()->withNotify($notify);
         }
-
         if ($id) {
             $roomType = RoomType::findOrFail($id);
             $roomType->name = $request->name;
-            $roomType->slug = \Str::slug($roomType->name);
+            $roomType->slug = Str::slug($roomType->name);
             $roomType->code  = $request->code;
             $roomType->status = $request->status;
             $roomType->unit_code = unitCode();
-                $roomType->subdomain = subdomain();
-              $roomType->main_image = "";
-            // if ($request->hasFile('main_image')) {
-            //     $main_images = saveImages($request, 'main_image', 'roomTypeImage', 600, 600);
-            //     if ($roomType->main_image && Storage::disk('public')->exists($roomType->main_image)) {
-            //         Storage::disk('public')->delete($roomType->main_image);
-            //     }
-            //     $roomType->main_image = $main_images[0];
-            // }
+            $roomType->subdomain = subdomain();
+            if ($request->hasFile('main_image')) {
+                $main_images = saveImages($request, 'main_image', 'roomTypeImage', 600, 600);
+                if ($main_images && count($main_images)) {
+                    $roomType->main_image = $main_images[0];
+                }
+            }
+
             $roomType->save();
-            $message = 'Phòng đã được cập nhật thành công';
+
+            $message = 'Loại phòng đã được cập nhật thành công';
         } else {
-            // foreach ($request->room_numbers as $roomNumber) {
-            //     $room = new Room;
-            //     $room->room_type_id = $request->room_type_id;
-            //     $room->room_number = $roomNumber;
-            //     $room->room_id = $request->room_id;
-            //     $room->save();
-            // }
             $roomType = new RoomType();
             $roomType->name      = $request->name;
-            $roomType->slug      = \Str::slug($roomType->name);
+            $roomType->slug      = Str::slug($roomType->name);
             $roomType->code      = $request->code;
             $roomType->status    = $request->status;
             $roomType->unit_code = unitCode();
-                 $roomType->subdomain = subdomain();
-             $roomType->main_image = "";
-            // if ($request->hasFile('main_image')) {
-            //     $main_images = saveImages($request, 'main_image', 'roomTypeImage', 600, 600);
-            //     if ($roomType->main_image && Storage::disk('public')->exists($roomType->main_image)) {
-            //         Storage::disk('public')->delete($roomType->main_image);
-            //     }
-            //     $roomType->main_image = $main_images[0];
-            // }
-            // dd($roomType);
+            $roomType->subdomain = subdomain();
+            if ($request->hasFile('main_image')) {
+                $main_images = saveImages($request, 'main_image', 'roomTypeImage', 600, 600);
+                if ($main_images && count($main_images)) {
+                    $roomType->main_image = $main_images[0];
+                }
+            }
+
+
             $roomType->save();
 
-            $message = 'Hạng phòng đã được thêm thành công';
+            $message = 'Loại phòng đã được thêm thành công';
         }
-
-        // Đồng bộ hóa giá
-        // if ($id) {
-        //        $room->prices()->sync($request->input('prices'));
-        // } else {
-        //     Nếu bạn đã thêm nhiều phòng, có thể cần đồng bộ cho từng phòng
-        //     foreach ($request->room_numbers as $roomNumber) {
-        //         $room = Room::where('room_number', $roomNumber)->first();
-        //         if ($room) {
-
-        //              $room->prices()->sync($request->input('prices'));
-        //         }
-        //     }
-
-        //     $room = Room::where('room_number', $request->room_numbers)->first();
-        //     if ($room) {
-        //         $room->updatePrices($request->input('prices'));
-        //         //  $room->prices()->sync($request->input('prices'));
-        //     }
-        // }
-
         $notify[] = ['success', $message];
         return back()->withNotify($notify);
     }
     public function delete($id)
     {
         $roomType = RoomType::findOrFail($id);
-        
-        // if ($roomType->main_image && Storage::disk('public')->exists($roomType->main_image)) {
-        //     Storage::disk('public')->delete($roomType->main_image);
-        // }
+
+        if ($roomType->main_image && Storage::disk('public')->exists($roomType->main_image)) {
+            Storage::disk('public')->delete($roomType->main_image);
+        }
 
         $roomType->delete();
 

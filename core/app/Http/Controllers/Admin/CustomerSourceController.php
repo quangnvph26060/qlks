@@ -13,11 +13,11 @@ class CustomerSourceController extends Controller
 {
     public function index()
     {
-        $code = SetupCode::where('menu_name','Danh mục nguồn khách')->where('unit_code',unitCode())->value('code');
-        $count = CustomerSource::where('unit_code',unitCode())->count();
+        $code = SetupCode::where('menu_name','Danh mục nguồn khách')->value('code');
+        $count = CustomerSource::count();
         $code = $code ? $code.$count+1 : '';
         $pageTitle = 'Nguồn khách hàng';
-        $customer_sources = CustomerSource::orderBy('id', 'desc')->where('unit_code',unitCode())->paginate(10);
+        $customer_sources = CustomerSource::orderBy('id', 'desc')->paginate(10);
         $unit_codes = HotelFacility::select('ma_coso')->get();
         $emptyMessage = 'Không tìm thấy dữ liệu';
         return view('admin.hotel.customer_source.list', compact('pageTitle', 'customer_sources','unit_codes', 'emptyMessage','code'));

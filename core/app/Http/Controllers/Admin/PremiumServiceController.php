@@ -7,6 +7,7 @@ use App\Models\PremiumService;
 use App\Models\Product;
 use App\Models\ReceiptAndPayment;
 use App\Models\RoomServiceProduct;
+use App\Models\SetupCode;
 use App\Repositories\BaseRepository;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\DB;
@@ -16,46 +17,59 @@ class PremiumServiceController extends Controller
 {
     public function index(Request $request)
     {
-       
+
         $input         = $request->name;
         $pageTitle     = 'Dịch vụ cao cấp';
-        // PremiumService::latest()->paginate(getPaginate());
+        $count = PremiumService::count();
+        $code = SetupCode::where('menu_name', 'Danh mục dịch vụ cao cấp')->value('code');
+        $code = $code ? $code . $count + 1 : '';
         $premiumServices = PremiumService::query();
         if (!empty($input)) {
             $premiumServices->where('name', 'like', '%' . $input . '%');
         }
         $premiumServices = $premiumServices->paginate(10);
-        return view('admin.hotel.premium_services', compact('pageTitle', 'premiumServices', 'input'));
+        return view('admin.hotel.premium_services', compact('pageTitle', 'premiumServices', 'input', 'code'));
     }
 
     public function save(Request $request, $id = 0)
-{
-    $request->validate([
-        'code' => 'required|string|max:3|unique:premium_services,code,' . $id,
-        'name' => 'required|string|max:255|unique:premium_services,name,' . $id,
-        'cost' => 'required'
-    ]);
+    {
+        $request->validate([
+            'code' => 'required|unique:premium_services,code,' . $id,
+            'name' => 'required|string|max:255|unique:premium_services,name,' . $id,
+            'cost' => 'required',
+        ], [
+            'code.required' => 'Mã dịch vụ không được để trống.',
+            'code.unique' => 'Mã dịch vụ đã tồn tại.',
 
-    $cost = str_replace('.', '', $request->cost);
-    $cost = (int) $cost;
+            'name.required' => 'Tên dịch vụ không được để trống.',
+            'name.string' => 'Tên dịch vụ phải là chuỗi ký tự.',
+            'name.max' => 'Tên dịch vụ không được vượt quá 255 ký tự.',
+            'name.unique' => 'Tên dịch vụ đã tồn tại.',
 
-    if ($id) {
-        $premiumService = PremiumService::findOrFail($id);
-        $notification = 'Dịch vụ đã được cập nhật thành công';
-    } else {
-        $premiumService = new PremiumService();
-        $notification = 'Dịch vụ đã được thêm thành công';
+            'cost.required' => 'Chi phí không được để trống.',
+        ]);
+
+        $cost = str_replace('.', '', $request->cost);
+        $cost = (int) $cost;
+
+        if ($id) {
+            $premiumService = PremiumService::findOrFail($id);
+            $notification = 'Dịch vụ đã được cập nhật thành công';
+        } else {
+            $premiumService = new PremiumService();
+            $notification = 'Dịch vụ đã được thêm thành công';
+        }
+        $premiumService->code = $request->code;
+        $premiumService->name = $request->name;
+        $premiumService->unit_code = hf('ma_coso');
+        $premiumService->subdomain = subdomain();
+        $premiumService->cost = $cost;
+
+        $premiumService->save();
+
+        $notify[] = ['success', $notification];
+        return back()->withNotify($notify);
     }
-
-    $premiumService->code = $request->code;
-    $premiumService->name = $request->name;
-    $premiumService->cost = $cost;
-
-    $premiumService->save();
-
-    $notify[] = ['success', $notification];
-    return back()->withNotify($notify);
-}
 
 
     public function status($id)
@@ -75,7 +89,7 @@ class PremiumServiceController extends Controller
         $input = $request->input('search');
         $room_code = $request->input('room_code');
         $check_in_id = $request->input('check_in_id');
-        $serviceInRoom = RoomServiceProduct:: where('room_code', $room_code)
+        $serviceInRoom = RoomServiceProduct::where('room_code', $room_code)
             ->where('check_in_id', $check_in_id)
             ->with('product', 'service')->get();
 
@@ -91,7 +105,7 @@ class PremiumServiceController extends Controller
 
         $premiumServices = PremiumService::query()
             ->active();
-           
+
 
         if (!empty($input)) {
             $premiumServices->where('name', 'like', '%' . $input . '%');

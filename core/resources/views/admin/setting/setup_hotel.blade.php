@@ -4,7 +4,12 @@
         <div class="col-12">
             <div class="card-body">
                 <div class="row">
-                    <div class="col-md-12 col-sm-12">
+                    <div class="col-md-12 col-sm-12 d-flex gap-2">
+                        <div class="form-group position-relative mt-1 btn-reload-hotel" id="">
+                            <button type="button" class="btn btn--primary " data-bs-toggle="modal">
+                                <i class="fa fa-repeat p-1"></i>
+                            </button>
+                        </div>
                         @can(['admin.hotel.setting.setup.add.hotel'])
                             <div class="form-group position-relative mt-1" id="btn-add-hotel">
                                 <button type="button" class="btn btn--primary btn-add " data-bs-toggle="modal"
@@ -385,6 +390,9 @@
             });
             $(document).on('click', function() {
                 $('.menu_dropdown').removeClass('show');
+            });
+            $(document).on('click', '.btn-reload-hotel', function() {
+                window.location.reload();
             });
 
         });

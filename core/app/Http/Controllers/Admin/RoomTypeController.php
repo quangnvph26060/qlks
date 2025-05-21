@@ -95,26 +95,25 @@ class RoomTypeController extends Controller
         $room_type = RoomType::all();
         $pageTitle   = 'Danh sách phòng';
         $rooms = Room::orderBy('id', 'desc')->paginate(10);
-        return view('admin.hotel.room_type.list', compact('pageTitle','room_type','rooms'));
+        return view('admin.hotel.room_type.list', compact('pageTitle', 'room_type', 'rooms'));
     }
     public function create()
     {
         $pageTitle   = 'Thêm phòng';
         $count = Room::count();
-        $code = SetupCode::where('menu_name','Danh mục phòng')->value('code');
-        $code = $code ? $code.$count+1 : '';
+        $code = SetupCode::where('menu_name', 'Danh mục phòng')->value('code');
+        $code = $code ? $code . $count + 1 : '';
         $amenities   = Amenity::active()->get();
         $facilities  = Facility::active()->get();
         $bedTypes    = BedType::all();
         $roomTypes   = RoomType::pluck('name', 'id');
         // $prices      = RoomPrice::active()->pluck('name', 'id');
-
-        return view('admin.hotel.room_type.create', compact('pageTitle','code', 'amenities', 'facilities', 'bedTypes', 'roomTypes'));
+        return view('admin.hotel.room_type.create', compact('pageTitle', 'code', 'amenities', 'bedTypes', 'facilities', 'roomTypes'));
     }
 
     public function edit($id)
     {
-        
+
         $roomType    = Room::with('amenities', 'facilities', 'images', 'products')->findOrFail($id);
         $pageTitle   = 'Cập nhật phòng  -' . $roomType->room_number;
         $amenities   = Amenity::active()->get();
@@ -122,8 +121,8 @@ class RoomTypeController extends Controller
         $bedTypes    = BedType::all();
         $images      = [];
         $roomTypes   = RoomType::pluck('name', 'id');
-        $prices = RoomPrice::active()->pluck('name', 'id');
-        $selectedPrices = $roomType->prices()->pluck('id')->toArray();
+        // $prices = RoomPrice::active()->pluck('name', 'id');
+        // $selectedPrices = $roomType->prices()->pluck('id')->toArray();
 
         // dd($selectedPrices);
 
@@ -134,20 +133,20 @@ class RoomTypeController extends Controller
         }
 
 
-        return view('admin.hotel.room_type.create', compact('pageTitle', 'roomType', 'amenities', 'facilities', 'bedTypes', 'images', 'roomTypes', 'prices', 'selectedPrices'));
+        return view('admin.hotel.room_type.create', compact('pageTitle', 'roomType', 'amenities', 'facilities', 'bedTypes', 'roomTypes', 'images'));
     }
     public function ajax(Request $request)
     {
 
         $room_type = Room::select('*')
 
-            ->where(function($q) use ($request) {
-        
-                if($request->room_type_id != '') {
-                    $q->where('rooms.room_type_id','=',$request->room_type_id);
+            ->where(function ($q) use ($request) {
+
+                if ($request->room_type_id != '') {
+                    $q->where('rooms.room_type_id', '=', $request->room_type_id);
                 }
-                if($request->status != '') {
-                    $q->where('rooms.status','=',$request->status);
+                if ($request->status != '') {
+                    $q->where('rooms.status', '=', $request->status);
                 }
             })
             ->distinct()
@@ -159,20 +158,8 @@ class RoomTypeController extends Controller
         $this->validation($request, $id);
         DB::beginTransaction();
         try {
-            // if ($request->room_number) {
-            //     $roomNumbers = Room::pluck('room_number')->toArray();
-            //     $exists = in_array($request->room_number, $roomNumbers);
-            //     if ($exists) {
-            //         $notify[] = ['error', ' số phòng đã tồn tại'];
-            //         return back()->withNotify($notify);
-            //     }
-            // }
-            // $bedArray         = array_values($request->bed ?? []);
-            // $purifier         = new \HTMLPurifier();
-
             if ($id) {
                 $room         = Room::findOrFail($id);
-
                 $notification     = 'Đã cập nhật phòng thành công';
             } else {
                 if ($request->room_number) {
@@ -184,10 +171,8 @@ class RoomTypeController extends Controller
                     }
                 }
                 $room             = new Room();
-
                 $notification     = 'Đã thêm phòng thành công';
             }
-
             $room->code                = $request->code;
             $room->room_type_id        = $request->room_type_id;
             $room->room_number         = $request->room_number;
@@ -209,46 +194,14 @@ class RoomTypeController extends Controller
                 }
                 $room->main_image = $main_images[0];
             }
-
             $room->save();
-
-            // if ($request->prices) {
-            //     $arr = [];
-            //     foreach ($request->prices as  $value) {
-            //         $data = RoomPrice::find($value);
-            //         $arr[$value] = [
-            //             'start_date' => $data->start_date,
-            //             'end_date' => $data->end_date,
-            //             'start_time' => $data->start_time,
-            //             'end_time' => $data->end_time,
-            //             'specific_date' => $data->specific_date
-            //         ];
-            //     }
-
-            //     $room->prices()->sync($arr);
-            // }
-
-
-            // $insertRoomPrice = Room::where('room_number', $room->room_number)->first();
-            // if ($insertRoomPrice) {
-            //     $insertRoomPrice->updatePrices($request->input('prices'));
-            // }
-
-            // $room->amenities()->sync($request->amenities);
-            // $room->facilities()->sync($request->facilities);
-
-            // $this->insertProducts($request, $room);
-
             $this->removeImages($request, $room);
-
             $this->insertImages($request, $room);
             DB::commit();
             $notify[] = ['success', $notification];
             return back()->withNotify($notify);
         } catch (\Exception $e) {
-            // dd([
-            //     'message' => $e->getMessage(),
-            // ]);
+
             DB::rollBack();
             FacadesLog::error($e->getMessage());
             $notify[] = ['error', $e->getMessage()];
@@ -299,30 +252,27 @@ class RoomTypeController extends Controller
 
     public function search(Request $request)
     {
-      
-        if($request->input('room_type_id') == '' && $request->input('code') == ''  && $request->input('status') == '')
-        {
+
+        if ($request->input('room_type_id') == '' && $request->input('code') == ''  && $request->input('status') == '') {
             $rooms =  Room::select('rooms.*')
-            ->orderBy('id', 'desc')->paginate(10);
-        }
-        else
-        {
-            $rooms = Room::select('rooms.*')->where('room_type_id','LIKE', '%'.$request->input('room_type_id').'%')
-            ->where(function ($query) use ($request) {
-                $query->where('room_number', 'LIKE', '%'.$request->input('code').'%')
-                    ->orWhere('code', 'LIKE', '%'.$request->input('code').'%');
-                    })
-                ->where('rooms.status','LIKE', '%'.$request->input('status').'%')
+                ->orderBy('id', 'desc')->paginate(10);
+        } else {
+            $rooms = Room::select('rooms.*')->where('room_type_id', 'LIKE', '%' . $request->input('room_type_id') . '%')
+                ->where(function ($query) use ($request) {
+                    $query->where('room_number', 'LIKE', '%' . $request->input('code') . '%')
+                        ->orWhere('code', 'LIKE', '%' . $request->input('code') . '%');
+                })
+                ->where('rooms.status', 'LIKE', '%' . $request->input('status') . '%')
                 ->orderBy('id', 'desc')->paginate(10);
         }
         $room_type = RoomType::all();
         $code =  $request->input('code');
 
         $pageTitle   = 'Danh sách phòng';
-        return view('admin.hotel.room_type.list', compact('pageTitle','room_type','rooms','code'));
+        return view('admin.hotel.room_type.list', compact('pageTitle', 'room_type', 'rooms', 'code'));
         // $typeList    = Room::with('amenities', 'facilities', 'products')->latest()->paginate(getPaginate());
         // return view('admin.hotel.room_type.list', compact('pageTitle', 'typeList'));
-     
+
     }
 
     protected function validation($request, $id)
@@ -334,25 +284,45 @@ class RoomTypeController extends Controller
         }
 
         $request->validate([
-            'code'                => 'string|max:6|unique:rooms,code,' . $id,
+            'code'                => 'nullable|string|max:6|unique:rooms,code,' . $id,
             'room_number'         => 'required|string|max:255',
             'total_adult'         => 'required|integer|gte:0',
-            // 'total_child'         => 'required|integer|gte:0',
             'amenities'           => 'nullable|array',
             'amenities.*'         => 'integer|exists:amenities,id',
             'keywords'            => 'nullable|array',
             'keywords.*'          => 'string',
             'facilities'          => 'nullable|array',
             'facilities.*'        => 'integer|exists:facilities,id',
-            // 'total_bed'           => 'required|gt:0',
-            // 'main_image'          => $imgValidation,
-            'beds'                 => 'required',
-            // 'bed.*'               => 'exists:bed_types,name',
+            'beds'                => 'required',
             'cancellation_policy' => 'nullable|string',
             'cancellation_fee'    => 'nullable|numeric',
             'products'            => 'nullable|array',
+        ], [
+            // Custom messages
+            'required' => ':attribute không được để trống.',
+            'string' => ':attribute phải là chuỗi.',
+            'max' => ':attribute không được vượt quá :max ký tự.',
+            'integer' => ':attribute phải là số nguyên.',
+            'gte' => ':attribute phải lớn hơn hoặc bằng :value.',
+            'exists' => ':attribute không hợp lệ.',
+            'numeric' => ':attribute phải là số.',
+            'unique' => ':attribute đã tồn tại.',
+        ], [
+            // Custom attributes
+            'code' => 'Mã phòng',
+            'room_number' => 'Số phòng',
+            'total_adult' => 'Số người lớn',
+            'amenities' => 'Tiện nghi',
+            'amenities.*' => 'Tiện nghi',
+            'keywords' => 'Từ khoá',
+            'keywords.*' => 'Từ khoá',
+            'facilities' => 'Cơ sở vật chất',
+            'facilities.*' => 'Cơ sở vật chất',
+            'beds' => 'Loại giường',
+            'cancellation_policy' => 'Chính sách huỷ',
+            'cancellation_fee' => 'Phí huỷ',
+            'products' => 'Sản phẩm',
         ]);
-        // |gte:0|lt:fare
     }
 
     protected function insertImages(Request $request, $roomType)

@@ -8,6 +8,7 @@ use App\Models\Frontend;
 use App\Models\HotelFacility;
 use App\Rules\FileTypeValidate;
 use Illuminate\Http\Request;
+use Illuminate\Support\Facades\Cache;
 
 class GeneralSettingController extends Controller
 {
@@ -336,19 +337,21 @@ class GeneralSettingController extends Controller
             'ma_coso' => 'required|string',
             'ten_coso' => 'required|string',
         ]);
-
         $hotel = new HotelFacility();
         $hotel->ma_coso = $request->ma_coso;
         $hotel->ten_coso = $request->ten_coso;
         $hotel->trang_thai =  $request->hotelStatus;
         // save
         $hotel->save();
-
+        // Chỉ lưu cache nếu trạng thái là 1 và chưa có cache
+        if ($hotel->trang_thai == 1 && !Cache::has('HotelFacility')) {
+            Cache::put('HotelFacility', $hotel);
+        }
         $notify[] = ['success', 'Thêm cơ sở thành công'];
         return back()->withNotify($notify);
     }
-    public function editHotel( $id)
-    {  
+    public function editHotel($id)
+    {
         if (!$id) {
             $notify[] = ['error', 'Không tìm thấy cơ sở'];
             return back()->withNotify($notify);
@@ -360,7 +363,7 @@ class GeneralSettingController extends Controller
         ]);
     }
 
-    public function updateHotel( $id, Request $request)
+    public function updateHotel($id, Request $request)
     {
         $request->validate([
             'ma_coso' => 'required|string',
@@ -386,7 +389,7 @@ class GeneralSettingController extends Controller
         ]);
     }
     // status
-    public function statusHotel( $id)
+    public function statusHotel($id)
     {
         $hotel = HotelFacility::find($id);
 
