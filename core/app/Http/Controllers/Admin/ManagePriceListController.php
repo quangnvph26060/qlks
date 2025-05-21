@@ -349,8 +349,6 @@ class ManagePriceListController extends Controller
                 }
             ],
             'description'       => 'required',
-            'check_in_time'     => 'required',
-            'check_out_time'    => 'required',
             'round_time'        => 'required',
             'price_requirement' => 'required',
         ]
@@ -362,10 +360,10 @@ class ManagePriceListController extends Controller
             $priceRoomType->price_code           = $validatedData['price_code'];
             $priceRoomType->price_name           = $validatedData['price_name'];
             $priceRoomType->description          = $validatedData['description'];
-            $priceRoomType->check_in_time        = $validatedData['check_in_time'];
-            $priceRoomType->check_out_time       = $validatedData['check_out_time'];
+            $priceRoomType->check_in_time        = $validatedData['check_in_time']?? "";
+            $priceRoomType->check_out_time       = $validatedData['check_out_time']?? "";
             $priceRoomType->round_time           = $validatedData['round_time'];
-            $priceRoomType->unit_code            = hf('ma_coso');
+            // $priceRoomType->unit_code            = hf('ma_coso');
             if (is_array($validatedData['price_requirement'])) {
                 // Loại bỏ các giá trị null trong mảng
                 $priceRequirements = array_filter($validatedData['price_requirement'], function($value) {
@@ -419,7 +417,7 @@ class ManagePriceListController extends Controller
             'overtime_price'        => (float) str_replace('.', '', $validatedData['overtime'] ?? '0'),
             'extra_person_price'    => (float) str_replace('.', '', $validatedData['too_many_people'] ?? '0'),
             'price_validity_period' => $validatedData['price_validity_period'],
-            'unit_code'             => hf('ma_coso'),
+            'unit_code'             =>  unitCode(),
         ]);
     
         $notify[] = ['success', 'Thêm thành công'];

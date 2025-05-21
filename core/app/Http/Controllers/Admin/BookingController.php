@@ -651,7 +651,7 @@ class BookingController extends Controller
             $roomChange->deposit_amount     = $roomBooking->deposit_amount;
             $roomChange->discount           = $roomBooking->discount;
             $roomChange->note               = "Đổi phòng từ " . ($isRoomOld->room_number ?? optional($roomBooking->room)->room_number) . " sang {$isRoom->room_number}";
-            $roomChange->unit_code          = hf('ma_coso');
+            $roomChange->unit_code          = unitCode();
             $roomChange->created_by         = authAdmin()->id;
             // check nếu lại đổi phòng trùng nhau
             if ($roomBooking->room_code == $isRoom->id) {
@@ -747,7 +747,7 @@ class BookingController extends Controller
             $roomChange->deposit_amount     = $roomBooking->deposit_amount;
             $roomChange->discount           = $roomBooking->discount;
             $roomChange->note               = "Đổi phòng từ " . ($isRoomOld->room_number ?? optional($roomBooking->room)->room_number) . " sang {$isRoom->room_number}";
-            $roomChange->unit_code          = hf('ma_coso');
+            $roomChange->unit_code          = unitCode();
             $roomChange->created_by         = authAdmin()->id;
             // check nếu lại đổi phòng ngược lại
             // if ($roomBooking->room_code == $isRoom->id) {
@@ -1164,7 +1164,7 @@ class BookingController extends Controller
             'payment_method'  => $request->payment_pttt,
             'service_fee'     => $sumServiceRoom,
             'created_date'    => now(),
-            'unit_code'       => hf('ma_coso')
+            'unit_code'       => unitCode()
         ]);
 
         // // Gộp tổng các lần thanh toán

@@ -369,7 +369,7 @@ function saveRoomStatusHistory($room_id, $start_date, $end_date, $status_code)
             'room_id'     => $room_id,
             'start_date'  => $start_date,
             'end_date'    => $end_date,
-            'unit_code'   => hf('ma_coso'),
+            'unit_code'   => unitCode(),
             'subdomain'   => subdomain(),
             'created_at'  => now(),
             'status_code' => $status_code
@@ -389,7 +389,7 @@ function savePayment($booking_id, $checkin_id, $room_price, $room_code, $deposit
         'total_payment'    => $total_payment,   // số tiền  thanh toán
         'payment_method'   => $payment_method,
         'created_date'     => now(),
-        'unit_code'        => hf('ma_coso'),
+        'unit_code'        => unitCode(),
         'subdomain'        => subdomain(),
     ]);
 }

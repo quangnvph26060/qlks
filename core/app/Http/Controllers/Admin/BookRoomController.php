@@ -165,7 +165,7 @@ class BookRoomController extends Controller
                 $check_in->deposit_amount     = $roomBooking->deposit_amount;        // Đặt cọc
                 $check_in->note               = $roomBooking->note;        // Ghi chú (nếu có)
                 $check_in->user_source        = $roomBooking->user_source;          // Nguồn khách (nếu có)
-                $check_in->unit_code          = hf('ma_coso');
+                $check_in->unit_code          = unitCode();
                 $check_in->created_by         = authAdmin()->id;             // Người tạo
 
                 $check_in->save();
@@ -415,7 +415,7 @@ class BookRoomController extends Controller
                 $check_in->discount       = $discountAmount;
                 $check_in->note           = $room['note'];
                 $check_in->user_source    = $request->customer_source;
-                $check_in->unit_code      = hf('ma_coso');
+                $check_in->unit_code      = unitCode();
                 $check_in->subdomain      = subdomain();
                 $check_in->created_by     = $request->name_staff ??  authAdmin()->id;
 
@@ -544,7 +544,7 @@ class BookRoomController extends Controller
                         $check_in->discount       = $discountAmount;
                         $check_in->note           = $room['note'];
                         $check_in->user_source    = $customer['customer_sourece'] ?? $request->customer_source;
-                        $check_in->unit_code      = hf('ma_coso');
+                        $check_in->unit_code      = unitCode();
                         $check_in->created_by     = $request->name_staff ?? authAdmin()->id;
                         $check_in->save();
 
@@ -568,7 +568,7 @@ class BookRoomController extends Controller
                                     'deposit_amount'    => $depositAmount,
                                     'discount_amount'   => $discountAmount,
                                     'created_date'      => now(),
-                                    'unit_code'         => hf('ma_coso')
+                                    'unit_code'         => unitCode()
                                 ]);
                             }
                         }
@@ -592,7 +592,7 @@ class BookRoomController extends Controller
                     $check_in_new->discount       = $discountAmount;
                     $check_in_new->note           = $room['note'];
                     $check_in_new->user_source    = $customer['customer_sourece'] ?? $request->customer_source;
-                    $check_in_new->unit_code      = hf('ma_coso');
+                    $check_in_new->unit_code      = unitCode();
                     $check_in_new->created_by     = $request->name_staff ??  authAdmin()->id;
                     $check_in_new->save();
 
@@ -673,7 +673,7 @@ class BookRoomController extends Controller
                         $check_in->discount       = $discountAmount;
                         $check_in->note           = $room['note'];
                         $check_in->user_source    = $customer['customer_sourece'] ?? $request->customer_source;
-                        $check_in->unit_code      = hf('ma_coso');
+                        $check_in->unit_code      = unitCode();
                         $check_in->created_by     = $request->name_staff ?? authAdmin()->id;
                         $check_in->save();
                         saveRoomStatusHistory($room['room'], $room['dateIn'], $room['dateOut'], 2);
@@ -708,7 +708,7 @@ class BookRoomController extends Controller
                     $check_in_new->discount       = $discountAmount;
                     $check_in_new->note           = $room['note'];
                     $check_in_new->user_source    = $customer['customer_sourece'] ?? $request->customer_source;
-                    $check_in_new->unit_code      = hf('ma_coso');
+                    $check_in_new->unit_code      =  unitCode();
                     $check_in_new->created_by     = $request->name_staff ??  authAdmin()->id;
                     $check_in_new->save();
                     saveRoomStatusHistory($room['room'], $room['dateIn'], $room['dateOut'], 2);
@@ -837,7 +837,7 @@ class BookRoomController extends Controller
                 'customer_code' => $code,
                 'name'          => $name,
                 'phone'         => $phone,
-                'unit_code'     => hf('ma_coso'),
+                'unit_code'     =>  unitCode(),
                 'subdomain'     => subdomain(),
                 'group_code'    => $customer_source,
                 'created_at'    => now(),
@@ -1027,7 +1027,7 @@ class BookRoomController extends Controller
                         $check_in->discount       = $discountAmount;
                         $check_in->note           = $room['note'];
                         $check_in->user_source    = $customer['customer_sourece'] ?? $request->customer_source;
-                        $check_in->unit_code      = hf('ma_coso');
+                        $check_in->unit_code      =  unitCode();
                         $check_in->created_by     = $request->name_staff ?? authAdmin()->id;
                         $check_in->save();
                         saveRoomStatusHistory($room['room'], $room['dateIn'], $room['dateOut'], 3);
@@ -1080,7 +1080,7 @@ class BookRoomController extends Controller
                     $check_in_new->discount       = $discountAmount;
                     $check_in_new->note           = $room['note'];
                     $check_in_new->user_source    = $customer['customer_sourece'] ?? $request->customer_source;
-                    $check_in_new->unit_code      = hf('ma_coso');
+                    $check_in_new->unit_code      =  unitCode();
                     $check_in_new->created_by     = $request->name_staff ??  authAdmin()->id;
                     $check_in_new->save();
 

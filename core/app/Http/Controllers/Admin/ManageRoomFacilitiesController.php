@@ -113,7 +113,7 @@ class ManageRoomFacilitiesController extends Controller
         $room = Room::find($request->room_id);
         if ($room) {
             // $room->facilities()->sync($request->facilities_id);
-            $unitCode = hf('ma_coso'); // hoặc lấy từ auth/session
+            $unitCode =  unitCode(); // hoặc lấy từ auth/session
             $subdomain = subdomain();
 
             $syncData = [];

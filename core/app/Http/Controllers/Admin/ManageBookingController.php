@@ -61,7 +61,7 @@ class ManageBookingController extends Controller
             $data['option_room']      = $bookedRoom['option_room'];
             $data['check_in']         = now();
             $data['check_out']        = Carbon::parse($bookedRoom['check_out'])->format('Y-m-d H:i:s');
-            $data['unit_code']        = hf('ma_coso');
+            $data['unit_code']        = unitCode();
             $data['key_status']       =  Status::KEY_GIVEN;
             $data['book_room_id']     =  $bookedRoom['id'];
             $data['check_in_at']      = now();

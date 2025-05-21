@@ -118,7 +118,7 @@ class ManageRoomAmenitiesController extends Controller
             // Lặp để gắn lại với unit_code và subdomain
             foreach ($request->amenities_id as $amenityId) {
                 $room->amenities()->attach($amenityId, [
-                    'unit_code' => hf('ma_coso'),
+                    'unit_code' =>  unitCode(),
                     'subdomain' => subdomain(),
                 ]);
             }
