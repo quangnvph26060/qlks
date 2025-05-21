@@ -592,23 +592,28 @@ function unitCode()
 
 function subdomain()
 {
-    $subdomain = Cache::get('Subdomain');
+    // $admin = Auth::guard('admin')->user();
+    $admin = auth('admin')->user();
+
+    if (!$admin || !isset($admin->subdomain)) {
+        // Trường hợp chưa login hoặc không có subdomain
+        return null;
+    }
+
+    // Tạo key riêng cho từng admin
+    $cacheKey = 'Subdomain_' . $admin->id;
+
+    // Kiểm tra cache
+    $subdomain = Cache::get($cacheKey);
 
     if (!$subdomain) {
-        $admin = Auth::guard('admin')->user();
-
-        if ($admin && isset($admin->subdomain)) {
-            $sub_domain = $admin->subdomain;
-            Cache::put('Subdomain', $sub_domain);
-            $subdomain = $sub_domain;
-        } else {
-            // Trường hợp chưa login hoặc không có subdomain
-            return null;
-        }
+        $subdomain = $admin->subdomain;
+        Cache::put($cacheKey, $subdomain, now()->addMinutes(60)); // hoặc bạn có thể set thời gian khác
     }
 
     return $subdomain;
 }
+
 // end setting and setup hotels
 function isImage($string)
 {
