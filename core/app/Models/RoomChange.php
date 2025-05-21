@@ -34,6 +34,7 @@ class RoomChange extends Model
         'note',
         'created_by',
         'unit_code',
+        'subdomain',
     ];
     public function room() {
         return $this->belongsTo(Room::class,'new_room_code');
