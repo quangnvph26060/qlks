@@ -1164,7 +1164,8 @@ class BookingController extends Controller
             'payment_method'  => $request->payment_pttt,
             'service_fee'     => $sumServiceRoom,
             'created_date'    => now(),
-            'unit_code'       => unitCode()
+            'unit_code'       => unitCode(),
+            'subdomain'       => subdomain(),
         ]);
 
         // // Gộp tổng các lần thanh toán

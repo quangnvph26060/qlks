@@ -29,7 +29,7 @@ class ReceiptAndPayment extends Model
         'room_code',
         'status',
         'payment_id',
-        'subdomain'
+        'subdomain',
     ];
     protected $appends = ['status_badge','check_in','room_booking'];
 
