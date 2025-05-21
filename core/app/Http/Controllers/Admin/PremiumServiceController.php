@@ -170,6 +170,7 @@ class PremiumServiceController extends Controller
                     'total_payment' => $product['price'] * $product['quantity'],
                     'creator'       => $creator,
                     'unit_code'     => unitCode(),
+                    'subdomain'     => subdomain(),
                     'created_at'    => now(),
                     'updated_at'    => now(),
                 ]);
@@ -201,6 +202,7 @@ class PremiumServiceController extends Controller
                     'total_payment' => $service['price'] * $service['quantity'],
                     'creator'       => $creator,
                     'unit_code'     => unitCode(),
+                      'subdomain'     => subdomain(),
                     'created_at'    => now(),
                     'updated_at'    => now(),
                 ]);

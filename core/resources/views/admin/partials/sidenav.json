@@ -49,11 +49,11 @@
             },
             {
                 "keyword": [
-                    "Danh mục dịch vụ cao cấp",
+                    "Danh mục dịch vụ",
                     "Dịch vụ cao cấp",
                     "Services"
                 ],
-                "title": "Danh mục dịch vụ cao cấp",
+                "title": "Danh mục dịch vụ",
                 "route_name": "admin.hotel.premium.service.all",
                 "menu_active": "admin.hotel.premium.service.all"
             },

@@ -21,6 +21,7 @@ class RoomServiceProduct extends Model
         'creator',
         'unit_code',
         'price',
+        'subdomain',
     ];
     public function product(){
         return $this->hasOne(Product::class, 'id', 'product_id');
