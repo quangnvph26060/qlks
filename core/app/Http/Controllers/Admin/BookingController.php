@@ -855,7 +855,8 @@ class BookingController extends Controller
                 ->whereNull('room_change')
                 ->first();
             $customerSourse = CustomerSource::where('unit_code', unitCode())->get();
-            $admin = Admin::where('unit_code', unitCode())->where('role_id', '!=', 0)->get();
+            $admin = Admin::where('unit_code', unitCode())
+            ->where('subdomain', subdomain())->get();
 
             $roomId = $roomData['room'];
             if (!isset($lastTimePerRoom[$roomId])) {

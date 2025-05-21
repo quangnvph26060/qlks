@@ -901,7 +901,8 @@ class BookRoomController extends Controller
     public function StaffAndCustomerSource(Request $request)
     {
         $customerSourse = CustomerSource::where('unit_code', unitCode())->get();
-        $admin = Admin::where('unit_code', unitCode())->where('role_id', '!=', 0)->get();
+        $admin = Admin::where('unit_code', unitCode())
+        ->where('subdomain', subdomain())->get();
         if (!$customerSourse && !$admin) {
             return response()->json(['error' => 'Không tìm thấy khách hàng'], 404);
         }
@@ -1167,7 +1168,8 @@ class BookRoomController extends Controller
         // Chuyển về dạng danh sách thay vì array với key
         $groupedBookings = array_values($groupedBookings);
         $customerSourse  = CustomerSource::where('unit_code', unitCode())->get();
-        $admin           = Admin::where('unit_code', unitCode())->where('role_id', '!=', 0)->get();
+        $admin           = Admin::where('unit_code', unitCode())
+         ->where('subdomain', subdomain())->get();
         if ($booking->customer_code) {
             $customer = Customer::where('customer_code', $booking->customer_code)->first();
         }

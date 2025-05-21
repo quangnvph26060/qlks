@@ -18,6 +18,7 @@ class CustomerController extends Controller
         $count  = Customer::count();
         $code   = $code ? $code . $count + 1 : '';
         $pageTitle = '';
+        
         $customers = Customer::orderBy('id', 'desc')->paginate(10);
         $unit_codes = HotelFacility::select('ma_coso')->where('subdomain', subdomain())->get();
         return view('admin.hotel.customer.list', compact('pageTitle', 'customers', 'unit_codes', 'code'));
@@ -45,7 +46,7 @@ class CustomerController extends Controller
         $customer->group_code = $request->group_code ?? '';
         $customer->note = $request->note ?? '';
         $customer->status = $request->status;
-        // $customer->source_code = $request->source_code;
+        $customer->source_code = $request->source_code;
         $customer->unit_code =  unitCode();
         $customer->subdomain =  subdomain();
         $customer->save();
@@ -79,7 +80,7 @@ class CustomerController extends Controller
                 $customer->address = $request->address ?? '';
                 $customer->group_code = $request->group_code ?? '';
                 $customer->note = $request->note ?? '';
-                // $customer->source_code = $request->source_code;
+                 $customer->source_code = $request->source_code;
                 $customer->status = $request->status;
                 // $customer->unit_code =  $request->unit_code;
                 $customer->save();
@@ -95,7 +96,7 @@ class CustomerController extends Controller
             $customer->address = $request->address ?? '';
             $customer->group_code = $request->group_code ?? '';
             $customer->note = $request->note ?? '';
-            // $customer->source_code = $request->source_code;
+             $customer->source_code = $request->source_code;
             $customer->status = $request->status;
             // $customer->unit_code =  $request->unit_code;
             $customer->save();
