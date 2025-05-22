@@ -150,6 +150,7 @@ class ProductController extends Controller
 
             // $data = $request->validated();
             $product->unit_code = unitCode();
+              $product->subdomain = subdomain();
             $product->image_path = $path[0] ?? '';
             $product->category_id = $request->input('category_id') ?? '';
             $product->brand_id = $request->input('brand_id') ?? '';
