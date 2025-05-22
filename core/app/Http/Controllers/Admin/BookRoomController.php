@@ -1106,11 +1106,11 @@ class BookRoomController extends Controller
         $roomBookings->with('room', 'room.roomType', 'room.roomType.roomTypePrice', 'room.roomType.roomTypePrice.setupPricing');
         if (!empty($request->method)) {
             $pageModal = 'Nhận phòng';
-            $roomBookings->where('id', $request->id);
+            // $roomBookings->where('id', $request->id);
         }
         $roomBookings->where('check_in_id', $id);
         $roomBookings = $roomBookings->get();
-
+        $totalPayment = ReceiptAndPayment::where('checkin_id', $id)->sum('total_payment');
         $groupedBookings = [];
         foreach ($roomBookings as $booking) {
             $key = $booking->customer_code . '|' . $booking->customer_name . '|' . $booking->email;
@@ -1140,7 +1140,7 @@ class BookRoomController extends Controller
                     'room_number'       => $booking->room_change_info['room']['room_number'],
                     'guest_count'       => $booking->room_change_info['guest_count'],
                     'status'            => $booking->status,
-                    'payment'           => $booking->check_in_payment ?? 0,
+                  
                     'total_service'     => RoomServiceProduct::where('check_in_id', $id)->where('room_code', $booking->room_change_info['new_room_code'])->sum('total_payment'),
                 ];
             } else {
@@ -1160,7 +1160,7 @@ class BookRoomController extends Controller
                     'room_number'       => $booking->room->room_number,
                     'guest_count'       => $booking->guest_count,
                     'status'            => $booking->status,
-                    'payment'           => $booking->check_in_payment ?? 0,
+                
                     'total_service'     => RoomServiceProduct::where('check_in_id', $id)->where('room_code', $booking->room->id)->sum('total_payment'),
                 ];
             }
@@ -1180,6 +1180,7 @@ class BookRoomController extends Controller
             'customerSourse'         => $customerSourse,
             'option_customer_source' => $customer->group_code ?? "",
             'pageModal'              => $pageModal,
+            'payment'                => $totalPayment,
         ]);
     }
     // get room booking
@@ -1215,8 +1216,7 @@ class BookRoomController extends Controller
         foreach ($request->booking_id as $item) {
             $result  = RoomBooking::query()
                 // ->active()
-                ->where('unit_code', unitCode())
-
+                ->where('status',Status::DISABLE)
                 ->where('booking_id', $item['book']);
             if (empty($item['method'])) {
                 $result = $result->where('room_code', $item['id']);
@@ -1229,8 +1229,7 @@ class BookRoomController extends Controller
             if (!$result) {
                 $result  = RoomBooking::query()
                     // ->active()
-                    ->where('unit_code', unitCode())
-
+                        ->where('status',Status::DISABLE)
                     ->where('booking_id', $item['book']);
                 // check if method LETAN ở đây
                 if (empty($item['method'])) {
@@ -1255,7 +1254,7 @@ class BookRoomController extends Controller
                 }
             }
         }
-        Log::info('Số bản ghi trong roomBooking: ' . count($roomBooking));
+        // Log::info('Số bản ghi trong roomBooking: ' . count($roomBooking));
 
         foreach ($roomBooking as $roomBook) {
             $bookingId = $roomBook['booking_id'];

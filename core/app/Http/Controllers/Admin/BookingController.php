@@ -856,7 +856,7 @@ class BookingController extends Controller
                 ->first();
             $customerSourse = CustomerSource::where('unit_code', unitCode())->get();
             $admin = Admin::where('unit_code', unitCode())
-            ->where('subdomain', subdomain())->get();
+                ->where('subdomain', subdomain())->get();
 
             $roomId = $roomData['room'];
             if (!isset($lastTimePerRoom[$roomId])) {
@@ -1118,15 +1118,8 @@ class BookingController extends Controller
     // }
     public function paymentRoom(Request $request)
     {
-        $roomJson = $request->room[0];
-        $roomData = json_decode($roomJson, true);
-        $roomId = $roomData['room'];
         $checkinId = $request->id_room_booking;
-
-        $totalService = (int)str_replace('.', '', $request->total_service);
         $amount = (int)str_replace('.', '', $request->input_pttt);
-        $deposit = (int)str_replace('.', '', $request->deposit);
-
         $errors = [];
 
         if ($request->payment_pttt == "") {
@@ -1143,22 +1136,34 @@ class BookingController extends Controller
                 "errors" => $errors
             ]);
         }
+        $totalAmount = 0;
+        $totalDeposit = 0;
+        $totalDiscount = 0;
+        $sumServiceRoom = 0;
+        foreach ($request->room as $roomJson) {
+            $roomData = json_decode($roomJson, true);
+            $roomId = $roomData['room'];
+            $bookingId = $roomData['bookingId'];
 
+            // Lấy dữ liệu checkin của từng phòng
+            $checkIns = CheckIn::where('check_in_id', $checkinId)
+                ->where('id', $bookingId)->get();
 
-        // Lấy thông tin check-in
-        $checkIns = CheckIn::where('check_in_id', $checkinId)->where('id', $roomData['bookingId'])->get();
-        $totalAmount = $checkIns->sum('total_amount');
-        $totalDeposit = $checkIns->sum('deposit_amount');
-        $totalDiscount = $checkIns->sum('discount');
+            $totalAmount += $checkIns->sum('total_amount');
+            $totalDeposit += $checkIns->sum('deposit_amount');
+            $totalDiscount += $checkIns->sum('discount');
 
-        $sumServiceRoom = RoomServiceProduct::where('check_in_id', $checkinId)
-            ->where('room_code', $roomId)->sum('total_payment');
-        // Tạo bản ghi thanh toán mới
+            // Tổng tiền dịch vụ từng phòng
+            $sumServiceRoom += RoomServiceProduct::where('check_in_id', $checkinId)
+                ->where('room_code', $roomId)->sum('total_payment');
+        }
+
+        // Sau khi tổng hợp xong, tạo 1 bản ghi duy nhất
         ReceiptAndPayment::create([
             'payment_id'      => getCode('TT', 12),
-            'booking_id'      => "", // điền nếu cần
+            'booking_id'      => "", // có thể điền nếu cần
             'checkin_id'      => $checkinId,
-            'room_code'       => $roomId,
+            'room_code'       => null, // vì là tổng cả đơn nên không ghi 1 phòng
             'room_price'      => $totalAmount,
             'deposit_amount'  => $totalDeposit,
             'discount_amount' => $totalDiscount,
@@ -1169,30 +1174,6 @@ class BookingController extends Controller
             'unit_code'       => unitCode(),
             'subdomain'       => subdomain(),
         ]);
-
-        // // Gộp tổng các lần thanh toán
-        // $receipts = ReceiptAndPayment::where('checkin_id', $checkinId)
-        //     ->where('room_code', $roomId)->get();
-        // // tổng tiền dịch vụ 
-        // $latestReceipt = ReceiptAndPayment::where('checkin_id', $checkinId)
-        //     ->where('room_code', $roomId)
-        //     ->orderByDesc('id')
-        //     ->first();
-        // $totalPaid        = $receipts->sum('total_payment');
-        // $totalDiscounts   = $latestReceipt?->discount_amount ?? 0;
-        // $totalDeposits    = $latestReceipt?->deposit_amount ?? 0;
-        // $totalServiceFees = $latestReceipt?->service_fee ?? 0;
-
-        // $due = ($totalAmount + $totalServiceFees - $totalDiscounts - $totalDeposits - $totalPaid);
-        // Log::info($checkIns);
-        // if ($due <= 0 && $checkIns->count()) {
-        //     foreach ($checkIns as $check_in) {
-        //         $roomToSave = $check_in->room_change ?? $check_in->room_code;
-        //        saveRoomStatusHistory($roomToSave, $check_in->checkin_date, $check_in->checkout_date, 1);
-        //     }
-        //     return response()->json(['status' => 'success', 'success' => 'Trả phòng thành công']);
-        // }
-
         return response()->json(['status' => 'success', 'success' => 'Thanh toán thành công']);
     }
     public function checkOutRoom(Request $request)
@@ -1207,7 +1188,7 @@ class BookingController extends Controller
 
             // Lấy thông tin check-in tương ứng
             $checkIns = CheckIn::where('check_in_id', $checkinId)
-                ->where('id', $bookingId)
+                // ->where('id', $bookingId)
                 ->get();
 
             $totalAmount    = $checkIns->sum('total_amount');
@@ -1215,14 +1196,13 @@ class BookingController extends Controller
             $totalDiscount  = $checkIns->sum('discount');
 
             // Gộp tổng các lần thanh toán
-            $receipts = ReceiptAndPayment::where('checkin_id', $checkinId)
-                ->where('room_code', $roomId)->get();
-            $room = Room::where('id',$roomId)->first();
+            $receipts = ReceiptAndPayment::where('checkin_id', $checkinId)->get();
+            $room     = Room::where('id', $roomId)->first();
             // Lấy biên lai mới nhất để tính phí
             $latestReceipt = $receipts->sortByDesc('id')->first();
-        $totalServicePayment = RoomServiceProduct::where('check_in_id', $checkinId)
-    ->where('room_code', $roomId)
-    ->sum('total_payment');
+            $totalServicePayment = RoomServiceProduct::where('check_in_id', $checkinId)
+                // ->where('room_code', $roomId)
+                ->sum('total_payment');
 
             $totalPaid        = $receipts->sum('total_payment');
             $totalDiscounts   = $latestReceipt?->discount_amount ?? 0;
@@ -1239,7 +1219,7 @@ class BookingController extends Controller
             } else {
                 return response()->json([
                     'status' => 'error',
-                 'error' => 'Phòng ' . $room->room_number . ' chưa thanh toán đủ. Còn thiếu: ' . number_format($due, 0, ',', '.'),
+                    'error' => 'Phòng ' . $room->room_number . ' chưa thanh toán đủ. Còn thiếu: ' . number_format($due, 0, ',', '.'),
 
                 ]);
             }
