@@ -58,20 +58,20 @@
                                            <svg class="svg_menu_check_in" xmlns="http://www.w3.org/2000/svg" width="30" height="30" viewBox="0 0 21 21"><g fill="currentColor" fill-rule="evenodd"><circle cx="10.5" cy="10.5" r="1"/><circle cx="10.5" cy="5.5" r="1"/><circle cx="10.5" cy="15.5" r="1"/></g></svg>
                                                <div class="dropdown menu_dropdown_check_in" id="dropdown-menu"  style="position:fixed">
                                                    <div class="dropdown-item"><a href="{{ route('admin.product.edit', $product->id) }}" style="color:black">
-                                                       Sửa sản phẩm    
+                                                       Sửa    
                                                    </a>
                                                </div>
                                                
                                                <div class="dropdown-item booked_room_detail"> <button class=" btn-delete icon-delete-room"
                                                        data-id="{{ $product->id }}" data-modal_title="@lang('Xóa trạng thái')" type="button"
-                                                       data-pro="0">Xóa sản phẩm</div>
+                                                       data-pro="0"> Xoá</div>
                                    
                                                </div>
                                        </td>
                                    @endcan
                                         <td data-label="STT" style="text-align:right">   
                                         @php
-                                            $stt = $categories->total() - ($categories->currentPage() - 1) * $categories->perPage() - $id;
+                                            $stt = $categories->total() + ($categories->currentPage() - 1) * $categories->perPage() + $id;
                                                 @endphp
                                             {{ $stt }}
                                         </td>   
@@ -110,7 +110,7 @@
                                             <div class="representatives-container">
                                                 <span class="representatives-label">Thương hiệu:</span>
                                                 <span class="representatives-list">
-                                                    <span class="badge bg-primary me-2 cursor-pointer">
+                                                    <span class="badge bg-primary me-2 cursor-pointer" style="color: white !important">
                                                         <small class="representative-name"> {{ $product->brand->name }}</small>
                                                     </span>
                                                 </span>

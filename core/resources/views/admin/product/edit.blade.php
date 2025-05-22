@@ -145,7 +145,7 @@
                     </div>
     </form>
     @push('breadcrumb-plugins')
-        <a class="btn btn-sm btn-outline--danger" href="{{ route('admin.product.index') }}"><i
+        <a class="btn btn-sm btn-outline--danger" href="{{ route('admin.hotel.setup.product.all') }}"><i
                 class="las la-list"></i>@lang('Danh sách sản phẩm')</a>
     @endpush
 @endsection
@@ -222,7 +222,7 @@
                     contentType: false,
                     success: function(response) {
                         if (response.status) {
-                            window.location.href = "{{ route('admin.product.index') }}";
+                            window.location.href = "{{ route('admin.hotel.setup.product.all') }}";
                         } else {
                             resetForm(true);
                             $.each(response.errors, function(index, message) {
