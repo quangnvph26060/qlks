@@ -32,7 +32,6 @@ class FacilityController extends Controller
     public function index(Request $request)
     {
         $pageTitle = 'Danh sách cơ sở vật chất';
-     
 
         $facilities = Facility::orderBy('id', 'desc')->where('unit_code',unitCode())->paginate(10);;
         $emptyMessage = 'Không tìm thấy dữ liệu';
@@ -57,6 +56,7 @@ class FacilityController extends Controller
         $facility->icon         = $request->icon;
         $facility->status = $request->status;
         $facility->unit_code = unitCode();
+        $facility->subdomain = subdomain();
         $facility->save();
 
         $notify[] = ['success', $notification];
