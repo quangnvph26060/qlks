@@ -4,6 +4,7 @@ namespace App\Http\Controllers\Admin;
 
 use App\Http\Controllers\Controller;
 use App\Models\Amenity;
+use App\Models\StatusCode;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Schema;
 
@@ -71,6 +72,7 @@ class AmenitiesController extends Controller
         $amenities->icon       = $request->icon;
         $amenities->status       = $request->status;
         $amenities->unit_code = unitCode();
+         $amenities->subdomain = subdomain();
         $amenities->save();
 
         $notify[] = ['success', $notification];
@@ -122,7 +124,7 @@ class AmenitiesController extends Controller
         $pageTitle = '';
         if($request->input('code') == '' && $request->input('title') == '')
         {
-            $amenities = Amenity::where('unit_code',unitCode())->orderBy('id', 'desc')->paginate(10);
+            $amenities = Amenity::orderBy('id', 'desc')->paginate(10);
         }
         else
         {
@@ -130,7 +132,6 @@ class AmenitiesController extends Controller
 
                 ->where('code','LIKE', '%'.$request->input('code').'%')
                 ->where('title','LIKE', '%'.$request->input('title').'%')
-                ->where('unit_code',unitCode())
                 ->orderBy('id', 'desc')->paginate(10);
         }
         $emptyMessage = 'Không tìm thấy dữ liệu';
