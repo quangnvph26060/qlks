@@ -12,7 +12,7 @@ use Illuminate\Support\Facades\Schema;
 use Illuminate\Support\Facades\Storage;
 use App\Models\SetupCode;
 use Illuminate\Support\Str;
-
+use Illuminate\Validation\Rule;
 
 class RoomController extends Controller
 {
@@ -52,8 +52,17 @@ class RoomController extends Controller
     public function addRoom(Request $request, $id = 0)
     {
         $request->validate([
-            'name' => 'required|unique:room_types,name,' . $id,
+            'name' => [
+                'required',
+                Rule::unique('room_types', 'name')
+                    ->ignore($id) // Bỏ qua bản ghi hiện tại
+                    ->where('subdomain', subdomain()), // Chỉ check trong cùng subdomain
+            ],
             'main_image' => 'image|nullable',
+        ], [
+            'name.required' => 'Tên loại phòng là bắt buộc.',
+            'name.unique' => 'Tên loại phòng đã tồn tại.',
+            'main_image.image' => 'Ảnh đại diện phải là định dạng hình ảnh.',
         ]);
 
         if ($id) {
