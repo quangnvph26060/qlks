@@ -338,7 +338,7 @@ class GeneralSettingController extends Controller
             'ma_coso' => [
                 'required',
                 'string',
-                'regex:/^[A-Z0-9]+$/',
+               'regex:/^[A-Z0-9\-]+$/'
             ],
             'ten_coso' => 'required|string',
         ]);
@@ -388,7 +388,7 @@ class GeneralSettingController extends Controller
             'ma_coso' => [
                 'required',
                 'string',
-                'regex:/^[A-Z0-9]+$/',
+               'regex:/^[A-Z0-9\-]+$/'
             ],
             'ten_coso' => 'required|string',
         ]);
