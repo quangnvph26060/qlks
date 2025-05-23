@@ -4,6 +4,7 @@ namespace App\Http\Requests\Product;
 
 use Illuminate\Foundation\Http\FormRequest;
 use Illuminate\Http\Exceptions\HttpResponseException;
+use Illuminate\Validation\Rule;
 
 class StoreProductRequest extends FormRequest
 {
@@ -22,12 +23,30 @@ class StoreProductRequest extends FormRequest
      */
     public function rules(): array
     {
+
         return [
-            'name' => 'required|unique:products',
+            // 'name' => 'required|unique:products',
+            'name' => [
+                'required',
+                'string',
+                Rule::unique('products', 'sku')
+                    ->ignore($this->id)
+                    ->where('unit_code', unitCode())
+                    ->where('subdomain', subdomain()),
+            ],
             'import_price' => 'required|numeric',
             'selling_price' => 'required|numeric|gt:import_price',
             'description' => 'nullable',
-            'sku' => 'required|unique:products|max:6',
+            'sku' => [
+                'required',
+                'string',
+               
+                'regex:/^[A-Z0-9\-]+$/',
+                Rule::unique('products', 'sku')
+                    ->ignore($this->id)
+                    ->where('unit_code', unitCode())
+                    ->where('subdomain', subdomain()),
+            ],
             'category_id' => 'required',
             'brand_id' => 'required',
             'stock' => 'nullable|integer',
@@ -47,6 +66,7 @@ class StoreProductRequest extends FormRequest
             'selling_price.gt'                      => 'Giá bán < giá nhập',
             'sku.required'                          => 'Vui lòng nhập :attribute',
             'sku.unique'                            => 'Mã sản phẩm đã tồn tại',
+            'sku.regex'                            => 'Mã sản phẩm phải ghi hoa',
             'category_id.required'                  => 'Vui lòng chọn :attribute',
             'brand_id.required'                     => 'Vui lòng chọn :attribute',
 

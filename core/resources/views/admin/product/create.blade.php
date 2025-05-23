@@ -50,7 +50,7 @@
                             <div class="form-group mb-3 col-lg-6">
                                 <label for="sku" class="form-label">SKU</label>
                                 <input type="text" name="sku" id="sku" class="form-control"
-                                    placeholder="Mã sản phẩm">
+                                    placeholder="Mã sản phẩm" value="{{ $code }}">
                                 <small></small>
                             </div>
                             <div class="form-group mb-3 col-lg-6">
@@ -120,7 +120,7 @@
                 </div>
             </div>
         </div>
-       
+
         <div class="card mt-3 pb-5">
                         <div class="card-body">
                             <div class="row">
