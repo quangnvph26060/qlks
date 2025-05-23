@@ -25,6 +25,7 @@ class RoomTypePrice extends Model
     public function setupPricing(){
         return $this->belongsTo(SetupPricing::class, 'setup_pricing_id', 'id');
     }
+    
     public function roomType(){
         return $this->belongsTo(RoomType::class, 'room_type_id', 'id');
     }
