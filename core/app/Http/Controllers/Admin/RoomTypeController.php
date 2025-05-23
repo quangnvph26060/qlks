@@ -290,7 +290,7 @@ class RoomTypeController extends Controller
             'string',
           
            Rule::unique('rooms', 'code')
-                ->ignore($id)
+            
                 ->where(function ($query) use ($request) {
                     return $query->where('room_type_id', $request->room_type_id)
                                  ->where('subdomain', subdomain());
