@@ -7,6 +7,7 @@ use App\Models\Amenity;
 use App\Models\StatusCode;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Schema;
+use Illuminate\Validation\Rule;
 
 class AmenitiesController extends Controller
 {
@@ -49,15 +50,40 @@ class AmenitiesController extends Controller
         // ->orderBy('title')
         // ->paginate(getPaginate());
 
-        $amenities = Amenity::orderBy('id', 'desc')->where('unit_code',unitCode())->paginate(10);;
+        $amenities = Amenity::orderBy('id', 'desc')->paginate(10);
         $emptyMessage = 'Không tìm thấy dữ liệu';
         return view('admin.hotel.setup.amenities', compact('pageTitle', 'amenities', 'emptyMessage'));
     }
     public function store(Request $request, $id = 0)
     {
         $request->validate([
-            'code' => 'required',
-            'title'      => 'required|string|unique:amenities,title,' . $id,
+            'code' => [
+                'required',
+                'string',
+                'regex:/^[A-Z0-9\-]+$/',
+                Rule::unique('amenities', 'code')
+                    ->ignore($id)
+                    ->where('unit_code', unitCode())
+                    ->where('subdomain', subdomain()),
+            ],
+            'title' => [
+                'required',
+                'string',
+                Rule::unique('amenities', 'title')
+                    ->ignore($id)
+                    ->where('unit_code', unitCode())
+                    ->where('subdomain', subdomain()),
+            ],
+        ],[
+            'code.required' => 'Mã tiện nghi không được để trống.',
+            'code.unique' => 'Mã tiện nghi đã tồn tại.',
+
+            'title.required' => 'Tên tiện nghi không được để trống.',
+            'title.string' => 'Tên tiện nghi phải là chuỗi ký tự.',
+            'title.max' => 'Tên tiện nghi không được vượt quá 255 ký tự.',
+            'title.unique' => 'Tên tiện nghi đã tồn tại.',
+
+            'cost.required' => 'Chi phí không được để trống.',
         ]);
 
         if ($id) {
