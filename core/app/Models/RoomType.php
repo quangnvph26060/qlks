@@ -64,36 +64,39 @@ class RoomType extends Model
             }
         );
     }
-
     public function roomTypePrice()
     {
-             $today = Carbon::now();
-
-            Log::info('Hôm nay là ngày: ' . $today->toDateString());
-            Log::info('Hôm nay là thứ: ' . $today->translatedFormat('l')); 
-
-           return $this->hasOne(RoomTypePrice::class, 'room_type_id', 'id')
-            ->where('price_validity_period', '<=', now()->toDateString())
-            ->orderByDesc('price_validity_period')
-            ->with('setupPricing');
-
-        // $today = Carbon::now()->toDateString();
-        // $weekday = (string)(Carbon::now()->dayOfWeekIso + 1);
-        // if ($weekday == '9') $weekday = '2';
-
-        // return $this->hasMany(RoomTypePrice::class, 'room_type_id', 'id')
-        //     ->where('price_validity_period', '<=', $today)
-        //     ->whereHas('setupPricing', function ($query) use ($weekday, $today) {
-        //         $query->where(function ($q) use ($weekday, $today) {
-        //             $q->whereJsonContains('price_requirement', $weekday)
-        //                 ->orWhereJsonContains('price_requirement', $today);
-        //         });
-        //     })
-        //     ->with(['setupPricing' => function ($q) use ($weekday, $today) {
-        //         $q->where(function ($q2) use ($weekday, $today) {
-        //             $q2->whereJsonContains('price_requirement', $weekday)
-        //                 ->orWhereJsonContains('price_requirement', $today);
-        //         });
-        //     }]);
+        return $this->hasOne(RoomTypePrice::class, 'room_type_id', 'id')->orderByDesc('price_validity_period');
     }
+    // public function roomTypePrice()
+    // {
+    //      $today = Carbon::now();
+
+    //     Log::info('Hôm nay là ngày: ' . $today->toDateString());
+    //     Log::info('Hôm nay là thứ: ' . $today->translatedFormat('l')); 
+
+    //    return $this->hasOne(RoomTypePrice::class, 'room_type_id', 'id')
+    //     ->where('price_validity_period', '<=', now()->toDateString())
+    //     ->orderByDesc('price_validity_period')
+    //     ->with('setupPricing');
+
+    // $today = Carbon::now()->toDateString();
+    // $weekday = (string)(Carbon::now()->dayOfWeekIso + 1);
+    // if ($weekday == '9') $weekday = '2';
+
+    // return $this->hasMany(RoomTypePrice::class, 'room_type_id', 'id')
+    //     ->where('price_validity_period', '<=', $today)
+    //     ->whereHas('setupPricing', function ($query) use ($weekday, $today) {
+    //         $query->where(function ($q) use ($weekday, $today) {
+    //             $q->whereJsonContains('price_requirement', $weekday)
+    //                 ->orWhereJsonContains('price_requirement', $today);
+    //         });
+    //     })
+    //     ->with(['setupPricing' => function ($q) use ($weekday, $today) {
+    //         $q->where(function ($q2) use ($weekday, $today) {
+    //             $q2->whereJsonContains('price_requirement', $weekday)
+    //                 ->orWhereJsonContains('price_requirement', $today);
+    //         });
+    //     }]);
+    //  }
 }
