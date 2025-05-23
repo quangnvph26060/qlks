@@ -52,14 +52,22 @@ class RoomController extends Controller
     public function addRoom(Request $request, $id = 0)
     {
         $request->validate([
+            'code' => [
+                'required',
+                Rule::unique('room_types', 'code')
+                    ->ignore($id)
+                    ->where('subdomain', subdomain()),
+            ],
             'name' => [
                 'required',
                 Rule::unique('room_types', 'name')
-                    ->ignore($id) // Bỏ qua bản ghi hiện tại
-                    ->where('subdomain', subdomain()), // Chỉ check trong cùng subdomain
+                    ->ignore($id)
+                    ->where('subdomain', subdomain()),
             ],
             'main_image' => 'image|nullable',
         ], [
+            'code.required' => 'Mã loại phòng là bắt buộc.',
+            'code.unique' => 'Mã loại phòng đã tồn tại.',
             'name.required' => 'Tên loại phòng là bắt buộc.',
             'name.unique' => 'Tên loại phòng đã tồn tại.',
             'main_image.image' => 'Ảnh đại diện phải là định dạng hình ảnh.',
