@@ -317,16 +317,16 @@ class ManagePriceListController extends Controller
         try {
 
             DB::beginTransaction();
-            $isDuplicate = RoomTypePrice::where('room_type_id', $validatedData['room_type_id'])
-                ->where('setup_pricing_id', $validatedData['setup_pricing_id'])
-                ->where('unit_code', unitCode())
-                ->where('subdomain', subdomain())
-                ->exists();
+            // $isDuplicate = RoomTypePrice::where('room_type_id', $validatedData['room_type_id'])
+            //     ->where('setup_pricing_id', $validatedData['setup_pricing_id'])
+            //     ->where('unit_code', unitCode())
+            //     ->where('subdomain', subdomain())
+            //     ->exists();
 
-            if ($isDuplicate) {
-                $notify[] = ['error', 'Cặp mã loại phòng và mã giá này đã tồn tại.'];
-                return back()->withNotify($notify)->withInput();
-            }
+            // if ($isDuplicate) {
+            //     $notify[] = ['error', 'Cặp mã loại phòng và mã giá này đã tồn tại.'];
+            //     return back()->withNotify($notify)->withInput();
+            // }
             $priceRoomType = new SetupPricing();
             $priceRoomType->price_code           = $validatedData['price_code'];
             $priceRoomType->price_name           = $validatedData['price_name'];
