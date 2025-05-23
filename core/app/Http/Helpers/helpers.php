@@ -582,19 +582,23 @@ function hf($key = null) // hotel_facilities
 // ma cơ sở 
 function unitCode()
 {
-    $unit = Cache::get('Unit_code');
+    $admin = Auth::guard('admin')->user();
+    
+    if (!$admin || !isset($admin->unit_code)) {
+        // Nếu chưa login hoặc không có unit_code thì trả về null
+        return null;
+    }
+
+    // Tạo cache key phân biệt theo user id để tránh cache chồng chéo
+    $cacheKey = 'Unit_code_' . $admin->subdomain;
+
+    // Lấy cache nếu có, nếu không thì lưu mới
+    $unit = Cache::get($cacheKey);
 
     if (!$unit) {
-        $admin = Auth::guard('admin')->user();
-
-        if ($admin && isset($admin->unit_code)) {
-            $unit_code = $admin->unit_code;
-            Cache::put('Unit_code', $unit_code);
-            $unit = $unit_code;
-        } else {
-            // Nếu chưa login thì return null luôn
-            return null;
-        }
+        $unit_code = $admin->unit_code;
+        Cache::put($cacheKey, $unit_code);
+        $unit = $unit_code;
     }
 
     return $unit;

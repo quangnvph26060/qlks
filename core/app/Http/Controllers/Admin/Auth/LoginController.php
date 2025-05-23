@@ -95,8 +95,9 @@ class LoginController extends Controller
 
     public function logout(Request $request)
     {
-        Cache::forget('Unit_code');
-        Cache::forget('Subdomain');
+       // Cache::forget('Unit_code');
+       // Cache::forget('Subdomain');
+        Cache::flush(); // xoá cache
         $this->guard('admin')->logout();
         $request->session()->invalidate();
         return $this->loggedOut($request) ?: redirect($this->redirectTo);

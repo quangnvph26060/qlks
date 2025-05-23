@@ -325,6 +325,7 @@ class GeneralSettingController extends Controller
     // cấu hình cơ sở 
     public function setupHotel()
     {
+       // dd(unitCode());
         $pageTitle = 'Cấu hình cơ sở';
         $hotels = HotelFacility::where('subdomain', subdomain())->paginate(10);
         $emptyMessage = 'Không tìm thấy dữ liệu';
@@ -334,9 +335,22 @@ class GeneralSettingController extends Controller
     public function addHotel(Request $request)
     {
         $request->validate([
-            'ma_coso' => 'required|string',
+            'ma_coso' => [
+                'required',
+                'string',
+                'regex:/^[A-Z0-9]+$/',
+            ],
             'ten_coso' => 'required|string',
         ]);
+        $exists = HotelFacility::where('ma_coso', $request->ma_coso)
+            ->where('subdomain', subdomain())->exists();
+        if ($exists) {
+            return back()->withErrors(['ma_coso' => 'Mã cơ sở đã tồn tại.'])->withInput();
+        }
+        if ($request->hotelStatus == 1) {
+            HotelFacility::where('subdomain', subdomain())
+                ->update(['trang_thai' => 0]);
+        }
         $hotel = new HotelFacility();
         $hotel->ma_coso = $request->ma_coso;
         $hotel->ten_coso = $request->ten_coso;
@@ -346,12 +360,11 @@ class GeneralSettingController extends Controller
         $hotel->save();
         // Chỉ lưu cache nếu trạng thái là 1 và chưa có cache
         if ($hotel->trang_thai == 1) {
-            $cacheKey = 'HotelFacility_' . $hotel->subdomain;
-
-            if (!Cache::has($cacheKey)) {
-                Cache::put($cacheKey, $hotel);
-            }
+            $cacheKey = 'Unit_code_' . $hotel->subdomain;
+            // Luôn cập nhật lại cache với bản ghi mới active
+            Cache::put($cacheKey, $hotel->ma_coso);
         }
+
 
         $notify[] = ['success', 'Thêm cơ sở thành công'];
         return back()->withNotify($notify);
@@ -372,17 +385,39 @@ class GeneralSettingController extends Controller
     public function updateHotel($id, Request $request)
     {
         $request->validate([
-            'ma_coso' => 'required|string',
+            'ma_coso' => [
+                'required',
+                'string',
+                'regex:/^[A-Z0-9]+$/',
+            ],
             'ten_coso' => 'required|string',
         ]);
 
         $hotel = HotelFacility::find($id);
+        $exists = HotelFacility::where('ma_coso', $request->ma_coso)
+            ->where('subdomain', subdomain())
+            ->where('id', '!=', $id) // bỏ qua bản ghi đang sửa
+            ->exists();
+
+        if ($exists) {
+            return back()->withErrors(['ma_coso' => 'Mã cơ sở đã tồn tại.'])->withInput();
+        }
+        if ($request->hotelStatus == 1) {
+            HotelFacility::where('subdomain', subdomain())
+                ->where('id', '!=', $id)
+                ->update(['trang_thai' => 0]);
+        }
+
         $hotel->ma_coso = $request->ma_coso;
         $hotel->ten_coso = $request->ten_coso;
         $hotel->trang_thai =  $request->hotelStatus;
         // save
         $hotel->save();
-
+        if ($hotel->trang_thai == 1) {
+            $cacheKey = 'Unit_code_' . $hotel->subdomain;
+            // Luôn cập nhật lại cache với bản ghi mới active
+            Cache::put($cacheKey, $hotel->ma_coso);
+        }
         $notify[] = ['success', 'Cập nhật cơ sở thành công'];
         return back()->withNotify($notify);
     }
