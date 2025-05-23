@@ -95,9 +95,9 @@ class ProductController extends Controller
         $pageTitle = 'Danh sách sản phẩm';
         // dd($code);
         $brands = Brand::query()->pluck('name', 'id');
-        $categories = Product::query()->orderBy('id', 'desc')->where('unit_code', unitCode())->paginate(10);;
+        $categories = Product::query()->orderBy('id', 'desc')->where('unit_code', unitCode())->paginate(10);
         $emptyMessage = 'Không tìm thấy dữ liệu';
-        return view('admin.hotel.setup.product', compact('pageTitle', 'categories', 'emptyMessage', 'code'));
+        return view('admin.hotel.setup.product', compact('pageTitle', 'categories', 'emptyMessage'));
     }
     public function search(Request $request)
     {
