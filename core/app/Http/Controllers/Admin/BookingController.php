@@ -366,206 +366,205 @@ class BookingController extends Controller
         return response()->json(['status' => 'success', 'data' => $rooms]);
     }
 
-   public function showRoom(Request $request)
-{
-    try {
-        $disabledRoomTypeIDs = RoomType::where('status', 0)->pluck('id')->toArray();
+    public function showRoom(Request $request)
+    {
+        try {
+            $disabledRoomTypeIDs = RoomType::where('status', 0)->pluck('id')->toArray();
 
-        if ($request->method === 'change_room') {
-            $dates = $this->getDates($request->dateId, $request->dateId);
-        } else {
-            $dates = $this->getDates($request->checkInDate, $request->checkOutDate);
-        }
+            if ($request->method === 'change_room') {
+                $dates = $this->getDates($request->dateId, $request->dateId);
+            } else {
+                $dates = $this->getDates($request->checkInDate, $request->checkOutDate);
+            }
 
-        $roomIds = is_array($request->roomIds) ? $request->roomIds : explode(',', $request->roomIds);
+            $roomIds = is_array($request->roomIds) ? $request->roomIds : explode(',', $request->roomIds);
 
-        $emptyRooms = Room::query()->active();
-        if ($request->method === 'change_room') {
-            $emptyRooms = $emptyRooms->whereNotIn('id', (array) $request->roomId);
-        }
+            $emptyRooms = Room::query()->active();
+            if ($request->method === 'change_room') {
+                $emptyRooms = $emptyRooms->whereNotIn('id', (array) $request->roomId);
+            }
 
-        $emptyRooms = $emptyRooms->whereNotIn('room_type_id', $disabledRoomTypeIDs);
-        if ($request->method != 'change_room') {
-            $emptyRooms = $emptyRooms->where(function ($query) use ($request) {
-                if ($request->optionHangPhong) {
-                    $query->where(function ($query) use ($request) {
-                        $query->whereExists(function ($subquery) use ($request) {
-                            $subquery->from('room_types')
-                                ->whereRaw('rooms.room_type_id = room_types.id')
-                                ->where('room_types.id', $request->optionHangPhong);
+            $emptyRooms = $emptyRooms->whereNotIn('room_type_id', $disabledRoomTypeIDs);
+            if ($request->method != 'change_room') {
+                $emptyRooms = $emptyRooms->where(function ($query) use ($request) {
+                    if ($request->optionHangPhong) {
+                        $query->where(function ($query) use ($request) {
+                            $query->whereExists(function ($subquery) use ($request) {
+                                $subquery->from('room_types')
+                                    ->whereRaw('rooms.room_type_id = room_types.id')
+                                    ->where('room_types.id', $request->optionHangPhong);
+                            });
+                        })->orWhere('rooms.id', $request->optionHangPhong);
+                    } else {
+                        $query->whereExists(function ($subquery) {
+                            $subquery->from('room_types');
                         });
-                    })->orWhere('rooms.id', $request->optionHangPhong);
-                } else {
-                    $query->whereExists(function ($subquery) {
-                        $subquery->from('room_types');
-                    });
-                }
-            })->where(function ($query) use ($request) {
-                if (!empty($request->optionNamePhong)) {
-                    $query->where('id', $request->optionNamePhong);
-                }
-            });
-        }
+                    }
+                })->where(function ($query) use ($request) {
+                    if (!empty($request->optionNamePhong)) {
+                        $query->where('id', $request->optionNamePhong);
+                    }
+                });
+            }
 
-        $emptyRooms = $emptyRooms->with(['roomType', 'roomType.roomTypePrice', 'roomCheckIn', 'roomBooking', 'roomBookingChange'])
-            ->select(['id', 'room_type_id', 'room_number'])
-            ->get();
-
-        $newRecords = [];
-        $allRoomStatusHistory = collect();
-
-        foreach ($emptyRooms as $room) {
-            $roomStatusHistory = RoomStatusHistory::where('room_id', $room->id)
-                ->with('roomStatus')
+            $emptyRooms = $emptyRooms->with(['roomType', 'roomType.roomTypePrice', 'roomCheckIn', 'roomBooking', 'roomBookingChange'])
+                ->select(['id', 'room_type_id', 'room_number'])
                 ->get();
 
-            $allRoomStatusHistory = $allRoomStatusHistory->merge($roomStatusHistory);
-        }
+            $newRecords = [];
+            $allRoomStatusHistory = collect();
 
-        $groupedByRoom = $allRoomStatusHistory->groupBy('room_id');
+            foreach ($emptyRooms as $room) {
+                $roomStatusHistory = RoomStatusHistory::where('room_id', $room->id)
+                    ->with('roomStatus')
+                    ->get();
 
-        $filteredResults = collect();
-
-        foreach ($groupedByRoom as $roomId => $records) {
-            $sortedRecords = $records->sortBy('start_date')->values();
-            $uniqueRecords = collect();
-
-            foreach ($sortedRecords as $record) {
-                $overlapIndex = $uniqueRecords->search(function ($item) use ($record) {
-                    return ($record->start_date == $item->start_date && $record->end_date == $item->end_date) ||
-                        ($record->start_date < $item->end_date && $record->end_date > $item->start_date);
-                });
-
-                if ($overlapIndex !== false) {
-                    $existingRecord = $uniqueRecords[$overlapIndex];
-                    if ($record->status_code > $existingRecord->status_code) {
-                        $uniqueRecords[$overlapIndex] = $record;
-                    }
-                } else {
-                    $uniqueRecords->push($record);
-                }
+                $allRoomStatusHistory = $allRoomStatusHistory->merge($roomStatusHistory);
             }
 
-            $filteredResults = $filteredResults->merge($uniqueRecords);
-        }
+            $groupedByRoom = $allRoomStatusHistory->groupBy('room_id');
 
-        $newRecords = [];
+            $filteredResults = collect();
 
-        foreach ($emptyRooms as $room) {
-            foreach ($dates as $date) {
-                $status = 0;
-                $check_booked = "Trống";
-                $selectedStatus = null;
+            foreach ($groupedByRoom as $roomId => $records) {
+                $sortedRecords = $records->sortBy('start_date')->values();
+                $uniqueRecords = collect();
 
-                $roomRecords = $filteredResults->filter(function ($item) use ($room, $date) {
-                    $formattedDate = Carbon::parse($date)->format('Y-m-d');
-                    $startDate = Carbon::parse($item->start_date)->format('Y-m-d');
-                    $endDate = Carbon::parse($item->end_date)->format('Y-m-d');
+                foreach ($sortedRecords as $record) {
+                    $overlapIndex = $uniqueRecords->search(function ($item) use ($record) {
+                        return ($record->start_date == $item->start_date && $record->end_date == $item->end_date) ||
+                            ($record->start_date < $item->end_date && $record->end_date > $item->start_date);
+                    });
 
-                    $daysDifference = Carbon::parse($startDate)->diffInDays(Carbon::parse($endDate));
-
-                    if ($daysDifference == 1) {
-                        return $item->room_id == $room->id && $formattedDate == $startDate;
+                    if ($overlapIndex !== false) {
+                        $existingRecord = $uniqueRecords[$overlapIndex];
+                        if ($record->status_code > $existingRecord->status_code) {
+                            $uniqueRecords[$overlapIndex] = $record;
+                        }
                     } else {
-                        $endDate = Carbon::parse($item->end_date)->subDay()->format('Y-m-d');
-                        return $item->room_id == $room->id && $formattedDate >= $startDate && $formattedDate <= $endDate;
-                    }
-                });
-
-                if ($roomRecords->isNotEmpty()) {
-                    $selectedStatus = $roomRecords->sortByDesc('status_code')->first();
-                }
-
-                if ($selectedStatus !== null) {
-                    if ($selectedStatus->status_code == 1) {
-                        $check_booked = "Trống";
-                        $status = 0;
-                    } elseif ($selectedStatus->status_code == 2) {
-                        $check_booked = "Đã đặt";
-                        $status = 1;
-                    } else {
-                        $check_booked = "Đã nhận";
-                        $status = 1;
+                        $uniqueRecords->push($record);
                     }
                 }
 
-                $newRecords[] = [
-                    "room_type_id" => $room->room_type_id,
-                    "room_number"  => $room->room_number,
-                    "id"           => $room->id,
-                    "date"         => $date,
-                    "check_booked" => $check_booked,
-                    "status"       => $status,
-                    "room_type"    => $room->roomType
-                ];
+                $filteredResults = $filteredResults->merge($uniqueRecords);
             }
-        }
 
-        $roomType = RoomType::active()->get();
-        $rooms = Room::active();
-        if ($request->method === 'change_room') {
-            $rooms = $rooms->where('id', $request->roomId)->first();
-        } else {
-            $rooms = $rooms->get();
-        }
+            $newRecords = [];
 
-        $newRecordsUpdated = [];
-        foreach ($newRecords as &$item) {
-            $roomIdExists = false;
-            $checkboxExists = isset($item['checkbox']) && $item['checkbox'] === 'checked';
+            foreach ($emptyRooms as $room) {
+                foreach ($dates as $date) {
+                    $status = 0;
+                    $check_booked = "Trống";
+                    $selectedStatus = null;
 
-            foreach ((array) $request->roomIds as $room) {
-                if (isset($room['roomId'], $room['dateId']) && $room['roomId'] == $item['id'] && $room['dateId'] == $item['date']) {
-                    $roomIdExists = true;
-                    break;
+                    $roomRecords = $filteredResults->filter(function ($item) use ($room, $date) {
+                        $formattedDate = Carbon::parse($date)->format('Y-m-d');
+                        $startDate = Carbon::parse($item->start_date)->format('Y-m-d');
+                        $endDate = Carbon::parse($item->end_date)->format('Y-m-d');
+
+                        $daysDifference = Carbon::parse($startDate)->diffInDays(Carbon::parse($endDate));
+
+                        if ($daysDifference == 1) {
+                            return $item->room_id == $room->id && $formattedDate == $startDate;
+                        } else {
+                            $endDate = Carbon::parse($item->end_date)->subDay()->format('Y-m-d');
+                            return $item->room_id == $room->id && $formattedDate >= $startDate && $formattedDate <= $endDate;
+                        }
+                    });
+
+                    if ($roomRecords->isNotEmpty()) {
+                        $selectedStatus = $roomRecords->sortByDesc('status_code')->first();
+                    }
+
+                    if ($selectedStatus !== null) {
+                        if ($selectedStatus->status_code == 1) {
+                            $check_booked = "Trống";
+                            $status = 0;
+                        } elseif ($selectedStatus->status_code == 2) {
+                            $check_booked = "Đã đặt";
+                            $status = 1;
+                        } else {
+                            $check_booked = "Đã nhận";
+                            $status = 1;
+                        }
+                    }
+
+                    $newRecords[] = [
+                        "room_type_id" => $room->room_type_id,
+                        "room_number"  => $room->room_number,
+                        "id"           => $room->id,
+                        "date"         => $date,
+                        "check_booked" => $check_booked,
+                        "status"       => $status,
+                        "room_type"    => $room->roomType
+                    ];
                 }
             }
 
-            if ($roomIdExists || $checkboxExists) {
-                $item['checkbox'] = 'checked';
+            $roomType = RoomType::active()->get();
+            $rooms = Room::active();
+            if ($request->method === 'change_room') {
+                $rooms = $rooms->where('id', $request->roomId)->first();
+            } else {
+                $rooms = $rooms->get();
             }
 
-            $newRecordsUpdated[] = $item;
-        }
+            $newRecordsUpdated = [];
+            foreach ($newRecords as &$item) {
+                $roomIdExists = false;
+                $checkboxExists = isset($item['checkbox']) && $item['checkbox'] === 'checked';
 
-        if ($request->method === 'change_room') {
+                foreach ((array) $request->roomIds as $room) {
+                    if (isset($room['roomId'], $room['dateId']) && $room['roomId'] == $item['id'] && $room['dateId'] == $item['date']) {
+                        $roomIdExists = true;
+                        break;
+                    }
+                }
+
+                if ($roomIdExists || $checkboxExists) {
+                    $item['checkbox'] = 'checked';
+                }
+
+                $newRecordsUpdated[] = $item;
+            }
+
+            if ($request->method === 'change_room') {
+                return response()->json([
+                    'status' => 'success',
+                    'data'   => $newRecordsUpdated,
+                    'room_number'        => $rooms,
+                    'bookingId'          => $request->bookingId,
+                    'roomId'             => $request->roomId,
+                    'id'                 => $request->Id,
+                    'dateBookingRoomOld' => date("d/m/Y", strtotime(now())),
+                ]);
+            }
+
             return response()->json([
-                'status' => 'success',
-                'data'   => $newRecordsUpdated,
-                'room_number'        => $rooms,
-                'bookingId'          => $request->bookingId,
-                'roomId'             => $request->roomId,
-                'id'                 => $request->Id,
-                'dateBookingRoomOld' => date("d/m/Y", strtotime(now())),
+                'status'        => 'success',
+                'roomIds'       => $request->roomIds,
+                'roomType'      => $roomType,
+                'room'          => $rooms,
+                'data'          => $newRecordsUpdated,
+                'option_hang_phong'   => $request->optionHangPhong,
+                'option_name_phong'   => $request->optionNamePhong,
+                'option_status_phong' => $request->optionStatusPhong,
             ]);
+        } catch (\Throwable $e) {
+            // Ghi log để kiểm tra sau
+            \Log::error('Lỗi showRoom: ' . $e->getMessage(), [
+                'line' => $e->getLine(),
+                'file' => $e->getFile(),
+                'trace' => $e->getTraceAsString()
+            ]);
+
+            // Trả về lỗi cho frontend
+            return response()->json([
+                'status' => 'error',
+                'message' => 'Đã xảy ra lỗi: ' . $e->getMessage(),
+            ], 500);
         }
-
-        return response()->json([
-            'status'        => 'success',
-            'roomIds'       => $request->roomIds,
-            'roomType'      => $roomType,
-            'room'          => $rooms,
-            'data'          => $newRecordsUpdated,
-            'option_hang_phong'   => $request->optionHangPhong,
-            'option_name_phong'   => $request->optionNamePhong,
-            'option_status_phong' => $request->optionStatusPhong,
-        ]);
-
-    } catch (\Throwable $e) {
-        // Ghi log để kiểm tra sau
-        \Log::error('Lỗi showRoom: ' . $e->getMessage(), [
-            'line' => $e->getLine(),
-            'file' => $e->getFile(),
-            'trace' => $e->getTraceAsString()
-        ]);
-
-        // Trả về lỗi cho frontend
-        return response()->json([
-            'status' => 'error',
-            'message' => 'Đã xảy ra lỗi: ' . $e->getMessage(),
-        ], 500);
     }
-}
 
     public function changeRoom(Request $request)
     {

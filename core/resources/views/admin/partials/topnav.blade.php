@@ -195,8 +195,8 @@
     <script src="{{ asset('assets/admin/js/search.js') }}"></script>
     <script>
         "use strict";
-        var currentUrl = "{{ request()->url() }}";
-        var currentPath = "{{ request()->path() }}";
+       // var currentUrl = "{{ request()->url() }}";
+     //   var currentPath = "{{ request()->path() }}";
         var routeName = "{{ Route::currentRouteName() }}";
 
         function getEmptyMessage() {
