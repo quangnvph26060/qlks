@@ -580,46 +580,54 @@ function hf($key = null) // hotel_facilities
 }
 
 // ma cơ sở 
+// function unitCode()
+// {
+//     $admin = Auth::guard('admin')->user();
+    
+//     if (!$admin || !isset($admin->unit_code)) {
+//         // Nếu chưa login hoặc không có unit_code thì trả về null
+//         return null;
+//     }
+
+//     // Tạo cache key phân biệt theo user id để tránh cache chồng chéo
+//     $cacheKey = 'Unit_code_' . $admin->subdomain;
+
+//     // Lấy cache nếu có, nếu không thì lưu mới
+//     $unit = Cache::get($cacheKey);
+
+//     if (!$unit) {
+//         $unit_code = $admin->unit_code;
+//         Cache::put($cacheKey, $unit_code);
+//         $unit = $unit_code;
+//     }
+
+//     return $unit;
+// }
+
+// function subdomain()
+// {
+//     $admin = auth('admin')->user();
+//     if (!$admin || !isset($admin->subdomain)) {
+     
+//         return null;
+//     }
+//     $cacheKey = 'Subdomain_' . $admin->id;
+//     $subdomain = Cache::get($cacheKey);
+//     if (!$subdomain) {
+//         $subdomain = $admin->subdomain;
+//         Cache::put($cacheKey, $subdomain, now()->addMinutes(60));
+//     }
+//     return $subdomain;
+// }
 function unitCode()
 {
-    $admin = Auth::guard('admin')->user();
-    
-    if (!$admin || !isset($admin->unit_code)) {
-        // Nếu chưa login hoặc không có unit_code thì trả về null
-        return null;
-    }
-
-    // Tạo cache key phân biệt theo user id để tránh cache chồng chéo
-    $cacheKey = 'Unit_code_' . $admin->subdomain;
-
-    // Lấy cache nếu có, nếu không thì lưu mới
-    $unit = Cache::get($cacheKey);
-
-    if (!$unit) {
-        $unit_code = $admin->unit_code;
-        Cache::put($cacheKey, $unit_code);
-        $unit = $unit_code;
-    }
-
-    return $unit;
+    return auth('admin')->user()?->unit_code;
 }
 
 function subdomain()
 {
-    $admin = auth('admin')->user();
-    if (!$admin || !isset($admin->subdomain)) {
-     
-        return null;
-    }
-    $cacheKey = 'Subdomain_' . $admin->id;
-    $subdomain = Cache::get($cacheKey);
-    if (!$subdomain) {
-        $subdomain = $admin->subdomain;
-        Cache::put($cacheKey, $subdomain, now()->addMinutes(60));
-    }
-    return $subdomain;
+    return auth('admin')->user()?->subdomain;
 }
-
 // end setting and setup hotels
 function isImage($string)
 {
