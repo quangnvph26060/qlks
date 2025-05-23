@@ -62,9 +62,9 @@
                             <th>STT</th>
                             <th>@lang('Mã cơ sở vật chất')</th>
                             <th>@lang('Tên cơ sở vật chất')</th>
-                            <th>@lang('Icon')</th>
+                            {{-- <th>@lang('Icon')</th> --}}
                             <th>@lang('Trạng thái')</th>
-                          
+
                         </tr>
                         </thead>
                         <tbody id="main-table-hotel">
@@ -78,28 +78,29 @@
                                                 Sửa
                                             </a>
                                         </div>
-                                          
+
                                          <div class="dropdown-item booked_room_detail"> <button class=" btn-delete icon-delete-room"
                                                 data-id="{{ $item->id }}" data-modal_title="@lang('Xóa trạng thái')" type="button"
                                                 data-pro="0">Xóa</div>
-                              
+
                                         </div>
                                 </td>
-                                <td data-label="STT" style="text-align:right">   
+                                <td data-label="STT" style="text-align:right">
                                     @php
-                                        $stt = $facilities->total() - ($facilities->currentPage() - 1) * $facilities->perPage() - $id;
+                                        $stt = $facilities->total() - ($facilities->currentPage() - 1) * $facilities->perPage() + $id;
                                             @endphp
                                         {{ $stt }}
-                                </td>                                 <td>
+                                </td>
+                                <td>
                                     {{ $item->code }}
                                 </td>
                                 <td>
                                     {{ $item->title }}
                                 </td>
-                                <td>
+                                {{-- <td>
                                     {{ $item->icon }}
-                                </td>
-                             
+                                </td> --}}
+
                                 <td style="width:50px;text-align: center" class="status-hotel">
                                         @if($item->status == 1)
                                             <i class="fa fa-check" style="color:green;text-align: center"></i>
@@ -128,7 +129,7 @@
 @push('style-lib')
     <link rel="stylesheet" type="text/css" href="{{ asset('assets/admin/css/daterangepicker.css') }}">
     <link rel="stylesheet" href="{{ asset('assets/global/css/modal.css') }}">
-    
+
     <style>
             .navbar__right{
                 display: none;

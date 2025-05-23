@@ -6,6 +6,7 @@ use App\Http\Controllers\Controller;
 use App\Models\Facility;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Schema;
+use Illuminate\Validation\Rule;
 
 class FacilityController extends Controller
 {
@@ -40,8 +41,34 @@ class FacilityController extends Controller
     public function store(Request $request, $id = 0)
     {
         $request->validate([
-            'code' => 'required',
-            'title'       => 'required|string|unique:facilities,title,' . $id,
+            'code' => [
+                'required',
+                'string',
+                'regex:/^[A-Z0-9\-]+$/',
+                Rule::unique('facilities', 'code')
+                    ->ignore($id)
+                    ->where('unit_code', unitCode())
+                    ->where('subdomain', subdomain()),
+            ],
+            'title' => [
+                'required',
+                'string',
+                Rule::unique('facilities', 'title')
+                    ->ignore($id)
+                    ->where('unit_code', unitCode())
+                    ->where('subdomain', subdomain()),
+            ],
+        ],[
+            'code.required' => 'Mã vật chất không được để trống.',
+            'code.unique' => 'Mã vật chất đã tồn tại.',
+            'code.regex' => 'Mã vật chất phải ghi hoa.',
+
+            'title.required' => 'Tên vật chất không được để trống.',
+            'title.string' => 'Tên vật chất phải là chuỗi ký tự.',
+            'title.max' => 'Tên vật chất không được vượt quá 255 ký tự.',
+            'title.unique' => 'Tên vật chất đã tồn tại.',
+
+            'cost.required' => 'Chi phí không được để trống.',
         ]);
 
         if ($id) {

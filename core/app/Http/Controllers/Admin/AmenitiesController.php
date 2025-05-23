@@ -77,6 +77,7 @@ class AmenitiesController extends Controller
         ],[
             'code.required' => 'Mã tiện nghi không được để trống.',
             'code.unique' => 'Mã tiện nghi đã tồn tại.',
+            'code.regex' => 'Mã tiện nghi phải ghi hoa.',
 
             'title.required' => 'Tên tiện nghi không được để trống.',
             'title.string' => 'Tên tiện nghi phải là chuỗi ký tự.',
