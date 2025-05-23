@@ -21,7 +21,7 @@
                                 <div class="form-group position-relative mb-0">
                                     <input class="searchInput" name="code"
                                         style="height: 35px;border: 1px solid rgb(121, 117, 117, 0.5);margin-left: 8px;"
-                                            placeholder="Mã tiện nghi" value="{{ $code ?? '' }}">
+                                            placeholder="Mã tiện nghi">
                                     <input class="searchInput" name="title"
                                         style="height: 35px;border: 1px solid rgb(121, 117, 117, 0.5); margin-left: 8px;"
                                         placeholder="Tiêu đề tiện nghi" value="{{ $title ?? '' }}">
@@ -150,6 +150,7 @@
 @endpush
 @push('script')
     <script>
+        var code = "{{$code}}";
         $(document).ready(function() {
             var formEconomyEdit = {
                 'code': {
@@ -203,7 +204,7 @@
                         <div class="mb-3">
                             <label for="statusCode" class="form-label">Mã tiện nghi</label>
                             <input type="text" class="form-control " name="code" id="add-code"
-                                placeholder="Nhập mã">
+                                placeholder="Nhập mã" value="${code}">
                             <span class="invalid-feedback d-block" style="font-weight: 500"
                                 id="code_error"></span>
                         </div>

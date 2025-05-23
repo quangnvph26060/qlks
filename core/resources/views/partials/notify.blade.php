@@ -23,7 +23,7 @@
 
 
     const triggerToaster = (status, message) => {
-        var type = status == 'success' ? 'Thành công' : 'Không thành công';
+        var type = status == 'success' ? 'Thành công' : 'Thành công';
         iziToast[status]({
             title: type.charAt(0).toUpperCase() + type.slice(1),
             message: message,

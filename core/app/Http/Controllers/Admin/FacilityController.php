@@ -4,6 +4,7 @@ namespace App\Http\Controllers\Admin;
 
 use App\Http\Controllers\Controller;
 use App\Models\Facility;
+use App\Models\SetupCode;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Schema;
 use Illuminate\Validation\Rule;
@@ -33,10 +34,12 @@ class FacilityController extends Controller
     public function index(Request $request)
     {
         $pageTitle = 'Danh sách cơ sở vật chất';
-
+        $count = Facility::count();
+        $code = SetupCode::where('menu_name', 'Cài đặt tiện nghi')->value('code');
+        $code = $code ? $code . $count + 1 : '';
         $facilities = Facility::orderBy('id', 'desc')->where('unit_code',unitCode())->paginate(10);;
         $emptyMessage = 'Không tìm thấy dữ liệu';
-        return view('admin.hotel.setup.facility', compact('pageTitle', 'facilities', 'emptyMessage'));
+        return view('admin.hotel.setup.facility', compact('pageTitle', 'facilities', 'emptyMessage','code'));
     }
     public function store(Request $request, $id = 0)
     {

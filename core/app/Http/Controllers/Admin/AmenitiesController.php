@@ -4,6 +4,7 @@ namespace App\Http\Controllers\Admin;
 
 use App\Http\Controllers\Controller;
 use App\Models\Amenity;
+use App\Models\SetupCode;
 use App\Models\StatusCode;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Schema;
@@ -49,10 +50,12 @@ class AmenitiesController extends Controller
         //     })
         // ->orderBy('title')
         // ->paginate(getPaginate());
-
+        $count = Amenity::count();
+        $code = SetupCode::where('menu_name', 'Cài đặt tiện nghi')->value('code');
+        $code = $code ? $code . $count + 1 : '';
         $amenities = Amenity::orderBy('id', 'desc')->paginate(10);
         $emptyMessage = 'Không tìm thấy dữ liệu';
-        return view('admin.hotel.setup.amenities', compact('pageTitle', 'amenities', 'emptyMessage'));
+        return view('admin.hotel.setup.amenities', compact('pageTitle', 'amenities', 'emptyMessage','code'));
     }
     public function store(Request $request, $id = 0)
     {

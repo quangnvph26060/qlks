@@ -21,7 +21,7 @@
                                 <div class="form-group position-relative mb-0">
                                     <input class="searchInput" name="code"
                                         style="height: 35px;border: 1px solid rgb(121, 117, 117, 0.5);margin-left: 8px;"
-                                            placeholder="Mã cơ sở vật chất" value="{{ $code ?? ''}}">
+                                            placeholder="Mã cơ sở vật chất" >
                                     <input class="searchInput" name="title"
                                         style="height: 35px;border: 1px solid rgb(121, 117, 117, 0.5); margin-left: 8px;"
                                         placeholder="Tiêu đề cơ sở vật chất" value="{{ $title ?? '' }}">
@@ -150,6 +150,7 @@
 @endpush
 @push('script')
     <script>
+        var code = "{{$code}}";
         $(document).ready(function() {
             var formEconomyEdit = {
                 'code': {
@@ -202,7 +203,7 @@
                         <!-- Input 1 -->
                         <div class="mb-3">
                             <label for="statusCode" class="form-label">Mã cơ sở vật chất</label>
-                            <input type="text" class="form-control " name="code" id="add-code"
+                            <input type="text" class="form-control " value="${code}" name="code" id="add-code"
                                 placeholder="Nhập mã">
                             <span class="invalid-feedback d-block" style="font-weight: 500"
                                 id="code_error"></span>
