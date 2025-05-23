@@ -67,8 +67,9 @@
                                         $menuOptions = [
                                             'Danh mục loại phòng',
                                             'Danh mục phòng',
-                                            'Danh mục dịch vụ cao cấp',
+                                            'Danh mục dịch vụ',
                                             'Cài đặt tiện nghi',
+                                            'Cài đặt tính giá',
                                             'Cài đặt cơ sở vật chất',
                                             'Cài đặt sản phẩm',
                                             'Danh mục người dùng',
@@ -183,14 +184,14 @@
                                             <div class="dropdown-item"><a data-id="{{ $item->id }}"
                                                     class="btn-edit-status" data-bs-toggle="modal"
                                                     data-bs-target="#status-code" style="color:black">
-                                                    Sửa mã
+                                                    Sửa
                                                 </a>
                                             </div>
 
                                             <div class="dropdown-item booked_room_detail"> <button
                                                     class=" btn-delete icon-delete-room" data-id="{{ $item->id }}"
                                                     data-modal_title="@lang('Xóa trạng thái')" type="button"
-                                                    data-pro="0">Xóa mã</div>
+                                                    data-pro="0">Xóa</div>
 
                                         </div>
                                     </td>

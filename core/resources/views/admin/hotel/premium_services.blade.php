@@ -12,7 +12,7 @@
                 </a>
                 @can('admin.hotel.premium.service.save')
                 <a>
-                    <button class="btn btn--primary cuModalBtn" data-modal_title="@lang('Thêm mới dịch vụ cao cấp')" type="button"
+                    <button class="btn btn--primary cuModalBtn" data-modal_title="@lang('Thêm mới dịch vụ')" type="button"
                         style="margin-left:10px">
                         <i class="las la-plus p-1"></i>
                     </button>

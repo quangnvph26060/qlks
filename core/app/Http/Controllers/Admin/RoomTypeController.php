@@ -287,7 +287,7 @@ class RoomTypeController extends Controller
         'code' => [
             'nullable',
             'string',
-            'max:6',
+          
             Rule::unique('rooms', 'code')
                 ->ignore($id)
                 ->where('subdomain', subdomain()),

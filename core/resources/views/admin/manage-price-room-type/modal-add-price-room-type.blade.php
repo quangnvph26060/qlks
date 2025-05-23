@@ -10,7 +10,7 @@
                 <div class="row-box col-6">
                     <div class="box">
                         <label for="priceCode" class="form-label">Mã bảng giá</label>
-                        <input type="text"  class="form-control" id="priceCode" placeholder="Nhập mã bảng giá"
+                        <input type="text"  class="form-control" value="{{$code}}" id="priceCode" placeholder="Nhập mã bảng giá"
                             name="price_code">
                         <span class="invalid-feedback d-block" style="font-weight: 500" id="priceCode_error"></span>
                     </div>

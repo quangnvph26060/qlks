@@ -93,14 +93,15 @@
     @can('')
         @push('breadcrumb-plugins')
             <div class="d-flex" style="gap: 5px">
-                 @can(['admin.manage.modalAdd','admin.manage.addPriceRoomType'])
+              
+                <a class="btn mt-1 btn-sm btn--primary btn-submit-sync-price">
+                    <i class="las la-sync"></i>
+                </a> 
+                  @can(['admin.manage.modalAdd','admin.manage.addPriceRoomType'])
                     <button type="button" class="btn btn--primary btn-sm mt-1 btn-add">
                         <i class="las la-plus"></i>
                     </button>
                  @endcan
-                <a class="btn mt-1 btn-sm btn--primary btn-submit-sync-price">
-                    <i class="las la-sync"></i>
-                </a>
             </div>
         @endpush
     @endcan

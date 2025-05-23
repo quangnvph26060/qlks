@@ -12,7 +12,7 @@ class SetupController extends Controller
     public function index()
     {
         $pageTitle = 'Mã các danh mục';
-        $setup_codes = SetupCode::orderBy('id', 'desc')->where('unit_code',unitCode())->paginate(10);
+        $setup_codes = SetupCode::orderBy('id', 'desc')->paginate(10);
         
         $emptyMessage = 'Không tìm thấy dữ liệu';
         return view('admin.hotel.setup_code.list', compact('pageTitle', 'setup_codes', 'emptyMessage'));
