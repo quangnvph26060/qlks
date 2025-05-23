@@ -155,7 +155,13 @@ class RoomTypeController extends Controller
     }
     public function save(Request $request, $id = 0)
     {
-        $this->validation($request, $id);
+
+        if ($id) {
+            $this->validationEdit($request, $id);
+        } else {
+          
+              $this->validationSave($request, $id);
+        }
         DB::beginTransaction();
         try {
             if ($id) {
@@ -275,77 +281,146 @@ class RoomTypeController extends Controller
 
     }
 
-    protected function validation($request, $id)
-{
-    if ($id) {
-        $imgValidation = ['nullable', new FileTypeValidate(['png', 'jpg', 'jpeg'])];
-    } else {
-        $imgValidation = ['required', new FileTypeValidate(['png', 'jpg', 'jpeg'])];
+    protected function validationSave($request, $id)
+    {
+        if ($id) {
+            $imgValidation = ['nullable', new FileTypeValidate(['png', 'jpg', 'jpeg'])];
+        } else {
+            $imgValidation = ['required', new FileTypeValidate(['png', 'jpg', 'jpeg'])];
+        }
+
+
+        $request->validate([
+            'code' => [
+                'nullable',
+                'string',
+
+                Rule::unique('rooms', 'code')
+                   
+                    ->where(function ($query) use ($request) {
+                        return $query->where('room_type_id', $request->room_type_id)
+                            ->where('subdomain', subdomain());
+                    }),
+            ],
+            'room_number' => [
+                'required',
+                'string',
+                'max:255',
+                Rule::unique('rooms', 'room_number')
+                
+                    ->where(function ($query) use ($request) {
+                        return $query->where('room_type_id', $request->room_type_id)
+                            ->where('subdomain', subdomain());
+                    }),
+            ],
+            'total_adult'         => 'required|integer|gte:0',
+            'amenities'           => 'nullable|array',
+            'amenities.*'         => 'integer|exists:amenities,id',
+            'keywords'            => 'nullable|array',
+            'keywords.*'          => 'string',
+            'facilities'          => 'nullable|array',
+            'facilities.*'        => 'integer|exists:facilities,id',
+            'beds'                => 'required',
+            'cancellation_policy' => 'nullable|string',
+            'cancellation_fee'    => 'nullable|numeric',
+            'products'            => 'nullable|array',
+        ], [
+            // Custom error messages
+            'required' => ':attribute không được để trống.',
+            'string' => ':attribute phải là chuỗi.',
+            'max' => ':attribute không được vượt quá :max ký tự.',
+            'integer' => ':attribute phải là số nguyên.',
+            'gte' => ':attribute phải lớn hơn hoặc bằng :value.',
+            'exists' => ':attribute không hợp lệ.',
+            'numeric' => ':attribute phải là số.',
+            'unique' => ':attribute đã tồn tại.',
+        ], [
+            // Custom attributes
+            'code' => 'Mã phòng',
+            'room_number' => 'Số phòng',
+            'total_adult' => 'Số người lớn',
+            'amenities' => 'Tiện nghi',
+            'amenities.*' => 'Tiện nghi',
+            'keywords' => 'Từ khoá',
+            'keywords.*' => 'Từ khoá',
+            'facilities' => 'Cơ sở vật chất',
+            'facilities.*' => 'Cơ sở vật chất',
+            'beds' => 'Loại giường',
+            'cancellation_policy' => 'Chính sách huỷ',
+            'cancellation_fee' => 'Phí huỷ',
+            'products' => 'Sản phẩm',
+        ]);
     }
-  
+ protected function validationEdit($request, $id)
+    {
+        if ($id) {
+            $imgValidation = ['nullable', new FileTypeValidate(['png', 'jpg', 'jpeg'])];
+        } else {
+            $imgValidation = ['required', new FileTypeValidate(['png', 'jpg', 'jpeg'])];
+        }
 
-    $request->validate([
-        'code' => [
-            'nullable',
-            'string',
-          
-           Rule::unique('rooms', 'code')
-            
-                ->where(function ($query) use ($request) {
-                    return $query->where('room_type_id', $request->room_type_id)
-                                 ->where('subdomain', subdomain());
-                }),
-        ],
-        'room_number' => [
-            'required',
-            'string',
-            'max:255',
-            Rule::unique('rooms', 'room_number')
-                ->ignore($id)
-                ->where(function ($query) use ($request) {
-                    return $query->where('room_type_id', $request->room_type_id)
-                                 ->where('subdomain', subdomain());
-                }),
-        ],
-        'total_adult'         => 'required|integer|gte:0',
-        'amenities'           => 'nullable|array',
-        'amenities.*'         => 'integer|exists:amenities,id',
-        'keywords'            => 'nullable|array',
-        'keywords.*'          => 'string',
-        'facilities'          => 'nullable|array',
-        'facilities.*'        => 'integer|exists:facilities,id',
-        'beds'                => 'required',
-        'cancellation_policy' => 'nullable|string',
-        'cancellation_fee'    => 'nullable|numeric',
-        'products'            => 'nullable|array',
-    ], [
-        // Custom error messages
-        'required' => ':attribute không được để trống.',
-        'string' => ':attribute phải là chuỗi.',
-        'max' => ':attribute không được vượt quá :max ký tự.',
-        'integer' => ':attribute phải là số nguyên.',
-        'gte' => ':attribute phải lớn hơn hoặc bằng :value.',
-        'exists' => ':attribute không hợp lệ.',
-        'numeric' => ':attribute phải là số.',
-        'unique' => ':attribute đã tồn tại.',
-    ], [
-        // Custom attributes
-        'code' => 'Mã phòng',
-        'room_number' => 'Số phòng',
-        'total_adult' => 'Số người lớn',
-        'amenities' => 'Tiện nghi',
-        'amenities.*' => 'Tiện nghi',
-        'keywords' => 'Từ khoá',
-        'keywords.*' => 'Từ khoá',
-        'facilities' => 'Cơ sở vật chất',
-        'facilities.*' => 'Cơ sở vật chất',
-        'beds' => 'Loại giường',
-        'cancellation_policy' => 'Chính sách huỷ',
-        'cancellation_fee' => 'Phí huỷ',
-        'products' => 'Sản phẩm',
-    ]);
-}
 
+        $request->validate([
+            'code' => [
+                'nullable',
+                'string',
+
+                Rule::unique('rooms', 'code')
+                       ->ignore($id)
+                    ->where(function ($query) use ($request) {
+                        return $query->where('room_type_id', $request->room_type_id)
+                            ->where('subdomain', subdomain());
+                    }),
+            ],
+            'room_number' => [
+                'required',
+                'string',
+                'max:255',
+                Rule::unique('rooms', 'room_number')
+                     ->ignore($id)
+                    ->where(function ($query) use ($request) {
+                        return $query->where('room_type_id', $request->room_type_id)
+                            ->where('subdomain', subdomain());
+                    }),
+            ],
+            'total_adult'         => 'required|integer|gte:0',
+            'amenities'           => 'nullable|array',
+            'amenities.*'         => 'integer|exists:amenities,id',
+            'keywords'            => 'nullable|array',
+            'keywords.*'          => 'string',
+            'facilities'          => 'nullable|array',
+            'facilities.*'        => 'integer|exists:facilities,id',
+            'beds'                => 'required',
+            'cancellation_policy' => 'nullable|string',
+            'cancellation_fee'    => 'nullable|numeric',
+            'products'            => 'nullable|array',
+        ], [
+            // Custom error messages
+            'required' => ':attribute không được để trống.',
+            'string' => ':attribute phải là chuỗi.',
+            'max' => ':attribute không được vượt quá :max ký tự.',
+            'integer' => ':attribute phải là số nguyên.',
+            'gte' => ':attribute phải lớn hơn hoặc bằng :value.',
+            'exists' => ':attribute không hợp lệ.',
+            'numeric' => ':attribute phải là số.',
+            'unique' => ':attribute đã tồn tại.',
+        ], [
+            // Custom attributes
+            'code' => 'Mã phòng',
+            'room_number' => 'Số phòng',
+            'total_adult' => 'Số người lớn',
+            'amenities' => 'Tiện nghi',
+            'amenities.*' => 'Tiện nghi',
+            'keywords' => 'Từ khoá',
+            'keywords.*' => 'Từ khoá',
+            'facilities' => 'Cơ sở vật chất',
+            'facilities.*' => 'Cơ sở vật chất',
+            'beds' => 'Loại giường',
+            'cancellation_policy' => 'Chính sách huỷ',
+            'cancellation_fee' => 'Phí huỷ',
+            'products' => 'Sản phẩm',
+        ]);
+    }
     protected function insertImages(Request $request, $roomType)
     {
         // Kiểm tra nếu có file hình ảnh được upload
