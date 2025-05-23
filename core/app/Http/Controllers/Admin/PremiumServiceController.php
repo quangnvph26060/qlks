@@ -12,12 +12,12 @@ use App\Repositories\BaseRepository;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\DB;
 use Illuminate\Support\Facades\Log;
+use Illuminate\Validation\Rule;
 
 class PremiumServiceController extends Controller
 {
     public function index(Request $request)
     {
-
         $input         = $request->name;
         $pageTitle     = 'Dịch vụ cao cấp';
         $count = PremiumService::count();
@@ -34,9 +34,25 @@ class PremiumServiceController extends Controller
     public function save(Request $request, $id = 0)
     {
         $request->validate([
-            'code' => 'required|unique:premium_services,code,' . $id,
-            'name' => 'required|string|max:255|unique:premium_services,name,' . $id,
+
             'cost' => 'required',
+            'code' => [
+                'required',
+                'string',
+                'regex:/^[A-Z0-9\-]+$/',
+                Rule::unique('premium_services', 'code')
+                    ->ignore($id)
+                    ->where('unit_code', unitCode())
+                    ->where('subdomain', subdomain()),
+            ],
+            'name' => [
+                'required',
+                'string',
+                Rule::unique('premium_services', 'name')
+                    ->ignore($id)
+                    ->where('unit_code', unitCode())
+                    ->where('subdomain', subdomain()),
+            ],
         ], [
             'code.required' => 'Mã dịch vụ không được để trống.',
             'code.unique' => 'Mã dịch vụ đã tồn tại.',
@@ -239,7 +255,7 @@ class PremiumServiceController extends Controller
             $receiptAndPayment = ReceiptAndPayment::where('checkin_id', $service->check_in_id)
                 ->where('room_code', $service->room_code)
                 ->first();
-            // cập nhật lại giá dịch vụ 
+            // cập nhật lại giá dịch vụ
             if ($receiptAndPayment) {
                 if ($receiptAndPayment->service_fee !== null && $receiptAndPayment->service_fee != 0) {
                     $newServiceFee = $receiptAndPayment->service_fee - $service->total_payment;
