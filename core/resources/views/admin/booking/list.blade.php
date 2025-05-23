@@ -99,7 +99,7 @@
                     </div>
                     <div class=" mt-2 d-flex mb-2" style="gap: 10px;justify-content: space-around;">
                         <div class="">
-                            <label for="">Chọn hạng phòng</label>
+                            <label for="">Chọn loại phòng</label>
                             <select class="form-select" id="selected-hang-phong">
 
 

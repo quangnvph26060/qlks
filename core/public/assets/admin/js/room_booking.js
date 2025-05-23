@@ -246,7 +246,7 @@ function showRoom(data = "", checkInDateValue = "", checkOutDateValue = "", sele
             // hạng phòng
             var selected_hang = $('#selected-hang-phong');
             selected_hang.empty();
-            let option = `<option value="">Chọn hạng phòng</option>`;
+            let option = `<option value="">Chọn loại phòng</option>`;
             data.roomType.forEach(function (item) {
                 if (item.id == data.option_hang_phong) {
                     option += `<option value="${item.id}" selected>${item.name}</option>`;

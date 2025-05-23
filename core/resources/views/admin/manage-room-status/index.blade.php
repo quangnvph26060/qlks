@@ -43,7 +43,7 @@
             <!-- Form tìm kiếm trực tiếp -->
             <div class=" mt-2 d-flex mb-2" style="gap: 10px;justify-content: space-around;">
                 <div class="">
-                    <label for="">Chọn hạng phòng</label>
+                    <label for="">Chọn loại phòng</label>
                     <select class="form-select" id="selected-hang-phong">
                     </select>
                 </div>
@@ -322,7 +322,7 @@
                         // hạng phòng
                         var selected_hang = $('#selected-hang-phong');
                         selected_hang.empty();
-                        let option = `<option value="">Chọn hạng phòng</option>`;
+                        let option = `<option value="">Chọn loại phòng</option>`;
                         data.roomType.forEach(function(item) {
                             if (item.id == data.option_hang_phong) {
                                 option +=
