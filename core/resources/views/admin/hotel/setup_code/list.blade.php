@@ -250,22 +250,26 @@
                     'element': document.getElementById('add-code'),
                     'error': document.getElementById('code_error'),
                     'validations': [{
-                        'func': function(value) {
-                            return checkRequired(value); // check trống
+                            'func': function(value) {
+                                return checkRequired(value); // check trống
+                            },
+                            'message': generateErrorMessage('MS001')
                         },
-                        'message': generateErrorMessage('MS001')
-                    }, ]
-                },
-                'code': {
-                    'element': document.getElementById('add-code'),
-                    'error': document.getElementById('code_error'),
-                    'validations': [{
-                        'func': function(value) {
-                            return checkKey(value);
+                        {
+                            'func': function(value) {
+                                return checkKey(value);
+                            },
+                            'message': generateErrorMessage('KT001')
                         },
-                        'message': generateErrorMessage('KT001')
-                    }, ]
+                        {
+                            'func': function(value) {
+                                return isAllUpperCase(value);
+                            },
+                            'message': generateErrorMessage('INHOA','Mã code')
+                        },
+                    ]
                 },
+
 
             }
             $(document).on('click', '#click-btn-add-code', function() {
