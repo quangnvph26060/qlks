@@ -4,6 +4,7 @@ namespace App\Http\Requests\Product;
 
 use Illuminate\Foundation\Http\FormRequest;
 use Illuminate\Http\Exceptions\HttpResponseException;
+use Illuminate\Validation\Rule;
 
 class UpdateProductRequest extends FormRequest
 {
@@ -23,11 +24,26 @@ class UpdateProductRequest extends FormRequest
     public function rules(): array
     {
         return [
-            'name' => 'required|unique:products,name,' . $this->id,
+            'name' => [
+                'required',
+                'string',
+                Rule::unique('products', 'name')
+                    ->ignore($this->id)
+                    ->where('unit_code', unitCode())
+                    ->where('subdomain', subdomain()),
+            ],
             'import_price' => 'required|numeric',
             'selling_price' => 'required|numeric|gt:import_price',
             'description' => 'nullable',
-            'sku' => 'max:6|required|unique:products,sku,' . $this->id,
+            'sku' => [
+                'required',
+                'string',
+                'regex:/^[A-Z0-9\-]+$/',
+                Rule::unique('products', 'sku')
+                    ->ignore($this->id)
+                    ->where('unit_code', unitCode())
+                    ->where('subdomain', subdomain()),
+            ],
             'category_id' => 'required',
             'brand_id' => 'required',
             'stock' => 'nullable|integer',

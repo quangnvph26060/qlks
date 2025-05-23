@@ -5,6 +5,7 @@ namespace App\Http\Controllers\Admin;
 use App\Models\Brand;
 use App\Models\Product;
 use App\Models\Category;
+use App\Models\SetupCode;
 use Illuminate\Http\Request;
 use App\Http\Controllers\Controller;
 use App\Repositories\BaseRepository;
@@ -82,36 +83,37 @@ class ProductController extends Controller
     {
         $pageTitle = "Thêm mới sản phẩm";
         $categories = Category::query()->pluck('name', 'id');
+        $count = Product::count();
+        $prefix = SetupCode::where('menu_name', 'Cài đặt sản phẩm')->value('code');
+
+        $code = $prefix ? $prefix . ($count + 1) : '';
         $brands = Brand::query()->pluck('name', 'id');
-        return view('admin.product.create', compact('brands', 'categories', 'pageTitle'));
+        return view('admin.product.create', compact('brands', 'categories', 'pageTitle', 'code'));
     }
     public function index(Request $request)
     {
         $pageTitle = 'Danh sách sản phẩm';
-    
+        // dd($code);
         $brands = Brand::query()->pluck('name', 'id');
-        $categories = Product::query()->orderBy('id', 'desc')->where('unit_code',unitCode())->paginate(10);;
+        $categories = Product::query()->orderBy('id', 'desc')->where('unit_code', unitCode())->paginate(10);;
         $emptyMessage = 'Không tìm thấy dữ liệu';
-        return view('admin.hotel.setup.product', compact('pageTitle', 'categories', 'emptyMessage'));
+        return view('admin.hotel.setup.product', compact('pageTitle', 'categories', 'emptyMessage', 'code'));
     }
     public function search(Request $request)
     {
         $pageTitle = '';
-        if($request->input('sku') == '' && $request->input('name') == '')
-        {
-            $categories = Product::query()->orderBy('id', 'desc')->where('unit_code',unitCode())->paginate(10);
-        }
-        else
-        {
-            $categories = Product::where('sku','LIKE', '%'.$request->input('sku').'%')
-                ->where('name','LIKE', '%'.$request->input('name').'%')
-                ->where('unit_code',unitCode())
+        if ($request->input('sku') == '' && $request->input('name') == '') {
+            $categories = Product::query()->orderBy('id', 'desc')->where('unit_code', unitCode())->paginate(10);
+        } else {
+            $categories = Product::where('sku', 'LIKE', '%' . $request->input('sku') . '%')
+                ->where('name', 'LIKE', '%' . $request->input('name') . '%')
+                ->where('unit_code', unitCode())
                 ->orderBy('id', 'desc')->paginate(10);
         }
         $emptyMessage = 'Không tìm thấy dữ liệu';
         $sku = $request->input('sku');
         $name = $request->input('name');
-        return view('admin.hotel.setup.product', compact('pageTitle', 'categories', 'emptyMessage','sku','name'));
+        return view('admin.hotel.setup.product', compact('pageTitle', 'categories', 'emptyMessage', 'sku', 'name'));
     }
     // public function edit($id)
     // {
@@ -129,7 +131,7 @@ class ProductController extends Controller
     {
         return Product::changeStatus($id);
     }
-   
+
     public function delete($id)
     {
         Product::destroy($id);
@@ -150,7 +152,7 @@ class ProductController extends Controller
 
             // $data = $request->validated();
             $product->unit_code = unitCode();
-              $product->subdomain = subdomain();
+            $product->subdomain = subdomain();
             $product->image_path = $path[0] ?? '';
             $product->category_id = $request->input('category_id') ?? '';
             $product->brand_id = $request->input('brand_id') ?? '';
@@ -162,10 +164,10 @@ class ProductController extends Controller
             $product->sku = $request->input('sku') ?? '';
             $product->stock = $request->input('stock') ?? 0;
             $product->is_published = $request->has('is_published') ? 1 : 0;
-               
+
             $product->save();
             // Product::create($data);
-            
+
             session()->flash('success', 'Thêm sản phẩm thành công!');
 
             return response()->json([
@@ -214,7 +216,7 @@ class ProductController extends Controller
     public function update(UpdateProductRequest $request, string $id)
     {
         $path = saveImages($request, 'image_path', 'products', 300, 300);
-        
+
         $product = Product::query()->find($id);
 
         if (!$product) {
@@ -334,5 +336,4 @@ class ProductController extends Controller
             ]);
         }
     }
-    
 }
