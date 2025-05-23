@@ -282,15 +282,19 @@ class RoomTypeController extends Controller
     } else {
         $imgValidation = ['required', new FileTypeValidate(['png', 'jpg', 'jpeg'])];
     }
+  
 
     $request->validate([
         'code' => [
             'nullable',
             'string',
           
-            Rule::unique('rooms', 'code')
+           Rule::unique('rooms', 'code')
                 ->ignore($id)
-                ->where('subdomain', subdomain()),
+                ->where(function ($query) use ($request) {
+                    return $query->where('room_type_id', $request->room_type_id)
+                                 ->where('subdomain', subdomain());
+                }),
         ],
         'room_number' => [
             'required',
