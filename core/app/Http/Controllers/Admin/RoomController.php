@@ -63,7 +63,7 @@ class RoomController extends Controller
         }
 
         if ($existsRoom) {
-            $notify[] = ['error', "Số phòng yêu cầu đã tồn tại"];
+            $notify[] = ['error', "Loại phòng yêu cầu đã tồn tại"];
             return back()->withNotify($notify);
         }
         if ($id) {

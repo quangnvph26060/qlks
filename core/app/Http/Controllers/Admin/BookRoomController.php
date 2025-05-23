@@ -318,7 +318,6 @@ class BookRoomController extends Controller
                 // kiểm tra khách hàng
                 if (!empty($request->insert_customer)) {
                     $customer = $this->add_guest($request->name, $request->phone, $request->customer_source);
-                 
                 }
 
                 // đặt cọc của từng phòng
@@ -488,6 +487,12 @@ class BookRoomController extends Controller
                 $room['dateOut'] = date('Y-m-d H:i:s', strtotime($room['dateOut']));
                 $dateIn  = Carbon::parse($room['dateIn']);
                 $dateOut =  Carbon::parse($room['dateOut']);
+                if ($dateIn >= $dateOut) {
+                    return response()->json([
+                        'status' => 'error',
+                        'success' => 'Ngày nhận phòng phải nhỏ hơn ngày trả phòng.'
+                    ]);
+                }
 
                 $is_room = Room::find($room['room']);
 
@@ -902,7 +907,7 @@ class BookRoomController extends Controller
     {
         $customerSourse = CustomerSource::where('unit_code', unitCode())->get();
         $admin = Admin::where('unit_code', unitCode())
-        ->where('subdomain', subdomain())->get();
+            ->where('subdomain', subdomain())->get();
         if (!$customerSourse && !$admin) {
             return response()->json(['error' => 'Không tìm thấy khách hàng'], 404);
         }
@@ -1140,7 +1145,7 @@ class BookRoomController extends Controller
                     'room_number'       => $booking->room_change_info['room']['room_number'],
                     'guest_count'       => $booking->room_change_info['guest_count'],
                     'status'            => $booking->status,
-                  
+
                     'total_service'     => RoomServiceProduct::where('check_in_id', $id)->where('room_code', $booking->room_change_info['new_room_code'])->sum('total_payment'),
                 ];
             } else {
@@ -1160,7 +1165,7 @@ class BookRoomController extends Controller
                     'room_number'       => $booking->room->room_number,
                     'guest_count'       => $booking->guest_count,
                     'status'            => $booking->status,
-                
+
                     'total_service'     => RoomServiceProduct::where('check_in_id', $id)->where('room_code', $booking->room->id)->sum('total_payment'),
                 ];
             }
@@ -1169,7 +1174,7 @@ class BookRoomController extends Controller
         $groupedBookings = array_values($groupedBookings);
         $customerSourse  = CustomerSource::where('unit_code', unitCode())->get();
         $admin           = Admin::where('unit_code', unitCode())
-         ->where('subdomain', subdomain())->get();
+            ->where('subdomain', subdomain())->get();
         if ($booking->customer_code) {
             $customer = Customer::where('customer_code', $booking->customer_code)->first();
         }
@@ -1216,7 +1221,7 @@ class BookRoomController extends Controller
         foreach ($request->booking_id as $item) {
             $result  = RoomBooking::query()
                 // ->active()
-                ->where('status',Status::DISABLE)
+                ->where('status', Status::DISABLE)
                 ->where('booking_id', $item['book']);
             if (empty($item['method'])) {
                 $result = $result->where('room_code', $item['id']);
@@ -1229,7 +1234,7 @@ class BookRoomController extends Controller
             if (!$result) {
                 $result  = RoomBooking::query()
                     // ->active()
-                        ->where('status',Status::DISABLE)
+                    ->where('status', Status::DISABLE)
                     ->where('booking_id', $item['book']);
                 // check if method LETAN ở đây
                 if (empty($item['method'])) {

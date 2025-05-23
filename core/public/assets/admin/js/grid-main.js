@@ -143,19 +143,7 @@ $(document).ready(function () {
     $('#endDate').val(formatDate(futureDate)); // Chỉ set nếu có endDate
 
 });
-var validatorPTTT = {
-    'select-option-pttt': {
-        'element': document.getElementById('select-option-pttt'),
-        'error': document.getElementById('select-option-pttt_error'),
-        'validations': [{
-            'func': function (value) {
-                return checkRequired(value); // check trống
-            },
-            'message': generateErrorMessage('P001', 'Phương thức thanh toán')
-        },
-        ]
-    },
-}
+
 function initGridMain(data, date) {
     const date_booking = new Date();
     const date_yyyy = date_booking.getFullYear();
@@ -976,7 +964,7 @@ function initViewScriptGird() {
             var url = checkInEditUrl.replace(':id',
                 dataId);
             let dataMethod = $(this).attr("data-method");
-            console.log(dataMethod);
+
 
 
 
@@ -2184,7 +2172,7 @@ $('.booking-form-edit').on('submit', function (e) {
                 success: function (response) {
                     if (response.success) {
                         notify('success', response.success);
-                       window.location.reload();
+                        window.location.reload();
                         let selectedDate = $('#startDate').val();
                         initGridMain('', selectedDate);
 
@@ -2225,18 +2213,7 @@ $('.btn-book-pttt').off('click').on('click', function (e) {
     const selectedOption = $('#select-option-pttt-main').val();
     const inputPtttValue = $('#input_pttt').val();
     const method = $(this).attr('data-method');
-    console.log(method);
-        //    $('.total_balance').each(function(index, el) {
-        //   console.log($(el).text());
-        // });
-    
 
-    function checkInteger(value) {
-        if (value.match(/^\d+$/)) {
-            return true;
-        }
-        return false;
-    }
     if (method === "check_in") {
         $('.booking-form-pttt').submit();
     } else if (method == "payment") {// thanh toán
@@ -2245,9 +2222,8 @@ $('.btn-book-pttt').off('click').on('click', function (e) {
         }
     }
     else {
-        // if (validator(selectedOption, inputPtttValue)) {
-        //     $('.booking-form-pttt').submit(); // Gửi form nếu hợp lệ
-        // }
+        // sửa thông tin nhận phòng
+        $('.booking-form-pttt').submit();
     }
 
 });
@@ -2715,6 +2691,7 @@ $('.booking-form-pttt').on('submit', function (e) {
                 let selectedDate = $('#startDate').val();
                 initGridMain('', selectedDate);
             } else {
+                notify('error', response.success);
                 $('#input_pttt_error').text(response.errors['amount'] ?? "");
                 $('#select-option-pttt_error1').text(response.errors['payment_pttt'] ?? "");
             }

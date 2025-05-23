@@ -161,12 +161,19 @@
                 'ma_coso': { // passwword thì nên đặt là name trong input đó
                     'element': document.getElementById('ma_coso'), // id trong input đó
                     'error': document.getElementById('ma_coso_error'), // thẻ hiển thị lỗi
-                    'validations': [{
+                    'validations': [
+                        {
                             'func': function(value) {
-                                return checkRequired(value); // check trống
+                                return checkRequired(value); 
                             },
                             'message': generateErrorMessage('MS001')
-                        }, // viết tiếp điều kiện validate vào đây (validations)
+                        }, 
+                         {
+                            'func': function(value) {
+                                return isAllUpperCase(value); 
+                            },
+                            'message': generateErrorMessage('INHOA','Mã cơ sở')
+                        }, 
                     ]
                 },
                 'ten_coso': { // passwword thì nên đặt là name trong input đó

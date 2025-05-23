@@ -9,6 +9,12 @@ function checkRequired(value) {
     }
     return true;
 }
+// check in hoa 
+function isAllUpperCase(value) {
+    return /^[A-Z0-9_-]+$/.test(value);
+
+}
+
 // check number
 function checkInteger(value) {
     if (value.match(/^\d+$/)) {
@@ -112,7 +118,8 @@ function generateErrorMessage(code, values = []) {
     const errorMessages = {
         E001: 'Mật khẩu không để trống',
         TKS001: 'Tên khách sạn không được để trống',
-        MS001: 'Mã code không được để trống',
+        MS001: 'Mã cơ sở không được để trống',
+        INHOA: `${values} phải là in hoa`,
         P001: `${values} không được để trống`,
         P002: `${values} phải là số`,
         TTT001: 'Tên trạng thái không được để trống',

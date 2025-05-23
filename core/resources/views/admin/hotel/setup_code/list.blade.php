@@ -65,7 +65,7 @@
                                     <label for="statusName" class="form-label">Chọn danh mục</label>
                                     @php
                                         $menuOptions = [
-                                            'Danh mục hạng phòng',
+                                            'Danh mục loại phòng',
                                             'Danh mục phòng',
                                             'Danh mục dịch vụ cao cấp',
                                             'Cài đặt tiện nghi',
