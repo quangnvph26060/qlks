@@ -20,6 +20,7 @@ class PriceController extends Controller
 
     private  function addPriceDate($date, $dateCurent, $option)
     {
+        
         $responseMessages = [];
         $dataDateValue = $date;
         if (empty($dataDateValue)) {
@@ -173,7 +174,7 @@ class PriceController extends Controller
         foreach ($dates as $date) {
             if (preg_match('/^\d+$/', str_replace('-', '', $date))) {
                 $roomPrice = RoomPricePerDay::where('room_price_id', $data['room_id'])->where('date', $date)->first();
-                
+
                 if (!$roomPrice) {
                     $roomPrice = new RoomPricePerDay();
                     $roomPrice->room_price_id = $data['room_id'];
@@ -362,5 +363,5 @@ class PriceController extends Controller
         return response()->json(['status' => 'success', 'data' => $rooms]);
     }
 
-    
+
 }

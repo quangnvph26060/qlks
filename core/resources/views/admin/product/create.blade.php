@@ -112,7 +112,7 @@
                                     <span>Upload Image</span>
                                 </label>
                                 <img id="preview" class="preview-image" src="" alt="Preview Image"
-                                    style="display: none;">
+                                    style="display: none; object-fit: contain">
                             </div>
                             <small></small>
                         </div>
