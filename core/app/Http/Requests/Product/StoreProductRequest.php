@@ -8,31 +8,34 @@ use Illuminate\Validation\Rule;
 
 class StoreProductRequest extends FormRequest
 {
-    /**
-     * Determine if the user is authorized to make this request.
-     */
     public function authorize(): bool
     {
-        return true;
+        return true; // Cho phép tất cả user gọi request này
     }
 
-    /**
-     * Get the validation rules that apply to the request.
-     *
-     * @return array<string, \Illuminate\Contracts\Validation\ValidationRule|array<mixed>|string>
-     */
+    protected function prepareForValidation()
+    {
+        $unitCode = unitCode();
+        $subdomain = subdomain();
+
+        // Gộp thêm unit_code, subdomain vào input để dùng trong rule unique
+        $this->merge([
+            'unit_code' => $unitCode,
+            'subdomain' => $subdomain,
+        ]);
+    }
+
     public function rules(): array
     {
-
         return [
-            // 'name' => 'required|unique:products',
             'name' => [
                 'required',
                 'string',
-                Rule::unique('products', 'sku')
-                    ->ignore($this->id)
-                    ->where('unit_code', unitCode())
-                    ->where('subdomain', subdomain()),
+                Rule::unique('products', 'name')
+                    ->where(fn ($query) => $query
+                        ->where('unit_code', $this->input('unit_code'))
+                        ->where('subdomain', $this->input('subdomain'))
+                    ),
             ],
             'import_price' => 'required|numeric',
             'selling_price' => 'required|numeric|gt:import_price',
@@ -40,12 +43,12 @@ class StoreProductRequest extends FormRequest
             'sku' => [
                 'required',
                 'string',
-               
                 'regex:/^[A-Z0-9\-]+$/',
                 Rule::unique('products', 'sku')
-                    ->ignore($this->id)
-                    ->where('unit_code', unitCode())
-                    ->where('subdomain', subdomain()),
+                    ->where(fn ($query) => $query
+                        ->where('unit_code', $this->input('unit_code'))
+                        ->where('subdomain', $this->input('subdomain'))
+                    ),
             ],
             'category_id' => 'required',
             'brand_id' => 'required',
@@ -56,45 +59,38 @@ class StoreProductRequest extends FormRequest
     public function messages(): array
     {
         return [
-            'sku.max'                               => 'Mã sản phẩm chỉ có tối đa 6 ký tự',
-            'name.required'                         => 'Vui lòng nhập :attribute',
-            'name.unique'                           => 'Tên sản phẩm đã tồn tại',
-            'import_price.required'                 => 'Vui lòng nhập :attribute',
-            'import_price.numeric'                  => 'Vui lòng nhập đúng định dạng :attribute',
-            'selling_price.required'                => 'Vui lòng nhập :attribute',
-            'selling_price.numeric'                 => 'Vui lòng nhập đúng định dạng :attribute',
-            'selling_price.gt'                      => 'Giá bán < giá nhập',
-            'sku.required'                          => 'Vui lòng nhập :attribute',
-            'sku.unique'                            => 'Mã sản phẩm đã tồn tại',
-            'sku.regex'                            => 'Mã sản phẩm phải ghi hoa',
-            'category_id.required'                  => 'Vui lòng chọn :attribute',
-            'brand_id.required'                     => 'Vui lòng chọn :attribute',
-
-            'stock.integer'                         => 'Vui lòng nhập đúng định dạng :attribute',
+            'name.required' => 'Tên sản phẩm không được để trống.',
+            'name.unique' => 'Tên sản phẩm đã tồn tại',
+            'sku.required' => 'SKU không được để trống.',
+            'sku.regex' => 'SKU chỉ được chứa chữ in hoa, số và dấu gạch ngang.',
+            'sku.unique' => 'SKU đã tồn tại',
+            'import_price.required' => 'Giá nhập không được để trống.',
+            'selling_price.required' => 'Giá bán không được để trống.',
+            'selling_price.gt' => 'Giá bán phải lớn hơn giá nhập.',
+            'category_id.required' => 'Vui lòng chọn danh mục.',
+            'brand_id.required' => 'Vui lòng chọn thương hiệu.',
         ];
     }
 
     public function attributes(): array
     {
         return [
-            'name'                                  => 'Tên sản phẩm',
-            'import_price'                          => 'Giá nhập',
-            'selling_price'                         => 'Giá bán',
-            'description'                           => 'Mô tả',
-            'sku'                                   => 'Mã sản phẩm',
-            'category_id'                           => 'Danh mục',
-            'brand_id'                              => 'Thương hiệu',
-            'stock'                                 => 'Số lượng',
+            'name' => 'Tên sản phẩm',
+            'import_price' => 'Giá nhập',
+            'selling_price' => 'Giá bán',
+            'description' => 'Mô tả',
+            'sku' => 'Mã sản phẩm',
+            'category_id' => 'Danh mục',
+            'brand_id' => 'Thương hiệu',
+            'stock' => 'Số lượng',
         ];
     }
 
     protected function failedValidation(\Illuminate\Contracts\Validation\Validator $validator)
     {
-        throw new HttpResponseException(
-            response()->json([
-                'status' => false,
-                'errors' => $validator->errors(),
-            ])
-        );
+        throw new HttpResponseException(response()->json([
+            'status' => false,
+            'errors' => $validator->errors(),
+        ]));
     }
 }

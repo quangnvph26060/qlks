@@ -9,9 +9,12 @@ use App\Models\SetupCode;
 use Illuminate\Http\Request;
 use App\Http\Controllers\Controller;
 use App\Repositories\BaseRepository;
+
+use Illuminate\Validation\Rule;
 use Illuminate\Support\Facades\Storage;
 use App\Http\Requests\Product\StoreProductRequest;
 use App\Http\Requests\Product\UpdateProductRequest;
+use Illuminate\Support\Facades\Validator;
 
 class ProductController extends Controller
 {
@@ -140,50 +143,43 @@ class ProductController extends Controller
             'message' => 'Xóa trạng thái chức năng thành công',
         ]);
     }
-    /**
-     * Store a newly created resource in storage.
-     */
+
+
     public function store(StoreProductRequest $request)
     {
+        // Lấy unit_code, subdomain (đã merge trong prepareForValidation)
+        $unitCode = $request->input('unit_code');
+        $subdomain = $request->input('subdomain');
 
         $path = saveImages($request, 'image_path', 'products', 300, 300);
+
         try {
-            $product = new Product();
+            $data = $request->validated(); // Lấy dữ liệu đã validate
 
-            // $data = $request->validated();
-            $product->unit_code = unitCode();
-            $product->subdomain = subdomain();
-            $product->image_path = $path[0] ?? '';
-            $product->category_id = $request->input('category_id') ?? '';
-            $product->brand_id = $request->input('brand_id') ?? '';
-            $product->name = $request->input('name') ?? '';
+            $data['unit_code'] = $unitCode;
+            $data['subdomain'] = $subdomain;
+            $data['image_path'] = $path[0] ?? '';
+            $data['is_published'] = $request->has('is_published') ? 1 : 0;
 
-            $product->description = $request->input('description') ?? '';
-            $product->import_price = $request->input('import_price') ?? 0;
-            $product->selling_price = $request->input('selling_price') ?? 0;
-            $product->sku = $request->input('sku') ?? '';
-            $product->stock = $request->input('stock') ?? 0;
-            $product->is_published = $request->has('is_published') ? 1 : 0;
+            Product::create($data);
 
-            $product->save();
-            // Product::create($data);
+            session()->flash('success', 'Thêm sản phẩm thành công!');
 
-            session()->flash('success', 'Thêm sản phẩm thành công!');
-
-            return response()->json([
-                'status' => true,
-            ]);
+            return response()->json(['status' => true]);
         } catch (\Exception $e) {
             if ($path && Storage::disk('public')->exists($path[0])) {
                 Storage::disk('public')->delete($path[0]);
             }
 
+            \Log::error('Error creating product: ' . $e->getMessage());
+
             return response()->json([
                 'status' => false,
-                'message' => $e->getMessage()
+                'message' => $e->getMessage(),
             ]);
         }
     }
+
 
     /**
      * Display the specified resource.
@@ -217,31 +213,32 @@ class ProductController extends Controller
     {
         $path = saveImages($request, 'image_path', 'products', 300, 300);
 
-        $product = Product::query()->find($id);
+        $product = Product::find($id);
 
         if (!$product) {
             return response()->json([
                 'status' => false,
-                'message' => 'Không tìm thấy sản phẩm!'
+                'message' => 'Không tìm thấy sản phẩm!'
             ]);
         }
 
         try {
             $data = $request->validated();
+
             if ($path && $path[0] != $product->image_path) {
                 if (Storage::disk('public')->exists($product->image_path)) {
                     Storage::disk('public')->delete($product->image_path);
                 }
                 $data['image_path'] = $path[0];
             }
+
             $data['is_published'] = $request->has('is_published') ? 1 : 0;
+
             $product->update($data);
 
-            session()->flash('success', 'Cập nhật sản phẩm thành công!');
+            session()->flash('success', 'Cập nhật sản phẩm thành công!');
 
-            return response()->json([
-                'status' => true,
-            ]);
+            return response()->json(['status' => true]);
         } catch (\Exception $e) {
             if ($path !== null && Storage::disk('public')->exists($path[0])) {
                 Storage::disk('public')->delete($path[0]);

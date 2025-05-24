@@ -24,6 +24,7 @@ class Product extends Model
         'sku',
         'is_published',
         'unit_code',
+        'subdomain',
     ];
 
     public function category()

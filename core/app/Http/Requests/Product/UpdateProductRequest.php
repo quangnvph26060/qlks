@@ -23,12 +23,13 @@ class UpdateProductRequest extends FormRequest
      */
     public function rules(): array
     {
+        $productId = $this->route('id');
         return [
             'name' => [
                 'required',
                 'string',
                 Rule::unique('products', 'name')
-                    ->ignore($this->id)
+                    ->ignore($productId)
                     ->where('unit_code', unitCode())
                     ->where('subdomain', subdomain()),
             ],
@@ -40,7 +41,7 @@ class UpdateProductRequest extends FormRequest
                 'string',
                 'regex:/^[A-Z0-9\-]+$/',
                 Rule::unique('products', 'sku')
-                    ->ignore($this->id)
+                    ->ignore($productId)
                     ->where('unit_code', unitCode())
                     ->where('subdomain', subdomain()),
             ],
