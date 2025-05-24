@@ -47,6 +47,8 @@ function calculateTotalPrice() {
     $('#list-booking-edit-letan').find('input.total_service').each(function () {
         let priceString = $(this).val(); // Lấy giá trị nhập trong input
         let price = parseFloat(priceString.replace(/[,.]/g, '')); // Loại bỏ ký tự không phải số
+
+
         if (!isNaN(price)) {
             service += price;
         }
@@ -63,6 +65,7 @@ function calculateTotalPrice() {
     $('.total_balance').each(function () {
         $(this).text(formatCurrency((totalPrice - totalDeposit - totalDiscount - payment))); // tiền còn lại
     });
+    $('.total_service_display').text(formatCurrency(service));
 
     $('.total_amount').each(function () {
         $(this).text(formatCurrency(totalPrice));
@@ -956,6 +959,8 @@ function initViewScriptGird() {
 
 
         $(document).off("click", ".check_in_data").on("click", ".check_in_data", function (e) {
+
+
             e.stopPropagation();
             if ($(e.target).closest('.menu-btn').length > 0) return;
             let dataId = $(this).attr("data-booking-id");
@@ -1139,6 +1144,7 @@ function initViewScriptGird() {
                             $('.total_deposit').text(formatCurrency(total_deposit_amount));
                             //$('.total_discount').text(formatCurrency(total_deposit_discount));
 
+
                             $('.total_amount').text(formatCurrency(totalPrice));
                             $('.total_balance').text(formatCurrency(totalPrice));
                             $('#loading').hide();
@@ -1148,6 +1154,8 @@ function initViewScriptGird() {
                             function calculateDepositAndBalance() {
                                 let rowTotal = 0;
                                 let payment = 0;
+                                let service = 0;
+                                // đặt cọc
                                 $('tr').each(function () {
                                     $(this).find('input.deposit').each(function () {
                                         let depositValue = $(this).val()
@@ -1157,6 +1165,7 @@ function initViewScriptGird() {
                                         rowTotal += numericDeposit;
                                     });
                                 });
+                                // giảm giá
                                 $('tr').each(function () {
                                     $(this).find('input.payment').each(function () {
                                         let depositValue = $(this).val()
@@ -1166,6 +1175,22 @@ function initViewScriptGird() {
                                         payment = numericDeposit;
                                     });
                                 });
+                                //dịch vụ
+                                $('tr').each(function () {
+                                    $(this).find('input.total_service').each(function () {
+                                        let totalServiceValue = $(this).val()
+                                            .replace(/[,.]/g, '');
+                                        console.log(totalServiceValue);
+
+                                        let numericDeposit = parseInt(
+                                            totalServiceValue) || 0;
+                                        service += numericDeposit;
+                                    });
+                                });
+
+                                $('.total_service_display').text(formatCurrency(service));
+                                let serviceString = $('.total_service_display').text();
+                                let service_payment = parseInt(serviceString.replace(/\./g, '')) || 0;
                                 $('.total_deposit').text(formatCurrency(rowTotal));
 
                                 let priceString = $('.total_discount').text();
@@ -1175,16 +1200,27 @@ function initViewScriptGird() {
 
                                 let paymentString = $('.total_payment').text();
                                 let total_payment = parseInt(paymentString.replace(/\./g, '')) || 0;
-                                let totalSerive = parseInt(total_service);
-                                totalBalance = totalPrice - rowTotal - price - total_payment + totalSerive;
+                               
+                                
+                                totalBalance = totalPrice - rowTotal - price  - total_payment  + service_payment;
+
+                                if (totalBalance > 0) {
+                                    $('#checkout_room').prop('disabled', true);
+                                    $('#print_invoice').prop('disabled', true);
+                                } else {
+                                    $('#checkout_room').prop('disabled', false);
+                                    $('#print_invoice').prop('disabled', false);
+                                }
                                 $('.total_balance').text(formatCurrency(totalBalance));
-                                //  $('.total_deposit').text(formatCurrency(price));
+                                
                             }
 
                             // Chạy khi trang load
                             $(document).ready(function () {
                                 calculateDepositAndBalance();
                             });
+
+                            // đặt cọc
                             $(document).on('blur', 'input.deposit', function () {
                                 let rowTotal = 0;
                                 $('tr').each(function () {
@@ -1220,9 +1256,10 @@ function initViewScriptGird() {
                                 let total_service = $('.total_service_display').text();
                                 let total_service_price = parseInt(total_service.replace(/\./g, '')) || 0;
                                 totalBalance = total_amount_price + total_service_price - rowTotal - price - total_discount_price - total_payment_price;
+                                console.log('đặt cọc:' + totalBalance);
                                 $('.total_balance').text(formatCurrency(totalBalance));
                             });
-
+                            // giảm giá
                             $(document).on('blur', 'input.discount', function () {
                                 let rowTotal = 0;
                                 $('tr').each(function () {
@@ -1257,7 +1294,7 @@ function initViewScriptGird() {
                                 // tính số dư 
                                 totalBalance = total_amount_price - rowTotal - price - total_discount_price - total_payment_price + total_service_price;
 
-
+                                console.log('giảm giá:' + totalBalance);
                                 $('.total_balance').text(formatCurrency(totalBalance));
                             });
                             // khách thanh toán
@@ -1272,6 +1309,7 @@ function initViewScriptGird() {
 
                                 // Cập nhật phần hiển thị tổng (không cập nhật lại input đang nhập)
                                 $('.total_entered_deposit').text(formatCurrency(rowTotal));
+                                console.log(rowTotal);
 
                                 // Lấy giá trị tiền đã cọc
                                 let priceString = $('.total_deposit').text();
@@ -1280,6 +1318,7 @@ function initViewScriptGird() {
                                 // Tổng tiền cần thanh toán
                                 let total_amount = $('.total_amount').text();
                                 let total_amount_price = parseInt(total_amount.replace(/\./g, '')) || 0;
+
 
                                 let total_discount = $('.total_discount').text();
                                 let total_discount_price = parseInt(total_discount.replace(/\./g, '')) || 0;
@@ -1291,7 +1330,18 @@ function initViewScriptGird() {
                                 let total_service_price = parseInt(total_service.replace(/\./g, '')) || 0;
                                 // Tính số dư
                                 let totalBalance = total_amount_price - rowTotal - price - total_discount_price - total_payment_price + total_service_price;
+                                console.log(' thanh toán:' + totalBalance);
+                                if (totalBalance > 0) {
 
+
+                                    $('#checkout_room').prop('disabled', true);
+                                    $('#print_invoice').prop('disabled', true);
+                                } else {
+
+
+                                    $('#checkout_room').prop('disabled', false);
+                                    $('#print_invoice').prop('disabled', false);
+                                }
                                 $('.total_balance').text(formatCurrency(totalBalance));
                             });
 
@@ -2687,7 +2737,9 @@ $('.booking-form-pttt').on('submit', function (e) {
                 notify('success', response.success);
                 // $('#myModal-check-in-edit').modal('hide');
                 $('#input_pttt').val('');
+                console.log(response.total);
 
+                $('.total_payment').text(formatCurrency(response.total));
                 let selectedDate = $('#startDate').val();
                 initGridMain('', selectedDate);
             } else {

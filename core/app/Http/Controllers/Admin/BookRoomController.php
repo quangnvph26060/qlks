@@ -574,7 +574,8 @@ class BookRoomController extends Controller
                                     'deposit_amount'    => $depositAmount,
                                     'discount_amount'   => $discountAmount,
                                     'created_date'      => now(),
-                                    'unit_code'         => unitCode()
+                                    'unit_code'         => unitCode(),
+                                    'subdomain'        => subdomain(),
                                 ]);
                             }
                         }
@@ -681,6 +682,7 @@ class BookRoomController extends Controller
                         $check_in->note           = $room['note'];
                         $check_in->user_source    = $customer['customer_sourece'] ?? $request->customer_source;
                         $check_in->unit_code      = unitCode();
+                          $check_in->subdomain      = subdomain();
                         $check_in->created_by     = $request->name_staff ?? authAdmin()->id;
                         $check_in->save();
                         saveRoomStatusHistory($room['room'], $room['dateIn'], $room['dateOut'], 2);
@@ -716,6 +718,7 @@ class BookRoomController extends Controller
                     $check_in_new->note           = $room['note'];
                     $check_in_new->user_source    = $customer['customer_sourece'] ?? $request->customer_source;
                     $check_in_new->unit_code      =  unitCode();
+                       $check_in_new->subdomain      = subdomain();
                     $check_in_new->created_by     = $request->name_staff ??  authAdmin()->id;
                     $check_in_new->save();
                     saveRoomStatusHistory($room['room'], $room['dateIn'], $room['dateOut'], 2);

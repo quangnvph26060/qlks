@@ -1162,7 +1162,19 @@ class BookingController extends Controller
             'unit_code'       => unitCode(),
             'subdomain'       => subdomain(),
         ]);
-        return response()->json(['status' => 'success', 'success' => 'Thanh toán thành công']);
+        $receipts = ReceiptAndPayment::where('checkin_id', $checkinId)->get();
+        $totalPaid        = $receipts->sum('total_payment');
+        // giá sản phẩm 
+         $totalServicePayment = RoomServiceProduct::where('check_in_id', $checkinId)
+                // ->where('room_code', $roomId)
+                ->sum('total_payment');
+        return response()->json(
+            [
+                'status' => 'success',
+                'total' => $totalPaid,
+                'success' => 'Thanh toán thành công'
+            ]
+        );
     }
     public function checkOutRoom(Request $request)
     {
@@ -1182,10 +1194,10 @@ class BookingController extends Controller
             $totalAmount    = $checkIns->sum('total_amount');
             $totalDeposit   = $checkIns->sum('deposit_amount');
             $totalDiscount  = $checkIns->sum('discount');
-
+            $roomIs     = Room::where('id', $roomId)->first();
             // Gộp tổng các lần thanh toán
             $receipts = ReceiptAndPayment::where('checkin_id', $checkinId)->get();
-            $room     = Room::where('id', $roomId)->first();
+
             // Lấy biên lai mới nhất để tính phí
             $latestReceipt = $receipts->sortByDesc('id')->first();
             $totalServicePayment = RoomServiceProduct::where('check_in_id', $checkinId)
@@ -1199,6 +1211,7 @@ class BookingController extends Controller
 
             $due = ($totalAmount + $totalServiceFees - $totalDiscounts - $totalDeposits - $totalPaid);
 
+
             if ($due <= 0 && $checkIns->count()) {
                 foreach ($checkIns as $check_in) {
                     $roomToSave = $check_in->room_change ?? $check_in->room_code;
@@ -1207,7 +1220,7 @@ class BookingController extends Controller
             } else {
                 return response()->json([
                     'status' => 'error',
-                    'error' => 'Phòng ' . $room->room_number . ' chưa thanh toán đủ. Còn thiếu: ' . number_format($due, 0, ',', '.'),
+                    'error' => 'Phòng ' . $roomIs->room_number . ' chưa thanh toán đủ. Còn thiếu: ' . number_format($due, 0, ',', '.'),
 
                 ]);
             }
