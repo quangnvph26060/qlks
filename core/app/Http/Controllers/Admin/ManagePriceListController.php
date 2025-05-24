@@ -38,7 +38,7 @@ class ManagePriceListController extends Controller
         $setupPrice = SetupPricing::all();
         return view('admin.manage-price.index', compact('pageTitle', 'rooms', 'input', 'setupPrice'));
     }
-    //add 
+    //add
     public function addPrice(Request $request)
     {
         $validatedData = $request->validate([
@@ -57,6 +57,9 @@ class ManagePriceListController extends Controller
         try {
             $exists = RoomTypePrice::where('room_type_id', $validatedData['room_type_id'])
                 ->where('setup_pricing_id', $validatedData['setup_pricing_id'])
+                ->where('unit_code', unitCode())
+                ->where('subdomain', subdomain())
+                ->where('price_validity_period', $validatedData['price_validity_period'])
                 ->exists();
             if ($exists) {
                 $notify[] = ['error', 'Dữ liệu đã tồn tại.'];
@@ -465,6 +468,7 @@ class ManagePriceListController extends Controller
 
         $isDuplicate = RoomTypePrice::where('room_type_id', $validatedData['room_type_id'])
             ->where('setup_pricing_id', $validatedData['setup_pricing_id'])
+            ->where('price_validity_period', $validatedData['price_validity_period'])
             ->where('unit_code', unitCode())
             ->where('subdomain', subdomain())
             ->where('id', '!=', $id) // Loại trừ bản ghi hiện tại
@@ -484,7 +488,7 @@ class ManagePriceListController extends Controller
             'unit_code'             =>  unitCode(),
         ]);
 
-        $notify[] = ['success', 'Thêm thành công'];
+        $notify[] = ['success', 'Cập nhật thành công'];
         return back()->withNotify($notify);
     }
 

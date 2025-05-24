@@ -118,7 +118,7 @@
                                 </label>
                                 <img id="preview" class="preview-image"
                                     src="{{ \Storage::url($product->image_path) }}" alt="Preview Image"
-                                    style="display: {{ $product->image_path ? 'block' : 'none' }};">
+                                    style="display: {{ $product->image_path ? 'block' : 'none' }}; object-fit: contain">
                             </div>
                             <small></small>
                         </div>
