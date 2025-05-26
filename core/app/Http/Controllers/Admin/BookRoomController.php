@@ -868,7 +868,7 @@ class BookRoomController extends Controller
 
     public function searchCustomer(Request $request)
     {
-        $customer = Customer::query()->where('unit_code', unitCode());
+        $customer = Customer::query();
 
         if (!empty($request->name)) {
             $customer->where(function ($query) use ($request) {
@@ -884,7 +884,7 @@ class BookRoomController extends Controller
 
         $customer = $customer->get();
 
-        $customerSourse = CustomerSource::where('unit_code', unitCode())->get();
+        $customerSourse = CustomerSource::all();
         return response()->json([
             'status'         => 'success',
             'data'           => $customer,
@@ -896,7 +896,7 @@ class BookRoomController extends Controller
     // tìm kiếm khách hàng
     public function findCustomer(Request $request)
     {
-        $customer = Customer::where('unit_code', unitCode())->where('id', $request->id)->first();
+        $customer = Customer::where('id', $request->id)->first();
         if (!$customer) {
             return response()->json(['error' => 'Không tìm thấy khách hàng'], 404);
         }

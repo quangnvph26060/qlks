@@ -18,7 +18,7 @@
 <div {{ $attributes->merge(['class' => 'image--uploader']) }}>
     <div class="image-upload-wrapper">
         <div class="image-upload-preview {{ $darkMode ? 'bg--dark' : '' }}"
-            style="background-image: url({{ $image ? \Storage::url($image) :  $imagePath }})">
+            style="background-image: url('{{ $image ? asset('storage/' . $image) : $imagePath }}')">
         </div>
         <div class="image-upload-input-wrapper">
             <input type="file" class="image-upload-input" name="{{ $name }}" id="{{ $id }}"

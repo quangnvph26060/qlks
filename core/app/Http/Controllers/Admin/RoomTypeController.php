@@ -27,9 +27,12 @@ use App\Repositories\BaseRepository;
 use Illuminate\Support\Facades\Log as FacadesLog;
 use Illuminate\Support\Facades\Storage;
 use Illuminate\Validation\Rule;
+use HTMLPurifier;
+use HTMLPurifier_Config;
 
 class RoomTypeController extends Controller
 {
+
     protected $repository;
 
     public function __construct()
@@ -159,11 +162,13 @@ class RoomTypeController extends Controller
         if ($id) {
             $this->validationEdit($request, $id);
         } else {
-          
-              $this->validationSave($request, $id);
+
+            $this->validationSave($request, $id);
         }
         DB::beginTransaction();
         try {
+            $config = HTMLPurifier_Config::createDefault();
+            $purifier = new HTMLPurifier($config);
             if ($id) {
                 $room         = Room::findOrFail($id);
                 $notification     = 'Đã cập nhật phòng thành công';
@@ -184,7 +189,7 @@ class RoomTypeController extends Controller
             $room->room_number         = $request->room_number;
             $room->total_adult         = $request->total_adult;
             // $room->total_child         = $request->total_child;
-            // $room->description         = htmlspecialchars_decode($purifier->purify($request->description));
+            $room->description         = htmlspecialchars_decode($purifier->purify($request->description));
             $room->beds                = $request->beds;
             $room->is_featured         = $request->is_featured ? 1 : 0;
             //$room->cancellation_fee    = $request->cancellation_fee ?? 0;
@@ -294,9 +299,9 @@ class RoomTypeController extends Controller
             'code' => [
                 'nullable',
                 'string',
-
+                'regex:/^[A-Z0-9\-]+$/',
                 Rule::unique('rooms', 'code')
-                   
+
                     ->where(function ($query) use ($request) {
                         return $query->where('room_type_id', $request->room_type_id)
                             ->where('subdomain', subdomain());
@@ -307,7 +312,7 @@ class RoomTypeController extends Controller
                 'string',
                 'max:255',
                 Rule::unique('rooms', 'room_number')
-                
+
                     ->where(function ($query) use ($request) {
                         return $query->where('room_type_id', $request->room_type_id)
                             ->where('subdomain', subdomain());
@@ -334,6 +339,7 @@ class RoomTypeController extends Controller
             'exists' => ':attribute không hợp lệ.',
             'numeric' => ':attribute phải là số.',
             'unique' => ':attribute đã tồn tại.',
+              'regex' => ':attribute không đúng định dạng. Chỉ cho phép chữ in hoa, số và dấu gạch ngang.',
         ], [
             // Custom attributes
             'code' => 'Mã phòng',
@@ -351,7 +357,7 @@ class RoomTypeController extends Controller
             'products' => 'Sản phẩm',
         ]);
     }
- protected function validationEdit($request, $id)
+    protected function validationEdit($request, $id)
     {
         if ($id) {
             $imgValidation = ['nullable', new FileTypeValidate(['png', 'jpg', 'jpeg'])];
@@ -364,9 +370,9 @@ class RoomTypeController extends Controller
             'code' => [
                 'nullable',
                 'string',
-
+                'regex:/^[A-Z0-9\-]+$/',
                 Rule::unique('rooms', 'code')
-                       ->ignore($id)
+                    ->ignore($id)
                     ->where(function ($query) use ($request) {
                         return $query->where('room_type_id', $request->room_type_id)
                             ->where('subdomain', subdomain());
@@ -377,7 +383,7 @@ class RoomTypeController extends Controller
                 'string',
                 'max:255',
                 Rule::unique('rooms', 'room_number')
-                     ->ignore($id)
+                    ->ignore($id)
                     ->where(function ($query) use ($request) {
                         return $query->where('room_type_id', $request->room_type_id)
                             ->where('subdomain', subdomain());
@@ -404,6 +410,7 @@ class RoomTypeController extends Controller
             'exists' => ':attribute không hợp lệ.',
             'numeric' => ':attribute phải là số.',
             'unique' => ':attribute đã tồn tại.',
+            'regex' => ':attribute không đúng định dạng. Chỉ cho phép chữ in hoa, số và dấu gạch ngang.',
         ], [
             // Custom attributes
             'code' => 'Mã phòng',

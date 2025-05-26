@@ -38,7 +38,7 @@ function showCustomer(value = "", option_customer_source = "") {
                     <td class="text-left "> ${item.customer_code} </td>
                     <td class="text-left "> ${item.name} </td>
                     <td class="text-right"> ${item.phone} </td>
-                    <td class="text-left "> ${item.group_code} </td>
+                    <td class="text-left "> ${item.source_code} </td>
                     <td class="text-center">
                         <input type="radio" name="customer_select" data-id="${item.id}">
                     </td>
