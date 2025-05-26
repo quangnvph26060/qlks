@@ -33,7 +33,7 @@
 <body>
     @yield('content')
     <div>
-      
+
     </div>
     <script src="{{ asset('assets/global/js/jquery-3.7.1.min.js') }}"></script>
     <script src="https://cdnjs.cloudflare.com/ajax/libs/bootstrap-notify/0.2.0/js/bootstrap-notify.min.js"></script>
@@ -47,7 +47,7 @@
 
     <script src="{{ asset('assets/global/js/select2.min.js') }}"></script>
     <script src="{{ asset('assets/admin/js/app.js') }}"></script>
-    <script src="{{ asset('assets/admin/js/cu-modal.js') }}"></script>
+    <script src="{{ asset('assets/admin/js/cu-modal.js') }}?v={{ filemtime(public_path('assets/admin/js/cu-modal.js')) }}"></script>
     <script src="{{ asset('assets/admin/js/vendor/sweetalert2@11.js') }}"></script>
     <script src="https://cdn.jsdelivr.net/npm/flatpickr"></script>
 
