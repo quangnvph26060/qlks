@@ -81,7 +81,6 @@
                 "route_name": "admin.hotel.room.product.all",
                 "menu_active": "admin.hotel.room.product.all"
             },
-           
             {
                 "keyword": [
                     "Danh mục khách hàng"
@@ -179,16 +178,15 @@
                 "route_name": "admin.manage.room.status",
                 "menu_active": "admin.manage.room.status"
             }
-           
         ]
     },
-     "employee_manager": {
+    "employee_manager": {
         "keyword": [
             "Quản lý nhân viên"
         ],
         "title": "Quản lý nhân viên",
         "icon": "las la-users",
-          "route_name": "admin.staff.index",
+        "route_name": "admin.staff.index",
         "menu_active": "admin.staff.index"
     },
     "general_settings": {
@@ -263,6 +261,13 @@
                 "menu_active": "admin.hotel.setup.code.all"
             }
         ]
+    },
+    "huong_dan": {
+        "keyword": [
+            "huong_dan"
+        ],
+        "title": "Hướng dẫn sử dụng",
+        "icon": "las la-info-circle",
+        "redirect": "https://fasthotel.vn/ho-tro"
     }
-   
 }

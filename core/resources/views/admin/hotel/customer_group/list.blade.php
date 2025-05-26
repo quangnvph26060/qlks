@@ -129,7 +129,7 @@
                                         @php
                                             $stt =
                                                 $customer_groups->total() -
-                                                ($customer_groups->currentPage() - 1) * $customer_groups->perPage() -
+                                                ($customer_groups->currentPage() - 1) * $customer_groups->perPage() +
                                                 $id;
                                         @endphp
                                         {{ $stt }}

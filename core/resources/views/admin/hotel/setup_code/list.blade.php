@@ -75,7 +75,9 @@
                                             'Danh mục người dùng',
                                             'Danh mục khách hàng',
                                             'Danh mục nguồn khách hàng',
+                                            'Danh mục nhóm khách',
                                             'Danh mục trạng thái',
+                                             
                                         ];
 
                                         // Lấy danh sách menu đã tồn tại cho đơn vị hiện tại
