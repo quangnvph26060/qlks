@@ -214,6 +214,15 @@ class RoomTypeController extends Controller
         } catch (\Exception $e) {
 
             DB::rollBack();
+            \Log::error('Lỗi khi lưu dữ liệu: ' . $e->getMessage());
+
+            // Ghi thêm thông tin chi tiết để debug (ví dụ: file và dòng)
+            \Log::info('Chi tiết lỗi', [
+                'file' => $e->getFile(),
+                'line' => $e->getLine(),
+                'trace' => $e->getTraceAsString(),
+                // Thêm nếu cần: request data, user id, subdomain, ...
+            ]);
             FacadesLog::error($e->getMessage());
             $notify[] = ['error', $e->getMessage()];
             return back()->withNotify($notify);
@@ -339,7 +348,7 @@ class RoomTypeController extends Controller
             'exists' => ':attribute không hợp lệ.',
             'numeric' => ':attribute phải là số.',
             'unique' => ':attribute đã tồn tại.',
-              'regex' => ':attribute không đúng định dạng. Chỉ cho phép chữ in hoa, số và dấu gạch ngang.',
+            'regex' => ':attribute không đúng định dạng. Chỉ cho phép chữ in hoa, số và dấu gạch ngang.',
         ], [
             // Custom attributes
             'code' => 'Mã phòng',
