@@ -167,8 +167,8 @@ class RoomTypeController extends Controller
         }
         DB::beginTransaction();
         try {
-            $config = HTMLPurifier_Config::createDefault();
-            $purifier = new HTMLPurifier($config);
+         //   $config = HTMLPurifier_Config::createDefault();
+          //  $purifier = new HTMLPurifier($config);
             if ($id) {
                 $room         = Room::findOrFail($id);
                 $notification     = 'Đã cập nhật phòng thành công';
@@ -189,7 +189,7 @@ class RoomTypeController extends Controller
             $room->room_number         = $request->room_number;
             $room->total_adult         = $request->total_adult;
             // $room->total_child         = $request->total_child;
-            $room->description         = htmlspecialchars_decode($purifier->purify($request->description));
+            $room->description         = $request->description; //  htmlspecialchars_decode($purifier->purify($request->description));
             $room->beds                = $request->beds;
             $room->is_featured         = $request->is_featured ? 1 : 0;
             //$room->cancellation_fee    = $request->cancellation_fee ?? 0;
