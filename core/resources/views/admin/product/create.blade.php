@@ -18,16 +18,18 @@
                             </div>
                             <div class="form-group mb-3 col-lg-3">
                                 <label for="import_price" class="form-label">Giá nhập</label>
-                                <input type="text" name="import_price" id="import_price" class="form-control"
-                                    placeholder="Giá nhập">
+                                <input type="text" id="import_price_display" class="form-control price-input" placeholder="Giá nhập">
+                                <input type="hidden" name="import_price" id="import_price">
                                 <small></small>
                             </div>
+
                             <div class="form-group mb-3 col-lg-3">
                                 <label for="selling_price" class="form-label">Giá bán</label>
-                                <input type="text" name="selling_price" id="selling_price" class="form-control"
-                                    placeholder="Giá bán">
+                                <input type="text" id="selling_price_display" class="form-control price-input" placeholder="Giá bán">
+                                <input type="hidden" name="selling_price" id="selling_price">
                                 <small></small>
                             </div>
+
                             <div class="form-group mb-3 col-lg-12">
                                 <label for="description" class="form-label">Mô tả</label>
                                 <textarea name="description" id="description" cols="30" rows="10" placeholder="Mô tả"></textarea>
@@ -221,6 +223,24 @@
             });
         })(jQuery);
     </script>
+    <script>
+        document.querySelectorAll('.price-input').forEach(function (displayInput) {
+            displayInput.addEventListener('input', function () {
+                const rawValue = displayInput.value.replace(/[^0-9]/g, ''); // Chỉ giữ số
+                const formatted = rawValue ? Number(rawValue).toLocaleString('en-US') : '';
+
+                displayInput.value = formatted;
+
+                // Tìm input hidden tương ứng
+                const hiddenInputId = displayInput.id.replace('_display', '');
+                const hiddenInput = document.getElementById(hiddenInputId);
+                if (hiddenInput) {
+                    hiddenInput.value = rawValue;
+                }
+            });
+        });
+    </script>
+
 @endpush
 
 @push('style')

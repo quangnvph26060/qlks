@@ -53,9 +53,9 @@
                     <table class="table--light style--two table">
                         <thead>
                             <tr>
-                              
+
                                     <th>@lang('Hành động')</th>
-                                
+
                                 <th style="width:50px">@lang('STT')</th>
                                 <th>@lang('Mã dịch vụ')</th>
                                 <th>@lang('Tên dịch vụ')</th>
@@ -107,7 +107,7 @@
                                     </td>
 
                                     <td>
-                                        {{ showAmount($premiumService->cost) }}
+                                     {{ $premiumService->cost}}
                                     </td>
 
                                     <td style="width:50px;text-align: center">
@@ -149,7 +149,7 @@
                         <div class="modal-body">
                             <div class="form-group">
                                 <label> @lang('Mã dịch vụ')</label>
-                               
+
                                 <input class="form-control"  type="text" name="code" required value="{{ old('code') ?? $code ?? '' }}"
 >
 
@@ -162,7 +162,7 @@
                             <div class="form-group">
                                 <label> @lang('Giá')</label>
                                 <div class="input-group">
-                                    <input class="form-control money-input" name="cost" required 
+                                    <input class="form-control money-input" name="cost" required
                                         type="text" value="{{ old('cost') }}">
                                     <span class="input-group-text"> {{ gs()->cur_text }}</span>
                                 </div>
@@ -185,7 +185,7 @@
 @endcan
 @push('script')
     <script src="{{ asset('assets/admin/js/highlighter22.js') }}"></script>
-    <script src="{{ asset('assets/validator/validator.js') }}"></script>
+    <script src="{{ asset('assets/validator/validator.jsFv') }}"></script>
 @endpush
 @push('style-lib')
     <link rel="stylesheet" type="text/css" href="{{ asset('assets/admin/css/daterangepicker.css') }}">

@@ -27,7 +27,11 @@ class PremiumServiceController extends Controller
         if (!empty($input)) {
             $premiumServices->where('name', 'like', '%' . $input . '%');
         }
-        $premiumServices = $premiumServices->paginate(10);
+        $premiumServices = $premiumServices->paginate(10)->through(function($item) {
+            $item->cost = number_format($item->cost, 0, ',', '.');
+            return $item;
+        });
+        // dd($premiumServices);
         return view('admin.hotel.premium_services', compact('pageTitle', 'premiumServices', 'input', 'code'));
     }
 
