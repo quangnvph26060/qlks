@@ -17,18 +17,32 @@
                                     class="form-control" placeholder="Nhập tên sản phẩm">
                                 <small></small>
                             </div>
-                            <div class="form-group mb-3 col-lg-3">
+                            {{-- <div class="form-group mb-3 col-lg-3">
                                 <label for="import_price" class="form-label">Giá nhập</label>
                                 <input type="text" name="import_price" value="{{ $product->import_price }}"
-                                    id="import_price" class="form-control" placeholder="Giá nhập">
+                                    id="import_price" class="form-control price-input" placeholder="Giá nhập">
                                 <small></small>
                             </div>
                             <div class="form-group mb-3 col-lg-3">
                                 <label for="selling_price" class="form-label">Giá bán</label>
                                 <input type="text" name="selling_price" value="{{ $product->selling_price }}"
-                                    id="selling_price" class="form-control" placeholder="Giá bán">
+                                    id="selling_price" class="form-control price-input" placeholder="Giá bán">
+                                <small></small>
+                            </div> --}}
+                            <div class="form-group mb-3 col-lg-3">
+                                <label for="import_price" class="form-label">Giá nhập</label>
+                                <input type="text" id="import_price_display" class="form-control price-input" value="{{ number_format($product->import_price) }}" placeholder="Giá nhập">
+                                <input type="hidden" name="import_price" id="import_price"  value="{{ $product->import_price }}">
                                 <small></small>
                             </div>
+
+                            <div class="form-group mb-3 col-lg-3">
+                                <label for="selling_price" class="form-label">Giá bán</label>
+                                <input type="text" id="selling_price_display" class="form-control price-input" value="{{ number_format($product->selling_price) }}"  placeholder="Giá bán">
+                                <input type="hidden" name="selling_price" id="selling_price"  value="{{ $product->selling_price }}">
+                                <small></small>
+                            </div>
+
                             <div class="form-group mb-3 col-lg-12">
                                 <label for="description" class="form-label">Mô tả</label>
                                 <textarea name="description" id="description" cols="30" rows="10" placeholder="Mô tả">{{ $product->description }}</textarea>
@@ -238,6 +252,25 @@
 
         })(jQuery);
     </script>
+    <script>
+        document.querySelectorAll('.price-input').forEach(function (displayInput) {
+            displayInput.addEventListener('input', function () {
+                const rawValue = displayInput.value.replace(/[^0-9]/g, ''); // Chỉ giữ số
+                const formatted = rawValue ? Number(rawValue).toLocaleString('en-US') : '';
+
+                displayInput.value = formatted;
+
+                // Tìm input hidden tương ứng
+                const hiddenInputId = displayInput.id.replace('_display', '');
+                const hiddenInput = document.getElementById(hiddenInputId);
+                if (hiddenInput) {
+                    hiddenInput.value = rawValue;
+                }
+            });
+        });
+    </script>
+
+
 @endpush
 
 @push('style')
