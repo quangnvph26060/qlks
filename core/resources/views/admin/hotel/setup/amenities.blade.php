@@ -217,9 +217,9 @@
                                 id="title_error"></span>
                         </div>
                             <div class="mb-3">
-                            <label for="note" class="form-label">Icon</label>
+                            <label for="note" class="form-label">Ghi chú</label>
                             <input type="text" class="form-control " name="icon"
-                                                    placeholder="Nhập icon">
+                                                    placeholder="Nhập ghi chú">
                         </div>
                         <div class="mb-3">
                             <label for="statusStatus" class="form-label">Trạng thái</label><br>
@@ -282,7 +282,7 @@
                                        <div class="mb-3">
                                             <label for="note" class="form-label">Ghi chú</label>
                                                <textarea type="text" class="form-control " name="icon"
-                                                placeholder="Nhập icon">${data.data['icon']}</textarea>
+                                                placeholder="Nhập ghi chú">${data.data['icon']}</textarea>
 
                                         </div>
                                         <div class="mb-3">
