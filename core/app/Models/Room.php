@@ -183,10 +183,10 @@ class Room extends Model
         );
     }
 
-    public function scopeFeatured($query)
-    {
-        return $query->where('is_featured', Status::ROOM_TYPE_FEATURED);
-    }
+    // public function scopeFeatured($query)
+    // {
+    //     return $query->where('is_featured', Status::ROOM_TYPE_FEATURED);
+    // }
 
     public function roomPriceNow()
     {

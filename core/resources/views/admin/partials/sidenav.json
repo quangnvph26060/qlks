@@ -220,6 +220,14 @@
                 "route_name": "admin.roles.index",
                 "menu_active": "admin.roles.index"
             },
+             {
+                "keyword": [
+                    "Cài đặt OTA"
+                ],
+                "title": "Cài đặt OTA",
+                "route_name": "admin.ota.index",
+                "menu_active": "admin.ota.index"
+            },
             {
                 "keyword": [
                     "Cài đặt gia hạn"
@@ -268,6 +276,6 @@
         ],
         "title": "Hướng dẫn sử dụng",
         "icon": "las la-info-circle",
-        "redirect": "https://fasthotel.vn/ho-tro"
+        "redirect": "https://fasthotel.vn/huong-dan-su-dung-fasthotel/dang-ky-dung-thu-fasthotel"
     }
 }

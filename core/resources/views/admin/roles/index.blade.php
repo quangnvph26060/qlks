@@ -43,9 +43,8 @@
                                                         @can('admin.roles.delete')
                                                             <li>
                                                                 <a class="dropdown-item  btn-delete-role"
-                                                                    href="javascript:void(0);"
-                                                                    data-url="{{ route('admin.roles.delete', $role->id) }}">
-                                                                   Xoá
+                                                                    data-id="{{ $role->id }}" href="javascript:void(0);">
+                                                                    Xoá
                                                                 </a>
                                                             </li>
                                                         @endcan
@@ -75,13 +74,14 @@
 
 
 @push('breadcrumb-plugins')
-    <div class="d-flex" style="gap:5px">
-        @can('admin.roles.add')
-            <a class="btn btn-sm mt-1 btn--primary" href="{{ route('admin.roles.add') }}"><i class="las la-plus"></i></a>
-        @endcan
+    <div class="d-flex" style="gap:5px">  
         <a class="btn mt-1 btn-sm btn--primary btn-submit-sync-roles">
             <i class="las la-sync"></i>
         </a>
+        @can('admin.roles.add')
+            <a class="btn btn-sm mt-1 btn--primary" href="{{ route('admin.roles.add') }}"><i class="las la-plus"></i></a>
+        @endcan
+      
     </div>
 @endpush
 <style scoped>
@@ -92,37 +92,57 @@
         color: inherit !important;
     }
 </style>
+<!-- jQuery CDN - thêm trước các script dùng jQuery -->
+
 @push('script')
     <script>
-       
-            "use strict";
-            $.ajaxSetup({
-                headers: {
-                    'X-CSRF-TOKEN': $('meta[name="csrf-token"]').attr('content')
-                }
-            });
+        $(document).ready(function() {
+
             $('.btn-submit-sync-roles').on('click', function() {
                 location.reload();
             });
-            $(document).on('click', '.btn-delete-role', function(e) {
-                e.preventDefault();
 
-                let url = $(this).data('url');
+            $(document).on('click', '.btn-delete-role', function() {
+                let id = $(this).data('id');
+                let baseUrl = "{{ route('admin.roles.delete', ':id') }}";
+                let url = baseUrl.replace(':id', id);
+                Swal.fire({
+                    title: 'Xác nhận xoá vai trò?',
+                    text: 'Bạn có chắc chắn muốn xóa vai trò  này không?',
+                    icon: 'warning',
+                    showCancelButton: true,
+                    confirmButtonText: 'Đồng ý',
+                    cancelButtonText: 'Hủy bỏ',
+                    reverseButtons: true
+                }).then((result) => {
+                    if (result.isConfirmed) {
+                        $.ajax({
+                            url: url,
+                            type: 'POST',
+                            data: {
+                                _token: $('meta[name="csrf-token"]').attr('content'),
+                            },
 
-                if (confirm('Bạn có chắc chắn muốn xoá vai trò này?')) {
-                    $.ajax({
-                        url: url,
-                        type: 'POST',
-                        data: {
-                            _token: '{{ csrf_token() }}',
-                        },
-                        success: function(response) {
-                        },
-                        error: function(xhr) {
-                            alert('Đã xảy ra lỗi khi xoá. Vui lòng thử lại.');
-                        }
-                    });
-                }
+                            success: function(response) {
+                                try {
+                                    location
+                                        .reload(); // hoặc cập nhật UI mà không cần reload
+                                } catch (error) {
+                                    console.error('Lỗi trong xử lý phản hồi:', error);
+                                    alert(
+                                        'Đã xảy ra lỗi khi xử lý phản hồi từ máy chủ.'
+                                        );
+                                }
+                            },
+                            error: function(xhr) {
+                                alert('Đã xảy ra lỗi khi xoá. Vui lòng thử lại.');
+                            }
+                        });
+
+
+                    }
+                });
             });
+        });
     </script>
 @endpush

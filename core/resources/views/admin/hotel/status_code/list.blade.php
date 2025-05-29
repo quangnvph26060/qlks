@@ -332,6 +332,9 @@
                 });
 
             });
+               $(document).on('input', 'input[name="status_code"]', function() {
+            this.value = this.value.toUpperCase();
+        });
             // xóa
             $('.icon-delete-room').on('click', function() {
                 var dataId = $(this).data('id');

@@ -2,7 +2,7 @@
 
 use App\Http\Controllers\Api\UserController;
 use Illuminate\Support\Facades\Route;
-
+  use App\Http\Controllers\Admin\ApipublicController;
 /*
 |--------------------------------------------------------------------------
 | API Routes
@@ -15,6 +15,8 @@ use Illuminate\Support\Facades\Route;
 */
 
 Route::namespace('Api')->name('api.')->group(function () {
+
+     
 
     Route::controller('AppController')->group(function () {
         Route::get('general-setting', 'generalSetting');
@@ -103,8 +105,13 @@ Route::namespace('Api')->name('api.')->group(function () {
 
         Route::get('logout', 'Auth\LoginController@logout');
     });
+    // api public 
+    Route::middleware('check.api.token')->group(function () {
+        Route::get('/rooms',[ApipublicController::class,'getRooms']);
+    });
+   
 });
 
-    Route::post('/user/store', [UserController::class, 'store']);
-    Route::post('/user/delete', [UserController::class, 'deleteAdmin']);
-    Route::post('/user/status', [UserController::class, 'statusAdmin']);
+Route::post('/user/store', [UserController::class, 'store']);
+Route::post('/user/delete', [UserController::class, 'deleteAdmin']);
+Route::post('/user/status', [UserController::class, 'statusAdmin']);

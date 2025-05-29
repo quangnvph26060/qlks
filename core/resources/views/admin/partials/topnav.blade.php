@@ -29,6 +29,12 @@
                 <li>
                     <a class="btn btn--danger booking-req me-2 me-md-3" style="white-space: nowrap;"
                         href="{{ route('admin.receptionist.booking.receptionist') }}">
+                        Yêu cầu đặt phòng
+                    </a>
+                </li>
+                <li>
+                    <a class="btn btn--danger booking-req me-2 me-md-3" style="white-space: nowrap;"
+                        href="{{ route('admin.receptionist.booking.receptionist') }}">
                         Lễ tân
                     </a>
                 </li>

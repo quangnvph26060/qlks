@@ -231,6 +231,9 @@
     <script src="{{ asset('assets/validator/validator.js') }}"></script>
 
     <script>
+           $(document).on('input', 'input[name="group_code"]', function() {
+            this.value = this.value.toUpperCase();
+        });
         $(document).ready(function() {
             var formEconomyEdit = {
                 'group_code': {

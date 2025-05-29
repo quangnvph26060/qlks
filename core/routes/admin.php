@@ -79,6 +79,16 @@ Route::middleware('admin', 'adminPermission')->prefix('admin')->group(function (
         Route::post('save/{id?}', 'save')->name('save');
         Route::post('delete/{id}', 'save')->name('delete');
     });
+     // Manage OTA
+    Route::controller('OTAController')->prefix('ota')->name('ota.')->group(function () {
+        Route::get('', 'index')->name('index');
+        Route::post('', 'save')->name('save');
+        // Route::get('add', 'add')->name('add');
+        // Route::get('edit/{id}', 'edit')->name('edit');
+        // Route::post('save/{id?}', 'save')->name('save');
+        // Route::post('delete/{id}', 'save')->name('delete');
+    });
+
 
     // Users Manager
     Route::controller('ManageUsersController')->name('users.')->prefix('users')->group(function () {
@@ -710,36 +720,36 @@ Route::middleware('admin', 'adminPermission')->prefix('admin')->group(function (
     // });
 
     //Notification Setting
-    Route::name('setting.notification.')->controller('NotificationController')->prefix('notification')->group(function () {
-        //Template Setting
-        Route::get('global/email', 'globalEmail')->name('global.email');
-        Route::post('global/email/update', 'globalEmailUpdate')->name('global.email.update');
+    // Route::name('setting.notification.')->controller('NotificationController')->prefix('notification')->group(function () {
+    //     //Template Setting
+    //     Route::get('global/email', 'globalEmail')->name('global.email');
+    //     Route::post('global/email/update', 'globalEmailUpdate')->name('global.email.update');
 
-        Route::get('global/sms', 'globalSms')->name('global.sms');
-        Route::post('global/sms/update', 'globalSmsUpdate')->name('global.sms.update');
+    //     Route::get('global/sms', 'globalSms')->name('global.sms');
+    //     Route::post('global/sms/update', 'globalSmsUpdate')->name('global.sms.update');
 
-        Route::get('global/push', 'globalPush')->name('global.push');
-        Route::post('global/push/update', 'globalPushUpdate')->name('global.push.update');
+    //     Route::get('global/push', 'globalPush')->name('global.push');
+    //     Route::post('global/push/update', 'globalPushUpdate')->name('global.push.update');
 
-        Route::get('templates', 'templates')->name('templates');
-        Route::get('template/edit/{type}/{id}', 'templateEdit')->name('template.edit');
-        Route::post('template/update/{type}/{id}', 'templateUpdate')->name('template.update');
+    //     Route::get('templates', 'templates')->name('templates');
+    //     Route::get('template/edit/{type}/{id}', 'templateEdit')->name('template.edit');
+    //     Route::post('template/update/{type}/{id}', 'templateUpdate')->name('template.update');
 
-        //Email Setting
-        Route::get('email/setting', 'emailSetting')->name('email');
-        Route::post('email/setting/update', 'emailSettingUpdate')->name('email.update');
-        Route::post('email/test', 'emailTest')->name('email.test');
+    //     //Email Setting
+    //     Route::get('email/setting', 'emailSetting')->name('email');
+    //     Route::post('email/setting/update', 'emailSettingUpdate')->name('email.update');
+    //     Route::post('email/test', 'emailTest')->name('email.test');
 
-        //SMS Setting
-        Route::get('sms/setting', 'smsSetting')->name('sms');
-        Route::post('sms/setting/update', 'smsSettingUpdate')->name('sms.update');
-        Route::post('sms/test', 'smsTest')->name('sms.test');
+    //     //SMS Setting
+    //     Route::get('sms/setting', 'smsSetting')->name('sms');
+    //     Route::post('sms/setting/update', 'smsSettingUpdate')->name('sms.update');
+    //     Route::post('sms/test', 'smsTest')->name('sms.test');
 
-        Route::get('notification/push/setting', 'pushSetting')->name('push');
-        Route::post('notification/push/setting/update', 'pushSettingUpdate')->name('push.update');
-        Route::post('notification/push/setting/upload', 'pushSettingUpload')->name('push.upload');
-        Route::get('notification/push/setting/download', 'pushSettingDownload')->name('push.download');
-    });
+    //     Route::get('notification/push/setting', 'pushSetting')->name('push');
+    //     Route::post('notification/push/setting/update', 'pushSettingUpdate')->name('push.update');
+    //     Route::post('notification/push/setting/upload', 'pushSettingUpload')->name('push.upload');
+    //     Route::get('notification/push/setting/download', 'pushSettingDownload')->name('push.download');
+    // });
 
     // Plugin
     Route::controller('ExtensionController')->prefix('extensions')->name('extensions.')->group(function () {
@@ -797,7 +807,7 @@ Route::middleware('admin', 'adminPermission')->prefix('admin')->group(function (
     // Report room status
     Route::controller('ManageReportController')->prefix('manage')->name('manage.')->group(function () {
 
-            Route::get('room-status', action: 'rommStatus')->name('room.status');
-            Route::get('room-status-history', 'roomStatusHistory')->name('room.status.history');
+        Route::get('room-status', action: 'rommStatus')->name('room.status');
+        Route::get('room-status-history', 'roomStatusHistory')->name('room.status.history');
     });
 });

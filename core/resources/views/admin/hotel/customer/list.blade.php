@@ -626,6 +626,9 @@
                         }
                     });
                 });
+                 $(document).on('input', 'input[name="customer_code"]', function() {
+            this.value = this.value.toUpperCase();
+        });
                 $(document).on('keyup', '#edit-customer-code', function(event) {
                     var code = $('#edit-customer-code').val();
                     $.ajax({

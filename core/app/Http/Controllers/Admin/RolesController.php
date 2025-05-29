@@ -12,7 +12,7 @@ class RolesController extends Controller
 
     public function index()
     {
-        $roles = Role::where('unit_code',subdomain())->where('subdomain',subdomain())->get();
+        $roles = Role::where('unit_code', unitCode())->where('subdomain', subdomain())->get();
         $pageTitle = "Tất cả vai trò";
         return view('admin.roles.index', compact('roles', 'pageTitle'));
     }
@@ -60,11 +60,24 @@ class RolesController extends Controller
     }
     public function delete($id)
     {
-        $role = Role::findOrFail($id);
+        try {
+            $role = Role::findOrFail($id);
+            \Log::info("Xoá vai trò ID: " . $id);
 
-        $role->permissions()->detach();
-        $role->delete();
+            $role->permissions()->detach();
+            $role->delete();
 
-        return redirect()->back()->with('success', 'Xoá vai trò thành công');
+            return response()->json([
+                'status' => 'success',
+                'message' => 'Xoá vai trò thành công'
+            ]);
+        } catch (\Exception $e) {
+            \Log::error('Lỗi xoá vai trò: ' . $e->getMessage());
+
+            return response()->json([
+                'status' => 'error',
+                'message' => 'Đã xảy ra lỗi khi xoá vai trò'
+            ], 500);
+        }
     }
 }

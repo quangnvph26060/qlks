@@ -349,6 +349,9 @@
                 this.value = this.value.toUpperCase();
             });
         });
+         $(document).on('input', 'input[name="code"]', function() {
+            this.value = this.value.toUpperCase();
+        });
 
         $(document).on('click', '.addItem', function() {
             var modal = $(this).parents('.modal');

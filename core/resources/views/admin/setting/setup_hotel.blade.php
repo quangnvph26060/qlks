@@ -375,8 +375,12 @@
                 const selectedStatus = $('input[name="hotelStatus"]:checked').val();
             });
         });
-        $(document).ready(function() {
+        $(document).on('input', 'input[name="ma_coso"]', function () {
+    this.value = this.value.toUpperCase();
+});
 
+        $(document).ready(function() {
+           
             $(document).on('click', '.svg-icon', function(e) {
                 e.stopPropagation();
                 const $dropdown = $(this).siblings('.menu_dropdown');

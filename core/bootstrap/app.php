@@ -72,6 +72,8 @@ return Application::configure(basePath: dirname(__DIR__))
             'maintenance'           => \App\Http\Middleware\MaintenanceMode::class,
             'adminPermission'       => \App\Http\Middleware\AdminPermissionMiddleware::class,
             'verifyToken'           => \App\Http\Middleware\VerifyApiToken::class,
+            'check.api.token'       => \App\Http\Middleware\CheckApiToken::class,
+
         ]);
 
         $middleware->validateCsrfTokens(

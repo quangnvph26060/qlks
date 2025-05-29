@@ -690,7 +690,9 @@
                 }
 
             });
-
+             $(document).on('input', 'input[name="code"]', function() {
+            this.value = this.value.toUpperCase();
+        });
             function notData() {
 
                 // Check if there are no rows in the tbody

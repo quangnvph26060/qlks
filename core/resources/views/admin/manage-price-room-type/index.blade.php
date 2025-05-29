@@ -146,7 +146,9 @@
             mode: "multiple",
             dateFormat: "Y-m-d",
         });
-
+           $(document).on('input', 'input[name="price_code"]', function() {
+            this.value = this.value.toUpperCase();
+        });
         $('.btn-submit-sync-price').on('click', function() {
             location.reload();
         });

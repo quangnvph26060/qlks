@@ -937,3 +937,8 @@ CREATE TABLE customer_sources (
 
 
 ALTER TABLE admins ADD COLUMN unit_code VARCHAR(255) NOT NULL DEFAULT 'coso1';
+
+
+
+INSERT INTO `permissions` (`id`, `name`, `group`, `code`) VALUES (NULL, 'Thêm OTA', 'OTA', 'admin.ota.save');
+INSERT INTO `permission_role` (`id`, `permission_id`, `role_id`) VALUES (NULL, '357', '1');

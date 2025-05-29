@@ -205,8 +205,8 @@
                                 @if ($type->amenities->count() > 0)
                                     <div class="float-inline-end">
                                         @foreach ($type->amenities as $amenity)
-                                            <span
-                                                class="badge {{ getRandomColor() }} m-1 p-1 rounded-pill text-white" style="color:white !important">
+                                            <span class="badge {{ getRandomColor() }} m-1 p-1 rounded-pill text-white"
+                                                style="color:white !important">
                                                 {{ $amenity->title }}
                                             </span>
                                         @endforeach
@@ -223,8 +223,8 @@
                                 @if ($type->facilities->count() > 0)
                                     <div class="float-inline-end">
                                         @foreach ($type->facilities as $facility)
-                                            <span
-                                                class="badge {{ getRandomColor() }} m-1 p-1 rounded-pill text-bg-primary" style="color:white !important">
+                                            <span class="badge {{ getRandomColor() }} m-1 p-1 rounded-pill text-bg-primary"
+                                                style="color:white !important">
                                                 {{ $facility->title }}
                                             </span>
                                         @endforeach
@@ -360,6 +360,9 @@
             row.classList.toggle('show');
             button.classList.toggle('collapsed');
         };
+        $(document).on('input', 'input[name="code"]', function() {
+            this.value = this.value.toUpperCase();
+        });
         $(document).ready(function() {
             const apiUrl = '{{ route('admin.hotel.room.type.all') }}';
             initDataFetch(apiUrl);
@@ -406,8 +409,8 @@
                             success: function(data) {
                                 if (data.status === 'success') {
                                     rowToDelete.remove();
-                                }else{
-                                    notify('error',data.message);
+                                } else {
+                                    notify('error', data.message);
                                 }
                             },
                             error: function(xhr, status, error) {

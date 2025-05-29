@@ -242,6 +242,9 @@
 
 @push('script')
     <script>
+         $(document).on('input', 'input[name="source_code"]', function() {
+            this.value = this.value.toUpperCase();
+        });
         $(document).ready(function() {
             var formEconomyEdit = {
                 'source_code': {
