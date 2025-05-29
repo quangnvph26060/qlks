@@ -2,7 +2,7 @@
 
 use App\Http\Controllers\Api\UserController;
 use Illuminate\Support\Facades\Route;
-  use App\Http\Controllers\Admin\ApipublicController;
+use App\Http\Controllers\Admin\ApipublicController;
 /*
 |--------------------------------------------------------------------------
 | API Routes
@@ -16,7 +16,7 @@ use Illuminate\Support\Facades\Route;
 
 Route::namespace('Api')->name('api.')->group(function () {
 
-     
+
 
     Route::controller('AppController')->group(function () {
         Route::get('general-setting', 'generalSetting');
@@ -107,9 +107,11 @@ Route::namespace('Api')->name('api.')->group(function () {
     });
     // api public 
     Route::middleware('check.api.token')->group(function () {
-        Route::get('/rooms',[ApipublicController::class,'getRooms']);
+        Route::get('/rooms', [ApipublicController::class, 'getRooms']);
+        Route::get('/roomss', function () {
+            return '123';
+        });
     });
-   
 });
 
 Route::post('/user/store', [UserController::class, 'store']);
