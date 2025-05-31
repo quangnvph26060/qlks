@@ -17,7 +17,13 @@ class ApipublicController extends Controller
         $host = request()->getHost();
         return explode('.', $host)[0];
     }
-
+    public function getHotels(Request $request){
+        $hotels = HotelFacility::all();
+          return response()->json([
+                'hotels' => $hotels,
+                
+            ], 200);
+    }
     public function getRooms(Request $request)
     {
         try {

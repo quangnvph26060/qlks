@@ -20,7 +20,10 @@ class CheckAdminSubdomain
             $subdomain = str_replace('.' . $baseDomain, '', $host);
           
             // Bỏ qua nếu là app.fasthotel.vn
-            if ($subdomain === 'app') {
+            // if ($subdomain === 'app') {
+            //     return $next($request);
+            // }
+             if (in_array($subdomain, ['app', 'api'])) {
                 return $next($request);
             }
 

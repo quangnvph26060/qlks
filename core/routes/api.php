@@ -108,6 +108,7 @@ Route::namespace('Api')->name('api.')->group(function () {
     // api public 
     Route::middleware('check.api.token')->group(function () {
         Route::get('/rooms', [ApipublicController::class, 'getRooms']);
+          Route::get('/get-hotels', [ApipublicController::class, 'getHotels']);
         Route::get('/roomss', function () {
             return '123';
         });

@@ -18,7 +18,7 @@ $widget = [];
 @endphp
 @section('panel')
     <div class="row gy-4">
-        <div class="col-xxl-3 col-sm-6">
+        {{-- <div class="col-xxl-3 col-sm-6">
             <x-widget color="danger" icon="la la-sign-out transform-rotate-180" link="admin.delayed.booking.checkout" style="2" cover_cursor="1" overlay_icon="0" title="Khách trả phòng muộn" value="{{ $widget['delayed_checkout'] }}" />
         </div>
 
@@ -32,7 +32,7 @@ $widget = [];
 
         <div class="col-xxl-3 col-sm-6">
             <x-widget color="info" icon="la la-sign-out transform-rotate-180" link="admin.upcoming.booking.checkout" style="2" cover_cursor="1" overlay_icon="0" title="Thanh toán sắp tới" value="{{ $widget['upcoming_checkout'] }}" />
-        </div>
+        </div> --}}
 
         <div class="col-xxl-3 col-sm-6">
             <x-widget color="dark" icon="la la-check-circle" icon_style="false" link="admin.booking.todays.booked" style="2" cover_cursor="1" overlay_icon="0" title="Phòng đã đặt hôm nay" value="{{ $widget['today_booked'] }}" />

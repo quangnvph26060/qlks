@@ -6,6 +6,7 @@ use App\Constants\Status;
 use App\Http\Controllers\Controller;
 use App\Models\Admin;
 use App\Models\DeviceToken;
+use App\Models\HotelFacility;
 use App\Models\NotificationLog;
 use App\Models\Transaction;
 use App\Models\User;
@@ -16,6 +17,7 @@ use Illuminate\Support\Facades\Log;
 use Illuminate\Validation\Rules\Password;
 use Illuminate\Support\Facades\Validator;
 use Illuminate\Validation\Rule;
+use Illuminate\Support\Facades\DB;
 
 class UserController extends Controller
 {
@@ -329,40 +331,36 @@ class UserController extends Controller
 
     public function store(Request $request)
     {
+        DB::beginTransaction();
         try {
-            // Kiểm tra xem email hoặc username đã tồn tại chưa
-            // if (Admin::where('email', $request->email)->exists()) {
-            //     return response()->json([
-            //         'success' => false,
-            //         'message' => 'Email đã tồn tại'
-            //     ], 400);
-            // }
-
-            // if (Admin::where('username', $request->username)->exists()) {
-            //     return response()->json([
-            //         'success' => false,
-            //         'message' => 'Username đã tồn tại'
-            //     ], 400);
-            // }
-
             $customer = Admin::create([
                 'name' => $request->name,
                 'username' => $request->username,
                 'email' => $request->email,
                 'mobile' => $request->phone,
-                'password' => $request->password,
+                // 'password' => $request->password,
+                'password'  => bcrypt($request->password), // NÊN mã hóa
                 'status' => 1,
                 'role_id' => 1,
                 'unit_code' => 'COSO1',
                 'subdomain' => $request->username
             ]);
-
+            if ($customer) {
+                HotelFacility::create([
+                    'ten_coso'  => $request->name,
+                    'ma_coso'   => "COSO1",
+                    'subdomain' => $request->username,
+                    'trang_thai' => 1,
+                ]);
+            }
+            DB::commit();
             return response()->json([
                 'success' => true,
                 'message' => 'Thêm khách hàng thành công',
                 'data' => $customer
             ], 201);
         } catch (QueryException $e) {
+            DB::rollBack();
             return response()->json([
                 'success' => false,
                 'message' => 'Đã xảy ra lỗi khi thêm khách hàng. Vui lòng thử lại!',
@@ -430,5 +428,4 @@ class UserController extends Controller
             'message' => 'Cập nhật  thành công',
         ], 200);
     }
-
 }

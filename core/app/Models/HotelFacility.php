@@ -16,6 +16,7 @@ class HotelFacility extends Model
         'trang_thai',
         'sudodmain'
     ];
+     protected $hidden = ['created_at', 'updated_at'];
     public function styleStatus(){
         return $this->trang_thai == 1 ? '<span class="badge badge--success">Hoạt động</span>' : '<span class="badge badge--danger">Không hoạt động</span>';
     }

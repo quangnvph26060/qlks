@@ -503,7 +503,9 @@
 
             // Hiển thị hình ảnh cũ nếu có
             let showImage = modal.find('#showImage');
-            showImage.attr('src', 'http://quanlykhachsan.test/storage/' + resource.main_image);
+           // showImage.attr('src', 'http://quanlykhachsan.test/storage/' + resource.main_image);
+             const CURRENT_ORIGIN = window.location.origin;
+                showImage.attr('src', CURRENT_ORIGIN + '/storage/' + resource.main_image);
             showImage.show();
 
             // Đặt lại file input
