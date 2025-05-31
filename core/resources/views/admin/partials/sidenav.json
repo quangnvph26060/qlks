@@ -194,6 +194,15 @@
         "icon": "las la-life-ring",
         "menu_active": "admin.premium.service*",
         "submenu": [
+             {
+                "keyword": [
+                    "Cấu hình khách sạn"
+                ],
+                "title": "Cấu hình khách sạn",
+                "icon": "las la-dollar-sign",
+                "route_name": "admin.hotel_configurations.index",
+                "menu_active": "admin.hotel_configurations.index"
+            },
             {
                 "keyword": [
                     "Cài đặt tính giá"

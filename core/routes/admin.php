@@ -133,7 +133,15 @@ Route::middleware('admin', 'adminPermission')->prefix('admin')->group(function (
         Route::put('update-status', 'updateStatus')->name('update.status');
         Route::delete('destroy/{id}', 'destroy')->name('destroy');
     });
-
+    //hotel_configurations cấu hình khách sạn
+  Route::controller('HotelConfigurationController')->prefix('hotel_configurations')->name('hotel_configurations.')->group(function () {
+        Route::get('/', 'index')->name('index');
+        // Route::post('create', 'store')->name('store');
+        // Route::get('edit/{id}', 'edit')->name('edit');
+        // Route::put('update/{id}', 'update')->name('update');
+        // Route::put('update-status', 'updateStatus')->name('update.status');
+        // Route::delete('destroy/{id}', 'destroy')->name('destroy');
+    });
     // manage supplier
     Route::controller('SupplierController')->prefix('supplier')->name('supplier.')->group(function () {
         Route::get('/', 'index')->name('index');

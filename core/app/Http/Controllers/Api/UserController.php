@@ -338,8 +338,7 @@ class UserController extends Controller
                 'username' => $request->username,
                 'email' => $request->email,
                 'mobile' => $request->phone,
-                // 'password' => $request->password,
-                'password'  => bcrypt($request->password), // NÊN mã hóa
+                 'password' => $request->password,
                 'status' => 1,
                 'role_id' => 1,
                 'unit_code' => 'COSO1',
@@ -349,7 +348,7 @@ class UserController extends Controller
                 HotelFacility::create([
                     'ten_coso'  => $request->name,
                     'ma_coso'   => "COSO1",
-                    'subdomain' => $request->username,
+                    'subdomain' => $customer->subdomain,
                     'trang_thai' => 1,
                 ]);
             }
