@@ -90,14 +90,27 @@ class ApipublicController extends Controller
             ], 404);
         }
         $date = $request->input('date', Carbon::today()->toDateString());
+        $searchRoomNumber = $request->input('room_number');
+        $searchRoomType = $request->input('room_type');
+
         $hotelFacility = HotelFacility::find($HotelConfiguration->hotel_facility_id);
         $otaSetting = OtaSetting::where('hotel_id', $HotelConfiguration->hotel_facility_id)->first();
         $rooms = Room::withoutTenant()->where('subdomain', $hotelFacility->subdomain)->active();
-        $rooms->select('id', 'room_number', 'room_type_id','main_image', 'is_clean', 'total_adult', 'total_child', 'beds', 'description');
+        $rooms->select('id', 'room_number', 'room_type_id', 'main_image', 'is_clean', 'total_adult', 'total_child', 'beds', 'description');
+        // 🔍 Lọc theo room_number nếu có
+        if (!empty($searchRoomNumber)) {
+            $rooms->where('room_number', 'like', '%' . $searchRoomNumber . '%');
+        }
 
+        // 🔍 Lọc theo tên loại phòng nếu có
+        if (!empty($searchRoomType)) {
+            $rooms->whereHas('roomType', function ($q) use ($searchRoomType) {
+                $q->where('name', 'like', '%' . $searchRoomType . '%');
+            });
+        }
         if (!$otaSetting->allow_all_rooms) {
             $filtered = false;
-           
+
             // Ưu tiên lọc theo ID phòng nếu có
             $allowedRooms = $otaSetting->allowed_rooms;
             if (is_array($allowedRooms) && count($allowedRooms)) {
@@ -105,9 +118,9 @@ class ApipublicController extends Controller
                 $filtered = true;
             }
             if (!$filtered) {
-              
+
                 $allowedRoomTypes = $otaSetting->allowed_room_types;
-           
+
                 if (is_array($allowedRoomTypes) && count($allowedRoomTypes)) {
                     $rooms->whereIn('room_type_id', $allowedRoomTypes);
                 }
@@ -135,7 +148,9 @@ class ApipublicController extends Controller
                 }
             },
             'roomBookingHistory.roomStatus',
-            'amenities', 'facilities', 'images'
+            'amenities',
+            'facilities',
+            'images'
             // 'roomBookingHistory.checkInData',
             // 'roomBookingHistory.bookingData',
         ]);

@@ -324,19 +324,19 @@
                     </div>
                 </div>
 
-                {{-- <div class="card mt-3">
+                <div class="card mt-3">
                     <div class="card-header">
                         <h5 class="card-title mb-0">
                             @lang('Hình ảnh')
                         </h5>
 
-                        <small class="text--info text--small"><i class="las la-info-circle"></i> @lang('Mỗi hình ảnh sẽ được thay đổi kích thước thành')
-                            {{ getFileSize('roomTypeImage') }}@lang('px')</small>
+                        {{-- <small class="text--info text--small"><i class="las la-info-circle"></i> @lang('Mỗi hình ảnh sẽ được thay đổi kích thước thành')
+                            {{ getFileSize('roomTypeImage') }}@lang('px')</small> --}}
                     </div>
                     <div class="card-body">
                         <div class="input-images pb-3"></div>
                     </div>
-                </div> --}}
+                </div>
 
                 {{-- <div class="card mt-3">
                     <div class="card-header">
