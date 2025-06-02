@@ -406,6 +406,9 @@
         .widget-seven .widget-seven__content-subheading {
             font-weight: normal;
         }
+        #add-code {
+  text-transform: uppercase;
+}
 
         .empty-search img {
             width: 120px;

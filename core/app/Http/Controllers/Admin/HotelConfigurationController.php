@@ -4,13 +4,18 @@ namespace App\Http\Controllers\admin;
 
 use App\Http\Controllers\Controller;
 use App\Models\HotelConfiguration;
+use App\Models\HotelFacility;
 use Illuminate\Http\Request;
-
+use Illuminate\Support\Str;
 class HotelConfigurationController extends Controller
 {
- public function index()
+    public function index()
     {
-        $configs = HotelConfiguration::all();
+        $hotelActive = HotelFacility::where('subdomain', subdomain())
+                ->where('ma_coso', unitCode())
+                ->firstOrFail();
+        $configs = HotelConfiguration::with('hotelFacility.galleryImages')
+        ->where('hotel_facility_id',$hotelActive->id)->first();
         return view('admin.setting.hotel_configurations', compact('configs'));
     }
 
@@ -23,20 +28,83 @@ class HotelConfigurationController extends Controller
     {
         $data = $request->validate([
             'hotel_name' => 'required|string|max:255',
+            'phone' => 'nullable|string|max:20',
+            'address' => 'required|string|max:255',
+            'external_link' => 'nullable|url',
             'logo' => 'nullable|image',
             'main_image' => 'nullable|image',
             'gallery_images.*' => 'nullable|image',
-            'address' => 'required|string|max:255',
-            'page_link' => 'nullable|url',
         ]);
 
-        // Xử lý upload ảnh ở đây nếu có (logo, main_image, gallery_images)
-        // Ví dụ lưu file, gán đường dẫn vào $data['logo'], ...
+        try {
+            // Lấy HotelFacility hiện tại
+            $hotelActive = HotelFacility::where('subdomain', subdomain())
+                ->where('ma_coso', unitCode())
+                ->firstOrFail();
 
-        HotelConfiguration::create($data);
+            $data['hotel_facility_id'] = $hotelActive->id;
 
-        return redirect()->route('hotel_configurations.index')->with('success', 'Đã tạo cấu hình khách sạn.');
+            // Xử lý logo
+            if ($request->hasFile('logo')) {
+                $logo = saveImages($request, 'logo', 'hotel/logo', 200, 200);
+                if (!empty($logo)) {
+                    $data['logo'] = $logo[0];
+                }
+            }
+
+            // Xử lý main_image
+            if ($request->hasFile('main_image')) {
+                $mainImage = saveImages($request, 'main_image', 'hotel/main_image', 600, 600);
+                if (!empty($mainImage)) {
+                    $data['main_image'] = $mainImage[0];
+                }
+            }
+
+            // Lưu icon
+            if ($request->hasFile('icon')) {
+                $icon = saveImages($request, 'icon', 'hotel/icon', 100, 100);
+                if (!empty($icon)) {
+                    $data['icon'] = $icon[0];
+                }
+            }
+            $data['slug'] = Str::slug($data['hotel_name']);
+            // Kiểm tra đã có hotel_configuration chưa
+            $existingHotel = HotelConfiguration::where('hotel_facility_id', $hotelActive->id)->first();
+
+            if ($existingHotel) {
+                // Nếu đã có → update
+                $existingHotel->update($data);
+                $hotel = $existingHotel;
+            } else {
+                // Nếu chưa có → tạo mới
+                $hotel = HotelConfiguration::create($data);
+            }
+
+            // Xử lý nhiều ảnh gallery
+            if ($request->hasFile('gallery_images')) {
+                $galleryImages = saveImages($request, 'gallery_images', 'hotel/gallery', 800, 600);
+
+                // Nếu là update, có thể xóa ảnh cũ nếu cần (tuỳ yêu cầu bạn)
+                // \DB::table('hotel_gallery_images')->where('hotel_facility_id', $hotel->id)->delete();
+
+                foreach ($galleryImages as $imagePath) {
+                    \DB::table('hotel_gallery_images')->insert([
+                        'hotel_facility_id' => $hotel->hotel_facility_id,
+                        'image_url' => $imagePath,
+                        'created_at' => now(),
+                        'updated_at' => now(),
+                    ]);
+                }
+            }
+            $notify[] = ['success', 'Cấu hình khách sạn đã được lưu.'];
+            return back()->withNotify($notify);
+        } catch (\Exception $e) {
+            \Log::error('Lỗi lưu cấu hình khách sạn: ' . $e->getMessage());
+            return back()->with('error', 'Đã xảy ra lỗi khi lưu cấu hình khách sạn.');
+        }
     }
+
+
 
     public function show(HotelConfiguration $hotelConfiguration)
     {

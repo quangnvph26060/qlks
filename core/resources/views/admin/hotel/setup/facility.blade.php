@@ -412,6 +412,9 @@
             place-items: center;
             color: #888;
         }
+#add-code {
+  text-transform: uppercase;
+}
 
         .system-search-icon~.form-control {
             padding-left: 45px;

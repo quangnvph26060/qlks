@@ -218,7 +218,7 @@
                         </div>
                             <div class="mb-3">
                             <label for="note" class="form-label">Ghi chú</label>
-                            <input type="text" class="form-control " name="icon"
+                            <input type="text"  data-placement="bottomRight" class="form-control icp icp-auto " name="icon"
                                                     placeholder="Nhập ghi chú">
                         </div>
                         <div class="mb-3">
@@ -235,7 +235,6 @@
                 </div>
             `;
                 $('#modal-dialog').append(row);
-
                 formEconomyEdit.code.element = document.getElementById('add-code');
                 formEconomyEdit.code.error = document.getElementById('code_error');
                 formEconomyEdit.title.element = document.getElementById('add-title');
@@ -419,6 +418,9 @@
         .widget-seven .widget-seven__content-amount {
             font-size: 22px;
         }
+#add-code {
+  text-transform: uppercase;
+}
 
         .widget-seven .widget-seven__content-subheading {
             font-weight: normal;

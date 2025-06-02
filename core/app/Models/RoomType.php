@@ -68,6 +68,12 @@ class RoomType extends Model
     {
         return $this->hasOne(RoomTypePrice::class, 'room_type_id', 'id')->orderByDesc('price_validity_period');
     }
+  public function roomTypePriceForDate()
+{
+    return $this->hasOne(RoomTypePrice::class, 'room_type_id', 'id');
+}
+
+
     // public function roomTypePrice()
     // {
     //      $today = Carbon::now();

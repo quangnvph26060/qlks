@@ -509,6 +509,9 @@
             width: 120px;
             margin-bottom: 15px;
         }
+#add-code {
+  text-transform: uppercase;
+}
 
         a.item-link:focus,
         a.item-link:hover {

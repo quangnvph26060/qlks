@@ -2,9 +2,9 @@
 namespace App\Http\Controllers\Admin\Auth;
 
 use App\Http\Controllers\Controller;
-use App\Traits\AuthenticatesUsers;
+use Illuminate\Foundation\Auth\AuthenticatesUsers;
 use Illuminate\Http\Request;
-use Illuminate\Support\Facades\Cache;
+
 
 class LoginController extends Controller
 {
@@ -26,7 +26,7 @@ class LoginController extends Controller
      *
      * @var string
      */
-    public $redirectTo = '/';
+    public $redirectTo = 'admin';
 
     /**
      * Show the application's login form.
@@ -35,7 +35,7 @@ class LoginController extends Controller
      */
     public function showLoginForm()
     {
-        $pageTitle = "Phần mềm quản lý khách sạn chuyên nghiệp";
+        $pageTitle = "Admin đăng nhập";
         return view('admin.auth.login', compact('pageTitle'));
     }
 
@@ -56,6 +56,7 @@ class LoginController extends Controller
 
     public function login(Request $request)
     {
+
         $this->validateLogin($request);
 
         $request->session()->regenerateToken();
@@ -66,7 +67,7 @@ class LoginController extends Controller
         }
 
 
-        //   Onumoti::getData();
+     //   Onumoti::getData();
 
         // If the class is using the ThrottlesLogins trait, we can automatically throttle
         // the login attempts for this application. We'll key this by the username and
@@ -76,10 +77,7 @@ class LoginController extends Controller
             $this->fireLockoutEvent($request);
             return $this->sendLockoutResponse($request);
         }
-        // check username to subdomain in login 
-        // if (!$this->canLoginBySubdomain($request)) {
-        //     abort(403, 'Bạn không có quyền đăng nhập tại subdomain này');
-        // }
+
         if ($this->attemptLogin($request)) {
             return $this->sendLoginResponse($request);
         }
@@ -95,9 +93,6 @@ class LoginController extends Controller
 
     public function logout(Request $request)
     {
-       // Cache::forget('Unit_code');
-       // Cache::forget('Subdomain');
-        Cache::flush(); // xoá cache
         $this->guard('admin')->logout();
         $request->session()->invalidate();
         return $this->loggedOut($request) ?: redirect($this->redirectTo);
