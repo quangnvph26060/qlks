@@ -60,12 +60,12 @@ class ApipublicController extends Controller
                         'hotelFacility.galleryImages' => function ($query) {
                             $query->select('hotel_facility_id', 'image_url');
                         },
-                        'hotelFacility.amenities' => function ($query)use ($hotel) {
+                        'hotelFacility.amenities' => function ($query) use ($hotel) {
                             $query->where('status', 1);
                             $query->where('unit_code',  $hotel->ma_coso);
                             $query->select('icon', 'title', 'subdomain');
                         },
-                         'hotelFacility.facilities' => function ($query)use ($hotel) {
+                        'hotelFacility.facilities' => function ($query) use ($hotel) {
                             $query->where('status', 1);
                             $query->where('unit_code',  $hotel->ma_coso);
                             $query->select('icon', 'title', 'subdomain');
@@ -74,7 +74,7 @@ class ApipublicController extends Controller
                             $query->where('unit_code', $hotel->ma_coso);
                         }
                     ])
-                        ->select('hotel_name', 'slug', 'address', 'province', 'phone', 'external_link', 'logo','main_image', 'hotel_facility_id', 'longitude', 'latitude')->first();
+                        ->select('hotel_name', 'slug', 'address', 'province', 'phone', 'external_link', 'logo', 'main_image', 'hotel_facility_id', 'longitude', 'latitude')->first();
                     if ($hotelConfig && $hotelConfig->hotelFacility) {
                         if ($hotelConfig->logo) {
                             $hotelConfig->logo = 'https://app.fasthotel.vn/storage' . '/' . ltrim($hotelConfig->logo, '/');
@@ -100,7 +100,7 @@ class ApipublicController extends Controller
                         $hotelConfig->makeHidden(['hotel_facility_id']);
                         $hotelConfig->hotelFacility->makeHidden(['subdomain', 'ma_coso']);
                         $hotelConfig->hotelFacility->amenities->makeHidden(['subdomain']);
-                          $hotelConfig->hotelFacility->facilities->makeHidden(['subdomain']);
+                        $hotelConfig->hotelFacility->facilities->makeHidden(['subdomain']);
                         $hotelConfig->hotelFacility->galleryImages->makeHidden(['hotel_facility_id']);
                         $hotelConfig->hotelFacility->makeHidden(['roomTypePrice']);
                     }
@@ -119,7 +119,22 @@ class ApipublicController extends Controller
 
     public function getRooms(Request $request, $hotel)
     {
-        $HotelConfiguration = HotelConfiguration::where('slug', $hotel)->first();
+        $HotelConfiguration = HotelConfiguration::where('slug', $hotel)->with([
+            'hotelFacility' => function ($query) {
+                $query->select('id', 'ma_coso', 'ten_coso', 'subdomain'); // cần giữ 'id' để join
+            },
+            'hotelFacility.galleryImages' => function ($query) {
+                $query->select('hotel_facility_id', 'image_url');
+            },
+            'hotelFacility.amenities' => function ($query) use ($hotel) {
+                $query->where('status', 1);
+                $query->select('icon', 'title', 'subdomain');
+            },
+            'hotelFacility.facilities' => function ($query) use ($hotel) {
+                $query->where('status', 1);
+                $query->select('icon', 'title', 'subdomain');
+            },
+        ])->first();
         if (!$HotelConfiguration) {
             return response()->json([
                 'message' => 'Khách sạn không tồn tại',
@@ -198,16 +213,98 @@ class ApipublicController extends Controller
                 }
             },
             'roomBookingHistory.roomStatus',
-            'amenities',
-            'facilities',
-            'images'
+            'amenities' => function ($query) {
+                $query->select('title', 'icon');
+            },
+            'facilities' => function ($query) {
+                $query->select('title', 'icon');
+            },
+            'images' => function ($query) {
+                $query->select('image', 'room_id');
+            },
             // 'roomBookingHistory.checkInData',
             // 'roomBookingHistory.bookingData',
         ]);
 
         $rooms = $rooms->get();
+
+
+        $domain = 'https://app.fasthotel.vn/storage'; // hoặc gán cứng ví dụ: $domain = 'https://yourdomain.com/';
+
+        $formattedRooms = $rooms->map(function ($room) use ($domain) {
+            // Đẩy giá và tên loại phòng ra ngoài
+            $unitPrice = optional($room->roomType->roomTypePriceForDate->first())->unit_price ?? null;
+            $roomTypeName = optional($room->roomType)->name;
+
+            // Gán link đầy đủ cho ảnh phòng và ảnh loại phòng
+            $room->main_image = $room->main_image ? $domain . '/' . ltrim($room->main_image, '/') : null;
+            if (!empty($room->roomType->main_image)) {
+                $room->room_type_image = $domain . '/' . ltrim($room->roomType->main_image, '/');
+            }
+
+            // Đổi is_clean sang mô tả
+            $room->is_clean = $room->is_clean ? 'Đã dọn' : 'Chưa dọn';
+
+            // Bỏ trường không cần
+            unset($room->room_type_id);
+            unset($room->roomType); // bỏ object roomType
+
+            // Chuyển amenities & facilities chỉ còn title và icon
+            if ($room->amenities) {
+                $room->amenities = $room->amenities->map(function ($a) {
+                    return [
+                        'title' => $a->title,
+                        'icon'  => $a->icon,
+                    ];
+                });
+            }
+
+            if ($room->facilities) {
+                $room->facilities = $room->facilities->map(function ($f) {
+                    return [
+                        'title' => $f->title,
+                        'icon'  => $f->icon,
+                    ];
+                });
+            }
+
+            // Gắn unit price và tên loại phòng
+            $room->unit_price = $unitPrice;
+            $room->room_type = $roomTypeName;
+
+            // Gắn link ảnh thumbnails
+            if (isset($room->images)) {
+                $room->images->transform(function ($img) use ($domain) {
+                    $img->image = $img->image ? $domain . '/' . ltrim($img->image, '/') : null;
+                    return $img;
+                });
+            }
+
+            // Tùy chỉnh room_booking_history thành chuỗi trạng thái
+            if ($room->roomBookingHistory->isEmpty()) {
+                $room->room_booking_history = 'Phòng trống';
+            } else {
+                $statusCode = (int) $room->roomBookingHistory->first()->status_code; // ép kiểu về int
+                $room->room_booking_history = match ($statusCode) {
+                    2 => 'Phòng đã đặt',
+                    3 => 'Phòng đang ở',
+                    default => 'Trạng thái không xác định'
+                };
+            }
+
+
+            // Bỏ object cũ (chứa đầy đủ history)
+            unset($room->roomBookingHistory);
+
+            return $room;
+        });
+        $HotelConfiguration->hotelFacility->makeHidden(['subdomain', 'ma_coso']);
+        $HotelConfiguration->hotelFacility->amenities->makeHidden(['subdomain']);
+        $HotelConfiguration->hotelFacility->facilities->makeHidden(['subdomain']);
+        unset($HotelConfiguration->icon);
+        unset($HotelConfiguration->logo);
         return response()->json([
-            'rooms' => $rooms,
+            'rooms' => $formattedRooms,
             'hotel' =>  $HotelConfiguration,
         ], 200);
     }
