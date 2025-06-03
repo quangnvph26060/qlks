@@ -6,6 +6,7 @@ use App\Constants\Status;
 use App\Http\Controllers\Controller;
 use App\Models\Admin;
 use App\Models\DeviceToken;
+use App\Models\HotelConfiguration;
 use App\Models\HotelFacility;
 use App\Models\NotificationLog;
 use App\Models\Transaction;
@@ -14,6 +15,7 @@ use Illuminate\Database\QueryException;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Hash;
 use Illuminate\Support\Facades\Log;
+use Illuminate\Support\Str;
 use Illuminate\Validation\Rules\Password;
 use Illuminate\Support\Facades\Validator;
 use Illuminate\Validation\Rule;
@@ -342,14 +344,21 @@ class UserController extends Controller
                 'status' => 1,
                 'role_id' => 1,
                 'unit_code' => 'COSO1',
-                'subdomain' => $request->username
+                'subdomain' => $request->username,
+                'hotel_homestay' => $request->hotel_homestay
             ]);
             if ($customer) {
-                HotelFacility::create([
+                $hotelFacility = HotelFacility::create([
                     'ten_coso'  => $request->name,
                     'ma_coso'   => "COSO1",
-                    'subdomain' => $customer->subdomain,
+                    'subdomain' => $request->username,
                     'trang_thai' => 1,
+
+                ]);
+                HotelConfiguration::create([
+                    'hotel_facility_id' => $hotelFacility->id,
+                    'hotel_name' => $request->hotel_homestay,
+                    'slug' => Str::slug($request->hotel_homestay)
                 ]);
             }
             DB::commit();
