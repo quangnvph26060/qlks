@@ -825,7 +825,7 @@ if (!function_exists('saveImages')) {
                     });
 
                     $filename = time() . uniqid() . '.' . $image->getClientOriginalExtension();
-                    $path = $directory . '/' . $filename;
+                    $path =  'public/' . trim($directory, '/') . '/' . $filename;
 
                     Storage::put($path, (string) $img->encode());
 
