@@ -60,9 +60,9 @@ class ApipublicController extends Controller
                         'hotelFacility.galleryImages' => function ($query) {
                             $query->select('hotel_facility_id', 'image_url');
                         },
-                        'hotelFacility.amenities' => function ($query) {
+                        'hotelFacility.amenities' => function ($query)use ($hotel) {
                             $query->where('status', 1);
-                            $query->where('unit_code', unitCode());
+                            $query->where('unit_code',  $hotel->ma_coso);
                             $query->select('icon', 'title', 'subdomain');
                         },
                         'hotelFacility.roomTypePrice' => function ($query) use ($hotel) {
