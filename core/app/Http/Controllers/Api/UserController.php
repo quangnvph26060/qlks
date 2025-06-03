@@ -357,7 +357,7 @@ class UserController extends Controller
                 ]);
                 HotelConfiguration::create([
                     'hotel_facility_id' => $hotelFacility->id,
-                    'hotel_homestay' => $request->hotel_homestay,
+                    'hotel_name' => $request->hotel_homestay,
                     'slug' => Str::slug($request->hotel_homestay)
                 ]);
             }
