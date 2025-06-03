@@ -351,7 +351,7 @@ class UserController extends Controller
                 $hotelFacility = HotelFacility::create([
                     'ten_coso'  => $request->name,
                     'ma_coso'   => "COSO1",
-                    'subdomain' => $customer->subdomain,
+                    'subdomain' => $request->username,
                     'trang_thai' => 1,
 
                 ]);
