@@ -23,8 +23,8 @@
                                     <tr>
                                         <td>{{ $loop->iteration }}</td>
                                         <td>{{ $item->code ?? 'Chưa có mã tiện nghi' }}</td>
-                                        <td>
-                                            {{ $item->title }}</td>
+                                        <td>{{ $item->title }}</td>
+                                            
                                         <td> @php echo $item->icon @endphp </td>
                                         <td> @php echo $item->statusBadge @endphp </td>
                                         @can(['admin.hotel.facility.save', 'admin.hotel.facility.status'])

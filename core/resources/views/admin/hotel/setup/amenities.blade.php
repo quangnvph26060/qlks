@@ -26,7 +26,7 @@
                                     </div>
                                     <!-- Input 2 -->
                                     <div class="mb-3">
-                                        <label for="statusName" class="form-label">Tiêu đề tiện nghi</label>
+                                        <label for="statusName" class="form-label">Tên tiện nghi</label>
                                         <input type="text" class="form-control " name="title" id="add-title"
                                             placeholder="Nhập tiêu đề">
                                         <span class="invalid-feedback d-block" style="font-weight: 500"
@@ -35,7 +35,7 @@
                                     <div class="mb-3">
                                         <label for="note" class="form-label">Icon</label>
                                         <div class="input-group">
-                                            <input type="text" class="form-control" id="icon" name="icon"
+                                            <input type="text" class="form-control iconPicker" id="icon" name="icon"
                                                 placeholder="Nhấn để chọn icon...">
                                             <span class="input-group-text">
                                                 <i id="icon-preview" class=""></i>
@@ -120,7 +120,7 @@
                                 <th>STT</th>
                                 <th>@lang('Mã tiện nghi')</th>
                                 <th>@lang('Tên tiện nghi')</th>
-                                {{-- <th>@lang('Icon')</th> --}}
+                                <th>@lang('Icon')</th>
                                 <th>@lang('Trạng thái')</th>
 
                             </tr>
@@ -168,9 +168,9 @@
                                     <td>
                                         {{ $item->title }}
                                     </td>
-                                    {{-- <td>
-                                    {{ $item->icon }}
-                                </td> --}}
+                                    <td>
+                                        @php echo $item->icon @endphp
+                                    </td>
 
                                     <td style="width:50px;text-align: center" class="status-hotel">
                                         @if ($item->status == 1)
@@ -236,6 +236,16 @@
 @push('script')
     <script>
         var code = "{{ $code }}";
+         (function($) {
+            "use strict";
+
+           
+
+            $('.iconPicker').iconpicker().on('iconpickerSelected', function(e) {
+                $('.iconPicker').val(`<i class="${e.iconpickerValue}"></i>`);
+            });
+
+        })(jQuery);
         $(document).ready(function() {
             var formEconomyEdit = {
                 'code': {
