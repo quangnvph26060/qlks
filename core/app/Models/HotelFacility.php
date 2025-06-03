@@ -14,7 +14,7 @@ class HotelFacility extends Model
         'ma_coso',
         'ten_coso',
         'trang_thai',
-        'sudodmain'
+        'subdomain'
     ];
     protected $hidden = ['created_at', 'updated_at'];
     public function styleStatus()
