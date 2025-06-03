@@ -74,7 +74,7 @@ class ApipublicController extends Controller
                             $query->where('unit_code', $hotel->ma_coso);
                         }
                     ])
-                        ->select('hotel_name', 'slug', 'address', 'province', 'phone', 'external_link', 'logo', 'hotel_facility_id', 'longitude', 'latitude')->first();
+                        ->select('hotel_name', 'slug', 'address', 'province', 'phone', 'external_link', 'logo','main_image', 'hotel_facility_id', 'longitude', 'latitude')->first();
                     if ($hotelConfig && $hotelConfig->hotelFacility) {
                         if ($hotelConfig->logo) {
                             $hotelConfig->logo = 'https://app.fasthotel.vn/storage' . '/' . ltrim($hotelConfig->logo, '/');
