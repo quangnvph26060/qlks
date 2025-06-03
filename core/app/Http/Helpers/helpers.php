@@ -828,8 +828,7 @@ if (!function_exists('saveImages')) {
                     $path =  'public/' . trim($directory, '/') . '/' . $filename;
 
                     Storage::put($path, (string) $img->encode());
-
-                    $paths[] = $path;
+                    $paths[] = str_replace('public/', '', $path);
 
                 } catch (\Exception $e) {
                     Log::error('Lỗi lưu ảnh: ' . $e->getMessage());
