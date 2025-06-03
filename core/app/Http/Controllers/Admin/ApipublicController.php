@@ -65,6 +65,11 @@ class ApipublicController extends Controller
                             $query->where('unit_code',  $hotel->ma_coso);
                             $query->select('icon', 'title', 'subdomain');
                         },
+                         'hotelFacility.facilities' => function ($query)use ($hotel) {
+                            $query->where('status', 1);
+                            $query->where('unit_code',  $hotel->ma_coso);
+                            $query->select('icon', 'title', 'subdomain');
+                        },
                         'hotelFacility.roomTypePrice' => function ($query) use ($hotel) {
                             $query->where('unit_code', $hotel->ma_coso);
                         }
@@ -95,6 +100,7 @@ class ApipublicController extends Controller
                         $hotelConfig->makeHidden(['hotel_facility_id']);
                         $hotelConfig->hotelFacility->makeHidden(['subdomain', 'ma_coso']);
                         $hotelConfig->hotelFacility->amenities->makeHidden(['subdomain']);
+                          $hotelConfig->hotelFacility->facilities->makeHidden(['subdomain']);
                         $hotelConfig->hotelFacility->galleryImages->makeHidden(['hotel_facility_id']);
                         $hotelConfig->hotelFacility->makeHidden(['roomTypePrice']);
                     }

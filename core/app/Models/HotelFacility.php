@@ -46,6 +46,10 @@ class HotelFacility extends Model
     {
         return $this->hasMany(Amenity::class, 'subdomain', 'subdomain');
     }
+    public function facilities()
+    {
+        return $this->hasMany(Facility::class, 'subdomain', 'subdomain');
+    }
     public function roomTypePrice()
     {
         return $this->hasMany(RoomTypePrice::class, 'subdomain', 'subdomain');
