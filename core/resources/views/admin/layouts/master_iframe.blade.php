@@ -2,7 +2,7 @@
 @section('content')
     @php
         $sidenav = file_get_contents(resource_path('views/admin/partials/sidenav.json'));
-    @endphp
+    @endphp    
     <!-- page-wrapper start -->
     <div class="page-wrapper default-version">
         <div class="container-fluid px-3 px-sm-0 main_content">

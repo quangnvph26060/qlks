@@ -13,15 +13,14 @@ class OTAController extends Controller
 {
     public function index()
     {
-        $hotels    = HotelFacility::where('subdomain', subdomain())->first();
-
+        $hotels    = HotelFacility::where('subdomain', subdomain())->where('trang_thai',1)->first();
         // room types
         $room_type = RoomType::all();
 
         // rooms 
         $rooms = RoomType::whereHas('rooms')->with('rooms')->get();
 
-        $ota = OtaSetting::where('subdomain', subdomain())->first();
+        $ota = OtaSetting::where('subdomain', subdomain())->where('hotel_id',$hotels->id)->first();
         return view('admin.hotel.ota.index', compact('hotels', 'room_type', 'rooms', 'ota'));
     }
     public function save(Request $request)

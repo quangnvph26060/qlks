@@ -1,6 +1,10 @@
 @extends('admin.layouts.master_iframe')
 @section('panel')
     <div class="row">
+        @php
+            $province = file_get_contents(resource_path('views/admin/partials/tinh_thanh.json'));
+            $provinces = json_decode($province, true);
+        @endphp
         <div class="col-12">
             <ul class="nav nav-tabs mb-3" id="hotelTab" role="tablist">
                 <li class="nav-item" role="presentation">
@@ -21,23 +25,50 @@
                     <div class="tab-pane fade show active" id="basicTab" role="tabpanel">
                         <div class="mb-3">
                             <label for="hotelName" class="form-label required">Tên khách sạn</label>
-                            <input type="text" class="form-control" id="hotelName" value="{{ $configs?->hotel_name ?? '' }}"
-                                name="hotel_name" required>
+                            <input type="text" class="form-control" id="hotelName"
+                                value="{{ $configs?->hotel_name ?? '' }}" name="hotel_name" required>
                         </div>
                         <div class="mb-3">
                             <label for="phone" class="form-label required">Số điện thoại</label>
-                            <input type="text" class="form-control" id="phone" value="{{ $configs?->phone ?? ""}}"
+                            <input type="text" class="form-control" id="phone" value="{{ $configs?->phone ?? '' }}"
                                 name="phone" placeholder="Ví dụ: 0123 456 789" required>
                         </div>
-                        <div class="mb-3">
-                            <label for="address" class="form-label required">Địa chỉ</label>
-                            <input type="text" class="form-control" id="address" value="{{ $configs?->address ?? "" }}"
-                                name="address" required>
-                        </div>
+
                         <div class="mb-3">
                             <label for="pageLink" class="form-label">Link fanpage hoặc YouTube</label>
-                            <input type="url" class="form-control" id="pageLink" value="{{ $configs?->external_link ?? ""}}"
-                                name="external_link" placeholder="https://..." >
+                            <input type="url" class="form-control" id="pageLink"
+                                value="{{ $configs?->external_link ?? '' }}" name="external_link" placeholder="https://...">
+                        </div>
+                        <div class="mb-3">
+                            <label for="pageLink" class="form-label required">Khu vực </label>
+                            <select name="province" id="province" class="form-control">
+                                <option value="">-- Chọn tỉnh/thành --</option>
+                                @foreach ($provinces as $province)
+                                    @php
+                                        $provinceName = $province['name'];
+                                    @endphp
+                                    <option value="{{ $provinceName }}"
+                                        {{ $configs?->province == $provinceName ? 'selected' : '' }}>
+                                        {{ $provinceName }}
+                                    </option>
+                                @endforeach
+
+                            </select>
+
+
+                        </div>
+                        <div class="mb-3">
+                            <label for="address" class="form-label required">Địa chỉ cụ thể</label>
+                            <div class="d-flex  gap-2">
+                                <input type="text" class="form-control" id="address"
+                                    value="{{ $configs?->address ?? '' }}" name="address" required> <button type="button"
+                                    class="btn btn-primary" style="width: 95px;" onclick="searchAddress()">Tìm</button>
+                            </div>
+                            <div id="map"></div>
+                            <input type="hidden" id="lat" name="latitude" value="{{ $configs?->latitude ?? '' }}"
+                                readonly>
+                            <input type="hidden" id="lng" name="longitude" value="{{ $configs?->longitude ?? '' }}"
+                                readonly>
                         </div>
                     </div>
 
@@ -48,13 +79,13 @@
                             <label for="icon" class="form-label required">Icon khách sạn</label>
                             <input class="form-control" type="file" id="icon" name="icon" accept="image/*" />
                             <div id="iconPreview" class="mt-2">
-                               @if (!empty(optional($configs)->icon))
-    <div class="preview-img">
-        <img src="{{ asset('storage/' . $configs->icon) }}" alt="Icon khách sạn"
-             style="max-width: 100px; max-height: 100px;">
-        <button type="button" class="btn-remove">&times;</button>
-    </div>
-@endif
+                                @if (!empty(optional($configs)->icon))
+                                    <div class="preview-img">
+                                        <img src="{{ asset('storage/' . $configs->icon) }}" alt="Icon khách sạn"
+                                            style="max-width: 100px; max-height: 100px;">
+                                        <button type="button" class="btn-remove">&times;</button>
+                                    </div>
+                                @endif
 
                             </div>
                         </div>
@@ -63,7 +94,8 @@
                         <!-- Logo -->
                         <div class="mb-3">
                             <label for="logo" class="form-label required">Logo khách sạn</label>
-                            <input class="form-control" type="file" id="logo" name="logo" accept="image/*" />
+                            <input class="form-control" type="file" id="logo" name="logo"
+                                accept="image/*" />
                             <div id="logoPreview" class="mt-2">
                                 @if (!empty(optional($configs)->logo))
                                     <div class="preview-img">
@@ -98,15 +130,15 @@
                             <input class="form-control" type="file" id="galleryImages" name="gallery_images[]"
                                 multiple accept="image/*" />
                             <div id="galleryPreview" class="mt-2 d-flex flex-wrap gap-2">
-                            @if (!empty(optional($configs)->hotelFacility) && !empty(optional($configs->hotelFacility)->galleryImages))
-    @foreach ($configs->hotelFacility->galleryImages as $image)
-        <div class="preview-img position-relative" data-id="{{ $image->id }}">
-            <img src="{{ asset('storage/' . $image->image_url) }}" alt="Ảnh gallery"
-                 style="max-width: 150px; max-height: 100px; object-fit: cover; border: 1px solid #ccc; border-radius: 4px;" />
-            <button type="button" class="btn-remove">&times;</button>
-        </div>
-    @endforeach
-@endif
+                                @if (!empty(optional($configs)->hotelFacility) && !empty(optional($configs->hotelFacility)->galleryImages))
+                                    @foreach ($configs->hotelFacility->galleryImages as $image)
+                                        <div class="preview-img position-relative" data-id="{{ $image->id }}">
+                                            <img src="{{ asset('storage/' . $image->image_url) }}" alt="Ảnh gallery"
+                                                style="max-width: 150px; max-height: 100px; object-fit: cover; border: 1px solid #ccc; border-radius: 4px;" />
+                                            <button type="button" class="btn-remove">&times;</button>
+                                        </div>
+                                    @endforeach
+                                @endif
 
                             </div>
                         </div>
@@ -129,8 +161,68 @@
 
     </div>
 @endsection
+@push('style')
+    <link rel="stylesheet" href="https://unpkg.com/leaflet/dist/leaflet.css" />
+@endpush
 @push('script')
+    <script src="https://unpkg.com/leaflet/dist/leaflet.js"></script>
     <script>
+        const map = L.map('map').setView([21.0285, 105.8542], 13); // Hà Nội mặc định
+
+        L.tileLayer('https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png', {
+            attribution: '&copy; OpenStreetMap contributors'
+        }).addTo(map);
+
+        let marker;
+
+        // Xử lý khi click vào bản đồ
+        map.on('click', function(e) {
+            const {
+                lat,
+                lng
+            } = e.latlng;
+            updateMarker(lat, lng);
+        });
+
+        // Hàm tìm địa chỉ
+        function searchAddress() {
+            const address = document.getElementById('address').value;
+            if (!address) return alert('Vui lòng nhập địa chỉ');
+
+            const url = `https://nominatim.openstreetmap.org/search?format=json&q=${encodeURIComponent(address)}`;
+
+            fetch(url)
+                .then(response => response.json())
+                .then(data => {
+                    if (!data.length) {
+                        alert('Không tìm thấy địa chỉ');
+                        return;
+                    }
+
+                    const {
+                        lat,
+                        lon
+                    } = data[0];
+                    updateMarker(lat, lon);
+                    map.setView([lat, lon], 16);
+                })
+                .catch(error => {
+                    alert('Lỗi khi tìm địa chỉ');
+                    console.error(error);
+                });
+        }
+
+        // Cập nhật marker và form
+        function updateMarker(lat, lng) {
+            if (marker) {
+                marker.setLatLng([lat, lng]);
+            } else {
+                marker = L.marker([lat, lng]).addTo(map);
+            }
+
+            document.getElementById('lat').value = lat;
+            document.getElementById('lng').value = lng;
+        }
         $(document).ready(function() {
             // Hàm tạo preview ảnh với nút xóa
             function createImagePreview(file, container, inputElement) {
@@ -280,6 +372,12 @@
         border-radius: 6px;
         overflow: hidden;
         border: 1px solid #ccc;
+    }
+
+    #map {
+        height: 400px;
+        width: 100%;
+        margin-top: 10px;
     }
 
     .preview-img img {

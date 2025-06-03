@@ -621,13 +621,24 @@ function hf($key = null) // hotel_facilities
 // }
 function unitCode()
 {
-    return auth('admin')->user()?->unit_code;
+    $subdomain = subdomain();
+
+    if (!$subdomain) {
+        return null; // hoặc trả về mặc định tùy bạn
+    }
+
+    $hotelActive = HotelFacility::where('subdomain', $subdomain)
+                    ->where('trang_thai', 1)
+                    ->first();
+
+    return $hotelActive?->ma_coso; // dùng null-safe operator
 }
 
 function subdomain()
 {
     return auth('admin')->user()?->subdomain;
 }
+
 // end setting and setup hotels
 function isImage($string)
 {

@@ -18,6 +18,9 @@ class HotelConfiguration extends Model
         'phone',
         'external_link',
         'icon',
+        'latitude',
+        'longitude',
+        'province'
     ];
     protected static function booted()
     {

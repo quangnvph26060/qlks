@@ -41,7 +41,7 @@ class Room extends Model
     public function amenities()
     {
         return $this->belongsToMany(Amenity::class, 'room_amenities', 'room_id', 'amenities_id')->withTimestamps()
-            ->withPivot(['unit_code', 'subdomain']);;
+            ->withPivot(['unit_code', 'subdomain']);
     }
 
     public function products()

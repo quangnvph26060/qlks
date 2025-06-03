@@ -34,6 +34,7 @@ class HotelConfigurationController extends Controller
             'logo' => 'nullable|image',
             'main_image' => 'nullable|image',
             'gallery_images.*' => 'nullable|image',
+            'province'=> 'required|string',
         ]);
 
         try {
@@ -68,6 +69,8 @@ class HotelConfigurationController extends Controller
                 }
             }
             $data['slug'] = Str::slug($data['hotel_name']);
+            $data['latitude'] = $request->latitude;
+            $data['longitude'] = $request->longitude;
             // Kiểm tra đã có hotel_configuration chưa
             $existingHotel = HotelConfiguration::where('hotel_facility_id', $hotelActive->id)->first();
 

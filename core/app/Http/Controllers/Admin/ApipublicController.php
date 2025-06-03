@@ -27,7 +27,9 @@ class ApipublicController extends Controller
         $address = $request->input('address');
         $amenities = $request->input('amenities');
 
-        $check_status = OtaSetting::all();
+        $check_status = OtaSetting::whereHas('hotelFacility', function ($q) {
+            $q->where('trang_thai', 1);
+        })->where('status', 1)->get();
         foreach ($check_status as $item) {
             if ($item->status == 1) {
                 $hotel = HotelFacility::find($item->hotel_id);
@@ -60,13 +62,41 @@ class ApipublicController extends Controller
                         },
                         'hotelFacility.amenities' => function ($query) {
                             $query->where('status', 1);
+                            $query->where('unit_code', unitCode());
                             $query->select('icon', 'title', 'subdomain');
+                        },
+                        'hotelFacility.roomTypePrice' => function ($query) use ($hotel) {
+                            $query->where('unit_code', $hotel->ma_coso);
                         }
                     ])
-                        ->select('hotel_name', 'slug', 'address', 'phone', 'external_link', 'logo', 'hotel_facility_id')->first();
+                        ->select('hotel_name', 'slug', 'address', 'province', 'phone', 'external_link', 'logo', 'hotel_facility_id', 'longitude', 'latitude')->first();
                     if ($hotelConfig && $hotelConfig->hotelFacility) {
-                        $hotelConfig->hotelFacility->makeHidden(['subdomain']);
+                        if ($hotelConfig->logo) {
+                            $hotelConfig->logo = 'https://app.fasthotel.vn/storage' . '/' . ltrim($hotelConfig->logo, '/');
+                        }
+
+                        // Thêm prefix vào gallery image URLs
+                        if ($hotelConfig->hotelFacility && $hotelConfig->hotelFacility->galleryImages) {
+                            foreach ($hotelConfig->hotelFacility->galleryImages as $image) {
+                                if ($image->image_url) {
+                                    $image->image_url = 'https://app.fasthotel.vn/storage' . '/' . ltrim($image->image_url, '/');
+                                }
+                            }
+                        }
+                        // Lấy min/max unit_price nếu có dữ liệu
+                        $roomPrices = $hotelConfig->hotelFacility->roomTypePrice;
+                        $maxPrice = $roomPrices->max('unit_price');
+                        $minPrice = $roomPrices->min('unit_price');
+
+                        // Gắn vào JSON trả về
+                        $hotelConfig->max_price = $maxPrice;
+                        $hotelConfig->min_price = $minPrice;
+                        // ẩn các trường không cho hiển thị ra 
+                        $hotelConfig->makeHidden(['hotel_facility_id']);
+                        $hotelConfig->hotelFacility->makeHidden(['subdomain', 'ma_coso']);
                         $hotelConfig->hotelFacility->amenities->makeHidden(['subdomain']);
+                        $hotelConfig->hotelFacility->galleryImages->makeHidden(['hotel_facility_id']);
+                        $hotelConfig->hotelFacility->makeHidden(['roomTypePrice']);
                     }
                     if ($hotelConfig) {
                         $data[] = $hotelConfig;
@@ -92,20 +122,34 @@ class ApipublicController extends Controller
         $date = $request->input('date', Carbon::today()->toDateString());
         $searchRoomNumber = $request->input('room_number');
         $searchRoomType = $request->input('room_type');
+        $searchAmenities = $request->input('amenities');
+        $searchFacilities = $request->input('facilities');
 
         $hotelFacility = HotelFacility::find($HotelConfiguration->hotel_facility_id);
         $otaSetting = OtaSetting::where('hotel_id', $HotelConfiguration->hotel_facility_id)->first();
-        $rooms = Room::withoutTenant()->where('subdomain', $hotelFacility->subdomain)->active();
+        $rooms = Room::withoutTenant()->where('subdomain', $hotelFacility->subdomain)->where('unit_code', $hotelFacility->ma_coso)->active();
         $rooms->select('id', 'room_number', 'room_type_id', 'main_image', 'is_clean', 'total_adult', 'total_child', 'beds', 'description');
-        // 🔍 Lọc theo room_number nếu có
+
         if (!empty($searchRoomNumber)) {
             $rooms->where('room_number', 'like', '%' . $searchRoomNumber . '%');
         }
 
-        // 🔍 Lọc theo tên loại phòng nếu có
+        // loại phòng
         if (!empty($searchRoomType)) {
             $rooms->whereHas('roomType', function ($q) use ($searchRoomType) {
                 $q->where('name', 'like', '%' . $searchRoomType . '%');
+            });
+        }
+        // tiện nghi
+        if (!empty($searchAmenities)) {
+            $rooms->whereHas('amenities', function ($q) use ($searchAmenities) {
+                $q->where('title', 'like', '%' . $searchAmenities . '%');
+            });
+        }
+        // cơ sở
+        if (!empty($searchFacilities)) {
+            $rooms->whereHas('facilities', function ($q) use ($searchFacilities) {
+                $q->where('title', 'like', '%' . $searchFacilities . '%');
             });
         }
         if (!$otaSetting->allow_all_rooms) {
@@ -158,78 +202,7 @@ class ApipublicController extends Controller
         $rooms = $rooms->get();
         return response()->json([
             'rooms' => $rooms,
+            'hotel' =>  $HotelConfiguration,
         ], 200);
     }
-    // public function getRooms(Request $request, $hotel)
-    // {
-    //     try {
-    //         $otaSetting = OtaSetting::where('subdomain', $this->Isubdomain())->first();
-    //         if (!$otaSetting || $otaSetting->status != 1) {
-    //             return response()->json([
-    //                 'message' => 'Không có quyền truy cập'
-    //             ], 401);
-    //         }
-
-    //         $date = $request->input('date', Carbon::today()->toDateString());
-
-    //         $rooms = Room::withoutTenant()->where('subdomain', $this->Isubdomain())->active();
-    //         $rooms->select('id', 'room_number', 'room_type_id', 'is_clean', 'total_adult', 'total_child', 'beds', 'description');
-
-    //         if (!$otaSetting->allow_all_rooms) {
-    //             $filtered = false;
-
-    //             // Ưu tiên lọc theo ID phòng nếu có
-    //             $allowedRooms = $otaSetting->allowed_rooms;
-    //             if (is_array($allowedRooms) && count($allowedRooms)) {
-    //                 $rooms->whereIn('id', $allowedRooms);
-    //                 $filtered = true;
-    //             }
-
-    //             if (!$filtered) {
-    //                 $allowedRoomTypes = is_string($otaSetting->allowed_room_types)
-    //                     ? json_decode($otaSetting->allowed_room_types, true)
-    //                     : [];
-
-    //                 if (is_array($allowedRoomTypes) && count($allowedRoomTypes)) {
-    //                     $rooms->whereIn('room_type_id', $allowedRoomTypes);
-    //                 }
-    //             }
-    //         }
-
-    //         $rooms->with([
-    //             'roomType' => function ($query) {
-    //                 $query->select('id', 'name', 'main_image', 'slug');
-    //             },
-    //             'roomType.roomTypePrice' => function ($query) {
-    //                 $query->select('room_type_id', 'unit_price', 'overtime_price', 'extra_person_price');
-    //             },
-    //             'roomBookingHistory' => function ($query) use ($date) {
-    //                 if (!empty($date)) {
-    //                     $query->whereDate('start_date', '<=', $date)
-    //                         ->whereDate('end_date', '>', Carbon::parse($date)->subDay())
-    //                         ->select('room_id', 'status_code', 'start_date', 'end_date');
-    //                 }
-    //             },
-    //             'roomBookingHistory.roomStatus',
-    //             // 'roomBookingHistory.checkInData',
-    //             // 'roomBookingHistory.bookingData',
-    //         ]);
-
-    //         $rooms = $rooms->get();
-
-    //         return response()->json([
-    //             'rooms' => $rooms,
-    //         ], 200);
-    //     } catch (\Exception $e) {
-    //         Log::error('Lỗi khi lấy danh sách phòng: ' . $e->getMessage(), [
-    //             'trace' => $e->getTraceAsString(),
-    //             'subdomain' => $this->Isubdomain(),
-    //             'request' => $request->all(),
-    //         ]);
-
-    //         return response()->json([
-    //             'message' => 'Đã xảy ra lỗi trong quá trình xử lý. Vui lòng thử lại sau.'
-    //         ], 500);
-    //     }
-    // }
 }

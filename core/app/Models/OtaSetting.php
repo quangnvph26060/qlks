@@ -6,7 +6,7 @@ use Illuminate\Database\Eloquent\Model;
 
 class OtaSetting extends Model
 {
-   protected $table = 'ota_settings';
+    protected $table = 'ota_settings';
 
     protected $fillable = [
         'hotel_id',
@@ -21,4 +21,8 @@ class OtaSetting extends Model
         'allowed_room_types' => 'array',
         'allowed_rooms' => 'array',
     ];
+    public function hotelFacility()
+    {
+        return $this->belongsTo(HotelFacility::class, 'hotel_id', 'id');
+    }
 }
