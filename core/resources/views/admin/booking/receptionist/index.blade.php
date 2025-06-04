@@ -467,6 +467,7 @@
         </div>
         {{-- dọn phòng --}}
         @include('admin/booking/partials/clean_modal')
+         @include('admin/booking/partials/room_fix_modal')
         <!-- Bộ lọc bên phải -->
         <div class="filter-sidebar" id="filter-sidebar">
             <div class="filter-header d-flex justify-content-between">
@@ -582,6 +583,7 @@
     var CheckInUrl = "{{ route('admin.room.booked.check.in') }}";
     var roomBook = "{{ route('admin.room.book') }}";
     var cleanRoomUrl = "{{ route('admin.roomclean.booking.roomclean') }}"
+    var changeRoomFixUrl = "{{ route('admin.roomfix.booking.roomfix') }}"
     var getAllService = "{{ route('admin.hotel.premium.service.get-all-service') }}";
     var storeService = "{{ route('admin.hotel.premium.service.store-service') }}";
     var deleteService = "{{ route('admin.hotel.premium.service.delete-service') }}";

@@ -408,7 +408,7 @@ class BookingController extends Controller
             }
 
             $emptyRooms = $emptyRooms->with(['roomType', 'roomType.roomTypePrice', 'roomCheckIn', 'roomBooking', 'roomBookingChange'])
-                ->select(['id', 'room_type_id', 'room_number'])
+                ->select(['id', 'room_type_id', 'room_number','room_fix'])
                 ->get();
 
             $newRecords = [];
@@ -483,7 +483,7 @@ class BookingController extends Controller
                         } elseif ($selectedStatus->status_code == 2) {
                             $check_booked = "Đã đặt";
                             $status = 1;
-                        } else {
+                        } elseif ($selectedStatus->status_code == 3) {
                             $check_booked = "Đã nhận";
                             $status = 1;
                         }
@@ -494,6 +494,7 @@ class BookingController extends Controller
                         "room_number"  => $room->room_number,
                         "id"           => $room->id,
                         "date"         => $date,
+                        'room_fix'     =>  $room->room_fix,
                         "check_booked" => $check_booked,
                         "status"       => $status,
                         "room_type"    => $room->roomType
@@ -1245,6 +1246,30 @@ class BookingController extends Controller
                 $msg = 'Phòng ' . $room->room_number . ' đã được làm sạch';
             } else {
                 $msg = 'Phòng ' . $room->room_number .  ' đã chuyển sang Chưa dọn';
+            }
+
+            return response()->json(['status' => 'success', 'success' => $msg]);
+        } catch (\Illuminate\Database\Eloquent\ModelNotFoundException $e) {
+
+            return ApiResponse::error('error', 404);
+        } catch (\Exception $e) {
+
+            return ApiResponse::error($e->getMessage(), 404);
+        }
+    }
+     public function changeCleanFix(Request $request)
+    {
+        try {
+            $room = Room::where('id', $request->id)->firstOrFail();
+
+
+            $room->update(['room_fix' => $room->room_fix == Status::ROOM_CLEAN_ACTIVE ? 0 : 1]);
+
+            $this->logCleanRoomAction($room->id, authAdmin()->id);
+            if ($room->room_fix === 1) {
+                $msg = ' ' . $room->room_number .  ' đã chuyển sang sửa chữa';
+            } else {
+                $msg = ' ' . $room->room_number . ' đã được sửa';
             }
 
             return response()->json(['status' => 'success', 'success' => $msg]);

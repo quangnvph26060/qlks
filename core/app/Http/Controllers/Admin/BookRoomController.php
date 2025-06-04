@@ -355,6 +355,14 @@ class BookRoomController extends Controller
                     })
                     ->first();
 
+
+                    if($is_room['room_fix'] == 1 ){
+                         DB::rollBack();
+
+                        return response()->json([
+                            'error' => 'Phòng ' . $is_room['room_number'] . ' đang sửa chữa không đặt được'
+                        ]);
+                    }
                 if ($checkRoom) {
 
                     DB::rollBack();

@@ -1,9 +1,9 @@
 @extends('admin.layouts.master_iframe')
 @section('panel')
     <div class="row">
-       
+
         <div class="pagination-container"> </div>
-        
+
         <div class="card b-radius--10 scroll-container-main">
 
             <div class="card-body p-0">
@@ -32,7 +32,7 @@
                 </div>
             @endif --}}
         </div>
-       
+
 
     </div>
 
@@ -94,12 +94,12 @@
 @push('style')
     <style>
         /* .pagination-container button:first-child {
-                border-radius: 5px 0 0 5px;
-            }
+                    border-radius: 5px 0 0 5px;
+                }
 
-            .pagination-container button:last-child {
-                border-radius: 0 5px 5px 0;
-            } */
+                .pagination-container button:last-child {
+                    border-radius: 0 5px 5px 0;
+                } */
         .upload-box {
             width: 100%;
             height: 200px;
@@ -285,27 +285,34 @@
                             let isFirst = !seenRooms.has(item.room_number);
                             seenRooms.add(item.room_number);
                             // Nếu không phải bản ghi đầu tiên, đặt class theo trạng thái
+                           
 
-                            if (!isFirst) {
-
-                                if (item.check_booked === 'Đã nhận') {
-                                    rowClass = "background-red";
-                                } else if (item.check_booked === 'Đã đặt') {
-                                    rowClass = 'background-yellow';
-                                } else if (item.check_booked === 'Trống') {
-                                    rowClass = "background-primary";
-                                }
+                            if (item.room_fix == 1) {
+                                item.check_booked = 'Phòng đang sửa';
+                                rowClass =  'background-gray'; // bạn có thể chọn màu khác nếu muốn
+                              
                             } else {
-                                if (item.check_booked === 'Đã nhận') {
-                                    rowClass = "background-red";
-                                } else if (item.check_booked === 'Đã đặt') {
-                                    rowClass = 'background-yellow';
-                                } else if (item.check_booked === 'Trống') {
-                                    rowClass = "background-primary";
+                                if (!isFirst) {
+                                    if (item.check_booked === 'Đã nhận') {
+                                        rowClass = "background-red";
+                                    } else if (item.check_booked === 'Đã đặt') {
+                                        rowClass = 'background-yellow';
+                                    } else if (item.check_booked === 'Trống') {
+                                        rowClass = "background-primary";
+                                    }
                                 } else {
-                                    rowClass = "background-white";
+                                    if (item.check_booked === 'Đã nhận') {
+                                        rowClass = "background-red";
+                                    } else if (item.check_booked === 'Đã đặt') {
+                                        rowClass = 'background-yellow';
+                                    } else if (item.check_booked === 'Trống') {
+                                        rowClass = "background-primary";
+                                    } else {
+                                        rowClass = "background-white";
+                                    }
                                 }
                             }
+
                             let firstRowClass = isFirst ? "first-row" : "";
                             var tr = `
                                         <tr class="${firstRowClass}">
@@ -503,9 +510,9 @@
 
             // Hiển thị hình ảnh cũ nếu có
             let showImage = modal.find('#showImage');
-           // showImage.attr('src', 'http://quanlykhachsan.test/storage/' + resource.main_image);
-             const CURRENT_ORIGIN = window.location.origin;
-                showImage.attr('src', CURRENT_ORIGIN + '/storage/' + resource.main_image);
+            // showImage.attr('src', 'http://quanlykhachsan.test/storage/' + resource.main_image);
+            const CURRENT_ORIGIN = window.location.origin;
+            showImage.attr('src', CURRENT_ORIGIN + '/storage/' + resource.main_image);
             showImage.show();
 
             // Đặt lại file input

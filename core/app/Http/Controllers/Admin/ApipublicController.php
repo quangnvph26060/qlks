@@ -242,7 +242,7 @@ class ApipublicController extends Controller
                 $room->room_type_image = $domain . '/' . ltrim($room->roomType->main_image, '/');
             }
 
-            // Đổi is_clean sang mô tả
+         
             $room->is_clean = $room->is_clean ? 'Đã dọn' : 'Chưa dọn';
 
             // Bỏ trường không cần

@@ -548,6 +548,7 @@ Route::middleware('admin', 'adminPermission')->prefix('admin')->group(function (
         Route::post('delete-clean-room/{id}','delCleanRoom')->name('delCleanRoom.booking.delCleanRoom');
         Route::get('searchrooms', 'searchRooms')->name('searchrooms.booking.searchrooms');
         Route::post('room-clean', 'changeCleanRoom')->name('roomclean.booking.roomclean');
+          Route::post('room-fix', 'changeCleanFix')->name('roomfix.booking.roomfix');
         Route::get('get-premium-services', 'getPremiumServices')->name('services.booking.services');
         Route::get('get-product', 'getProduct')->name('product.booking.product');
     });

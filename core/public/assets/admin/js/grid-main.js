@@ -266,7 +266,10 @@ function initGridMain(data, date) {
                             data-room-type-id="${item.room_type_id}">
            
                             <div class="room-header">
-                            <span class="status">${item.is_clean ? "✨ Sạch" : "🚨 Chưa dọn"}</span>
+                                <span class="status">
+                                ${item.room_fix == 1 ? "🛠 Phòng đang sửa" : (item.is_clean ? "✨ Sạch" : "🚨 Chưa dọn")}
+                                </span>
+
                                 <span class="menu-btn  ${status_code == 2 && checkTime
                                 ? 'text-white'
                                 : status_code == 3 && checkTime
@@ -276,10 +279,16 @@ function initGridMain(data, date) {
                                         <div class="dropdown-item room_clean" 
                                         data-name="${item.room_number}"
                                         data-id="${item.id}" >${item.is_clean ? "Chưa dọn" : "Làm sạch"}</div>
+
+                                       
                                         ${status_code == null ?
-                                `<div class="dropdown-item check_in_now"
+                                `   <div class="dropdown-item room_fix" 
+                                        data-name="${item.room_number}"
+                                        data-id="${item.id}" >${item.room_fix ? "Sửa phòng" : "Sửa phòng hoàn thành"}</div>
+                                <div class="dropdown-item check_in_now"
                                         data-room-type-id = "${item?.room_type_id}"
-                                        data-room-id = "${item?.id}" >Nhận phòng</div>`
+                                        data-room-id = "${item?.id}" >Nhận phòng</div>
+                                        `
                                 : ""}
                                         ${status_code == 2 && checkTime ? `<div class="dropdown-item check_in_room"
                                             data-id   = "${isBooking?.room_code}" 
@@ -600,6 +609,22 @@ function initViewScriptGird() {
         const modal = new bootstrap.Modal(document.getElementById("roomStatusModal"));
         modal.show();
     });
+    $(document).off("click", ".room_fix").on("click", ".room_fix", function (e) {
+        e.stopPropagation();
+
+        // Lấy thông tin từ div được bấm
+        const roomName = $(this).data("name");
+        const roomId = $(this).data("id");
+        const statusText = $(this).text().trim();
+
+        // Gán vào modal
+        $("#roomfixStatusModal .modal-body strong").text(roomName);
+        $("#roomfixStatusModal .modal-body .status-text").text(statusText);
+        $('.change_room_fix_btn').attr('data-id', roomId);
+        // Mở modal
+        const modal = new bootstrap.Modal(document.getElementById("roomfixStatusModal"));
+        modal.show();
+    });
     $(document).off("click", ".change_clean_room_btn").on("click", ".change_clean_room_btn", function (e) {
         const id = $(this).attr("data-id");
         $.ajax({
@@ -626,7 +651,32 @@ function initViewScriptGird() {
         });
 
     });
+    $(document).off("click", ".change_room_fix_btn").on("click", ".change_room_fix_btn", function (e) {
+        const id = $(this).attr("data-id");
+        $.ajax({
+            url: changeRoomFixUrl,
+            type: 'POST',
+            data: {
+                id: id,
+            },
+            success: function (data) {
+                if (data.status === 'success') {
+                    notify('success', data.success);
+                    const modal = bootstrap.Modal.getInstance(document.getElementById("roomfixStatusModal"));
+                    if (modal) modal.hide();
 
+                    let selectedDate = $('#startDate').val();
+                    initGridMain('', selectedDate);
+                }
+
+            },
+            error: function (error) {
+                $('#loading').hide();
+                console.log('Error:', error);
+            }
+        });
+
+    });
     $(document).off("click", ".check_in_room").on("click", ".check_in_room", function (e) {
         e.stopPropagation();
         let selectedData = [];
@@ -1200,9 +1250,9 @@ function initViewScriptGird() {
 
                                 let paymentString = $('.total_payment').text();
                                 let total_payment = parseInt(paymentString.replace(/\./g, '')) || 0;
-                               
-                                
-                                totalBalance = totalPrice - rowTotal - price  - total_payment  + service_payment;
+
+
+                                totalBalance = totalPrice - rowTotal - price - total_payment + service_payment;
 
                                 if (totalBalance > 0) {
                                     $('#checkout_room').prop('disabled', true);
@@ -1212,7 +1262,7 @@ function initViewScriptGird() {
                                     $('#print_invoice').prop('disabled', false);
                                 }
                                 $('.total_balance').text(formatCurrency(totalBalance));
-                                
+
                             }
 
                             // Chạy khi trang load
