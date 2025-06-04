@@ -233,9 +233,9 @@ class ApipublicController extends Controller
 
         $formattedRooms = $rooms->map(function ($room) use ($domain) {
             // Đẩy giá và tên loại phòng ra ngoài
-            $unitPrice = optional($room->roomType->roomTypePriceForDate->first())->unit_price ?? null;
+           /// $unitPrice = optional($room->roomType->roomTypePriceForDate->first())->unit_price ?? null;
             $roomTypeName = optional($room->roomType)->name;
-
+            $unitPrice = optional($room->roomType->roomTypePriceForDate)->unit_price ?? null;
             // Gán link đầy đủ cho ảnh phòng và ảnh loại phòng
             $room->main_image = $room->main_image ? $domain . '/' . ltrim($room->main_image, '/') : null;
             if (!empty($room->roomType->main_image)) {
