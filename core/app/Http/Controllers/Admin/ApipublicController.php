@@ -298,8 +298,8 @@ class ApipublicController extends Controller
 
             return $room;
         });
-        if ($HotelConfiguration->logo) {
-            $HotelConfiguration->logo = 'https://app.fasthotel.vn/storage' . '/' . ltrim($HotelConfiguration->logo, '/');
+        if ($HotelConfiguration->main_image) {
+            $HotelConfiguration->main_image = 'https://app.fasthotel.vn/storage' . '/' . ltrim($HotelConfiguration->main_image, '/');
         }
 
         // Thêm prefix vào gallery image URLs
