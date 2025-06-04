@@ -408,7 +408,7 @@ class BookingController extends Controller
             }
 
             $emptyRooms = $emptyRooms->with(['roomType', 'roomType.roomTypePrice', 'roomCheckIn', 'roomBooking', 'roomBookingChange'])
-                ->select(['id', 'room_type_id', 'room_number','room_fix'])
+                ->select(['id', 'room_type_id', 'room_number', 'room_fix'])
                 ->get();
 
             $newRecords = [];
@@ -831,7 +831,22 @@ class BookingController extends Controller
         if (isset($request->method)) {
             $room_type = RoomType::find($roomData['room_type']);
 
-            $room = Room::active()->with('roomType', 'roomType.roomTypePrice', 'roomType.roomTypePrice.setupPricing')
+            $room = Room::active()->with(
+                [
+                    'roomType',
+                    'roomType' => function ($query) use ($roomData) {
+                        $query->select('id', 'name', 'main_image', 'slug')
+                            ->with(['roomTypePriceForDate' => function ($q) use ($roomData) {
+                                $q->select('room_type_id', 'unit_price', 'overtime_price', 'extra_person_price')
+                                    ->whereDate('price_validity_period', '<=', $roomData['date'])
+                                    ->orderByDesc('price_validity_period')
+                                    ->limit(1); // Chỉ lấy giá có hiệu lực gần nhất theo ngày
+                            }]);
+                    },
+
+                    'roomType.roomTypePrice.setupPricing'
+                ]
+            )
                 ->where('id', $roomData['room'])->first();
 
             $roomBooking = RoomBooking::where('room_code', $roomData['room'])
@@ -1175,9 +1190,9 @@ class BookingController extends Controller
         $receipts = ReceiptAndPayment::where('checkin_id', $checkinId)->get();
         $totalPaid        = $receipts->sum('total_payment');
         // giá sản phẩm 
-         $totalServicePayment = RoomServiceProduct::where('check_in_id', $checkinId)
-                // ->where('room_code', $roomId)
-                ->sum('total_payment');
+        $totalServicePayment = RoomServiceProduct::where('check_in_id', $checkinId)
+            // ->where('room_code', $roomId)
+            ->sum('total_payment');
         return response()->json(
             [
                 'status' => 'success',
@@ -1220,7 +1235,7 @@ class BookingController extends Controller
             $totalServiceFees = $totalServicePayment;
 
             $due = ($totalAmount + $totalServiceFees - $totalDiscounts - $totalDeposits - $totalPaid);
-            
+
 
             if ($due <= 0 && $checkIns->count()) {
                 foreach ($checkIns as $check_in) {
@@ -1267,7 +1282,7 @@ class BookingController extends Controller
             return ApiResponse::error($e->getMessage(), 404);
         }
     }
-     public function changeCleanFix(Request $request)
+    public function changeCleanFix(Request $request)
     {
         try {
             $room = Room::where('id', $request->id)->firstOrFail();

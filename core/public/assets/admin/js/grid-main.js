@@ -1672,10 +1672,11 @@ function initViewScriptGird() {
             if ($(e.target).closest('.menu-btn').length > 0) return;
             let roomId = $(this).attr("data-room-id");
             let roomType = $(this).attr("data-room-type-id");
+                let selectedDate = $('#startDate').val();
             let data = {
                 room: roomId,
                 room_type: roomType,
-                date: formattedDates,
+                date: selectedDate,
             }
             //  $('.booking-form').attr('action', roomBook);
             let booked = 'room-booked';
