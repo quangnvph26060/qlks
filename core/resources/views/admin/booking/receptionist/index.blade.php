@@ -1438,26 +1438,33 @@
                         let rowClass = '';
                         let isFirst = !seenRooms.has(item.room_number);
                         seenRooms.add(item.room_number);
-                        if (!isFirst) {
 
-                            if (item.check_booked === 'Đã nhận') {
-                                rowClass = "background-red";
-                            } else if (item.check_booked === 'Đã đặt') {
-                                rowClass = 'background-yellow';
-                            } else if (item.check_booked === 'Trống') {
-                                rowClass = "background-primary";
-                            }
-                        } else {
-                            if (item.check_booked === 'Đã nhận') {
-                                rowClass = "background-red";
-                            } else if (item.check_booked === 'Đã đặt') {
-                                rowClass = 'background-yellow';
-                            } else if (item.check_booked === 'Trống') {
-                                rowClass = "background-primary";
+                           if (item.room_fix == 1) {
+                                item.check_booked = 'Phòng đang sửa';
+                                rowClass =  'background-gray'; // bạn có thể chọn màu khác nếu muốn
+                              
                             } else {
-                                rowClass = "background-white";
+                                if (!isFirst) {
+                                    if (item.check_booked === 'Đã nhận') {
+                                        rowClass = "background-red";
+                                    } else if (item.check_booked === 'Đã đặt') {
+                                        rowClass = 'background-yellow';
+                                    } else if (item.check_booked === 'Trống') {
+                                        rowClass = "background-primary";
+                                    }
+                                } else {
+                                    if (item.check_booked === 'Đã nhận') {
+                                        rowClass = "background-red";
+                                    } else if (item.check_booked === 'Đã đặt') {
+                                        rowClass = 'background-yellow';
+                                    } else if (item.check_booked === 'Trống') {
+                                        rowClass = "background-primary";
+                                    } else {
+                                        rowClass = "background-white";
+                                    }
+                                }
                             }
-                        }
+                        
                         let firstRowClass = isFirst ? "first-row" : "";
                         var tr = `
                         <tr class="${firstRowClass}">

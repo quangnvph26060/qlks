@@ -338,9 +338,10 @@ function initGridMain(data, date) {
                                     ? 'text-white'
                                     : ''}">${isBooking?.customer_name ??
                                     isBooking?.customer_name ?? " "}</div>
-                            <div class="time-info">
-                                    ${formatCurrency(item.room_type.room_type_price.unit_price)}
-                            </div>      
+                         <div class="time-info">
+    ${formatCurrency(item.room_type?.room_type_price?.unit_price ?? 0)}
+</div>
+    
 
                         </div>
                     `;
@@ -1951,9 +1952,15 @@ function initViewScriptGird() {
 
                                 </div>
                             </td>
-                            <td>
-                                 <p id="price" class="d-flex justify-content-center" data-price="${item.room['room_type']['room_type_price']['unit_price']}">${formatCurrency(item.room['room_type']['room_type_price']['unit_price'])}</p>
+                           <td>
+                                <p id="price" class="d-flex justify-content-center"
+                                data-price="${item.room?.room_type?.room_type_price?.unit_price ?? 0}">
+                                ${item.room?.room_type?.room_type_price?.unit_price != null 
+                                        ? formatCurrency(item.room.room_type.room_type_price.unit_price) 
+                                        : 0}
+                                </p>
                             </td>
+
                             <td>
                                   <input type="text" class="form-control deposit number-input money-input"  name="deposit"  placeholder="0">
                             </td>

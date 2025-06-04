@@ -1211,10 +1211,11 @@ class BookingController extends Controller
             $totalServiceFees = $totalServicePayment;
 
             $due = ($totalAmount + $totalServiceFees - $totalDiscounts - $totalDeposits - $totalPaid);
-
+            
 
             if ($due <= 0 && $checkIns->count()) {
                 foreach ($checkIns as $check_in) {
+                    Room::where('id', $check_in->room_code)->update(['is_clean' => 0]);
                     $roomToSave = $check_in->room_change ?? $check_in->room_code;
                     saveRoomStatusHistory($roomToSave, $check_in->checkin_date, $check_in->checkout_date, 1);
                 }
