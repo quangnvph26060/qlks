@@ -981,7 +981,16 @@ class BookingController extends Controller
         }
         $rooms->with([
             'roomType',
-            'roomType.roomTypePrice',
+            'roomType' => function ($query) use ($date) {
+                $query->select('id', 'name', 'main_image', 'slug')
+                    ->with(['roomTypePriceForDate' => function ($q) use ($date) {
+                        $q->select('room_type_id', 'unit_price', 'overtime_price', 'extra_person_price')
+                            ->whereDate('price_validity_period', '<=', $date)
+                            ->orderByDesc('price_validity_period')
+                            ->limit(1); // Chỉ lấy giá có hiệu lực gần nhất theo ngày
+                    }]);
+            },
+
             'roomBookingHistory' => function ($query) use ($date) {
                 if (!empty($date)) {
                     $query->whereDate('start_date', '<=', $date)

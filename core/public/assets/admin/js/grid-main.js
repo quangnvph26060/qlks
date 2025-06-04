@@ -339,8 +339,8 @@ function initGridMain(data, date) {
                                     : ''}">${isBooking?.customer_name ??
                                     isBooking?.customer_name ?? " "}</div>
                          <div class="time-info">
-    ${formatCurrency(item.room_type?.room_type_price?.unit_price ?? 0)}
-</div>
+                            ${formatCurrency(item.room_type?.room_type_price_for_date?.unit_price ?? 0)}
+                        </div>
     
 
                         </div>
@@ -1954,9 +1954,9 @@ function initViewScriptGird() {
                             </td>
                            <td>
                                 <p id="price" class="d-flex justify-content-center"
-                                data-price="${item.room?.room_type?.room_type_price?.unit_price ?? 0}">
-                                ${item.room?.room_type?.room_type_price?.unit_price != null 
-                                        ? formatCurrency(item.room.room_type.room_type_price.unit_price) 
+                                data-price="${item.room?.room_type?.room_type_price_for_date?.unit_price ?? 0}">
+                                ${item.room?.room_type?.room_type_price_for_date?.unit_price != null 
+                                        ? formatCurrency(item.room.room_type.room_type_price_for_date.unit_price) 
                                         : 0}
                                 </p>
                             </td>
