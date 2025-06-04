@@ -298,6 +298,18 @@ class ApipublicController extends Controller
 
             return $room;
         });
+        if ($HotelConfiguration->logo) {
+            $HotelConfiguration->logo = 'https://app.fasthotel.vn/storage' . '/' . ltrim($HotelConfiguration->logo, '/');
+        }
+
+        // Thêm prefix vào gallery image URLs
+        if ($HotelConfiguration->hotelFacility && $HotelConfiguration->hotelFacility->galleryImages) {
+            foreach ($HotelConfiguration->hotelFacility->galleryImages as $image) {
+                if ($image->image_url) {
+                    $image->image_url = 'https://app.fasthotel.vn/storage' . '/' . ltrim($image->image_url, '/');
+                }
+            }
+        }
         $HotelConfiguration->hotelFacility->makeHidden(['subdomain', 'ma_coso']);
         $HotelConfiguration->hotelFacility->amenities->makeHidden(['subdomain']);
         $HotelConfiguration->hotelFacility->facilities->makeHidden(['subdomain']);
