@@ -284,7 +284,7 @@ function initGridMain(data, date) {
                                         ${status_code == null ?
                                 `   <div class="dropdown-item room_fix" 
                                         data-name="${item.room_number}"
-                                        data-id="${item.id}" >${item.room_fix ? "Sửa phòng" : "Sửa phòng hoàn thành"}</div>
+                                        data-id="${item.id}" >${item.room_fix ? "Sửa phòng hoàn thành" : "Sửa phòng "}</div>
                                 <div class="dropdown-item check_in_now"
                                         data-room-type-id = "${item?.room_type_id}"
                                         data-room-id = "${item?.id}" >Nhận phòng</div>
