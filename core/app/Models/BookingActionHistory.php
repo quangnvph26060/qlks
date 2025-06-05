@@ -3,9 +3,9 @@
 namespace App\Models;
 
 use Illuminate\Database\Eloquent\Model;
-
+use App\Traits\BelongsToTenant;
 class BookingActionHistory extends Model {
-
+    use BelongsToTenant;
     public function booking() {
         return $this->belongsTo(Booking::class);
     }

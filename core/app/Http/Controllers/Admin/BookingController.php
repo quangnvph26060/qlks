@@ -5,6 +5,7 @@ namespace App\Http\Controllers\Admin;
 use App\Http\Controllers\Controller;
 use App\Models\Booking;
 use App\Models\BookedRoom;
+use App\Models\BookingActionHistory;
 use App\Models\CustomerSource;
 use App\Models\RoomChange;
 use App\Models\RoomStatusHistory;
@@ -23,6 +24,7 @@ use App\Models\Product;
 use App\Models\ReceiptAndPayment;
 use App\Models\RegularRoomPrice;
 use App\Models\RoomBooking;
+use App\Models\RoomMaintenance;
 use App\Models\RoomPriceRoom;
 use App\Models\RoomPricesWeekdayHour;
 use App\Models\RoomServiceProduct;
@@ -1290,7 +1292,7 @@ class BookingController extends Controller
 
             $room->update(['room_fix' => $room->room_fix == Status::ROOM_CLEAN_ACTIVE ? 0 : 1]);
 
-            $this->logCleanRoomAction($room->id, authAdmin()->id);
+            $this->logFixRoomAction($room->id, authAdmin()->id);
             if ($room->room_fix === 1) {
                 $msg = ' ' . $room->room_number .  ' đã chuyển sang sửa chữa';
             } else {
@@ -1310,33 +1312,84 @@ class BookingController extends Controller
     {
         try {
             UserCleanroom::create([
-                'room_id' => $roomId,
-                'admin_id' => $userId,
+                'room_id'    => $roomId,
+                'admin_id'   => $userId,
                 'clean_date' => now(),
+                'unit_code'  => unitCode(),
+                'subdomain'  => subdomain(),
             ]);
         } catch (\Exception $e) {
             Log::error('Error logging clean room action', ['message' => $e->getMessage()]);
             throw $e; // Re-throw để xử lý lỗi ở cấp cao hơn
         }
     }
+    private function logFixRoomAction(int $roomId, int $userId): void
+    {
+        try {
+            RoomMaintenance::create([
+                'room_id'    => $roomId,
+                'admin_id'   => $userId,
+                'fix_date'   => now(),
+                'unit_code'  => unitCode(),
+                'subdomain'  => subdomain(),
+            ]);
+        } catch (\Exception $e) {
+            Log::error('Error logging fix room action', ['message' => $e->getMessage()]);
+            throw $e; // Re-throw để xử lý lỗi ở cấp cao hơn
+        }
+    }
 
     public function listUserCleanRoom(Request $request)
     {
-        $pageTitle = 'Danh sách dọn phòng';
         $query = UserCleanroom::with('room', 'admin');
-        // Xử lý tìm kiếm theo clean_date nếu có keyword được gửi từ form
+
+        // Lọc theo ngày dọn phòng nếu có keyword
         if ($request->has('keyword')) {
             $keyword = $request->keyword;
             $query->where('clean_date', 'like', "%$keyword%");
         }
 
+        // Nếu là nhân viên, chỉ hiển thị lịch sử của chính họ
         if (authCleanRoom()) {
             $query->where('admin_id', authAdmin()->id);
         }
-        $userCleanRoom = $query->paginate(10);
-        return view('admin.booking.cleanroom', compact('pageTitle', 'userCleanRoom'));
-    }
 
+        $userCleanRoom = $query->paginate(10);
+
+        return response()->json([
+            'success' => true,
+            'message' => 'Danh sách dọn phòng',
+            'data' => $userCleanRoom
+        ]);
+    }
+    public function listUserFixRoom(Request $request)
+    {
+        $query = RoomMaintenance::with('room', 'admin');
+
+        // Lọc theo ngày dọn phòng nếu có keyword
+        if ($request->has('keyword')) {
+            $keyword = $request->keyword;
+            $query->where('fix_date', 'like', "%$keyword%");
+        }
+
+        // Nếu là nhân viên, chỉ hiển thị lịch sử của chính họ
+        if (authCleanRoom()) {
+            $query->where('admin_id', authAdmin()->id);
+        }
+
+        $RoomMaintenance = $query->paginate(10);
+
+        return response()->json([
+            'success' => true,
+            'message' => 'Danh sách sửa phòng',
+            'data' => $RoomMaintenance
+        ]);
+    }
+    public function viewHousekeepingMaintenance()
+    {
+        $today = now()->format('Y-m-d'); // Lấy ngày hiện tại theo định dạng yyyy-mm-dd
+        return view('admin.booking.cleanroom', compact('today'));
+    }
     public function getPremiumServices()
     {
         $premiumServices    = PremiumService::active()->get();
@@ -1379,6 +1432,74 @@ class BookingController extends Controller
 
             return response()->json(['status' => 'success', 'message' => 'Xóa thành công']);
         }
+    }
+    public function delFixRoom($id)
+    {
+        if (!authCleanRoom()) {
+            if (!$id) {
+                return response()->json(['status' => 'error', 'message' => 'ID không hợp lệ']);
+            }
+            $del = RoomMaintenance::find($id);
+
+            if (!$del) {
+                return response()->json(['status' => 'error', 'message' => 'Dữ liệu không tồn tại']);
+            }
+            $del->delete();
+
+            return response()->json(['status' => 'success', 'message' => 'Xóa thành công']);
+        }
+    }
+    public function bookingActionHistory()
+    {
+        return view('admin.history_room_booking.index');
+    }
+    public function getbookingActionHistory(Request $request)
+    {
+        // Lấy 10 bản ghi mỗi trang
+        $perPage = 10;
+
+        // Lấy danh sách có phân trang
+        $bookingActionHistory = BookingActionHistory::with('admin', 'room')
+            ->orderBy('action_time', 'desc')
+            ->paginate($perPage);
+
+        // Sử dụng collection để ánh xạ chi tiết
+        $historyWithDetails = $bookingActionHistory->getCollection()->map(function ($history) {
+            $detail = null;
+
+            switch ($history->action_table) {
+                case 'room_booking':
+                    $detail = RoomBooking::find($history->booking_id);
+                    break;
+
+                case 'check_in':
+                    $detail = CheckIn::find($history->booking_id);
+                    break;
+
+                default:
+                    $detail = null;
+            }
+
+            return [
+                'id' => $history->id,
+                'remark' => $history->remark,
+                'booking_id' => $history->booking_id,
+                'action_table' => $history->action_table,
+                'admin' => $history->admin?->name,
+                'room' => $history->room?->room_number,
+                'action_time' => $history->action_time,
+                'related_detail' => $detail,
+            ];
+        });
+
+        // Trả lại kết quả với phân trang
+        $bookingActionHistory->setCollection($historyWithDetails);
+
+        return response()->json([
+            'success' => true,
+            'message' => 'Danh sách lịch sử đặt phòng',
+            'data' => $bookingActionHistory
+        ]);
     }
 
     public function listRoomBooking(Request $request)
@@ -1480,21 +1601,44 @@ class BookingController extends Controller
 
     public function deleteRoomBooking($id)
     {
-
         $deletedRows = RoomBooking::where('booking_id', $id)->get();
         if ($deletedRows->isEmpty()) {
             return response()->json(['status' => 'error', 'message' => 'Không tìm thấy phòng.']);
         }
+        $admin_id = $request->name_staff ?? authAdmin()->id;
         foreach ($deletedRows as $roomBooking) {
             if (!empty($roomBooking->room_change)) {
                 return response()->json(['status' => 'error', 'message' => 'Phòng đã có thay đổi, không thể xoá.']);
             }
+            bookingActionRecord($roomBooking->id, $admin_id, $roomBooking->room_code, 'Xoá đặt phòng', 'room_booking');
+
             saveRoomStatusHistory($roomBooking->room_code, $roomBooking->checkin_date, $roomBooking->checkin_date, 1);
             $roomBooking->delete();
         }
         return response()->json(['status' => 'success', 'message' => 'Xoá thành công.']);
     }
+    public function delBookingActionHistory($id)
+    {
+        $history = BookingActionHistory::find($id);
 
+        if (!$history) {
+            return response()->json([
+                'success' => false,
+                'message' => 'Không tìm thấy lịch sử đặt phòng.'
+            ], 404);
+        }
+
+        try {
+            $history->delete();
+
+           return response()->json(['status' => 'success', 'message' => 'Xoá thành công.']);
+        } catch (\Exception $e) {
+            return response()->json([
+                'success' => false,
+                'message' => 'Đã có lỗi xảy ra khi xoá: ' . $e->getMessage()
+            ], 500);
+        }
+    }
     public function checkRoomBookingdel($id)
     {
         $is_check = CheckIn::where('id_room_booking', $id)->first();

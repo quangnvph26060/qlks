@@ -545,10 +545,16 @@ Route::middleware('admin', 'adminPermission')->prefix('admin')->group(function (
         Route::get('delayed/checkout', 'delayedCheckouts')->name('delayed.booking.checkout');
         Route::get('receptionist', 'Receptionist')->name('receptionist.booking.receptionist');
         Route::get('user-clean-room','listUserCleanRoom')->name('listUserCleanRoom.booking.listUserCleanRoom');
+        Route::get('user-room-fix','listUserFixRoom')->name('listUserFixRoom.booking.listUserFixRoom');
+        Route::get('housekeeping-maintenance-room','viewHousekeepingMaintenance')->name('viewHousekeepingMaintenance.booking.viewHousekeepingMaintenance');
+        Route::get('booking-action-history','bookingActionHistory')->name('bookingActionHistory.booking.bookingActionHistory');
+        Route::get('get-booking-action-history','getbookingActionHistory')->name('getbookingActionHistory.booking.getbookingActionHistory');
         Route::post('delete-clean-room/{id}','delCleanRoom')->name('delCleanRoom.booking.delCleanRoom');
+        Route::post('delete-fix-room/{id}','delFixRoom')->name('delFixRoom.booking.delFixRoom');
+        Route::post('delete-booking-action/{id}','delBookingActionHistory')->name('delBookingActionHistory.booking.delBookingActionHistory');
         Route::get('searchrooms', 'searchRooms')->name('searchrooms.booking.searchrooms');
         Route::post('room-clean', 'changeCleanRoom')->name('roomclean.booking.roomclean');
-          Route::post('room-fix', 'changeCleanFix')->name('roomfix.booking.roomfix');
+        Route::post('room-fix', 'changeCleanFix')->name('roomfix.booking.roomfix');
         Route::get('get-premium-services', 'getPremiumServices')->name('services.booking.services');
         Route::get('get-product', 'getProduct')->name('product.booking.product');
     });

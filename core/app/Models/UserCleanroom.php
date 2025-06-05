@@ -4,16 +4,19 @@ namespace App\Models;
 
 use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\Model;
+use App\Traits\BelongsToTenant;
 
 class UserCleanroom extends Model
 {
-    use HasFactory;
+    use HasFactory,BelongsToTenant;
     protected $table = 'user_cleanroom';
    
     protected $fillable = [
         'room_id',
         'clean_date',
         'admin_id',
+        'unit_code',
+        'subdomain',
     ];
     
     public function room()

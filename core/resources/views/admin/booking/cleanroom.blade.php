@@ -1,92 +1,5 @@
 @extends('admin.layouts.master_iframe')
 @section('panel')
-    <div class="row">
-        <!-- Khối bên phải: Danh sách danh mục -->
-        <div class="col-md-12">
-            <div class="border p-2">
-                <div class="d-flex justify-content-between mb-3">
-                    {{-- <div class="dt-length">
-                        <select name="example_length" id="perPage" style=" padding: 1px 3px; margin-right: 8px;"
-                            aria-controls="example" class="perPage">
-                            <option value="10">10</option>
-                            <option value="25">25</option>
-                            <option value="50">50</option>
-                            <option value="100">100</option>
-                        </select><label for="perPage"> entries per page</label>
-                    </div> --}}
-                    <div class="search">
-                        {{-- <label for="searchInput">Search:</label>
-                        <input class="searchInput"
-                            style="padding: 1px 3px; border: 1px solid rgb(121, 117, 117, 0.5); margin-left: 8px;"
-                            type="search" placeholder="Tìm kiếm..."> --}}
-                        <form method="GET" id="searchForm"
-                            action="{{ route('admin.listUserCleanRoom.booking.listUserCleanRoom') }}">
-                            @csrf
-                            <div class="input-group flex-nowrap">
-                                <input type="date" class="searchInput" name="keyword" id="searchInput"
-                                    value="{{ request('keyword') }}" placeholder="Tìm kiếm ...">
-                                <!-- Thay icon bằng bất kỳ icon nào bạn muốn -->
-                                <!-- Nút tìm kiếm -->
-                                <button type="button" id="clearDate"
-                                    data-url="{{ route('admin.listUserCleanRoom.booking.listUserCleanRoom') }}"
-                                    class="btn btn-primary">
-                                    <i class="las la-sync-alt"></i>
-                                </button>
-                            </div>
-                        </form>
-                    </div>
-                </div>
-                <div class="card b-radius--10">
-                    <div class="card-body p-0">
-                        <div class="table-responsive--sm table-responsive">
-                            <table class="table--light style--two table" id="data-table">
-                                <thead>
-                                    <tr>
-                                        <th>@lang('STT')</th>
-                                        <th>@lang('Số phòng')</th>
-                                        <th>@lang('Ngày tạo')</th>
-                                        <th>@lang('Admin')</th>
-                                        @can()
-                                            <th>@lang('Hành động')</th>
-                                        @endcan
-                                    </tr>
-                                </thead>
-                                <tbody>
-                                    @forelse($userCleanRoom as $index=>$item)
-                                        <tr data-table="{{ $item->id }}">
-                                            <td>{{ $index + 1 }}</td>
-                                            <td>{{ $item->room->room_number }}</td>
-                                            <td>{{ $item->clean_date }}</td>
-                                            <td>{{ $item->admin->name }}</td>
-                                            @php
-                                                $disabled = authCleanRoom() ? 'disabled' : '';
-                                            @endphp
-                                            <td>
-                                                <button class="btn btn-sm btn-outline--danger btn-delete"
-                                                    onclick="confirmDelete('{{ $item->id }}')"
-                                                    data-id="{{ $item->id }}"
-                                                    data-modal_title="@lang('Xóa danh mục')"type="button" data-pro="0"
-                                                    {{ $disabled }}>
-                                                    <i class="fas fa-trash"></i>@lang('Xóa')
-                                                </button>
-                                            </td>
-                                        </tr>
-                                    @empty
-                                        <h3>Không có dữ liệu.</h3>
-                                    @endforelse
-                                </tbody>
-                            </table>
-                        </div>
-                    </div>
-                </div>
-            </div>
-            <div id="pagination" class="mt-3">
-                {{ $userCleanRoom->links() }}
-            </div>
-        </div>
-    </div>
-
-
     <div class="modal fade" id="staticBackdrop" data-bs-backdrop="static" data-bs-keyboard="false" tabindex="-1"
         aria-labelledby="staticBackdropLabel" aria-hidden="true">
         <div class="modal-dialog modal-lg">
@@ -144,6 +57,90 @@
             </div>
         </div>
     </div>
+    <ul class="nav nav-tabs">
+        <li class="nav-item">
+            <a class="nav-link active" href="#cleaning" data-bs-toggle="tab">Dọn phòng</a>
+        </li>
+        <li class="nav-item">
+            <a class="nav-link" href="#maintenance" data-bs-toggle="tab">Sửa chữa</a>
+        </li>
+    </ul>
+
+    <div class="tab-content mt-3">
+        <div class="tab-pane fade show active" id="cleaning">
+            <div class="row">
+                <!-- Khối bên phải: Danh sách danh mục -->
+                <div class="col-md-12">
+                    <div class="col-md-2 mt-2 mb-2">
+                        <input type="date" id="search-input-clean" class="form-control" value="{{ $today }}" />
+                    </div>
+                    <div class="border p-2">
+                        <div class="card b-radius--10">
+                            <div class="card-body p-0">
+                                <div class="table-responsive--sm table-responsive">
+                                    <table class="table--light style--two table" id="data-table">
+                                        <thead>
+                                            <tr>
+                                                <th>@lang('STT')</th>
+                                                <th>@lang('Tên phòng')</th>
+                                                <th>@lang('Ngày tạo')</th>
+                                                <th>@lang('Nhân viên')</th>
+                                                @can()
+                                                    <th>@lang('Hành động')</th>
+                                                @endcan
+                                            </tr>
+                                        </thead>
+                                        <tbody class="data-table-clean">
+
+                                        </tbody>
+                                    </table>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+
+                </div>
+            </div>
+        </div>
+        <div class="tab-pane fade" id="maintenance">
+            <div class="row">
+                <!-- Khối bên phải: Danh sách danh mục -->
+                <div class="col-md-12">
+                    <div class="col-md-2 mt-2 mb-2">
+                        <input type="date" id="search-input-maintenance" class="form-control"
+                            value="{{ $today }}" />
+                    </div>
+                    <div class="border p-2">
+                        <div class="card b-radius--10">
+                            <div class="card-body p-0">
+
+
+                                <div class="table-responsive--sm table-responsive">
+                                    <table class="table--light style--two table" id="data-table">
+                                        <thead>
+                                            <tr>
+                                                <th>@lang('STT')</th>
+                                                <th>@lang('Tên phòng')</th>
+                                                <th>@lang('Ngày tạo')</th>
+                                                <th>@lang('Nhân viên')</th>
+                                                @can()
+                                                    <th>@lang('Hành động')</th>
+                                                @endcan
+                                            </tr>
+                                        </thead>
+                                        <tbody class="data-table-maintenance">
+
+                                        </tbody>
+                                    </table>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+
+                </div>
+            </div>
+        </div>
+    </div>
 @endsection
 <script src="https://code.jquery.com/jquery-3.5.1.slim.min.js"></script>
 
@@ -153,44 +150,223 @@
 @endpush
 <script>
     $(document).ready(function() {
-        $('#searchInput').change(function() {
-            var name = $('#searchInput').val();
-            $('#searchForm').submit();
-        })
+       
 
-        var originalUrl = $('#clearDate').data('url');
-        $('#clearDate').click(function() {
-            $('#searchInput').val('');
-            $('#searchForm').submit();
-            window.location.href = originalUrl;
+        fetchCleanRoomData();
+
+
+
+        // Optional: bắt sự kiện tìm kiếm theo keyword
+        $('#search-input-clean').on('change', function() {
+            let keyword = $(this).val();
+            fetchCleanRoomData(keyword);
+        });
+
+        fetchFixRoomData();
+
+
+
+        $('#search-input-maintenance').on('change', function() {
+            let keyword = $(this).val();
+            fetchFixRoomData(keyword);
         });
     });
+ function formatDatetime(datetimeStr) {
+            const date = new Date(datetimeStr);
+            const day = String(date.getDate()).padStart(2, '0');
+            const month = String(date.getMonth() + 1).padStart(2, '0'); // tháng bắt đầu từ 0
+            const year = date.getFullYear();
+            const hours = String(date.getHours()).padStart(2, '0');
+            const minutes = String(date.getMinutes()).padStart(2, '0');
 
-    function confirmDelete(id) {
-        if (confirm('Bạn có chắc chắn muốn xóa không?')) {
-            var dataTable = document.querySelector('tr[data-table="' + id + '"]');
-            var url = "{{route('admin.delCleanRoom.booking.delCleanRoom',['id'=> ':id' ])}}";
-            url = url.replace(':id', id);
+            return `${day}/${month}/${year} ${hours}:${minutes}`;
+        }
+        function fetchCleanRoomData(keyword = '') {
             $.ajax({
-                type: 'POST',
-                url: url,
+                url: "{{ route('admin.listUserCleanRoom.booking.listUserCleanRoom') }}",
+                method: "GET",
                 data: {
-                    id: id
+                    keyword: keyword
                 },
-                dataType: 'json',
                 success: function(response) {
-                    if (response.status === 'success') {
-                        console.log('Dữ liệu đã được xóa thành công!');
-                        dataTable.remove(); // Xóa dòng trong bảng HTML
-                    } else {
-                        console.error('Đã xảy ra lỗi khi xóa dữ liệu.');
+                    if (response.success) {
+                        const tbody = $(".data-table-clean");
+                        tbody.empty();
+
+                        const data = response.data.data; // Dữ liệu phân trang nằm trong `data`
+
+                        if (data.length === 0) {
+                            tbody.append(
+                                '<tr><td colspan="5" class="text-center">Không có dữ liệu</td></tr>'
+                            );
+                            return;
+                        }
+
+                        $.each(data, function(index, item) {
+                            const roomName = item.room ? item.room.room_number :
+                                '(Không có)';
+                            const adminName = item.admin ? item.admin.name : '(Không có)';
+                            const createdAt = item.clean_date ?? '-';
+
+                            let actions = '';
+                            @can('some_permission')
+                                actions = `
+                                        <button class="btn btn-sm btn-danger btn-delete-clean"
+                                            onclick="confirmDeleteClean(${item.id})"
+                                            data-id="${item.id}">
+                                            Xoá
+                                        </button>`;
+                            @endcan
+
+
+                            tbody.append(`
+                                <tr>
+                                    <td>${index + 1}</td>
+                                    <td>${roomName}</td>
+                                    <td>${formatDatetime(createdAt)}</td>
+                                    <td>${adminName}</td>
+                                    <td>${actions}</td>
+                                </tr>
+                            `);
+                        });
                     }
                 },
                 error: function() {
-                    console.error('Đã xảy ra lỗi khi gửi yêu cầu.');
+                    alert("Đã có lỗi xảy ra khi tải dữ liệu.");
                 }
             });
         }
+
+    function fetchFixRoomData(keyword = '') {
+        $.ajax({
+            url: "{{ route('admin.listUserFixRoom.booking.listUserFixRoom') }}",
+            method: "GET",
+            data: {
+                keyword: keyword
+            },
+            success: function(response) {
+                if (response.success) {
+                    const tbody = $(".data-table-maintenance");
+                    tbody.empty();
+
+                    const data = response.data.data; // Dữ liệu phân trang nằm trong `data`
+
+                    if (data.length === 0) {
+                        tbody.append(
+                            '<tr><td colspan="5" class="text-center">Không có dữ liệu</td></tr>'
+                        );
+                        return;
+                    }
+
+                    $.each(data, function(index, item) {
+                        const roomName = item.room ? item.room.room_number :
+                            '(Không có)';
+                        const adminName = item.admin ? item.admin.name : '(Không có)';
+                        const createdAt = item.fix_date ?? '-';
+
+                        let actions = '';
+                        @can('some_permission')
+                            actions =
+                                `<button class="btn btn-sm btn-danger btn-delete-maintenance"
+                                      onclick="confirmDeleteMaintenance(${item.id})"
+                                        data-id="${item.id}">
+                                    Xoá</button>`;
+                        @endcan
+
+
+                        tbody.append(`
+                            <tr>
+                                <td>${index + 1}</td>
+                                <td>${roomName}</td>
+                                <td>${formatDatetime(createdAt)}</td>
+                                <td>${adminName}</td>
+                                <td>${actions}</td>
+                            </tr>
+                        `);
+                    });
+                }
+            },
+            error: function() {
+                alert("Đã có lỗi xảy ra khi tải dữ liệu.");
+            }
+        });
+    }
+
+    function confirmDeleteClean(id) {
+        Swal.fire({
+            title: 'Bạn có chắc chắn?',
+            text: "Hành động này sẽ xóa dữ liệu dọn phòng!",
+            icon: 'warning',
+            showCancelButton: true,
+            confirmButtonColor: '#d33',
+            cancelButtonColor: '#3085d6',
+            confirmButtonText: 'Xoá',
+            cancelButtonText: 'Hủy'
+        }).then((result) => {
+            if (result.isConfirmed) {
+                let url = "{{ route('admin.delCleanRoom.booking.delCleanRoom', ['id' => ':id']) }}";
+                url = url.replace(':id', id);
+
+                $.ajax({
+                    type: 'POST',
+                    url: url,
+                    data: {
+                        id: id
+                    },
+                    dataType: 'json',
+                    success: function(response) {
+                        if (response.status === 'success') {
+
+                            fetchCleanRoomData();
+                        } else {
+                            Swal.fire('Lỗi!', 'Đã xảy ra lỗi khi xóa dữ liệu.', 'error');
+                        }
+                    },
+                    error: function() {
+                        Swal.fire('Lỗi!', 'Không thể gửi yêu cầu đến máy chủ.', 'error');
+                    }
+                });
+            }
+        });
+    }
+
+    function confirmDeleteMaintenance(id) {
+        Swal.fire({
+            title: 'Bạn có chắc chắn?',
+            text: "Hành động này sẽ xóa dữ liệu sửa phòng!",
+            icon: 'warning',
+            showCancelButton: true,
+            confirmButtonColor: '#d33',
+            cancelButtonColor: '#3085d6',
+            confirmButtonText: 'Xoá',
+            cancelButtonText: 'Hủy'
+        }).then((result) => {
+            if (result.isConfirmed) {
+
+                let url = "{{ route('admin.delFixRoom.booking.delFixRoom', ['id' => ':id']) }}";
+                url = url.replace(':id', id);
+
+                $.ajax({
+                    type: 'POST',
+                    url: url,
+                    data: {
+                        id: id
+                    },
+                    dataType: 'json',
+                    success: function(response) {
+                        if (response.status === 'success') {
+
+                            fetchFixRoomData();
+                        } else {
+                            Swal.fire('Lỗi!', 'Đã xảy ra lỗi khi xóa dữ liệu.', 'error');
+                        }
+                    },
+                    error: function() {
+                        Swal.fire('Lỗi!', 'Không thể gửi yêu cầu đến máy chủ.', 'error');
+                    }
+                });
+            }
+        });
     }
 </script>
 @push('style')
@@ -304,7 +480,4 @@
 @endpush
 
 @push('style-lib')
-@endpush
-
-@push('script-lib')
 @endpush

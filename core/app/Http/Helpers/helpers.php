@@ -7,6 +7,7 @@ use App\Lib\CurlRequest;
 use App\Lib\FileManager;
 use App\Models\Admin;
 use App\Models\BookingActionHistory;
+use App\Models\CheckIn;
 use App\Models\EmailTemplate;
 use App\Models\Extension;
 use App\Models\Frontend;
@@ -15,6 +16,7 @@ use App\Models\HotelFacility;
 use App\Models\Language;
 use App\Models\ReceiptAndPayment;
 use App\Models\Role;
+use App\Models\RoomBooking;
 use App\Models\RoomServiceProduct;
 use App\Models\RoomStatusHistory;
 use App\Notify\Notify;
@@ -694,12 +696,37 @@ function actionTakenBy($item)
     return @Admin::find($item->admin_id)->name;
 }
 
-function bookingActionRecord($bookingId, $admin, $remark)
+function bookingActionRecord($bookingId, $admin, $room, $remark, $action_table)
 {
-    $action             = new BookingActionHistory();
-    $action->booking_id = $bookingId;
-    $action->remark     = $remark;
-    $action->admin_id   = $admin;
+    // Tự động lấy mã nếu remark chưa được truyền vào
+    Log::info($bookingId);
+        $code = null;
+        switch ($action_table) {
+            case 'room_booking':
+                $booking = RoomBooking::find($bookingId);
+                $code = $booking?->booking_id;
+                break;
+
+            case 'check_in':
+                $checkIn = CheckIn::find($bookingId);
+                $code = $checkIn?->check_in_id;
+                break;
+
+            default:
+                $code = null;
+                break;
+        }
+    
+
+    $action = new BookingActionHistory();
+    $action->booking_id    = $code;
+    $action->remark        = $remark;
+    $action->admin_id      = $admin;
+    $action->room_id       = $room;
+    $action->action_time   = now();
+    $action->action_table  = $action_table;
+    $action->unit_code     = unitCode();
+    $action->subdomain     = subdomain();
     $action->save();
 }
 

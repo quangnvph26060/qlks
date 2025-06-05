@@ -290,7 +290,7 @@ class BookRoomController extends Controller
                 return response()->json(['error' => $validator->errors()->all()]);
             }
             $bookingId = null;
-            $tax            = gs('tax'); // thuế
+         //   $tax            = gs('tax'); // thuế
             $uniqueRooms = [];
             $filteredRooms = [];
 
@@ -319,16 +319,21 @@ class BookRoomController extends Controller
                 if (!empty($request->insert_customer)) {
                     $customer = $this->add_guest($request->name, $request->phone, $request->customer_source);
                 }
-
+                $dateIn  = Carbon::parse($room['dateIn']);
+                $dateOut =  Carbon::parse($room['dateOut']);
                 // đặt cọc của từng phòng
                 $depositAmount = intval(str_replace('.', '', $room['deposit']));
                 $discountAmount = intval(str_replace('.', '', $room['discount']));
-                $roomPice = RoomTypePrice::where('room_type_id', $room['roomType'])->orderByDesc('price_validity_period')->first();
+                $roomPice = RoomTypePrice::where('room_type_id', $room['roomType'])
+                    ->whereDate('price_validity_period', '<=', $dateIn)
+                    ->orderByDesc('price_validity_period')
+                    ->limit(1)
+                    ->first();
+
 
                 $check_in = $request->method == 'check_in' ? new CheckIn() : new RoomBooking();
 
-                $dateIn  = Carbon::parse($room['dateIn']);
-                $dateOut =  Carbon::parse($room['dateOut']);
+             
 
 
                 $is_room = Room::find($room['room']);
@@ -368,17 +373,19 @@ class BookRoomController extends Controller
                     DB::rollBack();
 
                     return response()->json([
-                        'error' => 'Phòng ' . $is_room['room_number'] . ' đã được đặt trong khoảng thời gian này  '
+                        'error' => 'Phòng ' . $is_room['room_number'] . ' đã được đặt trong khoảng thời gian này'
                     ]);
                 }
-
+                $admin_id = $request->name_staff ??  authAdmin()->id;
                 if ($index == 0) {
                     if ($request->method == 'check_in') {
                         $check_in->check_in_id      = getCode('NP', 12);
                         $bookingId = $check_in->check_in_id;
+                      
                     } else {
                         $check_in->booking_id       = getCode('DP', 12);
                         $bookingId = $check_in->booking_id;
+                       
                     }
                 } else {
                     if ($request->method == 'check_in') {
@@ -399,9 +406,9 @@ class BookRoomController extends Controller
                 } else {
                     saveRoomStatusHistory($room['room'], $dateIn, $dateOut, 2);
                 }
-
+             
                 // tổng tiền của phòng
-                $sumPrice += $roomPice['unit_price'];
+              //  $sumPrice += $roomPice['unit_price'];
                 // TỔNG GIẢM GIÁ
                 // $totalDiscount += $discountAmount;
                 // TỔNG ĐẶT CỌC 
@@ -427,7 +434,9 @@ class BookRoomController extends Controller
                 $check_in->created_by     = $request->name_staff ??  authAdmin()->id;
 
                 $check_in->save();
-
+                   $request->method == 'check_in'
+                    ? bookingActionRecord($check_in->id, $admin_id, $room['room'], 'Nhận phòng', 'check_in')
+                    : bookingActionRecord($check_in->id, $admin_id, $room['room'], 'Đặt phòng', 'room_booking');
                 $payment_pttt = $request->payment_pttt;
                 if ($discountAmount > 0 || $depositAmount > 0) {
                     if ($request->method == 'check_in') {
@@ -587,6 +596,9 @@ class BookRoomController extends Controller
                                 ]);
                             }
                         }
+                        $admin_id = $request->name_staff ?? authAdmin()->id;
+                        $roomCode = $checkRoom['room_change'] ?? $checkRoom['room_code'];
+                         bookingActionRecord($check_in->id, $admin_id, $roomCode, 'Nhận phòng', 'check_in');
                     }
                 } else {
                     $check_in_new                 = new CheckIn();
@@ -670,9 +682,11 @@ class BookRoomController extends Controller
                 $roomPice = RoomTypePrice::where('room_type_id', $room['roomType'])->orderByDesc('price_validity_period')->first();
                 $room['dateIn'] = date('Y-m-d H:i:s', strtotime($room['dateIn']));
                 $room['dateOut'] = date('Y-m-d H:i:s', strtotime($room['dateOut']));
+                  $admin_id =$request->name_staff ?? authAdmin()->id;
                 if (!empty($room['bookingId'])) {
                     $check_in = $request->method == 'check_in' ?  CheckIn::query() :  RoomBooking::query()->active();
                     $check_in = $check_in->where('id', $room['bookingId'])->first();
+                  
                     if ($check_in) {
                         $check_in->room_code      = $room['room'];
                         $check_in->document_date  = now();
@@ -691,8 +705,12 @@ class BookRoomController extends Controller
                         $check_in->user_source    = $customer['customer_sourece'] ?? $request->customer_source;
                         $check_in->unit_code      = unitCode();
                           $check_in->subdomain      = subdomain();
-                        $check_in->created_by     = $request->name_staff ?? authAdmin()->id;
+                        $check_in->created_by     =  $admin_id;
                         $check_in->save();
+
+                          $request->method == 'check_in'
+                        ? bookingActionRecord($check_in->id, $admin_id, $room['room'], 'Sửa nhận phòng', 'check_in')
+                        : bookingActionRecord($check_in->id, $admin_id, $room['room'], 'Sửa đặt phòng', 'room_booking');
                         saveRoomStatusHistory($room['room'], $room['dateIn'], $room['dateOut'], 2);
 
                         // TỔNG GIẢM GIÁ
@@ -727,8 +745,11 @@ class BookRoomController extends Controller
                     $check_in_new->user_source    = $customer['customer_sourece'] ?? $request->customer_source;
                     $check_in_new->unit_code      =  unitCode();
                        $check_in_new->subdomain      = subdomain();
-                    $check_in_new->created_by     = $request->name_staff ??  authAdmin()->id;
+                    $check_in_new->created_by     =  $admin_id;
                     $check_in_new->save();
+                      $request->method == 'check_in'
+                        ? bookingActionRecord($check_in_new->id, $admin_id, $room['room'], 'Nhận phòng', 'check_in')
+                        : bookingActionRecord($check_in_new->id, $admin_id, $room['room'], 'Đặt phòng', 'room_booking');
                     saveRoomStatusHistory($room['room'], $room['dateIn'], $room['dateOut'], 2);
                     // TỔNG GIẢM GIÁ
                     $totalDiscount += $discountAmount;
@@ -760,10 +781,11 @@ class BookRoomController extends Controller
         if (empty($ids) || !is_array($ids)) {
             return response()->json(['status' => 'error', 'message' => 'Dữ liệu không hợp lệ.']);
         }
+     
         try {
             return DB::transaction(function () use ($ids) {
                 $roomBookings = RoomBooking::whereIn('id', $ids)->get();
-
+                $admin_id = $request->name_staff ?? authAdmin()->id;
                 if ($roomBookings->isEmpty()) {
                     return response()->json(['status' => 'error', 'message' => 'Không tìm thấy phòng.']);
                 }
@@ -773,7 +795,9 @@ class BookRoomController extends Controller
                         return response()->json(['status' => 'error', 'message' => 'Phòng đã có thay đổi, không thể xoá.']);
                     }
                     saveRoomStatusHistory($roomBooking->room_code, $roomBooking->checkin_date, $roomBooking->checkin_date, 1);
+                       bookingActionRecord($roomBooking->id, $admin_id, $roomBooking->room_code, 'Xoá đặt phòng', 'room_booking');
                     $roomBooking->delete();
+                  
                 }
                 return response()->json(['status' => 'success', 'message' => 'Xoá thành công.']);
             });
@@ -793,7 +817,7 @@ class BookRoomController extends Controller
             return DB::transaction(function () use ($ids, $method) {
                 $model = $method == "LETAN" ? new  CheckIn() : new RoomBooking();
                 $checkIns = $model::whereIn('id', $ids)->get();
-
+                $admin_id = $request->name_staff ?? authAdmin()->id;
                 if ($checkIns->isEmpty()) {
                     return response()->json(['status' => 'error', 'message' => 'Không tìm thấy phòng.']);
                 }
@@ -819,7 +843,9 @@ class BookRoomController extends Controller
                             saveRoomStatusHistory($checkIn->room_code, $checkIn->checkin_date, $dateOut, 1);
                         }
                     }
+                        bookingActionRecord($checkIn->id, $admin_id, $checkIn->room_code, 'Xoá nhận phòng', 'check_in');
                     $checkIn->delete();
+                  
                 }
 
                 return response()->json(['status' => 'success', 'message' => 'Xoá thành công.']);
@@ -1027,6 +1053,7 @@ class BookRoomController extends Controller
                 $room['dateIn'] = date('Y-m-d H:i:s', strtotime($room['dateIn']));
                 $room['dateOut'] = date('Y-m-d H:i:s', strtotime($room['dateOut']));
                 $is_room = Room::find($room['room']);
+                $admin_id =$request->name_staff ?? authAdmin()->id;
                 if (!empty($room['bookingId'])) {
                     $check_in = CheckIn::query();
                     $check_in = $check_in->where('id', $room['bookingId'])->first();
@@ -1047,9 +1074,13 @@ class BookRoomController extends Controller
                         $check_in->note           = $room['note'];
                         $check_in->user_source    = $customer['customer_sourece'] ?? $request->customer_source;
                         $check_in->unit_code      =  unitCode();
-                        $check_in->created_by     = $request->name_staff ?? authAdmin()->id;
+                        $check_in->created_by     = $admin_id;
                         $check_in->save();
                         saveRoomStatusHistory($room['room'], $room['dateIn'], $room['dateOut'], 3);
+                       
+                        bookingActionRecord($check_in->id, $admin_id, $room['room'], 'Sửa nhận phòng', 'check_in');
+                      
+                     
                     }
                 } else {
                     //123456
@@ -1100,9 +1131,9 @@ class BookRoomController extends Controller
                     $check_in_new->note           = $room['note'];
                     $check_in_new->user_source    = $customer['customer_sourece'] ?? $request->customer_source;
                     $check_in_new->unit_code      =  unitCode();
-                    $check_in_new->created_by     = $request->name_staff ??  authAdmin()->id;
+                    $check_in_new->created_by     = $admin_id;
                     $check_in_new->save();
-
+                     bookingActionRecord($check_in_new->id, $admin_id, $room['room'], 'Nhận phòng', 'check_in');
                     saveRoomStatusHistory($room['room'], $room['dateIn'], $room['dateOut'], 3);
                 }
             }
@@ -1234,6 +1265,7 @@ class BookRoomController extends Controller
                 // ->active()
                 ->where('status', Status::DISABLE)
                 ->where('booking_id', $item['book']);
+                // lễ tân
             if (empty($item['method'])) {
                 $result = $result->where('room_code', $item['id']);
                 $result = $result->where('checkin_date', $item['date']);
@@ -1273,6 +1305,7 @@ class BookRoomController extends Controller
         // Log::info('Số bản ghi trong roomBooking: ' . count($roomBooking));
 
         foreach ($roomBooking as $roomBook) {
+            Log::info($roomBook);
             $bookingId = $roomBook['booking_id'];
             // Log::info($roomBook['room']['roomType']['id']);
             if (!isset($data[$bookingId])) {

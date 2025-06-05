@@ -177,6 +177,24 @@
                 "icon": "la la-hand-o-right",
                 "route_name": "admin.manage.room.status",
                 "menu_active": "admin.manage.room.status"
+            },
+            {
+                "keyword": [
+                    "Quản lý bảo trì & vệ sinh"
+                ],
+                "title": "Quản lý bảo trì & vệ sinh",
+                "icon": "la la-hand-o-right",
+                "route_name": "admin.viewHousekeepingMaintenance.booking.viewHousekeepingMaintenance",
+                "menu_active": "admin.viewHousekeepingMaintenance.booking.viewHousekeepingMaintenance"
+            },
+            {
+                "keyword": [
+                    "Lịch sử đặt phòng"
+                ],
+                "title": "Lịch sử đặt phòng",
+                "icon": "la la-hand-o-right",
+                "route_name": "admin.bookingActionHistory.booking.bookingActionHistory",
+                "menu_active": "admin.bookingActionHistory.booking.bookingActionHistory"
             }
         ]
     },
@@ -194,7 +212,7 @@
         "icon": "las la-life-ring",
         "menu_active": "admin.premium.service*",
         "submenu": [
-             {
+            {
                 "keyword": [
                     "Cấu hình khách sạn"
                 ],
@@ -229,7 +247,7 @@
                 "route_name": "admin.roles.index",
                 "menu_active": "admin.roles.index"
             },
-             {
+            {
                 "keyword": [
                     "Cài đặt OTA"
                 ],

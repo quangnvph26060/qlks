@@ -195,6 +195,7 @@ class RoomTypeController extends Controller
             //$room->cancellation_fee    = $request->cancellation_fee ?? 0;
             // $room->cancellation_policy = htmlspecialchars_decode($purifier->purify($request->cancellation_policy));
             $room->is_clean            = Status::ROOM_CLEAN_ACTIVE;
+            $room->room_fix            = Status::DISABLE;
             $room->status              = $request->status ? 1 : 0;
             $room->unit_code           = unitCode();
             $room->subdomain           = subdomain();
