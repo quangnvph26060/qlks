@@ -333,7 +333,7 @@
 @push('script')
     <script>
         "use strict";
-     
+
 
 
         const APP_URL = "{{ config('app.url') }}";
@@ -349,7 +349,7 @@
                 this.value = this.value.toUpperCase();
             });
         });
-         $(document).on('input', 'input[name="code"]', function() {
+        $(document).on('input', 'input[name="code"]', function() {
             this.value = this.value.toUpperCase();
         });
 
@@ -382,11 +382,11 @@
 
             // Hiển thị hình ảnh cũ nếu có
             let showImage = modal.find('#showImage');
-                const CURRENT_ORIGIN = window.location.origin;
-                showImage.attr('src', CURRENT_ORIGIN + '/storage/' + resource.main_image);
-            
-             //showImage.attr('src', APP_URL + '/storage/' + resource.main_image);
-          //  console.log('Full image URL:', APP_URL + '/storage/' + resource.main_image);
+            const CURRENT_ORIGIN = window.location.origin;
+            showImage.attr('src', CURRENT_ORIGIN + '/storage/' + resource.main_image);
+
+            //showImage.attr('src', APP_URL + '/storage/' + resource.main_image);
+            //  console.log('Full image URL:', APP_URL + '/storage/' + resource.main_image);
 
             showImage.show();
 
@@ -527,6 +527,8 @@
                             if (response.status === 'success') {
                                 notify('success', response.message);
                                 window.location.reload();
+                            } else if (response.status === 'error') {
+                                notify('error', response.message);
                             }
                         }
                     });

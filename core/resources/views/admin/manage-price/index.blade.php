@@ -284,10 +284,10 @@
                             var html = '';
 
                             data.forEach(element => {
-                                // const startDate = new Date(
-                                //     `${element.setup_pricing['effective_start_date']}`);
-                                // const endDate = new Date(
-                                //     `${element.setup_pricing['effective_end_date']}`);
+                                const startDate = new Date(
+                                    `${element.setup_pricing['effective_start_date']}`);
+                                const endDate = new Date(
+                                    `${element.setup_pricing['effective_end_date']}`);
 
 
                                 html += `

@@ -128,6 +128,13 @@ class RoomController extends Controller
     {
         $roomType = RoomType::findOrFail($id);
 
+        $roomsUsingThisType = Room::where('room_type_id', $roomType->id)->exists();
+        if ($roomsUsingThisType) {
+            return response()->json([
+                'status' => 'error',
+                'message' => 'Không thể xoá loại phòng vì vẫn còn phòng đang sử dụng.'
+            ]); // Trả về lỗi Bad Request
+        }
         if ($roomType->main_image && Storage::disk('public')->exists($roomType->main_image)) {
             Storage::disk('public')->delete($roomType->main_image);
         }

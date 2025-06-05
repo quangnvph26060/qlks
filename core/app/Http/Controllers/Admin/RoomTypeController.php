@@ -4,6 +4,8 @@ namespace App\Http\Controllers\Admin;
 
 use App\Constants\Status;
 use App\Models\Booking;
+use App\Models\RoomBooking;
+use App\Models\RoomChange;
 use Log;
 use App\Models\Room;
 use App\Models\Amenity;
@@ -21,6 +23,7 @@ use App\Rules\FileTypeValidate;
 use Illuminate\Support\Facades\DB;
 use App\Http\Controllers\Controller;
 use App\Models\BookedRoom;
+use App\Models\CheckIn;
 use App\Models\RoomImage;
 use App\Models\RoomPrice;
 use App\Repositories\BaseRepository;
@@ -167,8 +170,8 @@ class RoomTypeController extends Controller
         }
         DB::beginTransaction();
         try {
-         //   $config = HTMLPurifier_Config::createDefault();
-          //  $purifier = new HTMLPurifier($config);
+            //   $config = HTMLPurifier_Config::createDefault();
+            //  $purifier = new HTMLPurifier($config);
             if ($id) {
                 $room         = Room::findOrFail($id);
                 $notification     = 'Đã cập nhật phòng thành công';
@@ -562,12 +565,13 @@ class RoomTypeController extends Controller
             ]);
         }
 
-        $bookings = BookedRoom::where('room_id', $id)->where('status', 1)->first();
-
-        if ($bookings) {
+        $bookings = RoomBooking::where('room_code', $room->id)->first();
+        $checkin = CheckIn::where('room_code', $room->id)->first();
+        $roomChange = RoomChange::where('new_room_code', operator: $room->id)->first();
+        if ($bookings || $checkin ||  $roomChange) {
             return response()->json([
                 'status' => false,
-                'message' => 'Không thể xóa vì phòng đang được thuê.'
+                'message' => 'Không thể xóa vì vì vẫn còn phòng đang sử dụng.'
             ]);
         }
         $room->delete();
