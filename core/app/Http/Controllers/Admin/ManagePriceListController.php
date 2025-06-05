@@ -279,13 +279,22 @@ class ManagePriceListController extends Controller
     public function deletePriceRoomType($id)
     {
         $priceRoomType = SetupPricing::find($id);
-        if ($priceRoomType) {
-            $priceRoomType->delete();
+        if (!$priceRoomType) {
+         
             return response()->json([
-                'status'  => 'success',
-                'message' => 'Xóa giá phòng thành công.',
+                'status'  => 'error',
+                'message' => 'Dữ liệu không tồn tại.',
             ]);
         }
+        $usedByRoomType = RoomTypePrice::where('setup_pricing_id', $id)->exists();
+
+        if ($usedByRoomType) {
+            return response()->json([
+                'status'  => 'error',
+                'message' => 'Không thể xóa cài đặt tính giá vì đang được sử dụng.',
+            ]);
+        }  
+         $priceRoomType->delete();
         return response()->json([
             'status'  => 'error',
             'message' => 'Giá phòng không tồn tại.',

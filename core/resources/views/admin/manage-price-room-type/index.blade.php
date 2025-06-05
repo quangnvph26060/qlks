@@ -470,6 +470,8 @@
                             success: function(data) {
                                 if (data.status === 'success') {
                                     rowToDelete.remove();
+                                }else if(data.status === 'error'){
+                                    notify('error',data.message);
                                 }
                             },
                             error: function(xhr, status, error) {
