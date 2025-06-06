@@ -280,7 +280,7 @@ class ManagePriceListController extends Controller
     {
         $priceRoomType = SetupPricing::find($id);
         if (!$priceRoomType) {
-         
+
             return response()->json([
                 'status'  => 'error',
                 'message' => 'Dữ liệu không tồn tại.',
@@ -293,11 +293,11 @@ class ManagePriceListController extends Controller
                 'status'  => 'error',
                 'message' => 'Không thể xóa cài đặt tính giá vì đang được sử dụng.',
             ]);
-        }  
-         $priceRoomType->delete();
+        }
+        $priceRoomType->delete();
         return response()->json([
-            'status'  => 'error',
-            'message' => 'Giá phòng không tồn tại.',
+            'status'  => 'success',
+            'message' => 'Xoá thành công.',
         ]);
     }
 
@@ -329,16 +329,7 @@ class ManagePriceListController extends Controller
         try {
 
             DB::beginTransaction();
-            // $isDuplicate = RoomTypePrice::where('room_type_id', $validatedData['room_type_id'])
-            //     ->where('setup_pricing_id', $validatedData['setup_pricing_id'])
-            //     ->where('unit_code', unitCode())
-            //     ->where('subdomain', subdomain())
-            //     ->exists();
 
-            // if ($isDuplicate) {
-            //     $notify[] = ['error', 'Cặp mã loại phòng và mã giá này đã tồn tại.'];
-            //     return back()->withNotify($notify)->withInput();
-            // }
             $priceRoomType = new SetupPricing();
             $priceRoomType->price_code           = $validatedData['price_code'];
             $priceRoomType->price_name           = $validatedData['price_name'];
@@ -348,17 +339,30 @@ class ManagePriceListController extends Controller
             $priceRoomType->round_time           = $validatedData['round_time'];
             $priceRoomType->unit_code            = unitCode();
             $priceRoomType->subdomain            = subdomain();
-            if (is_array($validatedData['price_requirement'])) {
-                // Loại bỏ các giá trị null trong mảng
-                $priceRequirements = array_filter($validatedData['price_requirement'], function ($value) {
-                    return $value !== null;
-                });
+            if (!empty($validatedData['price_requirement'])) {
+                $rawRequirements = $validatedData['price_requirement'];
 
-                // Chuyển đổi mảng thành chuỗi JSON sau khi loại bỏ giá trị null
+                // Nếu là chuỗi kiểu "2025-06-06, 2025-06-07"
+                if (is_string($rawRequirements)) {
+                    $rawRequirements = explode(',', $rawRequirements);
+                }
+
+                // Nếu là mảng nhưng chứa 1 chuỗi bị gộp
+                if (is_array($rawRequirements) && count($rawRequirements) === 1 && str_contains($rawRequirements[0], ',')) {
+                    $rawRequirements = explode(',', $rawRequirements[0]);
+                }
+
+                $priceRequirements = collect($rawRequirements)
+                    ->map(fn($v) => trim($v))
+                    ->filter()
+                    ->values()
+                    ->all();
+
                 $priceRoomType->price_requirement = json_encode($priceRequirements);
             } else {
-                $priceRoomType->price_requirement = $validatedData['price_requirement'];
+                $priceRoomType->price_requirement = json_encode([]);
             }
+
             $priceRoomType->save();
             DB::commit();
 
@@ -427,18 +431,27 @@ class ManagePriceListController extends Controller
             $priceRoomType->check_in_time        = $validatedData['check_in_time'] ?? "";
             $priceRoomType->check_out_time       = $validatedData['check_out_time'] ?? "";
             $priceRoomType->round_time           = $validatedData['round_time'];
-            // $priceRoomType->unit_code            = hf('ma_coso');
-            if (is_array($validatedData['price_requirement'])) {
-                // Loại bỏ các giá trị null trong mảng
-                $priceRequirements = array_filter($validatedData['price_requirement'], function ($value) {
-                    return $value !== null;
-                });
+           if (!empty($validatedData['price_requirement'])) {
+            $rawRequirements = $validatedData['price_requirement'];
 
-                // Chuyển đổi mảng thành chuỗi JSON sau khi loại bỏ giá trị null
-                $priceRoomType->price_requirement = json_encode($priceRequirements);
-            } else {
-                $priceRoomType->price_requirement = $validatedData['price_requirement'];
+            // Normalize input to array
+            if (is_string($rawRequirements)) {
+                $rawRequirements = [$rawRequirements];
             }
+
+            $priceRequirements = collect($rawRequirements)
+                ->flatMap(function ($item) {
+                    return str_contains($item, ',') ? explode(',', $item) : [$item];
+                })
+                ->map(fn($v) => trim($v))
+                ->filter()
+                ->values()
+                ->all();
+
+            $priceRoomType->price_requirement = json_encode($priceRequirements);
+        } else {
+            $priceRoomType->price_requirement = json_encode([]);
+        }
             $priceRoomType->save();
             DB::commit();
 

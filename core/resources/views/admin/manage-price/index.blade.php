@@ -374,7 +374,7 @@
                 var dataId = $(this).data('id');
                 var rowToDelete = $(`tr[data-id="${dataId}"]`);
                 Swal.fire({
-                    title: 'Xác nhận xóa cơ sở?',
+                    title: 'Xác nhận xóa  giá loại phòng này không?',
                     text: 'Bạn có chắc chắn muốn xóa giá loại phòng này không?',
                     icon: 'warning',
                     showCancelButton: true,

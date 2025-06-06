@@ -168,7 +168,7 @@ function showRoom(data = "", checkInDateValue = "", checkOutDateValue = "", sele
                             <td style="${isFirst ? 'font-weight: bold;' : ''}"class="text-left"> ${item.room_number} </td>
                             <td style="${isFirst ? 'font-weight: bold;' : ''}"class="text-left"> ${formatDate(item.date)} </td>
                             <td style="${isFirst ? 'font-weight: bold;' : ''}"class="text-left ${rowClass}"> ${item.check_booked} </td>
-                            <td style="${isFirst ? 'font-weight: bold;' : ''}"class="text-right"> ${formatCurrency(item.room_type.room_type_price['unit_price'])} </td>
+                            <td style="${isFirst ? 'font-weight: bold;' : ''}"class="text-right"> ${formatCurrency(item.applied_price)} </td>
                             <td>
                                 <input type="checkbox" ${item.status == 1 ? 'disabled' : ''} ${item.checkbox !== undefined ? 'checked disabled' : ''} data-date="${item.date}" data-id="${item.id}" data-room_type_id="${item.room_type_id}" id="checkbox-${item.id}">
                             </td>
@@ -439,84 +439,77 @@ function addRoomInBooking(data, list) {
 
                 const formattedDates = `${yyyys}-${mms}-${dds}`;
                 const formattedTimes = `${hoursss}:${minutesss}`;
+                let date = ""
 
+                let timeBookRoom = "";
                 const seenRooms = new Set();
                 let totalPrice = 0;
                 response.data.forEach(item => {
                     let date = new Date(item.date);
-                    if (item.date == formattedDates) {
-                        item.date = new Date(item.date);
-                        item.date.setDate(item.date.getDate() + 1);
-                        item.date = item.date.toISOString().split('T')[0];
-                    }
-                    // date.setDate(date.getDate() + 1);
+                    date = new Date(item.date);
+                    date.setDate(date.getDate() + 1);
+                    timeBookRoom = item.checkin_datetime;
                     const roomId = item.room["id"];
                     const roomTypeId = item.room_type["id"];
-                    const key = `${roomId}-${roomTypeId}`;
 
-                    if (seenRooms.has(key)) {
-                        return;
-                    }
-                    seenRooms.add(key);
-                    var tr = `
-                            <tr data-room-id="${roomId}"  data-room-type-id="${roomTypeId}" data-date="${formattedDates}">
-                                <td>
-                                    <input type="checkbox">
-                                </td>
+                    const tr = `
+        <tr data-room-id="${roomId}" data-room-type-id="${roomTypeId}" data-date="${formattedDates}" data-price="${item.room['applied_price']['unit_price']}">
+            <td>
+                <input type="checkbox">
+            </td>
 
-                                <td>
-                                    <p class="room__name"> ${item.room['room_number']}</p>
-                                </td>
-                                 <td>
-                                     <input type="number" min="1" name="adult" class="form-control adult"  value="1"  style="margin-left: 16px;">
+            <td>
+                <p class="room__name">${item.room['room_number']}</p>
+            </td>
 
-                                </td>
-                                <td >
-                                    <select id="bookingType" class="form-select" name="optionRoom" style="width: 93px; font-size:15px">
-                                         <option value="ngay">Ngày</option>
-                                         <option value="gio">Giờ</option>
+            <td>
+                <input type="number" min="1" name="adult" class="form-control adult" value="1" style="margin-left: 16px;">
+            </td>
 
+            <td>
+                <select id="bookingType" class="form-select" name="optionRoom" style="width: 93px; font-size:15px">
+                    <option value="ngay">Ngày</option>
+                    <option value="gio">Giờ</option>
+                </select>
+            </td>
 
-                                    </select>
-                                </td>
-                                 <td>
-                                    <div class="d-flex align-items-center justify-content-start" style="gap: 3px">
-                                        <input type="date" name="checkInDate" id="date-book-room" class="form-control date-book-room"  value="${formattedDates}" readonly>
+            <td>
+                <div class="d-flex align-items-center justify-content-start" style="gap: 3px">
+                    <input type="date" name="checkInDate" id="date-book-room" class="form-control date-book-room" value="${item.date}" readonly>
+                    <input type="time" name="checkInTime" id="time-book-room" class="form-control time-book-room" value="${timeBookRoom}">
+                </div>
+            </td>
 
-                                        <input type="time" name="checkInTime" id="time-book-room" class="form-control time-book-room"  value="${formattedTimes}" >
-                                    </div>
-                                </td>
-                                <td>
-                                    <div class="d-flex align-items-center justify-content-start" style="gap: 3px">
-                                        <input type="date" name="checkOutDate"  class="form-control date-book-room" readonly value="${item.date}">
-                                        <input type="time" name="checkOutTime" id="time-book-room" class="form-control time-book-room"  value="${item.room['room_type']['room_type_price']['setup_pricing']['check_out_time']}">
-                                    </div>
-                                </td>
-                                <td>
-                                     <p id="price" data-price="${item.room['room_type']['room_type_price']['unit_price']}">${formatCurrency(item.room['room_type']['room_type_price']['unit_price'])}</p>
-                                </td>
-                                <td>
-                                      <input type="text" class="form-control deposit number-input money-input dmeodemo"   name="deposit"  placeholder="0">
-                                </td>
-                                <td>
-                                      <input type="text" class="form-control discount number-input-discount money-input"  name="discount"  placeholder="0">
-                                </td>
-                                <td>
-                                    <input type="text" name="note_room" class="form-control note_room" value="" id="note">
-                                </td>
+            <td>
+                <div class="d-flex align-items-center justify-content-start" style="gap: 3px">
+                    <input type="date" name="checkOutDate" class="form-control date-book-room" readonly value="${date.toISOString().split('T')[0]}">
+                    <input type="time" name="checkOutTime" id="time-book-room" class="form-control time-book-room" value="${timeBookRoom}">
+                </div>
+            </td>
 
+            <td>
+                <p id="price" data-price="${item.room['applied_price']['unit_price']}">
+                    ${formatCurrency(item.room['applied_price']['unit_price'])}
+                </p>
+            </td>
 
-                            </tr>
-                        `;
-                    const tableSelector = targetId === 'list-booking-edit' ? '#list-booking-edit' : '#list-booking';
-                    let isDuplicate = $(`${tableSelector} tr`).filter(function () {
-                        return $(this).attr('data-room-id') == roomId && $(this).attr('data-room-type-id') == roomTypeId;
-                    }).length > 0;
+            <td>
+                <input type="text" class="form-control deposit number-input money-input dmeodemo" name="deposit" placeholder="0">
+            </td>
 
-                    if (!isDuplicate) {
-                        tbody.append(tr);
-                    }
-                })
+            <td>
+                <input type="text" class="form-control discount number-input-discount money-input" name="discount" placeholder="0">
+            </td>
+
+            <td>
+                <input type="text" name="note_room" class="form-control note_room" value="" id="note">
+            </td>
+        </tr>
+    `;
+
+                    tbody.append(tr);
+                });
+
 
                 totalPrice = calculateTotalPrice();
 
@@ -604,7 +597,7 @@ function validator(checkInDate, checkOutDate, dataRowValue) {
 }
 
 function getDatesBetween(checkInDate, checkInTime, checkOutDate, checkOutTime, room, roomType, adult, note,
-    deposit, discount, roomBookingId) {
+    deposit, discount, roomBookingId,priceRoom) {
 
     let dates = [];
     let currentDate = new Date(checkInDate);
@@ -638,7 +631,8 @@ function getDatesBetween(checkInDate, checkInTime, checkOutDate, checkOutTime, r
             note: note,
             deposit: deposit,
             discount: discount,
-            bookingId: roomBookingId
+            bookingId: roomBookingId,
+            priceRoom:priceRoom
         });
         break;
     }
@@ -852,6 +846,7 @@ $(document).on('click', '.booked_room_edit', function () {
                             var tr = `
                                     <tr data-room-id="${room.room_id}"
                                     data-room-booking-id="${room.id}"
+                                    data-price="${room.total_amount}"
                                     data-room-type-id="${room.room_type_id}"
                                     class="${room.status === 1 ? "check_in_status" : ""}">
                                         <td>
@@ -872,9 +867,9 @@ $(document).on('click', '.booked_room_edit', function () {
                                         </td>
                                         <td>
                                             <div class="d-flex align-items-center justify-content-start" style="gap: 10px">
-                                                <input type="date" name="checkInDate" id="date-book-room" class="form-control date-book-room"  value="${formattedDates}" readonly>
+                                                <input type="date" name="checkInDate" id="date-book-room" class="form-control date-book-room"  value="${checkinDate}" readonly>
 
-                                                <input type="time" name="checkInTime" id="time-book-room" class="form-control time-book-room"  value="${formattedTimes}" >
+                                                <input type="time" name="checkInTime" id="time-book-room" class="form-control time-book-room"  value="${checkinTime}" >
                                             </div>
                                         </td>
                                         <td>
@@ -1138,6 +1133,7 @@ $('.booking-form-edit').on('submit', function (e) {
         // if (status !== 0) {
         //     return;
         // }
+        var priceRoom = $(this).data('price');
         var roomBookingId = $(this).data('room-booking-id');
         var roomId = $(this).data('room-id');
         var roomTypeId = $(this).data('room-type-id');
@@ -1170,13 +1166,14 @@ $('.booking-form-edit').on('submit', function (e) {
             deposit: deposit,
             discount: discount,
             roomBookingId: roomBookingId,
+            priceRoom:priceRoom,
         });
     });
     if (hasError) {
         roomData.forEach(function (item) {
             const roomDates = getDatesBetween(item['checkInDate'], item['checkInTime'],
                 item['checkOutDate'], item['checkOutTime'], item['roomId'], item['roomTypeId'],
-                item['adult'], item['note'], item['deposit'], item['discount'], item['roomBookingId']);
+                item['adult'], item['note'], item['deposit'], item['discount'], item['roomBookingId'], item['priceRoom']);
 
             roomDates.forEach(function (date, index) {
                 formData.push({
@@ -1309,6 +1306,7 @@ function findRoomBookingId(id) {
                     item.rooms.forEach(function (room) {
                         let checkinDateTime = room.checkin_date;
 
+
                         let [dateIn, timeIn] = checkinDateTime.split(" ");
                         let checkoutDateTime = room.checkout_date;
 
@@ -1332,10 +1330,10 @@ function findRoomBookingId(id) {
                             datePart = dateOnly;
                             timePart = currentTime;
                         }
-                        console.log(room.note);
+
 
                         var tr = `
-                        <tr data-room-booking-id="${room.booking_id}" data-room-id="${room.room_code}"  data-room-type-id="${room.room_type}" data-date="${datePart}">
+                        <tr data-room-booking-id="${room.booking_id}"  data-room-id="${room.room_code}"  data-room-type-id="${room.room_type}" data-date="${datePart}">
                             <td>
                                 <input type="checkbox">
                             </td>
@@ -1803,6 +1801,7 @@ $('.booking-form').on('submit', function (e) {
     // Duyệt qua từng dòng trong bảng
     $('#list-booking tr').each(function () {
         var roomId = $(this).data('room-id');
+       var priceRoom = $(this).data('price');
         var roomBookingId = $(this).data('room-booking-id');
         var roomTypeId = $(this).data('room-type-id');
         var checkInDate = $(this).find('input[name="checkInDate"]').val();
@@ -1835,6 +1834,7 @@ $('.booking-form').on('submit', function (e) {
             deposit: deposit,
             discount: discount,
             roomBookingId: roomBookingId,
+            priceRoom: priceRoom,
         });
     });
 
@@ -1842,7 +1842,7 @@ $('.booking-form').on('submit', function (e) {
         roomData.forEach(function (item) {
             const roomDates = getDatesBetween(item['checkInDate'], item['checkInTime'],
                 item['checkOutDate'], item['checkOutTime'], item['roomId'], item['roomTypeId'],
-                item['adult'], item['note'], item['deposit'], item['discount'], item['roomBookingId']);
+                item['adult'], item['note'], item['deposit'], item['discount'], item['roomBookingId'], item['priceRoom']);
 
             roomDates.forEach(function (date, index) {
                 formData.push({

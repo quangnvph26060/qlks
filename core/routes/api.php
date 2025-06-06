@@ -1,8 +1,11 @@
 <?php
-
+  use App\Models\SetupPricing;
 use App\Http\Controllers\Api\UserController;
 use Illuminate\Support\Facades\Route;
 use App\Http\Controllers\Admin\ApipublicController;
+use App\Models\Room;
+use App\Models\RoomTypePrice;
+
 /*
 |--------------------------------------------------------------------------
 | API Routes
@@ -15,6 +18,8 @@ use App\Http\Controllers\Admin\ApipublicController;
 */
 
 Route::namespace('Api')->name('api.')->group(function () {
+
+     
 
 
 
@@ -120,3 +125,67 @@ Route::namespace('Api')->name('api.')->group(function () {
 Route::post('/user/store', [UserController::class, 'store']);
 Route::post('/user/delete', [UserController::class, 'deleteAdmin']);
 Route::post('/user/status', [UserController::class, 'statusAdmin']);
+
+Route::get('/demo', function () {
+    $today = "2025-06-07";
+    $carbonWeekday = \Illuminate\Support\Carbon::parse($today)->dayOfWeek;
+    $customWeekday = $carbonWeekday === 0 ? 8 : $carbonWeekday + 1;
+    $subdomain = 'quangdev';
+
+    // Lấy SetupPricing phù hợp
+    $setupPricings = SetupPricing::withoutTenant()
+        ->where('subdomain', $subdomain)
+        ->get()
+        ->filter(function ($config) use ($customWeekday, $today) {
+            $requirement = json_decode($config->price_requirement, true);
+            if (!is_array($requirement)) return false;
+
+            $normalized = collect($requirement)
+                ->flatMap(fn($item) => explode(',', $item))
+                ->map(fn($item) => trim($item))
+                ->filter()
+                ->unique()
+                ->values()
+                ->all();
+
+            return in_array($today, $normalized) || in_array((string) $customWeekday, $normalized);
+        })
+        ->values();
+
+    // Lấy danh sách setup_pricing_id theo ngày cụ thể (có $today)
+    $setupPricingIdsForToday = $setupPricings->filter(function ($config) use ($today) {
+        $requirement = json_decode($config->price_requirement, true);
+        return in_array($today, $requirement);
+    })->pluck('id')->all();
+
+    // Lấy tất cả RoomTypePrice theo setup_pricing_id hợp lệ
+    $roomTypePrices = RoomTypePrice::whereIn('setup_pricing_id', $setupPricings->pluck('id')->all())
+        ->get();
+
+    // Nhóm theo room_type_id
+    $grouped = $roomTypePrices->groupBy('room_type_id');
+
+    $filtered = $grouped->map(function ($prices, $roomTypeId) use ($setupPricingIdsForToday) {
+        // Tìm bản có setup_pricing_id thuộc ngày cụ thể trước
+        $priceForToday = $prices->first(fn($price) => in_array($price->setup_pricing_id, $setupPricingIdsForToday));
+
+        if ($priceForToday) {
+            return $priceForToday;
+        }
+
+        // Nếu không có bản ngày cụ thể thì lấy bản đầu tiên (theo setup_pricing_id khác)
+        return $prices->first();
+    })->values();
+
+    return response()->json([
+        'success' => true,
+        'message' => 'Danh sách loại phòng áp dụng cấu hình giá hôm nay (đã lọc 1 bản cho mỗi room_type_id)',
+        'data' => [
+            'today'          => $today,
+            'customWeekday'  => $customWeekday,
+            'setup_pricings' => $setupPricings,
+            'room_types'     => $filtered,
+        ]
+    ]);
+});
+

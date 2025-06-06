@@ -324,11 +324,7 @@ class BookRoomController extends Controller
                 // đặt cọc của từng phòng
                 $depositAmount = intval(str_replace('.', '', $room['deposit']));
                 $discountAmount = intval(str_replace('.', '', $room['discount']));
-                $roomPice = RoomTypePrice::where('room_type_id', $room['roomType'])
-                    ->whereDate('price_validity_period', '<=', $dateIn)
-                    ->orderByDesc('price_validity_period')
-                    ->limit(1)
-                    ->first();
+                $roomPice = $room['priceRoom'];
 
 
                 $check_in = $request->method == 'check_in' ? new CheckIn() : new RoomBooking();
@@ -424,7 +420,7 @@ class BookRoomController extends Controller
                 $check_in->email          = $customer['email'] ?? "";
                 $check_in->price_group    = 1; // đang fix cứng
                 $check_in->guest_count    = $room['adult'];
-                $check_in->total_amount   = $roomPice['unit_price']; // giá phòng hiện tại đang áp dụng
+                $check_in->total_amount   = $roomPice; // giá phòng hiện tại đang áp dụng
                 $check_in->deposit_amount = $depositAmount;
                 $check_in->discount       = $discountAmount;
                 $check_in->note           = $room['note'];
@@ -679,7 +675,7 @@ class BookRoomController extends Controller
                 $totalDiscount = 0;
                 $depositAmount  =    intval(str_replace('.', '', $room['deposit']));
                 $discountAmount =    intval(str_replace('.', '', $room['discount']));
-                $roomPice = RoomTypePrice::where('room_type_id', $room['roomType'])->orderByDesc('price_validity_period')->first();
+                $roomPice = $room['priceRoom'];
                 $room['dateIn'] = date('Y-m-d H:i:s', strtotime($room['dateIn']));
                 $room['dateOut'] = date('Y-m-d H:i:s', strtotime($room['dateOut']));
                   $admin_id =$request->name_staff ?? authAdmin()->id;
@@ -698,7 +694,7 @@ class BookRoomController extends Controller
                         $check_in->email          = $customer['email'] ?? '';
                         $check_in->price_group    = 1; // đang fix cứng
                         $check_in->guest_count    = $room['adult'];
-                        $check_in->total_amount   = $roomPice['unit_price']; // giá phòng hiện tại đang áp dụng
+                        $check_in->total_amount   = $roomPice; // giá phòng hiện tại đang áp dụng
                         $check_in->deposit_amount = $depositAmount;
                         $check_in->discount       = $discountAmount;
                         $check_in->note           = $room['note'];
@@ -738,7 +734,7 @@ class BookRoomController extends Controller
                     $check_in_new->email          = $customer['email'] ?? "";
                     $check_in_new->price_group    = 1; // đang fix cứng
                     $check_in_new->guest_count    = $room['adult'];
-                    $check_in_new->total_amount   = $roomPice['unit_price']; // giá phòng hiện tại đang áp dụng
+                    $check_in_new->total_amount   = $roomPice; // giá phòng hiện tại đang áp dụng
                     $check_in_new->deposit_amount = $depositAmount;
                     $check_in_new->discount       = $discountAmount;
                     $check_in_new->note           = $room['note'];
@@ -1049,7 +1045,7 @@ class BookRoomController extends Controller
                 // đặt cọc của từng phòng
                 $depositAmount  =    intval(str_replace('.', '', $room['deposit']));
                 $discountAmount =    intval(str_replace('.', '', $room['discount']));
-                $roomPice = RoomTypePrice::where('room_type_id', $room['roomType'])->orderByDesc('price_validity_period')->first();
+                $roomPice = $room['priceRoom'];
                 $room['dateIn'] = date('Y-m-d H:i:s', strtotime($room['dateIn']));
                 $room['dateOut'] = date('Y-m-d H:i:s', strtotime($room['dateOut']));
                 $is_room = Room::find($room['room']);
@@ -1068,7 +1064,7 @@ class BookRoomController extends Controller
                         $check_in->email          = $customer['email'] ?? '';
                         $check_in->price_group    = 1; // đang fix cứng
                         $check_in->guest_count    = $room['adult'];
-                        $check_in->total_amount   = $roomPice['unit_price']; // giá phòng hiện tại đang áp dụng
+                        $check_in->total_amount   = $roomPice; // giá phòng hiện tại đang áp dụng
                         $check_in->deposit_amount = $depositAmount;
                         $check_in->discount       = $discountAmount;
                         $check_in->note           = $room['note'];
@@ -1083,7 +1079,7 @@ class BookRoomController extends Controller
                      
                     }
                 } else {
-                    //123456
+                   
                     $start_date = Carbon::parse($room['dateIn']);
                     $end_date = Carbon::parse($room['dateOut']);
                     $checkRoom = RoomStatusHistory::where('room_id', $room['room'])
@@ -1125,7 +1121,7 @@ class BookRoomController extends Controller
                     $check_in_new->email          = $customer['email'] ?? "";
                     $check_in_new->price_group    = 1; // đang fix cứng
                     $check_in_new->guest_count    = $room['adult'];
-                    $check_in_new->total_amount   = $roomPice['unit_price']; // giá phòng hiện tại đang áp dụng
+                    $check_in_new->total_amount   = $roomPice; // giá phòng hiện tại đang áp dụng
                     $check_in_new->deposit_amount = $depositAmount;
                     $check_in_new->discount       = $discountAmount;
                     $check_in_new->note           = $room['note'];

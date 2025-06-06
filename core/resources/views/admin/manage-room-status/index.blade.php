@@ -320,7 +320,7 @@
                                             <td class="text-left"> ${item.room_number} </td>
                                             <td class="text-left"> ${formatDate(item.date)} </td>
                                             <td class="text-left ${rowClass}"> ${item.check_booked} </td>
-                                            <td class="text-right"> ${formatCurrency(item.room_type.room_type_price['unit_price'])} </td>
+                                            <td class="text-right"> ${formatCurrency(item.applied_price)} </td>
                                         </tr>
                                     `;
                             tbody.append(tr);

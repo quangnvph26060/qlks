@@ -339,7 +339,7 @@ function initGridMain(data, date) {
                                     : ''}">${isBooking?.customer_name ??
                                     isBooking?.customer_name ?? " "}</div>
                          <div class="time-info">
-                            ${formatCurrency(item.room_type?.room_type_price_for_date?.unit_price ?? 0)}
+                            ${formatCurrency(item.applied_price?.unit_price ?? 0)}
                         </div>
     
 
@@ -1803,7 +1803,7 @@ function initViewScriptGird() {
                                     <td style="${isFirst ? 'font-weight: bold;' : ''}"class="text-left"> ${item.room_number} </td>
                                     <td style="${isFirst ? 'font-weight: bold;' : ''}"class="text-left"> ${formatDatee(item.date)} </td>
                                     <td style="${isFirst ? 'font-weight: bold;' : ''}"class="text-left w-10  ${rowClass} "> ${item.check_booked} </td>
-                                    <td style="${isFirst ? 'font-weight: bold;' : ''}"class="text-right"> ${formatCurrency(item.room_type.room_type_price['unit_price'])} </td>
+                                    <td style="${isFirst ? 'font-weight: bold;' : ''}"class="text-right">${formatCurrency(item.applied_price)}</td>
                                     <td class="text-center">
                                         <input type="radio" name="change-room" ${item.status == 1 ? 'disabled' : ''}
                                             data-date="${item.date}"
@@ -1955,9 +1955,9 @@ function initViewScriptGird() {
                             </td>
                            <td>
                                 <p id="price" class="d-flex justify-content-center"
-                                data-price="${item.room?.room_type?.room_type_price_for_date?.unit_price ?? 0}">
-                                ${item.room?.room_type?.room_type_price_for_date?.unit_price != null 
-                                        ? formatCurrency(item.room.room_type.room_type_price_for_date.unit_price) 
+                                data-price="${item?.room.applied_price?.unit_price ?? 0}">
+                                ${item?.room.applied_price?.unit_price != null 
+                                        ? formatCurrency(item?.room.applied_price?.unit_price) 
                                         : 0}
                                 </p>
                             </td>

@@ -290,7 +290,7 @@ function changeRoom(Id, bookingId, roomId, dateId, name) {
                             <td style="${isFirst ? 'font-weight: bold;' : ''}"class="text-left"> ${item.room_number} </td>
                             <td style="${isFirst ? 'font-weight: bold;' : ''}"class="text-left"> ${formatDate(item.date)} </td>
                             <td style="${isFirst ? 'font-weight: bold;' : ''}"class="text-left w-10  ${rowClass} "> ${item.check_booked} </td>
-                            <td style="${isFirst ? 'font-weight: bold;' : ''}"class="text-right"> ${formatCurrency(item.room_type.room_type_price['unit_price'])} </td>
+                            <td style="${isFirst ? 'font-weight: bold;' : ''}"class="text-right"> ${formatCurrency(item.applied_price)} </td>
                             <td class="text-center">
                                 <input type="radio" name="change-room" ${item.status == 1 ? 'disabled' : ''}
                                     data-date="${item.date}"

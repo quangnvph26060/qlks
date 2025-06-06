@@ -454,8 +454,8 @@
                 var dataId = $(this).data('id');
                 var rowToDelete = $(`tr[data-id="${dataId}"]`);
                 Swal.fire({
-                    title: 'Xác nhận xóa cơ sở?',
-                    text: 'Bạn có chắc chắn muốn xóa cơ sở này không?',
+                    title: 'Xác nhận xóa  cài đặt tính giá?',
+                    text: 'Bạn có chắc chắn muốn xóa cài đặt tính giá này không?',
                     icon: 'warning',
                     showCancelButton: true,
                     confirmButtonText: 'Đồng ý',
@@ -470,6 +470,7 @@
                             success: function(data) {
                                 if (data.status === 'success') {
                                     rowToDelete.remove();
+                                    notify('success',data.message);
                                 }else if(data.status === 'error'){
                                     notify('error',data.message);
                                 }

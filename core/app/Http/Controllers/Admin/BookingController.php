@@ -11,6 +11,7 @@ use App\Models\RoomChange;
 use App\Models\RoomStatusHistory;
 use App\Models\RoomType;
 use App\Models\Room;
+use App\Models\SetupPricing;
 use App\Models\UsedPremiumService;
 use App\Models\User;
 use App\Models\UserdProductRoom;
@@ -38,11 +39,14 @@ use Illuminate\Support\Facades\DB;
 use Illuminate\Support\Facades\Log;
 use Symfony\Component\Console\Helper\Helper;
 use Symfony\Component\HttpKernel\Log\Logger;
+use App\Traits\HasTodayPrice;
 
 class BookingController extends Controller
 {
+    use HasTodayPrice;
     public function todaysBooked()
     {
+
         $pageTitle = request()->type == 'not_booked' ? 'Phòng có sẵn để đặt hôm nay' : 'Phòng đã đặt hôm nay';
 
         $rooms = BookedRoom::active()
@@ -377,10 +381,8 @@ class BookingController extends Controller
                 $dates = $this->getDates($request->dateId, $request->dateId);
             } else {
                 $dates = $this->getDates($request->checkInDate, $request->checkOutDate);
+                $pricesByDateAndRoomType = $this->getPricesBySetupPricingForMultipleDates($dates);
             }
-
-            $roomIds = is_array($request->roomIds) ? $request->roomIds : explode(',', $request->roomIds);
-
             $emptyRooms = Room::query()->active();
             if ($request->method === 'change_room') {
                 $emptyRooms = $emptyRooms->whereNotIn('id', (array) $request->roomId);
@@ -409,10 +411,15 @@ class BookingController extends Controller
                 });
             }
 
-            $emptyRooms = $emptyRooms->with(['roomType', 'roomType.roomTypePrice', 'roomCheckIn', 'roomBooking', 'roomBookingChange'])
+            $emptyRooms = $emptyRooms->with(['roomType', 'roomCheckIn', 'roomBooking', 'roomBookingChange'])
                 ->select(['id', 'room_type_id', 'room_number', 'room_fix'])
                 ->get();
 
+            // $emptyRooms->transform(function ($room) use ($pricesByRoomTypeId) {
+            //     $room->applied_price = $pricesByRoomTypeId[$room->room_type_id] ?? null;
+            //     return $room;
+            // });
+            // return response()->json(['data'=>$emptyRooms]);
             $newRecords = [];
             $allRoomStatusHistory = collect();
 
@@ -452,7 +459,7 @@ class BookingController extends Controller
             }
 
             $newRecords = [];
-
+            $appliedPrice = null;
             foreach ($emptyRooms as $room) {
                 foreach ($dates as $date) {
                     $status = 0;
@@ -491,15 +498,21 @@ class BookingController extends Controller
                         }
                     }
 
+
+                    if (isset($pricesByDateAndRoomType[$date][$room->room_type_id])) {
+                        $appliedPrice = $pricesByDateAndRoomType[$date][$room->room_type_id]->unit_price;
+                    }
+
                     $newRecords[] = [
-                        "room_type_id" => $room->room_type_id,
-                        "room_number"  => $room->room_number,
-                        "id"           => $room->id,
-                        "date"         => $date,
-                        'room_fix'     =>  $room->room_fix,
-                        "check_booked" => $check_booked,
-                        "status"       => $status,
-                        "room_type"    => $room->roomType
+                        "room_type_id"  => $room->room_type_id,
+                        "room_number"   => $room->room_number,
+                        "id"            => $room->id,
+                        "date"          => $date,
+                        "room_fix"      => $room->room_fix,
+                        "check_booked"  => $check_booked,
+                        "status"        => $status,
+                        "room_type"     => $room->roomType,
+                        "applied_price" => $appliedPrice,
                     ];
                 }
             }
@@ -832,24 +845,28 @@ class BookingController extends Controller
         $totalPrice = 0;
         if (isset($request->method)) {
             $room_type = RoomType::find($roomData['room_type']);
+            $pricesByRoomTypeId = $this->getPricesBySetupPricing($roomData['date']);
 
             $room = Room::active()->with(
                 [
                     'roomType',
-                    'roomType' => function ($query) use ($roomData) {
-                        $query->select('id', 'name', 'main_image', 'slug')
-                            ->with(['roomTypePriceForDate' => function ($q) use ($roomData) {
-                                $q->select('room_type_id', 'unit_price', 'overtime_price', 'extra_person_price')
-                                    ->whereDate('price_validity_period', '<=', $roomData['date'])
-                                    ->orderByDesc('price_validity_period')
-                                    ->limit(1); // Chỉ lấy giá có hiệu lực gần nhất theo ngày
-                            }]);
-                    },
+                    // 'roomType' => function ($query) use ($roomData) {
+                    //     $query->select('id', 'name', 'main_image', 'slug')
+                    //         ->with(['roomTypePriceForDate' => function ($q) use ($roomData) {
+                    //             $q->select('room_type_id', 'unit_price', 'overtime_price', 'extra_person_price')
+                    //                 ->whereDate('price_validity_period', '<=', $roomData['date'])
+                    //                 ->orderByDesc('price_validity_period')
+                    //                 ->limit(1); // Chỉ lấy giá có hiệu lực gần nhất theo ngày
+                    //         }]);
+                    // },
 
                     'roomType.roomTypePrice.setupPricing'
                 ]
             )
                 ->where('id', $roomData['room'])->first();
+            if ($room) {
+                $room->applied_price = $pricesByRoomTypeId[$room->room_type_id] ?? null;
+            }
 
             $roomBooking = RoomBooking::where('room_code', $roomData['room'])
                 ->whereDate('checkin_date', $roomData['date'])
@@ -899,10 +916,12 @@ class BookingController extends Controller
 
             foreach ($roomData as $data) {
                 $room_type = RoomType::find($data['room_type']);
-
+                $pricesByRoomTypeId = $this->getPricesBySetupPricing($data['date']);
                 $room = Room::active()->with('roomType', 'roomType.roomTypePrice', 'roomType.roomTypePrice.setupPricing')
                     ->where('id', $data['room'])->first();
-
+                if ($room) {
+                $room->applied_price = $pricesByRoomTypeId[$room->room_type_id] ?? null;
+            }
                 $roomBooking = RoomBooking::where('room_code', $data['room'])
                     ->whereDate('checkin_date', $data['date'])
                     ->whereNull('room_change')
@@ -966,8 +985,8 @@ class BookingController extends Controller
         $value       = data_get($request->data, 'searchValue');
         $room_type   = data_get($request->data, 'room_type');
         $room_clean  = data_get($request->data, 'room_clean');
-        // $room_status = data_get($request->data, 'room_status');
-        //Log::info($date);
+        $pricesByRoomTypeId = $this->getPricesBySetupPricing($date);
+
         $rooms = Room::query();
 
         $rooms->when(!empty($room_type), function ($query) use ($room_type) {
@@ -989,24 +1008,34 @@ class BookingController extends Controller
                 $query->where('customer_name', 'LIKE', "%$value%");
             });
         }
-        if ($method === 'booking' && !empty($value)) {
-            $rooms->whereHas('roomBookingHistory.checkInData', function ($query) use ($value) {
-                $query->where('id_room_booking', 'LIKE', "%$value%");
-            })->orWhereHas('roomBookingHistory.bookingData', function ($query) use ($value) {
-                $query->where('booking_id', 'LIKE', "%$value%");
+        // if ($method === 'booking' && !empty($value)) {
+        //     $rooms->whereHas('roomBookingHistory.checkInData', function ($query) use ($value) {
+        //         $query->where('id_room_booking', 'LIKE', "%$value%");
+        //     })->orWhereHas('roomBookingHistory.bookingData', function ($query) use ($value) {
+        //         $query->where('booking_id', 'LIKE', "%$value%");
+        //     });
+        // }
+        if ($method === 'customer' && !empty($value)) {
+            $rooms->where(function ($query) use ($value) {
+                $query->whereHas('roomBookingHistory.checkInData', function ($q) use ($value) {
+                    $q->where('customer_name', 'LIKE', "%$value%");
+                })->orWhereHas('roomBookingHistory.bookingData', function ($q) use ($value) {
+                    $q->where('customer_name', 'LIKE', "%$value%");
+                });
             });
         }
+
         $rooms->with([
             'roomType',
-            'roomType' => function ($query) use ($date) {
-                $query->select('id', 'name', 'main_image', 'slug')
-                    ->with(['roomTypePriceForDate' => function ($q) use ($date) {
-                        $q->select('room_type_id', 'unit_price', 'overtime_price', 'extra_person_price')
-                            ->whereDate('price_validity_period', '<=', $date)
-                            ->orderByDesc('price_validity_period')
-                            ->limit(1); // Chỉ lấy giá có hiệu lực gần nhất theo ngày
-                    }]);
-            },
+            // 'roomType' => function ($query) use ($date) {
+            //     $query->select('id', 'name', 'main_image', 'slug')
+            //         ->with(['roomTypePriceForDate' => function ($q) use ($date) {
+            //             $q->select('room_type_id', 'unit_price', 'overtime_price', 'extra_person_price')
+            //                 ->whereDate('price_validity_period', '<=', $date)
+            //                 ->orderByDesc('price_validity_period')
+            //                 ->limit(1); // Chỉ lấy giá có hiệu lực gần nhất theo ngày
+            //         }]);
+            // },
 
             'roomBookingHistory' => function ($query) use ($date) {
                 if (!empty($date)) {
@@ -1022,6 +1051,11 @@ class BookingController extends Controller
             'roomBookingHistory.bookingData',
         ]);
         $rooms = $rooms->get();
+
+        $rooms->transform(function ($room) use ($pricesByRoomTypeId) {
+            $room->applied_price = $pricesByRoomTypeId[$room->room_type_id] ?? null;
+            return $room;
+        });
 
         if (request('method') === 'list-room-booking') {
             $check_ins = Room::query();
@@ -1631,7 +1665,7 @@ class BookingController extends Controller
         try {
             $history->delete();
 
-           return response()->json(['status' => 'success', 'message' => 'Xoá thành công.']);
+            return response()->json(['status' => 'success', 'message' => 'Xoá thành công.']);
         } catch (\Exception $e) {
             return response()->json([
                 'success' => false,
