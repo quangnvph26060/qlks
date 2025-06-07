@@ -49,21 +49,22 @@
                                 </div>
                                 <div class="mb-3">
                                     <label for="pageLink" class="form-label required">Khu vực </label>
-                                    <select name="province" id="province" class="form-control">
+                                    <select id="province-select" name="province_code" class="form-select">
                                         <option value="">-- Chọn tỉnh/thành --</option>
                                         @foreach ($provinces as $province)
-                                            @php
-                                                $provinceName = $province['name'];
-                                            @endphp
-                                            <option value="{{ $provinceName }}"
-                                                {{ $configs?->province == $provinceName ? 'selected' : '' }}>
-                                                {{ $provinceName }}
+                                            <option value="{{ $province['code'] }}" data-name="{{ $province['name'] }}"
+                                                {{ $configs?->province_code == $province['code'] ? 'selected' : '' }}>
+                                                {{ $province['name'] }}
                                             </option>
                                         @endforeach
-
                                     </select>
+
+                                    <!-- Hidden input để lưu name -->
+                                    <input type="hidden" name="province" id="province-name"
+                                        value="{{ $configs?->province_name }}">
+
                                 </div>
-                              
+
                             </div>
                             <div class="col-md-6">
                                 <div class="mb-3">
@@ -82,18 +83,18 @@
                                         value="{{ $configs?->longitude ?? '' }}" readonly>
                                 </div>
                             </div>
-                              <div>
-                                    <label for="pageLink" class="form-label ">Giới thiệu </label>
-                                    <div class="card-body">
-                                        <textarea class="nicEdit" id="description" name="gioi_thieu" rows="13">@php echo @$configs->gioi_thieu ?? old('gioi_thieu') @endphp</textarea>
-                                    </div>
+                            <div>
+                                <label for="pageLink" class="form-label ">Giới thiệu </label>
+                                <div class="card-body">
+                                    <textarea class="nicEdit" id="description" name="gioi_thieu" rows="13">@php echo @$configs->gioi_thieu ?? old('gioi_thieu') @endphp</textarea>
                                 </div>
-                                 <div>
-                                    <label for="pageLink" class="form-label ">Chính sách  </label>
-                                    <div class="card-body">
-                                        <textarea class="nicEdit" id="description" name="chinh_sach" rows="13">@php echo @$configs->chinh_sach ?? old('chinh_sach') @endphp</textarea>
-                                    </div>
+                            </div>
+                            <div>
+                                <label for="pageLink" class="form-label ">Chính sách </label>
+                                <div class="card-body">
+                                    <textarea class="nicEdit" id="description" name="chinh_sach" rows="13">@php echo @$configs->chinh_sach ?? old('chinh_sach') @endphp</textarea>
                                 </div>
+                            </div>
                         </div>
 
                     </div>
@@ -175,11 +176,11 @@
                 </div>
 
                 <!-- Submit -->
-               <div class="row">
-                <div class=" mt-3">
-                    <button type="submit" class="btn btn-primary">Lưu</button>
+                <div class="row">
+                    <div class=" mt-3">
+                        <button type="submit" class="btn btn-primary">Lưu</button>
+                    </div>
                 </div>
-               </div>
             </form>
 
 
@@ -192,6 +193,14 @@
 @endpush
 @push('script')
     <script src="https://unpkg.com/leaflet/dist/leaflet.js"></script>
+    <script>
+    document.getElementById('province-select').addEventListener('change', function () {
+        const selectedOption = this.options[this.selectedIndex];
+        const provinceName = selectedOption.getAttribute('data-name');
+        document.getElementById('province-name').value = provinceName;
+    });
+</script>
+
     <script>
         const map = L.map('map').setView([21.0285, 105.8542], 13); // Hà Nội mặc định
 

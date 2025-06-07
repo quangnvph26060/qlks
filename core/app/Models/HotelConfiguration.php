@@ -23,7 +23,8 @@ class HotelConfiguration extends Model
         'province',
         'email',
         'chinh_sach',
-        'gioi_thieu'
+        'gioi_thieu',
+        'province_code'
     ];
     protected $hidden = [
         'created_at','updated_at'

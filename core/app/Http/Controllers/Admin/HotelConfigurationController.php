@@ -74,6 +74,7 @@ class HotelConfigurationController extends Controller
             $data['longitude'] = $request->longitude;
               $data['chinh_sach'] = $request->chinh_sach;
                 $data['gioi_thieu'] = $request->gioi_thieu;
+                $data['province_code'] = $request->province_code;
             // Kiểm tra đã có hotel_configuration chưa
             $existingHotel = HotelConfiguration::where('hotel_facility_id', $hotelActive->id)->first();
 

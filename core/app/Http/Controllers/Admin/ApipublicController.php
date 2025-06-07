@@ -7,6 +7,7 @@ use App\Models\HotelConfiguration;
 use App\Models\HotelFacility;
 use App\Models\OtaSetting;
 use App\Models\Room;
+use App\Traits\HasTodayPrice;
 use Carbon\Carbon;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Log;
@@ -14,6 +15,7 @@ use Illuminate\Support\Arr;
 
 class ApipublicController extends Controller
 {
+    use HasTodayPrice;
     protected  function Isubdomain()
     {
         $host = request()->getHost();
@@ -24,7 +26,7 @@ class ApipublicController extends Controller
     {
         $data = [];
         $hotelName = $request->input('hotel_name');
-        $address = $request->input('address');
+        $province_id = $request->input('province_id');
         $amenities = $request->input('amenities');
 
         $check_status = OtaSetting::whereHas('hotelFacility', function ($q) {
@@ -43,8 +45,8 @@ class ApipublicController extends Controller
                         $hotelConfigQuery->where('hotel_name', 'like', '%' . $hotelName . '%');
                     }
 
-                    if ($address) {
-                        $hotelConfigQuery->where('address', 'like', '%' . $address . '%');
+                    if ($province_id) {
+                        $hotelConfigQuery->where('province_code',   $province_id);
                     }
                     // Nếu có lọc theo tiện ích
                     if (!empty($amenities)) {
@@ -74,7 +76,7 @@ class ApipublicController extends Controller
                             $query->where('unit_code', $hotel->ma_coso);
                         }
                     ])
-                        ->select('hotel_name', 'slug', 'address', 'province', 'phone', 'external_link', 'logo', 'main_image', 'hotel_facility_id', 'longitude', 'latitude')->first();
+                        ->select('hotel_name', 'slug', 'address', 'province', 'phone', 'external_link', 'logo', 'main_image', 'hotel_facility_id', 'longitude', 'latitude', 'email', 'chinh_sach', 'gioi_thieu')->first();
                     if ($hotelConfig && $hotelConfig->hotelFacility) {
                         if ($hotelConfig->logo) {
                             $hotelConfig->logo = 'https://app.fasthotel.vn/storage' . '/' . ltrim($hotelConfig->logo, '/');
@@ -134,7 +136,7 @@ class ApipublicController extends Controller
                 $query->where('status', 1);
                 $query->select('icon', 'title', 'subdomain');
             },
-        ])->first();
+        ])->select('hotel_name', 'slug', 'address', 'province', 'phone', 'external_link', 'logo', 'main_image', 'hotel_facility_id', 'longitude', 'latitude', 'email', 'chinh_sach', 'gioi_thieu')->first();
         if (!$HotelConfiguration) {
             return response()->json([
                 'message' => 'Khách sạn không tồn tại',
@@ -148,6 +150,7 @@ class ApipublicController extends Controller
 
         $hotelFacility = HotelFacility::find($HotelConfiguration->hotel_facility_id);
         $otaSetting = OtaSetting::where('hotel_id', $HotelConfiguration->hotel_facility_id)->first();
+        $pricesByRoomTypeId = $this->getPricesBySetupPricingApi($date);
         $rooms = Room::withoutTenant()->where('subdomain', $hotelFacility->subdomain)->where('unit_code', $hotelFacility->ma_coso)->active();
         $rooms->select('id', 'room_number', 'room_type_id', 'main_image', 'is_clean', 'total_adult', 'total_child', 'beds', 'description');
 
@@ -196,15 +199,6 @@ class ApipublicController extends Controller
             'roomType' => function ($query) {
                 $query->select('id', 'name', 'main_image', 'slug');
             },
-            'roomType' => function ($query) use ($date) {
-                $query->select('id', 'name', 'main_image', 'slug')
-                    ->with(['roomTypePriceForDate' => function ($q) use ($date) {
-                        $q->select('room_type_id', 'unit_price', 'overtime_price', 'extra_person_price')
-                            ->whereDate('price_validity_period', '<=', $date)
-                            ->orderByDesc('price_validity_period')
-                            ->limit(1); // Chỉ lấy giá có hiệu lực gần nhất theo ngày
-                    }]);
-            },
             'roomBookingHistory' => function ($query) use ($date) {
                 if (!empty($date)) {
                     $query->whereDate('start_date', '<=', $date)
@@ -225,30 +219,36 @@ class ApipublicController extends Controller
             // 'roomBookingHistory.checkInData',
             // 'roomBookingHistory.bookingData',
         ]);
-
         $rooms = $rooms->get();
+        $rooms->transform(function ($room) use ($pricesByRoomTypeId) {
+            $room->applied_price = $pricesByRoomTypeId[$room->room_type_id] ?? null;
 
+            return $room;
+        });
 
         $domain = 'https://app.fasthotel.vn/storage'; // hoặc gán cứng ví dụ: $domain = 'https://yourdomain.com/';
 
         $formattedRooms = $rooms->map(function ($room) use ($domain) {
             // Đẩy giá và tên loại phòng ra ngoài
-           /// $unitPrice = optional($room->roomType->roomTypePriceForDate->first())->unit_price ?? null;
+            /// $unitPrice = optional($room->roomType->roomTypePriceForDate->first())->unit_price ?? null;
             $roomTypeName = optional($room->roomType)->name;
-            $unitPrice = optional($room->roomType->roomTypePriceForDate)->unit_price ?? null;
+            //  $unitPrice = optional($room->roomType->roomTypePriceForDate)->unit_price ?? null;
+            if (!empty($room->applied_price) && isset($room->applied_price['unit_price'])) {
+                $unitPrice = $room->applied_price['unit_price'];
+            }
             // Gán link đầy đủ cho ảnh phòng và ảnh loại phòng
             $room->main_image = $room->main_image ? $domain . '/' . ltrim($room->main_image, '/') : null;
             if (!empty($room->roomType->main_image)) {
                 $room->room_type_image = $domain . '/' . ltrim($room->roomType->main_image, '/');
             }
 
-         
+
             $room->is_clean = $room->is_clean ? 'Đã dọn' : 'Chưa dọn';
 
             // Bỏ trường không cần
             unset($room->room_type_id);
             unset($room->roomType); // bỏ object roomType
-
+            unset($room->applied_price);
             // Chuyển amenities & facilities chỉ còn title và icon
             if ($room->amenities) {
                 $room->amenities = $room->amenities->map(function ($a) {
@@ -314,6 +314,7 @@ class ApipublicController extends Controller
         $HotelConfiguration->hotelFacility->amenities->makeHidden(['subdomain']);
         $HotelConfiguration->hotelFacility->facilities->makeHidden(['subdomain']);
         unset($HotelConfiguration->icon);
+        unset($HotelConfiguration->hotel_facility_id);
         unset($HotelConfiguration->logo);
         return response()->json([
             'rooms' => $formattedRooms,

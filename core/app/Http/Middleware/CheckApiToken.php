@@ -15,12 +15,12 @@ class CheckApiToken
      */
     public function handle(Request $request, Closure $next): Response
     {
-        $token = $request->bearerToken();
-        $validToken =   env('KEY_PUBLIC');
+        // $token = $request->bearerToken();
+        // $validToken =   env('KEY_PUBLIC');
 
-        if ($token !== $validToken) {
-            return response()->json(['error' => 'Unauthorized'], 401);
-        }
+        // if ($token !== $validToken) {
+        //     return response()->json(['error' => 'Unauthorized'], 401);
+        // }
 
         return $next($request);
     }
