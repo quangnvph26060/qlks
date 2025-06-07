@@ -1493,7 +1493,7 @@ function initViewScriptGird() {
 
 
                                     var tr = `
-                                        <tr data-room-id="${room.room_id}" data-status="${room.status}"
+                                        <tr data-room-id="${room.room_id}" data-price="${room.total_amount}" data-status="${room.status}"
                                         data-room-booking-id="${room.id}"  data-room-type-id="${room.room_type_id}"  class="${room.status === 1 ? "check_in_status" : ""}">
                                             <td>
                                                 <input type="checkbox">
@@ -1920,7 +1920,7 @@ function initViewScriptGird() {
                                 timeBookRoom = item.checkin_datetime;
                             }
                             var tr = `
-                        <tr  data-status="0" data-room-id="${roomId}"  data-room-type-id="${roomTypeId}" data-date="${item.date}">
+                        <tr  data-status="0" data-room-id="${roomId}" data-price="${item?.room.applied_price?.unit_price}"  data-room-type-id="${roomTypeId}" data-date="${item.date}">
                             <td>
                                 <input type="checkbox">
                             </td>
@@ -2195,7 +2195,7 @@ $('.booking-form-edit').on('submit', function (e) {
             return;
         }
 
-
+        var priceRoom = $(this).data('price');
         var roomBookingId = $(this).data('room-booking-id');
         var roomId = $(this).data('room-id');
         var roomTypeId = $(this).data('room-type-id');
@@ -2229,6 +2229,7 @@ $('.booking-form-edit').on('submit', function (e) {
             deposit: deposit,
             discount: discount,
             roomBookingId: roomBookingId,
+            priceRoom: priceRoom
         });
     });
 
@@ -2236,7 +2237,7 @@ $('.booking-form-edit').on('submit', function (e) {
         roomData.forEach(function (item) {
             const roomDates = getDatesBetween(item['checkInDate'], item['checkInTime'],
                 item['checkOutDate'], item['checkOutTime'], item['roomId'], item['roomTypeId'],
-                item['adult'], item['note'], item['deposit'], item['discount'], item['roomBookingId']);
+                item['adult'], item['note'], item['deposit'], item['discount'], item['roomBookingId'], item['priceRoom']);
 
             roomDates.forEach(function (date, index) {
                 formData.push({
@@ -2336,7 +2337,7 @@ $('.btn-book-pttt').off('click').on('click', function (e) {
 
 });
 function getDatesBetween(checkInDate, checkInTime, checkOutDate, checkOutTime, room, roomType, adult, note,
-    deposit, discount, roomBookingId) {
+    deposit, discount, roomBookingId,priceRoom) {
 
     let dates = [];
     let currentDate = new Date(checkInDate);
@@ -2370,7 +2371,8 @@ function getDatesBetween(checkInDate, checkInTime, checkOutDate, checkOutTime, r
             note: note,
             deposit: deposit,
             discount: discount,
-            bookingId: roomBookingId
+            bookingId: roomBookingId,
+            priceRoom:priceRoom,
         });
         break;
     }
@@ -2732,6 +2734,7 @@ $('.booking-form-pttt').on('submit', function (e) {
             selectedBookingIds.push(bookingId);
             // $(this).remove();
         }
+        var priceRoom = $(this).data('price');
         var roomBookingId = $(this).data('room-booking-id');
         var roomId = $(this).data('room-id');
         var roomTypeId = $(this).data('room-type-id');
@@ -2756,6 +2759,7 @@ $('.booking-form-pttt').on('submit', function (e) {
             deposit: deposit,
             discount: discount,
             roomBookingId: roomBookingId,
+            priceRoom:priceRoom,
         });
 
 
@@ -2776,7 +2780,7 @@ $('.booking-form-pttt').on('submit', function (e) {
     filteredRoomData.forEach(function (item) {
         const roomDates = getDatesBetween(item['checkInDate'], item['checkInTime'],
             item['checkOutDate'], item['checkOutTime'], item['roomId'], item['roomTypeId'],
-            item['adult'], item['note'], item['deposit'], item['discount'], item['roomBookingId']);
+            item['adult'], item['note'], item['deposit'], item['discount'], item['roomBookingId'],item['priceRoom']);
 
         roomDates.forEach(function (date, index) {
             formData.push({

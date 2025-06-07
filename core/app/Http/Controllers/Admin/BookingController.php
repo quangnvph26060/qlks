@@ -698,7 +698,11 @@ class BookingController extends Controller
             // if ($roomBooking->room_change) {
             //     return ApiResponse::error('Phòng đã đổi một lần rồi', 200);
             // }
-            $isRoom = Room::where('id', $request->room_id_new)->with('roomType', 'roomType.roomTypePrice')->first();
+            $pricesByRoomTypeId = $this->getPricesBySetupPricing($request->date_new);
+            $isRoom = Room::where('id', $request->room_id_new)->with('roomType')->first();
+            if ($isRoom) {
+                $isRoom->applied_price = $pricesByRoomTypeId[$isRoom->room_type_id] ?? null;
+            }
 
             if (!$isRoom) {
                 return ApiResponse::error('Không tìm thấy phòng', 200);
@@ -747,7 +751,7 @@ class BookingController extends Controller
             $roomChange->email              = $roomBooking->email;
             $roomChange->price_group        = $roomBooking->price_group;
             $roomChange->guest_count        = $roomBooking->guest_count;
-            $roomChange->total_amount       = $isRoom['roomType']['roomTypePrice']['unit_price']; // giá tiền của phòng mới
+            $roomChange->total_amount       = $isRoom['applied_price']['unit_price']; // giá tiền của phòng mới
             $roomChange->deposit_amount     = $roomBooking->deposit_amount;
             $roomChange->discount           = $roomBooking->discount;
             $roomChange->note               = "Đổi phòng từ " . ($isRoomOld->room_number ?? optional($roomBooking->room)->room_number) . " sang {$isRoom->room_number}";
@@ -768,7 +772,7 @@ class BookingController extends Controller
                     ->where('room_code', $roomBooking->room_change ?? $roomBooking->room_code)
                     ->update([
                         'room_code' => $isRoom->id,
-                        'room_price' => $isRoom['roomType']['roomTypePrice']['unit_price'],
+                        'room_price' => $isRoom['applied_price']['unit_price'],
                     ]);
                 if ($roomBooking->room_change) {
                     Log::info('Đã đổi rồi');
@@ -920,8 +924,8 @@ class BookingController extends Controller
                 $room = Room::active()->with('roomType', 'roomType.roomTypePrice', 'roomType.roomTypePrice.setupPricing')
                     ->where('id', $data['room'])->first();
                 if ($room) {
-                $room->applied_price = $pricesByRoomTypeId[$room->room_type_id] ?? null;
-            }
+                    $room->applied_price = $pricesByRoomTypeId[$room->room_type_id] ?? null;
+                }
                 $roomBooking = RoomBooking::where('room_code', $data['room'])
                     ->whereDate('checkin_date', $data['date'])
                     ->whereNull('room_change')

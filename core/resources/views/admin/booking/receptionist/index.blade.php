@@ -873,7 +873,7 @@
 
         function getDatesBetween(checkInDate, checkInTime, checkOutDate, checkOutTime, room, roomType, adult,
             note,
-            deposit, discount, roomBookingId) {
+            deposit, discount, roomBookingId,priceRoom) {
 
             let dates = [];
             let currentDate = new Date(checkInDate);
@@ -907,7 +907,8 @@
                     note: note,
                     deposit: deposit,
                     discount: discount,
-                    bookingId: roomBookingId
+                    bookingId: roomBookingId,
+                    priceRoom:priceRoom
                 });
 
                 break;
@@ -1035,6 +1036,7 @@
             // Duyệt qua từng dòng trong bảng
             $('#list-booking tr').each(function() {
                 var roomId = $(this).data('room-id');
+                 var priceRoom = $(this).data('price');
                 var roomTypeId = $(this).data('room-type-id');
                 var checkInDate = $(this).find('input[name="checkInDate"]').val();
                 var checkInTime = $(this).find('input[name="checkInTime"]').val();
@@ -1066,6 +1068,7 @@
                     note: note,
                     deposit: deposit,
                     discount: discount,
+                    priceRoom:priceRoom,
                 });
 
             });
@@ -1075,7 +1078,7 @@
                     const roomDates = getDatesBetween(item['checkInDate'], item['checkInTime'],
                         item['checkOutDate'], item['checkOutTime'], item['roomId'], item[
                             'roomTypeId'],
-                        item['adult'], item['note'], item['deposit'], item['discount'], "");
+                        item['adult'], item['note'], item['deposit'], item['discount'], "",item['priceRoom']);
 
                     roomDates.forEach(function(date, index) {
                         formData.push({
