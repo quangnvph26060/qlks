@@ -20,7 +20,10 @@ class HotelConfiguration extends Model
         'icon',
         'latitude',
         'longitude',
-        'province'
+        'province',
+        'email',
+        'chinh_sach',
+        'gioi_thieu'
     ];
     protected $hidden = [
         'created_at','updated_at'

@@ -17,7 +17,8 @@ class StaffController extends Controller {
         $allStaff = Admin::where('id', '!=', auth('admin')->user()->id)->with('role')
         ->where('unit_code',unitCode())
         ->where('subdomain',subdomain())->paginate(getPaginate());
-        $roles = Role::all();
+        $roles = Role::where('unit_code',unitCode())
+        ->where('subdomain',subdomain())->get();
         return view('admin.staff.index', compact('pageTitle', 'allStaff', 'roles'));
     }
 

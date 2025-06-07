@@ -5,7 +5,7 @@
     @endphp    
     <!-- page-wrapper start -->
     <div class="page-wrapper default-version">
-        <div class="container-fluid px-3 px-sm-0 main_content">
+        <div class="container-fluid px-3 px-sm-0 main_content" style="margin-bottom: 50px">
             <div class="menu-header" style="margin-left: 250px">
                 <div class="bg-white menu-item-container" id="menu-item-container" style="border-radius: 2px">
 

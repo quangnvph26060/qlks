@@ -23,103 +23,131 @@
 
                     <!-- Tab 1: Thông tin cơ bản -->
                     <div class="tab-pane fade show active" id="basicTab" role="tabpanel">
-                        <div class="mb-3">
-                            <label for="hotelName" class="form-label required">Tên khách sạn</label>
-                            <input type="text" class="form-control" id="hotelName"
-                                value="{{ $configs?->hotel_name ?? '' }}" name="hotel_name" required>
-                        </div>
-                        <div class="mb-3">
-                            <label for="phone" class="form-label required">Số điện thoại</label>
-                            <input type="text" class="form-control" id="phone" value="{{ $configs?->phone ?? '' }}"
-                                name="phone" placeholder="Ví dụ: 0123 456 789" required>
-                        </div>
+                        <div class="row">
+                            <div class="col-md-6 ">
+                                <div class="mb-3">
+                                    <label for="hotelName" class="form-label required">Tên khách sạn</label>
+                                    <input type="text" class="form-control" id="hotelName"
+                                        value="{{ $configs?->hotel_name ?? '' }}" name="hotel_name" required>
+                                </div>
+                                <div class="mb-3">
+                                    <label for="phone" class="form-label required">Số điện thoại</label>
+                                    <input type="text" class="form-control" id="phone"
+                                        value="{{ $configs?->phone ?? '' }}" name="phone"
+                                        placeholder="Ví dụ: 0123 456 789" required>
+                                </div>
+                                <div class="mb-3">
+                                    <label for="phone" class="form-label required">Email</label>
+                                    <input type="text" class="form-control" id="email"
+                                        value="{{ $configs?->email ?? '' }}" name="email" placeholder="Email" required>
+                                </div>
+                                <div class="mb-3">
+                                    <label for="pageLink" class="form-label">Link fanpage hoặc YouTube</label>
+                                    <input type="url" class="form-control" id="pageLink"
+                                        value="{{ $configs?->external_link ?? '' }}" name="external_link"
+                                        placeholder="https://...">
+                                </div>
+                                <div class="mb-3">
+                                    <label for="pageLink" class="form-label required">Khu vực </label>
+                                    <select name="province" id="province" class="form-control">
+                                        <option value="">-- Chọn tỉnh/thành --</option>
+                                        @foreach ($provinces as $province)
+                                            @php
+                                                $provinceName = $province['name'];
+                                            @endphp
+                                            <option value="{{ $provinceName }}"
+                                                {{ $configs?->province == $provinceName ? 'selected' : '' }}>
+                                                {{ $provinceName }}
+                                            </option>
+                                        @endforeach
 
-                        <div class="mb-3">
-                            <label for="pageLink" class="form-label">Link fanpage hoặc YouTube</label>
-                            <input type="url" class="form-control" id="pageLink"
-                                value="{{ $configs?->external_link ?? '' }}" name="external_link" placeholder="https://...">
-                        </div>
-                        <div class="mb-3">
-                            <label for="pageLink" class="form-label required">Khu vực </label>
-                            <select name="province" id="province" class="form-control">
-                                <option value="">-- Chọn tỉnh/thành --</option>
-                                @foreach ($provinces as $province)
-                                    @php
-                                        $provinceName = $province['name'];
-                                    @endphp
-                                    <option value="{{ $provinceName }}"
-                                        {{ $configs?->province == $provinceName ? 'selected' : '' }}>
-                                        {{ $provinceName }}
-                                    </option>
-                                @endforeach
-
-                            </select>
-
-
-                        </div>
-                        <div class="mb-3">
-                            <label for="address" class="form-label required">Địa chỉ cụ thể</label>
-                            <div class="d-flex  gap-2">
-                                <input type="text" class="form-control" id="address"
-                                    value="{{ $configs?->address ?? '' }}" name="address" required> <button type="button"
-                                    class="btn btn-primary" style="width: 95px;" onclick="searchAddress()">Tìm</button>
+                                    </select>
+                                </div>
+                              
                             </div>
-                            <div id="map"></div>
-                            <input type="hidden" id="lat" name="latitude" value="{{ $configs?->latitude ?? '' }}"
-                                readonly>
-                            <input type="hidden" id="lng" name="longitude" value="{{ $configs?->longitude ?? '' }}"
-                                readonly>
+                            <div class="col-md-6">
+                                <div class="mb-3">
+                                    <label for="address" class="form-label required">Địa chỉ maps</label><span
+                                        style="font-size: 10px">( Nhập địa chỉ sau dó bấm tìm )</span>
+                                    <div class="d-flex  gap-2">
+                                        <input type="text" class="form-control" id="address"
+                                            value="{{ $configs?->address ?? '' }}" name="address" required> <button
+                                            type="button" class="btn btn-primary" style="width: 95px;"
+                                            onclick="searchAddress()">Tìm</button>
+                                    </div>
+                                    <div id="map"></div>
+                                    <input type="hidden" id="lat" name="latitude"
+                                        value="{{ $configs?->latitude ?? '' }}" readonly>
+                                    <input type="hidden" id="lng" name="longitude"
+                                        value="{{ $configs?->longitude ?? '' }}" readonly>
+                                </div>
+                            </div>
+                              <div>
+                                    <label for="pageLink" class="form-label ">Giới thiệu </label>
+                                    <div class="card-body">
+                                        <textarea class="nicEdit" id="description" name="gioi_thieu" rows="13">@php echo @$configs->gioi_thieu ?? old('gioi_thieu') @endphp</textarea>
+                                    </div>
+                                </div>
+                                 <div>
+                                    <label for="pageLink" class="form-label ">Chính sách  </label>
+                                    <div class="card-body">
+                                        <textarea class="nicEdit" id="description" name="chinh_sach" rows="13">@php echo @$configs->chinh_sach ?? old('chinh_sach') @endphp</textarea>
+                                    </div>
+                                </div>
                         </div>
-                    </div>
 
+                    </div>
                     <!-- Tab 2: Hình ảnh -->
                     <div class="tab-pane fade" id="imagesTab" role="tabpanel">
-                        <!-- Icon khách sạn -->
-                        <div class="mb-3">
-                            <label for="icon" class="form-label required">Icon khách sạn</label>
-                            <input class="form-control" type="file" id="icon" name="icon" accept="image/*" />
-                            <div id="iconPreview" class="mt-2">
-                                @if (!empty(optional($configs)->icon))
-                                    <div class="preview-img">
-                                        <img src="{{ asset('storage/' . $configs->icon) }}" alt="Icon khách sạn"
-                                            style="max-width: 100px; max-height: 100px;">
-                                        <button type="button" class="btn-remove">&times;</button>
-                                    </div>
-                                @endif
+                        <div class="row">
+                            <!-- Icon khách sạn -->
+                            <div class=" col-md-4 mb-3">
+                                <label for="icon" class="form-label required">Icon khách sạn</label>
+                                <input class="form-control" type="file" id="icon" name="icon"
+                                    accept="image/*" />
+                                <div id="iconPreview" class="mt-2">
+                                    @if (!empty(optional($configs)->icon))
+                                        <div class="preview-img">
+                                            <img src="{{ asset('storage/' . $configs->icon) }}" alt="Icon khách sạn"
+                                                style="max-width: 100px; max-height: 100px;">
+                                            <button type="button" class="btn-remove">&times;</button>
+                                        </div>
+                                    @endif
 
+                                </div>
                             </div>
-                        </div>
 
 
-                        <!-- Logo -->
-                        <div class="mb-3">
-                            <label for="logo" class="form-label required">Logo khách sạn</label>
-                            <input class="form-control" type="file" id="logo" name="logo"
-                                accept="image/*" />
-                            <div id="logoPreview" class="mt-2">
-                                @if (!empty(optional($configs)->logo))
-                                    <div class="preview-img">
-                                        <img src="{{ asset('storage/' . $configs->logo) }}" alt="Logo khách sạn"
-                                            style="max-width: 100px; max-height: 100px;">
-                                        <button type="button" class="btn-remove">&times;</button>
-                                    </div>
-                                @endif
+                            <!-- Logo -->
+                            <div class="  col-md-4 mb-3">
+                                <label for="logo" class="form-label required">Logo khách sạn</label>
+                                <input class="form-control" type="file" id="logo" name="logo"
+                                    accept="image/*" />
+                                <div id="logoPreview" class="mt-2">
+                                    @if (!empty(optional($configs)->logo))
+                                        <div class="preview-img">
+                                            <img src="{{ asset('storage/' . $configs->logo) }}" alt="Logo khách sạn"
+                                                style="max-width: 100px; max-height: 100px;">
+                                            <button type="button" class="btn-remove">&times;</button>
+                                        </div>
+                                    @endif
+                                </div>
                             </div>
-                        </div>
 
-                        <!-- Ảnh chính -->
-                        <div class="mb-3">
-                            <label for="mainImage" class="form-label required">Ảnh chính</label>
-                            <input class="form-control" type="file" id="mainImage" name="main_image"
-                                accept="image/*" />
-                            <div id="mainImagePreview" class="mt-2">
-                                @if (!empty(optional($configs)->main_image))
-                                    <div class="preview-img">
-                                        <img src="{{ asset('storage/' . $configs->main_image) }}" alt="Ảnh chính"
-                                            style="max-width: 100px; max-height: 100px;">
-                                        <button type="button" class="btn-remove">&times;</button>
-                                    </div>
-                                @endif
+                            <!-- Ảnh chính -->
+                            <div class=" col-md-4 mb-3">
+                                <label for="mainImage" class="form-label required">Ảnh chính</label>
+                                <input class="form-control" type="file" id="mainImage" name="main_image"
+                                    accept="image/*" />
+                                <div id="mainImagePreview" class="mt-2">
+                                    @if (!empty(optional($configs)->main_image))
+                                        <div class="preview-img">
+                                            <img src="{{ asset('storage/' . $configs->main_image) }}" alt="Ảnh chính"
+                                                style="max-width: 100px; max-height: 100px;">
+                                            <button type="button" class="btn-remove">&times;</button>
+                                        </div>
+                                    @endif
+                                </div>
                             </div>
                         </div>
 
@@ -144,16 +172,14 @@
                         </div>
 
                     </div>
-
-
-
-
                 </div>
 
                 <!-- Submit -->
-                <div class="text-end mt-3">
+               <div class="row">
+                <div class=" mt-3">
                     <button type="submit" class="btn btn-primary">Lưu</button>
                 </div>
+               </div>
             </form>
 
 

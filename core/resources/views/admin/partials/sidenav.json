@@ -255,14 +255,7 @@
                 "route_name": "admin.ota.index",
                 "menu_active": "admin.ota.index"
             },
-            {
-                "keyword": [
-                    "Cài đặt gia hạn"
-                ],
-                "title": "Cài đặt gia hạn",
-                "route_name": "admin.roles.add",
-                "menu_active": "admin.roles.add"
-            },
+           
             {
                 "keyword": [
                     "Cài đặt tiện nghi"
