@@ -18,57 +18,58 @@
 @endphp
 @section('panel')
     <div class="row gy-4">
-        <div class="col-xxl-3 col-sm-6">
+        {{-- <div class="col-xxl-3 col-sm-6">
             <x-widget color="danger" icon="la la-sign-out transform-rotate-180" link="admin.delayed.booking.checkout"
                 style="2" cover_cursor="1" overlay_icon="0" title="Khách trả phòng muộn"
                 value="{{ $widget['delayed_checkout'] }}" />
-        </div>
-
-        <div class="col-xxl-3 col-sm-6">
-            <x-widget color="warning" icon="la la-sign-in" link="admin.pending.booking.checkin" style="2"
-                cover_cursor="1" overlay_icon="0" title="Khách nhận phòng muộn" value="{{ $widget['pending_checkin'] }}" />
-        </div>
-
-        <div class="col-xxl-3 col-sm-6">
-            <x-widget color="info" icon="la la-sign-in" link="admin.upcoming.booking.checkin" style="2"
-                cover_cursor="1" overlay_icon="0" title="Đăng ký sắp tới" value="{{ $widget['upcoming_checkin'] }}" />
-        </div>
-
-        <div class="col-xxl-3 col-sm-6">
-            <x-widget color="info" icon="la la-sign-out transform-rotate-180" link="admin.upcoming.booking.checkout"
-                style="2" cover_cursor="1" overlay_icon="0" title="Thanh toán sắp tới"
-                value="{{ $widget['upcoming_checkout'] }}" />
-        </div>
-
-        <div class="col-xxl-3 col-sm-6">
-            <x-widget color="dark" date="1" dateNow="{{ $availableRoom }}" inputName="available_room"
-                icon="la la-check-circle" icon_style="false" link="admin.book.room" style="2" cover_cursor="1"
-                overlay_icon="0" title="Phòng đã đặt hôm nay" value="{{ $widget['today_booked'] }}" />
-        </div>
-
+        </div> --}}
         <div class="col-xxl-3 col-sm-6">
             <x-widget color="info" date="1" dateNow="{{ $bookedRoom }}" inputName="booked_room"
                 icon="la la-hospital-alt" icon_style="false" link="admin.book.room" query_string="type=not_booked"
                 style="2" cover_cursor="1" overlay_icon="0" title="Phòng trống hôm nay"
                 value="{{ $widget['today_available'] }}" />
         </div>
+        <div class="col-xxl-3 col-sm-6">
+            <x-widget color="dark" date="1" dateNow="{{ $availableRoom }}" inputName="available_room"
+                icon="la la-check-circle" icon_style="false" link="admin.book.room" style="2" cover_cursor="1"
+                overlay_icon="0" title="Phòng đã đặt hôm nay" value="{{ $widget['today_booked'] }}" />
+        </div>
+
 
         <div class="col-xxl-3 col-sm-6">
-            <x-widget color="success" icon="la la-clipboard-check" icon_style="false" link="admin.booking.active"
-                style="2" cover_cursor="1" overlay_icon="0" title="Đặt chỗ đang hoạt động"
-                value="{{ $widget['active'] }}" />
+            <x-widget color="info" icon="la la-sign-out transform-rotate-180" link="admin.upcoming.booking.checkout"
+                style="2" cover_cursor="1" overlay_icon="0" title="Phòng đang hoạt động"
+                value="{{ $widget['room_checkIn'] }}" />
+        </div>
+        <div class="col-xxl-3 col-sm-6">
+            <x-widget color="warning" icon="la la-sign-in" link="admin.book.room" style="2" cover_cursor="1"
+                overlay_icon="0" title="Khách nhận phòng muộn" value="{{ $widget['pending_checkin'] }}" />
+        </div>
+        {{-- 
+        <div class="col-xxl-3 col-sm-6">
+            <x-widget color="info" icon="la la-sign-in" link="admin.upcoming.booking.checkin" style="2"
+                cover_cursor="1" overlay_icon="0" title="Đăng ký sắp tới" value="{{ $widget['upcoming_checkin'] }}" />
+        </div> --}}
+
+
+
+
+
+        <div class="col-xxl-3 col-sm-6">
+            <x-widget color="success" icon="la la-clipboard-check" icon_style="false" link="admin.book.room" style="2"
+                cover_cursor="1" overlay_icon="0" title="Phòng chưa dọn dẹp" value="{{ $widget['is_clean'] }}" />
         </div>
 
         <div class="col-xxl-3 col-sm-6">
-            <x-widget color="primary" icon="la la-city" icon_style="false" link="admin.booking.all" style="2"
-                cover_cursor="1" overlay_icon="0" title="Tổng số đặt phòng" value="{{ $widget['total'] }}" />
+            <x-widget color="primary" icon="la la-city" icon_style="false" link="admin.book.room" style="2"
+                cover_cursor="1" overlay_icon="0" title="Phòng sửa chữa" value="{{ $widget['room_fix'] }}" />
         </div>
     </div>
 
     <div class="row mb-none-30 mt-30">
         <div class="col-xl-12 mb-30">
             <div class="card">
-                <h3 style="padding: 20px 20px 0;">TOP 5 CÔNG SUẤT CAO</h3>
+                <h3 style="padding: 20px 20px 0;">Số lượng phòng</h3>
 
                 <div class="tabs"
                     style="display: flex; gap: 20px; padding: 0 20px; margin-top: 10px; border-bottom: 2px solid #eaeaea;">
@@ -77,7 +78,7 @@
                         hạng phòng</a>
                 </div>
 
-                <div class="filters" style="padding: 10px 20px;">
+                {{-- <div class="filters" style="padding: 10px 20px;">
                     <label for="timeFilter">Thời gian:</label>
                     <select id="timeFilter"
                         style="padding: 6px 12px; border: 1px solid #ccc; border-radius: 4px; font-size: 14px;">
@@ -87,7 +88,7 @@
                         <option value="thisMonth" selected>Tháng này</option>
                         <option value="lastMonth">Tháng trước</option>
                     </select>
-                </div>
+                </div> --}}
 
                 <div style="padding: 0 20px 20px;">
                     <canvas id="occupancyChart" width="100%" height="300"></canvas>
@@ -124,22 +125,7 @@
             </div>
         </div>
 
-        {{-- <div class="col-xl-6 mb-30">
-            <div class="card">
-                <div class="card-body">
-                    <div class="d-flex flex-wrap justify-content-between">
-                        <h5 class="card-title">@lang('Báo cáo thanh toán')</h5>
-
-                        <div id="paymentDatePicker" class="border p-1 cursor-pointer rounded">
-                            <i class="la la-calendar"></i>&nbsp;
-                            <span></span> <i class="la la-caret-down"></i>
-                        </div>
-                    </div>
-
-                    <div id="paymentReportArea"></div>
-                </div>
-            </div>
-        </div> --}}
+      
     </div>
     {{-- 
     <div class="row mb-none-30 mt-30">
@@ -203,19 +189,17 @@
 @push('script')
     <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
     <script>
+         const dataRoomType = @json($roomTypeLabels);
+    const dataPercent = @json($roomTypePercents);
         const ctx = document.getElementById('occupancyChart').getContext('2d');
+      
         const occupancyChart = new Chart(ctx, {
             type: 'bar',
             data: {
-                labels: [
-                    'Phòng 01 giường đôi và 1 giường đơn',
-                    'Phòng 02 giường đơn',
-                    'Phòng 01 giường đơn',
-                    'Phòng 01 giường đôi cho 2 người'
-                ],
+                labels: dataRoomType,
                 datasets: [{
                     label: 'Chi nhánh trung tâm',
-                    data: [72, 33, 5, 2],
+                    data: dataPercent,
                     backgroundColor: '#007bff'
                 }]
             },
@@ -244,10 +228,10 @@
             }
         });
 
-        document.getElementById('timeFilter').addEventListener('change', function() {
-            alert('Bạn chọn: ' + this.options[this.selectedIndex].text);
-            // TODO: Gọi AJAX để cập nhật dữ liệu nếu cần
-        });
+        // document.getElementById('timeFilter').addEventListener('change', function() {
+        //     alert('Bạn chọn: ' + this.options[this.selectedIndex].text);
+        //     // TODO: Gọi AJAX để cập nhật dữ liệu nếu cần
+        // });
 
         const labels = ['01', '02', '03', '04', '05', '06', '07', '08', '09', '10', '11', '12'];
         const dataValues = [

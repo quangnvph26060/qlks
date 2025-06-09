@@ -194,15 +194,18 @@
 @push('script')
     <script src="https://unpkg.com/leaflet/dist/leaflet.js"></script>
     <script>
-    document.getElementById('province-select').addEventListener('change', function () {
-        const selectedOption = this.options[this.selectedIndex];
-        const provinceName = selectedOption.getAttribute('data-name');
-        document.getElementById('province-name').value = provinceName;
-    });
-</script>
+        document.getElementById('province-select').addEventListener('change', function() {
+            const selectedOption = this.options[this.selectedIndex];
+            const provinceName = selectedOption.getAttribute('data-name');
+            document.getElementById('province-name').value = provinceName;
+        });
+    </script>
 
     <script>
-        const map = L.map('map').setView([21.0285, 105.8542], 13); // Hà Nội mặc định
+        var longitude = "{{ $configs?->longitude ?? 105.8542 }}";
+        var latitude = "{{ $configs?->latitude ?? 21.0285 }}";
+
+        const map = L.map('map').setView([parseFloat(latitude), parseFloat(longitude)], 13);
 
         L.tileLayer('https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png', {
             attribution: '&copy; OpenStreetMap contributors'
@@ -210,7 +213,22 @@
 
         let marker;
 
-        // Xử lý khi click vào bản đồ
+        // ✅ Cắm marker mặc định ngay khi load trang
+        updateMarker(parseFloat(latitude), parseFloat(longitude));
+
+        // Hàm cập nhật marker và form
+        function updateMarker(lat, lng) {
+            if (marker) {
+                marker.setLatLng([lat, lng]);
+            } else {
+                marker = L.marker([lat, lng]).addTo(map);
+            }
+
+            document.getElementById('lat').value = lat;
+            document.getElementById('lng').value = lng;
+        }
+
+        // Lắng nghe sự kiện click trên bản đồ
         map.on('click', function(e) {
             const {
                 lat,
@@ -218,6 +236,7 @@
             } = e.latlng;
             updateMarker(lat, lng);
         });
+
 
         // Hàm tìm địa chỉ
         function searchAddress() {
@@ -247,17 +266,7 @@
                 });
         }
 
-        // Cập nhật marker và form
-        function updateMarker(lat, lng) {
-            if (marker) {
-                marker.setLatLng([lat, lng]);
-            } else {
-                marker = L.marker([lat, lng]).addTo(map);
-            }
 
-            document.getElementById('lat').value = lat;
-            document.getElementById('lng').value = lng;
-        }
         $(document).ready(function() {
             // Hàm tạo preview ảnh với nút xóa
             function createImagePreview(file, container, inputElement) {

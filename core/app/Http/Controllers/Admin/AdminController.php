@@ -58,10 +58,11 @@ class AdminController extends Controller
     public function dashboard(Request $request)
     {
         $availableRoom = $request->input('available_room') ?? todaysDate();
-          $bookedRoom = $request->input('booked_room') ?? todaysDate();
+        $bookedRoom = $request->input('booked_room') ?? todaysDate();
         $pageTitle                          = 'Thống kê';
         $todaysBookedRoomIds                = RoomBooking::whereDate('document_date', $availableRoom)->pluck('room_code')->toArray();
         $roomIds = Room::active()->pluck('id')->toArray();
+
         $roomIdsWithStatusToday = RoomStatusHistory::whereDate('start_date', $bookedRoom)
             ->whereIn('status_code', [2, 3])
             ->pluck('room_id')
@@ -70,11 +71,48 @@ class AdminController extends Controller
         $lateCheckinCount = RoomBooking::where('status', 0)
             ->whereDate('checkout_date', '<', Carbon::today())
             ->count();
+        $countIsClean = Room::where('is_clean', 0)->count();
+        $countRoomFix = Room::where('room_fix', 1)->count();
 
+        $roomIdsWithCheckIn = RoomStatusHistory::where('status_code', 3)
+            ->pluck('room_id')
+            ->toArray();
+
+        $roomTypeStats = Room::with('roomType')
+            ->get()
+            ->groupBy(fn($room) => $room->roomType ? $room->roomType->name : 'Unknown')
+            ->map(fn($rooms, $type) => [
+                'room_type' => $type,
+                'total_rooms' => count($rooms), // số lượng phòng theo loại
+            ])
+            ->sortByDesc('total_rooms')
+            ->values();
+
+        $totalRooms = $roomTypeStats->sum('total_rooms');
+
+        $percentStats = $roomTypeStats->map(function ($item) use ($totalRooms) {
+            return [
+                'room_type' => $item['room_type'],
+                'percent' => $totalRooms > 0 ? round(($item['total_rooms'] / $totalRooms) * 100, 2) : 0,
+            ];
+        });
+
+        $roomTypeLabels = $percentStats->pluck('room_type');
+        $roomTypePercents = $percentStats->pluck('percent');
+        $widget['is_clean']                = $countIsClean;
+        $widget['room_fix']                =   $countRoomFix;
         $widget['pending_checkin']         =  $lateCheckinCount;
+        $widget['room_checkIn']            =  count($roomIdsWithCheckIn);
         $widget['today_available']         =  count($roomIdsWithoutStatusToday);
-        $widget['today_booked']             = count($todaysBookedRoomIds);
-        return view('admin.dashboard', compact('pageTitle', 'widget','availableRoom','bookedRoom'));
+        $widget['today_booked']            = count($todaysBookedRoomIds);
+        return view('admin.dashboard', compact(
+            'pageTitle',
+            'widget',
+            'availableRoom',
+            'bookedRoom',
+            'roomTypeLabels',
+            'roomTypePercents'
+        ));
     }
 
 
