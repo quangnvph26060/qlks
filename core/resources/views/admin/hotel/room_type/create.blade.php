@@ -41,7 +41,20 @@
                                         value="{{ old('room_number', @$roomType->room_number) }}" required>
                                 </div>
                             </div>
-
+                             <div class="col-xl-4 col-md-4 col-sm-12">
+                                <div class="">
+                                    <label>@lang('Diện tích (m²)')</label>
+                                    <input class="form-control" placeholder="Diện tích" name="area" type="text"
+                                        value="{{ old('area', @$roomType->area) }}" required>
+                                </div>
+                            </div>
+                             <div class="col-xl-4 col-md-4 col-sm-12">
+                                <div class="">
+                                    <label>@lang('Hướng phòng')</label>
+                                    <input class="form-control" placeholder="Hướng phòng" name="direction" type="text"
+                                        value="{{ old('direction', @$roomType->direction) }}" required>
+                                </div>
+                            </div>
                             {{-- <div class="col-xl-4 col-md-4 col-sm-12">
                                 <div class="form-group">
                                     <label>@lang('Phí hủy bỏ') /@lang('Đêm')</label>
@@ -108,7 +121,7 @@
 
 
                         </div>
-                        <div class="row">
+                        <div class="row mt-2">
                             {{-- <div class="col-xl-4 col-md-4 col-sm-12">
                                 <div class="form-group">
                                     <label>@lang('Số phòng')</label>

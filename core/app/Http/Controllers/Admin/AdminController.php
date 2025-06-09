@@ -10,6 +10,8 @@ use App\Models\BookedRoom;
 use App\Models\Booking;
 use App\Models\PaymentLog;
 use App\Models\Room;
+use App\Models\RoomBooking;
+use App\Models\RoomStatusHistory;
 use App\Models\User;
 use App\Models\UserLogin;
 use App\Rules\FileTypeValidate;
@@ -52,11 +54,27 @@ class AdminController extends Controller
 
         //    return view('admin.dashboard', compact('pageTitle', 'widget', 'chart'));
         return view('admin.blank');
-
     }
-    public function dashboard(){
+    public function dashboard(Request $request)
+    {
+        $availableRoom = $request->input('available_room') ?? todaysDate();
+          $bookedRoom = $request->input('booked_room') ?? todaysDate();
         $pageTitle                          = 'Thống kê';
-        return view('admin.dashboard', compact('pageTitle'));
+        $todaysBookedRoomIds                = RoomBooking::whereDate('document_date', $availableRoom)->pluck('room_code')->toArray();
+        $roomIds = Room::active()->pluck('id')->toArray();
+        $roomIdsWithStatusToday = RoomStatusHistory::whereDate('start_date', $bookedRoom)
+            ->whereIn('status_code', [2, 3])
+            ->pluck('room_id')
+            ->toArray();
+        $roomIdsWithoutStatusToday = array_diff($roomIds, $roomIdsWithStatusToday);
+        $lateCheckinCount = RoomBooking::where('status', 0)
+            ->whereDate('checkout_date', '<', Carbon::today())
+            ->count();
+
+        $widget['pending_checkin']         =  $lateCheckinCount;
+        $widget['today_available']         =  count($roomIdsWithoutStatusToday);
+        $widget['today_booked']             = count($todaysBookedRoomIds);
+        return view('admin.dashboard', compact('pageTitle', 'widget','availableRoom','bookedRoom'));
     }
 
 

@@ -17,6 +17,9 @@
     'viewMoreIcon' => true,
     'query_string' => null,
     'parameters' => null,
+    'date' => 0,
+    'inputName' => 'date',
+    'dateNow'=> \Carbon\Carbon::today()->format('Y-m-d'),
 ])
 
 @php
@@ -37,7 +40,7 @@
 @endif
 
 @if ($style == 2)
-    <x-widget-2 :link=$link :title=$title :value=$value :heading=$heading :subheading=$subheading :icon=$icon :bg=$bg :color=$color :icon_color=$icon_color :icon_style=$icon_style :overlay_icon=$overlay_icon :cover_cursor=$cover_cursor />
+    <x-widget-2 :dateNow=$dateNow :inputName=$inputName :date=$date :link=$link :title=$title :value=$value :heading=$heading :subheading=$subheading :icon=$icon :bg=$bg :color=$color :icon_color=$icon_color :icon_style=$icon_style :overlay_icon=$overlay_icon :cover_cursor=$cover_cursor />
 @endif
 
 @if ($style == 3)

@@ -76,7 +76,7 @@ class ApipublicController extends Controller
                             $query->where('unit_code', $hotel->ma_coso);
                         }
                     ])
-                        ->select('hotel_name', 'slug', 'address', 'province', 'phone', 'external_link', 'logo', 'main_image', 'hotel_facility_id', 'longitude', 'latitude', 'email', 'chinh_sach', 'gioi_thieu')->first();
+                        ->select('hotel_name', 'slug', 'address', 'province','province_code', 'phone', 'external_link', 'logo', 'main_image', 'hotel_facility_id', 'longitude', 'latitude', 'email', 'chinh_sach', 'gioi_thieu')->first();
                     if ($hotelConfig && $hotelConfig->hotelFacility) {
                         if ($hotelConfig->logo) {
                             $hotelConfig->logo = 'https://app.fasthotel.vn/storage' . '/' . ltrim($hotelConfig->logo, '/');
@@ -152,7 +152,7 @@ class ApipublicController extends Controller
         $otaSetting = OtaSetting::where('hotel_id', $HotelConfiguration->hotel_facility_id)->first();
         $pricesByRoomTypeId = $this->getPricesBySetupPricingApi($date);
         $rooms = Room::withoutTenant()->where('subdomain', $hotelFacility->subdomain)->where('unit_code', $hotelFacility->ma_coso)->active();
-        $rooms->select('id', 'room_number', 'room_type_id', 'main_image', 'is_clean', 'total_adult', 'total_child', 'beds', 'description');
+        $rooms->select('id', 'room_number', 'room_type_id', 'main_image', 'is_clean', 'total_adult', 'total_child', 'beds', 'description','area','direction');
 
         if (!empty($searchRoomNumber)) {
             $rooms->where('room_number', 'like', '%' . $searchRoomNumber . '%');
@@ -170,7 +170,7 @@ class ApipublicController extends Controller
                 $q->where('title', 'like', '%' . $searchAmenities . '%');
             });
         }
-        // cơ sở
+        // cơ sở vật chất
         if (!empty($searchFacilities)) {
             $rooms->whereHas('facilities', function ($q) use ($searchFacilities) {
                 $q->where('title', 'like', '%' . $searchFacilities . '%');

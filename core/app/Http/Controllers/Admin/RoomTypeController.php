@@ -194,6 +194,8 @@ class RoomTypeController extends Controller
             // $room->total_child         = $request->total_child;
             $room->description         = $request->description; //  htmlspecialchars_decode($purifier->purify($request->description));
             $room->beds                = $request->beds;
+            $room->area                = $request->area;
+            $room->direction           = $request->direction;
             $room->is_featured         = $request->is_featured ? 1 : 0;
             //$room->cancellation_fee    = $request->cancellation_fee ?? 0;
             // $room->cancellation_policy = htmlspecialchars_decode($purifier->purify($request->cancellation_policy));
@@ -342,6 +344,8 @@ class RoomTypeController extends Controller
             'cancellation_policy' => 'nullable|string',
             'cancellation_fee'    => 'nullable|numeric',
             'products'            => 'nullable|array',
+            'direction'           => 'nullable',
+            'area'                => 'nullable',
         ], [
             // Custom error messages
             'required' => ':attribute không được để trống.',
@@ -413,6 +417,8 @@ class RoomTypeController extends Controller
             'cancellation_policy' => 'nullable|string',
             'cancellation_fee'    => 'nullable|numeric',
             'products'            => 'nullable|array',
+             'direction'           => 'nullable',
+            'area'                => 'nullable',
         ], [
             // Custom error messages
             'required' => ':attribute không được để trống.',

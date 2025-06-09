@@ -16,7 +16,7 @@ class Room extends Model
     use GlobalStatus, BelongsToTenant;
 
     protected $table = 'rooms';
-    protected $fillable = ['is_clean', 'unit_code','room_fix'];
+    protected $fillable = ['is_clean', 'unit_code','room_fix','direction','area'];
 
     // insert hay get ra đều trả ra đúng mảng 
     protected $casts = [
