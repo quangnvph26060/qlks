@@ -34,7 +34,7 @@ class HotelConfigurationController extends Controller
             'logo' => 'nullable|image',
             'main_image' => 'nullable|image',
             'gallery_images.*' => 'nullable|image',
-            'province'=> 'required|string',
+            'province'=> 'nullable|string',
             'email'=> 'string',
         ]);
 
