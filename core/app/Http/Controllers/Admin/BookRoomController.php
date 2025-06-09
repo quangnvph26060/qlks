@@ -433,13 +433,13 @@ class BookRoomController extends Controller
                    $request->method == 'check_in'
                     ? bookingActionRecord($check_in->id, $admin_id, $room['room'], 'Nhận phòng', 'check_in')
                     : bookingActionRecord($check_in->id, $admin_id, $room['room'], 'Đặt phòng', 'room_booking');
-                $payment_pttt = $request->payment_pttt;
+                $payment_pttt = $request->payment_pttt ?? "Thanh toán chuyển khoản";
                 if ($discountAmount > 0 || $depositAmount > 0) {
                     if ($request->method == 'check_in') {
                         savePayment(
                             '',
                             $bookingId,
-                            $roomPice['unit_price'],
+                            $roomPice,
                             $room['room'],
                             $depositAmount,
                             $discountAmount,
@@ -450,7 +450,7 @@ class BookRoomController extends Controller
                         savePayment(
                             $bookingId,
                             '',
-                            $roomPice['unit_price'],
+                            $roomPice,
                             $room['room'],
                             $depositAmount,
                             $discountAmount,

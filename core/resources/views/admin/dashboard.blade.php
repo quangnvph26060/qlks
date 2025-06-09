@@ -97,8 +97,19 @@
         </div>
         <div class="col-xl-12 mb-30">
             <div class="card">
-                <h3 style="padding: 20px 20px 0;">DOANH THU THÁNG NÀY</h3>
-
+              <div class="d-flex align-items-center justify-content-between">
+                  <h3 style="padding: 20px 20px 0;">DOANH THU THÁNG NÀY</h3>
+                <div class="filters" style="padding: 10px 20px;">
+                    <select id="timeFilter"
+                        style="padding: 6px 12px; border: 1px solid #ccc; border-radius: 4px; font-size: 14px;">
+                        <option value="today">Hôm nay</option>
+                        <option value="yesterday">Hôm qua</option>
+                        <option value="last7">7 ngày qua</option>
+                        <option value="thisMonth" selected>Tháng này</option>
+                        <option value="lastMonth">Tháng trước</option>
+                    </select>
+                </div>
+              </div>
                 <div class="revenue-summary" style="padding: 20px;">
                     <span
                         style="color: #007bff; font-size: 24px; font-weight: bold; display: inline-flex; align-items: center; gap: 5px;">
@@ -125,7 +136,7 @@
             </div>
         </div>
 
-      
+
     </div>
     {{-- 
     <div class="row mb-none-30 mt-30">
@@ -189,10 +200,10 @@
 @push('script')
     <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
     <script>
-         const dataRoomType = @json($roomTypeLabels);
-    const dataPercent = @json($roomTypePercents);
+        const dataRoomType = @json($roomTypeLabels);
+        const dataPercent = @json($roomTypePercents);
         const ctx = document.getElementById('occupancyChart').getContext('2d');
-      
+
         const occupancyChart = new Chart(ctx, {
             type: 'bar',
             data: {
