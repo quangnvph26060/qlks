@@ -132,6 +132,7 @@ class HotelConfigurationController extends Controller
             'gallery_images.*' => 'nullable|image',
             'address' => 'required|string|max:255',
             'page_link' => 'nullable|url',
+            'province'=> 'nullable|string',
         ]);
 
         // Xử lý upload ảnh, cập nhật tương tự store()
