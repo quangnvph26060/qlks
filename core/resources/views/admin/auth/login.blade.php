@@ -91,8 +91,8 @@
                             <i class="fa-solid fa-eye"></i>
                         </span>
                     </div>
-                    <a href="{{ route('admin.password.reset') }}"
-                        class="forget-text float-end text-dark">@lang('Quên mật khẩu?')</a>
+                    {{-- <a href="{{ route('admin.password.reset') }}"
+                        class="forget-text float-end text-dark">@lang('Quên mật khẩu?')</a> --}}
                     <div class="checkbox-row d-flex align-items-center">
                         <input type="checkbox" id="remember" class="me-2" />
                         <label for="remember" class="text-dark m-0">Lưu mật khẩu</label>
