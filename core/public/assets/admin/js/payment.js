@@ -563,21 +563,21 @@ function printInvoice(idx) {
    <table class="mb-2 table-print">
        <thead>
            <tr>
-              <th>Mã hàng hóa</th>
-               <th>Tên sản phẩm</th>
-               <th>Đơn giá</th>
-               <th>SL</th>
-               <th>Thành tiền</th>
+              <th class="price-cell">Mã hàng hóa</th>
+               <th class="price-cell">Tên sản phẩm</th>
+               <th class="price-cell">Đơn giá</th>
+               <th class="price-cell"> SL</th>
+               <th class="price-cell">Thành tiền</th>
            </tr>
        </thead>
        <tbody>
            ${record['service_booking'].map(item => `
               <tr>
-                  <td class="text-left">${item.service?.code ?? item.product?.sku}</td>
-                    <td>${item.service?.name ?? item.product?.name}</td>
-                <td>${item.quantity}</td>
-                <td>${formatCurrency(item.price)}</td>
-                <td>${formatCurrency(item.total_payment)}</td>
+                  <td class="text-left price-cell">${item.service?.code ?? item.product?.sku}</td>
+                    <td class="price-cell">${item.service?.name ?? item.product?.name}</td>
+                <td class="price-cell">${item.quantity}</td>
+                <td class="price-cell">${formatCurrency(item.price)}</td>
+                <td  class="price-cell">${formatCurrency(item.total_payment)}</td>
               </tr>
            `).join('')}
        </tbody>
@@ -590,21 +590,21 @@ function printInvoice(idx) {
         <table class="mb-2 table-print">
             <thead>
             <tr>
-                <th>Mã đặt phòng</th>
-                <th>Tên phòng</th>
-                <th>Đơn giá</th>
-               <th>Giảm giá</th>
-                <th>Đặt cọc</th>
+                <th class="price-cell">Mã đặt phòng</th>
+                <th class="price-cell">Tên phòng</th>
+                <th class="price-cell">Đơn giá</th>
+               <th class="price-cell">Giảm giá</th>
+                <th class="price-cell">Đặt cọc</th>
             </tr>
             </thead>
             <tbody>
            ${source.map(item => `
                 <tr class="table-row">
-                    <td class="text-left">${item.booking_id ?? item.check_in_id}</td>
-                    <td class="text-left">${item.room['room_number']}</td>
-                    <td class="text-left">${formatCurrency(item.total_amount)}</td>
-                    <td class="text-left">${formatCurrency(item.discount)}</td>
-                    <td class="text-left">${formatCurrency(item.deposit_amount)}</td>
+                    <td class="text-left price-cell">${item.booking_id ?? item.check_in_id}</td>
+                    <td class="text-left price-cell">${item.room['room_number']}</td>
+                    <td class="text-left price-cell ">${formatCurrency(item.total_amount)}</td>
+                    <td class="text-left price-cell">${formatCurrency(item.discount)}</td>
+                    <td class="text-left price-cell">${formatCurrency(item.deposit_amount)}</td>
                 </tr>
             `).join('')
             }

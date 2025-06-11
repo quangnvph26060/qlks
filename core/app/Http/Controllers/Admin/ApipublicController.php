@@ -7,6 +7,7 @@ use App\Models\HotelConfiguration;
 use App\Models\HotelFacility;
 use App\Models\OtaSetting;
 use App\Models\Room;
+use App\Models\RoomStatusHistory;
 use App\Traits\HasTodayPrice;
 use Carbon\Carbon;
 use Illuminate\Http\Request;
@@ -76,7 +77,7 @@ class ApipublicController extends Controller
                             $query->where('unit_code', $hotel->ma_coso);
                         }
                     ])
-                        ->select('hotel_name', 'slug', 'address', 'province','province_code', 'phone', 'external_link', 'logo', 'main_image', 'hotel_facility_id', 'longitude', 'latitude', 'email', 'chinh_sach', 'gioi_thieu')->first();
+                        ->select('hotel_name', 'slug', 'address', 'province', 'province_code', 'phone', 'external_link', 'logo', 'main_image', 'hotel_facility_id', 'longitude', 'latitude', 'email', 'chinh_sach', 'gioi_thieu')->first();
                     if ($hotelConfig && $hotelConfig->hotelFacility) {
                         if ($hotelConfig->logo) {
                             $hotelConfig->logo = 'https://app.fasthotel.vn/storage' . '/' . ltrim($hotelConfig->logo, '/');
@@ -136,13 +137,17 @@ class ApipublicController extends Controller
                 $query->where('status', 1);
                 $query->select('icon', 'title', 'subdomain');
             },
-        ])->select('hotel_name', 'slug', 'address', 'province', 'phone', 'external_link', 'logo', 'main_image', 'hotel_facility_id', 'longitude', 'latitude', 'email', 'chinh_sach', 'gioi_thieu')->first();
+        ])->select('id', 'hotel_name', 'slug', 'address', 'province', 'phone', 'external_link', 'logo', 'main_image', 'hotel_facility_id', 'longitude', 'latitude', 'email', 'chinh_sach', 'gioi_thieu')->first();
         if (!$HotelConfiguration) {
             return response()->json([
                 'message' => 'Khách sạn không tồn tại',
             ], 404);
         }
         $date = $request->input('date', Carbon::today()->toDateString());
+        $checkInDate = $request->input('date_star', now()->toDateString());
+        $checkOutDate = $request->input('date_end', now()->addDay()->toDateString());
+
+
         $searchRoomNumber = $request->input('room_number');
         $searchRoomType = $request->input('room_type');
         $searchAmenities = $request->input('amenities');
@@ -150,9 +155,10 @@ class ApipublicController extends Controller
 
         $hotelFacility = HotelFacility::find($HotelConfiguration->hotel_facility_id);
         $otaSetting = OtaSetting::where('hotel_id', $HotelConfiguration->hotel_facility_id)->first();
-        $pricesByRoomTypeId = $this->getPricesBySetupPricingApi($date);
-        $rooms = Room::withoutTenant()->where('subdomain', $hotelFacility->subdomain)->where('unit_code', $hotelFacility->ma_coso)->active();
-        $rooms->select('id', 'room_number', 'room_type_id', 'main_image', 'is_clean', 'total_adult', 'total_child', 'beds', 'description','area','direction');
+        $dates = $this->getDates($checkInDate, $checkOutDate);
+        $pricesByRoomTypeId = $this->getPricesBySetupPricingForMultipleDatesApi($dates);
+        $rooms = Room::withoutTenant()->where('subdomain', $hotelFacility->subdomain)->where('unit_code', $hotelFacility->ma_coso)->where('room_fix', 0)->active();
+        $rooms->select('id', 'room_number', 'room_type_id', 'main_image', 'is_clean', 'total_adult', 'total_child', 'beds', 'description', 'area', 'direction');
 
         if (!empty($searchRoomNumber)) {
             $rooms->where('room_number', 'like', '%' . $searchRoomNumber . '%');
@@ -220,35 +226,131 @@ class ApipublicController extends Controller
             // 'roomBookingHistory.bookingData',
         ]);
         $rooms = $rooms->get();
-        $rooms->transform(function ($room) use ($pricesByRoomTypeId) {
-            $room->applied_price = $pricesByRoomTypeId[$room->room_type_id] ?? null;
+        $allRoomStatusHistory = collect();
+        $newRecords = [];
+        foreach ($rooms as $room) {
+            $roomStatusHistory = RoomStatusHistory::where('room_id', $room->id)
+                ->with('roomStatus')
+                ->get();
 
-            return $room;
-        });
+            $allRoomStatusHistory = $allRoomStatusHistory->merge($roomStatusHistory);
+        }
+        $groupedByRoom = $allRoomStatusHistory->groupBy('room_id');
+        $filteredResults = collect();
+
+        foreach ($groupedByRoom as $roomId => $records) {
+            $sortedRecords = $records->sortBy('start_date')->values();
+            $uniqueRecords = collect();
+
+            foreach ($sortedRecords as $record) {
+                $overlapIndex = $uniqueRecords->search(function ($item) use ($record) {
+                    return ($record->start_date == $item->start_date && $record->end_date == $item->end_date) ||
+                        ($record->start_date < $item->end_date && $record->end_date > $item->start_date);
+                });
+
+                if ($overlapIndex !== false) {
+                    $existingRecord = $uniqueRecords[$overlapIndex];
+                    if ($record->status_code > $existingRecord->status_code) {
+                        $uniqueRecords[$overlapIndex] = $record;
+                    }
+                } else {
+                    $uniqueRecords->push($record);
+                }
+            }
+
+            $filteredResults = $filteredResults->merge($uniqueRecords);
+        }
+        $newRecords = [];
+        $appliedPrice = null;
+        foreach ($rooms as $room) {
+            foreach ($dates as $date) {
+                $status = 0;
+                $check_booked = "Trống";
+                $selectedStatus = null;
+
+                $roomRecords = $filteredResults->filter(function ($item) use ($room, $date) {
+                    $formattedDate = Carbon::parse($date)->format('Y-m-d');
+                    $startDate = Carbon::parse($item->start_date)->format('Y-m-d');
+                    $endDate = Carbon::parse($item->end_date)->format('Y-m-d');
+
+                    $daysDifference = Carbon::parse($startDate)->diffInDays(Carbon::parse($endDate));
+
+                    if ($daysDifference == 1) {
+                        return $item->room_id == $room->id && $formattedDate == $startDate;
+                    } else {
+                        $endDate = Carbon::parse($item->end_date)->subDay()->format('Y-m-d');
+                        return $item->room_id == $room->id && $formattedDate >= $startDate && $formattedDate <= $endDate;
+                    }
+                });
+
+                if ($roomRecords->isNotEmpty()) {
+                    $selectedStatus = $roomRecords->sortByDesc('status_code')->first();
+                }
+
+                if ($selectedStatus !== null) {
+                    if ($selectedStatus->status_code == 1) {
+                        $check_booked = "Trống";
+                        $status = 0;
+                    } elseif ($selectedStatus->status_code == 2) {
+                        $check_booked = "Đã đặt";
+                        $status = 1;
+                    } elseif ($selectedStatus->status_code == 3) {
+                        $check_booked = "Đã nhận";
+                        $status = 1;
+                    }
+                }
+
+
+                if (isset($pricesByRoomTypeId[$date][$room->room_type_id])) {
+                    $appliedPrice = $pricesByRoomTypeId[$date][$room->room_type_id]->unit_price;
+                }
+
+                $newRecords[] = [
+                    "room_type_id"  => $room->room_type_id,
+                    "date"          => $date,
+                    "check_booked"  => $check_booked,
+                    //  "status"        => $status,
+                    "applied_price" => $appliedPrice,
+                ];
+            }
+        }
+        // $rooms->transform(function ($room) use ($pricesByRoomTypeId) {
+        //     $room->applied_price = $pricesByRoomTypeId[$room->room_type_id] ?? null;
+
+        //     return $room;
+        // });
 
         $domain = 'https://app.fasthotel.vn/storage'; // hoặc gán cứng ví dụ: $domain = 'https://yourdomain.com/';
+        $today = Carbon::now()->toDateString();
+        $formattedRooms = $rooms->map(function ($room) use ($domain, $newRecords, $today) {
+            $roomTypeId = $room->room_type_id;
 
-        $formattedRooms = $rooms->map(function ($room) use ($domain) {
-            // Đẩy giá và tên loại phòng ra ngoài
-            /// $unitPrice = optional($room->roomType->roomTypePriceForDate->first())->unit_price ?? null;
+            $matchedRecords = array_filter($newRecords, function ($record) use ($roomTypeId) {
+                return $record['room_type_id'] == $roomTypeId;
+            });
+            $matchedRecords = array_values($matchedRecords);
+            $cleanedRecords = array_map(function ($record) {
+                unset($record['room_type_id']);
+                return $record;
+            }, $matchedRecords);
+            $room->daily_room_rate = $cleanedRecords; // ds giá khoảng ngày đã chọn
+         
+            $todayRecord = collect($matchedRecords)->firstWhere('date', $today);
+            $room->unit_price = $todayRecord['applied_price']; // giá ngày hôm nay
             $roomTypeName = optional($room->roomType)->name;
-            //  $unitPrice = optional($room->roomType->roomTypePriceForDate)->unit_price ?? null;
-            if (!empty($room->applied_price) && isset($room->applied_price['unit_price'])) {
-                $unitPrice = $room->applied_price['unit_price'];
-            }
+            $room->room_type = $roomTypeName; // tên loại phòng
             // Gán link đầy đủ cho ảnh phòng và ảnh loại phòng
             $room->main_image = $room->main_image ? $domain . '/' . ltrim($room->main_image, '/') : null;
             if (!empty($room->roomType->main_image)) {
                 $room->room_type_image = $domain . '/' . ltrim($room->roomType->main_image, '/');
             }
 
-
             $room->is_clean = $room->is_clean ? 'Đã dọn' : 'Chưa dọn';
 
             // Bỏ trường không cần
             unset($room->room_type_id);
+            unset($room->room_type_id);
             unset($room->roomType); // bỏ object roomType
-            unset($room->applied_price);
             // Chuyển amenities & facilities chỉ còn title và icon
             if ($room->amenities) {
                 $room->amenities = $room->amenities->map(function ($a) {
@@ -269,8 +371,8 @@ class ApipublicController extends Controller
             }
 
             // Gắn unit price và tên loại phòng
-            $room->unit_price = $unitPrice;
-            $room->room_type = $roomTypeName;
+
+
 
             // Gắn link ảnh thumbnails
             if (isset($room->images)) {

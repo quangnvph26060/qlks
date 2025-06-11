@@ -270,6 +270,10 @@
         .text-left {
             text-align: left !important;
         }
+.price-cell {
+    font-size: 12px;
+    white-space: nowrap;
+}
 
         .text-right {
             text-align: right !important;
