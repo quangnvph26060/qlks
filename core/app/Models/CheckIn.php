@@ -66,9 +66,7 @@ class CheckIn extends Model
     }
     public function getCheckInPaymentAttribute()
     {
-        return ReceiptAndPayment::where('checkin_id', $this->check_in_id)
-            // ->where('room_code', $this->room_change ?? $this->room_code)
-            ->sum('total_payment');
+        return '123';
     }
     public function getCheckInServiceProductsAttribute()
     {

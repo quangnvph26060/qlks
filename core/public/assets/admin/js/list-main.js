@@ -121,7 +121,7 @@ function initGridMain(data,date) {
                                                     )}
                                                 </td>
 
-                                                <td class="text-right">${formatCurrency(checkIn['check_in_payment'])}</td>
+                                                <td class="text-right demo">${formatCurrency(123)}</td>
                                               
 
                                               </tr>
@@ -156,7 +156,7 @@ function initGridMain(data,date) {
                                                 <td class="w-10">${formatDateTime(checkIn['checkin_date'])}</td>
                                                 <td class="w-10">${formatDateTime(checkIn['checkout_date'])}</td>
                                                 <td class="text-right">${formatCurrency(checkIn['total_amount'])}</td>
-                                                    <td class="text-right">${formatCurrency(checkIn['check_in_payment'])}</td>
+                                                    <td class="text-right">${formatCurrency(123)}</td>
                                                
                                               
 
