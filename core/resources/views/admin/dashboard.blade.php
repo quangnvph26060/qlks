@@ -37,7 +37,7 @@
 
 
         <div class="col-xxl-3 col-sm-6">
-            <x-widget color="info" icon="la la-sign-out transform-rotate-180" link="admin.upcoming.booking.checkout"
+            <x-widget color="info" icon="la la-sign-out transform-rotate-180" link="admin.book.room"
                 style="2" cover_cursor="1" overlay_icon="0" title="Phòng đang hoạt động"
                 value="{{ $widget['room_checkIn'] }}" />
         </div>

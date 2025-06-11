@@ -787,7 +787,7 @@ function initViewScriptGird() {
                             }
 
                             var tr = `
-                                <tr data-room-booking-id="${room.booking_id}" data-room-id="${room.room_code}"  data-room-type-id="${room.room_type}" data-date="${formattedDates}">
+                                <tr data-room-booking-id="${room.booking_id}" data-price="${room.total_amount}" data-room-id="${room.room_code}"  data-room-type-id="${room.room_type}" data-date="${formattedDates}">
                                     <td>
                                         <input type="checkbox">
                                     </td>
@@ -1122,11 +1122,12 @@ function initViewScriptGird() {
                                     total_deposit_amount += parseFloat(room.deposit_amount);
                                     total_deposit_discount += parseFloat(room.discount);
                                     total_service = room.total_service; // tổng tiền dịch vụ
-
+//1234567
                                     var tr = `
                                         <tr data-room-id="${room.room_id}"
                                         data-room-booking-id="${room.id}"
                                         data-room-type-id="${room.room_type_id}"
+                                        data-price="${room.total_amount}"
                                         class="${room.status === 1 ? "check_in_status" : ""}">
                                             <td>
                                                 <input type="checkbox">
@@ -2725,7 +2726,7 @@ $('.booking-form-pttt').on('submit', function (e) {
     var roomData = [];
     var filteredRoomData = [];
     const method = $('.btn-book-pttt').attr('data-method');
-
+//1234567
     $('#list-booking-edit-letan tr').each(function () {
 
         var checkbox = $(this).find('input[type="checkbox"]');

@@ -16,6 +16,8 @@ use PDF;
 use App\Http\Responses\ApiResponse;
 use App\Models\BookedRoom;
 use App\Models\CheckInRoom;
+use Illuminate\Container\Attributes\Log;
+use Illuminate\Support\Facades\Log as FacadesLog;
 
 class ManageBookingController extends Controller
 {
@@ -34,7 +36,7 @@ class ManageBookingController extends Controller
         //       0 => '268',
         //     ),
         //   )  
-        \Log::info($request->all());
+        FacadesLog::info($request->all());
         $booking = Booking::active()->findOrFail($id);
         if(!$booking){
             $notify[] = ['error', 'Không tìm thấy thông tin phòng'];

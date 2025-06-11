@@ -8,9 +8,10 @@ use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\Model;
 use Illuminate\Database\Eloquent\Relations\HasOne;
 use App\Traits\BelongsToTenant;
+
 class ReceiptAndPayment extends Model
 {
-    use HasFactory,BelongsToTenant;
+    use HasFactory, BelongsToTenant;
 
     protected $table = 'receipts_and_payments';
 
@@ -18,31 +19,32 @@ class ReceiptAndPayment extends Model
         'booking_id',
         'checkin_id',
         'room_price',
-        'deposit_amount',
-        'discount_amount',
-        'service_fee',
-        'product_price',
-        'total_payment',
         'payment_method',
         'created_date',
         'unit_code',
-        'room_code',
         'status',
         'payment_id',
         'subdomain',
+        'creator'
     ];
-    protected $appends = ['status_badge','check_in','room_booking'];
+    protected $appends = ['status_badge', 'check_in', 'room_booking', 'creator_name', 'service_booking'];
 
     public function getDueAttribute()
     {
         return $this->room_price  + $this->service_fee - $this->deposit_amount - $this->discount_amount - $this->total_payment;
+    }
+    public function creatorName(): Attribute
+    {
+        return new Attribute(
+            get: fn() => Admin::find($this->creator)->name,
+        );
     }
     public function statusBadge(): Attribute
     {
         $className = 'badge badge--';
         if ($this->status == Status::DISABLE) {
             $className .= 'warning';
-            $text = 'Chưa xử lý';
+            $text = 'Đang xử lý';
         } elseif ($this->status == Status::ENABLE) {
             $className .= 'success';
             $text = 'Thành công';
@@ -54,26 +56,28 @@ class ReceiptAndPayment extends Model
     public function checkIn(): Attribute
     {
         return Attribute::get(function () {
-            return CheckIn::where('check_in_id', $this->checkin_id)
-                ->where('room_change', $this->room_code)
-                ->where('unit_code', unitCode())
-                ->first()
-                ?? CheckIn::where('check_in_id', $this->checkin_id)
-                    ->where('room_code', $this->room_code)
-                    ->where('unit_code', unitCode())
-                    ->first();
+            return CheckIn::with('room')->where('check_in_id', $this->checkin_id)
+                ->get()
+                ?? CheckIn::with('room')->where('check_in_id', $this->checkin_id)
+                ->get();
         });
-        
     }
     public function roomBooking(): Attribute
     {
         return Attribute::get(function () {
-            return RoomBooking::where('booking_id', $this->booking_id)
-                    ->where('room_code', $this->room_code)
-                    ->where('unit_code', unitCode())
-                    ->first();
+            return RoomBooking::with('room')->where('booking_id', $this->booking_id)
+                ->get();
         });
-        
     }
-
+    public function serviceBooking(): Attribute
+    {
+        return Attribute::get(function () {
+            return RoomServiceProduct::with('service','product')->where('check_in_id', $this->checkin_id)
+                ->get();
+        });
+    }
+    public function paymentTransactions()
+    {
+        return $this->hasMany(PaymentTransaction::class, 'receipts_and_payments_id');
+    }
 }

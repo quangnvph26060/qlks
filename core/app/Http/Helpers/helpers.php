@@ -378,21 +378,19 @@ function saveRoomStatusHistory($room_id, $start_date, $end_date, $status_code)
         ]);
     }
 }
-function savePayment($booking_id, $checkin_id, $room_price, $room_code, $deposit_amount, $discount_amount, $total_payment, $payment_method)
+function savePayment($booking_id, $checkin_id, $room_price, $payment_method,$admin)
 {
     ReceiptAndPayment::create([
-        'payment_id'       => getCode('TT', 12),
+        'payment_id'       => getCode('HD', 12),
         'booking_id'       => $booking_id,
         'checkin_id'       => $checkin_id,
         'room_price'       => $room_price,
-        'room_code'        => $room_code,
-        'deposit_amount'   => $deposit_amount,  // đặt cọc
-        'discount_amount'  => $discount_amount, // giảm giá
-        'total_payment'    => $total_payment,   // số tiền  thanh toán
+       // 'total_payment'    => $total_payment,   // số tiền  thanh toán
         'payment_method'   => $payment_method,
         'created_date'     => now(),
         'unit_code'        => unitCode(),
         'subdomain'        => subdomain(),
+        'creator'          =>$admin,
     ]);
 }
 function updateRoomService($checkIn, $roomIdOld, $roomIdNew)

@@ -7,6 +7,9 @@ use App\Models\Booking;
 use App\Models\BookedRoom;
 use App\Models\BookingActionHistory;
 use App\Models\CustomerSource;
+use App\Models\HotelConfiguration;
+use App\Models\HotelFacility;
+use App\Models\PaymentTransaction;
 use App\Models\RoomChange;
 use App\Models\RoomStatusHistory;
 use App\Models\RoomType;
@@ -921,7 +924,7 @@ class BookingController extends Controller
             foreach ($roomData as $data) {
                 $room_type = RoomType::find($data['room_type']);
                 $pricesByRoomTypeId = $this->getPricesBySetupPricing($data['date']);
-                $room = Room::active()->with('roomType', 'roomType.roomTypePrice', 'roomType.roomTypePrice.setupPricing')
+                $room = Room::active()->with('roomType',  'roomType.roomTypePrice.setupPricing')
                     ->where('id', $data['room'])->first();
                 if ($room) {
                     $room->applied_price = $pricesByRoomTypeId[$room->room_type_id] ?? null;
@@ -1012,13 +1015,6 @@ class BookingController extends Controller
                 $query->where('customer_name', 'LIKE', "%$value%");
             });
         }
-        // if ($method === 'booking' && !empty($value)) {
-        //     $rooms->whereHas('roomBookingHistory.checkInData', function ($query) use ($value) {
-        //         $query->where('id_room_booking', 'LIKE', "%$value%");
-        //     })->orWhereHas('roomBookingHistory.bookingData', function ($query) use ($value) {
-        //         $query->where('booking_id', 'LIKE', "%$value%");
-        //     });
-        // }
         if ($method === 'customer' && !empty($value)) {
             $rooms->where(function ($query) use ($value) {
                 $query->whereHas('roomBookingHistory.checkInData', function ($q) use ($value) {
@@ -1031,16 +1027,6 @@ class BookingController extends Controller
 
         $rooms->with([
             'roomType',
-            // 'roomType' => function ($query) use ($date) {
-            //     $query->select('id', 'name', 'main_image', 'slug')
-            //         ->with(['roomTypePriceForDate' => function ($q) use ($date) {
-            //             $q->select('room_type_id', 'unit_price', 'overtime_price', 'extra_person_price')
-            //                 ->whereDate('price_validity_period', '<=', $date)
-            //                 ->orderByDesc('price_validity_period')
-            //                 ->limit(1); // Chỉ lấy giá có hiệu lực gần nhất theo ngày
-            //         }]);
-            // },
-
             'roomBookingHistory' => function ($query) use ($date) {
                 if (!empty($date)) {
                     $query->whereDate('start_date', '<=', $date)
@@ -1210,25 +1196,32 @@ class BookingController extends Controller
             $sumServiceRoom += RoomServiceProduct::where('check_in_id', $checkinId)
                 ->where('room_code', $roomId)->sum('total_payment');
         }
+        $receipt = ReceiptAndPayment::where('checkin_id', $checkinId)->first();
 
-        // Sau khi tổng hợp xong, tạo 1 bản ghi duy nhất
-        ReceiptAndPayment::create([
-            'payment_id'      => getCode('TT', 12),
-            'booking_id'      => "", // có thể điền nếu cần
-            'checkin_id'      => $checkinId,
-            'room_code'       => null, // vì là tổng cả đơn nên không ghi 1 phòng
-            'room_price'      => $totalAmount,
-            'deposit_amount'  => $totalDeposit,
-            'discount_amount' => $totalDiscount,
-            'total_payment'   => $amount,
-            'payment_method'  => $request->payment_pttt,
-            'service_fee'     => $sumServiceRoom,
-            'created_date'    => now(),
-            'unit_code'       => unitCode(),
-            'subdomain'       => subdomain(),
-        ]);
-        $receipts = ReceiptAndPayment::where('checkin_id', $checkinId)->get();
-        $totalPaid        = $receipts->sum('total_payment');
+        if (!$receipt) {
+            $receipt = savePayment("", $checkinId, $totalAmount, $request->payment_pttt, authAdmin()->id);
+        }
+
+
+        if ($receipt) {
+            do {
+                $paymentCode = getCode('TT', 12);
+            } while (PaymentTransaction::where('payment_code', $paymentCode)->exists());
+
+            PaymentTransaction::create([
+                'payment_code'   =>  $paymentCode,
+                'receipts_and_payments_id' => $receipt->id,
+                'amount'        => $amount,
+                'payment_method' => $request->payment_pttt,
+                'note'          => '',
+                'status'        => 1,
+                'paid_at'       => now(),
+                'unit_code'     => unitCode(),
+                'subdomain'     => subdomain(),
+                'created_by'    => authAdmin()->id,
+            ]);
+        }
+        $totalPaid = PaymentTransaction::where('receipts_and_payments_id', $receipt->id)->sum('amount');
         // giá sản phẩm 
         $totalServicePayment = RoomServiceProduct::where('check_in_id', $checkinId)
             // ->where('room_code', $roomId)
@@ -1260,21 +1253,20 @@ class BookingController extends Controller
             $totalDeposit   = $checkIns->sum('deposit_amount');
             $totalDiscount  = $checkIns->sum('discount');
             $roomIs     = Room::where('id', $roomId)->first();
-            // Gộp tổng các lần thanh toán
-            $receipts = ReceiptAndPayment::where('checkin_id', $checkinId)->get();
 
-            // Lấy biên lai mới nhất để tính phí
-            $latestReceipt = $receipts->sortByDesc('id')->first();
+            $receipt = ReceiptAndPayment::where('checkin_id', $checkinId)->first();
+            $totalPayment = PaymentTransaction::where('receipts_and_payments_id', $receipt->id)->sum('amount');
+
+
             $totalServicePayment = RoomServiceProduct::where('check_in_id', $checkinId)
                 // ->where('room_code', $roomId)
                 ->sum('total_payment');
 
-            $totalPaid        = $receipts->sum('total_payment');
-            $totalDiscounts   = $latestReceipt?->discount_amount ?? 0;
-            $totalDeposits    = $latestReceipt?->deposit_amount ?? 0;
+
+
             $totalServiceFees = $totalServicePayment;
 
-            $due = ($totalAmount + $totalServiceFees - $totalDiscounts - $totalDeposits - $totalPaid);
+            $due = ($totalAmount + $totalServiceFees - $totalDeposit -  $totalDiscount - $totalPayment);
 
 
             if ($due <= 0 && $checkIns->count()) {
@@ -1286,7 +1278,7 @@ class BookingController extends Controller
             } else {
                 return response()->json([
                     'status' => 'error',
-                    'error' => 'Phòng ' . $roomIs->room_number . ' chưa thanh toán đủ. Còn thiếu: ' . number_format($due, 0, ',', '.'),
+                    'error' => ' ' . $roomIs->room_number . ' chưa thanh toán đủ. Còn thiếu: ' . number_format($due, 0, ',', '.'),
 
                 ]);
             }
@@ -1725,18 +1717,42 @@ class BookingController extends Controller
         $perPage = 10;
 
         $rooms = Room::active()->select('id', 'room_number')->get();
-
-        $payments = ReceiptAndPayment::where('unit_code', unitCode())
+        $staff = Admin::where('unit_code', unitCode())->where('subdomain', subdomain())->get();
+        $payments = ReceiptAndPayment::with('paymentTransactions', 'paymentTransactions.creator')
             ->when(!empty($request->data['bookingCode']), function ($query) use ($request) {
                 $query->where('payment_id', 'LIKE', '%' . $request->data['bookingCode'] . '%');
             })
             ->orderBy('created_at', 'desc')
             ->paginate($perPage);
+        $payments->getCollection()->transform(function ($payment) {
 
+            $depositTotal = optional($payment->check_in)->isNotEmpty()
+                ? $payment->check_in->sum('deposit_amount')
+                : optional($payment->room_booking)->sum('deposit_amount');
+
+            $discountTotal = optional($payment->check_in)->isNotEmpty()
+                ? $payment->check_in->sum('discount')
+                : optional($payment->room_booking)->sum('discount');
+
+
+            $paidCustomer = optional($payment->paymentTransactions)->sum('amount');
+            $payment->deposit_total  = $depositTotal;
+            $payment->discount_total = $discountTotal;
+            $payment->payment_total  = $paidCustomer;
+            $payment->customer   = optional($payment->check_in->first())['customer_name'] ?? '';
+            $totalPayment        = $payment->room_price  + optional($payment->service_booking)->sum('total_payment');
+            $payment->room_price = $totalPayment;
+            $payment->paid_customer = $paidCustomer;
+            $payment->customer_needs_to_pay = $totalPayment - $paidCustomer - $depositTotal - $discountTotal;
+            // Ẩn mảng check_in khỏi response
+            // $payment->setRelation('check_in', collect());
+
+            return $payment;
+        });
         return response([
             'status' => 'success',
             'data' => $payments->items(),
-            'rooms' => $rooms,
+            'staff' => $staff,
             'option_selected' => $request->data['roomCode'] ?? "",
             'pagination' => [
                 'total' => $payments->total(),
@@ -1749,8 +1765,55 @@ class BookingController extends Controller
     public function paymentView()
     {
         $pageTitle = ' Danh sách thanh toán';
-        return view('admin.booking.payment.index', compact('pageTitle'));
+       $hotelActive = HotelFacility::where('subdomain', subdomain())
+                    ->where('trang_thai', 1)
+                    ->first();
+        $hotel = HotelConfiguration::where('hotel_facility_id', $hotelActive->id)
+        ->first();
+        return view('admin.booking.payment.index', compact('pageTitle','hotel'));
     }
+    public function changeCashierge(Request $request)
+    {
+        $request->validate([
+            'creator' => 'required',
+            'payment_id' => 'required|string|max:50',
+        ]);
+
+        $paymentId = $request->input('payment_id');
+        $newCreator = $request->input('creator');
+        try {
+
+            $receiptPayment = ReceiptAndPayment::where('payment_id', $paymentId)->first();
+
+            if ($receiptPayment) {
+                // Update the creator field
+                $receiptPayment->creator = $newCreator;
+                // Save the changes to the database
+                $receiptPayment->save();
+
+                return response()->json(['status' => 'success', 'message' => 'Thu ngân đã được cập nhật thành công!'], 200);
+            } else {
+                return response()->json(['message' => 'Không tìm thấy hóa đơn hoặc không có gì thay đổi.'], 404);
+            }
+        } catch (\Exception $e) {
+
+            return redirect()->back()->with('error', 'Đã xảy ra lỗi khi cập nhật thu ngân.');
+        }
+    }
+    public function updatePaymentMethod(Request $request)
+    {
+        $request->validate([
+            'payment_code' => 'required|string',
+            'payment_method' => 'required|string|in:Tiền mặt,Thẻ tín dụng,Chuyển khoản ngân hàng',
+        ]);
+
+        $payment = PaymentTransaction::where('payment_code', $request->payment_code)->firstOrFail();
+        $payment->payment_method = $request->payment_method;
+        $payment->save();
+
+        return response()->json(['status' => 'success', 'message' => 'Cập nhật thành công']);
+    }
+
     public function findPayment(Request $request)
     {
         $receiptsPayment = ReceiptAndPayment::where('id', $request->id)->first();

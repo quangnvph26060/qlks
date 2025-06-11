@@ -14,6 +14,7 @@
                     <span class="icon"> <i class="fa-solid fa-th-large"></i></span> <span class="text"
                         style="display: none;">Sơ đồ</span>
                 </button>
+              
             </div>
             <div class="search-container">
                 <!-- Dropdown (Bên trái) -->
@@ -1236,7 +1237,7 @@
                             // item.room['room_type']['room_type_price']['setup_pricing']['check_in_time']
                             // item.room['room_type']['room_type_price']['setup_pricing']['check_out_time']
                             var tr = `
-                            <tr  data-status="0" data-room-id="${roomId}"  data-room-type-id="${roomTypeId}" data-date="${item.date}">
+                            <tr  data-status="0" data-price="${item.room['applied_price']['unit_price']}" data-room-id="${roomId}"  data-room-type-id="${roomTypeId}" data-date="${item.date}">
                                 <td>
                                     <input type="checkbox">
                                 </td>
@@ -1270,7 +1271,7 @@
                                     </div>
                                 </td>
                                 <td>
-                                     <p id="price" data-price="${item.room['room_type']['room_type_price']['unit_price']}">${formatCurrency(item.room['room_type']['room_type_price']['unit_price'])}</p>
+                                     <p id="price" data-price="${item.room['applied_price']['unit_price']}">${formatCurrency(item.room['applied_price']['unit_price'])}</p>
                                 </td>
                                 <td>
                                       <input type="text" class="form-control deposit number-input money-input"  name="deposit"  placeholder="0">

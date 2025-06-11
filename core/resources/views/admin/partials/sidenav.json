@@ -169,6 +169,15 @@
         "icon": "las la-clipboard-list",
         "menu_active": "admin.manage*",
         "submenu": [
+             {
+                "keyword": [
+                    "Báo cáo định kì"
+                ],
+                "title": "Báo cáo định kì",
+                "icon": "la la-hand-o-right",
+                "route_name": "admin.manage.room.status",
+                "menu_active": "admin.manage.room.status"
+            },
             {
                 "keyword": [
                     "Báo cáo tình trạng phòng"
@@ -178,6 +187,7 @@
                 "route_name": "admin.manage.room.status",
                 "menu_active": "admin.manage.room.status"
             },
+            
             {
                 "keyword": [
                     "Quản lý bảo trì & vệ sinh"

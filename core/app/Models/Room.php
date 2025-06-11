@@ -146,12 +146,12 @@ class Room extends Model
         ]);
     }
 
-    public function roomPrices()
-    {
-        return $this->belongsToMany(RoomPrice::class, 'room_price_rooms', 'room_id', 'price_id')
-            ->where('room_prices.status', 'active')
-            ->withPivot('room_id', 'price_id', 'start_date', 'end_date', 'start_time', 'end_time', 'specific_date', 'status');
-    }
+    // public function roomPrices()
+    // {
+    //     return $this->belongsToMany(RoomPrice::class, 'room_price_rooms', 'room_id', 'price_id')
+    //         ->where('room_prices.status', 'active')
+    //         ->withPivot('room_id', 'price_id', 'start_date', 'end_date', 'start_time', 'end_time', 'specific_date', 'status');
+    // }
     // public function roomPricesActive()
     // {
     //     return $this->belongsToMany(RoomPrice::class, 'room_price_rooms', 'room_id', 'price_id')
@@ -188,20 +188,20 @@ class Room extends Model
     //     return $query->where('is_featured', Status::ROOM_TYPE_FEATURED);
     // }
 
-    public function roomPriceNow()
-    {
-        $day = Carbon::now()->toDateString();
-        $thu = Carbon::now()->locale('en')->isoFormat('dddd');
+    // public function roomPriceNow()
+    // {
+    //     $day = Carbon::now()->toDateString();
+    //     $thu = Carbon::now()->locale('en')->isoFormat('dddd');
 
-        if ($this->roomPriceDayNow($day)) {
-            return  $this->roomPriceDayNow($day);
-        } elseif ($this->roomPriceDayOfWeekNow($thu)) {
-            return  $this->roomPriceDayOfWeekNow($thu);
-        }
+    //     if ($this->roomPriceDayNow($day)) {
+    //         return  $this->roomPriceDayNow($day);
+    //     } elseif ($this->roomPriceDayOfWeekNow($thu)) {
+    //         return  $this->roomPriceDayOfWeekNow($thu);
+    //     }
 
-        return  $this->regularRoom();
-        //return $this->code;
-    }
+    //     return  $this->regularRoom();
+    //     //return $this->code;
+   // }
 
     // public function roomPriceDayNow($date)
     // {

@@ -10,21 +10,22 @@
                     <table class="table--light style--two table" id="data-table">
                         <thead>
                             <tr>
+                                <th></th>
                                 <th>@lang('STT')</th>
                                 <th>@lang('Hành động')</th>
                                 <th>@lang('Mã thanh toán')</th>
-                                <th>@lang('Mã nhận phòng')</th>
                                 <th>@lang('Ngày chứng từ')</th>
-                                <th>@lang('Tiền phòng')</th>
-                                <th>@lang('Tiền dịch vụ')</th>
+                                <th>@lang('Tổng tiền')</th>
                                 <th>@lang('Đặt cọc')</th>
-                                <th>@lang('Giảm giá')</th>
+                                <th>@lang('Giảm gía')</th>
                                 <th>@lang('Khách đã trả')</th>
-                                <th>@lang('Phương thức thanh toán')</th>
                                 <th>@lang('Trạng thái')</th>
                                 @can(['admin.hotel.room.type.edit', 'admin.hotel.room.type.status',
                                     'admin.hotel.room.type.destroy'])
                                 @endcan
+                            </tr>
+                            <tr class="bg-white total_payment">
+
                             </tr>
                         </thead>
                         <tbody class="data-table">
@@ -35,9 +36,26 @@
             </div>
 
         </div>
+        <div id="print-container" style="display:none"></div>
+
         @include('admin.booking.partials.room_booking')
         @include('admin.booking.partials.room_booking_edit')
         @include('admin.booking.partials.confirm-room')
+        <!-- Modal -->
+        <div class="modal fade" id="transactionModal" tabindex="-1" aria-hidden="true">
+            <div class="modal-dialog">
+                <div class="modal-content" style="width: 50%;">
+                    <div class="modal-header">
+                        <h5 class="modal-title">Chi tiết lịch sử thanh toán</h5>
+                        <button type="button" class="btn-close" data-bs-dismiss="modal"></button>
+                    </div>
+                    <div class="modal-body" id="modalContent">
+                        <!-- Nội dung chi tiết sẽ được đưa vào đây -->
+                    </div>
+                </div>
+            </div>
+        </div>
+
     </div>
 @endsection
 
@@ -166,14 +184,14 @@
                     </div>
                     <div class="modal-body">
                         <ul class="list-unstyled " id="payment-info">
-                          
+
                         </ul>
-                      
+
                     </div>
                 </div>
             </div>
         </div>
-        
+
         @include('admin.booking.partials.change_room_booking')
         @include('admin.booking.partials.customer_booked')
     @endpush
@@ -211,6 +229,9 @@
         var findCustomerUrl = '{{ route('admin.find.customer') }}';
         var getCustomerStaff = "{{ route('admin.get.customer.staff') }}";
         var changeRoomBooking = "{{ route('admin.booking.changeRoomBooking') }}";
+        var changeCashierge = "{{ route('admin.booking.change.cashierge') }}";
+        var updatePaymentMethod = "{{ route('admin.booking.update.payment.transaction') }}";
+        var hotel = @json($hotel);
     </script>
 
     <script>
@@ -352,5 +373,28 @@
             background: white;
             box-shadow: 0px 4px 10px rgba(0, 0, 0, 0.2);
         }
+
+        .child-table-row td {
+            padding: 0 !important;
+            border: none !important;
+        }
+
+        .child-table-row table {
+            margin: 0;
+        }
+
+        .table-bordered-thanh-toan {
+            border: 1px solid #dee2e6 !important;
+            border-collapse: collapse;
+        }
+
+        .table-bordered-thanh-toan th,
+        .table-bordered-thanh-toan td {
+            border: 1px solid #dee2e6 !important;
+        }
+        .table-print th,.table-print td {
+      padding: 5px;
+      border-bottom: 1px dashed #000;
+    }
     </style>
 @endpush

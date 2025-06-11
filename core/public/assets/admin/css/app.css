@@ -3757,6 +3757,11 @@ table.table--light.style--two thead th {
     /* padding-left: 25px;
     padding-right: 25px; */
 }
+/* Ghi đè lại màu nền chỉ cho dòng thứ 2 của thead */
+.table--light thead tr.bg-white th {
+    background-color: #fff !important; /* hoặc màu khác nếu muốn */
+    color: #000; /* Màu chữ nếu cần thay */
+}
 
 
 

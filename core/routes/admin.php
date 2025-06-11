@@ -464,6 +464,8 @@ Route::middleware('admin', 'adminPermission')->prefix('admin')->group(function (
             Route::post('delete-check-in/{id}', 'deleteCheckIn')->name('delete-check-in');
 
             // list thanh toán 
+               Route::post('change-cashierge', 'changeCashierge')->name('change.cashierge');
+                   Route::post('update-payment-transaction', 'updatePaymentMethod')->name('update.payment.transaction');
             Route::get('payment-view', 'paymentView')->name('payment-view');
             Route::get('payment', 'paymentList')->name('payment.list');
             Route::get('find-payment', 'findPayment')->name('payment.find');
@@ -520,6 +522,7 @@ Route::middleware('admin', 'adminPermission')->prefix('admin')->group(function (
             Route::post('key/handover/{id}', 'handoverKey')->name('key.handover');
             Route::post('booking-merge/{id}', 'mergeBooking')->name('merge');
             Route::get('bill-payment/{id}', 'paymentView')->name('payment');
+         
             Route::post('bill-payment/{id}', 'payment')->name('payment.submit');// thanh toán trước
             Route::post('add-charge/{id}', 'addExtraCharge')->name('extra.charge.add'); // thêm phụ phí
             Route::post('subtract-charge/{id}', 'subtractExtraCharge')->name('extra.charge.subtract'); // trừ chi phí
