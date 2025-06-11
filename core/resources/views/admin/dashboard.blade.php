@@ -37,9 +37,8 @@
 
 
         <div class="col-xxl-3 col-sm-6">
-            <x-widget color="info" icon="la la-sign-out transform-rotate-180" link="admin.book.room"
-                style="2" cover_cursor="1" overlay_icon="0" title="Phòng đang hoạt động"
-                value="{{ $widget['room_checkIn'] }}" />
+            <x-widget color="info" icon="la la-sign-out transform-rotate-180" link="admin.book.room" style="2"
+                cover_cursor="1" overlay_icon="0" title="Phòng đang hoạt động" value="{{ $widget['room_checkIn'] }}" />
         </div>
         <div class="col-xxl-3 col-sm-6">
             <x-widget color="warning" icon="la la-sign-in" link="admin.book.room" style="2" cover_cursor="1"
@@ -97,28 +96,28 @@
         </div>
         <div class="col-xl-12 mb-30">
             <div class="card">
-              <div class="d-flex align-items-center justify-content-between">
-                  <h3 style="padding: 20px 20px 0;">DOANH THU THÁNG NÀY</h3>
-                <div class="filters" style="padding: 10px 20px;">
-                    <select id="timeFilter"
-                        style="padding: 6px 12px; border: 1px solid #ccc; border-radius: 4px; font-size: 14px;">
-                        <option value="today">Hôm nay</option>
-                        <option value="yesterday">Hôm qua</option>
-                        <option value="last7">7 ngày qua</option>
-                        <option value="thisMonth" selected>Tháng này</option>
-                        <option value="lastMonth">Tháng trước</option>
-                    </select>
+                <div class="d-flex align-items-center justify-content-between">
+                    <h3 style="padding: 20px 20px 0;">DOANH THU <span class="text-option"></span></h3>
+                    <div class="filters" style="padding: 10px 20px;">
+                        <select id="timeFilter"
+                            style="padding: 6px 12px; border: 1px solid #ccc; border-radius: 4px; font-size: 14px;">
+                            <option value="today">Hôm nay</option>
+                            <option value="yesterday">Hôm qua</option>
+                            <option value="last7">7 ngày qua</option>
+                            <option value="thisMonth" selected>Tháng này</option>
+                            <option value="lastMonth">Tháng trước</option>
+                        </select>
+                    </div>
                 </div>
-              </div>
                 <div class="revenue-summary" style="padding: 20px;">
-                    <span
+                    <span class="sum_revenue"
                         style="color: #007bff; font-size: 24px; font-weight: bold; display: inline-flex; align-items: center; gap: 5px;">
-                        💰 1,549,499,000
+
                     </span>
-                    <span
+                    {{-- <span
                         style="margin-left: 20px; color: #fd7e14; font-size: 20px; font-weight: bold; display: inline-flex; align-items: center; gap: 5px;">
                         📄 24
-                    </span>
+                    </span> --}}
                 </div>
 
                 <div class="chart-tabs" style="display: flex; justify-content: flex-end; padding: 0 20px;">
@@ -130,7 +129,9 @@
                 </div>
 
                 <div style="padding: 0 20px 20px;">
-                    <canvas id="revenueChart"></canvas>
+                    <canvas id="revenueChart" style="width: 100%; height: 400px;"></canvas>
+                    <canvas id="invoicePieChart" style="width: 100%; height: 400px; display: none;"></canvas>
+
                 </div>
 
             </div>
@@ -239,22 +240,62 @@
             }
         });
 
-        // document.getElementById('timeFilter').addEventListener('change', function() {
-        //     alert('Bạn chọn: ' + this.options[this.selectedIndex].text);
-        //     // TODO: Gọi AJAX để cập nhật dữ liệu nếu cần
-        // });
 
-        const labels = ['01', '02', '03', '04', '05', '06', '07', '08', '09', '10', '11', '12'];
-        const dataValues = [
-            50000000, 630000000, 850000000, 19499000,
-            100000000, 0, 0, 0, 0, 0, 0, 0
-        ];
-
-        const ctx2 = document.getElementById('revenueChart').getContext('2d');
 
         let revenueChart = null;
+        let invoiceChart = null;
+        let currentLabels = [];
+        let currentDataValues = [];
 
-        function createBarChart() {
+        const ctx2 = document.getElementById('revenueChart').getContext('2d');
+        const ctxInvoicePie = document.getElementById('invoicePieChart').getContext('2d');
+
+        function generateLabels(filter) {
+            const today = new Date();
+            const labels = [];
+            let month = today.getMonth() + 1; // 1-12
+            let year = today.getFullYear();
+
+            if (filter === 'today') {
+                labels.push(String(today.getDate()).padStart(2, '0'));
+            } else if (filter === 'yesterday') {
+                const yesterday = new Date();
+                yesterday.setDate(today.getDate() - 1);
+                labels.push(String(yesterday.getDate()).padStart(2, '0'));
+                month = yesterday.getMonth() + 1;
+                year = yesterday.getFullYear();
+            } else if (filter === 'last7') {
+                for (let i = 6; i >= 0; i--) {
+                    const d = new Date();
+                    d.setDate(today.getDate() - i);
+                    labels.push(String(d.getDate()).padStart(2, '0'));
+                }
+            } else if (filter === 'thisMonth') {
+                const dayNow = today.getDate();
+                for (let i = 1; i <= dayNow; i++) {
+                    labels.push(String(i).padStart(2, '0'));
+                }
+            } else if (filter === 'lastMonth') {
+                const firstDayThisMonth = new Date(today.getFullYear(), today.getMonth(), 1);
+                const lastDayLastMonth = new Date(firstDayThisMonth - 1);
+                const daysInLastMonth = lastDayLastMonth.getDate();
+                month = lastDayLastMonth.getMonth() + 1;
+                year = lastDayLastMonth.getFullYear();
+
+                for (let i = 1; i <= daysInLastMonth; i++) {
+                    labels.push(String(i).padStart(2, '0'));
+                }
+            }
+
+            return {
+                labels,
+                month,
+                year
+            };
+        }
+
+
+        function createBarChart(labels, dataValues) {
             return new Chart(ctx2, {
                 type: 'bar',
                 data: {
@@ -270,8 +311,7 @@
                     maintainAspectRatio: false,
                     scales: {
                         x: {
-                            barThickness: 30,
-                            maxBarThickness: 40,
+                            maxBarThickness: 20,
                             ticks: {
                                 font: {
                                     size: 13
@@ -302,8 +342,8 @@
             });
         }
 
-        function createPieChart() {
-            return new Chart(ctx2, {
+        function createPieChart(labels, dataValues) {
+            return new Chart(ctxInvoicePie, {
                 type: 'pie',
                 data: {
                     labels: labels,
@@ -335,16 +375,19 @@
             });
         }
 
-        // Khởi tạo chart mặc định là biểu đồ cột
-        revenueChart = createBarChart();
-
-        // Xử lý chuyển đổi tab
+        // Xử lý chuyển tab
         document.getElementById('barTab').addEventListener('click', function(e) {
             e.preventDefault();
-            if (revenueChart) revenueChart.destroy();
-            revenueChart = createBarChart();
 
-            // Update UI tab
+            // Cập nhật dữ liệu như bình thường
+            if (revenueChart) revenueChart.destroy();
+            revenueChart = createBarChart(currentLabels, currentDataValues);
+
+            // Hiện biểu đồ cột, ẩn biểu đồ tròn
+            document.getElementById('revenueChart').style.display = 'block';
+            document.getElementById('invoicePieChart').style.display = 'none';
+
+            // Cập nhật UI tab
             this.classList.add('active');
             this.style.color = '#007bff';
             this.style.borderBottom = '2px solid #007bff';
@@ -355,12 +398,17 @@
             pieTab.style.borderBottom = 'none';
         });
 
+
         document.getElementById('pieTab').addEventListener('click', function(e) {
             e.preventDefault();
-            if (revenueChart) revenueChart.destroy();
-            revenueChart = createPieChart();
 
-            // Update UI tab
+            if (invoiceChart) invoiceChart.destroy();
+            invoiceChart = createPieChart(currentLabels, currentDataValues);
+
+            // Hiện biểu đồ tròn, ẩn biểu đồ cột
+            document.getElementById('invoicePieChart').style.display = 'block';
+            document.getElementById('revenueChart').style.display = 'none';
+
             this.classList.add('active');
             this.style.color = '#007bff';
             this.style.borderBottom = '2px solid #007bff';
@@ -370,6 +418,77 @@
             barTab.style.color = '#6c757d';
             barTab.style.borderBottom = 'none';
         });
+
+
+        // Cập nhật biểu đồ khi filter thay đổi
+        async function updateChart() {
+            const filter = document.getElementById('timeFilter').value;
+            const {
+                labels,
+                month,
+                year
+            } = generateLabels(filter);
+            currentLabels = labels;
+            currentDataValues = await fetchChartData(labels, month, year);
+            const activeTab = document.querySelector('.tab.active')?.id;
+            if (activeTab === 'barTab') {
+                if (revenueChart) revenueChart.destroy();
+                revenueChart = createBarChart(currentLabels, currentDataValues);
+                document.getElementById('revenueChart').style.display = 'block';
+                document.getElementById('invoicePieChart').style.display = 'none';
+            } else if (activeTab === 'pieTab') {
+                if (invoiceChart) invoiceChart.destroy();
+                invoiceChart = createPieChart(currentLabels, currentDataValues);
+                document.getElementById('invoicePieChart').style.display = 'block';
+                document.getElementById('revenueChart').style.display = 'none';
+            }
+        }
+
+
+        // Gán sự kiện thay đổi filter
+        document.getElementById('timeFilter').addEventListener('change', updateChart);
+
+        // Mặc định hiển thị
+        document.getElementById('barTab').classList.add('tab', 'active');
+        document.getElementById('pieTab').classList.add('tab');
+        updateChart();
+        function formatCurrencyVN(amount) {
+    return Number(amount).toLocaleString('vi-VN') + ' VNĐ';
+}
+
+        function fetchChartData(labels, month, year) {
+            return new Promise((resolve, reject) => {
+                $.ajax({
+                    url: '{{ route('admin.revenue') }}',
+                    method: 'POST',
+                    contentType: 'application/json',
+                    data: JSON.stringify({
+                        labels: labels,
+                        month: month,
+                        year: year
+                    }),
+                    headers: {
+                        'X-CSRF-TOKEN': $('meta[name="csrf-token"]').attr('content')
+                    },
+                    success: function(response) {
+                        if (Array.isArray(response.dataValues)) {
+                            resolve(response.dataValues);
+                            console.log(response.sum_revenue);
+                            const formatted = formatCurrencyVN(response.sum_revenue);
+
+                            $('.sum_revenue').text(formatted);
+                        } else {
+                            console.error('Dữ liệu trả về không hợp lệ');
+                            resolve(labels.map(() => 0));
+                        }
+                    },
+                    error: function(xhr, status, error) {
+                        console.error('Lỗi khi lấy dữ liệu biểu đồ:', error);
+                        resolve(labels.map(() => 0));
+                    }
+                });
+            });
+        }
     </script>
 @endpush
 @push('style')
@@ -495,6 +614,13 @@
             max-width: 100%;
             height: 400px !important;
             min-height: 400px;
+        }
+
+        canvas#invoicePieChart {
+            width: 300px;
+            height: 300px !important;
+            max-width: 100%;
+            /* Đảm bảo responsive trên thiết bị nhỏ */
         }
     </style>
 @endpush

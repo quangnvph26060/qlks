@@ -14,12 +14,16 @@ class AdminPermissionMiddleware
     {
         $codes = optional(auth('admin')->user()->role)->permissions->pluck('code')->toArray();
         $currentRoute = $request->route()->getName();
-        if (!in_array($currentRoute, $codes)) {
+        $excludedRoutes = ['admin.revenue'];
+        /*
+            'admin.revenue' => 'Danh thu trong màn thông kế'
+        
+        */
+        if (!in_array($currentRoute, $excludedRoutes) && !in_array($currentRoute, $codes)) {
              Log::warning('Access denied for route: ' . $currentRoute);
             if (url()->previous() == url()->current()) {
-                abort(403, 'Bạn không có quyền truy cập vào trang này.');
+                abort(403, 'Bạn không có quyền truy cập vào trang này .');
             }
-           // return redirect()->back()->with('error', 'Bạn không có quyền truy cập vào trang này.');
            abort(403, 'Bạn không có quyền truy cập vào trang này.');
         }
 

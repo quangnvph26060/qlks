@@ -9,6 +9,7 @@ use App\Models\AdminNotification;
 use App\Models\BookedRoom;
 use App\Models\Booking;
 use App\Models\PaymentLog;
+use App\Models\PaymentTransaction;
 use App\Models\Room;
 use App\Models\RoomBooking;
 use App\Models\RoomStatusHistory;
@@ -114,6 +115,31 @@ class AdminController extends Controller
             'roomTypePercents'
         ));
     }
+   public function revenue(Request $request)
+{
+    $labels = $request->input('labels'); // ["01", "02", ..., "31"]
+    $month = $request->input('month');   // 5 => tháng 5
+    $year = $request->input('year');     // 2025
+
+    $dataValues = [];
+    $sumRevenue = 0;
+
+    foreach ($labels as $day) {
+        $dateStart = sprintf('%04d-%02d-%02d 00:00:00', $year, $month, $day);
+        $dateEnd   = sprintf('%04d-%02d-%02d 23:59:59', $year, $month, $day);
+
+        $totalAmount =(float) PaymentTransaction::whereBetween('paid_at', [$dateStart, $dateEnd])
+            ->sum('amount');
+
+        $dataValues[] = $totalAmount;
+        $sumRevenue += $totalAmount;
+    }
+
+    return response()->json([
+        'dataValues' => $dataValues,
+        'sum_revenue' => $sumRevenue
+    ]);
+}
 
 
 

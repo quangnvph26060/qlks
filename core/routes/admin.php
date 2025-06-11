@@ -42,6 +42,7 @@ Route::middleware('admin', 'adminPermission')->prefix('admin')->group(function (
     Route::controller('AdminController')->group(function () {
         Route::get('display', 'display')->name('display');
         Route::get('dashboard', 'dashboard')->name('dashboard');
+         Route::post('revenue', 'revenue')->name('revenue');
         Route::get('chart/booking-report', 'bookingReport')->name('chart.booking');
         Route::get('chart/payment-report', 'paymentReport')->name('chart.payment');
         Route::get('profile', 'profile')->name('profile');
