@@ -1485,15 +1485,22 @@ class BookingController extends Controller
     }
     public function getbookingActionHistory(Request $request)
     {
-        // Lấy 10 bản ghi mỗi trang
         $perPage = 10;
+        $adminId = null;
 
-        // Lấy danh sách có phân trang
+        if (!empty($request->staff)) {
+            $adminId = Admin::where('name', 'like', '%' . $request->staff . '%')->value('id');
+        }
         $bookingActionHistory = BookingActionHistory::with('admin', 'room')
+            ->when($adminId, function ($query, $adminId) {
+                return $query->where('admin_id', $adminId);
+            })
+            ->when($request->code, function ($query, $code) {
+                return $query->where('booking_id', 'like', "%$code%");
+            })
             ->orderBy('action_time', 'desc')
             ->paginate($perPage);
 
-        // Sử dụng collection để ánh xạ chi tiết
         $historyWithDetails = $bookingActionHistory->getCollection()->map(function ($history) {
             $detail = null;
 
@@ -1765,12 +1772,12 @@ class BookingController extends Controller
     public function paymentView()
     {
         $pageTitle = ' Danh sách thanh toán';
-       $hotelActive = HotelFacility::where('subdomain', subdomain())
-                    ->where('trang_thai', 1)
-                    ->first();
+        $hotelActive = HotelFacility::where('subdomain', subdomain())
+            ->where('trang_thai', 1)
+            ->first();
         $hotel = HotelConfiguration::where('hotel_facility_id', $hotelActive->id)
-        ->first();
-        return view('admin.booking.payment.index', compact('pageTitle','hotel'));
+            ->first();
+        return view('admin.booking.payment.index', compact('pageTitle', 'hotel'));
     }
     public function changeCashierge(Request $request)
     {

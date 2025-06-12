@@ -44,6 +44,14 @@
             <x-widget color="warning" icon="la la-sign-in" link="admin.book.room" style="2" cover_cursor="1"
                 overlay_icon="0" title="Khách nhận phòng muộn" value="{{ $widget['pending_checkin'] }}" />
         </div>
+        <div class="col-xxl-3 col-sm-6">
+            <x-widget color="danger" icon="la la-sign-out" link="admin.book.room" style="2" cover_cursor="1"
+                overlay_icon="0" title="Thanh toán chậm trễ" value="{{ $widget['late_payment_room'] }}" />
+        </div>
+        <div class="col-xxl-3 col-sm-6">
+            <x-widget color="warning" icon="la la-sign-out" link="admin.book.room" style="2" cover_cursor="1"
+                overlay_icon="0" title="Đang chờ kiểm tra" value="{{ $widget['late_payment_room'] }}" />
+        </div>
         {{-- 
         <div class="col-xxl-3 col-sm-6">
             <x-widget color="info" icon="la la-sign-in" link="admin.upcoming.booking.checkin" style="2"
@@ -122,10 +130,10 @@
 
                 <div class="chart-tabs" style="display: flex; justify-content: flex-end; padding: 0 20px;">
                     <a href="#" class="chart-tab active" id="barTab"
-                        style="text-decoration: none; font-weight: bold; color: #007bff; border-bottom: 2px solid #007bff; margin-right: 10px;">Biểu
-                        đồ cột</a>
-                    <a href="#" class="chart-tab" id="pieTab"
-                        style="text-decoration: none; color: #6c757d;">Biểu đồ tròn</a>
+                        style="text-decoration: none; font-weight: bold; color: #007bff; border-bottom: 2px solid #007bff; margin-right: 10px;"><i
+                            class="fas fa-chart-bar"></i> Biểu đồ cột</a>
+                    <a href="#" class="chart-tab" id="pieTab" style="text-decoration: none; color: #6c757d;">
+                        <i class="fas fa-chart-pie"></i>Biểu đồ tròn</a>
                 </div>
 
                 <div style="padding: 0 20px 20px;">
@@ -136,8 +144,6 @@
 
             </div>
         </div>
-
-
     </div>
     {{-- 
     <div class="row mb-none-30 mt-30">
@@ -452,9 +458,10 @@
         document.getElementById('barTab').classList.add('tab', 'active');
         document.getElementById('pieTab').classList.add('tab');
         updateChart();
+
         function formatCurrencyVN(amount) {
-    return Number(amount).toLocaleString('vi-VN') + ' VNĐ';
-}
+            return Number(amount).toLocaleString('vi-VN') + ' VNĐ';
+        }
 
         function fetchChartData(labels, month, year) {
             return new Promise((resolve, reject) => {

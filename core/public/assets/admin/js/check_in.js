@@ -1333,7 +1333,7 @@ function findRoomBookingId(id) {
 
 
                         var tr = `
-                        <tr data-room-booking-id="${room.booking_id}"  data-room-id="${room.room_code}"  data-room-type-id="${room.room_type}" data-date="${datePart}">
+                        <tr data-room-booking-id="${room.booking_id}" data-price="${room.total_amount}"  data-room-id="${room.room_code}"  data-room-type-id="${room.room_type}" data-date="${datePart}">
                             <td>
                                 <input type="checkbox">
                             </td>

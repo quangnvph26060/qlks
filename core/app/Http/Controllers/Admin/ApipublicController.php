@@ -309,7 +309,7 @@ class ApipublicController extends Controller
                     "room_type_id"  => $room->room_type_id,
                     "date"          => $date,
                     "check_booked"  => $check_booked,
-                    //  "status"        => $status,
+                    "status"        => $status,
                     "applied_price" => $appliedPrice,
                 ];
             }

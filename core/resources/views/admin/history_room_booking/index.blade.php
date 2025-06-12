@@ -5,14 +5,14 @@
         <div class="col-md-12">
             <div class="col-md-4 mt-2 mb-2">
                 <div class="d-flex justify-content-center ali gap-3">
-                  <button class="btn btn--primary btn-reload" data-modal_title="Làm mới">
-    <i class="fa fa-repeat p-1"></i>
-</button>
-                    <input type="text" placeholder="Đặt phòng" id="search-input-clean" style="height: 36px"
+                    <button class="btn btn--primary btn-reload" data-modal_title="Làm mới">
+                        <i class="fa fa-repeat p-1"></i>
+                    </button>
+                    <input type="text" placeholder="Đặt phòng" id="search-input-code" style="height: 36px"
                         class="form-control" value="" />
-                    <input type="text" placeholder="Nhân viên" id="search-input-clean" style="height: 36px"
+                    <input type="text" placeholder="Nhân viên" id="search-input-staff" style="height: 36px"
                         class="form-control" value="" />
-                    <button type="submit" class="btn btn--primary">
+                    <button type="submit" class="btn btn--primary btn-search-history">
                         <i class="las la-search p-1"></i>
                     </button>
                 </div>
@@ -54,15 +54,91 @@
     <script>
         $(document).ready(function() {
             fetchData(1); // Mặc định trang 1
-             $(document).on('click', '.btn-reload', function () {
-        location.reload();
-    });
+            $(document).on('click', '.btn-reload', function() {
+                location.reload();
+            });
             // Gắn sự kiện click cho phân trang
             $(document).on('click', '#pagination a.page-link', function(e) {
                 e.preventDefault();
                 let page = $(this).data('page');
                 fetchData(page);
             });
+            $(document).on('click', '.btn-search-history', function() {
+                let code = $('#search-input-code').val().trim();
+                let staff = $('#search-input-staff').val().trim();
+
+                $.ajax({
+                    url: "{{ route('admin.getbookingActionHistory.booking.getbookingActionHistory') }}",
+                    type: 'GET',
+                    data: {
+                        code: code,
+                        staff: staff,
+                        _token: $('meta[name="csrf-token"]').attr(
+                            'content') // CSRF token nếu dùng Laravel
+                    },
+                    success: function(response) {
+                        if (response.success) {
+                            const tbody = $(".data-table");
+                            const pagination = $("#pagination");
+                            tbody.empty();
+                            pagination.empty();
+
+                            const data = response.data.data; // Lấy mảng data
+                            const currentPage = response.data.current_page;
+                            const lastPage = response.data.last_page;
+
+                            if (data.length === 0) {
+                                tbody.append(
+                                    '<tr><td colspan="7" class="text-center">Không có dữ liệu</td></tr>'
+                                    );
+                                return;
+                            }
+
+                            $.each(data, function(index, item) {
+                                const roomName = item.room ?? '(Không có)';
+                                const adminName = item.admin ?? '(Không có)';
+                                const createdAt = item.action_time ?? '-';
+
+                                let actions = '';
+                                @can('some_permission')
+                                    actions = `
+                                    <button class="btn btn-sm btn-danger btn-delete-clean"
+                                        onclick="confirmDelete(${item.id})"
+                                        data-id="${item.id}">
+                                        Xoá
+                                    </button>`;
+                                @endcan
+
+                                tbody.append(`
+                                <tr>
+                                    <td>${index + 1 + ((currentPage - 1) * 10)}</td>
+                                    <td>${item.booking_id}</td>
+                                    <td>${roomName}</td>
+                                    <td>${item.remark}</td>
+                                    <td>${formatDatetime(createdAt)}</td>
+                                    <td>${adminName}</td>
+                                    <td>${actions}</td>
+                                </tr>
+                            `);
+                            });
+
+                            // Render nút phân trang
+                            for (let i = 1; i <= lastPage; i++) {
+                                const active = i === currentPage ? 'active' : '';
+                                pagination.append(`
+                                <li class="page-item ${active}">
+                                    <a class="page-link" href="#" data-page="${i}">${i}</a>
+                                </li>
+                            `);
+                            }
+                        }
+                    },
+                    error: function(xhr) {
+                        console.log('Có lỗi xảy ra:', xhr.responseText);
+                    }
+                });
+
+            })
         });
 
         function formatDatetime(datetimeStr) {

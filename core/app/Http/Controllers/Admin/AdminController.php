@@ -76,9 +76,12 @@ class AdminController extends Controller
         $countRoomFix = Room::where('room_fix', 1)->count();
 
         $roomIdsWithCheckIn = RoomStatusHistory::where('status_code', 3)
+            ->pluck('room_id')->where('end_date', '>', Carbon::now())
+            ->toArray();
+       $latePaymentRoom = RoomStatusHistory::where('status_code', 3)
+            ->where('end_date', '<', Carbon::now())
             ->pluck('room_id')
             ->toArray();
-
         $roomTypeStats = Room::with('roomType')
             ->get()
             ->groupBy(fn($room) => $room->roomType ? $room->roomType->name : 'Unknown')
@@ -98,14 +101,16 @@ class AdminController extends Controller
             ];
         });
 
+
         $roomTypeLabels = $percentStats->pluck('room_type');
         $roomTypePercents = $percentStats->pluck('percent');
-        $widget['is_clean']                = $countIsClean;
-        $widget['room_fix']                =   $countRoomFix;
-        $widget['pending_checkin']         =  $lateCheckinCount;
-        $widget['room_checkIn']            =  count($roomIdsWithCheckIn);
+        $widget['is_clean']                =  $countIsClean;
+        $widget['room_fix']                =  $countRoomFix;
+        $widget['pending_checkin']         =  $lateCheckinCount; // khách nhận phòng muộn
+        $widget['room_checkIn']            =  count($roomIdsWithCheckIn); // phòng đang hoạt động
+        $widget['late_payment_room']            =  count($latePaymentRoom); // phòng thanh toán chậm trễ
         $widget['today_available']         =  count($roomIdsWithoutStatusToday);
-        $widget['today_booked']            = count($todaysBookedRoomIds);
+        $widget['today_booked']            =  count($todaysBookedRoomIds);
         return view('admin.dashboard', compact(
             'pageTitle',
             'widget',
@@ -140,111 +145,6 @@ class AdminController extends Controller
         'sum_revenue' => $sumRevenue
     ]);
 }
-
-
-
-    public function bookingReport(Request $request)
-    {
-
-        $diffInDays = Carbon::parse($request->start_date)->diffInDays(Carbon::parse($request->end_date));
-
-        $groupBy = $diffInDays > 30 ? 'months' : 'days';
-        $format = $diffInDays > 30 ? '%M-%Y'  : '%d-%M-%Y';
-
-        if ($groupBy == 'days') {
-            $dates = $this->getAllDates($request->start_date, $request->end_date);
-        } else {
-            $dates = $this->getAllMonths($request->start_date, $request->end_date);
-        }
-        $bookings = BookedRoom::whereDate('created_at', '>=', $request->start_date)
-            ->whereDate('created_at', '<=', $request->end_date)
-            ->whereIn('status', [Status::ROOM_ACTIVE, Status::ROOM_CHECKOUT])
-            ->selectRaw("SUM( CASE WHEN status IN(1,9) THEN fare END) as amount")
-            ->selectRaw("DATE_FORMAT(created_at, '{$format}') as created_on")
-            ->latest()
-            ->groupBy('created_on')
-            ->get();
-
-        $data = [];
-
-        foreach ($dates as $date) {
-            $data[] = [
-                'created_on' => $date,
-                'bookingAmounts' => getAmount($bookings->where('created_on', $date)->first()?->amount ?? 0)
-            ];
-        }
-
-        $data = collect($data);
-        $report['created_on']   = $data->pluck('created_on');
-        $report['data']     = [
-            [
-                'name' => 'Booking Amount',
-                'data' => $data->pluck('bookingAmounts')
-            ]
-        ];
-
-        return response()->json($report);
-    }
-
-    public function paymentReport(Request $request)
-    {
-
-        $diffInDays = Carbon::parse($request->start_date)->diffInDays(Carbon::parse($request->end_date));
-
-        $groupBy = $diffInDays > 30 ? 'months' : 'days';
-        $format = $diffInDays > 30 ? '%M-%Y'  : '%d-%M-%Y';
-
-        if ($groupBy == 'days') {
-            $dates = $this->getAllDates($request->start_date, $request->end_date);
-        } else {
-            $dates = $this->getAllMonths($request->start_date, $request->end_date);
-        }
-
-        $plusTransactions = PaymentLog::where('type', 'RECEIVED')
-            ->whereDate('created_at', '>=', $request->start_date)
-            ->whereDate('created_at', '<=', $request->end_date)
-            ->selectRaw('SUM(amount) AS amount')
-            ->selectRaw("DATE_FORMAT(created_at, '{$format}') as created_on")
-            ->latest()
-            ->groupBy('created_on')
-            ->get();
-
-        $minusTransactions = PaymentLog::where('type', 'RETURNED')
-            ->whereDate('created_at', '>=', $request->start_date)
-            ->whereDate('created_at', '<=', $request->end_date)
-            ->selectRaw('SUM(amount) AS amount')
-            ->selectRaw("DATE_FORMAT(created_at, '{$format}') as created_on")
-            ->latest()
-            ->groupBy('created_on')
-            ->get();
-
-
-        $data = [];
-
-        foreach ($dates as $date) {
-            $data[] = [
-                'created_on' => $date,
-                'credits' => getAmount($plusTransactions->where('created_on', $date)->first()?->amount ?? 0),
-                'debits' => getAmount($minusTransactions->where('created_on', $date)->first()?->amount ?? 0)
-            ];
-        }
-
-        $data = collect($data);
-        $report['created_on']   = $data->pluck('created_on');
-        $report['data']     = [
-            [
-                'name' => 'Received Amount',
-                'data' => $data->pluck('credits')
-            ],
-            [
-                'name' => 'Returned Amount',
-                'data' => $data->pluck('debits')
-            ]
-        ];
-
-        return response()->json($report);
-    }
-
 
     private function getAllDates($startDate, $endDate)
     {
