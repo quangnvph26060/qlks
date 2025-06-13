@@ -84,7 +84,7 @@
                         </div>
                     </div>
                 </div>
-                <div class="card mt-3">
+                {{-- <div class="card mt-3">
                     <div class="card-header">
                         <h5 class="card-title">Thương hiệu</h5>
                     </div>
@@ -100,7 +100,7 @@
                             <small></small>
                         </div>
                     </div>
-                </div>
+                </div> --}}
                 <div class="card mt-3">
                     <div class="card-header">
                         <h5 class="card-title">Ảnh đại diện</h5>

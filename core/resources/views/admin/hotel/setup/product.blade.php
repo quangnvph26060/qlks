@@ -122,16 +122,6 @@
                                                     </span>
                                                 </div>
                                                 <div class="representatives-container">
-                                                    <span class="representatives-label">Thương hiệu:</span>
-                                                    <span class="representatives-list">
-                                                        <span class="badge bg-primary me-2 cursor-pointer"
-                                                            style="color: white !important">
-                                                            <small class="representative-name">
-                                                                {{ $product->brand->name }}</small>
-                                                        </span>
-                                                    </span>
-                                                </div>
-                                                <div class="representatives-container">
                                                     <span class="representatives-label">Xuất bản:</span>
                                                     <span class="representatives-list">
                                                         <div class="form-check form-switch m-0">
