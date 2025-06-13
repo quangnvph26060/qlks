@@ -29,10 +29,14 @@ class ApipublicController extends Controller
         $hotelName = $request->input('hotel_name');
         $province_id = $request->input('province_id');
         $amenities = $request->input('amenities');
+        $ota_id = $request->ota_id;
+        $check_status = OtaSetting::where('ota_id', $ota_id)
+            ->where('status', 1)
+            ->whereHas('hotelFacility', function ($q) {
+                $q->where('trang_thai', 1);
+            })
+            ->get();
 
-        $check_status = OtaSetting::whereHas('hotelFacility', function ($q) {
-            $q->where('trang_thai', 1);
-        })->where('status', 1)->get();
         foreach ($check_status as $item) {
             if ($item->status == 1) {
                 $hotel = HotelFacility::find($item->hotel_id);
@@ -95,10 +99,12 @@ class ApipublicController extends Controller
                         $roomPrices = $hotelConfig->hotelFacility->roomTypePrice;
                         $maxPrice = $roomPrices->max('unit_price');
                         $minPrice = $roomPrices->min('unit_price');
-
+                        // phần trăm giảm giá
+                        $hotelConfig->discount_code = $item->discount_code;
                         // Gắn vào JSON trả về
-                        $hotelConfig->max_price = $maxPrice;
-                        $hotelConfig->min_price = $minPrice;
+                        // $hotelConfig->max_price = $maxPrice; 
+                        $hotelConfig->room_price = $minPrice;
+                        $hotelConfig->discounted_room = $minPrice * (1 - $item->discount_code / 100);
                         // ẩn các trường không cho hiển thị ra 
                         $hotelConfig->makeHidden(['hotel_facility_id']);
                         $hotelConfig->hotelFacility->makeHidden(['subdomain', 'ma_coso']);
@@ -116,6 +122,7 @@ class ApipublicController extends Controller
 
         return response()->json([
             'hotels' => $data,
+            'demo' => $request->ota_id,
 
         ], 200);
     }
@@ -154,7 +161,7 @@ class ApipublicController extends Controller
         $searchFacilities = $request->input('facilities');
 
         $hotelFacility = HotelFacility::find($HotelConfiguration->hotel_facility_id);
-        $otaSetting = OtaSetting::where('hotel_id', $HotelConfiguration->hotel_facility_id)->first();
+        $otaSetting = OtaSetting::where('hotel_id', $HotelConfiguration->hotel_facility_id)->where('ota_id', $request->ota_id)->first();
         $dates = $this->getDates($checkInDate, $checkOutDate);
         $pricesByRoomTypeId = $this->getPricesBySetupPricingForMultipleDatesApi($dates);
         $rooms = Room::withoutTenant()->where('subdomain', $hotelFacility->subdomain)->where('unit_code', $hotelFacility->ma_coso)->where('room_fix', 0)->active();
@@ -262,8 +269,16 @@ class ApipublicController extends Controller
         }
         $newRecords = [];
         $appliedPrice = null;
+        $seenRoomTypeDates = []; // key = room_type_id|date
+
         foreach ($rooms as $room) {
             foreach ($dates as $date) {
+                $key = $room->room_type_id . '|' . $date;
+                if (isset($seenRoomTypeDates[$key])) {
+                    continue; // bỏ qua nếu đã xử lý cặp room_type_id + date
+                }
+                $seenRoomTypeDates[$key] = true;
+
                 $status = 0;
                 $check_booked = "Trống";
                 $selectedStatus = null;
@@ -300,20 +315,19 @@ class ApipublicController extends Controller
                     }
                 }
 
-
-                if (isset($pricesByRoomTypeId[$date][$room->room_type_id])) {
-                    $appliedPrice = $pricesByRoomTypeId[$date][$room->room_type_id]->unit_price;
-                }
+                $appliedPrice = $pricesByRoomTypeId[$date][$room->room_type_id]->unit_price ?? 0;
 
                 $newRecords[] = [
                     "room_type_id"  => $room->room_type_id,
                     "date"          => $date,
                     "check_booked"  => $check_booked,
                     "status"        => $status,
-                    "applied_price" => $appliedPrice,
+                    "room_discount" => $appliedPrice * (1 - ($otaSetting->discount_code / 100)),
+                    "room_price" => $appliedPrice,
                 ];
             }
         }
+
         // $rooms->transform(function ($room) use ($pricesByRoomTypeId) {
         //     $room->applied_price = $pricesByRoomTypeId[$room->room_type_id] ?? null;
 
@@ -322,7 +336,7 @@ class ApipublicController extends Controller
 
         $domain = 'https://app.fasthotel.vn/storage'; // hoặc gán cứng ví dụ: $domain = 'https://yourdomain.com/';
         $today = Carbon::now()->toDateString();
-        $formattedRooms = $rooms->map(function ($room) use ($domain, $newRecords, $today) {
+        $formattedRooms = $rooms->map(function ($room) use ($domain, $newRecords, $today, $otaSetting) {
             $roomTypeId = $room->room_type_id;
 
             $matchedRecords = array_filter($newRecords, function ($record) use ($roomTypeId) {
@@ -334,9 +348,9 @@ class ApipublicController extends Controller
                 return $record;
             }, $matchedRecords);
             $room->daily_room_rate = $cleanedRecords; // ds giá khoảng ngày đã chọn
-         
+
             $todayRecord = collect($matchedRecords)->firstWhere('date', $today);
-            $room->unit_price = $todayRecord['applied_price']; // giá ngày hôm nay
+            $room->unit_price = $todayRecord['room_price']; // giá ngày hôm nay
             $roomTypeName = optional($room->roomType)->name;
             $room->room_type = $roomTypeName; // tên loại phòng
             // Gán link đầy đủ cho ảnh phòng và ảnh loại phòng
@@ -344,7 +358,9 @@ class ApipublicController extends Controller
             if (!empty($room->roomType->main_image)) {
                 $room->room_type_image = $domain . '/' . ltrim($room->roomType->main_image, '/');
             }
+           $room->discounted_room = $room->unit_price * (1 - ($otaSetting->discount_code / 100));
 
+            $room->discount_code = $otaSetting->discount_code;
             $room->is_clean = $room->is_clean ? 'Đã dọn' : 'Chưa dọn';
 
             // Bỏ trường không cần
@@ -415,6 +431,14 @@ class ApipublicController extends Controller
         $HotelConfiguration->hotelFacility->makeHidden(['subdomain', 'ma_coso']);
         $HotelConfiguration->hotelFacility->amenities->makeHidden(['subdomain']);
         $HotelConfiguration->hotelFacility->facilities->makeHidden(['subdomain']);
+        $HotelConfiguration->hotelFacility->makeHidden(['roomTypePrice']);
+        $HotelConfiguration->discount_code = $otaSetting->discount_code;
+        $roomPrices = $HotelConfiguration->hotelFacility->roomTypePrice;
+        $maxPrice = $roomPrices->max('unit_price');
+        $minPrice = $roomPrices->min('unit_price');
+
+        $HotelConfiguration->room_price = $minPrice;
+        $HotelConfiguration->discounted_room = $minPrice * (1 - $otaSetting->discount_code / 100);
         unset($HotelConfiguration->icon);
         unset($HotelConfiguration->hotel_facility_id);
         unset($HotelConfiguration->logo);

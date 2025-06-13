@@ -538,7 +538,7 @@ class BookingController extends Controller
                         $roomIdExists = true;
                         break;
                     }
-                }
+                }  
 
                 if ($roomIdExists || $checkboxExists) {
                     $item['checkbox'] = 'checked';
