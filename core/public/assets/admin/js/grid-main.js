@@ -12,6 +12,13 @@ function toggleFloor(id) {
         icon.classList.add("fa-chevron-right");
     }
 }
+function formatDateTime(inputDateTime) {
+    var dateTimeParts = inputDateTime.split(' ');
+    var dateParts = dateTimeParts[0].split('-');
+    var formattedDate = dateParts[2] + '/' + dateParts[1] + '/' + dateParts[0];
+    var formattedDateTime = formattedDate + ' ' + dateTimeParts[1];
+    return formattedDateTime;
+}
 function calculateTotalPrice() {
     let totalPrice = 0;
     let totalDeposit = 0;
@@ -1008,7 +1015,7 @@ function initViewScriptGird() {
             });
         });
 
-
+        let paymentTransaction = [];
         $(document).off("click", ".check_in_data").on("click", ".check_in_data", function (e) {
 
 
@@ -1095,8 +1102,16 @@ function initViewScriptGird() {
                         selected_select_staff.empty();
                         let option_staff = `<option value="">Chọn nhân viên</option>`;
                         response.admin.forEach(function (item) {
-                            option_staff += `<option value="${item.id}">${item.username}</option>`;
+                            if (item.id == response.option_admin) {
+                                option_staff += `<option value="${item.id}"selected>${item.username}</option>`;
+                            } else {
+                                option_staff += `<option value="${item.id}">${item.username}</option>`;
+                            }
                         });
+                        var countPaymentTransaction = response.payment_tranction.length;
+                        $('.payment_paid').text(countPaymentTransaction);
+                        paymentTransaction = response.payment_tranction;
+
                         selected_select_staff.append(option_staff);
                         $('#myModal-check-in-edit').modal('show').on('shown.bs.modal', function () {
 
@@ -1122,7 +1137,7 @@ function initViewScriptGird() {
                                     total_deposit_amount += parseFloat(room.deposit_amount);
                                     total_deposit_discount += parseFloat(room.discount);
                                     total_service = room.total_service; // tổng tiền dịch vụ
-//1234567
+
                                     var tr = `
                                         <tr data-room-id="${room.room_id}"
                                         data-room-booking-id="${room.id}"
@@ -1232,7 +1247,7 @@ function initViewScriptGird() {
                                     $(this).find('input.total_service').each(function () {
                                         let totalServiceValue = $(this).val()
                                             .replace(/[,.]/g, '');
-                                        console.log(totalServiceValue);
+
 
                                         let numericDeposit = parseInt(
                                             totalServiceValue) || 0;
@@ -1414,7 +1429,23 @@ function initViewScriptGird() {
         });
         $('#myModal-booking-edit').on('hidden.bs.modal', function () {
             $('#list-booking-edit').empty('');
+        });
 
+        $(document).off("click", ".total_payment").on("click", ".total_payment", function (e) {
+            const modal = new bootstrap.Modal(document.getElementById('paymentModal'));
+            modal.show();
+            $('#paymentTableBody').empty();
+            paymentTransaction.forEach(item => {
+                const row = `
+                    <tr>
+                        <td class="fw-bold">${item.payment_code}</td>
+                        <td>${formatDateTime(item.paid_at) ?? 'N/A'}</td>
+                        <td>${Number(item.amount).toLocaleString()} VND</td>
+                        <td>${item.payment_method}</td>
+                    </tr>
+                `;
+                $('#paymentTableBody').append(row);
+            });
         });
 
         $(document).off("click", ".room-booking").on("click", ".room-booking", function (e) {
@@ -1673,7 +1704,7 @@ function initViewScriptGird() {
             if ($(e.target).closest('.menu-btn').length > 0) return;
             let roomId = $(this).attr("data-room-id");
             let roomType = $(this).attr("data-room-type-id");
-                let selectedDate = $('#startDate').val();
+            let selectedDate = $('#startDate').val();
             let data = {
                 room: roomId,
                 room_type: roomType,
@@ -1745,9 +1776,7 @@ function initViewScriptGird() {
 
             });
         function formatDatee(inputDate) {
-            // Chia chuỗi ngày thành các phần tử: năm, tháng, ngày
             var parts = inputDate.split('-');
-            // Định dạng lại chuỗi ngày
             var formattedDate = parts[2] + '/' + parts[1] + '/' + parts[0];
             return formattedDate;
         }
@@ -1957,9 +1986,9 @@ function initViewScriptGird() {
                            <td>
                                 <p id="price" class="d-flex justify-content-center"
                                 data-price="${item?.room.applied_price?.unit_price ?? 0}">
-                                ${item?.room.applied_price?.unit_price != null 
-                                        ? formatCurrency(item?.room.applied_price?.unit_price) 
-                                        : 0}
+                                ${item?.room.applied_price?.unit_price != null
+                                    ? formatCurrency(item?.room.applied_price?.unit_price)
+                                    : 0}
                                 </p>
                             </td>
 
@@ -2338,7 +2367,7 @@ $('.btn-book-pttt').off('click').on('click', function (e) {
 
 });
 function getDatesBetween(checkInDate, checkInTime, checkOutDate, checkOutTime, room, roomType, adult, note,
-    deposit, discount, roomBookingId,priceRoom) {
+    deposit, discount, roomBookingId, priceRoom) {
 
     let dates = [];
     let currentDate = new Date(checkInDate);
@@ -2373,7 +2402,7 @@ function getDatesBetween(checkInDate, checkInTime, checkOutDate, checkOutTime, r
             deposit: deposit,
             discount: discount,
             bookingId: roomBookingId,
-            priceRoom:priceRoom,
+            priceRoom: priceRoom,
         });
         break;
     }
@@ -2726,7 +2755,7 @@ $('.booking-form-pttt').on('submit', function (e) {
     var roomData = [];
     var filteredRoomData = [];
     const method = $('.btn-book-pttt').attr('data-method');
-//1234567
+    //1234567
     $('#list-booking-edit-letan tr').each(function () {
 
         var checkbox = $(this).find('input[type="checkbox"]');
@@ -2760,7 +2789,7 @@ $('.booking-form-pttt').on('submit', function (e) {
             deposit: deposit,
             discount: discount,
             roomBookingId: roomBookingId,
-            priceRoom:priceRoom,
+            priceRoom: priceRoom,
         });
 
 
@@ -2781,7 +2810,7 @@ $('.booking-form-pttt').on('submit', function (e) {
     filteredRoomData.forEach(function (item) {
         const roomDates = getDatesBetween(item['checkInDate'], item['checkInTime'],
             item['checkOutDate'], item['checkOutTime'], item['roomId'], item['roomTypeId'],
-            item['adult'], item['note'], item['deposit'], item['discount'], item['roomBookingId'],item['priceRoom']);
+            item['adult'], item['note'], item['deposit'], item['discount'], item['roomBookingId'], item['priceRoom']);
 
         roomDates.forEach(function (date, index) {
             formData.push({

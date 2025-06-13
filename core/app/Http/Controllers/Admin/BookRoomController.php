@@ -1211,14 +1211,23 @@ class BookRoomController extends Controller
         if ($booking->customer_code) {
             $customer = Customer::where('customer_code', $booking->customer_code)->first();
         }
+        // số lần thanh toán
+        $receiptAndPayment = ReceiptAndPayment::where('checkin_id', $booking->check_in_id)->first();
+        if($receiptAndPayment){
+            $paymentTransaction = PaymentTransaction::where('subdomain', subdomain())
+            ->where('unit_code', unitCode())->where('receipts_and_payments_id', $receiptAndPayment->id)->get();
+        }
+     
         return response()->json([
             'status'                 => 'success',
             'data'                   => $groupedBookings,
             'admin'                  => $admin,
             'customerSourse'         => $customerSourse,
             'option_customer_source' => $customer->group_code ?? "",
+            'option_admin'           => $booking->created_by ?? "",
             'pageModal'              => $pageModal,
             'payment'                => $totalPayment ?? 0,
+            'payment_tranction'      => $paymentTransaction ?? [],
         ]);
     }
     // get room booking

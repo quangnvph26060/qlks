@@ -14,7 +14,7 @@
                     <span class="icon"> <i class="fa-solid fa-th-large"></i></span> <span class="text"
                         style="display: none;">Sơ đồ</span>
                 </button>
-              
+
             </div>
             <div class="search-container">
                 <!-- Dropdown (Bên trái) -->
@@ -435,7 +435,7 @@
 
                                         </li>
                                         <li class="financial-item" id="select-option-pttt">
-                                            <span>Khách đã thanh toán</span>
+                                            <span>Khách đã thanh toán <span class="payment_paid"> 0 </span></span>
                                             <span class="total_payment">0</span>
 
                                         </li>
@@ -456,8 +456,9 @@
                                 </div>
                             </div>
                             <div class="d-flex justify-content-end" style="gap: 10px;">
-                                 <button type="button"  id="checkout_room" class="btn btn-primary btn-checkout-room">Trả phòng</button>
-                                  <button type="button" id="print_invoice" class="btn btn-success">In hoá đơn</button>
+                                <button type="button" id="checkout_room" class="btn btn-primary btn-checkout-room">Trả
+                                    phòng</button>
+                                <button type="button" id="print_invoice" class="btn btn-success">In hoá đơn</button>
                                 <button type="button" class="btn-dat-truoc btn-book-pttt">Lưu</button>
                                 <p type="button" data-row="booked" class="alert-paragraph close_modal">Hủy</p>
                             </div>
@@ -468,7 +469,7 @@
         </div>
         {{-- dọn phòng --}}
         @include('admin/booking/partials/clean_modal')
-         @include('admin/booking/partials/room_fix_modal')
+        @include('admin/booking/partials/room_fix_modal')
         <!-- Bộ lọc bên phải -->
         <div class="filter-sidebar" id="filter-sidebar">
             <div class="filter-header d-flex justify-content-between">
@@ -539,6 +540,39 @@
                 <button class="btn btn-primary btn-fillter" id="btn-fillter">Áp dụng</button>
             </div>
         </div>
+        <!-- Nút để test -->
+        {{-- <span class="total_payment" style="cursor: pointer; color: blue; text-decoration: underline;">90.000VND</span> --}}
+
+        <!-- Modal Bootstrap -->
+        <div class="modal fade " id="paymentModal" tabindex="-1" aria-labelledby="paymentModalLabel" aria-hidden="true">
+            <div class="modal-dialog modal-lg modal-dialog-centered">
+                <div class="modal-content rounded-3 shadow-lg" style="width: 50%;">
+                    <div class="modal-header border-0">
+                        <h5 class="modal-title fw-bold" id="paymentModalLabel">
+                            Thanh toán cho nhận phòng 
+                        </h5>
+                        <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Đóng"></button>
+                    </div>
+                    <div class="modal-body">
+                        <table class=" table--light style--two table align-middle text-center">
+                            <thead class="table-success">
+                                <tr>
+                                    <th scope="col">Mã phiếu thu</th>
+                                    <th scope="col">Thời gian</th>
+                                    <th scope="col">Tiền thu</th>
+                                    <th scope="col">Phương thức</th>
+                                </tr>
+                            </thead>
+                            <tbody id="paymentTableBody">
+                            </tbody>
+                        </table>
+                    </div>
+                    <div class="modal-footer border-0">
+                        <button type="button" class="btn btn-primary px-4" data-bs-dismiss="modal">Xong</button>
+                    </div>
+                </div>
+            </div>
+        </div>
 
         <!-- Overlay làm mờ nền -->
         <div class="overlay" id="overlay"></div>
@@ -580,7 +614,7 @@
     var checkInEditUrl = "{{ route('admin.check.in.edit', ['id' => ':id']) }}";
     var paymentRoomUrl = "{{ route('admin.booking.payment.room') }}";
     var checkOutRoomUrl = "{{ route('admin.booking.check.out.room') }}";
-    var findRoomBookingIdUrl = '{{ route("admin.find.room.booking") }}';
+    var findRoomBookingIdUrl = '{{ route('admin.find.room.booking') }}';
     var CheckInUrl = "{{ route('admin.room.booked.check.in') }}";
     var roomBook = "{{ route('admin.room.book') }}";
     var cleanRoomUrl = "{{ route('admin.roomclean.booking.roomclean') }}"
@@ -874,7 +908,7 @@
 
         function getDatesBetween(checkInDate, checkInTime, checkOutDate, checkOutTime, room, roomType, adult,
             note,
-            deposit, discount, roomBookingId,priceRoom) {
+            deposit, discount, roomBookingId, priceRoom) {
 
             let dates = [];
             let currentDate = new Date(checkInDate);
@@ -909,7 +943,7 @@
                     deposit: deposit,
                     discount: discount,
                     bookingId: roomBookingId,
-                    priceRoom:priceRoom
+                    priceRoom: priceRoom
                 });
 
                 break;
@@ -1021,8 +1055,8 @@
                 formObject[field.name] = field.value;
             });
             if (!validatePhone(formData[2]['value'])) {
-                    return;
-                }
+                return;
+            }
             let queryString = $.param(formObject);
 
             const params = new URLSearchParams(queryString);
@@ -1037,7 +1071,7 @@
             // Duyệt qua từng dòng trong bảng
             $('#list-booking tr').each(function() {
                 var roomId = $(this).data('room-id');
-                 var priceRoom = $(this).data('price');
+                var priceRoom = $(this).data('price');
                 var roomTypeId = $(this).data('room-type-id');
                 var checkInDate = $(this).find('input[name="checkInDate"]').val();
                 var checkInTime = $(this).find('input[name="checkInTime"]').val();
@@ -1069,7 +1103,7 @@
                     note: note,
                     deposit: deposit,
                     discount: discount,
-                    priceRoom:priceRoom,
+                    priceRoom: priceRoom,
                 });
 
             });
@@ -1079,7 +1113,8 @@
                     const roomDates = getDatesBetween(item['checkInDate'], item['checkInTime'],
                         item['checkOutDate'], item['checkOutTime'], item['roomId'], item[
                             'roomTypeId'],
-                        item['adult'], item['note'], item['deposit'], item['discount'], "",item['priceRoom']);
+                        item['adult'], item['note'], item['deposit'], item['discount'], "",
+                        item['priceRoom']);
 
                     roomDates.forEach(function(date, index) {
                         formData.push({
@@ -1113,7 +1148,7 @@
                     }
 
                 });
-               
+
 
 
                 let url = $(this).attr('action');
@@ -1443,32 +1478,33 @@
                         let isFirst = !seenRooms.has(item.room_number);
                         seenRooms.add(item.room_number);
 
-                           if (item.room_fix == 1) {
-                                item.check_booked = 'Phòng đang sửa';
-                                rowClass =  'background-gray'; // bạn có thể chọn màu khác nếu muốn
-                              
+                        if (item.room_fix == 1) {
+                            item.check_booked = 'Phòng đang sửa';
+                            rowClass =
+                                'background-gray'; // bạn có thể chọn màu khác nếu muốn
+
+                        } else {
+                            if (!isFirst) {
+                                if (item.check_booked === 'Đã nhận') {
+                                    rowClass = "background-red";
+                                } else if (item.check_booked === 'Đã đặt') {
+                                    rowClass = 'background-yellow';
+                                } else if (item.check_booked === 'Trống') {
+                                    rowClass = "background-primary";
+                                }
                             } else {
-                                if (!isFirst) {
-                                    if (item.check_booked === 'Đã nhận') {
-                                        rowClass = "background-red";
-                                    } else if (item.check_booked === 'Đã đặt') {
-                                        rowClass = 'background-yellow';
-                                    } else if (item.check_booked === 'Trống') {
-                                        rowClass = "background-primary";
-                                    }
+                                if (item.check_booked === 'Đã nhận') {
+                                    rowClass = "background-red";
+                                } else if (item.check_booked === 'Đã đặt') {
+                                    rowClass = 'background-yellow';
+                                } else if (item.check_booked === 'Trống') {
+                                    rowClass = "background-primary";
                                 } else {
-                                    if (item.check_booked === 'Đã nhận') {
-                                        rowClass = "background-red";
-                                    } else if (item.check_booked === 'Đã đặt') {
-                                        rowClass = 'background-yellow';
-                                    } else if (item.check_booked === 'Trống') {
-                                        rowClass = "background-primary";
-                                    } else {
-                                        rowClass = "background-white";
-                                    }
+                                    rowClass = "background-white";
                                 }
                             }
-                        
+                        }
+
                         let firstRowClass = isFirst ? "first-row" : "";
                         var tr = `
                         <tr class="${firstRowClass}">
@@ -1878,6 +1914,24 @@
         background: #ddd;
         padding: 8px 10px;
         border-radius: 8px;
+    }
+
+    .payment_paid {
+        display: inline-block;
+        width: 24px;
+        height: 24px;
+        border-radius: 50%;
+        text-align: center;
+        line-height: 24px;
+        font-size: 14px;
+        vertical-align: middle;
+        padding: 0;
+        margin-left: 4px;
+        border: 1px solid;
+    }
+
+    .total_payment {
+        cursor: pointer;
     }
 
     .add-room-booking,
