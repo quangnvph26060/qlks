@@ -14,9 +14,10 @@ class AdminPermissionMiddleware
     {
         $codes = optional(auth('admin')->user()->role)->permissions->pluck('code')->toArray();
         $currentRoute = $request->route()->getName();
-        $excludedRoutes = ['admin.revenue'];
+        $excludedRoutes = ['admin.revenue','admin.hotel.setup.amenities.search'];
         /*
             'admin.revenue' => 'Danh thu trong màn thông kế'
+            'admin.hotel.setup.amenities.search' => 'Tìm kiếm cài đặt tiện nghi'
         
         */
         if (!in_array($currentRoute, $excludedRoutes) && !in_array($currentRoute, $codes)) {
