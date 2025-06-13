@@ -90,14 +90,14 @@ class ProductController extends Controller
         $prefix = SetupCode::where('menu_name', 'Cài đặt sản phẩm')->value('code');
 
         $code = $prefix ? $prefix . ($count + 1) : '';
-        $brands = Brand::query()->pluck('name', 'id');
-        return view('admin.product.create', compact('brands', 'categories', 'pageTitle', 'code'));
+        
+        return view('admin.product.create', compact( 'categories', 'pageTitle', 'code'));
     }
     public function index(Request $request)
     {
         $pageTitle = 'Danh sách sản phẩm';
         // dd($code);
-        $brands = Brand::query()->pluck('name', 'id');
+     
         $categories = Product::query()->orderBy('id', 'desc')->where('unit_code', unitCode())->paginate(10);
         $emptyMessage = 'Không tìm thấy dữ liệu';
         return view('admin.hotel.setup.product', compact('pageTitle', 'categories', 'emptyMessage'));
