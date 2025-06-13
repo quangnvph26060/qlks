@@ -122,7 +122,7 @@ class ApipublicController extends Controller
 
         return response()->json([
             'hotels' => $data,
-            'demo' => $request->ota_id,
+           
 
         ], 200);
     }
