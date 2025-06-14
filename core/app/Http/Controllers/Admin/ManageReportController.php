@@ -12,6 +12,13 @@ use Illuminate\Support\Facades\Schema;
 class ManageReportController extends Controller
 {
 
+    public function periodicReport(Request $request)
+    {
+        $pageTitle = 'Báo cáo định kì';
+        $roomStatus = RoomStatus::all();   
+        $room       = Room::active()->get();
+        return view('admin.manage-room-status.index', compact('pageTitle','roomStatus', 'room'));
+    }
     public function rommStatus(Request $request)
     {
         $pageTitle = 'Báo cáo trạng thái phòng';

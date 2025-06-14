@@ -175,8 +175,8 @@
                 ],
                 "title": "Báo cáo định kì",
                 "icon": "la la-hand-o-right",
-                "route_name": "admin.manage.room.status",
-                "menu_active": "admin.manage.room.status"
+                "route_name": "admin.manage.periodic.report",
+                "menu_active": "admin.manage.periodic.report"
             },
             {
                 "keyword": [
