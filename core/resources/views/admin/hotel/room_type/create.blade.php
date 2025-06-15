@@ -45,14 +45,14 @@
                                 <div class="">
                                     <label>@lang('Diện tích (m²)')</label>
                                     <input class="form-control" placeholder="Diện tích" name="area" type="text"
-                                        value="{{ old('area', @$roomType->area) }}" required>
+                                        value="{{ old('area', @$roomType->area) }}" >
                                 </div>
                             </div>
                              <div class="col-xl-4 col-md-4 col-sm-12">
                                 <div class="">
                                     <label>@lang('Hướng phòng')</label>
                                     <input class="form-control" placeholder="Hướng phòng" name="direction" type="text"
-                                        value="{{ old('direction', @$roomType->direction) }}" required>
+                                        value="{{ old('direction', @$roomType->direction) }}" >
                                 </div>
                             </div>
                             {{-- <div class="col-xl-4 col-md-4 col-sm-12">
@@ -151,7 +151,7 @@
                                         type="button">-</button>
                                     <input class="form-control text-center product-qty border-0" type="number" style="height: 30px !important; padding: 0px !important;"
                                         name="total_adult" min="1" max="100"
-                                        value="{{ old('total_adult', @$roomType->total_adult ?? 1) }}"  required>
+                                        value="{{ old('total_adult', @$roomType->total_adult ?? 1) }}"  >
                                     <button class="btn btn-light qty-count qty-count--add border-start" data-action="add" style="padding: 0px !important;"
                                         type="button">+</button>
                                 </div>
@@ -169,7 +169,7 @@
                                         <input class="form-control text-center product-qty border-0" type="number" style="height: 30px !important; padding: 0px !important;"
                                             name="beds" min="1" max="100"
                                             value="{{ old('beds', @$roomType->beds ?? 1) }}" readonly
-                                            required>
+                                            >
                                         <button class="btn btn-light qty-count qty-count--add border-start" style="padding: 0px !important;"
                                             data-action="add" type="button">+</button>
                                     </div>
@@ -317,8 +317,10 @@
                                 </h5>
                             </div>
                             <div class="card-body">
-                                <x-image-uploader name="main_image" class="w-100" type="roomTypeImage" :image="@$roomType->main_image"
-                                    :required="@$roomType ? false : true" />
+                                {{-- <x-image-uploader name="main_image" class="w-100" type="roomTypeImage" :image="@$roomType->main_image"
+                                    :required="@$roomType ? false : true" /> --}}
+                                      <x-image-uploader name="main_image" class="w-100" type="roomTypeImage" :image="@$roomType->main_image"
+                                    />
                             </div>
                         </div>
                     </div>

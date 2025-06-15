@@ -122,7 +122,7 @@
                             </div>
 
                             <div class="input_hodiday">
-                                <label for="selectedDates" class="form-label">Chọn ngày:</label>
+                                <label for="selectedDates" class="form-label">Chọn ngày đặc biệt:</label>
                                 <input type="text" id="selectedDates" class="form-group abc "
                                     placeholder="Chọn ngày" name="price_requirement[]"
                                     style="width: 100%; height: 35px;">
@@ -145,36 +145,38 @@
 <script>
     $(document).ready(function() {
         var selectedValues = @json($selectedValues);
-        // check type number
-        if (typeof(selectedValues) === 'number') {
-            $('.price_requirement_value').val(selectedValues);
-            $('#dayType').val('time');
-            $('.input_rank').hide();
-            $('.input_hodiday').hide();
-        }
-
-        if (typeof(selectedValues) === 'object') {
-            selectedValues.forEach(function(value) {
-                if (/^\d{4}-\d{2}-\d{2}(?:,\s*\d{4}-\d{2}-\d{2})*$/.test(value) ) {  
-                    $('.abc').val(value);
-                    $('.input_rank').hide(); 
-                    $('#dayType').val('holiday');
-                    $('.price_requirement_value').hide();
-                  
-                    flatpickr("#selectedDates", {
-                        mode: "multiple",
-                        dateFormat: "Y-m-d",
-                    });
-                } else {
-                    $('.input_hodiday').hide(); 
-                    $('#dayType').val('rank'); 
-                    $('.price_requirement_value').hide();
-                    var input = document.querySelector('input[value="' + value + '"]');
-                    if (input) {
-                        input.checked = true;
-                    }
+       
+        if (selectedValues)
+                if (Array.isArray(selectedValues) && selectedValues.length === 1 && selectedValues[0] === 'Giờ') {
+                    $('.price_requirement_value').val('Giờ');
+                    $('#dayType').val('time').trigger('change');
+                    $('.input_rank').hide();
+                    $('.input_hodiday').hide();
                 }
-            });
-        }
+                else if (typeof(selectedValues) === 'object') {
+                    let validDates = [];
+                    selectedValues.forEach(function(value) {
+                        if (/^\d{4}-\d{2}-\d{2}(?:,\s*\d{4}-\d{2}-\d{2})*$/.test(value)) {
+                            validDates.push(value);
+                            $('.abc').val(validDates.join(', '));
+                            $('.input_rank').hide();
+                            $('#dayType').val('holiday');
+                            $('.price_requirement_value').hide();
+
+                            flatpickr("#selectedDates", {
+                                mode: "multiple",
+                                dateFormat: "Y-m-d",
+                            });
+                        } else {
+                            $('.input_hodiday').hide();
+                            $('#dayType').val('rank');
+                            $('.price_requirement_value').hide();
+                            var input = document.querySelector('input[value="' + value + '"]');
+                            if (input) {
+                                input.checked = true;
+                            }
+                        }
+                    });
+                }
     });
 </script>

@@ -194,7 +194,7 @@
                                 <label for="sunday">Chủ Nhật</label>
                             </div>
                         </div>
-                        <label for="selectedDates" class="form-label">Chọn ngày:</label>
+                        <label for="selectedDates" class="form-label">Chọn ngày đặc biệt:</label>
                         <input type="text" id="selectedDates" class="form-group" placeholder="Chọn ngày" name="price_requirement[]" style="width: 100%; height: 35px;">
                     `;
                     } else if (selectedValue === 'time') { // giờ
@@ -203,7 +203,7 @@
                     `;
 
 
-                    } else { // ngày thường
+                    } else { // ngày đặc biệt
                         checkboxList.innerHTML = `
                             <input type="text" hidden name="price_requirement" class="price_requirement_value" value="weekday">
                         `;
@@ -222,7 +222,7 @@
                 if (selectedValue === 'holiday') {
                     checkboxList.innerHTML = `
 
-                        <label for="selectedDates" class="form-label">Chọn ngày:</label>
+                        <label for="selectedDates" class="form-label">Chọn ngày đặc biệt:</label>
                         <input type="text" id="selectedDates" class="form-group" placeholder="Chọn ngày" name="price_requirement[]" style="width: 100%; height: 35px;">
                     `;
                     flatpickr("#selectedDates", {
@@ -230,10 +230,14 @@
                         dateFormat: "Y-m-d",
                     });
                 } else if (selectedValue === 'time') { // giờ
+                   
                     checkboxList.innerHTML = `
-                        <input type="text"  name="price_requirement" class="form-control price_requirement_value" placeholder="Nhập giờ">
+                        <input type="hidden"  name="price_requirement" class="form-control price_requirement_value" value="Giờ" placeholder="Nhập giờ">
                     `;
-                } else if (selectedValue === 'rank') { // ngày thường
+                    // checkboxList.innerHTML = `
+                    //     <input type="text"  name="price_requirement" class="form-control price_requirement_value" placeholder="Nhập giờ">
+                    // `;
+                } else if (selectedValue === 'rank') { // ngày đặc biệt
                     checkboxList.innerHTML = `
                              <label class="form-label">Chọn thứ:</label>
                         <div class="checkbox-group" style="display: flex; gap: 10px">
@@ -292,19 +296,7 @@
                         }, // viết tiếp điều kiện validate vào đây (validations)
                     ]
                 },
-                'priceNote': { // passwword thì nên đặt là name trong input đó
-                    'element': document.getElementById('priceNote'), // id trong input đó
-                    'error': document.getElementById('priceNote_error'), // thẻ hiển thị lỗi
-                    'validations': [{
-                            'func': function(value) {
-                                return checkRequired(value); // check trống
-                            },
-                            'message': generateErrorMessage('P001', 'Ghi Chú')
-                        }, // viết tiếp điều kiện validate vào đây (validations)
-                    ]
-                },
-               
-                'roundTime': { // passwword thì nên đặt là name trong input đó
+                  'roundTime': { // passwword thì nên đặt là name trong input đó
                     'element': document.getElementById('roundTime'), // id trong input đó
                     'error': document.getElementById('roundTime_error'), // thẻ hiển thị lỗi
                     'validations': [{
@@ -320,7 +312,9 @@
                             'message': generateErrorMessage('P002', 'Làm tròn thời gian')
                         },
                     ]
-                },
+                }
+               
+              
             }
 
             // function validateDate() {
@@ -377,10 +371,10 @@
                         'priceName');
                         formEconomyEdit.priceName.error = document.getElementById(
                             'priceName_error');
-                        formEconomyEdit.priceNote.element = document.getElementById(
-                        'priceNote');
-                        formEconomyEdit.priceNote.error = document.getElementById(
-                            'priceNote_error');
+                        // formEconomyEdit.priceNote.element = document.getElementById(
+                        // 'priceNote');
+                        // formEconomyEdit.priceNote.error = document.getElementById(
+                        //     'priceNote_error');
                         // formEconomyEdit.startDate.element = document.getElementById('startDate');
                         // formEconomyEdit.startDate.error = document.getElementById('startDate_error');
                         // formEconomyEdit.endDate.element = document.getElementById('endDate');
@@ -390,9 +384,9 @@
                         'roundTime');
                         formEconomyEdit.roundTime.error = document.getElementById(
                             'roundTime_error');
-                        formEconomyEdit.dayType.element = document.getElementById('dayType');
-                        formEconomyEdit.dayType.error = document.getElementById(
-                        'dayType_error');
+                        // formEconomyEdit.dayType.element = document.getElementById('dayType');
+                        // formEconomyEdit.dayType.error = document.getElementById(
+                        // 'dayType_error');
                     },
                     error: function(xhr, status, error) {
                         $('#loading').hide();
@@ -424,10 +418,10 @@
                         'priceName');
                         formEconomyEdit.priceName.error = document.getElementById(
                             'priceName_error');
-                        formEconomyEdit.priceNote.element = document.getElementById(
-                        'priceNote');
-                        formEconomyEdit.priceNote.error = document.getElementById(
-                            'priceNote_error');
+                        // formEconomyEdit.priceNote.element = document.getElementById(
+                        // 'priceNote');
+                        // formEconomyEdit.priceNote.error = document.getElementById(
+                        //     'priceNote_error');
                         // formEconomyEdit.startDate.element = document.getElementById('startDate');
                         // formEconomyEdit.startDate.error = document.getElementById('startDate_error');
                         // formEconomyEdit.endDate.element = document.getElementById('endDate');
@@ -437,9 +431,9 @@
                         'roundTime');
                         formEconomyEdit.roundTime.error = document.getElementById(
                             'roundTime_error');
-                        formEconomyEdit.dayType.element = document.getElementById('dayType');
-                        formEconomyEdit.dayType.error = document.getElementById(
-                        'dayType_error');
+                        // formEconomyEdit.dayType.element = document.getElementById('dayType');
+                        // formEconomyEdit.dayType.error = document.getElementById(
+                        // 'dayType_error');
 
                     },
                     error: function(xhr, status, error) {
@@ -534,7 +528,10 @@
 
 
                                 formattedData = dataArray.map(item => {
-                                    if (item.includes('-')) {
+                                    if(item == "Giờ"){
+                                        return item;
+                                    }
+                                     else if(item.includes('-')) {
                                         // Xử lý định dạng cho ngày tháng
                                         const dates = item.split(',').map(dateStr => {
                                             const date = new Date(dateStr.trim());

@@ -14,7 +14,8 @@ class StaffController extends Controller {
     public function index() {
         $pageTitle = 'Tất cả nhân viên';
         // $allStaff = Admin::where('id', '!=', 1)->with('role')->paginate(getPaginate());
-        $allStaff = Admin::where('id', '!=', auth('admin')->user()->id)->with('role')
+       //  $allStaff = Admin::where('id', '!=', auth('admin')->user()->id)->with('role')
+        $allStaff = Admin::with('role')
         ->where('unit_code',unitCode())
         ->where('subdomain',subdomain())->paginate(getPaginate());
         $roles = Role::where('unit_code',unitCode())

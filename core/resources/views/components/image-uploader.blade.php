@@ -6,7 +6,7 @@
     'name' => 'image',
     'id' => 'image-upload-input1',
     'accept' => '.png, .jpg, .jpeg',
-    'required' => true,
+    'required' => false,
     'darkMode' => false,
 ])
 

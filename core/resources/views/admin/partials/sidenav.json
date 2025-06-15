@@ -107,12 +107,13 @@
             },
             {
                 "keyword": [
-                    "Danh mục trạng thái"
+                    "Danh mục hướng phòng"
                 ],
-                "title": "Danh mục trạng thái",
-                "route_name": "admin.hotel.status.code.all",
-                "menu_active": "admin.hotel.status.code.all"
+                "title": "Danh mục hướng phòng",
+                "route_name": "admin.hotel.direction.all",
+                "menu_active": "admin.hotel.direction.all"
             }
+            
         ]
     },
     "manage_booked": {
@@ -297,6 +298,14 @@
                 "title": "Cài đặt mã",
                 "route_name": "admin.hotel.setup.code.all",
                 "menu_active": "admin.hotel.setup.code.all"
+            },
+            {
+                "keyword": [
+                    "Danh mục trạng thái"
+                ],
+                "title": "Danh mục trạng thái",
+                "route_name": "admin.hotel.status.code.all",
+                "menu_active": "admin.hotel.status.code.all"
             }
         ]
     },

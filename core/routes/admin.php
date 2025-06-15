@@ -364,8 +364,18 @@ Route::middleware('admin', 'adminPermission')->prefix('admin')->group(function (
             Route::get('search', 'search')->name('search');
             Route::get('check-code','checkCode')->name('check');
             Route::get('get/{id}','getCustomer')->name('get');
-
-
+        });
+        // danh mục hướng phòng
+          Route::controller('RoomDirectionController')->name('direction.')->prefix('direction')->group(function () {
+            Route::get('', 'index')->name('all');
+            // Route::post('/add-customer', 'store')->name('store');
+            // Route::get('edit-customer/{id}', 'edit')->name('edit');
+            // Route::put('/update-customer/{id}', 'update')->name('update');
+            // Route::post('delete-customer/{id}', 'delete')->name('delete');
+            // Route::post('status/{id}', 'status')->name('status');
+            // Route::get('search', 'search')->name('search');
+            // Route::get('check-code','checkCode')->name('check');
+            // Route::get('get/{id}','getCustomer')->name('get');
         });
 
         Route::controller('StatusCodeController')->name('status.code.')->prefix('status-code')->group(function () {

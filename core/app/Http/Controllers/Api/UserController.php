@@ -9,6 +9,7 @@ use App\Models\DeviceToken;
 use App\Models\HotelConfiguration;
 use App\Models\HotelFacility;
 use App\Models\NotificationLog;
+use App\Models\Role;
 use App\Models\Transaction;
 use App\Models\User;
 use Illuminate\Database\QueryException;
@@ -340,7 +341,7 @@ class UserController extends Controller
                 'username' => $request->username,
                 'email' => $request->email,
                 'mobile' => $request->phone,
-                 'password' => $request->password,
+                'password' => $request->password,
                 'status' => 1,
                 'role_id' => 1,
                 'unit_code' => 'COSO1',
@@ -348,6 +349,7 @@ class UserController extends Controller
                 'hotel_homestay' => $request->hotel_homestay
             ]);
             if ($customer) {
+                // thêm cơ sở
                 $hotelFacility = HotelFacility::create([
                     'ten_coso'  => $request->name,
                     'ma_coso'   => "COSO1",
@@ -355,10 +357,17 @@ class UserController extends Controller
                     'trang_thai' => 1,
 
                 ]);
+                // thêm cấu hình
                 HotelConfiguration::create([
                     'hotel_facility_id' => $hotelFacility->id,
                     'hotel_name' => $request->hotel_homestay,
                     'slug' => Str::slug($request->hotel_homestay)
+                ]);
+                // thêm vai trò 
+                Role::create([
+                    'name' => "Lễ Tân",
+                    'subdomain' => $request->username,
+                    'unit_code' => 'COSO1',
                 ]);
             }
             DB::commit();

@@ -994,7 +994,7 @@ class BookingController extends Controller
         $room_clean  = data_get($request->data, 'room_clean');
         $pricesByRoomTypeId = $this->getPricesBySetupPricing($date);
 
-        $rooms = Room::query();
+        $rooms = Room::query()->active();
 
         $rooms->when(!empty($room_type), function ($query) use ($room_type) {
             $query->whereIn('room_type_id', $room_type);
