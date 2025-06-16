@@ -9,6 +9,15 @@ use Illuminate\Support\Facades\Cache;
 
 class Role extends Model
 {
+    protected $table = 'roles';
+    protected $fillable = [
+      'name',
+      'unit_code',
+      'subdomain',
+    ];
+    protected $hidden = [
+        'created_at','updated_at'
+    ];
     public function permissions()
     {
         return $this->belongsToMany(Permission::class);
