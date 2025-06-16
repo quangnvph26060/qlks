@@ -363,12 +363,25 @@ class UserController extends Controller
                     'hotel_name' => $request->hotel_homestay,
                     'slug' => Str::slug($request->hotel_homestay)
                 ]);
+                $permissionIds = [
+                    1, 2, 57, 275, 276, 277, 278, 279, 280, 281, 282, 283,
+                    284, 285, 286, 306, 73, 287, 288, 289, 290, 291, 292, 293, 294
+                ];
+
                 // thêm vai trò 
-                Role::create([
+                $role = Role::create([
                     'name' => "Lễ Tân",
                     'subdomain' => $request->username,
                     'unit_code' => 'COSO1',
                 ]);
+                if ($role) {
+                    foreach ($permissionIds as $permissionId) {
+                        DB::table('permission_role')->insert([
+                            'role_id' => $role->id,
+                            'permission_id' => $permissionId,
+                        ]);
+                    }
+                }
             }
             DB::commit();
             return response()->json([
