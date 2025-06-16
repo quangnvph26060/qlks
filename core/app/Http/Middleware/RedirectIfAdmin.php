@@ -16,8 +16,13 @@ class RedirectIfAdmin
     public function handle($request, Closure $next, $guard = 'admin')
     {
         if (Auth::guard($guard)->check()) {
-            // return to_route('admin.dashboard');
-               return to_route('admin.display');
+            $user = Auth::guard($guard)->user();
+                if($user->role_id == 1){
+                    return to_route('admin.display');
+                }else{
+                    return to_route('admin.receptionist.booking.receptionist'); // lễ tân
+                }
+              
         }
         return $next($request);
     }

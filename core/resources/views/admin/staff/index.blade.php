@@ -128,7 +128,7 @@
                         @csrf
                         <div class="modal-body">
                             <div class="form-group">
-                                <label>@lang('Tên')</label>
+                                <label>@lang('Tên đăng nhập')</label>
                                 <input class="form-control" name="name" required type="text">
                             </div>
 
