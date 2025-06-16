@@ -77,6 +77,7 @@
                                             'Danh mục nguồn khách hàng',
                                             'Danh mục nhóm khách',
                                             'Danh mục trạng thái',
+                                            'Danh mục hướng phòng',
                                              
                                         ];
 

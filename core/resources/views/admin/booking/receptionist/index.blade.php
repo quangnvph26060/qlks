@@ -3,13 +3,13 @@
     <div class="row d-flex align-items-center" style="padding: 10px">
         <div class="col-md-6 d-flex" style="justify-content: start;gap:10px;height: 38px;">
             <div class="view-toggle">
-                <button id="listViewBtn" class="active" onclick="changeView('list')">
+                {{-- <button id="listViewBtn" class="active" onclick="changeView('list')">
                     <span class="icon"> <i class="fa-solid fa-bars"></i></span> <span class="text">Danh Sách</span>
                 </button>
                 <button id="gridViewBtn" onclick="changeView('calendar')">
                     <span class="icon"><i class="fa-solid fa-sliders"></i></span> <span class="text"
                         style="display: none;">Lưới</span>
-                </button>
+                </button> --}}
                 <button id="tableViewBtn" onclick="changeView('grid')">
                     <span class="icon"> <i class="fa-solid fa-th-large"></i></span> <span class="text"
                         style="display: none;">Sơ đồ</span>

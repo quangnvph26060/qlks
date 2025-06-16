@@ -51,8 +51,13 @@
                              <div class="col-xl-4 col-md-4 col-sm-12">
                                 <div class="">
                                     <label>@lang('Hướng phòng')</label>
-                                    <input class="form-control" placeholder="Hướng phòng" name="direction" type="text"
-                                        value="{{ old('direction', @$roomType->direction) }}" >
+                                      <select class="form-control" name="direction_id" >
+                                        <option disabled selected value="">@lang('Chọn loại phòng')</option>
+                                        @foreach ($roomDirections as $id => $name)
+                                            <option @selected(old('direction_id', @$roomType->direction_id) == $id) value="{{ $id }}">
+                                                {{ __($name) }}</option>
+                                        @endforeach
+                                    </select>
                                 </div>
                             </div>
                             {{-- <div class="col-xl-4 col-md-4 col-sm-12">

@@ -161,19 +161,18 @@
                 'ma_coso': { // passwword thì nên đặt là name trong input đó
                     'element': document.getElementById('ma_coso'), // id trong input đó
                     'error': document.getElementById('ma_coso_error'), // thẻ hiển thị lỗi
-                    'validations': [
-                        {
+                    'validations': [{
                             'func': function(value) {
-                                return checkRequired(value); 
+                                return checkRequired(value);
                             },
                             'message': generateErrorMessage('MS001')
-                        }, 
-                         {
+                        },
+                        {
                             'func': function(value) {
-                                return isAllUpperCase(value); 
+                                return isAllUpperCase(value);
                             },
-                            'message': generateErrorMessage('INHOA','Mã cơ sở')
-                        }, 
+                            'message': generateErrorMessage('INHOA', 'Mã cơ sở')
+                        },
                     ]
                 },
                 'ten_coso': { // passwword thì nên đặt là name trong input đó
@@ -375,12 +374,12 @@
                 const selectedStatus = $('input[name="hotelStatus"]:checked').val();
             });
         });
-        $(document).on('input', 'input[name="ma_coso"]', function () {
-    this.value = this.value.toUpperCase();
-});
+        $(document).on('input', 'input[name="ma_coso"]', function() {
+            this.value = this.value.toUpperCase();
+        });
 
         $(document).ready(function() {
-           
+
             $(document).on('click', '.svg-icon', function(e) {
                 e.stopPropagation();
                 const $dropdown = $(this).siblings('.menu_dropdown');
@@ -509,9 +508,10 @@
             width: 120px;
             margin-bottom: 15px;
         }
-#add-code {
-  text-transform: uppercase;
-}
+
+        #add-code {
+            text-transform: uppercase;
+        }
 
         a.item-link:focus,
         a.item-link:hover {

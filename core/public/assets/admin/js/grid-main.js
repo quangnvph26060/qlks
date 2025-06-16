@@ -174,6 +174,7 @@ function initGridMain(data, date) {
             if (response.status === 'success') {
                 // resolve(response.data);
                 let groupedRooms = {};
+                //console.log(response);
 
                 response.data.forEach(item => {
                     if (!groupedRooms[item.room_type_id]) {
@@ -186,6 +187,17 @@ function initGridMain(data, date) {
                     groupedRooms[item.room_type_id].rooms.push(item);
                 });
                 let selectedDate = $('#startDate').val();
+                // console.log(selectedDate);
+                let fullDateTime = null;
+                if (selectedDate) {
+                    let now = new Date(); // thời gian hiện tại
+                    let hours = String(now.getHours()).padStart(2, '0');
+                    let minutes = String(now.getMinutes()).padStart(2, '0');
+                    let seconds = String(now.getSeconds()).padStart(2, '0');
+
+                    fullDateTime = `${selectedDate} ${hours}:${minutes}:${seconds}`;
+
+                }
                 let roomHTML = "";
                 Object.values(groupedRooms).forEach(group => {
                     roomHTML += `
@@ -205,14 +217,10 @@ function initGridMain(data, date) {
                         let flag = 'room-booked';
                         if (item.room_booking_history.length > 0 && item.room_booking_history) {
                             item.room_booking_history.forEach(booking => {
-                                status_code = booking.status_code;
+                                status_code = booking.status_code; // tình trạng phòng
                                 if (Array.isArray(booking.check_in_data) && booking.check_in_data.length > 0 && booking.status_code == 3) {
-
-
                                     let room_code = "";
                                     booking.check_in_data.forEach(k => {
-
-
                                         //  check liên quan đổi phòng
                                         if (k.room_change != null) {
                                             room_code = k.room_change;
@@ -221,7 +229,6 @@ function initGridMain(data, date) {
                                         }
                                         // console.log(selectedDate);
                                         // console.log('checkin' + k?.checkin_date.split(' ')[0]);
-
                                         if (room_code == item.id &&
                                             selectedDate >= k?.checkin_date.split(' ')[0] &&
                                             selectedDate < k?.checkout_date.split(' ')[0]
@@ -255,7 +262,11 @@ function initGridMain(data, date) {
                         //     button.dataset.room = item?.room_number;
                         //     button.dataset.id = isBooking?.booking_id ?? isBooking?.check_in_id ?? "";
                         // }
-                        //   console.log(isBooking);
+                        //  console.log(isBooking);
+                        // console.log(isBooking?.checkin_date.split(' ')[0]);
+
+                        // console.log(status_code);
+
                         const checkTime = selectedDate >= isBooking?.checkin_date.split(' ')[0] &&
                             selectedDate < isBooking?.checkout_date.split(' ')[0];
                         roomHTML += `
@@ -290,20 +301,21 @@ function initGridMain(data, date) {
                                        
                                         ${status_code == null ?
                                 `   <div class="dropdown-item room_fix" 
-                                        data-name="${item.room_number}"
-                                        data-id="${item.id}" >${item.room_fix ? "Sửa phòng hoàn thành" : "Sửa phòng "}</div>
-                                <div class="dropdown-item check_in_now"
-                                        data-room-type-id = "${item?.room_type_id}"
-                                        data-room-id = "${item?.id}" >Nhận phòng</div>
-                                        `
-                                : ""}
+                                                    data-name="${item.room_number}"
+                                                    data-id="${item.id}" >${item.room_fix ? "Sửa phòng hoàn thành" : "Sửa phòng "}</div>
+                                            <div class="dropdown-item check_in_now"
+                                                    data-room-type-id = "${item?.room_type_id}"
+                                                    data-room-id = "${item?.id}" >Nhận phòng</div>
+                                                    `
+                                : ""
+                            }
                                         ${status_code == 2 && checkTime ? `<div class="dropdown-item check_in_room"
                                             data-id   = "${isBooking?.room_code}" 
                                             data-date ="${isBooking?.checkin_date}"
-                                            data-book ="${isBooking?.booking_id ?? isBooking?.check_in_id ?? ''}">Nhận phòng</div>` : ''
+                                            data-book ="${isBooking?.booking_id ?? isBooking?.check_in_id ?? ''}">
+                                            Nhận phòng</div>` : ''
                             }
-                                        ${status_code == 3 && checkTime
-                                ? `
+                                        ${status_code == 3 && checkTime ? `
                                                 <div class="dropdown-item add_product_service"  
                                                     data-room-id="${isBooking?.room_change_info ? isBooking?.room_change_info?.new_room_code : item?.id}" 
                                                     data-coustomer="${isBooking?.customer_name ?? ''}" 
@@ -345,9 +357,21 @@ function initGridMain(data, date) {
                                     ? 'text-white'
                                     : ''}">${isBooking?.customer_name ??
                                     isBooking?.customer_name ?? " "}</div>
-                         <div class="time-info">
-                            ${formatCurrency(item.applied_price?.unit_price ?? 0)}
-                        </div>
+                                   <div class="room-number-name
+                                     ${status_code == 2 && checkTime
+                                ? 'text-white'
+                                : status_code == 3 && checkTime
+                                    ? 'text-white'
+                                    : ''}
+                                   ">
+                                        ${item?.direction?.name || "&nbsp;"}
+                                    </div>
+                                    <div class="time-info">
+                                        ${formatCurrency(item.applied_price?.unit_price ?? 0)} <span>
+                                        ${item?.direction?.price_offset > 0 ? '+ ' + formatCurrency(item.direction.price_offset) : ''}
+                                        </span>
+
+                                    </div>
     
 
                         </div>
@@ -1949,8 +1973,15 @@ function initViewScriptGird() {
                                 //   item.room['room_type']['room_type_price']['setup_pricing']['check_out_time']
                                 timeBookRoom = item.checkin_datetime;
                             }
+                            let unitPrice = Number(item?.room?.applied_price?.unit_price) || 0;
+                            let priceOffset = Number(item?.room?.direction?.price_offset) || 0;
+
+                            let totalPrice = unitPrice + priceOffset;
+
+                            console.log(totalPrice);
+
                             var tr = `
-                        <tr  data-status="0" data-room-id="${roomId}" data-price="${item?.room.applied_price?.unit_price}"  data-room-type-id="${roomTypeId}" data-date="${item.date}">
+                        <tr  data-status="0" data-room-id="${roomId}" data-price="${totalPrice}"  data-room-type-id="${roomTypeId}" data-date="${item.date}">
                             <td>
                                 <input type="checkbox">
                             </td>
@@ -1985,9 +2016,9 @@ function initViewScriptGird() {
                             </td>
                            <td>
                                 <p id="price" class="d-flex justify-content-center"
-                                data-price="${item?.room.applied_price?.unit_price ?? 0}">
-                                ${item?.room.applied_price?.unit_price != null
-                                    ? formatCurrency(item?.room.applied_price?.unit_price)
+                                data-price="${totalPrice ?? 0}">
+                                ${totalPrice != null
+                                    ? formatCurrency(totalPrice)
                                     : 0}
                                 </p>
                             </td>

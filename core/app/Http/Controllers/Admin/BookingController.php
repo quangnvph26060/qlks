@@ -866,7 +866,7 @@ class BookingController extends Controller
                     //                 ->limit(1); // Chỉ lấy giá có hiệu lực gần nhất theo ngày
                     //         }]);
                     // },
-
+                    'direction',
                     'roomType.roomTypePrice.setupPricing'
                 ]
             )
@@ -1039,6 +1039,7 @@ class BookingController extends Controller
             'roomBookingHistory.roomStatus',
             'roomBookingHistory.checkInData',
             'roomBookingHistory.bookingData',
+            'direction'
         ]);
         $rooms = $rooms->get();
 

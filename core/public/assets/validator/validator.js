@@ -116,11 +116,11 @@ function validateField(fieldName, data) {
 }
 function generateErrorMessage(code, values = []) {
     const errorMessages = {
-        E001: 'Mật khẩu không để trống',
+        E001:   'Mật khẩu không để trống',
         TKS001: 'Tên khách sạn không được để trống',
-        MS001: 'Mã cơ sở không được để trống',
-        INHOA: `${values} phải là in hoa`,
-        P001: `${values} không được để trống`,
+        MS001:  'Mã cơ sở không được để trống',
+        INHOA:  `${values} phải là in hoa`,
+        P001:  `${values} không được để trống`,
         P002: `${values} phải là số`,
         TTT001: 'Tên trạng thái không được để trống',
         KT001: 'Mã code không được chưa ký tự đặc biệt',

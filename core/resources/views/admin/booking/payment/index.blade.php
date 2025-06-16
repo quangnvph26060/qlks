@@ -12,7 +12,6 @@
                             <tr>
                                 <th></th>
                                 <th>@lang('STT')</th>
-                                <th>@lang('Hành động')</th>
                                 <th>@lang('Mã thanh toán')</th>
                                 <th>@lang('Ngày chứng từ')</th>
                                 <th>@lang('Tổng tiền')</th>

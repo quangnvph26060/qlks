@@ -368,8 +368,9 @@ Route::middleware('admin', 'adminPermission')->prefix('admin')->group(function (
         // danh mục hướng phòng
           Route::controller('RoomDirectionController')->name('direction.')->prefix('direction')->group(function () {
             Route::get('', 'index')->name('all');
-            // Route::post('/add-customer', 'store')->name('store');
-            // Route::get('edit-customer/{id}', 'edit')->name('edit');
+             Route::post('/add-customer', 'store')->name('store');
+            Route::delete('/delete-direction/{id}','destroy')->name('delete');
+
             // Route::put('/update-customer/{id}', 'update')->name('update');
             // Route::post('delete-customer/{id}', 'delete')->name('delete');
             // Route::post('status/{id}', 'status')->name('status');

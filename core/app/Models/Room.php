@@ -16,7 +16,7 @@ class Room extends Model
     use GlobalStatus, BelongsToTenant;
 
     protected $table = 'rooms';
-    protected $fillable = ['is_clean', 'unit_code','room_fix','direction','area'];
+    protected $fillable = ['is_clean', 'unit_code', 'room_fix', 'direction_id', 'area'];
 
     // insert hay get ra đều trả ra đúng mảng 
     protected $casts = [
@@ -201,7 +201,7 @@ class Room extends Model
 
     //     return  $this->regularRoom();
     //     //return $this->code;
-   // }
+    // }
 
     // public function roomPriceDayNow($date)
     // {
@@ -233,5 +233,9 @@ class Room extends Model
     public function  roomBookingHistory()
     {
         return $this->hasMany(RoomStatusHistory::class, 'room_id')->whereIn('status_code', [2, 3]);
+    }
+    public function direction()
+    {
+        return $this->belongsTo(RoomDirection::class, 'direction_id');
     }
 }

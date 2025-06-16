@@ -15,6 +15,7 @@
                                     <th>@lang('Loại phòng')</th>
                                     <th>@lang('Mã phòng')</th>
                                     <th>@lang('Tên phòng')</th>
+                                    <th>@lang('Hướng phòng')</th>
                                     <th>@lang('Số người')</th>
                                     <th>@lang('Số giường')</th>
                                     {{-- <th>@lang('Hình ảnh')</th> --}}
@@ -98,16 +99,18 @@
                 </td>
 
                 <td data-label="Loại phòng" class="text-left">
-                    @php
-                        $type_name = \App\Models\RoomType::where('id', $type->room_type_id)->value('name');
-                    @endphp
-                    {{ $type_name }}
+                   
+                   {{ $type->roomType['name'] }}
                 </td>
                 <td data-label="Mã phòng" class="text-left">
                     {{ $type->code }}
                 </td>
                 <td data-label="Tên phòng" class="text-left">
                     {{ $type->room_number }}
+                </td>
+                  <td data-label="Hướng phòng" class="text-left">
+                  {{ optional($type->direction)->name }}
+
                 </td>
                 <td data-label="Số người" class="w-10 text-right">
                     {{ $type->total_adult }}
@@ -365,7 +368,7 @@
         });
         $(document).ready(function() {
             const apiUrl = '{{ route('admin.hotel.room.type.all') }}';
-            initDataFetch(apiUrl);
+            // initDataFetch(apiUrl);
 
 
 

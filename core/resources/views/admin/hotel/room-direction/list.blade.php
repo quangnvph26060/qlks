@@ -11,23 +11,16 @@
                                 <thead>
                                     <tr>
                                         <th>@lang('Hành động')</th>
-                                        <th>@lang('STT')</th>
-                                        <th style="width:8%">@lang('Mã KH')</th>
-                                        <th>@lang('Tên')</th>
-                                        <th style="width:110px">@lang('Số điện thoại')</th>
-                                        <th style="width:15%">@lang('Email')</th>
-                                        <th style="width:10%">@lang('Địa chỉ')</th>
-                                        <th>@lang('Nhóm KH')</th>
-                                        <th>@lang('Nguồn KH')</th>
-                                        <th>@lang('Ngày tạo')</th>
-                                        <th>@lang('Tr.thái')</th>
-
+                                        <th style="width:8%">@lang('STT')</th>
+                                        <th>Mã hướng phòng</th>
+                                        <th>@lang('Hướng phòng')</th>
+                                        <th>@lang('Giá')</th>
                                     </tr>
                                 </thead>
                                 <tbody>
-                                    @forelse($customers as $id => $customer)
-                                        <tr data-id="{{ $customer->id }}"
-                                            class={{ $id % 2 !== 0 ? 'bg-white' : 'bg-gray' }}>
+                                    @forelse($roomDirection as $id => $item)
+                                        <tr data-id="{{ $item->id }}" class={{ $id % 2 !== 0 ? 'bg-white' : 'bg-gray' }}>
+
                                             <td style="width:20px;">
                                                 <svg class="svg_menu_check_in" xmlns="http://www.w3.org/2000/svg"
                                                     width="30" height="30" viewBox="0 0 21 21">
@@ -41,78 +34,36 @@
                                                 <div class="dropdown menu_dropdown_check_in" id="dropdown-menu"
                                                     style="position:fixed">
                                                     @can(['admin.hotel.customer.edit', 'admin.hotel.customer.update'])
-                                                        <div class="dropdown-item"><a data-id="{{ $customer->id }}"
-                                                                class="btn-edit-customer" data-bs-toggle="modal"
-                                                                data-bs-target="#edit-customer" style="color:black">
+                                                        <div class="dropdown-item"><a data-id="{{ $item->id }}"
+                                                                data-code="{{ $item->code }}" data-name="{{ $item->name }}"
+                                                                data-price="{{ $item->price_offset }}"
+                                                                class="btn-edit-direction" style="color:black">
                                                                 Sửa
                                                             </a>
                                                         </div>
                                                     @endcan
-                                                    @can('admin.hotel.customer.delete')
+                                                    @can('admin.hotel.direction.delete')
                                                         <div class="dropdown-item booked_room_detail"> <button
                                                                 class=" btn-delete icon-delete-room"
-                                                                data-id="{{ $customer->id }}"
+                                                                data-id="{{ $item->id }}"
                                                                 data-modal_title="@lang('Xóa khách hàng')" type="button"
                                                                 data-pro="0">Xóa
                                                         </div>
                                                     @endcan
                                                 </div>
                                             </td>
-                                            <td style="width:20px;text-align:right">
-                                                @php
-                                                    $stt =
-                                                        $customers->total() -
-                                                        ($customers->currentPage() - 1) * $customers->perPage() -
-                                                        $id;
-                                                @endphp
-                                                {{ $stt }}
+                                            <td>
+                                                {{ $id + 1 }}
                                             </td>
                                             <td>
-                                                {{ $customer->customer_code }}
+                                                {{ $item->code }}
                                             </td>
                                             <td>
-                                                {{ $customer->name }}
+                                                {{ $item->name }}
                                             </td>
-                                            <td style="text-align:right">
-                                                {{ $customer->phone }}
+                                            <td class="text-right">
+                                                {{ number_format($item->price_offset, 0, ',', '.') }}
                                             </td>
-                                            <td>
-                                                {{ $customer->email }}
-                                            </td>
-                                            <td>
-                                                {{ $customer->address }}
-                                            </td>
-                                            <td>
-                                                @php
-                                                    $group = \App\Models\CustomerGroup::where(
-                                                        'group_code',
-                                                        '=',
-                                                        $customer->group_code,
-                                                    )->value('group_name');
-                                                @endphp
-                                                {{ $group }}
-                                            </td>
-                                            <td>
-                                                @php
-                                                    $source = \App\Models\CustomerSource::where(
-                                                        'source_code',
-                                                        '=',
-                                                        $customer->source_code,
-                                                    )->value('source_name');
-                                                @endphp
-                                                {{ $source }}
-                                            </td>
-                                            <td style="text-align:right;width:90px">
-                                                {{ (new DateTime($customer->created_at))->format('d/m/Y') }}
-                                            </td>
-                                            <td style="width:50px;text-align: center" class="status-hotel">
-                                                @if ($customer->status == 1)
-                                                    <i class="fa fa-check" style="color:green;text-align: center"></i>
-                                                @else
-                                                    <i class="fa fa-close" style="color:red;text-align: center"></i>
-                                                @endif
-                                            </td>
-
 
                                         </tr>
                                     @empty
@@ -136,33 +87,26 @@
         <div class="card-body mt-1">
             <div class="row">
                 <div class="col-md-12 col-sm-12 d-flex">
-                    <a class="mr-1" href="{{ route('admin.hotel.customer.all') }}">
+                    <a class="mr-1" href="{{ route('admin.hotel.direction.all') }}">
                         <button class="btn btn--primary" data-modal_title="Làm mới">
                             <i class="fa fa-repeat p-1"></i>
                         </button>
                     </a>
                     @can('admin.hotel.customer.store')
-                    <a>
-                        <button class="btn btn--primary" data-modal_title="Thêm mới khách hàng" type="button"
-                            data-bs-toggle="modal" data-bs-target="#customer" style="margin-left:10px">
-                            <i class="las la-plus p-1"></i>
-                        </button>
-                    </a>
+                        <a>
+                            <button class="btn btn--primary" data-modal_title="Thêm mới khách hàng" type="button"
+                                data-bs-toggle="modal" data-bs-target="#direction" style="margin-left:10px">
+                                <i class="las la-plus p-1"></i>
+                            </button>
+                        </a>
                     @endcan
-                    <form role="form" enctype="multipart/form-data" action="{{ route('admin.hotel.customer.search') }}">
+                    <form role="form" enctype="multipart/form-data" action="{{ route('admin.hotel.direction.all') }}">
+                        @csrf
                         <div class="form-group position-relative mb-0">
-                            <input class="searchInput" name="customer_code"
-                                style="height: 35px;width:20%;border: 1px solid rgb(121, 117, 117, 0.5);margin-left: 8px;"
-                                placeholder="Mã khách hàng" value="{{ $customer_code ?? '' }}">
                             <input class="searchInput" name="name"
-                                style="height: 35px;width:20%;border: 1px solid rgb(121, 117, 117, 0.5); margin-left: 8px;"
-                                placeholder="Tên khách hàng" value="{{ $name ?? '' }}">
-                            <input class="searchInput" name="phone"
-                                style="height: 35px;width:20%;border: 1px solid rgb(121, 117, 117, 0.5); margin-left: 8px;"
-                                placeholder="Điện thoại" value="{{ $phone ?? '' }}">
-                            <input class="searchInput" name="address"
-                                style="height: 35px;width:20%;border: 1px solid rgb(121, 117, 117, 0.5); margin-left: 8px;"
-                                placeholder="Địa chỉ" value="{{ $address ?? '' }}">
+                                style="height: 35px;width:70%;border: 1px solid rgb(121, 117, 117, 0.5);margin-left: 8px;"
+                                placeholder="Hướng phòng" value="{{ $customer_code ?? '' }}">
+
                             <a>
                                 <button type="submit" class="btn btn--primary">
                                     <i class="las la-search p-1"></i>
@@ -171,11 +115,11 @@
                         </div>
                     </form>
                 </div>
-                @if ($customers->hasPages())
+                @if ($roomDirection->hasPages())
                     <div class="pager-wrap">
                         <div class="k-widget d-flex">
                             <div class="pagination-tb" style="font-size: 13px;margin: 0 auto">
-                                {{ $customers->links('pagination::bootstrap-4') }}
+                                {{ $roomDirection->links('pagination::bootstrap-4') }}
                             </div>
                         </div>
                     </div>
@@ -183,109 +127,49 @@
             </div>
         </div>
     @endpush
-    <div class="modal fade" id="customer" data-bs-backdrop="static" data-bs-keyboard="false" tabindex="-1"
+    <div class="modal fade" id="direction" data-bs-backdrop="static" data-bs-keyboard="false" tabindex="-1"
         aria-labelledby="staticBackdropLabel" aria-hidden="true">
         <div class="modal-dialog modal-lg">
             <div class="modal-content">
                 <div class="modal-header">
-                    <h5 class="modal-title" id="staticBackdropLabel">Thêm mới khách hàng</h5>
+                    <h5 class="modal-title" id="staticBackdropLabel">Thêm mới hướng phòng</h5>
                     <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
                 </div>
                 <div class="modal-body">
-                    <form id="addCustomer" method="POST" action="{{ route('admin.hotel.customer.store') }}">
+                    <form id="add_room_directions" method="POST" action="{{ route('admin.hotel.direction.store') }}">
                         {{ method_field('POST') }}
                         @csrf
+                        <input type="hidden" name="direction_id" id="direction_id">
+
                         <div class="row">
                             <div>
                                 <div class="mb-3">
-                                    <label for="statusCode" class="form-label">Mã khách hàng</label>
-                                    <input type="text" class="form-control " name="customer_code"
-                                        id="add_customer_code" placeholder="Nhập mã khách hàng"
-                                        value="{{ $code }}">
+                                    <label for="statusCode" class="form-label required">Mã hướng phòng</label>
+                                    <input type="text" class="form-control " name="code" id="code"
+                                        placeholder="Mã hướng phòng" value="{{ $code }}" required>
                                     <span class="invalid-feedback d-block" style="font-weight: 500"
-                                        id="customer_code_error"></span>
+                                        id="code_error"></span>
                                 </div>
                                 <div class="mb-3">
-                                    <label for="statusName" class="form-label">Tên khách hàng</label>
-                                    <input type="text" class="form-control " name="name" id="add_name"
-                                        placeholder="Nhập tên khách hàng">
+                                    <label for="name" class="form-label required">Tên hướng phòng</label>
+                                    <input type="text" class="form-control" name="name" id="name_directions"
+                                        placeholder="Tên hướng phòng" required>
                                     <span class="invalid-feedback d-block" style="font-weight: 500"
-                                        id="name_error"></span>
+                                        id="name_directions_error"></span>
                                 </div>
-                            </div>
-                            <div style="display: grid; grid-template-columns: 50% 50%">
                                 <div class="mb-3">
-                                    <label for="statusCode" class="form-label">Điện thoại</label>
-                                    <input type="number" class="form-control " name="phone" id="add_phone"
-                                        placeholder="Nhập số điện thoại" style="width:98%">
+                                    <label for="price_offset" class="form-label">Giá hướng phòng</label>
+                                    <input type="text" class="form-control  money-input" name="price_offset"
+                                        id="price_offset" placeholder="Nhập giá hướng phòng">
                                     <span class="invalid-feedback d-block" style="font-weight: 500"
-                                        id="phone_error"></span>
+                                        id="price_offset_error"></span>
                                 </div>
-                                <div class="mb-3">
-                                    <label for="statusCode" class="form-label">Email</label>
-                                    <input type="email" class="form-control " name="email" id="add_email"
-                                        placeholder="Nhập email">
-                                    <span class="invalid-feedback d-block" style="font-weight: 500"
-                                        id="email_error"></span>
-                                </div>
-                            </div>
-                            <div class="mb-3">
-                                <label for="address" class="form-label">Địa chỉ</label>
-                                <input type="text" class="form-control" name="address" id="add_address"
-                                    placeholder="Nhập địa chỉ">
-                                <span class="invalid-feedback d-block" id="address_error"
-                                    style="font-weight: 500"></span>
-                            </div>
-                            <div class="mb-3">
-                                <label class="form-label">Ghi chú</label>
-                                <textarea type="text" class="form-control " name="note" rows="1"></textarea>
-
-                            </div>
-                            <div style="display: grid; grid-template-columns: 50% 50%">
-                                <div class="mb-3">
-                                    <label>@lang('Nhóm khách')</label>
-                                    <select class="form-control" name="group_code" style="width:98%">
-                                        <option value="">@lang('Chọn nhóm khách hàng')</option>
-                                        @php
-                                            $customer_group = \App\Models\CustomerGroup::where(
-                                                'unit_code',
-                                                unitCode(),
-                                            )->get();
-                                        @endphp
-                                        @foreach ($customer_group as $group)
-                                            <option value="{{ $group->group_code }}">
-                                                {{ $group->group_name }}</option>
-                                        @endforeach
-                                    </select>
-                                </div>
-                                <div class="mb-3">
-                                    <label>@lang('Nguồn khách')</label>
-                                    <select class="form-control" name="source_code">
-                                        <option value="">@lang('Chọn nguồn khách hàng')</option>
-                                        @php
-                                            $customer_source = \App\Models\CustomerSource::where(
-                                                'unit_code',
-                                                unitCode(),
-                                            )->get();
-                                        @endphp
-                                        @foreach ($customer_source as $source)
-                                            <option value="{{ $source->source_code }}">
-                                                {{ $source->source_name }}</option>
-                                        @endforeach
-                                    </select>
-                                </div>
-                            </div>
-                            <div class="mb-3">
-                                <label class="form-label">Trạng thái</label><br>
-                                <input type="radio" name="status" value="1" id="statusActive" checked>Hoạt động
-                                <input type="radio" name="status" value="0" id="statusInactive">
-                                Không hoạt động
                             </div>
 
 
                             <div class="modal-footer">
                                 <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Đóng</button>
-                                <button type="submit" id="btn-add-customer" class="btn btn-primary">Lưu</button>
+                                <button type="submit" id="btn-add-directions" class="btn btn-primary">Lưu</button>
                             </div>
                         </div>
                     </form>
@@ -293,117 +177,7 @@
             </div>
         </div>
     </div>
-    <div class="modal fade" id="edit-customer" data-bs-backdrop="static" data-bs-keyboard="false" tabindex="-1"
-        aria-labelledby="staticBackdropLabel" aria-hidden="true">
-        <div class="modal-dialog modal-lg">
-            <div class="modal-content">
-                <div class="modal-header">
-                    <h5 class="modal-title" id="staticBackdropLabel">Cập nhật khách hàng</h5>
-                    <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
-                </div>
-                <div class="modal-body">
-                    <form id="editCustomer" method="POST" action="">
-                        {!! csrf_field() !!}
-                        <input type="hidden" id="method" name="_method" value="">
-                        <div class="row">
-                            <div>
-                                <div class="mb-3">
-                                    <label for="statusCode" class="form-label">Mã khách hàng</label>
-                                    <input type="text" class="form-control " name="customer_code"
-                                        id="edit-customer-code" placeholder="Nhập mã khách hàng" style="width:98%">
-                                    <input id="ma-kh-cu" hidden>
-                                    <span class="invalid-feedback d-block" id="edit_customer_code_error"
-                                        style="font-weight: 500"></span>
-                                </div>
-                                <div class="mb-3">
-                                    <label for="statusName" class="form-label">Tên khách hàng</label>
-                                    <input type="text" class="form-control " name="name" id="edit-name"
-                                        placeholder="Nhập tên khách hàng">
-                                    <span class="invalid-feedback d-block" id="edit_name_error"
-                                        style="font-weight: 500"></span>
-                                </div>
-                            </div>
-                            <div style="display: grid; grid-template-columns: 50% 50%">
-                                <div class="mb-3">
-                                    <label for="statusCode" class="form-label">Điện thoại</label>
-                                    <input type="text" class="form-control " name="phone" id="edit-phone"
-                                        placeholder="Nhập số điện thoại" style="width:98%">
-                                    <span class="invalid-feedback d-block" id="edit_phone_error"
-                                        style="font-weight: 500"></span>
-                                </div>
-                                <div class="mb-3">
-                                    <label for="email" class="form-label">Email</label>
-                                    <input type="email" class="form-control" name="email" id="edit-email"
-                                        placeholder="Nhập email">
-                                    <span class="invalid-feedback d-block" id="edit_email_error"
-                                        style="font-weight: 500"></span>
-                                </div>
-                            </div>
-                            <div class="mb-3">
-                                <label for="address" class="form-label">Địa chỉ</label>
-                                <input type="text" class="form-control " name="address" id="edit-address"
-                                    placeholder="Nhập địa chỉ">
-                                <span class="invalid-feedback d-block" id="edit_address_error"
-                                    style="font-weight: 500"></span>
-                            </div>
-                            <div class="mb-3">
-                                <label class="form-label">Ghi chú</label>
-                                <textarea type="text" class="form-control" id="edit-note" name="note" rows="1"></textarea>
 
-                            </div>
-                            <div style="display: grid; grid-template-columns: 50% 50%">
-                                <div class="mb-3">
-                                    <label>@lang('Nhóm khách')</label>
-                                    <select class="form-control" name="group_code" id="edit-group-code"
-                                        style="width:98%">
-                                        <option value="">@lang('Chọn nhóm khách hàng')</option>
-                                        @php
-                                            $customer_group = \App\Models\CustomerGroup::where(
-                                                'unit_code',
-                                                unitCode(),
-                                            )->get();
-                                        @endphp
-                                        @foreach ($customer_group as $group)
-                                            <option value="{{ $group->group_code }}">
-                                                {{ $group->group_name }}</option>
-                                        @endforeach
-                                    </select>
-                                </div>
-                                <div class="mb-3">
-                                    <label>@lang('Nguồn khách')</label>
-                                    <select class="form-control" name="source_code" id="edit-source-code">
-                                        <option value="">@lang('Chọn nguồn khách hàng')</option>
-                                        @php
-                                            $customer_source = \App\Models\CustomerSource::where(
-                                                'unit_code',
-                                                unitCode(),
-                                            )->get();
-                                        @endphp
-                                        @foreach ($customer_source as $source)
-                                            <option value="{{ $source->source_code }}">
-                                                {{ $source->source_name }}</option>
-                                        @endforeach
-                                    </select>
-                                </div>
-                            </div>
-                            <div class="mb-3">
-                                <label class="form-label">Trạng thái</label><br>
-                                <input type="radio" class="edit-status" name="status" value="1">Hoạt động
-                                <input type="radio" class="edit-status" name="status" value="0">
-                                Không hoạt động
-                            </div>
-
-                            <div class="modal-footer">
-                                <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Đóng</button>
-                                <button type="submit" id="btn-edit-customer" class="btn btn-primary">Lưu</button>
-                            </div>
-                        </div>
-                    </form>
-
-                </div>
-            </div>
-        </div>
-    </div>
 @endsection
 @push('style-lib')
     <link rel="stylesheet" type="text/css" href="{{ asset('assets/admin/css/daterangepicker.css') }}">
@@ -429,174 +203,58 @@
     <script>
         (function($) {
             "use strict"
+            document.addEventListener('input', function(e) {
+                if (e.target.classList.contains('money-input')) {
+                    let value = e.target.value.replace(/\D/g, ""); // Xóa ký tự không phải số
+                    value = Number(value).toLocaleString('vi-VN'); // Định dạng theo chuẩn Việt Nam
+                    e.target.value = value;
+                }
+            });
+            // Chỉ cho nhập số và dấu chấm
+            document.querySelector('.money-input').addEventListener('input', function(e) {
+                this.value = this.value.replace(/[^0-9.]/g, '');
+            });
+
+            $(document).on('input', 'input[name="code"]', function() {
+                this.value = this.value.toUpperCase();
+            });
             $(document).ready(function() {
                 var formEconomyEdit = {
-                    'customer_code': {
-                        'element': document.getElementById('add_customer_code'),
-                        'error': document.getElementById('customer_code_error'),
+                    'code': {
+                        'element': document.getElementById('code'),
+                        'error': document.getElementById('code_error'),
+                        'validations': [{
+                                'func': function(value) {
+                                    return checkRequired(value); // check trống
+                                },
+                                'message': generateErrorMessage('P001', 'Mã code')
+                            },
+                            {
+                                'func': function(value) {
+                                    return isAllUpperCase(value);
+                                },
+                                'message': generateErrorMessage('INHOA', 'Mã code')
+                            }
+
+                        ]
+                    },
+                    'name': {
+                        'element': document.getElementById('name_directions'),
+                        'error': document.getElementById('name_directions_error'),
                         'validations': [{
                             'func': function(value) {
                                 return checkRequired(value); // check trống
                             },
-                            'message': generateErrorMessage('MKH001')
-                        }, ]
-                    },
-                    'customer_code': {
-                        'element': document.getElementById('add_customer_code'),
-                        'error': document.getElementById('customer_code_error'),
-                        'validations': [{
-                            'func': function(value) {
-                                return checkKey(value); // check trống
-                            },
-                            'message': generateErrorMessage('KT001')
-                        }, ]
-                    },
-                    'name': {
-                        'element': document.getElementById('add_name'), // id trong input đó
-                        'error': document.getElementById('name_error'), // thẻ hiển thị lỗi
-                        'validations': [{
-                            'func': function(value) {
-                                return checkRequired(value);
-                            },
-                            'message': generateErrorMessage('TKH001')
-                        }, ]
-                    },
-                    //     'phone': {
-                    //         'element': document.getElementById('add_phone'), // id trong input đó
-                    //         'error': document.getElementById('phone_error'), // thẻ hiển thị lỗi
-                    //         'validations': [{
-                    //             'func': function(value) {
-                    //                 return checkRequired(value);
-                    //             },
-                    //             'message': generateErrorMessage('SDT001')
-                    //         },
-                    //         ]
-                    //     },
-
-                    //     'email': {
-                    //         'element': document.getElementById('add_email'), // id trong input đó
-                    //         'error': document.getElementById('email_error'), // thẻ hiển thị lỗi
-                    //         'validations': [{
-                    //             'func': function(value) {
-                    //                 return checkRequired(value);
-                    //             },
-                    //             'message': generateErrorMessage('Email001') 
-                    //         },
-                    //         ]
-
-                    //     },
-
-                    'email': {
-                        'element': document.getElementById('add_email'), // id trong input đó
-                        'error': document.getElementById('email_error'), // thẻ hiển thị lỗi
-                        'validations': [{
-                            'func': function(value) {
-                                return checkEmail(value);
-                            },
-                            'message': generateErrorMessage('Email002')
-                        }, ]
-                    },
-
-
-                    //     'address': {
-                    //         'element': document.getElementById('add_address'), // id trong input đó
-                    //         'error': document.getElementById('address_error'), // thẻ hiển thị lỗi
-                    //         'validations': [{
-                    //             'func': function(value) {
-                    //                 return checkRequired(value);
-                    //             },
-                    //             'message': generateErrorMessage('DiaChi001')
-                    //         },
-                    //         ]
-                    //     },
+                            'message': generateErrorMessage('P001', 'Tên')
+                        }]
+                    }
                 }
-                var formEconomyEdit_edit = {
-                    'customer_code': {
-                        'element': document.getElementById('edit-customer-code'),
-                        'error': document.getElementById('edit_customer_code_error'),
-
-                        'validations': [{
-                            'func': function(value) {
-                                return checkRequired(value); // check trống
-                            },
-                            'message': generateErrorMessage('MKH001')
-                        }, ]
-                    },
-                    'customer_code': {
-                        'element': document.getElementById('edit-customer-code'),
-                        'error': document.getElementById('edit_customer_code_error'),
-                        'validations': [{
-                            'func': function(value) {
-                                return checkKey(value); // check trống
-                            },
-                            'message': generateErrorMessage('KT001')
-                        }, ]
-                    },
-                    'name': {
-                        'element': document.getElementById('edit-name'), // id trong input đó
-                        'error': document.getElementById('edit_name_error'), // thẻ hiển thị lỗi
-                        'validations': [{
-                            'func': function(value) {
-                                return checkRequired(value);
-                            },
-                            'message': generateErrorMessage('TKH001')
-                        }, ]
-                    },
-                    // 'phone': {
-                    //     'element': document.getElementById('edit-phone'), // id trong input đó
-                    //     'error': document.getElementById('edit_phone_error'), // thẻ hiển thị lỗi
-                    //     'validations': [{
-                    //         'func': function(value) {
-                    //             return checkRequired(value);
-                    //         },
-                    //         'message': generateErrorMessage('SDT001')
-                    //     },
-                    //     ]
-                    // },
-
-                    // 'email': {
-                    //     'element': document.getElementById('edit-email'), // id trong input đó
-                    //     'error': document.getElementById('edit_email_error'), // thẻ hiển thị lỗi
-                    //     'validations': [{
-                    //         'func': function(value) {
-                    //             return checkRequired(value);
-                    //         },
-                    //         'message': generateErrorMessage('Email001') 
-                    //     },
-                    //     ]
-
-                    // },
-                    'email': {
-                        'element': document.getElementById('edit-email'), // id trong input đó
-                        'error': document.getElementById('edit_email_error'), // thẻ hiển thị lỗi
-                        'validations': [{
-                            'func': function(value) {
-                                return checkEmail(value);
-                            },
-                            'message': generateErrorMessage('Email002')
-                        }, ]
-                    },
-                    // 'address': {
-                    //     'element': document.getElementById('edit-address'), // id trong input đó
-                    //     'error': document.getElementById('edit_address_error'), // thẻ hiển thị lỗi
-                    //     'validations': [{
-                    //         'func': function(value) {
-                    //             return checkRequired(value);
-                    //         },
-                    //         'message': generateErrorMessage('DiaChi001')
-                    //     },
-                    //     ]
-                    // },
-                }
-                $(document).on('click', '#btn-add-customer', function(event) {
-
+                $(document).on('click', '#btn-add-directions', function(event) {
                     if (validateAllFields(formEconomyEdit)) {
-                        document.getElementById('addCustomer').submit(); // là id trong form
+                        document.getElementById('add_room_directions').submit(); // là id trong form
                     } else {
                         event.preventDefault();
-
                     }
-
                 });
                 $(document).on('keyup', '#add_customer_code', function(event) {
                     var code = $('#add_customer_code').val();
@@ -627,186 +285,98 @@
                         }
                     });
                 });
-                 $(document).on('input', 'input[name="customer_code"]', function() {
-            this.value = this.value.toUpperCase();
-        });
-                $(document).on('keyup', '#edit-customer-code', function(event) {
-                    var code = $('#edit-customer-code').val();
-                    $.ajax({
-                        url: `{{ route('admin.hotel.customer.check') }}`,
-                        type: 'GET',
-                        cache: false,
-                        data: {
-                            'customer_code': code,
-                        },
-                        success: function(response) {
-                            if (response == 1) {
-                                $('#edit_customer_code_error').html(
-                                    'Mã khách hàng đã tồn tại');
-                                document.getElementById('btn-edit-customer').disabled =
-                                    'disabled';
-                                var old_code = $('#ma-kh-cu').val();
-                                var allVals = [];
-                                $(".code").each(function() {
-                                    if ($(this).text() != old_code) {
-                                        allVals.push($(this).text());
-                                    }
-                                });
-
-                                if (allVals.indexOf($('#edit-customer-code').val()) > -1) {
-                                    $('#edit_customer_code_error').html(
-                                        'Mã khách hàng đã tồn tại');
-                                    document.getElementById('btn-edit-customer').disabled =
-                                        'disabled';
-                                } else {
-                                    $('#edit_customer_code_error').html('');
-                                    document.getElementById('btn-edit-customer').disabled =
-                                        false;
-                                }
-
-                            } else {
-                                $('#edit_customer_code_error').html('');
-                                document.getElementById('btn-edit-customer').disabled =
-                                    false;
-
-                            }
-
-                        },
-                        error: function(error) {
-                            console.log(error);
-
-                        }
-                    });
+                $(document).on('input', 'input[name="customer_code"]', function() {
+                    this.value = this.value.toUpperCase();
                 });
-                $(document).on('click', '#btn-edit-customer', function() {
-                    if (validateAllFields(formEconomyEdit_edit)) {
-                        document.getElementById('editCustomer').submit(); // là id trong form
-                    } else {
-                        event.preventDefault();
 
-                    }
+                $(document).on('click', '.btn-edit-direction', function(e) {
+                    e.preventDefault();
+
+                    // Lấy dữ liệu từ nút
+                    let id = $(this).data('id');
+                    let name = $(this).data('name');
+                    let price = $(this).data('price');
+                    let code = $(this).data('code');
+                  
+                    let formattedPrice = Number(price).toLocaleString('vi-VN');
+                    // Đổ dữ liệu vào form
+                    $('#direction_id').val(id);
+                    $('#name_directions').val(name);
+                    $('#price_offset').val(formattedPrice);
+                    $('#code').val(code);
+
+                    // Không thay đổi action
+                    // Không cần thêm _method PUT
+
+                    // Cập nhật tiêu đề modal
+                    $('#staticBackdropLabel').text('Chỉnh sửa hướng phòng');
+
+                    // Mở modal
+                    $('#direction').modal('show');
                 });
-                $(document).on('click', '.btn-edit-customer', function() {
-                    var dataId = $(this).data('id');
-                    $.ajax({
-                        // url: `{{ route('admin.hotel.customer.edit', '') }}/${dataId}`,
-                        url: "{{ route('admin.hotel.customer.edit', ':id') }}".replace(
-                            ':id',
-                            dataId),
-                        type: 'GET',
-                        success: function(data) {
-                            $('#ma-kh-cu').val(data.customer_code);
-                            $('#edit-customer-code').val(data.customer_code);
-                            $('#edit-name').val(data.name);
-                            $('#edit-phone').val(data.phone);
-                            $('#edit-email').val(data.email);
-                            $('#edit-address').val(data.address);
-                            $('#edit-note').val(data.note);
-                            $('#edit-group-code').val(data.group_code).change();
-                            $('#edit-source-code').val(data.source_code).change();
-                            $('input[name^="status"][class^="edit-status"][value="' + data
-                                .status +
-                                '"').prop('checked', true);
-                            $('#method').attr('value', 'PUT');
-                            $('#editCustomer').attr('action',
-                                '{{ route('admin.hotel.customer.update', '') }}/' +
-                                dataId + ''
-                            )
-                        },
-                        error: function(xhr, status, error) {
-                            console.log("Status:", xhr.status);
-                            console.log("Redirected to:", xhr.getResponseHeader(
-                                "Location"));
-                            console.log("Response body:", xhr.responseText);
-                        }
-                    });
 
+                $('#direction').on('hidden.bs.modal', function() {
+                    // Reset form
+                    $('#add_room_directions')[0].reset();
+
+                    // Đặt lại action là thêm
+                    $('#add_room_directions').attr('action',
+                        '{{ route('admin.hotel.direction.store') }}');
+
+                    // Xoá input _method nếu có
+                    $('#add_room_directions input[name="_method"]').remove();
+
+                    // Xoá hidden id
+                    $('#direction_id').val('');
+
+                    // Đặt lại tiêu đề
+                    $('#staticBackdropLabel').text('Thêm mới hướng phòng');
                 });
-                $('.icon-delete-room').on('click', function() {
-                    var dataId = $(this).data('id');
-                    var rowToDelete = $(`tr[data-id="${dataId}"]`);
-                    $.ajax({
-                        url: `{{ route('admin.hotel.customer.get', '') }}/${dataId}`,
-                        type: 'GET',
-                        success: function(data) {
-                            if (data == 1) {
-                                Swal.fire({
-                                    title: 'Khách hàng đã có đơn hàng',
-                                    text: 'Bạn không thể xóa khách hàng này',
-                                    icon: 'warning',
-                                    showCancelButton: true,
-                                    // confirmButtonText: 'Đồng ý',
-                                    cancelButtonText: 'Hủy bỏ',
-                                    reverseButtons: true
-                                })
-                            } else {
-                                Swal.fire({
-                                    title: 'Xác nhận xóa khách hàng?',
-                                    text: 'Bạn có chắc chắn muốn xóa khách hàng này không?',
-                                    icon: 'warning',
-                                    showCancelButton: true,
-                                    confirmButtonText: 'Đồng ý',
-                                    cancelButtonText: 'Hủy bỏ',
-                                    reverseButtons: true
-                                }).then((result) => {
-                                    if (result.isConfirmed) {
-                                        // ajax
-                                        $.ajax({
-                                            url: `{{ route('admin.hotel.customer.delete', '') }}/${dataId}`,
-                                            type: 'POST',
-                                            success: function(data) {
-                                                if (data.status ===
-                                                    'success') {
-                                                    rowToDelete
-                                                        .remove();
+                $(document).on('click', '.btn-delete', function() {
+                    let id = $(this).data('id');
 
-                                                } else {
-                                                    alert(
-                                                        'Khách hàng đã có đơn hàng, không thể xóa'
-                                                    );
-                                                }
-                                            },
-                                            error: function(xhr, status,
-                                                error) {
-                                                console.log(xhr
-                                                    .responseText);
-                                            }
+                    Swal.fire({
+                        title: 'Bạn có chắc muốn xoá?',
+                        text: "Hành động này không thể hoàn tác!",
+                        icon: 'warning',
+                        showCancelButton: true,
+                        confirmButtonColor: '#d33',
+                        cancelButtonColor: '#6c757d',
+                        confirmButtonText: 'Xoá',
+                        cancelButtonText: 'Huỷ'
+                    }).then((result) => {
+                        if (result.isConfirmed) {
+                            let url =
+                                '{{ route('admin.hotel.direction.delete', ['id' => '___ID___']) }}';
+                            url = url.replace('___ID___', id);
+
+                            $.ajax({
+                                url: url,
+                                type: 'DELETE',
+                                data: {
+                                    _token: '{{ csrf_token() }}',
+                                },
+                                success: function(response) {
+                                    if (response.success) {
+                                        Swal.fire('Đã xoá!', response.message,
+                                            'success').then(() => {
+                                            location
+                                                .reload(); // hoặc reload 1 phần nếu dùng AJAX render danh sách
                                         });
-
-
+                                    } else {
+                                        Swal.fire('Lỗi', response.message, 'error');
                                     }
-                                });
-                            }
-                        },
-                        error: function(xhr, status, error) {
-                            console.log(xhr.responseText);
+                                },
+                                error: function(xhr) {
+                                    Swal.fire('Lỗi',
+                                        'Đã xảy ra lỗi không xác định.', 'error'
+                                    );
+                                }
+                            });
                         }
                     });
-
                 });
-
             });
-            $('.confirmationBtn').on('click', function() {
-                var action = $(this).data('action');
-                var dataId = $(this).data('id');
-                // ajax request
-                $.ajax({
-                    url: action,
-                    type: 'POST',
-                    success: function(data) {
-                        if (data.status === 'success') {
-                            let statusCell = $(`tr[data-id="${dataId}"] .status-hotel`);
-                            statusCell.html(data.status_html);
-                        }
-                    },
-                    error: function(xhr, status, error) {
-                        console.log(xhr.responseText);
-                    }
-                });
-
-            });
-
-
             $(document).ready(function() {
 
                 $(document).on('click', '.svg-icon', function(e) {

@@ -270,20 +270,20 @@ function loadRoomBookings(page = 1, data) {
                     totaldeposit += parseFloat(record['deposit_total']) || 0;
                     paymentTotal += parseFloat(record['payment_total']) || 0;
                     const source = (record.check_in && record.check_in.length > 0) ? record.check_in : record.room_booking;
-
+                                        // <td class="text-center w-10" >
+                                        //     <svg class="svg_menu_check_in" xmlns="http://www.w3.org/2000/svg" width="30" height="30" viewBox="0 0 21 21"><g fill="currentColor" fill-rule="evenodd"><circle cx="10.5" cy="10.5" r="1"/><circle cx="10.5" cy="5.5" r="1"/><circle cx="10.5" cy="15.5" r="1"/></g></svg>
+                                        //     <div class="dropdown menu_dropdown_check_in" id="dropdown-menu">
+                                        //         <div class="dropdown-item click_modal_payment" data-status="${record['status']}" data-id="${record['id']}">Sửa</div>
+                                        //         <div class="dropdown-item delete-booked-room" data-room-id="${record['id']}">Xóa </div>
+                                        //     </div>
+                                        // </td>
                     html += `<tr data-id="${record['id']}" id="invoice-${record.payment_id}" class="table-row">
                                         <td>
-                                         <button class="btn btn-link btn-toggle" type="button" onclick="toggleRepresentatives(${record['id']}, this)">
-                                        </button>
+                                            <button class="btn btn-link btn-toggle" type="button" onclick="toggleRepresentatives(${record['id']}, this)">
+                                            </button>
                                         </td>
                                        <td class="text-right w-10">${idx + 1}</td>
-                                        <td class="text-center w-10" >
-                                            <svg class="svg_menu_check_in" xmlns="http://www.w3.org/2000/svg" width="30" height="30" viewBox="0 0 21 21"><g fill="currentColor" fill-rule="evenodd"><circle cx="10.5" cy="10.5" r="1"/><circle cx="10.5" cy="5.5" r="1"/><circle cx="10.5" cy="15.5" r="1"/></g></svg>
-                                            <div class="dropdown menu_dropdown_check_in" id="dropdown-menu">
-                                                <div class="dropdown-item click_modal_payment" data-status="${record['status']}" data-id="${record['id']}">Sửa</div>
-                                                <div class="dropdown-item delete-booked-room" data-room-id="${record['id']}">Xóa </div>
-                                            </div>
-                                        </td>
+                                       
                                         <td class="text-left w-10">${record['payment_id']}</td>
 
                                         <td class="text-left">${formatDateTime(record['created_date'])}</td>
@@ -558,7 +558,7 @@ function printInvoice(idx) {
         <div class="mb-2">Thu ngân: <span>${record['creator_name'] || "-"}</span></div>
   
       ${record['service_booking'] && record['service_booking'].length > 0 ?
-   `
+            `
    <h4>Danh sách sản phẩm</h4>
    <table class="mb-2 table-print">
        <thead>
@@ -583,7 +583,7 @@ function printInvoice(idx) {
        </tbody>
    </table>
    ` : ""
-}
+        }
 
   
         <h4>Danh sách phòng</h4>
@@ -607,7 +607,7 @@ function printInvoice(idx) {
                     <td class="text-left price-cell">${formatCurrency(item.deposit_amount)}</td>
                 </tr>
             `).join('')
-            }
+        }
             </tbody>
         </table>
 

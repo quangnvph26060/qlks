@@ -24,6 +24,7 @@ use Illuminate\Support\Facades\DB;
 use App\Http\Controllers\Controller;
 use App\Models\BookedRoom;
 use App\Models\CheckIn;
+use App\Models\RoomDirection;
 use App\Models\RoomImage;
 use App\Models\RoomPrice;
 use App\Repositories\BaseRepository;
@@ -100,7 +101,7 @@ class RoomTypeController extends Controller
     {
         $room_type = RoomType::all();
         $pageTitle   = 'Danh sách phòng';
-        $rooms = Room::orderBy('id', 'desc')->paginate(10);
+        $rooms = Room::with('roomType','direction')->orderBy('id', 'desc')->paginate(10);
         return view('admin.hotel.room_type.list', compact('pageTitle', 'room_type', 'rooms'));
     }
     public function create()
@@ -113,8 +114,9 @@ class RoomTypeController extends Controller
         $facilities  = Facility::active()->get();
         $bedTypes    = BedType::all();
         $roomTypes   = RoomType::pluck('name', 'id');
+        $roomDirections   = RoomDirection::pluck('name', 'id');
         // $prices      = RoomPrice::active()->pluck('name', 'id');
-        return view('admin.hotel.room_type.create', compact('pageTitle', 'code', 'amenities', 'bedTypes', 'facilities', 'roomTypes'));
+        return view('admin.hotel.room_type.create', compact('pageTitle', 'code', 'amenities', 'bedTypes', 'facilities', 'roomTypes', 'roomDirections'));
     }
 
     public function edit($id)
@@ -127,6 +129,7 @@ class RoomTypeController extends Controller
         $bedTypes    = BedType::all();
         $images      = [];
         $roomTypes   = RoomType::pluck('name', 'id');
+        $roomDirections   = RoomDirection::pluck('name', 'id');
         // $prices = RoomPrice::active()->pluck('name', 'id');
         // $selectedPrices = $roomType->prices()->pluck('id')->toArray();
 
@@ -139,7 +142,7 @@ class RoomTypeController extends Controller
         }
 
 
-        return view('admin.hotel.room_type.create', compact('pageTitle', 'roomType', 'amenities', 'facilities', 'bedTypes', 'roomTypes', 'images'));
+        return view('admin.hotel.room_type.create', compact('pageTitle', 'roomType', 'amenities', 'facilities', 'bedTypes', 'roomTypes', 'images', 'roomDirections'));
     }
     public function ajax(Request $request)
     {
@@ -195,7 +198,7 @@ class RoomTypeController extends Controller
             $room->description         = $request->description; //  htmlspecialchars_decode($purifier->purify($request->description));
             $room->beds                = $request->beds;
             $room->area                = $request->area;
-            $room->direction           = $request->direction;
+            $room->direction_id           = $request->direction_id;
             $room->is_featured         = $request->is_featured ? 1 : 0;
             //$room->cancellation_fee    = $request->cancellation_fee ?? 0;
             // $room->cancellation_policy = htmlspecialchars_decode($purifier->purify($request->cancellation_policy));
@@ -206,11 +209,20 @@ class RoomTypeController extends Controller
             $room->subdomain           = subdomain();
             if ($request->hasFile('main_image')) {
                 $main_images = saveImages($request, 'main_image', 'roomImage', 600, 600);
+
+                // Xóa ảnh cũ nếu có
                 if ($room->main_image && Storage::disk('public')->exists($room->main_image)) {
                     Storage::disk('public')->delete($room->main_image);
                 }
-                $room->main_image = $main_images[0];
+
+                $room->main_image = $main_images[0] ?? 'images/default.png';
+            } else {
+                // Nếu không có file upload và chưa có ảnh -> dùng ảnh mặc định
+                if (!$room->main_image) {
+                    $room->main_image = 'images/default.png';
+                }
             }
+
             $room->save();
             $this->removeImages($request, $room);
             $this->insertImages($request, $room);
@@ -220,15 +232,15 @@ class RoomTypeController extends Controller
         } catch (\Exception $e) {
 
             DB::rollBack();
-            \Log::error('Lỗi khi lưu dữ liệu: ' . $e->getMessage());
+            // \Log::error('Lỗi khi lưu dữ liệu: ' . $e->getMessage());
 
-            // Ghi thêm thông tin chi tiết để debug (ví dụ: file và dòng)
-            \Log::info('Chi tiết lỗi', [
-                'file' => $e->getFile(),
-                'line' => $e->getLine(),
-                'trace' => $e->getTraceAsString(),
-                // Thêm nếu cần: request data, user id, subdomain, ...
-            ]);
+            // // Ghi thêm thông tin chi tiết để debug (ví dụ: file và dòng)
+            // \Log::info('Chi tiết lỗi', [
+            //     'file' => $e->getFile(),
+            //     'line' => $e->getLine(),
+            //     'trace' => $e->getTraceAsString(),
+            //     // Thêm nếu cần: request data, user id, subdomain, ...
+            // ]);
             FacadesLog::error($e->getMessage());
             $notify[] = ['error', $e->getMessage()];
             return back()->withNotify($notify);
