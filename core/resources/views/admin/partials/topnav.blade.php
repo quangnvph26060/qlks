@@ -327,6 +327,8 @@
                     'margin-bottom': '10px',
                     'left': '34px'
                 });
+                const baseUrl = `${window.location.protocol}//${window.location.hostname}`;
+                const dashboardUrl = `${baseUrl}/admin/dashboard`;
                 // Thêm tab dashboard
                 $('#tabs').append(`
                         <button id="tab-dashboard" class="tab-btn" onclick="switchTab('dashboard')">
@@ -337,7 +339,7 @@
                 // Thêm iframe dashboard
                 $('#frame').append(`
                     <iframe name="main" id="dashboard" class="frame vh-100" 
-                        src="http://quangdev.fasthotels.vn:83/admin/dashboard" 
+                        src="${dashboardUrl}" 
                         style="width: calc(100% - 265px); right: 1; position: fixed; z-index: 999; margin-top: 33px; border: none; display: none;">
                     </iframe>
                 `);
