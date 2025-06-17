@@ -201,8 +201,8 @@
     <script src="{{ asset('assets/admin/js/search.js') }}"></script>
     <script>
         "use strict";
-       // var currentUrl = "{{ request()->url() }}";
-     //   var currentPath = "{{ request()->path() }}";
+        // var currentUrl = "{{ request()->url() }}";
+        //   var currentPath = "{{ request()->path() }}";
         var routeName = "{{ Route::currentRouteName() }}";
 
         function getEmptyMessage() {
@@ -317,20 +317,51 @@
         });
 
 
+        // luôn hiển thị ra thống kê
+        $(document).ready(function() {
+            // Kiểm tra nếu chưa có tab dashboard thì tạo mới
+            if ($('#tab-dashboard').length === 0) {
+                const menuTitle = "Thống kê"; // hoặc lấy từ đâu đó nếu cần
+                $('#tabs').css({
+                    'position': 'absolute',
+                    'margin-bottom': '10px',
+                    'left': '34px'
+                });
+                // Thêm tab dashboard
+                $('#tabs').append(`
+                        <button id="tab-dashboard" class="tab-btn" onclick="switchTab('dashboard')">
+                            ${menuTitle} <span onclick="closeTab(event, 'dashboard')" style="margin-left: 4px; cursor: pointer;"> <i class="las la-times"></i></span>
+                        </button>
+                    `);
 
+                // Thêm iframe dashboard
+                $('#frame').append(`
+                    <iframe name="main" id="dashboard" class="frame vh-100" 
+                        src="http://quangdev.fasthotels.vn:83/admin/dashboard" 
+                        style="width: calc(100% - 265px); right: 1; position: fixed; z-index: 999; margin-top: 33px; border: none; display: none;">
+                    </iframe>
+                `);
+            }
+
+            // Hiển thị tab dashboard
+            switchTab('dashboard');
+
+            // Nếu bạn muốn load lại các tab khác từ localStorage thì làm tiếp ở đây...
+        });
 
         function loadIframe(url) {
             if (url === "javascript:void(0)") {
                 return; // Nếu URL là "javascript:void(0)", không xử lý
             }
+            console.log(url);
 
             const parts = url.split('/');
-           
+
 
             const tabId = parts.pop() || parts.pop();
             const iframeId = tabId;
             const menuTitle = $("a[href='" + url + "']").find(".menu-title").text();
-            
+
             // Kiểm tra tab tồn tại chưa
             if ($('#tab-' + tabId).length === 0) {
                 // Thêm tab mới
@@ -356,7 +387,6 @@
         function switchTab(iframeId) {
             $('.frame').hide();
             $('iframe#' + iframeId).show();
-
             // Đổi style active cho tab
             $('.tab-btn').removeClass('active-tab');
             $('#tab-' + iframeId).addClass('active-tab');
@@ -364,6 +394,7 @@
 
         function closeTab(event, iframeId) {
             event.stopPropagation(); // Ngăn chặn sự kiện bọt biển
+
             $('#' + iframeId).remove(); // Xóa iframe
             $('#tab-' + iframeId).remove(); // Xóa tab
         }
