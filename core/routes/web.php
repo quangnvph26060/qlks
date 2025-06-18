@@ -1,6 +1,7 @@
 <?php
 
 use App\Events\EventRegisterUser;
+use App\Http\Controllers\TestController;
 use App\Jobs\JobSendMail;
 use Illuminate\Support\Facades\Route;
 use Illuminate\Support\Facades\Mail;
@@ -22,6 +23,12 @@ Route::get('demo', function () {
     event(new EventRegisterUser($data));
 });
 
+Route::get('/check', function () {
+
+    return view('test.form');
+});
+
+Route::post('/check/import', [TestController::class, 'importExcel'])->name('test.import');
 
 Route::get('/test-notify', function () {
     $user = (object)[
@@ -90,3 +97,5 @@ Route::controller('SiteController')->group(function () {
     Route::get('/trangchu', 'index')->name('home');
     Route::post('subscribe', 'subscribe')->name('subscribe');
 });
+
+
