@@ -8,6 +8,9 @@
                         <table class="table--light style--two table " id="data-table">
                             <thead>
                                 <tr>
+                                    <th>
+                                        <input type="checkbox" name="" id="checkbox-room">
+                                    </th>
                                     <th></th>
                                     <th>@lang('Hành động')</th>
                                     <th>@lang('STT')</th>
@@ -32,6 +35,9 @@
                             <tbody>
                                 @forelse($rooms as $id => $type)
                                     <tr data-id="{{ $type->id }}" class="{{ $id % 2 !== 0 ? 'bg-white' : 'bg-gray' }}">
+                                        <td>
+                                            <input type="checkbox" class="checkbox-item" data-id="{{ $type->id }}">
+                                        </td>
                                         <td>
                                             <button class="btn btn-link btn-toggle" type="button"
                                                 onclick=" toggleRepresentatives('{{ $type->id }}', this)">
@@ -99,8 +105,8 @@
                 </td>
 
                 <td data-label="Loại phòng" class="text-left">
-                   
-                   {{ $type->roomType['name'] }}
+
+                    {{ $type->roomType['name'] }}
                 </td>
                 <td data-label="Mã phòng" class="text-left">
                     {{ $type->code }}
@@ -108,8 +114,8 @@
                 <td data-label="Tên phòng" class="text-left">
                     {{ $type->room_number }}
                 </td>
-                  <td data-label="Hướng phòng" class="text-left">
-                  {{ optional($type->direction)->name }}
+                <td data-label="Hướng phòng" class="text-left">
+                    {{ optional($type->direction)->name }}
 
                 </td>
                 <td data-label="Số người" class="w-10 text-right">
@@ -307,6 +313,33 @@
                         <button type="submit" class="btn btn--primary" style="margin-left: 8px;">
                             <i class="las la-search p-1"></i>
                         </button>
+                        <!-- Nút bấm -->
+                        <button type="button" class="btn btn--primary gap-2 " data-bs-toggle="modal"
+                            data-bs-target="#importRoomModal" style="margin-left: 8px;">
+                            <i class="fa-solid fa-file-import"></i> Import
+                        </button>
+
+                        <a href="{{ route('admin.rooms.export') }}" class="btn btn--primary gap-2 btn-export-room"
+                            style="margin-left: 8px;">
+                            <i class="fa-solid fa-file-export"></i> Export
+                        </a>
+
+                        <!-- Nút thao tác -->
+                        <div class="dropdown-hover d-none"
+                            style="position: relative; display: inline-block; margin-left: 8px;">
+                            <button type="button" class="btn btn--primary gap-2 ">
+                                <i class="fas fa-ellipsis-v"></i> Thao tác
+                            </button>
+                            <!-- Cách 1: button -->
+
+                            <!-- Menu tùy chọn hiển thị khi hover -->
+                            <div class="dropdown-menu-custom">
+                                <a href="#" class="dropdown-item change-room-status"
+                                    id="btn-change-status-room">Chuyển trạng thái</a>
+                                <a href="#" class="dropdown-item change-room-status">Chuyển loại phòng</a>
+                            </div>
+                        </div>
+
                     </div>
                 </form>
             </div>
@@ -317,6 +350,43 @@
                     </div>
                 </div>
             </div>
+            <!-- Modal import-->
+            <div class="modal fade" id="importRoomModal" tabindex="-1" aria-labelledby="importRoomModalLabel"
+                aria-hidden="true">
+                <div class="modal-dialog modal-dialog-centered">
+                    <div class="modal-content">
+
+                        <div class="modal-header">
+                            <h5 class="modal-title" id="importRoomModalLabel">Nhập phòng từ file Excel</h5>
+                            <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Đóng"></button>
+                        </div>
+
+                        <div class="modal-body">
+                            <p>
+                                Xử lý dữ liệu (Tải về File mẫu: <a href="{{ asset('file/MaufileDsPhong.xlsx') }}"
+                                    download>Excel File</a>):
+                            </p>
+                            {{-- <div class="alert alert-warning">
+                                <strong><i class="fa-solid fa-triangle-exclamation"></i> Lưu ý</strong><br>
+                                Hệ thống cho phép nhập tối đa <strong>1.000 phòng</strong> mỗi lần từ file
+                            </div> --}}
+
+                            <form action="{{ route('admin.hotel.import.room.store') }}" method="POST"
+                                enctype="multipart/form-data">
+                                @csrf
+                                <div class="mb-3">
+                                    <label for="import_file" class="form-label">Chọn file Excel:</label>
+                                    <input class="form-control" type="file" id="import_file" name="file" required>
+                                </div>
+                                <button type="submit" class="btn btn-primary btn-import-room" style="float: right">Chọn
+                                    file dữ liệu</button>
+                            </form>
+                        </div>
+
+                    </div>
+                </div>
+            </div>
+
         </div>
 
     </div>
@@ -391,6 +461,60 @@
             });
         });
         $(document).ready(function() {
+            function toggleActionDropdown() {
+                const anyChecked = $('.checkbox-item:checked').length > 0;
+
+                if (anyChecked) {
+                    $('.dropdown-hover').removeClass('d-none');
+                } else {
+                    $('.dropdown-hover').addClass('d-none');
+                }
+            }
+
+
+            // Khi thay đổi checkbox tổng
+            $('#checkbox-room').on('change', function() {
+                const isChecked = $(this).is(':checked');
+                $('.checkbox-item').prop('checked', isChecked);
+                toggleActionDropdown();
+            });
+
+            // Khi thay đổi bất kỳ checkbox con nào
+            $(document).on('change', '.checkbox-item', function() {
+                toggleActionDropdown();
+            });
+
+            $(document).on('click', '#btn-change-status-room', function(e) {
+                e.preventDefault();
+                const selectedIds = $('.checkbox-item:checked')
+                    .map(function() {
+                        return $(this).data('id');
+                    })
+                    .get();
+
+                if (selectedIds.length === 0) {
+                    alert("Vui lòng chọn ít nhất một phòng để thay đổi trạng thái.");
+                    return;
+                }
+
+                $.ajax({
+                    url: '{{ route('admin.hotel.room.type.statusAll') }}', // Laravel route helper
+                    method: 'POST',
+                    data: {
+                        ids: selectedIds
+                    },
+                    success: function(response) {
+                        console.log("Thành công:", response);
+                        // Ví dụ: reload lại trang hoặc cập nhật giao diện
+                        location.reload();
+                    },
+                    error: function(xhr) {
+                        console.error("Lỗi:", xhr.responseText);
+                        alert("Có lỗi xảy ra khi cập nhật trạng thái.");
+                    }
+                });
+
+            });
             $('.btn-delete').on('click', function() {
 
                 var dataId = $(this).data('id');
@@ -477,6 +601,35 @@
 
 @push('style')
     <style>
+        .dropdown-hover .dropdown-menu-custom {
+            display: none;
+            position: absolute;
+            top: 100%;
+            left: 0;
+            background: white;
+            border: 1px solid #ccc;
+            min-width: 120px;
+            box-shadow: 0 2px 8px rgba(0, 0, 0, 0.15);
+            z-index: 999;
+            padding: 5px 0;
+            border-radius: 4px;
+        }
+
+        .dropdown-hover:hover .dropdown-menu-custom {
+            display: block;
+        }
+
+        .dropdown-item {
+            display: block;
+            padding: 8px 12px;
+            color: #333;
+            text-decoration: none;
+        }
+
+        .dropdown-item:hover {
+            background-color: #f0f0f0;
+        }
+
         @media (max-width: 991px) {
 
             .table-responsive--md tr th,

@@ -90,12 +90,15 @@ class ManageRoomAmenitiesController extends Controller
         $validator = Validator::make(
             $request->all(),
             [
-                'room_id' => 'required',
-                'amenities_id' => 'required|array',
+                'room_ids' => 'required|array|min:1',
+                'room_ids.*' => 'exists:rooms,id',
+                'amenities_id' => 'required|array|min:1',
                 'amenities_id.*' => 'exists:amenities,id',
             ],
             [
-                'room_id.required' => 'Vui lòng chọn phòng.',
+                'room_ids.required' => 'Vui lòng chọn phòng.',
+                'room_ids.array' => 'Danh sách phòng không hợp lệ.',
+                'room_ids.*.exists' => 'Một hoặc nhiều phòng không tồn tại.',
                 'amenities_id.required' => 'Vui lòng chọn tiện nghi.',
                 'amenities_id.array' => 'Danh sách tiện nghi không hợp lệ.',
                 'amenities_id.*.exists' => 'Một hoặc nhiều tiện nghi không tồn tại.',
@@ -110,25 +113,33 @@ class ManageRoomAmenitiesController extends Controller
             ]);
         }
 
-        $room = Room::find($request->room_id);
-        if ($room) {
-            // Xoá các tiện nghi hiện tại
-            $room->amenities()->detach();
+        $roomIds = $request->room_ids;
+        $amenityIds = $request->amenities_id;
 
-            // Lặp để gắn lại với unit_code và subdomain
-            foreach ($request->amenities_id as $amenityId) {
-                $room->amenities()->attach($amenityId, [
-                    'unit_code' =>  unitCode(),
-                    'subdomain' => subdomain(),
-                ]);
+        foreach ($roomIds as $roomId) {
+            $room = Room::find($roomId);
+            if ($room) {
+                foreach ($amenityIds as $amenityId) {
+                    // Nếu phòng chưa có tiện nghi này thì mới thêm
+                    $alreadyAttached = $room->amenities()->where('amenities.id', $amenityId)->exists();
+
+                    if (!$alreadyAttached) {
+                        $room->amenities()->attach($amenityId, [
+                            'unit_code' => unitCode(),
+                            'subdomain' => subdomain(),
+                        ]);
+                    }
+                }
             }
         }
 
+
         return response()->json([
             'status' => true,
-            'message' => 'Thao tác thành công!'
+            'message' => 'Đã gán tiện nghi cho các phòng thành công!',
         ]);
     }
+
 
 
     public function edit($id)

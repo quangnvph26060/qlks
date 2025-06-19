@@ -1,10 +1,13 @@
 <?php
 
 use App\Events\EventRegisterUser;
+use App\Exports\RoomsExport;
 use App\Http\Controllers\TestController;
 use App\Jobs\JobSendMail;
 use Illuminate\Support\Facades\Route;
 use Illuminate\Support\Facades\Mail;
+use Maatwebsite\Excel\Facades\Excel;
+
 //test
 Route::get('/send-test-email', function () {
     Mail::raw('Test email', function ($message) {
@@ -28,7 +31,9 @@ Route::get('/check', function () {
     return view('test.form');
 });
 
-Route::post('/check/import', [TestController::class, 'importExcel'])->name('test.import');
+Route::get('/admin/export-rooms', function () {
+    return Excel::download(new RoomsExport, 'danh_sach_phong.xlsx');
+})->name('admin.rooms.export');
 
 Route::get('/test-notify', function () {
     $user = (object)[

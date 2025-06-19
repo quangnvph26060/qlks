@@ -5,13 +5,15 @@ use App\Http\Controllers\Admin\GeneralSettingController;
 use App\Http\Controllers\Admin\PriceController;
 use App\Http\Controllers\Admin\TransactionController;
 use Illuminate\Support\Facades\Route;
-
+    use App\Http\Controllers\Admin\RoomImportExportController;
 
 
 
 
 ///
 Route::namespace('Auth')->group(function () {
+
+   
     Route::middleware('admin.guest')->group(function () {
         Route::controller('LoginController')->group(function () {
             Route::get('/', 'showLoginForm')->name('login');
@@ -42,7 +44,7 @@ Route::middleware('admin', 'adminPermission')->prefix('admin')->group(function (
     Route::controller('AdminController')->group(function () {
         Route::get('display', 'display')->name('display');
         Route::get('dashboard', 'dashboard')->name('dashboard');
-         Route::post('revenue', 'revenue')->name('revenue');
+        Route::post('revenue', 'revenue')->name('revenue');
         Route::get('profile', 'profile')->name('profile');
         Route::post('profile', 'profileUpdate')->name('profile.update');
         Route::get('password', 'password')->name('password');
@@ -78,7 +80,7 @@ Route::middleware('admin', 'adminPermission')->prefix('admin')->group(function (
         Route::post('save/{id?}', 'save')->name('save');
         Route::post('delete/{id}', 'save')->name('delete');
     });
-     // Manage OTA
+    // Manage OTA
     Route::controller('OTAController')->prefix('ota')->name('ota.')->group(function () {
         Route::get('', 'index')->name('index');
         Route::post('', 'save')->name('save');
@@ -133,7 +135,7 @@ Route::middleware('admin', 'adminPermission')->prefix('admin')->group(function (
         Route::delete('destroy/{id}', 'destroy')->name('destroy');
     });
     //hotel_configurations cấu hình khách sạn
-  Route::controller('HotelConfigurationController')->prefix('hotel_configurations')->name('hotel_configurations.')->group(function () {
+    Route::controller('HotelConfigurationController')->prefix('hotel_configurations')->name('hotel_configurations.')->group(function () {
         Route::get('/', 'index')->name('index');
         Route::post('create', 'store')->name('store');
         // Route::get('edit/{id}', 'edit')->name('edit');
@@ -229,6 +231,7 @@ Route::middleware('admin', 'adminPermission')->prefix('admin')->group(function (
             Route::get('edit/{id}', 'edit')->name('edit');
             Route::post('save/{id?}', 'save')->name('save');
             Route::post('status/{id}', 'status')->name('status');
+            Route::post('statusAll', 'statusAll')->name('statusAll');
             Route::post('delete/{id}', 'delete')->name('delete');
 
             Route::get('check-slug', 'checkSlug')->name('check.slug');
@@ -237,7 +240,6 @@ Route::middleware('admin', 'adminPermission')->prefix('admin')->group(function (
             Route::get('/restore/{id}', 'restore')->name('restore');
             Route::get('search', 'search')->name('search');
             Route::get('ajax', 'ajax')->name('ajax');
-
         });
 
         //Room
@@ -259,8 +261,15 @@ Route::middleware('admin', 'adminPermission')->prefix('admin')->group(function (
             Route::get('get-all-service', 'getAllService')->name('get-all-service');
             Route::post('store-service', 'storeServices')->name('store-service');
             Route::post('delete-service', 'deleteService')->name('delete-service');
-            
         });
+        //import room
+        Route::controller(RoomImportExportController::class)
+            ->prefix('import-room')
+            ->name('import.room.')
+            ->group(function () {
+                Route::post('/', 'import')->name('store');
+                
+            });
         //Manage amenities with room
         Route::controller('ManageRoomAmenitiesController')->name('room.amenities.')->prefix('roomAmenities')->group(function () {
             Route::get('', 'index')->name('all');
@@ -270,8 +279,6 @@ Route::middleware('admin', 'adminPermission')->prefix('admin')->group(function (
             Route::get('search', 'search')->name('search');
             Route::get('ajax', 'ajax')->name('ajax');
             Route::post('delete-amenities/{id}', 'delete')->name('delete');
-
-
         });
         //Manage Facilities with room
         Route::controller('ManageRoomFacilitiesController')->name('room.facilities.')->prefix('roomFacilities')->group(function () {
@@ -282,7 +289,6 @@ Route::middleware('admin', 'adminPermission')->prefix('admin')->group(function (
             Route::get('search', 'search')->name('search');
             Route::get('ajax', 'ajax')->name('ajax');
             Route::post('delete-facilities/{id}', 'delete')->name('delete');
-
         });
 
         // Route::controller('StatusCodeController')->name('status.code.')->prefix('status-codes')->group(function () {
@@ -302,36 +308,32 @@ Route::middleware('admin', 'adminPermission')->prefix('admin')->group(function (
             Route::put('/setup/update-setup/{id}', 'update')->name('update');
             Route::post('delete-setup/{id}', 'delete')->name('delete');
             Route::get('search', 'search')->name('search');
-
         });
 
         Route::controller('AmenitiesController')->name('setup.amenities.')->prefix('amenities')->group(function () {
             Route::post('/setup/add-amenities', 'store')->name('store');
             Route::get('', 'index')->name('all');
             Route::get('setup/edit-amenities/{id}', 'edit')->name('edit');
-            Route::post('/setup/update-amenities/{id}', 'store')->name('update');    
+            Route::post('/setup/update-amenities/{id}', 'store')->name('update');
             Route::post('delete-amenities/{id}', 'delete')->name('delete');
             Route::get('search', 'search')->name('search');
-
         });
- 
+
         Route::controller('FacilityController')->name('setup.facilities.')->prefix('facilities')->group(function () {
             Route::post('/setup/add-facilities', 'store')->name('store');
             Route::get('', 'index')->name('all');
             Route::get('setup/edit-facilities/{id}', 'edit')->name('edit');
-            Route::post('/setup/update-facilities/{id}', 'store')->name('update');    
+            Route::post('/setup/update-facilities/{id}', 'store')->name('update');
             Route::post('delete-facilities/{id}', 'delete')->name('delete');
             Route::get('search', 'search')->name('search');
-
         });
         Route::controller('ProductController')->name('setup.product.')->prefix('product')->group(function () {
             Route::post('/setup/add-product', 'store')->name('store');
             Route::get('', 'index')->name('all');
             Route::get('setup/edit-setup/{id}', 'edit')->name('edit');
-            Route::post('/setup/update-setup/{id}', 'update')->name('update');    
+            Route::post('/setup/update-setup/{id}', 'update')->name('update');
             Route::post('delete-setup/{id}', 'delete')->name('delete');
             Route::get('search', 'search')->name('search');
-
         });
         Route::controller('CustomerSourceController')->name('customer.source.')->prefix('customer-sources')->group(function () {
             Route::get('', 'index')->name('all');
@@ -340,7 +342,6 @@ Route::middleware('admin', 'adminPermission')->prefix('admin')->group(function (
             Route::put('/source/update-source/{id}', 'update')->name('update');
             Route::post('delete-source/{id}', 'delete')->name('delete');
             Route::get('search', 'search')->name('search');
-
         });
 
         Route::controller('CustomerGroupController')->name('customer.group.')->prefix('customer-groups')->group(function () {
@@ -350,7 +351,6 @@ Route::middleware('admin', 'adminPermission')->prefix('admin')->group(function (
             Route::put('/source/update-group/{id}', 'update')->name('update');
             Route::post('delete-group/{id}', 'delete')->name('delete');
             Route::get('search', 'search')->name('search');
-
         });
 
 
@@ -362,14 +362,14 @@ Route::middleware('admin', 'adminPermission')->prefix('admin')->group(function (
             Route::post('delete-customer/{id}', 'delete')->name('delete');
             Route::post('status/{id}', 'status')->name('status');
             Route::get('search', 'search')->name('search');
-            Route::get('check-code','checkCode')->name('check');
-            Route::get('get/{id}','getCustomer')->name('get');
+            Route::get('check-code', 'checkCode')->name('check');
+            Route::get('get/{id}', 'getCustomer')->name('get');
         });
         // danh mục hướng phòng
-          Route::controller('RoomDirectionController')->name('direction.')->prefix('direction')->group(function () {
+        Route::controller('RoomDirectionController')->name('direction.')->prefix('direction')->group(function () {
             Route::get('', 'index')->name('all');
-             Route::post('/add-customer', 'store')->name('store');
-            Route::delete('/delete-direction/{id}','destroy')->name('delete');
+            Route::post('/add-customer', 'store')->name('store');
+            Route::delete('/delete-direction/{id}', 'destroy')->name('delete');
 
             // Route::put('/update-customer/{id}', 'update')->name('update');
             // Route::post('delete-customer/{id}', 'delete')->name('delete');
@@ -387,7 +387,6 @@ Route::middleware('admin', 'adminPermission')->prefix('admin')->group(function (
             Route::post('status/{id}', 'status')->name('status');
             Route::post('delete-status/{id}', 'delete')->name('delete');
             Route::get('search', 'search')->name('search');
-
         });
 
         Route::controller('ManageRoomProductController')->name('room.product.')->prefix('roomProduct')->group(function () {
@@ -398,8 +397,6 @@ Route::middleware('admin', 'adminPermission')->prefix('admin')->group(function (
             Route::get('search', 'search')->name('search');
             Route::get('ajax', 'ajax')->name('ajax');
             Route::post('delete-products/{id}', 'delete')->name('delete');
-
-
         });
         Route::controller('CustomerSourceController')->name('room.customer_customer.')->prefix('CustomerSource')->group(function () {
             Route::get('', 'index')->name('all');
@@ -458,7 +455,7 @@ Route::middleware('admin', 'adminPermission')->prefix('admin')->group(function (
 
 
             Route::post('show-room', 'showRoom')->name('showRoom.submit');
-            Route::post('change-room-booking','changeRoom')->name('changeRoomBooking');
+            Route::post('change-room-booking', 'changeRoom')->name('changeRoomBooking');
             // Route::post('change-check-in','changeCheckIn')->name('changeCheckIn');
             Route::get('serviceproduct/{id}', 'bookingserviceproduct')->name('serviceproduct');
 
@@ -474,15 +471,14 @@ Route::middleware('admin', 'adminPermission')->prefix('admin')->group(function (
             Route::post('delete-check-in/{id}', 'deleteCheckIn')->name('delete-check-in');
 
             // list thanh toán 
-               Route::post('change-cashierge', 'changeCashierge')->name('change.cashierge');
-                   Route::post('update-payment-transaction', 'updatePaymentMethod')->name('update.payment.transaction');
+            Route::post('change-cashierge', 'changeCashierge')->name('change.cashierge');
+            Route::post('update-payment-transaction', 'updatePaymentMethod')->name('update.payment.transaction');
             Route::get('payment-view', 'paymentView')->name('payment-view');
             Route::get('payment', 'paymentList')->name('payment.list');
             Route::get('find-payment', 'findPayment')->name('payment.find');
             // thanh toán 
             Route::post('payment-room', 'paymentRoom')->name('payment.room');
             Route::post('check-out-room', 'checkOutRoom')->name('check.out.room');
-
         });
     });
 
@@ -532,8 +528,8 @@ Route::middleware('admin', 'adminPermission')->prefix('admin')->group(function (
             Route::post('key/handover/{id}', 'handoverKey')->name('key.handover');
             Route::post('booking-merge/{id}', 'mergeBooking')->name('merge');
             Route::get('bill-payment/{id}', 'paymentView')->name('payment');
-         
-            Route::post('bill-payment/{id}', 'payment')->name('payment.submit');// thanh toán trước
+
+            Route::post('bill-payment/{id}', 'payment')->name('payment.submit'); // thanh toán trước
             Route::post('add-charge/{id}', 'addExtraCharge')->name('extra.charge.add'); // thêm phụ phí
             Route::post('subtract-charge/{id}', 'subtractExtraCharge')->name('extra.charge.subtract'); // trừ chi phí
             // Route::get('booking-checkout/{id}', 'checkOutPreview')->name('checkout');
@@ -557,14 +553,14 @@ Route::middleware('admin', 'adminPermission')->prefix('admin')->group(function (
         Route::get('pending/check-in', 'pendingCheckIn')->name('pending.booking.checkin');
         Route::get('delayed/checkout', 'delayedCheckouts')->name('delayed.booking.checkout');
         Route::get('receptionist', 'Receptionist')->name('receptionist.booking.receptionist');
-        Route::get('user-clean-room','listUserCleanRoom')->name('listUserCleanRoom.booking.listUserCleanRoom');
-        Route::get('user-room-fix','listUserFixRoom')->name('listUserFixRoom.booking.listUserFixRoom');
-        Route::get('housekeeping-maintenance-room','viewHousekeepingMaintenance')->name('viewHousekeepingMaintenance.booking.viewHousekeepingMaintenance');
-        Route::get('booking-action-history','bookingActionHistory')->name('bookingActionHistory.booking.bookingActionHistory');
-        Route::get('get-booking-action-history','getbookingActionHistory')->name('getbookingActionHistory.booking.getbookingActionHistory');
-        Route::post('delete-clean-room/{id}','delCleanRoom')->name('delCleanRoom.booking.delCleanRoom');
-        Route::post('delete-fix-room/{id}','delFixRoom')->name('delFixRoom.booking.delFixRoom');
-        Route::post('delete-booking-action/{id}','delBookingActionHistory')->name('delBookingActionHistory.booking.delBookingActionHistory');
+        Route::get('user-clean-room', 'listUserCleanRoom')->name('listUserCleanRoom.booking.listUserCleanRoom');
+        Route::get('user-room-fix', 'listUserFixRoom')->name('listUserFixRoom.booking.listUserFixRoom');
+        Route::get('housekeeping-maintenance-room', 'viewHousekeepingMaintenance')->name('viewHousekeepingMaintenance.booking.viewHousekeepingMaintenance');
+        Route::get('booking-action-history', 'bookingActionHistory')->name('bookingActionHistory.booking.bookingActionHistory');
+        Route::get('get-booking-action-history', 'getbookingActionHistory')->name('getbookingActionHistory.booking.getbookingActionHistory');
+        Route::post('delete-clean-room/{id}', 'delCleanRoom')->name('delCleanRoom.booking.delCleanRoom');
+        Route::post('delete-fix-room/{id}', 'delFixRoom')->name('delFixRoom.booking.delFixRoom');
+        Route::post('delete-booking-action/{id}', 'delBookingActionHistory')->name('delBookingActionHistory.booking.delBookingActionHistory');
         Route::get('searchrooms', 'searchRooms')->name('searchrooms.booking.searchrooms');
         Route::post('room-clean', 'changeCleanRoom')->name('roomclean.booking.roomclean');
         Route::post('room-fix', 'changeCleanFix')->name('roomfix.booking.roomfix');
@@ -579,7 +575,6 @@ Route::middleware('admin', 'adminPermission')->prefix('admin')->group(function (
         Route::post('add', 'addService')->name('save');
         Route::post('add-product', 'addProduct')->name('save-product');
         Route::post('delete/{id}', 'delete')->name('delete');
-       
     });
 
     // Manage Booking Request
@@ -836,7 +831,7 @@ Route::middleware('admin', 'adminPermission')->prefix('admin')->group(function (
     Route::controller('ManageReportController')->prefix('manage')->name('manage.')->group(function () {
 
         Route::get('periodic-report', action: 'periodicReport')->name('periodic.report');
-         Route::get('room-status', action: 'rommStatus')->name('room.status');
+        Route::get('room-status', action: 'rommStatus')->name('room.status');
         Route::get('room-status-history', 'roomStatusHistory')->name('room.status.history');
     });
 });

@@ -14,10 +14,12 @@ class AdminPermissionMiddleware
     {
         $codes = optional(auth('admin')->user()->role)->permissions->pluck('code')->toArray();
         $currentRoute = $request->route()->getName();
-        $excludedRoutes = ['admin.revenue','admin.hotel.setup.amenities.search'];
+        $excludedRoutes = ['admin.revenue','admin.hotel.setup.amenities.search','admin.hotel.import.room.store','admin.hotel.room.type.statusAll'];
         /*
             'admin.revenue' => 'Danh thu trong màn thông kế'
             'admin.hotel.setup.amenities.search' => 'Tìm kiếm cài đặt tiện nghi'
+            'admin.hotel.import.room.store' => import room
+            'admin.hotel.room.type.statusAll' => update nhiều trạng thái phòng 
         
         */
         if (!in_array($currentRoute, $excludedRoutes) && !in_array($currentRoute, $codes)) {

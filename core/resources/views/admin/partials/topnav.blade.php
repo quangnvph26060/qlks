@@ -323,12 +323,13 @@
             if ($('#tab-dashboard').length === 0) {
                 const menuTitle = "Thống kê"; // hoặc lấy từ đâu đó nếu cần
                 $('#tabs').css({
-                    'position': 'absolute',
+                     'position': 'absolute',
                     'margin-bottom': '10px',
                     'left': '34px'
                 });
                 const baseUrl = `${window.location.protocol}//${window.location.hostname}`;
                 const dashboardUrl = `${baseUrl}/admin/dashboard`;
+                
                 // Thêm tab dashboard
                 $('#tabs').append(`
                         <button id="tab-dashboard" class="tab-btn" onclick="switchTab('dashboard')">
@@ -355,7 +356,11 @@
             if (url === "javascript:void(0)") {
                 return; // Nếu URL là "javascript:void(0)", không xử lý
             }
-            console.log(url);
+              $('#tabs').css({
+                'position': '',
+                'margin-bottom': '',
+                'left': ''
+            });
 
             const parts = url.split('/');
 
@@ -368,20 +373,24 @@
             if ($('#tab-' + tabId).length === 0) {
                 // Thêm tab mới
                 $('#tabs').append(`
-            <button id="tab-${tabId}" class="tab-btn" onclick="switchTab('${iframeId}')">
-                ${menuTitle} <span onclick="closeTab(event, '${iframeId}')" style="margin-left: 4px; cursor: pointer;"> <i class="las la-times"></i></span>
-            </button>
-            `);
+                    <button id="tab-${tabId}" class="tab-btn" onclick="switchTab('${iframeId}')">
+                        ${menuTitle} <span onclick="closeTab(event, '${iframeId}')" style="margin-left: 4px; cursor: pointer;"> <i class="las la-times"></i></span>
+                    </button>
+                `);
 
                 // Thêm iframe mới
                 $('#frame').append(`
-            <iframe name="main" id="${iframeId}" class="frame vh-100" 
-                src="${url}"
-                style="width: calc(100% - 265px); right: 1; position: fixed; z-index: 999; margin-top: 33px; border: none; display: none;">
-            </iframe>
-            `);
-            }
+                    <iframe name="main" id="${iframeId}" class="frame vh-100" 
+                        src="${url}"
+                        style="width: calc(100% - 265px); right: 1; position: fixed; z-index: 999; margin-top: 33px; border: none; display: none;">
+                    </iframe>
+                `);
 
+                
+            }
+          
+            
+           
             // Chuyển sang tab đó
             switchTab(iframeId);
         }

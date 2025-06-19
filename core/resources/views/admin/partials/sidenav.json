@@ -104,15 +104,8 @@
                 "title": "Danh mục nhóm khách",
                 "route_name": "admin.hotel.customer.group.all",
                 "menu_active": "admin.hotel.customer.group.all"
-            },
-            {
-                "keyword": [
-                    "Danh mục hướng phòng"
-                ],
-                "title": "Danh mục hướng phòng",
-                "route_name": "admin.hotel.direction.all",
-                "menu_active": "admin.hotel.direction.all"
             }
+            
             
         ]
     },
@@ -306,6 +299,14 @@
                 "title": "Danh mục trạng thái",
                 "route_name": "admin.hotel.status.code.all",
                 "menu_active": "admin.hotel.status.code.all"
+            },
+            {
+                "keyword": [
+                    "Cài đặt hướng/vỉew"
+                ],
+                "title":  "Cài đặt hướng/vỉew",
+                "route_name": "admin.hotel.direction.all",
+                "menu_active": "admin.hotel.direction.all"
             }
         ]
     },
