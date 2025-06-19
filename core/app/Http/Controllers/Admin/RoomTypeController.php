@@ -100,9 +100,10 @@ class RoomTypeController extends Controller
     public function index()
     {
         $room_type = RoomType::all();
+        $roomDirections   = RoomDirection::pluck('name', 'id');
         $pageTitle   = 'Danh sách phòng';
         $rooms = Room::with('roomType', 'direction')->orderBy('id', 'desc')->paginate(10);
-        return view('admin.hotel.room_type.list', compact('pageTitle', 'room_type', 'rooms'));
+        return view('admin.hotel.room_type.list', compact('pageTitle', 'room_type', 'rooms','roomDirections'));
     }
     public function create()
     {
@@ -527,7 +528,28 @@ class RoomTypeController extends Controller
             ['error', 'Không có phòng nào được cập nhật.']
         ]);
     }
+      public function changeDirections(Request $request)
+    {
+        $ids = $request->input('ids', []);
+        $direction_id = $request->input('direction_id', "");
+        if (empty($ids) || !is_array($ids)) {
+            return back()->withNotify([
+                ['error', 'Vui lòng chọn ít nhất một phòng để cập nhật hướng phòng.']
+            ]);
+        }
 
+        $updated = Room::whereIn('id', $ids)->update(['direction_id' => $direction_id]);
+
+        if ($updated) {
+            return back()->withNotify([
+                ['success', 'Cập nhật hướng phòng thành công.']
+            ]);
+        }
+
+        return back()->withNotify([
+            ['error', 'Không có phòng nào được cập nhật.']
+        ]);
+    }
     public function status($id)
     {
         return Room::changeStatus($id);

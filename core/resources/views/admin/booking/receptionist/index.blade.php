@@ -458,7 +458,8 @@
                             <div class="d-flex justify-content-end" style="gap: 10px;">
                                 <button type="button" id="checkout_room" class="btn btn-primary btn-checkout-room">Trả
                                     phòng</button>
-                                <button type="button" id="print_invoice" class="btn btn-success">In hoá đơn</button>
+                                <button type="button" id="print_invoice" class="btn btn-success"> <i class="fas fa-print"></i> In hoá đơn</button>
+                                   <button type="button" id="print_sales_invoice" class="btn btn-secondary btn-sales-invoice"> <i class="fas fa-print"></i> In</button>
                                 <button type="button" class="btn-dat-truoc btn-book-pttt">Lưu</button>
                                 <p type="button" data-row="booked" class="alert-paragraph close_modal">Hủy</p>
                             </div>
@@ -623,6 +624,7 @@
     var storeService = "{{ route('admin.hotel.premium.service.store-service') }}";
     var deleteService = "{{ route('admin.hotel.premium.service.delete-service') }}";
     var showCurrency = "{{ format_currency() }}";
+     var printSalesInvoice = "{{ route('admin.booking.payment.print.invoice', ['id' => '__ID__']) }}";
     const date_booking = new Date();
     const date_yyyy = date_booking.getFullYear();
     const date_mm = String(date_booking.getMonth() + 1).padStart(2, '0');

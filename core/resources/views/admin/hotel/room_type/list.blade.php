@@ -336,7 +336,10 @@
                             <div class="dropdown-menu-custom">
                                 <a href="#" class="dropdown-item change-room-status"
                                     id="btn-change-status-room">Chuyển trạng thái</a>
-                                <a href="#" class="dropdown-item change-room-status">Chuyển loại phòng</a>
+                                <a href="#"
+                                    class="dropdown-item change-room-direction"id="btn-change-direction-room">Chuyển hướng
+                                    phòng</a>
+                                {{-- <a href="#" class="dropdown-item change-room-status">Chuyển loại phòng</a> --}}
                             </div>
                         </div>
 
@@ -389,6 +392,36 @@
 
         </div>
 
+    </div>
+    <!-- Modal: Chọn hướng phòng -->
+    <div class="modal fade" id="modal-room-direction" tabindex="-1" aria-labelledby="roomDirectionLabel"
+        aria-hidden="true">
+        <div class="modal-dialog">
+            <div class="modal-content">
+                <div class="modal-header">
+                    <h5 class="modal-title">Chọn hướng phòng</h5>
+                    <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Đóng"></button>
+                </div>
+                <div class="modal-body">
+                    <form id="roomDirectionForm">
+                        <div class="mb-3">
+                            <label for="room_direction" class="form-label">Hướng phòng</label>
+                            <select id="room_direction" name="direction" class="form-select">
+                                <option value="">-- Chọn hướng phòng --</option>
+                                @foreach ($roomDirections as $id => $name)
+                                    <option value="{{ $id }}">{{ $name }}</option>
+                                @endforeach
+
+                            </select>
+                        </div>
+                    </form>
+                </div>
+                <div class="modal-footer">
+                    <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Thoát</button>
+                    <button type="button" id="btn-save-direction" class="btn btn-primary">Lưu</button>
+                </div>
+            </div>
+        </div>
     </div>
 
 
@@ -483,7 +516,47 @@
             $(document).on('change', '.checkbox-item', function() {
                 toggleActionDropdown();
             });
+            $(document).on('click', '#btn-change-direction-room', function(e) {
+                e.preventDefault();
+                $('#modal-room-direction').modal('show');
+            });
 
+            $(document).on('click', '#btn-save-direction', function(e) {
+                e.preventDefault();
+                const selectedIds = $('.checkbox-item:checked')
+                    .map(function() {
+                        return $(this).data('id');
+                    })
+                    .get();
+
+                if (selectedIds.length === 0) {
+                    alert("Vui lòng chọn ít nhất một phòng để thay đổi trạng thái.");
+                    return;
+                }
+                var room_direction = $('#room_direction').val();
+                if(room_direction === ""){
+                    notify('error','Chọn hướng phòng');
+                    return;
+                }
+                $.ajax({
+                    url: '{{ route('admin.hotel.room.type.changeDirections') }}', // Laravel route helper
+                    method: 'POST',
+                    data: {
+                        ids: selectedIds,
+                        direction_id:room_direction ,
+                    },
+                    success: function(response) {
+                        console.log("Thành công:", response);
+                        // Ví dụ: reload lại trang hoặc cập nhật giao diện
+                        location.reload();
+                    },
+                    error: function(xhr) {
+                        console.error("Lỗi:", xhr.responseText);
+                        alert("Có lỗi xảy ra khi cập nhật trạng thái.");
+                    }
+                });
+
+            });
             $(document).on('click', '#btn-change-status-room', function(e) {
                 e.preventDefault();
                 const selectedIds = $('.checkbox-item:checked')

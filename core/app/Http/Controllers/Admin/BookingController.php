@@ -538,7 +538,7 @@ class BookingController extends Controller
                         $roomIdExists = true;
                         break;
                     }
-                }  
+                }
 
                 if ($roomIdExists || $checkboxExists) {
                     $item['checkbox'] = 'checked';
@@ -1780,6 +1780,14 @@ class BookingController extends Controller
             ->first();
         return view('admin.booking.payment.index', compact('pageTitle', 'hotel'));
     }
+  
+    public function printInvoice(Request $request, $id)
+{
+    $booking = ReceiptAndPayment::where('checkin_id', $id)->firstOrFail();
+
+    return view('admin.print', compact('booking'));
+}
+
     public function changeCashierge(Request $request)
     {
         $request->validate([

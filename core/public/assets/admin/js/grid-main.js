@@ -719,6 +719,7 @@ function initViewScriptGird() {
         $('[id="select-option-pttt-main"]').hide();
         $('[id="select-option-pttt"]').hide();
         $('[id="print_invoice"]').hide();
+        $('[id="print_sales_invoice"]').hide();
         $('[id="checkout_room"]').hide();
         $('[id="total_payment_display"]').hide();
         let dataId = $(this).attr("data-id");
@@ -986,7 +987,7 @@ function initViewScriptGird() {
                 $('#changeRoomModal').addClass('z__index-mod');
             });
         });
-        //123
+        //trả phòng
         $(document).off("click", ".btn-checkout-room").on("click", ".btn-checkout-room", function (e) {
             e.preventDefault();
 
@@ -1038,6 +1039,41 @@ function initViewScriptGird() {
                 }
             });
         });
+        // in hoá đơn bán hàng
+        $(document).off("click", ".btn-sales-invoice").on("click", ".btn-sales-invoice", function (e) {
+            e.preventDefault();
+
+            let mainRoomBookingId = $('#id_room_booking').val();
+            let printUrl = printSalesInvoice.replace('__ID__', mainRoomBookingId);
+
+            $.ajax({
+                url: printUrl,
+                type: 'GET',
+                success: function (html) {
+                    // Tạo iframe ẩn để in
+                    let printWindow = window.open('', '', 'width=800,height=600');
+                    printWindow.document.write(`
+                <html>
+                    <head>
+                        <title>In hóa đơn</title>
+                        <style>
+                            body { font-family: DejaVu Sans, sans-serif; padding: 20px; }
+                            h3 { text-align: center; }
+                        </style>
+                    </head>
+                    <body onload="window.print(); window.close();">
+                        ${html}
+                    </body>
+                </html>
+            `);
+                    printWindow.document.close();
+                },
+                error: function () {
+                    alert("Lỗi khi lấy hóa đơn.");
+                }
+            });
+        });
+
 
         let paymentTransaction = [];
         $(document).off("click", ".check_in_data").on("click", ".check_in_data", function (e) {
@@ -1077,6 +1113,7 @@ function initViewScriptGird() {
                 $('[id="select-option-pttt-main"]').show();
                 $('[id="select-option-pttt"]').show();
                 $('[id="print_invoice"]').show();
+                $('[id="print_sales_invoice"]').show();
                 $('[id="checkout_room"]').show();
                 $('[id="total_payment_display"]').show();
                 $('#add-service-room-booking').show();
@@ -1088,6 +1125,7 @@ function initViewScriptGird() {
                 $('[id="select-option-pttt-main"]').hide();
                 $('[id="select-option-pttt"]').hide();
                 $('[id="print_invoice"]').hide();
+                $('[id="print_sales_invoice"]').hide();
                 $('[id="checkout_room"]').hide();
                 $('#add-service-room-booking').hide();
                 $('[id="total_payment_display"]').hide();
@@ -1298,9 +1336,11 @@ function initViewScriptGird() {
                                 if (totalBalance > 0) {
                                     $('#checkout_room').prop('disabled', true);
                                     $('#print_invoice').prop('disabled', true);
+                                    $('#print_sales_invoice').prop('disabled', true);
                                 } else {
                                     $('#checkout_room').prop('disabled', false);
                                     $('#print_invoice').prop('disabled', false);
+                                    $('#print_sales_invoice').prop('disabled', false);
                                 }
                                 $('.total_balance').text(formatCurrency(totalBalance));
 
@@ -1426,11 +1466,13 @@ function initViewScriptGird() {
 
 
                                     $('#checkout_room').prop('disabled', true);
+                                    $('#print_sales_invoice').prop('disabled', true);
                                     $('#print_invoice').prop('disabled', true);
                                 } else {
 
 
                                     $('#checkout_room').prop('disabled', false);
+                                    $('#print_sales_invoice').prop('disabled', false);
                                     $('#print_invoice').prop('disabled', false);
                                 }
                                 $('.total_balance').text(formatCurrency(totalBalance));

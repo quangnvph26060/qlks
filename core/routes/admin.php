@@ -232,6 +232,7 @@ Route::middleware('admin', 'adminPermission')->prefix('admin')->group(function (
             Route::post('save/{id?}', 'save')->name('save');
             Route::post('status/{id}', 'status')->name('status');
             Route::post('statusAll', 'statusAll')->name('statusAll');
+              Route::post('changeDirections', 'changeDirections')->name('changeDirections');
             Route::post('delete/{id}', 'delete')->name('delete');
 
             Route::get('check-slug', 'checkSlug')->name('check.slug');
@@ -475,6 +476,7 @@ Route::middleware('admin', 'adminPermission')->prefix('admin')->group(function (
             Route::post('update-payment-transaction', 'updatePaymentMethod')->name('update.payment.transaction');
             Route::get('payment-view', 'paymentView')->name('payment-view');
             Route::get('payment', 'paymentList')->name('payment.list');
+            Route::get('print-invoice/{id}', 'printInvoice')->name('payment.print.invoice');
             Route::get('find-payment', 'findPayment')->name('payment.find');
             // thanh toán 
             Route::post('payment-room', 'paymentRoom')->name('payment.room');
