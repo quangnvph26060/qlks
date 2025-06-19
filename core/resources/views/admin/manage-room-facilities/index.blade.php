@@ -80,61 +80,71 @@
     @endcan
 
     <div class="modal fade" id="staticBackdrop" data-bs-backdrop="static" data-bs-keyboard="false" tabindex="-1"
-        aria-labelledby="staticBackdropLabel" aria-hidden="true">
-        <div class="modal-dialog modal-lg">
-            <div class="modal-content">
-                <div class="modal-header">
-                    <h5 class="modal-title" id="staticBackdropLabel">Thêm mới</h5>
-                    <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
-                </div>
-                <div class="modal-body">
-                    <form id="roomsAddFacilityForm" method="POST" action="">
-                        <input type="hidden" name="_method" id="method" value="POST">
-                        <input type="hidden" name="id" id="recordId">
-                        <div class="row">
-                            <div class="form-group mb-3">
-                                <label for="">Mã Phòng</label>
-                                <select name="room_id" id="room-multiple-choice" class="form-control">
-                                    <option value="" selected>--Chọn mã phòng--</option>
-                                    @foreach ($rooms as $room)
-                                        <option value="{{ $room->id }}">{{ $room->code }}</option>
-                                    @endforeach
-                                </select>
-                            </div>
-                        </div>
-                        <div class="row">
-                            <div class="form-group mb-3">
-                                <label for="">Các tiện nghi <code>(Được chọn nhiều)</code></label>
-                                <div class="form-check-group mt-3">
-                                    @if ($facilities->isNotEmpty())
-                                        @foreach ($facilities as $facility)
-                                            <div class="form-check">
-                                                <input class="form-check-input" type="checkbox" value="{{ $facility->id }}"
-                                                    name="facilities_id[]" multiple id="checkbox-facility-add">
-                                                <label class="form-check-label" for="checkbox-facility-add">
-                                                    {{ $facility->title }}
-                                                </label>
-                                            </div>
-                                        @endforeach
-                                    @else
-                                        <p>Chưa có tiện ích nào!</p>
-                                    @endif
-                                </div>
-
-                            </div>
-                        </div>
-                        <div class="modal-footer">
-                            <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Đóng</button>
-                            @if ($facilities->isNotEmpty())
-                                <button type="submit" class="btn btn-primary">Thực hiện</button>
-                            @endif
-                        </div>
-                    </form>
-                </div>
-
+    aria-labelledby="staticBackdropLabel" aria-hidden="true">
+    <div class="modal-dialog modal-lg">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h5 class="modal-title" id="staticBackdropLabel">Thêm tiện nghi vào phòng</h5>
+                <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
             </div>
+
+            <div class="modal-body">
+                <form id="roomsAddFacilityForm" method="POST" action="">
+                    @csrf
+                    <input type="hidden" name="_method" id="method" value="POST">
+                    <input type="hidden" name="id" id="recordId">
+
+                    {{-- Danh sách mã phòng --}}
+                    <div class="mb-4">
+                        <label class="form-label fw-semibold">Mã Phòng</label>
+                        <div class="form-check mb-2">
+                            <input type="checkbox" class="form-check-input" id="checkAllRooms">
+                            <label for="checkAllRooms" class="form-check-label">Chọn tất cả phòng</label>
+                        </div>
+                        <div class="border rounded p-3 scroll-box" style="max-height: 200px; overflow-y: auto;">
+                            @foreach ($rooms as $room)
+                                <div class="form-check">
+                                    <input type="checkbox" class="form-check-input room-checkbox"
+                                           name="room_ids[]" value="{{ $room->id }}" id="room-{{ $room->id }}">
+                                    <label class="form-check-label" for="room-{{ $room->id }}">{{ $room->code }}</label>
+                                </div>
+                            @endforeach
+                        </div>
+                    </div>
+
+                    {{-- Danh sách tiện nghi --}}
+                    <div class="mb-4">
+                        <label class="form-label fw-semibold">Các tiện nghi <code>(Được chọn nhiều)</code></label>
+                        @if ($facilities->isNotEmpty())
+                            <div class="border rounded p-3 scroll-box" style="max-height: 200px; overflow-y: auto;">
+                                @foreach ($facilities as $facility)
+                                    <div class="form-check">
+                                        <input class="form-check-input" type="checkbox" value="{{ $facility->id }}"
+                                               name="facilities_id[]" id="facility-{{ $facility->id }}">
+                                        <label class="form-check-label" for="facility-{{ $facility->id }}">
+                                            {{ $facility->title }}
+                                        </label>
+                                    </div>
+                                @endforeach
+                            </div>
+                        @else
+                            <p>Chưa có tiện nghi nào!</p>
+                        @endif
+                    </div>
+
+                    <div class="modal-footer">
+                        <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Đóng</button>
+                        @if ($facilities->isNotEmpty())
+                            <button type="submit" class="btn btn-primary">Thực hiện</button>
+                        @endif
+                    </div>
+                </form>
+            </div>
+
         </div>
     </div>
+</div>
+
     <div class="modal fade" id="showEditRoomFacility" data-bs-backdrop="static" data-bs-keyboard="false" tabindex="-1"
         aria-labelledby="staticBackdropLabel" aria-hidden="true">
         <div class="modal-dialog modal-lg">
@@ -238,7 +248,16 @@
                         }
                     });
                 })
+                 $('#checkAllRooms').on('change', function() {
+                    $('.room-checkbox').prop('checked', this.checked);
+                });
 
+                // Nếu bỏ chọn 1 phòng => bỏ check all
+                $('.room-checkbox').on('change', function() {
+                    const allChecked = $('.room-checkbox').length === $('.room-checkbox:checked')
+                    .length;
+                    $('#checkAllRooms').prop('checked', allChecked);
+                });
                 $(document).on('click', '.btn-edit', function() {
                     let id = $(this).data('id');
 
@@ -257,8 +276,9 @@
                                     let selected = room.id === response.roomEdit
                                         .id ? 'selected' :
                                         '';
+                                          let disabled = room.id !== response.roomEdit.id ? 'disabled class="text-muted"' : '';
                                     roomSelect.append(
-                                        `<option value="${room.id}" ${selected}>${room.code}</option>`
+                                        `<option value="${room.id}" ${selected} ${disabled}>${room.code}</option>`
                                     );
                                 });
                                 roomSelect.trigger('change');

@@ -87,51 +87,57 @@ class ManageRoomFacilitiesController extends Controller
         return view('admin.manage-room-facilities.index', compact('rooms', 'facilities', 'pageTitle', 'room_type', 'code'));
     }
     public function store(Request $request)
-    {
-        $validator = Validator::make(
-            $request->all(),
-            [
-                'room_id' => 'required',
-                'facilities_id' => 'required|array',
-                'facilities_id.*' => 'exists:facilities,id',
-            ],
-            [
-                'room_id.required' => 'Vui lòng chọn phòng.',
-                'facilities_id.required' => 'Vui lòng chọn tiện nghi.',
-                'facilities_id.array' => 'Danh sách tiện nghi không hợp lệ.',
-                'facilities_id.*.exists' => 'Một hoặc nhiều tiện nghi không tồn tại.',
-            ]
-        );
-        if ($validator->fails()) {
-            return response()->json([
-                'status' => false,
-                'message' => $validator->errors()->first(),
-                'key' => $validator->errors()->keys()[0],
-            ]);
-        }
+{
+    $validator = Validator::make(
+        $request->all(),
+        [
+            'room_ids' => 'required|array|min:1',
+            'room_ids.*' => 'exists:rooms,id',
+            'facilities_id' => 'required|array|min:1',
+            'facilities_id.*' => 'exists:facilities,id',
+        ],
+        [
+            'room_ids.required' => 'Vui lòng chọn ít nhất 1 phòng.',
+            'room_ids.array' => 'Danh sách phòng không hợp lệ.',
+            'room_ids.*.exists' => 'Phòng không tồn tại.',
+            'facilities_id.required' => 'Vui lòng chọn tiện nghi.',
+            'facilities_id.array' => 'Danh sách tiện nghi không hợp lệ.',
+            'facilities_id.*.exists' => 'Một hoặc nhiều tiện nghi không tồn tại.',
+        ]
+    );
 
-        $room = Room::find($request->room_id);
-        if ($room) {
-            // $room->facilities()->sync($request->facilities_id);
-            $unitCode =  unitCode(); // hoặc lấy từ auth/session
-            $subdomain = subdomain();
-
-            $syncData = [];
-            foreach ($request->facilities_id as $facilityId) {
-                $syncData[$facilityId] = [
-                    'unit_code' => $unitCode,
-                    'subdomain' => $subdomain,
-                ];
-            }
-
-            $room->facilities()->sync($syncData);
-        }
-
+    if ($validator->fails()) {
         return response()->json([
-            'status' => true,
-            'message' => 'Thao tác thành công!'
+            'status' => false,
+            'message' => $validator->errors()->first(),
+            'key' => $validator->errors()->keys()[0],
         ]);
     }
+
+    $unitCode = unitCode();
+    $subdomain = subdomain();
+
+    foreach ($request->room_ids as $roomId) {
+        $room = Room::find($roomId);
+        if ($room) {
+            foreach ($request->facilities_id as $facilityId) {
+                // Kiểm tra nếu chưa có thì mới attach
+                if (!$room->facilities()->where('facilities.id', $facilityId)->exists()) {
+                    $room->facilities()->attach($facilityId, [
+                        'unit_code' => $unitCode,
+                        'subdomain' => $subdomain,
+                    ]);
+                }
+            }
+        }
+    }
+
+    return response()->json([
+        'status' => true,
+        'message' => 'Đã thêm tiện nghi vào các phòng thành công!',
+    ]);
+}
+
     public function edit($id)
     {
         $rooms = Room::select('id', 'code')->where('status', 1)->get();

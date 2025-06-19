@@ -50,12 +50,12 @@
                                 </button>
                             </a>
                             @can('admin.hotel.room.product.store')
-                            <a>
-                                <button type="button" class="btn btn--primary btn-add " style="margin-left:8px">
-                                    <i class="las la-plus p-1 "></i>
+                                <a>
+                                    <button type="button" class="btn btn--primary btn-add " style="margin-left:8px">
+                                        <i class="las la-plus p-1 "></i>
 
-                                </button>
-                            </a>
+                                    </button>
+                                </a>
                             @endcan
                             <form role="form" enctype="multipart/form-data" action="{{ route('admin.hotel.room.product.search') }}">
                                 <div class="form-group mb-0" style="display: flex;">
@@ -84,66 +84,69 @@
             @endpush
         @endpush
     @endcan
-
     <div class="modal fade" id="staticBackdrop" data-bs-backdrop="static" data-bs-keyboard="false" tabindex="-1"
         aria-labelledby="staticBackdropLabel" aria-hidden="true">
         <div class="modal-dialog modal-lg">
             <div class="modal-content">
                 <div class="modal-header">
-                    <h5 class="modal-title" id="staticBackdropLabel">Thêm mới</h5>
+                    <h5 class="modal-title" id="staticBackdropLabel">Thêm sản phẩm vào phòng</h5>
                     <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
                 </div>
+
                 <div class="modal-body">
-                    <form id="roomsAddFacilityForm" method="POST" action="">
-                        <input type="hidden" name="_method" id="method" value="POST">
-                        <input type="hidden" name="id" id="recordId">
-                        <div class="row">
-                            <div class="form-group mb-3">
-                                <label for="">Mã Phòng</label>
-                                <select name="room_id" id="room-multiple-choice" class="form-control">
-                                    <option value="" selected>--Chọn mã phòng--</option>
-                                    @foreach ($rooms as $room)
-                                        <option value="{{ $room->id }}">{{ $room->code }}</option>
-                                    @endforeach
-                                </select>
+                    <form id="roomsAddFacilityForm" method="GET" action="">
+                        @csrf
+
+                        {{-- Danh sách phòng --}}
+                        <div class="mb-4">
+                            <label class="form-label fw-semibold">Mã phòng</label>
+                            <div class="form-check mb-2">
+                                <input type="checkbox" class="form-check-input" id="checkAllRooms">
+                                <label class="form-check-label" for="checkAllRooms">Chọn tất cả phòng</label>
+                            </div>
+                            <div class="border rounded p-3" style="max-height: 200px; overflow-y: auto;">
+                                @foreach ($rooms as $room)
+                                    <div class="form-check">
+                                        <input type="checkbox" class="form-check-input room-checkbox" name="room_ids[]"
+                                            value="{{ $room->id }}" id="room-{{ $room->id }}">
+                                        <label class="form-check-label" for="room-{{ $room->id }}">
+                                            {{ $room->code }}
+                                        </label>
+                                    </div>
+                                @endforeach
                             </div>
                         </div>
-                        <div class="row">
-                            <div class="form-group mb-3">
-                                <label for="">Các sản phẩm <code>(Được chọn nhiều)</code></label>
 
-                                <div class="form-check-group mt-3 row" style="max-height: 250px; overflow-y: auto;">
-                                    @if ($products->isNotEmpty())
-                                        @foreach ($products as $product)
-                                            <div class=" mb-4" style="display: flex">
-                                                <!-- Sử dụng col-12 để đảm bảo mỗi item chiếm toàn bộ chiều rộng -->
-                                                <div class="form-check" style="flex: 70%">
-                                                    <input class="form-check-input product-checkbox" type="checkbox"
-                                                        value="{{ $product->id }}" name="product_id[]"
-                                                        id="checkbox-facility-add-{{ $product->id }}">
-                                                    <label class="form-check-label limit_name"
-                                                        for="checkbox-facility-add-{{ $product->id }}">
-                                                        {{ $product->name }}
-                                                    </label>
-                                                </div>
-                                                <div style="flex: 30%">
-                                                    <input type="number" name="stock[]"
-                                                        class="input_number form-control form-control-sm" disabled
-                                                        style="max-width: 80px" id="stock-{{ $product->id }}"
-                                                        max="{{ $product->stock }}" min="1"
-                                                        oninput="validateInput(this)">
-                                                </div>
+                        {{-- Danh sách sản phẩm --}}
+                        <div class="mb-4">
+                            <label class="form-label fw-semibold">Các sản phẩm <code>(Chọn và nhập số lượng)</code></label>
+
+                            @if ($products->isNotEmpty())
+                                <div class="border rounded p-3" style="max-height: 250px; overflow-y: auto;">
+                                    @foreach ($products as $product)
+                                        <div class="mb-3 d-flex align-items-center justify-content-between">
+                                            <div class="form-check flex-grow-1">
+                                                <input class="form-check-input product-checkbox" type="checkbox"
+                                                    value="{{ $product->id }}" name="product_ids[]"
+                                                    id="product-{{ $product->id }}">
+                                                <label class="form-check-label" for="product-{{ $product->id }}">
+                                                    {{ $product->name }}
+                                                </label>
                                             </div>
-                                        @endforeach
-                                    @else
-                                        <p>Chưa có sản phẩm nào!</p>
-                                    @endif
+                                            <div style="width: 90px;">
+                                                <input type="number" name="stock[{{ $product->id }}]"
+                                                    class="form-control form-control-sm" id="stock-{{ $product->id }}"
+                                                    max="{{ $product->stock }}" min="1" disabled
+                                                    oninput="validateInput(this)">
+                                            </div>
+                                        </div>
+                                    @endforeach
                                 </div>
-
-
-
-                            </div>
+                            @else
+                                <p>Chưa có sản phẩm nào!</p>
+                            @endif
                         </div>
+
                         <div class="modal-footer">
                             <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Đóng</button>
                             @if ($products->isNotEmpty())
@@ -152,10 +155,10 @@
                         </div>
                     </form>
                 </div>
-
             </div>
         </div>
     </div>
+
     <div class="modal fade" id="showEditRoomFacility" data-bs-backdrop="static" data-bs-keyboard="false" tabindex="-1"
         aria-labelledby="staticBackdropLabel" aria-hidden="true">
         <div class="modal-dialog modal-lg">
@@ -165,8 +168,9 @@
                     <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
                 </div>
                 <div class="modal-body">
-                    <form id="roomsEditFacilityForm">
-                        <input type="hidden" name="_method" id="method" value="POST">
+                    <form id="roomsEditFacilityForm" method="POST">
+                        @csrf
+                        {{-- <input type="hidden" name="_method" id="method" value="POST"> --}}
                         <input type="hidden" name="id" id="recordId">
                         <div class="row">
                             <div class="form-group mb-3">
@@ -232,15 +236,11 @@
 
                 $("#roomsAddFacilityForm").on('submit', function(e) {
                     e.preventDefault();
-                    const method = $('#method').val();
-                    const url = method === 'PUT' ? "{{ route('admin.manage.price.update', ':id') }}"
-                        .replace(
-                            ':id', $(
-                                '#recordId').val()) :
+                    const url =
                         "{{ route('admin.hotel.room.product.store') }}";
 
                     $.ajax({
-                        type: method,
+                        type: "POST",
                         url: url,
                         data: $(this).serializeArray(),
                         success: function(response) {
@@ -266,7 +266,16 @@
                         }
                     });
                 })
+                $('#checkAllRooms').on('change', function() {
+                    $('.room-checkbox').prop('checked', this.checked);
+                });
 
+                // Nếu bỏ chọn 1 phòng => bỏ check all
+                $('.room-checkbox').on('change', function() {
+                    const allChecked = $('.room-checkbox').length === $('.room-checkbox:checked')
+                        .length;
+                    $('#checkAllRooms').prop('checked', allChecked);
+                });
                 $(document).on('click', '.btn-edit', function() {
                     let id = $(this).data('id');
 
@@ -284,8 +293,10 @@
                                 response.rooms.forEach(room => {
                                     let selected = room.id === response.roomEdit
                                         .id ? 'selected' : '';
+                                    let disabled = room.id !== response.roomEdit
+                                        .id ? 'disabled class="text-muted"' : '';
                                     roomSelect.append(
-                                        `<option value="${room.id}" ${selected}>${room.code}</option>`
+                                        `<option value="${room.id}" ${selected} ${disabled}>${room.code}</option>`
                                     );
                                 });
                                 roomSelect.trigger('change');
@@ -377,46 +388,46 @@
                         }
                     });
                 });
- $(document).on('click', '.btn-delete', function() {
-            var dataId = $(this).data('id');
-            var rowToDelete = $(`tr[data-id="${dataId}"]`);
-            Swal.fire({
-                title: 'Xác nhận xóa sản phẩm?',
-                text: 'Bạn có chắc chắn muốn xóa sản phẩm này không?',
-                icon: 'warning',
-                showCancelButton: true,
-                confirmButtonText: 'Đồng ý',
-                cancelButtonText: 'Hủy bỏ',
-                reverseButtons: true
-            }).then((result) => {
-                if (result.isConfirmed) {
-                    // ajax
-                    $.ajax({
-                        url: `{{ route('admin.hotel.room.product.delete', '') }}/${dataId}`,
-                        type: 'POST',
-                        success: function(data) {
-                            if (data.status === 'success') {
-                                rowToDelete.remove();
+                $(document).on('click', '.btn-delete', function() {
+                    var dataId = $(this).data('id');
+                    var rowToDelete = $(`tr[data-id="${dataId}"]`);
+                    Swal.fire({
+                        title: 'Xác nhận xóa sản phẩm?',
+                        text: 'Bạn có chắc chắn muốn xóa sản phẩm này không?',
+                        icon: 'warning',
+                        showCancelButton: true,
+                        confirmButtonText: 'Đồng ý',
+                        cancelButtonText: 'Hủy bỏ',
+                        reverseButtons: true
+                    }).then((result) => {
+                        if (result.isConfirmed) {
+                            // ajax
+                            $.ajax({
+                                url: `{{ route('admin.hotel.room.product.delete', '') }}/${dataId}`,
+                                type: 'POST',
+                                success: function(data) {
+                                    if (data.status === 'success') {
+                                        rowToDelete.remove();
 
 
-                            }
-                        },
-                        error: function(xhr, status, error) {
-                            console.log(xhr.responseText);
+                                    }
+                                },
+                                error: function(xhr, status, error) {
+                                    console.log(xhr.responseText);
+                                }
+                            });
+
+
                         }
                     });
-
-
-                }
-            });
-        });
+                });
 
 
             });
 
 
         })(jQuery);
-       
+
         $(document).ready(function() {
 
             $(document).on('click', '.svg-icon', function(e) {
@@ -609,10 +620,10 @@
         }
 
         /* .form-check-group {
-                    display: flex;
-                    flex-wrap: wrap;
-                    gap: 10px;
-                } */
+                            display: flex;
+                            flex-wrap: wrap;
+                            gap: 10px;
+                        } */
 
         .form-check {
             margin-right: 15px;

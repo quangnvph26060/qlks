@@ -38,7 +38,7 @@
 
             <th data-label="STT">
                 @php
-                    $stt = $response->total() - ($response->currentPage() - 1) * $response->perPage() - $id;
+                    $stt = $response->total() - ($response->currentPage() - 1) * $response->perPage() + $id;
                 @endphp
                 {{ $stt }}
             </th>

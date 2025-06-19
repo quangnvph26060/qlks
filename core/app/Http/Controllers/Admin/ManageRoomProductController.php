@@ -79,21 +79,24 @@ class ManageRoomProductController extends Controller
     // }
     public function store(Request $request)
     {
-
         $validator = Validator::make(
             $request->all(),
             [
-                'room_id' => 'required',
-                'product_id' => 'required|array',
-                'product_id.*' => 'exists:products,id',
+                'room_ids' => 'required|array|min:1',
+                'room_ids.*' => 'exists:rooms,id',
+                'product_ids' => 'required|array|min:1',
+                'product_ids.*' => 'exists:products,id',
+                'stock' => 'required|array',
             ],
             [
-                'room_id.required' => 'Vui lòng chọn phòng.',
-                'product_id.required' => 'Vui lòng chọn sản phẩm.',
-                'product_id.array' => 'Danh sách sản phẩm không hợp lệ.',
-                'product_id.*.exists' => 'Một hoặc nhiều  không tồn tại.',
+                'room_ids.required' => 'Vui lòng chọn phòng.',
+                'room_ids.*.exists' => 'Phòng không tồn tại.',
+                'product_ids.required' => 'Vui lòng chọn sản phẩm.',
+                'product_ids.*.exists' => 'Sản phẩm không tồn tại.',
+                'stock.required' => 'Thiếu dữ liệu số lượng.',
             ]
         );
+
         if ($validator->fails()) {
             return response()->json([
                 'status' => false,
@@ -102,25 +105,53 @@ class ManageRoomProductController extends Controller
             ]);
         }
 
-        $room = Room::find($request->room_id);
+        $unitCode = unitCode();
+        $subdomain = subdomain();
 
-        if ($room) {
-            $productIds = $request->product_id;
-            $quantities = $request->stock;
-            $syncData = [];
-            foreach ($productIds as $index => $productId) {
-                $syncData[$productId] = ['quantity' => $quantities[$index]];
-                $product = Product::find($productId);
-                $product->update(['stock' => $product->stock - $quantities[$index]]);
+        foreach ($request->product_ids as $productId) {
+            $quantity = (int) ($request->stock[$productId] ?? 0);
+            if ($quantity < 1) continue;
+
+            $product = Product::find($productId);
+            if (!$product) continue;
+
+            // Tổng số cần trừ: quantity x số phòng
+            $totalQuantityRequired = $quantity * count($request->room_ids);
+
+            // Kiểm tra đủ tồn kho
+            if ($product->stock < $totalQuantityRequired) {
+                return response()->json([
+                    'status' => false,
+                    'message' => "Sản phẩm {$product->name} không đủ tồn kho.",
+                ]);
             }
-            $room->products()->sync($syncData);
+
+            // Bắt đầu gán từng phòng
+            foreach ($request->room_ids as $roomId) {
+                $room = Room::find($roomId);
+                if (!$room) continue;
+
+                $exists = $room->products()->where('products.id', $productId)->exists();
+                if (!$exists) {
+                    $room->products()->attach($productId, [
+                        'quantity' => $quantity,
+                        'unit_code' => $unitCode,
+                        'subdomain' => $subdomain,
+                    ]);
+
+                    // Chỉ giảm nếu thực sự đã gán
+                    $product->decrement('stock', $quantity);
+                }
+            }
         }
+
 
         return response()->json([
             'status' => true,
-            'message' => 'Thao tác thành công!'
+            'message' => 'Đã thêm sản phẩm vào các phòng thành công!',
         ]);
     }
+
     public function edit($id)
     {
         $rooms = Room::select('id', 'code')->get();
@@ -146,51 +177,92 @@ class ManageRoomProductController extends Controller
     }
     public function update(Request $request)
     {
+        try {
+            // Validate dữ liệu gửi lên
+            $request->validate([
+                'room_id' => 'required|exists:rooms,id',
+                'product_id' => 'nullable|array',
+                'product_id.*' => 'exists:products,id',
+                'stock' => 'nullable|array',
+            ]);
 
-        $request->validate([
-            'room_id' => 'required|exists:rooms,id',
-            'product_id' => 'nullable|array',
-            'product_id.*' => 'exists:products,id',
-        ]);
-        $room = Room::find($request->room_id);
+            $room = Room::findOrFail($request->room_id);
+            $productIds = $request->product_id ?? [];
+            $quantities = $request->stock ?? [];
 
-        $productIds = $request->product_id;
-        $quantities = $request->stock;
-
-        if ($productIds || $quantities) {
             $syncData = [];
 
-            foreach ($productIds as $index => $productId) {
-                $existingProduct = $room->products()->where('product_id', $productId)->first();
-                $oldQuantity = $existingProduct?->pivot->quantity ?? 0;
+            // Lấy danh sách ID sản phẩm hiện có trong phòng
+            $currentProductIds = $room->products->pluck('id')->toArray();
 
-                $syncData[$productId] = ['quantity' => $quantities[$index]];
+            if (!empty($productIds)) {
+                foreach ($productIds as $index => $productId) {
+                    $quantity = (int) ($quantities[$index] ?? 0);
+                    $product = Product::findOrFail($productId);
 
-                $product = Product::find($productId);
-                $product->update([
-                    'stock' => $product->stock + $oldQuantity - $quantities[$index]
-                ]);
+                    // Kiểm tra xem sản phẩm đã có trong phòng chưa
+                    $existing = $room->products()->where('product_id', $productId)->first();
+                    $oldQuantity = $existing?->pivot->quantity ?? 0;
+
+                    // Cập nhật lại tồn kho (hoàn số cũ, trừ số mới)
+                    $product->update([
+                        'stock' => $product->stock + $oldQuantity - $quantity,
+                    ]);
+
+                    // Gán dữ liệu cho pivot
+                    $syncData[$productId] = [
+                        'quantity' => $quantity,
+                        'unit_code' => unitCode(),
+                        'subdomain' => subdomain(),
+                    ];
+                }
+
+                // Xử lý các sản phẩm bị xoá (không còn trong request)
+                $productsToRemove = array_diff($currentProductIds, $productIds);
+                foreach ($productsToRemove as $productId) {
+                    $product = Product::find($productId);
+                    $pivot = $room->products()->where('product_id', $productId)->first();
+
+                    if ($product && $pivot) {
+                        $product->update([
+                            'stock' => $product->stock + $pivot->pivot->quantity,
+                        ]);
+                    }
+                }
+
+                // Cập nhật dữ liệu bảng pivot
+                $room->products()->sync($syncData);
+            } else {
+                // Nếu không gửi sản phẩm nào → hoàn kho toàn bộ và xoá
+                foreach ($room->products as $product) {
+                    $product->update([
+                        'stock' => $product->stock + $product->pivot->quantity,
+                    ]);
+                }
+                $room->products()->detach();
             }
 
-            $room->products()->sync($syncData);
-        } else {
-            $currentProducts = $room->products()->get();
+            return response()->json([
+                'status' => true,
+                'message' => 'Cập nhật sản phẩm cho phòng thành công!',
+            ]);
+        } catch (\Exception $e) {
+            \Log::error('Lỗi cập nhật sản phẩm cho phòng', [
+                'error' => $e->getMessage(),
+                'line' => $e->getLine(),
+                'file' => $e->getFile(),
+            ]);
 
-            foreach ($currentProducts as $product) {
-                $quantity = $product->pivot->quantity;
-
-                $product->update([
-                    'stock' => $product->stock + $quantity
-                ]);
-            }
-            $room->products()->detach();
+            return response()->json([
+                'status' => false,
+                'message' => 'Đã xảy ra lỗi: ' . $e->getMessage(),
+                'line' => $e->getLine(),
+            ], 500);
         }
-
-        return response()->json([
-            'status' => true,
-            'message' => 'Cập nhật sản phẩm cho phòng thành công!'
-        ]);
     }
+
+
+
     public function search(Request $request)
     {
         if ($request->input('room_type_id') == '' && $request->input('code') == '') {
@@ -229,13 +301,27 @@ class ManageRoomProductController extends Controller
             ->orderBy('id', 'desc')->paginate(10);
         return view('admin.manage-room-products.search', compact('rooms'));
     }
-    public function delete($id)
+    public function delete($roomId)
     {
-        $room = RoomProduct::where('room_id', $id)->delete();
+        // Lấy danh sách các sản phẩm đã gán vào phòng
+        $roomProducts = RoomProduct::where('room_id', $roomId)->get();
+
+        foreach ($roomProducts as $roomProduct) {
+            // Lấy sản phẩm tương ứng
+            $product = Product::find($roomProduct->product_id);
+
+            if ($product) {
+                // Cộng lại số lượng vào tồn kho
+                $product->increment('stock', $roomProduct->quantity);
+            }
+        }
+
+        // Xóa hết bản ghi gán sản phẩm vào phòng
+        RoomProduct::where('room_id', $roomId)->delete();
 
         return response()->json([
             'status' => 'success',
-            'message' => 'Xóa sản phẩm thành công',
+            'message' => 'Xóa sản phẩm và cập nhật tồn kho thành công',
         ]);
     }
 }

@@ -32,7 +32,7 @@
                
                 <td style="text-align:right">
                     @php
-                        $stt = $response->total() - ($response->currentPage() - 1) * $response->perPage() - $id;
+                        $stt = $response->total() - ($response->currentPage() - 1) * $response->perPage() + $id;
                     @endphp
                     {{ $stt }}
                 </td>

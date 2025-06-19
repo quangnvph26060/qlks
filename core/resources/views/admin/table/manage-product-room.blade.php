@@ -36,7 +36,7 @@
                 @endcan
                 <th data-label="STT" style="text-align:right">
                     @php
-                        $stt = $response->total() - ($response->currentPage() - 1) * $response->perPage() - $id;
+                        $stt = $response->total() - ($response->currentPage() - 1) * $response->perPage() + $id;
                     @endphp
                     {{ $stt }}</th>
                 <td data-label="Mã phòng">{{ $room->code }}</td>
