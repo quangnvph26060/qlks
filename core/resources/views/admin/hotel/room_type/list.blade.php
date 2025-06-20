@@ -366,7 +366,7 @@
 
                         <div class="modal-body">
                             <p>
-                                Xử lý dữ liệu (Tải về File mẫu: <a href="{{ asset('file/MaufileDsPhong.xlsx') }}"
+                                Xử lý dữ liệu (Tải về File mẫu: <a href="{{ asset('file/FileMauDSPhong.xlsx') }}"
                                     download>Excel File</a>):
                             </p>
                             {{-- <div class="alert alert-warning">
