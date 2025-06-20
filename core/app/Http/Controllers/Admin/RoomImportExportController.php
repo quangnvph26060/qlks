@@ -115,10 +115,18 @@ class RoomImportExportController extends Controller
                     Log::warning('Room type không tồn tại: ' . $roomData['ma_loai_phong']);
                     continue;
                 }
+                if ($roomData['ma_phong'] == "") {
+                    continue;
+                }
+                $room = Room::where('code', $roomData['ma_phong'])->first();
+                if ($room) {
+                    continue;
+                }
                 // Tạo phòng mới
                 $room = new Room();
                 // Gán dữ liệu từ Excel (hoặc từ request nếu cần)
-                $room->code          = $roomData['ma_phong'] ?? $this->generateRoomCode();
+                // $room->code          = $roomData['ma_phong'] ?? $this->generateRoomCode();
+                $room->code          = $roomData['ma_phong'];
                 $room->room_type_id  = $roomType->id;
                 $room->room_number   = $roomData['ten_phong'];
                 $room->status        = $roomData['trang_thai'];
@@ -126,6 +134,7 @@ class RoomImportExportController extends Controller
                 $room->beds          = $roomData['so_giuong'];
                 $room->total_adult   = $roomData['so_nguoi'];
                 $room->direction_id  = $direction->id;
+                $room->room_fix      =  0;
                 $room->main_image    = 'images/default.png';
                 $room->unit_code     = unitCode();
                 $room->subdomain     = subdomain();
