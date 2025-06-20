@@ -6,6 +6,7 @@ use App\Http\Controllers\Controller;
 use App\Imports\RoomsImport;
 use App\Jobs\ProcessRoomImport;
 use App\Models\Room;
+use App\Models\RoomDirection;
 use App\Models\RoomType;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Log;
@@ -98,7 +99,10 @@ class RoomImportExportController extends Controller
             $roomData = [
                 'ten_phong'     => $mapped['Tên phòng'] ?? null,
                 'ma_phong'      => $mapped['Mã phòng'] ?? null,
-                'ma_loai_phong' => $mapped['Mã Loại phòng'] ?? null,
+                'ma_loai_phong' => $mapped['Mã loại phòng'] ?? null,
+                'so_giuong'     => $mapped['Số giường'] ?? null,
+                'so_nguoi'      => $mapped['Số người'] ?? null,
+                'huong_phong'   => $mapped['Hướng phòng'] ?? null,
                 'trang_thai'    => $mapped['Trạng thái'] ?? null,
                 'mo_ta'         => $mapped['Mô tả'] ?? null,
             ];
@@ -106,7 +110,7 @@ class RoomImportExportController extends Controller
             try {
                 // Tìm RoomType từ mã loại phòng
                 $roomType = RoomType::where('code', $roomData['ma_loai_phong'])->first();
-
+                $direction = RoomDirection::where('code', $roomData['huong_phong'])->first();
                 if (!$roomType) {
                     Log::warning('Room type không tồn tại: ' . $roomData['ma_loai_phong']);
                     continue;
@@ -114,16 +118,17 @@ class RoomImportExportController extends Controller
                 // Tạo phòng mới
                 $room = new Room();
                 // Gán dữ liệu từ Excel (hoặc từ request nếu cần)
-                $room->code = $roomData['ma_phong'] ?? $this->generateRoomCode();
-                $room->room_type_id = $roomType->id;
-                $room->room_number = $roomData['ten_phong'];
-                $room->status = $roomData['trang_thai'];
-                $room->description = $roomData['mo_ta'];
-                $room->beds = 1;
-                $room->total_adult = 2;
-                $room->main_image = 'images/default.png';
-                $room->unit_code = unitCode();
-                $room->subdomain = subdomain();
+                $room->code          = $roomData['ma_phong'] ?? $this->generateRoomCode();
+                $room->room_type_id  = $roomType->id;
+                $room->room_number   = $roomData['ten_phong'];
+                $room->status        = $roomData['trang_thai'];
+                $room->description   = $roomData['mo_ta'];
+                $room->beds          = $roomData['so_giuong'];
+                $room->total_adult   = $roomData['so_nguoi'];
+                $room->direction_id  = $direction->id;
+                $room->main_image    = 'images/default.png';
+                $room->unit_code     = unitCode();
+                $room->subdomain     = subdomain();
 
                 // Lưu vào DB
                 $room->save();

@@ -1780,13 +1780,42 @@ class BookingController extends Controller
             ->first();
         return view('admin.booking.payment.index', compact('pageTitle', 'hotel'));
     }
-  
-    public function printInvoice(Request $request, $id)
-{
-    $booking = ReceiptAndPayment::where('checkin_id', $id)->firstOrFail();
 
-    return view('admin.print', compact('booking'));
-}
+    public function printInvoice(Request $request, $id)
+    {
+        $currentDateTime = now()->format('H:i d/m/Y');
+
+        $booking = ReceiptAndPayment::with('paymentTransactions', 'paymentTransactions.creator')->where('checkin_id', $id)->firstOrFail();
+    
+
+        $depositTotal = optional($booking->check_in)->isNotEmpty()
+            ? $booking->check_in->sum('deposit_amount')
+            : optional($booking->room_booking)->sum('deposit_amount');
+
+        $discountTotal = optional($booking->check_in)->isNotEmpty()
+            ? $booking->check_in->sum('discount')
+            : optional($booking->room_booking)->sum('discount');
+
+        $paidCustomer = optional($booking->paymentTransactions)->sum('amount');
+        $booking->deposit_total  = $depositTotal;
+        $booking->discount_total = $discountTotal;
+        $booking->payment_total  = $paidCustomer;
+        $booking->customer       = optional($booking->check_in->first())['customer_name'] ?? '';
+        $totalPayment            = $booking->room_price + optional($booking->service_booking)->sum('total_payment');
+        $booking->room_price     = $totalPayment;
+        $booking->paid_customer  = $paidCustomer;
+        $booking->customer_needs_to_pay = $totalPayment - $paidCustomer - $depositTotal - $discountTotal;
+        // Nếu muốn loại bỏ check_in ra khỏi response
+        // $booking->setRelation('check_in', collect());
+       
+        $hotelActive = HotelFacility::where('subdomain', subdomain())
+            ->where('trang_thai', 1)
+            ->first();
+        $hotel = HotelConfiguration::where('hotel_facility_id', $hotelActive->id)
+            ->first();
+        $booked = $booking->check_in ?? $booking->room_booking;
+        return view('admin.print', compact('booking','hotel','currentDateTime','booked'));
+    }
 
     public function changeCashierge(Request $request)
     {

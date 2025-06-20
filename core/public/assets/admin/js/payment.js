@@ -372,15 +372,15 @@ function loadRoomBookings(page = 1, data) {
                               
                                  <h4 class="text-left">Danh sách phòng</h4> 
                                 <table class="table--light style--two table table-bordered-thanh-toan"  style="width:100%; background: #f9f9f9;">
-                                            <thead class="bg-light">
-                                                <tr>
-                                                <th>Mã đặt phòng</th>
-                                                <th>Tên phòng</th>
-                                                <th>Giá</th>
-                                                <th>Giảm giá</th>
-                                                <th>Đặt cọc</th>
-                                                </tr>
-                                            </thead>
+                                    <thead class="bg-light">
+                                        <tr>
+                                        <th>Mã đặt phòng</th>
+                                        <th>Tên phòng</th>
+                                        <th>Giá</th>
+                                        <th>Giảm giá</th>
+                                        <th>Đặt cọc</th>
+                                        </tr>
+                                    </thead>
                                     <tbody>
                                         <tr>
                                             ${source.map(item => `
@@ -393,8 +393,7 @@ function loadRoomBookings(page = 1, data) {
                                                         <td class="text-left">${formatCurrency(item.deposit_amount)}</td>
                                                     </tr>
                                                 `).join('')
-                        }
-                                            
+                                            }
                                         </tr>
                                     </tbody>
                                 </table>
@@ -411,24 +410,25 @@ function loadRoomBookings(page = 1, data) {
                                     </thead>
                                     <tbody>
                                       ${(record.service_booking && record.service_booking.length > 0) ?
-                            record.service_booking.map(item =>
-                                `
+                                            record.service_booking.map(item =>
+                                                `
                                                     <tr>
                                                         <td class="text-left">${item.service?.code ?? item.product?.sku}</td>
-                                                         <td>${item.service?.name ?? item.product?.name}</td>
-                                                       <td>${item.quantity}</td>
+                                                        <td>${item.service?.name ?? item.product?.name}</td>
+                                                    <td>${item.quantity}</td>
                                                         <td>${formatCurrency(item.price)}</td>
-                                                      <td>${formatCurrency(item.total_payment)}</td>
+                                                    <td>${formatCurrency(item.total_payment)}</td>
                                                     
                                                     </tr>
                                                 `
-                            ).join('')
-                            : `
-                                                <tr>
-                                                    <td colspan="6" class="text-center text-muted">Không có dữ liệu!</td>
-                                                </tr>
-                                            `
-                        }
+                                            ).join('')
+                                            : 
+                                                `
+                                                    <tr>
+                                                        <td colspan="6" class="text-center text-muted">Không có dữ liệu!</td>
+                                                    </tr>
+                                                `
+                                        }
                                        
                                     </tbody>
                                 </table>
@@ -556,37 +556,7 @@ function printInvoice(idx) {
         <div class="mb-1">Khách hàng: <span>${record['customer'] || "-"} </span></div>
         <div class="mb-1">Mã đặt phòng: <span>${record['booking_id'] || "-"}</span></div>
         <div class="mb-2">Thu ngân: <span>${record['creator_name'] || "-"}</span></div>
-  
-      ${record['service_booking'] && record['service_booking'].length > 0 ?
-            `
-   <h4>Danh sách sản phẩm</h4>
-   <table class="mb-2 table-print">
-       <thead>
-           <tr>
-              <th class="price-cell">Mã hàng hóa</th>
-               <th class="price-cell">Tên sản phẩm</th>
-               <th class="price-cell">Đơn giá</th>
-               <th class="price-cell"> SL</th>
-               <th class="price-cell">Thành tiền</th>
-           </tr>
-       </thead>
-       <tbody>
-           ${record['service_booking'].map(item => `
-              <tr>
-                  <td class="text-left price-cell">${item.service?.code ?? item.product?.sku}</td>
-                    <td class="price-cell">${item.service?.name ?? item.product?.name}</td>
-                <td class="price-cell">${item.quantity}</td>
-                <td class="price-cell">${formatCurrency(item.price)}</td>
-                <td  class="price-cell">${formatCurrency(item.total_payment)}</td>
-              </tr>
-           `).join('')}
-       </tbody>
-   </table>
-   ` : ""
-        }
-
-  
-        <h4>Danh sách phòng</h4>
+     <h4>Danh sách phòng</h4>
         <table class="mb-2 table-print">
             <thead>
             <tr>
@@ -610,6 +580,36 @@ function printInvoice(idx) {
         }
             </tbody>
         </table>
+      ${record['service_booking'] && record['service_booking'].length > 0 ?
+            `
+            <h4>Danh sách sản phẩm</h4>
+            <table class="mb-2 table-print">
+                <thead>
+                    <tr>
+                        <th class="price-cell">Mã hàng hóa</th>
+                        <th class="price-cell">Tên sản phẩm</th>
+                        <th class="price-cell">Đơn giá</th>
+                        <th class="price-cell"> SL</th>
+                        <th class="price-cell">Thành tiền</th>
+                    </tr>
+                </thead>
+                <tbody>
+                    ${record['service_booking'].map(item => `
+                        <tr>
+                            <td class="text-left price-cell">${item.service?.code ?? item.product?.sku}</td>
+                                <td class="price-cell">${item.service?.name ?? item.product?.name}</td>
+                            <td class="price-cell">${item.quantity}</td>
+                            <td class="price-cell">${formatCurrency(item.price)}</td>
+                            <td  class="price-cell">${formatCurrency(item.total_payment)}</td>
+                        </tr>
+                    `).join('')}
+                </tbody>
+            </table>
+            ` : ""
+        }
+
+  
+       
 
         <table class="no-border">
         
