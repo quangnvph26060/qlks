@@ -60,21 +60,35 @@ class RoomImportExportController extends Controller
             $data[0] = $filteredRows;
 
             // Kiểm tra kết quả
-            $this->importData($data);
+            $errors = $this->importData($data);
             if (file_exists($filePath)) {
                 unlink($filePath);
             }
+            $notify = [];
+
+            if (!empty($errors)) {
+                foreach ($errors as $error) {
+                    $notify[] = ['error', $error];
+                }
+            } else {
+                $notify[] = ['success', 'Thêm dữ liệu thành công'];
+            }
+
+            return back()->withNotify($notify);
         } catch (\Throwable $e) {
             Log::error('[IMPORT ERROR] ' . $e->getMessage(), ['file' => $file?->getClientOriginalName()]);
             return back()->with('error', 'Đã xảy ra lỗi khi xử lý file Excel.');
         }
 
-        return back()->with('success', 'Import thành công!');
+        // $notify[] = ['success', 'Thêm dữ liệu thành công'];
+
+
+        // return back()->withNotify($notify);
     }
     protected function importData(array $data)
     {
         $rows = $data[0] ?? [];
-
+        $errors = [];
         if (count($rows) < 2) {
             Log::warning('Import Room: Không có dữ liệu để import');
             return;
@@ -104,6 +118,7 @@ class RoomImportExportController extends Controller
                 'so_nguoi'      => $mapped['Số người'] ?? null,
                 'huong_phong'   => $mapped['Hướng phòng'] ?? null,
                 'trang_thai'    => $mapped['Trạng thái'] ?? null,
+                'dien_tich'     => $mapped['Diện tích phòng'] ?? null,
                 'mo_ta'         => $mapped['Mô tả'] ?? null,
             ];
 
@@ -112,14 +127,20 @@ class RoomImportExportController extends Controller
                 $roomType = RoomType::where('code', $roomData['ma_loai_phong'])->first();
                 $direction = RoomDirection::where('code', $roomData['huong_phong'])->first();
                 if (!$roomType) {
-                    Log::warning('Room type không tồn tại: ' . $roomData['ma_loai_phong']);
+                    $errors[] = "Mã loại phòng không tồn tại ({$roomData['ma_loai_phong']})";
+                    continue;
+                }
+                if (!$direction) {
+                    $errors[] = "Mã hướng phòng không tồn tại ({$roomData['huong_phong']})";
                     continue;
                 }
                 if ($roomData['ma_phong'] == "") {
+                    $errors[] = " Mã phòng không được để trống";
                     continue;
                 }
                 $room = Room::where('code', $roomData['ma_phong'])->first();
                 if ($room) {
+                    $errors[] = " Mã phòng đã tồn tại ({$roomData['ma_phong']})";
                     continue;
                 }
                 // Tạo phòng mới
@@ -134,6 +155,7 @@ class RoomImportExportController extends Controller
                 $room->beds          = $roomData['so_giuong'];
                 $room->total_adult   = $roomData['so_nguoi'];
                 $room->direction_id  = $direction->id;
+                $room->area          = $roomData['dien_tich'];
                 $room->room_fix      =  0;
                 $room->main_image    = 'images/default.png';
                 $room->unit_code     = unitCode();
@@ -150,6 +172,7 @@ class RoomImportExportController extends Controller
                 ]);
             }
         }
+        return $errors;
     }
     protected function generateRoomCode(): string
     {

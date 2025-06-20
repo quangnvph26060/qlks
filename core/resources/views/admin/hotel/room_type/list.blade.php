@@ -366,7 +366,7 @@
 
                         <div class="modal-body">
                             <p>
-                                Xử lý dữ liệu (Tải về File mẫu: <a href="{{ asset('file/FileMauDSPhong.xlsx') }}"
+                                Xử lý dữ liệu (Tải về File mẫu: <a href="{{ asset('file/FileExcelMau.xlsx') }}"
                                     download>Excel File</a>):
                             </p>
                             {{-- <div class="alert alert-warning">
@@ -381,8 +381,7 @@
                                     <label for="import_file" class="form-label">Chọn file Excel:</label>
                                     <input class="form-control" type="file" id="import_file" name="file" required>
                                 </div>
-                                <button type="submit" class="btn btn-primary btn-import-room" style="float: right">Chọn
-                                    file dữ liệu</button>
+                                <button type="submit" class="btn btn-primary btn-import-room" style="float: right">Nhận</button>
                             </form>
                         </div>
 
