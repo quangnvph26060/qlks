@@ -6,6 +6,7 @@ use App\Http\Controllers\Controller;
 use App\Models\HotelConfiguration;
 use App\Models\HotelFacility;
 use App\Models\OtaSetting;
+use App\Models\ReceiptAndPayment;
 use App\Models\Room;
 use App\Models\RoomStatusHistory;
 use App\Traits\HasTodayPrice;
@@ -122,7 +123,7 @@ class ApipublicController extends Controller
 
         return response()->json([
             'hotels' => $data,
-           
+
 
         ], 200);
     }
@@ -358,7 +359,7 @@ class ApipublicController extends Controller
             if (!empty($room->roomType->main_image)) {
                 $room->room_type_image = $domain . '/' . ltrim($room->roomType->main_image, '/');
             }
-           $room->discounted_room = $room->unit_price * (1 - ($otaSetting->discount_code / 100));
+            $room->discounted_room = $room->unit_price * (1 - ($otaSetting->discount_code / 100));
 
             $room->discount_code = $otaSetting->discount_code;
             $room->is_clean = $room->is_clean ? 'Đã dọn' : 'Chưa dọn';
@@ -445,6 +446,24 @@ class ApipublicController extends Controller
         return response()->json([
             'rooms' => $formattedRooms,
             'hotel' =>  $HotelConfiguration,
+        ], 200);
+    }
+    public function getInvoice(Request $request)
+    {
+        $receipts_and_payments = ReceiptAndPayment::withoutTenant()
+            ->with('paymentTransactions')
+            ->get()
+            ->map(function ($item) {
+                return [
+                    'payment_id' => $item->payment_id,
+                    'total_amount' => $item->paymentTransactions->sum('amount'),
+                ];
+            });
+
+        return response()->json([
+            'datas' => $receipts_and_payments,
+
+
         ], 200);
     }
 }
