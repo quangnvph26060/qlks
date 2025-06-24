@@ -450,15 +450,18 @@ class ApipublicController extends Controller
     }
     public function getInvoice(Request $request)
     {
-        $receipts_and_payments = ReceiptAndPayment::withoutTenant()
-            ->with('paymentTransactions')
-            ->get()
-            ->map(function ($item) {
-                return [
-                    'payment_id' => $item->payment_id,
-                    'total_amount' => $item->paymentTransactions->sum('amount'),
-                ];
-            });
+       $receipts_and_payments = ReceiptAndPayment::withoutTenant()
+        ->get()
+        ->map(function ($item) {
+            $room_price = (float) $item->room_price;
+            $service_total = $item->service_booking ? $item->service_booking->sum('total_payment') : 0;
+
+            return [
+                'payment_id' => $item->payment_id,
+                'total_amount' => $room_price + $service_total,
+            ];
+        });
+
 
         return response()->json([
             'datas' => $receipts_and_payments,
