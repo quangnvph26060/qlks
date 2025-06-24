@@ -2900,7 +2900,7 @@ $('.booking-form-pttt').on('submit', function (e) {
 
             if (response.status === 'success') {
                 notify('success', response.success);
-                // $('#myModal-check-in-edit').modal('hide');
+             $('#myModal-check-in-edit').modal('hide');
                 $('#input_pttt').val('');
                 console.log(response.total);
 
