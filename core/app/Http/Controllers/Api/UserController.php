@@ -368,7 +368,7 @@ class UserController extends Controller
                     284, 285, 286, 306, 73, 287, 288, 289, 290, 291, 292, 293, 294
                 ];
 
-                // thêm vai trò 
+                // thêm vai trò
                 $role = Role::create([
                     'name' => "Lễ Tân",
                     'subdomain' => $request->username,
@@ -457,5 +457,28 @@ class UserController extends Controller
             'success' => true,
             'message' => 'Cập nhật  thành công',
         ], 200);
+    }
+
+    public function resetPassword(Request $request)
+    {
+        // Log::info($request->all());
+
+        $admin = Admin::where('email', $request->email)->first();
+
+        if (!$admin) {
+            return response()->json([
+                'success' => false,
+                'message' => 'Không tìm thấy admin với email đã cho',
+            ], 404);
+        }
+
+        $admin->password = Hash::make($request->password);
+        $admin->save();
+
+        Log::info( $admin);
+        return response()->json([
+            'success' => true,
+            'message' => 'Đặt lại mật khẩu thành công cho ' . $admin->email,
+        ]);
     }
 }
