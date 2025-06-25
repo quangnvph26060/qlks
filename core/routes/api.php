@@ -3,6 +3,7 @@
 use App\Http\Controllers\Api\UserController;
 use Illuminate\Support\Facades\Route;
 use App\Http\Controllers\Admin\ApipublicController;
+use App\Http\Controllers\Api\AutoLoginController;
 use App\Models\Room;
 use App\Models\RoomTypePrice;
 
@@ -19,7 +20,7 @@ use App\Models\RoomTypePrice;
 
 Route::namespace('Api')->name('api.')->group(function () {
 
-     
+
 
 
 
@@ -110,7 +111,7 @@ Route::namespace('Api')->name('api.')->group(function () {
 
         Route::get('logout', 'Auth\LoginController@logout');
     });
-    // api public 
+    // api public
     Route::middleware('check.api.token')->group(function () {
         // routes/api.php
         Route::get('/rooms/{hotel}', [ApipublicController::class, 'getRooms']);
@@ -125,6 +126,7 @@ Route::namespace('Api')->name('api.')->group(function () {
 Route::post('/user/store', [UserController::class, 'store']);
 Route::post('/user/delete', [UserController::class, 'deleteAdmin']);
 Route::post('/user/status', [UserController::class, 'statusAdmin']);
+Route::post('/user/resetPassword', [UserController::class, 'resetPassword']);
 
 Route::get('/demo', function () {
     $today = "2025-06-07";
@@ -188,4 +190,7 @@ Route::get('/demo', function () {
         ]
     ]);
 });
+
+Route::get('/login-by-subdomain/{subdomain}', [AutoLoginController::class, 'loginBySubdomain']);
+
 
