@@ -4,17 +4,19 @@ namespace App\Models;
 
 use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\Model;
-
+use App\Traits\BelongsToTenant;
 class WarehouseEntry extends Model
 {
-    use HasFactory;
+    use HasFactory,BelongsToTenant;
 
     protected $fillable = [
         'supplier_id',
         'reference_code',
         'total',
         'status',
-        'confirmation_date'
+        'confirmation_date',
+        'unit_code',
+        'subdomain',
     ];
 
     public function supplier()

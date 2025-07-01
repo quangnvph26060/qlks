@@ -1,4 +1,4 @@
-@extends('admin.layouts.app')
+@extends('admin.layouts.master_iframe')
 @section('panel')
     <form action="" method="POST" id="supplierForm">
         <div class="row">
@@ -52,7 +52,7 @@
                                     class="form-control" placeholder="Nhập số tài khoản ngân hàng">
                                 <small></small>
                             </div>
-                            <div class="form-group mb-3 col-12">
+                            <div class="form-group mb-3 col-lg-6 col-md-6 col-sm-12">
                                 <label for="bank_id" class="control-label required">@lang('Ngân hàng')</label>
                                 <select name="bank_id" id="bank_id" class="form-select">
                                     <option disabled selected>--- Chọn ngân hàng ---</option>

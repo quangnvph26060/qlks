@@ -27,19 +27,20 @@ class WarehouseController extends Controller
      */
     public function index()
     {
-        $pageTitle = "Danh sách đơn hàng";
+        $pageTitle = "Danh sách nhập hàng";
 
         $search = request()->get('search');
         $perPage = request()->get('perPage', 10);
         $orderBy = request()->get('orderBy', 'id');
         $columns = ['id', 'supplier_id', 'reference_code', 'total', 'status', 'created_at'];
-        $relations = ['supplier', 'return.return_items'];
+        $relations = [];
         $searchColumns = ['reference_code'];
-
+        $requiredRelations = [];
         $response = $this->repository
             ->customPaginate(
                 $columns,
                 $relations,
+                $requiredRelations,
                 $perPage,
                 $orderBy,
                 $search,
@@ -99,6 +100,8 @@ class WarehouseController extends Controller
                 'supplier_id' => $request->get('supplier_id'),
                 'reference_code' => $this->repository->generateRandomString(),
                 'total' => 0,
+                'subdomain' => subdomain(),
+                'unit_code' => unitCode(),
             ]);
 
             $total = 0;
@@ -107,7 +110,7 @@ class WarehouseController extends Controller
                 foreach ($request->input('products') as $key => $value) {
                     $product = Product::query()->find($key);
                     $product->update([
-                        'stock' => $product->stock - $value
+                        'stock' => $product->stock + $value
                     ]);
 
                     $total += $product->import_price * $value;
@@ -116,7 +119,6 @@ class WarehouseController extends Controller
                         'product_id' => $key,
                         'quantity' => $value
                     ]);
-
                 }
             }
 
@@ -155,9 +157,7 @@ class WarehouseController extends Controller
     public function show(string $id)
     {
         $pageTitle = "Chi tiết đơn hàng";
-        // $warehouse = WarehouseEntry::query()->with('supplier', 'entries.product', 'payments.payment_method', 'return')->find($id);
-        $warehouse = WarehouseEntry::query()->with('return')->find($id);
-        Log::info($warehouse);
+        $warehouse = WarehouseEntry::query()->with('supplier', 'return')->find($id);
         if (!$warehouse) {
             abort(404);
         }

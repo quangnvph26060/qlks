@@ -378,19 +378,19 @@ function saveRoomStatusHistory($room_id, $start_date, $end_date, $status_code)
         ]);
     }
 }
-function savePayment($booking_id, $checkin_id, $room_price, $payment_method,$admin)
+function savePayment($booking_id, $checkin_id, $room_price, $payment_method, $admin)
 {
     ReceiptAndPayment::create([
         'payment_id'       => getCode('HD', 12),
         'booking_id'       => $booking_id,
         'checkin_id'       => $checkin_id,
         'room_price'       => $room_price,
-       // 'total_payment'    => $total_payment,   // số tiền  thanh toán
+        // 'total_payment'    => $total_payment,   // số tiền  thanh toán
         'payment_method'   => $payment_method,
         'created_date'     => now(),
         'unit_code'        => unitCode(),
         'subdomain'        => subdomain(),
-        'creator'          =>$admin,
+        'creator'          => $admin,
     ]);
 }
 function updateRoomService($checkIn, $roomIdOld, $roomIdNew)
@@ -558,7 +558,7 @@ function gs($key = null)
 }
 function hf($key = null) // hotel_facilities
 {
-    $subdomain = subdomain(); 
+    $subdomain = subdomain();
 
     if (!$subdomain) {
         return null;
@@ -583,7 +583,7 @@ function hf($key = null) // hotel_facilities
 // function unitCode()
 // {
 //     $admin = Auth::guard('admin')->user();
-    
+
 //     if (!$admin || !isset($admin->unit_code)) {
 //         // Nếu chưa login hoặc không có unit_code thì trả về null
 //         return null;
@@ -608,7 +608,7 @@ function hf($key = null) // hotel_facilities
 // {
 //     $admin = auth('admin')->user();
 //     if (!$admin || !isset($admin->subdomain)) {
-     
+
 //         return null;
 //     }
 //     $cacheKey = 'Subdomain_' . $admin->id;
@@ -628,8 +628,8 @@ function unitCode()
     }
 
     $hotelActive = HotelFacility::where('subdomain', $subdomain)
-                    ->where('trang_thai', 1)
-                    ->first();
+        ->where('trang_thai', 1)
+        ->first();
 
     return $hotelActive?->ma_coso; // dùng null-safe operator
 }
@@ -639,6 +639,10 @@ function subdomain()
     return auth('admin')->user()?->subdomain;
 }
 
+function isSuperAdmin()
+{
+    return auth('admin')->user()?->role_id == 1;
+}
 // end setting and setup hotels
 function isImage($string)
 {
@@ -698,23 +702,23 @@ function bookingActionRecord($bookingId, $admin, $room, $remark, $action_table)
 {
     // Tự động lấy mã nếu remark chưa được truyền vào
     Log::info($bookingId);
-        $code = null;
-        switch ($action_table) {
-            case 'room_booking':
-                $booking = RoomBooking::find($bookingId);
-                $code = $booking?->booking_id;
-                break;
+    $code = null;
+    switch ($action_table) {
+        case 'room_booking':
+            $booking = RoomBooking::find($bookingId);
+            $code = $booking?->booking_id;
+            break;
 
-            case 'check_in':
-                $checkIn = CheckIn::find($bookingId);
-                $code = $checkIn?->check_in_id;
-                break;
+        case 'check_in':
+            $checkIn = CheckIn::find($bookingId);
+            $code = $checkIn?->check_in_id;
+            break;
 
-            default:
-                $code = null;
-                break;
-        }
-    
+        default:
+            $code = null;
+            break;
+    }
+
 
     $action = new BookingActionHistory();
     $action->booking_id    = $code;
@@ -865,7 +869,6 @@ if (!function_exists('saveImages')) {
 
                     Storage::put($path, (string) $img->encode());
                     $paths[] = str_replace('public/', '', $path);
-
                 } catch (\Exception $e) {
                     Log::error('Lỗi lưu ảnh: ' . $e->getMessage());
                 }

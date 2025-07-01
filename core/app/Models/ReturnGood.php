@@ -4,10 +4,10 @@ namespace App\Models;
 
 use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\Model;
-
+use App\Traits\BelongsToTenant;
 class ReturnGood extends Model
 {
-    use HasFactory;
+    use HasFactory,BelongsToTenant;
 
     protected $table = 'returns';
 
@@ -16,6 +16,8 @@ class ReturnGood extends Model
         'reference_code',
         'status',
         'total',
+        'subdomain',
+        'unit_code',
     ];
 
 

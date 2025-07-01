@@ -26,8 +26,8 @@
                             @can('admin.hotel.room.product.delete')
                             <div class="dropdown-item booked_room_detail">
                                 <button class=" btn-delete" data-id="{{ $room->id }}"
-                                    data-modal_title="@lang('Xóa')" type="button">
-                                    Xóa
+                                    data-modal_title="@lang('Hoàn kho')" type="button">
+                                    Hoàn kho
                             </div>
                             @endcan
                         </div>

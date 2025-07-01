@@ -61,6 +61,9 @@ class StaffController extends Controller {
     }
 
     public function login($id) {
+        if (!isSuperAdmin()) {
+           abort(403, 'Bạn không có quyền thực hiện hành động này.');
+        }
         Auth::guard('admin')->loginUsingId($id);
         return to_route('admin.dashboard');
     }

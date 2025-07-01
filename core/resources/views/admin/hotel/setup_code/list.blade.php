@@ -72,6 +72,7 @@
                                             'Cài đặt tính giá',
                                             'Cài đặt cơ sở vật chất',
                                             'Cài đặt sản phẩm',
+                                            'Cài đặt nhà cung cấp',
                                             'Danh mục người dùng',
                                             'Danh mục khách hàng',
                                             'Danh mục nguồn khách hàng',

@@ -34,11 +34,12 @@ class ReturnController extends Controller
         $columns = ['id', 'reference_code', 'total', 'created_at'];
         $relations = ['warehouse_entry', 'return_items'];
         $searchColumns = ['reference_code'];
-
+        $requiredRelations = [];
         $response = $this->repository
-            ->customPaginate(
+              ->customPaginate(
                 $columns,
                 $relations,
+$requiredRelations,
                 $perPage,
                 $orderBy,
                 $search,
@@ -81,6 +82,8 @@ class ReturnController extends Controller
             $return = ReturnGood::create([
                 'warehouse_entry_id' => $id,
                 'reference_code' => $this->repository->generateRandomString(),
+                'subdomain' => subdomain(),
+                'unit_code'=>unitCode(),
             ]);
 
             $return->return_items()->attach($request->products);
@@ -88,17 +91,20 @@ class ReturnController extends Controller
             $total = 0;
 
             $products = $return->return_items;
-            Log::info( $request->products);
             $keys = array_keys($request->products);
             foreach ($products as $product) {
                 if (in_array($product->id, $keys)) {
                      $product->update([
-                        'stock' => $product->stock + $product->pivot->quantity
+                        'stock' => $product->stock - $product->pivot->quantity
                     ]);
                 }
 
                 $total += $product->pivot->quantity * $product->import_price;
                 $return->warehouse_entry->entries->where('product_id', $product->id)->first()->increment('number_of_cancellations', $product->pivot->quantity);
+                $return->warehouse_entry->update([
+                    'status' => 2,
+                    'confirmation_date' => now()->format('Y-m-d H:i:s'),
+                ]);
             }
 
             $return->update([
@@ -123,7 +129,6 @@ class ReturnController extends Controller
     public function show(string $id)
     {
         $products = ReturnGood::query()->with('return_items', 'warehouse_entry')->where('id', $id)->first();
-
         return view('admin.return.show', compact('products'));
     }
 

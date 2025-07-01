@@ -1,4 +1,4 @@
-@extends('admin.layouts.app')
+@extends('admin.layouts.master_iframe')
 
 @section('panel')
     @include('admin.messages')
@@ -6,7 +6,7 @@
         <div class="col-lg-12">
             <div class="card b-radius--10">
                 <div class="card-body p-0">
-                    <div class="table-responsive--md table-responsive p-2">
+                    <div class="table-responsive--md table-responsive p-2" style="overflow-x: visible;">
                         <div class="d-flex justify-content-between mb-3">
                             <div class="dt-length">
                                 <select name="example_length" style=" padding: 1px 3px; margin-right: 8px;"
@@ -29,12 +29,13 @@
                             <thead>
                                 <tr>
                                     <th></th>
+                                    <th>Hành Động</th>
                                     <th>Mã Nhà Cung Cấp</th>
                                     <th>Tên Nhà Cung Cấp</th>
                                     <th>Email</th>
                                     <th>Số điện thoại</th>
                                     <th>Địa Chỉ</th>
-                                    <th>Hành Động</th>
+
                                 </tr>
                             </thead>
                             <tbody>
@@ -199,7 +200,7 @@
                         }
                     })
                 })
-
+               
                 $(document).on('click', '.edit-representative', function() {
 
                     var representativeId = $(this).data('id');

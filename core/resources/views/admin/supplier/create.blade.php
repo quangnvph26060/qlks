@@ -1,4 +1,4 @@
-@extends('admin.layouts.app')
+@extends('admin.layouts.master_iframe')
 @section('panel')
     <form action="" method="POST" id="supplierForm">
         <div class="row">
@@ -12,7 +12,7 @@
                             <div class="form-group mb-3 col-lg-6 col-md-6 col-sm-12">
                                 <label for="suppliers.supplier_id" class="control-label ">@lang('Mã nhà cung cấp')</label>
                                 <input type="text" name="suppliers[supplier_id]" id="suppliers.supplier_id"
-                                    class="form-control" placeholder="Nhập tên nhà cung cấp">
+                                    class="form-control" value="{{$code}}" placeholder="Nhập tên nhà cung cấp">
                                 <small></small>
                             </div>
                             <div class="form-group mb-3 col-lg-6 col-md-6 col-sm-12">
@@ -22,7 +22,7 @@
                                 <small></small>
                             </div>
                             <div class="form-group mb-3 col-lg-6 col-md-6 col-sm-12">
-                                <label for="suppliers.email" class="control-label required">@lang('Địa chỉ email')</label>
+                                <label for="suppliers.email" class="control-label ">@lang('Địa chỉ email')</label>
                                 <input type="email" name="suppliers[email]" id="suppliers.email" class="form-control"
                                     placeholder="Nhập địa chỉ email">
                                 <small></small>
@@ -41,19 +41,19 @@
                             </div>
                             <div class="form-group mb-3 col-lg-6 col-md-6 col-sm-12">
                                 <label for="suppliers.account_number"
-                                    class="control-label required">@lang('Số tài khoản')</label>
+                                    class="control-label ">@lang('Số tài khoản')</label>
                                 <input type="text" name="suppliers[account_number]" id="suppliers.account_number"
                                     class="form-control" placeholder="Nhập số tài khoản ngân hàng">
                                 <small></small>
                             </div>
                             <div class="form-group mb-3 col-lg-6 col-md-6 col-sm-12">
-                                <label for="suppliers.tax_code" class="control-label required">@lang('Mã số thuế')</label>
+                                <label for="suppliers.tax_code" class="control-label">@lang('Mã số thuế')</label>
                                 <input type="text" name="suppliers[tax_code]" id="suppliers.tax_code"
                                     class="form-control" placeholder="Nhập số tài khoản ngân hàng">
                                 <small></small>
                             </div>
-                            <div class="form-group mb-3 col-12">
-                                <label for="suppliers.bank_id" class="control-label required">@lang('Ngân hàng')</label>
+                            <div class="form-group mb-3 col-lg-6 col-md-6 col-sm-12">
+                                <label for="suppliers.bank_id" class="control-label">@lang('Ngân hàng')</label>
                                 <select name="suppliers[bank_id]" id="suppliers.bank_id" class="form-select">
                                     <option disabled selected>--- Chọn ngân hàng ---</option>
                                     @foreach ($banks as $id => $name)
@@ -84,15 +84,16 @@
                                 class="form-control" placeholder="Nhập tên">
                             <small></small>
                         </div>
+                       
                         <div class="form-group mb-3">
-                            <label for="representatives.email" class="control-label required">@lang('Email')</label>
-                            <input type="text" name="representatives[email]" id="representatives.email"
+                            <label for="representatives.phone" class="control-label required">@lang('Số điện thoại')</label>
+                            <input type="text" name="representatives[phone]" id="representatives.phone"
                                 class="form-control" placeholder="Nhập tên">
                             <small></small>
                         </div>
-                        <div class="form-group mb-3">
-                            <label for="representatives.phone" class="control-label">@lang('Số điện thoại')</label>
-                            <input type="text" name="representatives[phone]" id="representatives.phone"
+                         <div class="form-group mb-3">
+                            <label for="representatives.email" class="control-label ">@lang('Email')</label>
+                            <input type="text" name="representatives[email]" id="representatives.email"
                                 class="form-control" placeholder="Nhập tên">
                             <small></small>
                         </div>

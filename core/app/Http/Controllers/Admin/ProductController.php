@@ -313,10 +313,12 @@ class ProductController extends Controller
         $filters = [
             'category_id' => request()->get('category_id', []),
         ];
+        $requiredRelations = [];
 
         $response = $this->repository->customPaginate(
             ['id', 'image_path', 'name', 'import_price', 'selling_price', 'category_id', 'stock', 'is_published'],
             [], // Thêm quan hệ nếu cần
+        $requiredRelations,
             $perPage,
             $orderBy,
             $search,

@@ -3,6 +3,7 @@
 namespace App\Http\Controllers\Admin;
 
 use App\Models\Bank;
+use App\Models\SetupCode;
 use App\Models\Supplier;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\DB;
@@ -35,11 +36,12 @@ class SupplierController extends Controller
         $relations = ['supplier_representatives'];
         $searchColumns = ['name', 'email', 'phone', 'address'];
         $relationSearchColumns = ['supplier_representatives' => ['email', 'name']];
-
+        $requiredRelations = [];
         $response = $this->repository
             ->customPaginate(
                 $columns,
                 $relations,
+                $requiredRelations,
                 $perPage,
                 $orderBy,
                 $search,
@@ -64,9 +66,13 @@ class SupplierController extends Controller
      */
     public function create()
     {
+        $code   = SetupCode::where('menu_name', 'Cài đặt nhà cung cấp')->value('code');
+        $count  = Supplier::count();
+        $code   = $code ? $code . $count + 1 : '';
         $pageTitle = "Thêm mới nhà cung cấp";
         $banks = Bank::query()->pluck('name', 'id');
-        return view('admin.supplier.create', compact('pageTitle', 'banks'));
+       
+        return view('admin.supplier.create', compact('pageTitle', 'banks','code'));
     }
 
     /**

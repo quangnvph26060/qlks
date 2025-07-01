@@ -71,14 +71,14 @@ Route::middleware('admin', 'adminPermission')->prefix('admin')->group(function (
         Route::post('switch-status/{id}', 'status')->name('status');
         Route::get('login/{id}', 'login')->name('login');
     });
-
+   
     // Manage Roles
     Route::controller('RolesController')->prefix('roles')->name('roles.')->group(function () {
         Route::get('', 'index')->name('index');
         Route::get('add', 'add')->name('add');
         Route::get('edit/{id}', 'edit')->name('edit');
         Route::post('save/{id?}', 'save')->name('save');
-        Route::post('delete/{id}', 'save')->name('delete');
+        Route::post('delete/{id}', 'delete')->name('delete');
     });
     // Manage OTA
     Route::controller('OTAController')->prefix('ota')->name('ota.')->group(function () {
@@ -174,7 +174,7 @@ Route::middleware('admin', 'adminPermission')->prefix('admin')->group(function (
         Route::get('filter', 'filter')->name('filter');
     });
 
-    // manage warehouse
+    // manage warehouse 
     Route::controller('WarehouseController')->prefix('warehouse')->name('warehouse.')->group(function () {
         Route::get('/', 'index')->name('index');
         Route::get('create', 'create')->name('create');

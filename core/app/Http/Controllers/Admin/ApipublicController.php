@@ -453,8 +453,8 @@ class ApipublicController extends Controller
        $receipts_and_payments = ReceiptAndPayment::withoutTenant()
         ->get()
         ->map(function ($item) {
-            $room_price = (float) $item->room_price;
-            $service_total = $item->service_booking ? $item->service_booking->sum('total_payment') : 0;
+            $room_price = (float) $item->room_price; // giá phòng
+            $service_total = $item->service_booking ? $item->service_booking->sum('total_payment') : 0; // giá sản phẩm 
 
             return [
                 'payment_id' => $item->payment_id,

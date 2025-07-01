@@ -1,4 +1,4 @@
-@extends('admin.layouts.app')
+@extends('admin.layouts.master_iframe')
 @section('panel')
     <div class="row">
         <div class="col-lg-6 col-md-12">
@@ -10,20 +10,20 @@
                     <table class="table table-bordered">
                         <thead>
                             <tr>
-                                <th class="w-25"><i class="fas fa-user me-2"></i> Tên nhà cung cấp</th>
-                                <td>{{ $warehouse->supplier->name ?? "" }}</td>
+                                <th class="w-25 text-left"><i class="fas fa-user me-2"></i> Tên nhà cung cấp</th>
+                                <td>{{ $warehouse->supplier->name ?? '' }}</td>
                             </tr>
                             <tr>
-                                <th><i class="fas fa-phone me-2"></i> Số điện thoại</th>
-                                <td>{{ $warehouse->supplier->phone ?? ""}}</td>
+                                <th class="text-left"><i class="fas fa-phone me-2"></i> Số điện thoại</th>
+                                <td>{{ $warehouse->supplier->phone ?? '' }}</td>
                             </tr>
                             <tr>
-                                <th><i class="fas fa-envelope me-2"></i> Email</th>
-                                <td>{{ $warehouse->supplier->email ?? ""}}</td>
+                                <th class="text-left"><i class="fas fa-envelope me-2"></i> Email</th>
+                                <td>{{ $warehouse->supplier->email ?? '' }}</td>
                             </tr>
                             <tr>
-                                <th><i class="fas fa-map-marker-alt me-2"></i> Địa chỉ</th>
-                                <td>{{ $warehouse->supplier->address ?? "" }}</td>
+                                <th class="text-left"><i class="fas fa-map-marker-alt me-2"></i> Địa chỉ</th>
+                                <td>{{ $warehouse->supplier->address ?? '' }}</td>
                             </tr>
                         </thead>
                     </table>
@@ -39,19 +39,19 @@
                     <table class="table table-bordered">
                         <thead>
                             <tr>
-                                <th class="w-25"><i class="fas fa-receipt me-2"></i> Mã đơn hàng</th>
-                                <td>{{ $warehouse->reference_code ?? ""}}</td>
+                                <th class="w-25 text-left"><i class="fas fa-receipt me-2"></i> Mã đơn hàng</th>
+                                <td>{{ $warehouse->reference_code ?? '' }}</td>
                             </tr>
                             <tr>
-                                <th><i class="fas fa-money-bill-wave me-2"></i> Tổng tiền</th>
-                                <td>{{ showAmount($warehouse->total) ?? "" }}</td>
+                                <th class="text-left"><i class="fas fa-money-bill-wave me-2"></i> Tổng tiền</th>
+                                <td>{{ showAmount($warehouse->total) ?? '' }}</td>
                             </tr>
                             <tr>
-                                <th><i class="fas fa-calendar-alt me-2"></i> Ngày tạo</th>
-                                <td>{{ \Carbon\Carbon::parse($warehouse->date)->format('d/m/Y') ?? "" }}</td>
+                                <th class="text-left"><i class="fas fa-calendar-alt me-2"></i> Ngày tạo</th>
+                                <td>{{ \Carbon\Carbon::parse($warehouse->confirmation_date)->format('d/m/Y') ?? '' }}</td>
                             </tr>
                             <tr>
-                                <th><i class="fas fa-credit-card me-2"></i> Phương thức thanh toán</th>
+                                <th class="text-left"><i class="fas fa-credit-card me-2"></i> Phương thức thanh toán</th>
                                 <td>Thanh toán khi nhận hàng</td>
                             </tr>
                             {{-- {{ $warehouse->payments->payment_method->name }} --}}
@@ -60,7 +60,7 @@
                 </div>
             </div>
         </div>
-        {{-- <div class="col-md-12 mt-3">
+        <div class="col-md-12 mt-3">
             <div class="card">
                 @php($sl = 0)
                 @foreach ($warehouse->entries ?? [] as $item)
@@ -125,25 +125,26 @@
                     </div>
                 </div>
             </div>
-        </div> --}}
+        </div>
     </div>
-    @push('breadcrumb-plugins')
-        @if (!$warehouse->status)
-            <div class="action-btn">
-                <a href="{{ route('admin.return.create', $warehouse->id ?? "") }}" class="btn btn-sm btn-outline--danger"
-                    id="btn-return"><i class="las la-sync"></i>Trả hàng</a>
-                {{-- <a href="{{ route('admin.return.create', $warehouse->id) }}" class="btn btn-sm btn-outline--danger"
-                    id="btn-cancel"><i class="las la-window-close"></i>Hủy đơn hàng</a> --}}
-            </div>
-        @elseif($warehouse->return && $warehouse->return->status)
-            <a href="{{ route('admin.return.show', $warehouse->id) }}" class="btn btn-sm btn-outline--secondary"
-                id="btn-return">chi tiết sản
-                phẩm bị hoàn trả</a>
-        @endif
+   @php($firstReturn = $warehouse->return->first())
 
-        <a class="btn btn-sm btn-outline--primary" href="{{ route('admin.warehouse.index') }}"><i
-                class="las la-list"></i>@lang('Danh sách đơn hàng')</a>
-    @endpush
+@push('breadcrumb-plugins')
+    @if (!$warehouse->status)
+        <div class="action-btn">
+            <a href="{{ route('admin.return.create', $warehouse->id) }}" class="btn btn-sm btn-outline--danger"
+                id="btn-return"><i class="las la-sync"></i>Trả hàng</a>
+        </div>
+    @elseif($firstReturn && $firstReturn->status)
+        <a href="{{ route('admin.return.show', $warehouse->id) }}" class="btn btn-sm btn-outline--secondary"
+            id="btn-return">Chi tiết sản phẩm bị hoàn trả</a>
+    @endif
+
+    <a class="btn btn-sm btn-outline--primary" href="{{ route('admin.warehouse.index') }}">
+        <i class="las la-list"></i>@lang('Danh sách đơn hàng')
+    </a>
+@endpush
+
 @endsection
 
 @push('script')

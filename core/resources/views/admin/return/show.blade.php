@@ -1,4 +1,4 @@
-@extends('admin.layouts.app')
+@extends('admin.layouts.master_iframe')
 @section('panel')
     <div class="card">
         <div class="card-header">
@@ -19,7 +19,7 @@
                             </tr>
                         </thead>
                         <tbody>
-                            @empty($products->return_items)
+                            @empty(!$products->return_items)
                                 @foreach ($products->return_items as $item)
                                     <tr>
                                         <td data-label="Sản phẩm">
@@ -42,7 +42,7 @@
                     </table>
 
                     <div class="text-right mt-3">
-                        <button type="submit" class="btn btn-primary">Chế độ chỉnh sửa</button>
+                        {{-- <button type="submit" class="btn btn-primary">Chế độ chỉnh sửa</button> --}}
                         <a href="{{ route('admin.return.index') }}" class="btn btn-outline--primary" id="btn-close">Danh
                             sách</a>
                     </div>

@@ -1,4 +1,4 @@
-@extends('admin.layouts.app')
+@extends('admin.layouts.master_iframe')
 @section('panel')
     @include('admin.messages')
     <div class="row">
@@ -28,8 +28,8 @@
                                 <tr>
                                     <th>Mã phiếu</th>
                                     <th>Nhà Cung Cấp</th>
-                                    <th>Số điện thoại</th>
-                                    <th>Ngày tạo</th>
+                                    {{-- <th>Số điện thoại</th>
+                                    <th>Ngày tạo</th> --}}
                                     <th>Trạng thái</th>
                                     <th>Tổng tiền</th>
                                 </tr>

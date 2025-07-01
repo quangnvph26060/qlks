@@ -73,14 +73,7 @@
                 "route_name": "admin.hotel.room.facilities.all",
                 "menu_active": "admin.hotel.room.facilities.all"
             },
-            {
-                "keyword": [
-                    "Danh mục sản phẩm"
-                ],
-                "title": "Danh mục sản phẩm",
-                "route_name": "admin.hotel.room.product.all",
-                "menu_active": "admin.hotel.room.product.all"
-            },
+          
             {
                 "keyword": [
                     "Danh mục khách hàng"
@@ -210,6 +203,53 @@
         "icon": "las la-users",
         "route_name": "admin.staff.index",
         "menu_active": "admin.staff.index"
+    },
+     "warehouse_management": {
+        "keyword": [
+            "Quản lý kho"
+        ],
+        "title": "Quản lý kho",
+        "icon": "fas fa-boxes-stacked",
+      
+        "menu_active": "admin.warehouse.*",
+           "submenu": [
+             {
+                "keyword": [
+                    "Cài đặt nhà cung cấp"
+                ],
+                "title": "Cài đặt nhà cung cấp",
+                "icon": "las la-dollar-sign",
+                "route_name": "admin.supplier.index",
+                "menu_active": "admin.supplier.index"
+            },
+            {
+                "keyword": [
+                    "Nhập hàng"
+                ],
+                "title": "Nhập hàng",
+                "icon": "las la-dollar-sign",
+                "route_name": "admin.warehouse.index",
+                "menu_active": "admin.warehouse.index"
+            },
+            {
+                "keyword": [
+                    "Hoàn hàng"
+                ],
+                "title": "Hoàn hàng",
+                "icon": "las la-dollar-sign",
+                "route_name": "admin.return.index",
+                "menu_active": "admin.return.index"
+            },
+            {
+                "keyword": [
+                    "Danh mục sản phẩm"
+                ],
+                "title": "Danh mục sản phẩm",
+                "route_name": "admin.hotel.room.product.all",
+                "menu_active": "admin.hotel.room.product.all"
+            }
+           
+        ]
     },
     "general_settings": {
         "title": "Cài đặt chung",

@@ -92,8 +92,6 @@
         color: inherit !important;
     }
 </style>
-<!-- jQuery CDN - thêm trước các script dùng jQuery -->
-
 @push('script')
     <script>
         $(document).ready(function() {
@@ -104,6 +102,8 @@
 
             $(document).on('click', '.btn-delete-role', function() {
                 let id = $(this).data('id');
+                console.log(id);
+                
                 let baseUrl = "{{ route('admin.roles.delete', ':id') }}";
                 let url = baseUrl.replace(':id', id);
                 Swal.fire({

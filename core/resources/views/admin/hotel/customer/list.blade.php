@@ -725,6 +725,8 @@
                 $('.icon-delete-room').on('click', function() {
                     var dataId = $(this).data('id');
                     var rowToDelete = $(`tr[data-id="${dataId}"]`);
+                  
+                    
                     $.ajax({
                         url: `{{ route('admin.hotel.customer.get', '') }}/${dataId}`,
                         type: 'GET',

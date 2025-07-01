@@ -458,8 +458,10 @@
                             <div class="d-flex justify-content-end" style="gap: 10px;">
                                 <button type="button" id="checkout_room" class="btn btn-primary btn-checkout-room">Trả
                                     phòng</button>
-                                <button type="button" id="print_invoice" class="btn btn-success"> <i class="fas fa-print"></i> In hoá đơn</button>
-                                   <button type="button" id="print_sales_invoice" class="btn btn-secondary btn-sales-invoice"> <i class="fas fa-print"></i> In</button>
+                                <button type="button" id="print_invoice" class="btn btn-success"> <i
+                                        class="fas fa-print"></i> In hoá đơn</button>
+                                <button type="button" id="print_sales_invoice" class="btn btn-secondary btn-sales-invoice">
+                                    <i class="fas fa-print"></i> In</button>
                                 <button type="button" class="btn-dat-truoc btn-book-pttt">Lưu</button>
                                 <p type="button" data-row="booked" class="alert-paragraph close_modal">Hủy</p>
                             </div>
@@ -550,7 +552,7 @@
                 <div class="modal-content rounded-3 shadow-lg" style="width: 50%;">
                     <div class="modal-header border-0">
                         <h5 class="modal-title fw-bold" id="paymentModalLabel">
-                            Thanh toán cho nhận phòng 
+                            Thanh toán cho nhận phòng
                         </h5>
                         <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Đóng"></button>
                     </div>
@@ -624,7 +626,7 @@
     var storeService = "{{ route('admin.hotel.premium.service.store-service') }}";
     var deleteService = "{{ route('admin.hotel.premium.service.delete-service') }}";
     var showCurrency = "{{ format_currency() }}";
-     var printSalesInvoice = "{{ route('admin.booking.payment.print.invoice', ['id' => '__ID__']) }}";
+    var printSalesInvoice = "{{ route('admin.booking.payment.print.invoice', ['id' => '__ID__']) }}";
     const date_booking = new Date();
     const date_yyyy = date_booking.getFullYear();
     const date_mm = String(date_booking.getMonth() + 1).padStart(2, '0');
@@ -1788,8 +1790,14 @@
     }
 
     .modal-content {
+        height: 95vh;
         border-radius: 8px;
         box-shadow: 0 4px 10px rgba(0, 0, 0, 0.2);
+    }
+
+    .modal-body {
+        flex: 1;
+        overflow-y: auto;
     }
 
     .modal-dialog {
@@ -1798,8 +1806,12 @@
         justify-content: center;
         max-width: 97vw !important;
         max-height: 90vh;
-        width: 100%;
+      
         margin: auto !important;
+        max-width: 90vw;
+        width: 100%;
+        max-height: 95vh;
+        margin: auto;
     }
 
     .delete-room-booking,
@@ -1948,11 +1960,7 @@
         white-space: nowrap;
     }
 
-    .modal-content {
-        max-height: 90vh;
-        overflow-y: auto;
-        scrollbar-width: none;
-    }
+
 
     .alert-paragraph {
         display: inline-block;

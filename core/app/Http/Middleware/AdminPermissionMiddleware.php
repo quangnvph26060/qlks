@@ -14,7 +14,29 @@ class AdminPermissionMiddleware
     {
         $codes = optional(auth('admin')->user()->role)->permissions->pluck('code')->toArray();
         $currentRoute = $request->route()->getName();
-        $excludedRoutes = ['admin.revenue','admin.hotel.setup.amenities.search','admin.hotel.import.room.store','admin.hotel.room.type.statusAll','admin.booking.payment.print.invoice','admin.hotel.room.type.changeDirections'];
+        $excludedRoutes = ['admin.revenue',
+            'admin.hotel.setup.amenities.search',
+            'admin.hotel.import.room.store',
+            'admin.hotel.room.type.statusAll',
+            'admin.booking.payment.print.invoice',
+            'admin.hotel.room.type.changeDirections',
+            'admin.warehouse.show',
+            'admin.warehouse.create',
+            'admin.product.index', //1
+            'admin.product.filter',           // tìm kiếm sản phẩm
+            'admin.warehouse.store',          // thêm  nhập kho
+            'admin.supplier.create',          // trang thêm nhà cung cấp
+            'admin.supplier.store',           // thêm mới nhà cung cấp
+            'admin.supplier.edit',            // sửa nhà cung cấp
+            'admin.representative.edit',
+            'admin.representative.update',    // sửa thông tin người đại diện
+            'admin.supplier.destroy',         // xoá nhà cung cấp
+            'admin.warehouse.update',         // xác nhận trạng thái nhập hàng
+            'admin.return.create',            // trả hàng
+            'admin.return.store', // xác nhận hàng hỏng
+            'admin.return.index', // trang trả hàng
+            'admin.return.show', // phiếu trả hàng
+        ];
         /*
             'admin.revenue' => 'Danh thu trong màn thông kế'
             'admin.hotel.setup.amenities.search' => 'Tìm kiếm cài đặt tiện nghi'
@@ -22,6 +44,8 @@ class AdminPermissionMiddleware
             'admin.hotel.room.type.statusAll' => update nhiều trạng thái phòng 
             'admin.booking.payment.print.invoice'=> in hoá đơn bán hàng ở lễ tân
             'admin.hotel.room.type.changeDirections'=> chuyển hướng phòng
+            'admin.warehouse.show' => chi tiết nhập kho
+            'admin.warehouse.create'=> tạo nhập kho
         
         */
         if (!in_array($currentRoute, $excludedRoutes) && !in_array($currentRoute, $codes)) {
