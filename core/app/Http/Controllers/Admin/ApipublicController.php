@@ -473,7 +473,7 @@ class ApipublicController extends Controller
     public function getPayment($bookingCode)
     {
         try {
-            $payment = ReceiptAndPayment::with([
+            $payment = ReceiptAndPayment::withoutTenant()->with([
                 'paymentTransactions',
                 'paymentTransactions.creator',
             ])
