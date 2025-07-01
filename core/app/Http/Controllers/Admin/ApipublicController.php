@@ -470,16 +470,24 @@ class ApipublicController extends Controller
 
         ], 200);
     }
-    public function getPayment(Request $request)
+    public function getPayment($bookingCode)
     {
-      $payments = ReceiptAndPayment::with('paymentTransactions', 'paymentTransactions.creator')
-        ->when(!empty($request->bookingCode), function ($query) use ($request) {
-            $query->where('payment_id', 'LIKE', '%' . $request->bookingCode . '%');
-        })
-        ->orderBy('created_at', 'desc')
-        ->get();
+        try {
+            $payment = ReceiptAndPayment::with([
+                'paymentTransactions',
+                'paymentTransactions.creator',
+            ])
+                ->where('payment_id', $bookingCode)
+                ->latest()
+                ->first();
 
-        $payments = $payments->map(function ($payment) {
+            if (!$payment) {
+                return response()->json([
+                    'status' => 'error',
+                    'message' => 'Không tìm thấy hóa đơn',
+                ], 404);
+            }
+
             $depositTotal = optional($payment->check_in)->isNotEmpty()
                 ? $payment->check_in->sum('deposit_amount')
                 : optional($payment->room_booking)->sum('deposit_amount');
@@ -489,21 +497,26 @@ class ApipublicController extends Controller
                 : optional($payment->room_booking)->sum('discount');
 
             $paidCustomer = optional($payment->paymentTransactions)->sum('amount');
+            $totalPayment = $payment->room_price + optional($payment->service_booking)->sum('total_payment');
+
             $payment->deposit_total = $depositTotal;
             $payment->discount_total = $discountTotal;
             $payment->payment_total = $paidCustomer;
             $payment->customer = optional($payment->check_in->first())['customer_name'] ?? '';
-            $totalPayment = $payment->room_price + optional($payment->service_booking)->sum('total_payment');
             $payment->room_price = $totalPayment;
             $payment->paid_customer = $paidCustomer;
             $payment->customer_needs_to_pay = $totalPayment - $paidCustomer - $depositTotal - $discountTotal;
 
-            return $payment;
-        });
-
-        return response([
-            'status' => 'success',
-            'data' => $payments
-        ]);
+            return response()->json([
+                'status' => 'success',
+                'data' => $payment
+            ]);
+        } catch (\Exception $e) {
+            return response()->json([
+                'status' => 'error',
+                'message' => 'Đã xảy ra lỗi khi xử lý yêu cầu.',
+                'error' => $e->getMessage() // Có thể bỏ dòng này ở production
+            ], 500);
+        }
     }
 }
