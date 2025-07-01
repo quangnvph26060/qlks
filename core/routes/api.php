@@ -117,11 +117,14 @@ Route::namespace('Api')->name('api.')->group(function () {
         Route::get('/rooms/{hotel}', [ApipublicController::class, 'getRooms']);
         Route::get('/get-hotels', [ApipublicController::class, 'getHotels']);
         Route::get('/get-invoice', [ApipublicController::class, 'getInvoice']);
+      
         Route::get('/roomss', function () {
             return '123';
         });
     });
 });
+
+  Route::get('/get-payment', [ApipublicController::class, 'getPayment']);
 
 Route::post('/user/store', [UserController::class, 'store']);
 Route::post('/user/delete', [UserController::class, 'deleteAdmin']);

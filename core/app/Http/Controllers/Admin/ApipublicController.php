@@ -3,6 +3,7 @@
 namespace App\Http\Controllers\Admin;
 
 use App\Http\Controllers\Controller;
+use App\Models\Admin;
 use App\Models\HotelConfiguration;
 use App\Models\HotelFacility;
 use App\Models\OtaSetting;
@@ -450,17 +451,17 @@ class ApipublicController extends Controller
     }
     public function getInvoice(Request $request)
     {
-       $receipts_and_payments = ReceiptAndPayment::withoutTenant()
-        ->get()
-        ->map(function ($item) {
-            $room_price = (float) $item->room_price; // giá phòng
-            $service_total = $item->service_booking ? $item->service_booking->sum('total_payment') : 0; // giá sản phẩm 
+        $receipts_and_payments = ReceiptAndPayment::withoutTenant()
+            ->get()
+            ->map(function ($item) {
+                $room_price = (float) $item->room_price; // giá phòng
+                $service_total = $item->service_booking ? $item->service_booking->sum('total_payment') : 0; // giá sản phẩm 
 
-            return [
-                'payment_id' => $item->payment_id,
-                'total_amount' => $room_price + $service_total,
-            ];
-        });
+                return [
+                    'payment_id' => $item->payment_id,
+                    'total_amount' => $room_price + $service_total,
+                ];
+            });
 
 
         return response()->json([
@@ -468,5 +469,41 @@ class ApipublicController extends Controller
 
 
         ], 200);
+    }
+    public function getPayment(Request $request)
+    {
+      $payments = ReceiptAndPayment::with('paymentTransactions', 'paymentTransactions.creator')
+        ->when(!empty($request->bookingCode), function ($query) use ($request) {
+            $query->where('payment_id', 'LIKE', '%' . $request->bookingCode . '%');
+        })
+        ->orderBy('created_at', 'desc')
+        ->get();
+
+        $payments = $payments->map(function ($payment) {
+            $depositTotal = optional($payment->check_in)->isNotEmpty()
+                ? $payment->check_in->sum('deposit_amount')
+                : optional($payment->room_booking)->sum('deposit_amount');
+
+            $discountTotal = optional($payment->check_in)->isNotEmpty()
+                ? $payment->check_in->sum('discount')
+                : optional($payment->room_booking)->sum('discount');
+
+            $paidCustomer = optional($payment->paymentTransactions)->sum('amount');
+            $payment->deposit_total = $depositTotal;
+            $payment->discount_total = $discountTotal;
+            $payment->payment_total = $paidCustomer;
+            $payment->customer = optional($payment->check_in->first())['customer_name'] ?? '';
+            $totalPayment = $payment->room_price + optional($payment->service_booking)->sum('total_payment');
+            $payment->room_price = $totalPayment;
+            $payment->paid_customer = $paidCustomer;
+            $payment->customer_needs_to_pay = $totalPayment - $paidCustomer - $depositTotal - $discountTotal;
+
+            return $payment;
+        });
+
+        return response([
+            'status' => 'success',
+            'data' => $payments
+        ]);
     }
 }
