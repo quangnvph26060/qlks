@@ -1,89 +1,86 @@
-@extends('admin.layouts.master_iframe')
-@section('panel')
-    <div class="row">
-        <div class="col-xl-8 col-lg-12">
-            <div class="card">
-                <div class="card-header d-flex gap-2 align-items-center position-relative">
-                    <input type="search" name="searchInput" class="form-control searchInput" placeholder="Tìm kiếm sản phẩm..."
-                        autocomplete="off">
-                    <select class="form-select categorySelect" aria-label="Chọn danh mục" style="width: auto;">
-                        <option selected value="0">Chọn danh mục</option>
-                        @foreach ($categories as $id => $name)
+<div class="row">
+    <div class="col-xl-12 col-lg-12">
+        <div class="card">
+            <div class="card-header d-flex gap-2 align-items-center position-relative">
+                <input type="search" name="searchInput" class="form-control searchInput" placeholder="Tìm kiếm sản phẩm..."
+                    autocomplete="off">
+                <select class="form-select categorySelect" aria-label="Chọn danh mục" style="width: auto;">
+                    <option selected value="0">Chọn danh mục</option>
+                    @foreach ($categories as $id => $name)
+                        <option value="{{ $id }}">{{ $name }}</option>
+                    @endforeach
+                </select>
+
+                <div class="position-absolute w-100 start-0 bg-light text-dark p-2 rounded shadow"
+                    style="top: 100%; left: 0; z-index: 100;">
+                    <div class="search-results" id="search-results"></div>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+
+<form action="" method="post" id="warehouseForm">
+    {{-- Nhà cung cấp và thanh toán trên cùng hàng --}}
+    <div class="row mt-3 mb-4">
+        <div class="col-md-6">
+            <div class="card h-100">
+                <div class="card-header">
+                    <h5 class="card-title">Nhà cung cấp</h5>
+                </div>
+                <div class="card-body">
+                    <select class="form-select" id="supplierSelect" name="supplier_id" aria-label="Chọn nhà cung cấp">
+                        <option selected disabled>--- Chọn nhà cung cấp ---</option>
+                        @foreach ($suppliers as $id => $name)
                             <option value="{{ $id }}">{{ $name }}</option>
                         @endforeach
                     </select>
+                </div>
+            </div>
+        </div>
+        <div class="col-md-6">
+            <div class="card h-100">
+                <div class="card-header">
+                    <h5 class="card-title">Thanh toán</h5>
+                </div>
+                <div class="card-body">
+                    <select class="form-select" id="paymentMethod" name="payment_method_id"
+                        aria-label="Chọn phương thức thanh toán">
+                        <option selected disabled>Chọn phương thức thanh toán</option>
+                        <option value="1">Thanh toán khi nhận hàng</option>
+                    </select>
+                    <div class="payment-details mt-3 hidden" id="paymentDetails"></div>
+                </div>
+            </div>
+        </div>
+    </div>
 
-                    <div class="position-absolute w-100 start-0 bg-light text-dark p-2 rounded shadow"
-                        style="top: 100%; left: 0; z-index: 100;">
-                        <div class="search-results" id="search-results">
-
-                            <!-- Thêm nhiều sản phẩm nếu cần -->
-                        </div>
+    {{-- Sản phẩm đã chọn --}}
+    <div class="row mt-3">
+        <div class="col-12">
+            <div class="card">
+                <div class="card-header">
+                    <h5 class="card-title">Sản phẩm đã chọn</h5>
+                </div>
+                <div class="card-body">
+                    <div id="selected-product" style="height: 300px; overflow-y: auto;">
+                        <p class="text-danger text-center">Vui lòng chọn sản phẩm <strong>*</strong></p>
                     </div>
                 </div>
             </div>
         </div>
+    </div>
 
-        <div class="col-xl-4 col-lg-12 md-mt-5">
-            <form action="" method="post" id="warehouseForm">
-                <div class="card">
-                    <div class="card-header">
-                        <h5 class="card-title">Tóm tắt sản phẩm đã chọn</h5>
-                    </div>
-                    <div class="card-body">
-                        <div id="selected-product">
-                            <p class="text-danger text-center">Vui lòng chọn sản phẩm <strong>*</strong></p>
-                        </div>
-                        <!-- Hàng tính tổng -->
-                        <div class="total d-flex justify-content-between align-items-center pt-3">
-                            <div class="fw-bold">Tổng cộng:</div>
-                            <div class="total-price text-success">0 VND</div>
-                        </div>
-                    </div>
-                </div>
-
-                <div class="card mt-3">
-                    <div class="card-header">
-                        <h5 class="card-title">Nhà cung cấp</h5>
-                    </div>
-                    <div class="card-body">
-                        <select class="form-select" id="supplierSelect" name="supplier_id" aria-label="Chọn nhà cung cấp">
-                            <option selected disabled>--- Chọn nhà cung cấp ---</option>
-                            @foreach ($suppliers as $id => $name)
-                                <option value="{{ $id }}">{{ $name }}</option>
-                            @endforeach
-                        </select>
-                    </div>
-                </div>
-
-                <div class="card shadow-sm mt-3">
-                    <div class="card-header">
-                        <h5 class="card-title">Thanh toán</h5>
-                    </div>
-                    <div class="card-body">
-                        <label for="paymentMethod" class="form-label">Phương thức thanh toán</label>
-                        <select class="form-select" id="paymentMethod" name="payment_method_id"
-                            aria-label="Chọn phương thức thanh toán">
-                            <option selected disabled>Chọn phương thức thanh toán</option>
-                            {{-- <option value="credit_card">Thẻ tín dụng</option>
-                            <option value="paypal">PayPal</option>
-                            <option value="2">Chuyển khoản ngân hàng</option> --}}
-                            <option value="1">Thanh toán khi nhận hàng</option>
-                        </select>
-
-                        <div class="payment-details mt-3 hidden" id="paymentDetails"></div>
-
-                        <button class="btn btn-primary mt-4" type="submit" id="confirmPayment">Xác nhận thanh toán</button>
-                    </div>
-                </div>
-            </form>
+    {{-- Tổng cộng + Xác nhận --}}
+    <div class="row mt-3">
+        <div class="col-12 d-flex justify-content-end align-items-end gap-3 flex-column">
+            <div>
+                <div class="fw-bold">Tổng cộng: <span class="total-price text-success"> 0 VND</span></div>
+            </div>
+            <button class="btn btn-primary" type="submit" id="confirmPayment">Xác nhận thanh toán</button>
         </div>
     </div>
-    @push('breadcrumb-plugins')
-        <a class="btn btn-sm btn-outline--primary" href="{{ route('admin.product.index') }}"><i
-                class="las la-list"></i>@lang('Danh sách nhập kho')</a>
-    @endpush
-@endsection
+</form>
 
 @push('script')
     <script>
@@ -92,7 +89,7 @@
             $(document).ready(function() {
                 let debounceTimer;
 
-                let path_url =  window.location.origin + '/storage/';
+                let path_url = window.location.origin + '/storage/';
 
                 $("#warehouseForm").on("submit", function(e) {
                     e.preventDefault();
@@ -156,7 +153,7 @@
                             </div>
                             <div class="info flex-grow-1">
                                 <div class="name fw-bold ellipsis">${product.name}</div>
-                                <div class="price text-success">Giá: ${Math.floor(product.import_price).toString()}</div>
+                                <div class="price text-success">Giá: ${Number(product.import_price).toLocaleString('vi-VN')}</div>
                                 <div class="quantity d-flex align-items-center">
                                     <button type="button" class="btn btn-outline-secondary btn-sm decrease">-</button>
                                     <input type="number" class="form-control mx-2 handled-focus" name="products[${productId}]" value="1" min="1" style="width: 70px; text-align: center; height: 30px;">
@@ -198,13 +195,19 @@
                     const selectedProducts = $('#selected-product .selected-product');
 
                     selectedProducts.each(function() {
-                        const price = parseFloat($(this).find('.price').text().replace('Giá: ', '')
-                            .replace(' VND', ''));
+                        const price = parseFloat(
+                            $(this).find('.price').text().replace('Giá: ', '').replace(' VND', '')
+                            .replace(/\./g, '')
+                        );
+
+
+
                         const quantity = parseInt($(this).find('input[type="number"]').val());
                         total += price * quantity;
                     });
 
-                    $('.total-price').text(total + ' VND');
+                   $('.total-price').text(total.toLocaleString('vi-VN') + ' VND');
+
 
                     // Nếu không có sản phẩm nào, hiển thị thông báo
                     if (total === 0) {
@@ -224,6 +227,7 @@
                 $(document).on("click", ".increase", function() {
                     const input = $(this).siblings('input');
                     let value = parseInt(input.val());
+
                     input.val(value + 1);
                     updateTotal();
                 });
@@ -327,7 +331,7 @@
                     `);
                     } else if (this.value === '1') {
                         paymentDetails.html(`
-                    <p>Vui lòng chuẩn bị tiền mặt khi nhận hàng.</p>
+                        <p>Vui lòng chuẩn bị tiền mặt khi nhận hàng.</p>
                     `);
                     }
                 });
@@ -386,6 +390,12 @@
             transition: opacity 0.5s ease;
         }
 
+        #selected-product .selected-product {
+            border-bottom: 1px solid #ddd;
+            padding-bottom: 10px;
+            margin-bottom: 10px;
+        }
+
         .hidden {
             display: none;
             /* Ẩn phần tử */
@@ -401,7 +411,8 @@
         }
 
         .ellipsis {
-            max-width: ;: 250px;
+            max-width: ;
+            : 250px;
             /* Chiều rộng tối đa của phần tử */
             white-space: nowrap;
             /* Không cho văn bản xuống dòng */
@@ -449,11 +460,16 @@
         }
 
         .ellipsis {
-    white-space: nowrap;       /* Ngăn nội dung xuống dòng */
-    overflow: hidden;          /* Ẩn phần nội dung vượt quá chiều rộng */
-    text-overflow: ellipsis;   /* Thêm dấu "..." vào cuối nội dung bị cắt */
-    max-width: 200px;          /* Đặt chiều rộng tối đa cho phần tử */
-    display: inline-block;     /* Đảm bảo thuộc tính hoạt động với phần tử */
-}
+            white-space: nowrap;
+            /* Ngăn nội dung xuống dòng */
+            overflow: hidden;
+            /* Ẩn phần nội dung vượt quá chiều rộng */
+            text-overflow: ellipsis;
+            /* Thêm dấu "..." vào cuối nội dung bị cắt */
+            max-width: 200px;
+            /* Đặt chiều rộng tối đa cho phần tử */
+            display: inline-block;
+            /* Đảm bảo thuộc tính hoạt động với phần tử */
+        }
     </style>
 @endpush

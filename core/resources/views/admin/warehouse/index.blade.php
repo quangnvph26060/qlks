@@ -46,8 +46,30 @@
 
     @can('')
         @push('breadcrumb-plugins')
-            <a class="btn btn-sm btn-outline--primary" href="{{ route('admin.warehouse.create') }}"><i
-                    class="las la-plus"></i>@lang('Thêm mới')</a>
+            {{-- <a class="btn btn-sm btn-primary" href="{{ route('admin.warehouse.create') }}"><i
+                    class="las la-plus"></i></a> --}}
+            <!-- Modal Nhập kho -->
+            <button class="btn btn-sm btn-primary" data-bs-toggle="modal" data-bs-target="#warehouseModal">
+                <i class="las la-plus"></i>
+            </button>
+
+            <div class="modal fade" id="warehouseModal" tabindex="-1" aria-labelledby="warehouseModalLabel" aria-hidden="true">
+                <div class="modal-dialog modal-xl modal-dialog-scrollable">
+                    <div class="modal-content">
+                        <div class="modal-header">
+                            <h5 class="modal-title" id="warehouseModalLabel">Tạo phiếu nhập kho</h5>
+                            <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Đóng"></button>
+                        </div>
+                        <div class="modal-body p-4">
+                            @include('admin.warehouse.create', [
+                                'categories' => $categories,
+                                'suppliers' => $suppliers,
+                            ])
+
+                        </div>
+                    </div>
+                </div>
+            </div>
         @endpush
     @endcan
 @endsection

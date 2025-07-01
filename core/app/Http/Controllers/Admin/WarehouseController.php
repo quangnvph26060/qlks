@@ -54,7 +54,10 @@ class WarehouseController extends Controller
                 'pagination' => view('vendor.pagination.custom', compact('response'))->render(),
             ]);
         }
-        return view('admin.warehouse.index', compact('pageTitle'));
+     
+        $categories = Category::query()->pluck('name', 'id');
+        $suppliers = Supplier::query()->pluck('name', 'id');
+        return view('admin.warehouse.index', compact('pageTitle','categories','suppliers'));
     }
 
     /**
