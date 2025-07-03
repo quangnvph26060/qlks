@@ -36,6 +36,11 @@ class AdminPermissionMiddleware
             'admin.return.store', // xác nhận hàng hỏng
             'admin.return.index', // trang trả hàng
             'admin.return.show', // phiếu trả hàng
+            'admin.warehouse.warehouse', // trang danh mục kho
+            'admin.warehouse.add.warehouse', // thêm kho mới
+            'admin.warehouse.edit.warehouse', // edit kho
+            'admin.warehouse.update.warehouse', // update kho
+            'admin.warehouse.delete.warehouse', // xoá kho
         ];
         /*
             'admin.revenue' => 'Danh thu trong màn thông kế'

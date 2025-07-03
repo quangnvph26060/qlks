@@ -57,23 +57,27 @@ class SupplierController extends Controller
                 'pagination' => view('vendor.pagination.custom', compact('response'))->render(),
             ]);
         }
-
-        return view('admin.supplier.index', compact('response', 'pageTitle'));
-    }
-
-    /**
-     * Show the form for creating a new resource.
-     */
-    public function create()
-    {
         $code   = SetupCode::where('menu_name', 'Cài đặt nhà cung cấp')->value('code');
         $count  = Supplier::count();
         $code   = $code ? $code . $count + 1 : '';
         $pageTitle = "Thêm mới nhà cung cấp";
         $banks = Bank::query()->pluck('name', 'id');
-       
-        return view('admin.supplier.create', compact('pageTitle', 'banks','code'));
+        return view('admin.supplier.index', compact('response', 'pageTitle', 'banks', 'code'));
     }
+
+    /**
+     * Show the form for creating a new resource.
+     */
+    // public function create()
+    // {
+    //     $code   = SetupCode::where('menu_name', 'Cài đặt nhà cung cấp')->value('code');
+    //     $count  = Supplier::count();
+    //     $code   = $code ? $code . $count + 1 : '';
+    //     $pageTitle = "Thêm mới nhà cung cấp";
+    //     $banks = Bank::query()->pluck('name', 'id');
+
+    //     return view('admin.supplier.create', compact('pageTitle', 'banks', 'code'));
+    // }
 
     /**
      * Store a newly created resource in storage.
@@ -87,10 +91,11 @@ class SupplierController extends Controller
                 $data                           = $request->validated();
 
                 $data['suppliers']['is_active'] = $request->is_active ? 1 : 0;
-
+                $data['suppliers']['unit_code'] = unitCode(); // ví dụ mã đơn vị
+                $data['suppliers']['subdomain'] = subdomain(); // ví dụ subdomain
                 $supplier                       = Supplier::create($data['suppliers']);
 
-                $supplier->supplier_representatives()->create($data['representatives']);
+                // $supplier->supplier_representatives()->create($data['representatives']);
 
                 DB::commit();
 

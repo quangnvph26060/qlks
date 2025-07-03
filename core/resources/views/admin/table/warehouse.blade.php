@@ -23,7 +23,9 @@
                         <span class="tooltiptext">Đơn hàng có sản phẩm bị hoàn trả!</span>
                     @endif
                 </div>
-                <a href="{{ route('admin.warehouse.show', $warehouse->id) }}">{{ $warehouse->reference_code }}</a>
+                <a href="javascript:void(0);" class="open-warehouse-modal" data-id="{{ $warehouse->id }}"   data-url="{{ route('admin.warehouse.show', $warehouse->id) }}">
+                    {{ $warehouse->reference_code }}
+                </a>
             </td>
             <td data-label="Nhà Cung Cấp">{{ $warehouse->supplier->name ?? '' }}</td>
             {{-- <td data-label="Số điện thoại">{{ $warehouse->supplier->phone ?? '' }}</td>

@@ -13,6 +13,10 @@ class WarehouseEntryItem extends Model
         'warehouse_entry_id',
         'product_id',
         'quantity',
+        'warehouse_id',
+        'type',
+        'price',
+
     ];
 
     public function warehouseEntry()

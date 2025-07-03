@@ -68,6 +68,7 @@
                                             'Danh mục loại phòng',
                                             'Danh mục phòng',
                                             'Danh mục dịch vụ',
+                                            'Danh mục kho',
                                             'Cài đặt tiện nghi',
                                             'Cài đặt tính giá',
                                             'Cài đặt cơ sở vật chất',
@@ -79,7 +80,6 @@
                                             'Danh mục nhóm khách',
                                             'Danh mục trạng thái',
                                             'Danh mục hướng phòng',
-                                             
                                         ];
 
                                         // Lấy danh sách menu đã tồn tại cho đơn vị hiện tại
@@ -270,7 +270,7 @@
                             'func': function(value) {
                                 return isAllUpperCase(value);
                             },
-                            'message': generateErrorMessage('INHOA','Mã code')
+                            'message': generateErrorMessage('INHOA', 'Mã code')
                         },
                     ]
                 },
@@ -408,9 +408,10 @@
         .widget-seven .widget-seven__content-subheading {
             font-weight: normal;
         }
+
         #add-code {
-  text-transform: uppercase;
-}
+            text-transform: uppercase;
+        }
 
         .empty-search img {
             width: 120px;

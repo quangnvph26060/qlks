@@ -4,12 +4,15 @@ namespace App\Http\Controllers\Admin;
 
 use App\Models\Product;
 use App\Models\Category;
+use App\Models\SetupCode;
 use App\Models\Supplier;
 use Illuminate\Http\Request;
 use App\Models\WarehouseEntry;
 use Illuminate\Support\Facades\DB;
 use Illuminate\Support\Facades\Log;
 use App\Http\Controllers\Controller;
+use App\Models\Admin;
+use App\Models\Warehouse;
 use App\Repositories\BaseRepository;
 use Illuminate\Support\Facades\Validator;
 
@@ -54,10 +57,13 @@ class WarehouseController extends Controller
                 'pagination' => view('vendor.pagination.custom', compact('response'))->render(),
             ]);
         }
-     
+
+        $products   = Product::all();
         $categories = Category::query()->pluck('name', 'id');
-        $suppliers = Supplier::query()->pluck('name', 'id');
-        return view('admin.warehouse.index', compact('pageTitle','categories','suppliers'));
+        $suppliers  = Supplier::query()->pluck('name', 'id');
+        $admin      = Admin::where('unit_code', unitCode())->where('subdomain', subdomain())->get();
+        $warehouse  = Warehouse::active()->get();
+        return view('admin.warehouse.index', compact('pageTitle', 'categories', 'suppliers', 'products', 'admin', 'warehouse'));
     }
 
     /**
@@ -77,15 +83,18 @@ class WarehouseController extends Controller
      */
     public function store(Request $request)
     {
+        Log::info($request->all());
         $data = Validator::make(
             $request->all(),
             [
-                'supplier_id' => 'required',
-                'payment_method_id' => 'required',
+                'supplier_id' => 'required|not_in:null,0,""', // thêm các giá trị không hợp lệ
+                'payment_method_id' => 'required|not_in:null,0,""',
             ],
             [
                 'supplier_id.required' => 'Vui lòng chọn nhà cung cấp',
+                'supplier_id.not_in' => 'Nhà cung cấp không hợp lệ',
                 'payment_method_id.required' => 'Vui lòng chọn phương thức thanh toán',
+                'payment_method_id.not_in' => 'Phương thức thanh toán không hợp lệ',
             ]
         );
 
@@ -99,38 +108,52 @@ class WarehouseController extends Controller
         DB::beginTransaction();
 
         try {
-            $warehouse = WarehouseEntry::query()->create([
-                'supplier_id' => $request->get('supplier_id'),
-                'reference_code' => $this->repository->generateRandomString(),
-                'total' => 0,
-                'subdomain' => subdomain(),
-                'unit_code' => unitCode(),
-            ]);
-
             $total = 0;
 
-            if (count($request->input('products')) > 0) {
-                foreach ($request->input('products') as $key => $value) {
-                    $product = Product::query()->find($key);
-                    $product->update([
-                        'stock' => $product->stock + $value
-                    ]);
+            $warehouse = WarehouseEntry::query()->create([
+                'supplier_id'        => $request->get('supplier_id'),
+                'reference_code'     => $this->repository->generateRandomString(),
+                'created_time'       => now(),
+                'payment_method_id'  => $request->get('payment_method_id'),
+                'total'              => 0,
+                'created_by' => (empty($request->get('employee_id')) || $request->get('employee_id') === 'null')
+                    ? $request->get('employee_id')
+                    : authAdmin()->id,
 
-                    $total += $product->import_price * $value;
+                'subdomain'          => subdomain(),
+                'unit_code'          => unitCode(),
+            ]);
 
-                    $warehouse->entries()->create([
-                        'product_id' => $key,
-                        'quantity' => $value
-                    ]);
+            $products = $request->input('products', []);
+
+            foreach ($products as $item) {
+                $productId    = $item['product_id'];
+                $quantity     = $item['quantity'];
+                $warehouseId  = $item['warehouse_id'];
+                $price        = $item['price'];
+
+                $product = Product::find($productId);
+                if (!$product) {
+                    throw new \Exception("Sản phẩm ID $productId không tồn tại.");
                 }
+
+                // Cập nhật tồn kho
+                $product->increment('stock', $quantity);
+
+                // Tạo bản ghi chi tiết nhập
+                $warehouse->entries()->create([
+                    'product_id'    => $productId,
+                    'quantity'      => $quantity,
+                    'warehouse_id'  => $warehouseId,
+                    'price'         => $price,
+                    'type'          => 1
+                ]);
+
+                // Tính tổng
+                $total += $quantity * $price;
             }
 
-            // $warehouse->payments()->create([
-            //     'payment_method_id' => $request->get('payment_method_id'),
-            //     'amount' => $total,
-            //     'transaction_date' => now(),
-            // ]);
-
+            // Cập nhật tổng tiền
             $warehouse->update([
                 'total' => $total
             ]);
@@ -142,9 +165,7 @@ class WarehouseController extends Controller
                 'message' => 'Tạo đơn hàng thành công.',
             ]);
         } catch (\Exception $exception) {
-
             DB::rollBack();
-
             $this->repository->logError($exception);
 
             return response()->json([
@@ -154,17 +175,21 @@ class WarehouseController extends Controller
         }
     }
 
+
     /**
      * Display the specified resource.
      */
     public function show(string $id)
     {
         $pageTitle = "Chi tiết đơn hàng";
-        $warehouse = WarehouseEntry::query()->with('supplier', 'return')->find($id);
+        $suppliers = Supplier::query()->pluck('name', 'id');
+        $warehouse = WarehouseEntry::query()->with('supplier', 'return','entries.product')->find($id);
+        $warehouses  = Warehouse::active()->get();
+        $admin     = Admin::where('unit_code', unitCode())->where('subdomain', subdomain())->get();
         if (!$warehouse) {
             abort(404);
         }
-        return view('admin.warehouse.show', compact('pageTitle', 'warehouse'));
+        return view('admin.warehouse.show', compact('pageTitle', 'warehouse', 'suppliers', 'admin','warehouses'));
     }
 
     /**
@@ -221,5 +246,102 @@ class WarehouseController extends Controller
     public function destroy(string $id)
     {
         //
+    }
+    // danh mục kho 
+    public function Warehouse()
+    {
+        $code   = SetupCode::where('menu_name', 'Danh mục kho')->value('code');
+        $count  = Warehouse::count();
+        $code   = $code ? $code . $count + 1 : '';
+        $warehouse = Warehouse::where('subdomain', subdomain())->paginate(10);
+        $emptyMessage = 'Không tìm thấy dữ liệu';
+        return view('admin.warehouse.warehouse', compact('warehouse', 'emptyMessage', 'code'));
+    }
+    public function addWarehouse(Request $request)
+    {
+        $request->merge([
+            'code' => strtoupper(trim($request->code))
+        ]);
+        $request->validate([
+            'code' => [
+                'required',
+                'string',
+                'regex:/^[A-Z0-9\-]+$/'
+            ],
+            'name' => 'required|string',
+        ]);
+        $exists = Warehouse::where('code', $request->code)
+            ->where('subdomain', subdomain())->exists();
+        if ($exists) {
+            return back()->withErrors(['code' => 'Mã kho đã tồn tại.'])->withInput();
+        }
+
+        $hotel = new Warehouse();
+        $hotel->code = $request->code;
+        $hotel->name = $request->name;
+        $hotel->subdomain =  subdomain();
+        $hotel->unit_code =  unitCode();
+        $hotel->status =  $request->status;
+        // save
+        $hotel->save();
+
+
+        $notify[] = ['success', 'Thêm kho thành công'];
+        return back()->withNotify($notify);
+    }
+    public function editWarehouse($id)
+    {
+        if (!$id) {
+            $notify[] = ['error', 'Không tìm thấy kho'];
+            return back()->withNotify($notify);
+        }
+        $hotel = Warehouse::find($id);
+        return response()->json([
+            'status' => 'success',
+            'data' => $hotel,
+        ]);
+    }
+    public function updateWarehouse($id, Request $request)
+    {
+        $request->merge([
+            'code' => strtoupper(trim($request->code))
+        ]);
+        $request->validate([
+            'code' => [
+                'required',
+                'string',
+                'regex:/^[A-Z0-9\-]+$/'
+            ],
+            'name' => 'required|string',
+        ]);
+
+        $hotel = Warehouse::find($id);
+        $exists = Warehouse::where('code', $request->code)
+            ->where('subdomain', subdomain())
+            ->where('id', '!=', $id) // bỏ qua bản ghi đang sửa
+            ->exists();
+
+        if ($exists) {
+            return back()->withErrors(['code' => 'Mã kho đã tồn tại.'])->withInput();
+        }
+
+        $hotel->code = $request->code;
+        $hotel->name = $request->name;
+        $hotel->subdomain =  subdomain();
+        $hotel->unit_code =  unitCode();
+        $hotel->status =  $request->status;
+
+        $hotel->save();
+
+        $notify[] = ['success', 'Cập nhật kho thành công'];
+        return back()->withNotify($notify);
+    }
+    public function deleteWarehouse($id)
+    {
+        Warehouse::destroy($id);
+        return response()->json([
+            'status' => 'success',
+            'message' => 'Xóa kho thành công',
+        ]);
     }
 }

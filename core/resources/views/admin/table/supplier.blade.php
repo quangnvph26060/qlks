@@ -1,8 +1,9 @@
 @foreach ($response as $item)
     <tr style="border-bottom: 1px solid #dee2e6">
         <td>
-            <button class="btn btn-link btn-toggle" type="button"
-                onclick=" toggleRepresentatives('{{ $item->id }}', this)"></button>
+             {{ $loop->iteration }}
+            {{-- <button class="btn btn-link btn-toggle" type="button"
+                onclick=" toggleRepresentatives('{{ $item->id }}', this)"></button> --}}
         </td>
         <td style="position: relative;">
             <svg class="svg_menu_check_in" xmlns="http://www.w3.org/2000/svg" width="30" height="30"
@@ -17,7 +18,7 @@
             <div class="dropdown menu_dropdown_check_in" id="dropdown-menu-{{ $item->id }}"
                 style="display: none; position: absolute; z-index: 99999999999999; background: #fff; box-shadow: 0 2px 8px rgba(0,0,0,0.15); border-radius: 5px;">
                 <div class="dropdown-item">
-                    <a class="btn btn-sm btn-outline--primary cuModalBtn edit-service"
+                    <a class="btn btn-sm btn-outline--primary cuModalBtn edit_supplier"
                         href="{{ route('admin.supplier.edit', $item->id) }}" data-id="{{ $item->id }}"
                         data-modal_title="@lang('Cập nhật danh mục')" type="button"
                         style="color: black !important; border: none;">Sửa</a>
@@ -60,21 +61,20 @@
     </tr>
 @endforeach
 <script>
-  function toggleDropdown(event, id) {
-    event.stopPropagation(); // Ngăn sự kiện lan ra ngoài
-    const dropdown = document.getElementById(`dropdown-menu-${id}`);
-    const allDropdowns = document.querySelectorAll('.menu_dropdown_check_in');
+    function toggleDropdown(event, id) {
+        event.stopPropagation(); // Ngăn sự kiện lan ra ngoài
+        const dropdown = document.getElementById(`dropdown-menu-${id}`);
+        const allDropdowns = document.querySelectorAll('.menu_dropdown_check_in');
 
-    allDropdowns.forEach(el => {
-      if (el !== dropdown) el.style.display = 'none';
+        allDropdowns.forEach(el => {
+            if (el !== dropdown) el.style.display = 'none';
+        });
+
+        dropdown.style.display = dropdown.style.display === 'block' ? 'none' : 'block';
+    }
+
+    // Ẩn khi click ra ngoài
+    document.addEventListener('click', function() {
+        document.querySelectorAll('.menu_dropdown_check_in').forEach(el => el.style.display = 'none');
     });
-
-    dropdown.style.display = dropdown.style.display === 'block' ? 'none' : 'block';
-  }
-
-  // Ẩn khi click ra ngoài
-  document.addEventListener('click', function () {
-    document.querySelectorAll('.menu_dropdown_check_in').forEach(el => el.style.display = 'none');
-  });
 </script>
-

@@ -28,7 +28,7 @@
                         <table class="table--light style--two table table-hover" id="data-table">
                             <thead>
                                 <tr>
-                                    <th></th>
+                                    <th>STT</th>
                                     <th>Hành Động</th>
                                     <th>Mã Nhà Cung Cấp</th>
                                     <th>Tên Nhà Cung Cấp</th>
@@ -95,12 +95,14 @@
             </div>
         </div>
     </div>
+    @include('admin.supplier.create')
 @endsection
 
 @can('')
     @push('breadcrumb-plugins')
-        <a class="btn btn-sm btn-outline--primary" href="{{ route('admin.supplier.create') }}"><i
-                class="las la-plus"></i>@lang('Thêm mới')</a>
+        <a class="btn btn-sm btn-primary" id="openSupplierModal">
+            <i class="las la-plus"></i>
+        </a>
     @endpush
 @endcan
 
@@ -119,14 +121,50 @@
             };
 
             $(document).ready(function() {
+                $('#openSupplierModal').on('click', function(e) {
+                    e.preventDefault();
+                    $('#supplierModal').modal('show');
+                });
+                $('.btn-reset').on('click', function() {
+                    $('#supplierForm').trigger('reset');
+                    $('input, select').removeClass('is-invalid');
+                    $('small').removeClass('invalid-feedback').html('');
+                });
 
+                $('#supplierForm').on('submit', function(e) {
+                    e.preventDefault();
+
+                    $.ajax({
+                        url: "{{ route('admin.supplier.store') }}",
+                        type: "POST",
+                        data: $(this).serializeArray(),
+                        success: function(response) {
+                            if (response.status) {
+                                window.location.href =
+                                    "{{ route('admin.supplier.index') }}";
+                            } else {
+                                $('small').removeClass('invalid-feedback').html('');
+                                $('input, select').removeClass('is-invalid');
+
+                                $.each(response.errors, function(index, message) {
+                                    $(`input[id="${index}"], select[id="${index}"]`)
+                                        .addClass('is-invalid')
+                                        .siblings('small')
+                                        .addClass('invalid-feedback').html(message);
+                                });
+                            }
+                        },
+                        error: function(xhr, status, error) {
+                            console.log(xhr);
+                        }
+                    })
+                })
                 $(document).on('click', '.show-modal', function() {
                     const id = $(this).data('id');
                     $('#representativeForm').attr('data-id', id);
                     $('.modal').modal('show');
 
                 })
-
                 const apiUrl = '{{ route('admin.supplier.index') }}';
                 initDataFetch(apiUrl);
 
@@ -200,7 +238,7 @@
                         }
                     })
                 })
-               
+
                 $(document).on('click', '.edit-representative', function() {
 
                     var representativeId = $(this).data('id');

@@ -49,11 +49,25 @@
             {{-- <a class="btn btn-sm btn-primary" href="{{ route('admin.warehouse.create') }}"><i
                     class="las la-plus"></i></a> --}}
             <!-- Modal Nhập kho -->
-            <button class="btn btn-sm btn-primary" data-bs-toggle="modal" data-bs-target="#warehouseModal">
+            <button class="btn btn-sm btn-primary" data-bs-toggle="modal" data-bs-target="#warehouseModaladd">
                 <i class="las la-plus"></i>
             </button>
+            <div class="modal fade" id="warehouseModal" tabindex="-1" aria-hidden="true">
+                <div class="modal-dialog modal-lg modal-dialog-centered">
+                    <div class="modal-content">
+                        <div class="modal-header">
+                            <h5 class="modal-title">Chi tiết phiếu nhập</h5>
+                            <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Đóng"></button>
+                        </div>
+                        <div class="modal-body">
+                            <!-- Nội dung chi tiết sẽ được load ở đây -->
+                        </div>
+                    </div>
+                </div>
+            </div>
 
-            <div class="modal fade" id="warehouseModal" tabindex="-1" aria-labelledby="warehouseModalLabel" aria-hidden="true">
+
+            <div class="modal fade" id="warehouseModaladd" tabindex="-1" aria-labelledby="warehouseModalLabel" aria-hidden="true">
                 <div class="modal-dialog modal-xl modal-dialog-scrollable">
                     <div class="modal-content">
                         <div class="modal-header">
@@ -64,6 +78,9 @@
                             @include('admin.warehouse.create', [
                                 'categories' => $categories,
                                 'suppliers' => $suppliers,
+                                'products' => $products,
+                                'admin'    => $admin,
+                                'warehouse'=>$warehouse,
                             ])
 
                         </div>
@@ -86,6 +103,20 @@
                 initDataFetch(apiUrl);
 
             });
+
+            $(document).on('click', '.open-warehouse-modal', function() {
+                const url = $(this).data('url'); // lấy route URL từ data-url
+
+                $.ajax({
+                    url: url,
+                    type: 'GET',
+                    success: function(data) {
+                        $('#warehouseModal .modal-body').html(data);
+                        $('#warehouseModal').modal('show');
+                    }
+                });
+            });
+
 
 
         })(jQuery);

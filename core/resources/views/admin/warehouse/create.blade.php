@@ -1,4 +1,4 @@
-<div class="row">
+{{-- <div class="row">
     <div class="col-xl-12 col-lg-12">
         <div class="card">
             <div class="card-header d-flex gap-2 align-items-center position-relative">
@@ -18,16 +18,26 @@
             </div>
         </div>
     </div>
+</div> --}}
+<div class="row">
+    <p class="add-room-product" style="width: 185px;">
+        <svg xmlns="http://www.w3.org/2000/svg" width="20" height="20" viewBox="0 0 24 24">
+            <g fill="currentColor" fill-rule="evenodd" clip-rule="evenodd">
+                <path
+                    d="M2 12C2 6.477 6.477 2 12 2s10 4.477 10 10s-4.477 10-10 10S2 17.523 2 12Zm10-8a8 8 0 1 0 0 16a8 8 0 0 0 0-16Z">
+                </path>
+                <path d="M13 7a1 1 0 1 0-2 0v4H7a1 1 0 1 0 0 2h4v4a1 1 0 1 0 2 0v-4h4a1 1 0 1 0 0-2h-4V7Z"></path>
+            </g>
+        </svg>
+        Chọn sản phẩm
+    </p>
 </div>
-
 <form action="" method="post" id="warehouseForm">
     {{-- Nhà cung cấp và thanh toán trên cùng hàng --}}
     <div class="row mt-3 mb-4">
         <div class="col-md-6">
             <div class="card h-100">
-                <div class="card-header">
-                    <h5 class="card-title">Nhà cung cấp</h5>
-                </div>
+
                 <div class="card-body">
                     <select class="form-select" id="supplierSelect" name="supplier_id" aria-label="Chọn nhà cung cấp">
                         <option selected disabled>--- Chọn nhà cung cấp ---</option>
@@ -40,19 +50,26 @@
         </div>
         <div class="col-md-6">
             <div class="card h-100">
-                <div class="card-header">
-                    <h5 class="card-title">Thanh toán</h5>
-                </div>
                 <div class="card-body">
+                  
+                    <select class="form-select mb-3" id="employeeSelect" name="employee_id" aria-label="Chọn nhân viên">
+                        <option selected disabled>Chọn nhân viên</option>
+                        @foreach ($admin as $id => $name)
+                            <option value="{{ $id }}">{{ $name->name }}</option>
+                        @endforeach
+                    </select>
                     <select class="form-select" id="paymentMethod" name="payment_method_id"
                         aria-label="Chọn phương thức thanh toán">
                         <option selected disabled>Chọn phương thức thanh toán</option>
                         <option value="1">Thanh toán khi nhận hàng</option>
+                        <option value="2">Thanh toán chuyển khoản</option>
                     </select>
+
                     <div class="payment-details mt-3 hidden" id="paymentDetails"></div>
                 </div>
             </div>
         </div>
+
     </div>
 
     {{-- Sản phẩm đã chọn --}}
@@ -60,10 +77,18 @@
         <div class="col-12">
             <div class="card">
                 <div class="card-header">
-                    <h5 class="card-title">Sản phẩm đã chọn</h5>
+                    <h5 class="card-title">Sản phẩm</h5>
                 </div>
                 <div class="card-body">
-                    <div id="selected-product" style="height: 300px; overflow-y: auto;">
+                    <div class="d-flex fw-bold border-bottom pb-2 mb-2 justify-content-between"
+                        style="padding-left: 4px;">
+                        <div style="width: 150px;">Sản phẩm</div>
+                        <div style="width: 100px;">Giá</div>
+                        <div style="width: 120px;">Kho</div>
+                        <div style="width: 130px;">Số lượng</div>
+                        <div style="width: 37px;">Xóa</div>
+                    </div>
+                    <div id="selected-product-add" style="height: 250px; overflow-y: auto;">
                         <p class="text-danger text-center">Vui lòng chọn sản phẩm <strong>*</strong></p>
                     </div>
                 </div>
@@ -77,35 +102,134 @@
             <div>
                 <div class="fw-bold">Tổng cộng: <span class="total-price text-success"> 0 VND</span></div>
             </div>
-            <button class="btn btn-primary" type="submit" id="confirmPayment">Xác nhận thanh toán</button>
+            <button class="btn btn-primary" type="submit" id="confirmPayment">Lưu</button>
         </div>
     </div>
 </form>
+<div class="modal fade" id="productModal" tabindex="-1" aria-hidden="true">
+    <div class="modal-dialog modal-lg modal-dialog-centered">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h5 class="modal-title">Chọn sản phẩm</h5>
+                <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+            </div>
+            <div class="modal-body">
+                <div class="table-responsive">
+                    <table class="table table-bordered table-hover align-middle">
+                        <thead class="table-light">
+                            <tr>
+                                <th>Mã sản phẩm</th>
+                                <th scope="col">Tên sản phẩm</th>
+                                <th scope="col">Giá tiền</th>
+                            </tr>
+                        </thead>
+                        <tbody>
+                            @foreach ($products as $product)
+                                <tr class="result-item" data-resource="{{ $product }}">
+                                    <td>{{ $product->sku }}</td>
+                                    <td>{{ $product->name }}</td>
+                                    <td>{{ number_format($product->import_price, 0, ',', '.') }} VND</td>
+
+                                </tr>
+                            @endforeach
+                        </tbody>
+                    </table>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+
 
 @push('script')
     <script>
         (function($) {
             "use strict";
+            $(document).on('click', '.add-room-product', function() {
+                $('#productModal').modal('show');
+            });
+            var warehouse = @json($warehouse);
             $(document).ready(function() {
                 let debounceTimer;
 
                 let path_url = window.location.origin + '/storage/';
 
+                let products = [];
+
+                $('#confirmPayment').on('click', function(event) {
+                    products = []; // reset trước khi push
+
+                    if ($('#selected-product-add .selected-product').length === 0) {
+                        event.preventDefault();
+                        alert('Vui lòng chọn ít nhất một sản phẩm để thanh toán.');
+                        return;
+                    }
+
+                    let valid = true;
+
+                    $('#selected-product-add .selected-product').each(function() {
+                        const productId = $(this).data('id');
+                        const quantity = $(this).find('input[name^="products"]').val();
+                        const warehouseId = $(this).find('select[name^="warehouses"]').val();
+                        const price = $(this).find('.price').data('price');
+
+                        if (!warehouseId || !quantity || quantity <= 0) {
+                            valid = false;
+                            return;
+                        }
+
+                        products.push({
+                            product_id: productId,
+                            quantity: parseInt(quantity),
+                            warehouse_id: warehouseId,
+                            price: parseFloat(price)
+                        });
+                    });
+
+                    if (!valid) {
+                        event.preventDefault();
+                        alert('Vui lòng chọn kho và số lượng hợp lệ cho từng sản phẩm.');
+                        return;
+                    }
+
+                    console.log("Danh sách sản phẩm đã chọn:", products);
+                    alert('Đang xử lý thanh toán...');
+                    // $('#warehouseForm').submit(); // gọi submit form chính
+                });
+
                 $("#warehouseForm").on("submit", function(e) {
                     e.preventDefault();
+
+                    let formData = new FormData();
+
+                    // Thêm các trường cần thiết từ form
+                    formData.append('supplier_id', $('#supplierSelect').val());
+                    formData.append('employee_id', $('#employeeSelect').val());
+                    formData.append('payment_method_id', $('#paymentMethod').val());
+
+                    // Thêm danh sách sản phẩm
+                    products.forEach((item, index) => {
+                        formData.append(`products[${index}][product_id]`, item.product_id);
+                        formData.append(`products[${index}][quantity]`, item.quantity);
+                        formData.append(`products[${index}][warehouse_id]`, item.warehouse_id);
+                        formData.append(`products[${index}][price]`, item.price);
+                    });
+
 
                     $.ajax({
                         url: "{{ route('admin.warehouse.store') }}",
                         type: "POST",
-                        data: $(this).serializeArray(),
+                        data: formData,
+                        processData: false,
+                        contentType: false,
                         success: function(response) {
                             if (response.status) {
                                 window.location.href =
                                     "{{ route('admin.warehouse.index') }}";
                             } else {
                                 const firstKey = Object.keys(response.errors)[0];
-
                                 const firstError = response.errors[firstKey];
+
                                 const Toast = Swal.mixin({
                                     toast: true,
                                     position: "top-end",
@@ -117,9 +241,10 @@
                                         toast.onmouseleave = Swal.resumeTimer;
                                     },
                                     customClass: {
-                                        container: 'custom-toast' // Áp dụng lớp CSS tùy chỉnh
+                                        container: 'custom-toast'
                                     }
                                 });
+
                                 Toast.fire({
                                     icon: "error",
                                     title: `<p>${firstError}</p>`,
@@ -132,6 +257,7 @@
                     });
                 });
 
+
                 $(document).on("click", ".result-item", function(e) {
                     e.preventDefault(); // Ngăn chặn hành động mặc định
                     e.stopPropagation(); // Ngăn chặn hành động mặc định
@@ -140,32 +266,40 @@
 
 
                     // Kiểm tra xem sản phẩm đã được chọn chưa
-                    if ($('#selected-product').find(`[data-id="${productId}"]`).length > 0) {
+                    if ($('#selected-product-add').find(`[data-id="${productId}"]`).length > 0) {
                         alert('Sản phẩm này đã được chọn.');
                         return; // Dừng hàm nếu sản phẩm đã được chọn
                     }
-
+                    let warehouseOptions = warehouse.map((w, index) =>
+                        `<option value="${w.id}" ${index === 0 ? 'selected' : ''}>${w.name}</option>`
+                    ).join('');
                     // Tạo HTML cho sản phẩm đã chọn
                     const selectedProductHtml = `
-                        <div class="selected-product d-flex align-items-center mb-3 pb-3 border-bottom" data-id="${productId}">
-                            <div class="image me-2">
-                                <img width="80" src="${path_url}${product.image_path}" alt="${product.name}">
+                        <div class="selected-product d-flex justify-content-between align-items-center mb-2 py-2 border-bottom" data-id="${productId}">
+                            <div class="product-name fw-bold me-3 flex-shrink-0" style="width: 150px;">${product.name}</div>
+                            
+                            <div class="product-price text-success me-3 flex-shrink-0 price" style="width: 100px;" data-price="${product.import_price}">
+                               ${Number(product.import_price).toLocaleString('vi-VN')}
                             </div>
-                            <div class="info flex-grow-1">
-                                <div class="name fw-bold ellipsis">${product.name}</div>
-                                <div class="price text-success">Giá: ${Number(product.import_price).toLocaleString('vi-VN')}</div>
-                                <div class="quantity d-flex align-items-center">
-                                    <button type="button" class="btn btn-outline-secondary btn-sm decrease">-</button>
-                                    <input type="number" class="form-control mx-2 handled-focus" name="products[${productId}]" value="1" min="1" style="width: 70px; text-align: center; height: 30px;">
-                                    <button type="button" class="btn btn-outline-secondary btn-sm increase">+</button>
-                                </div>
+                            
+                            <select name="warehouses[${productId}]" class="form-select form-select-sm me-3 flex-shrink-0" style="width: 120px;">
+                                <option selected disabled>Chọn kho</option>
+                                ${warehouseOptions}
+                            </select>
+
+                            <div class="quantity d-flex align-items-center me-3 flex-shrink-0" style="width: 130px;">
+                                <button type="button" class="btn btn-outline-secondary btn-sm decrease">-</button>
+                                <input type="number" class="form-control mx-2 handled-focus" name="products[${productId}]" value="1" min="1"
+                                    style="width: 50px; text-align: center; height: 30px;">
+                                <button type="button" class="btn btn-outline-secondary btn-sm increase">+</button>
                             </div>
-                            <button class="btn btn-outline-danger btn-sm ms-2 remove-product">X</button> <!-- Nút Xóa -->
+
+                            <button class="btn btn-outline-danger btn-sm remove-product flex-shrink-0" style="width: 30px;">X</button>
                         </div>
                     `;
 
                     // Thêm sản phẩm vào tóm tắt
-                    $('#selected-product').append(selectedProductHtml);
+                    $('#selected-product-add').append(selectedProductHtml);
 
                     // Cập nhật tổng tiền
                     updateTotal();
@@ -192,7 +326,7 @@
                 // Hàm cập nhật tổng tiền
                 function updateTotal() {
                     let total = 0;
-                    const selectedProducts = $('#selected-product .selected-product');
+                    const selectedProducts = $('#selected-product-add .selected-product');
 
                     selectedProducts.each(function() {
                         const price = parseFloat(
@@ -206,18 +340,18 @@
                         total += price * quantity;
                     });
 
-                   $('.total-price').text(total.toLocaleString('vi-VN') + ' VND');
+                    $('.total-price').text(total.toLocaleString('vi-VN') + ' VND');
 
 
                     // Nếu không có sản phẩm nào, hiển thị thông báo
                     if (total === 0) {
-                        $('#selected-product').html(
+                        $('#selected-product-add').html(
                             '<p class="text-danger text-center">Vui lòng chọn sản phẩm <strong>*</strong></p>'
                         );
                     } else {
                         // Nếu có sản phẩm, không hiển thị thông báo
                         if (selectedProducts.length > 0) {
-                            $('#selected-product').find('p.text-danger.text-center')
+                            $('#selected-product-add').find('p.text-danger.text-center')
                                 .remove(); // Xóa thông báo nếu có sản phẩm
                         }
                     }
@@ -285,65 +419,57 @@
 
                 });
 
-                $('#paymentMethod').on('change', function() {
-                    const paymentDetails = $('#paymentDetails');
-                    paymentDetails.empty(); // Xóa thông tin cũ
+                // $('#paymentMethod').on('change', function() {
+                //     const paymentDetails = $('#paymentDetails');
+                //     paymentDetails.empty(); // Xóa thông tin cũ
 
-                    if (this.value === "Chọn phương thức thanh toán") {
-                        paymentDetails.removeClass('visible').addClass('hidden'); // Ẩn khi chưa chọn
-                        return;
-                    }
+                //     if (this.value === "Chọn phương thức thanh toán") {
+                //         paymentDetails.removeClass('visible').addClass('hidden'); // Ẩn khi chưa chọn
+                //         return;
+                //     }
 
-                    paymentDetails.removeClass('hidden').addClass('visible'); // Hiện phần chi tiết
+                //     paymentDetails.removeClass('hidden').addClass('visible'); // Hiện phần chi tiết
 
-                    if (this.value === 'credit_card') {
-                        paymentDetails.html(`
-                    <div class="mb-3">
-                        <label for="cardNumber" class="form-label">Số thẻ</label>
-                        <input type="text" class="form-control" id="cardNumber" placeholder="Nhập số thẻ">
-                    </div>
-                    <div class="mb-3">
-                        <label for="cardExpiry" class="form-label">Ngày hết hạn</label>
-                        <input type="text" class="form-control" id="cardExpiry" placeholder="MM/YY">
-                    </div>
-                    <div class="mb-3">
-                        <label for="cardCVC" class="form-label">Mã CVC</label>
-                        <input type="text" class="form-control" id="cardCVC" placeholder="Nhập mã CVC">
-                    </div>
-                    `);
-                    } else if (this.value === 'paypal') {
-                        paymentDetails.html(`
-                    <div class="mb-3">
-                        <label for="paypalEmail" class="form-label">Email PayPal</label>
-                        <input type="email" class="form-control" id="paypalEmail" placeholder="Nhập email PayPal">
-                    </div>
-                    `);
-                    } else if (this.value === '2') {
-                        paymentDetails.html(`
-                    <div class="mb-3">
-                        <label for="bankAccount" class="form-label">Số tài khoản ngân hàng</label>
-                        <input type="text" class="form-control" id="bankAccount" placeholder="Nhập số tài khoản">
-                    </div>
-                    <div class="mb-3">
-                        <label for="bankName" class="form-label">Tên ngân hàng</label>
-                        <input type="text" class="form-control" id="bankName" placeholder="Nhập tên ngân hàng">
-                    </div>
-                    `);
-                    } else if (this.value === '1') {
-                        paymentDetails.html(`
-                        <p>Vui lòng chuẩn bị tiền mặt khi nhận hàng.</p>
-                    `);
-                    }
-                });
+                //     if (this.value === 'credit_card') {
+                //         paymentDetails.html(`
+            //     <div class="mb-3">
+            //         <label for="cardNumber" class="form-label">Số thẻ</label>
+            //         <input type="text" class="form-control" id="cardNumber" placeholder="Nhập số thẻ">
+            //     </div>
+            //     <div class="mb-3">
+            //         <label for="cardExpiry" class="form-label">Ngày hết hạn</label>
+            //         <input type="text" class="form-control" id="cardExpiry" placeholder="MM/YY">
+            //     </div>
+            //     <div class="mb-3">
+            //         <label for="cardCVC" class="form-label">Mã CVC</label>
+            //         <input type="text" class="form-control" id="cardCVC" placeholder="Nhập mã CVC">
+            //     </div>
+            //     `);
+                //     } else if (this.value === 'paypal') {
+                //         paymentDetails.html(`
+            //     <div class="mb-3">
+            //         <label for="paypalEmail" class="form-label">Email PayPal</label>
+            //         <input type="email" class="form-control" id="paypalEmail" placeholder="Nhập email PayPal">
+            //     </div>
+            //     `);
+                //     } else if (this.value === '2') {
+                //         paymentDetails.html(`
+            //     <div class="mb-3">
+            //         <label for="bankAccount" class="form-label">Số tài khoản ngân hàng</label>
+            //         <input type="text" class="form-control" id="bankAccount" placeholder="Nhập số tài khoản">
+            //     </div>
+            //     <div class="mb-3">
+            //         <label for="bankName" class="form-label">Tên ngân hàng</label>
+            //         <input type="text" class="form-control" id="bankName" placeholder="Nhập tên ngân hàng">
+            //     </div>
+            //     `);
+                //     } else if (this.value === '1') {
+                //         paymentDetails.html(`
+            //         <p>Vui lòng chuẩn bị tiền mặt khi nhận hàng.</p>
+            //     `);
+                //     }
+                // });
 
-                $('#confirmPayment').on('click', function(event) {
-                    if ($('#selected-product .selected-product').length === 0) {
-                        event.preventDefault();
-                        alert('Vui lòng chọn ít nhất một sản phẩm để thanh toán.');
-                    } else {
-                        alert('Đang xử lý thanh toán...');
-                    }
-                });
 
                 function notData() {
 
@@ -390,7 +516,16 @@
             transition: opacity 0.5s ease;
         }
 
-        #selected-product .selected-product {
+        .add-room-product {
+            padding: 4px 10px;
+            border: 1px solid #337ab7;
+            border-radius: 8px;
+            cursor: pointer;
+            color: #337ab7;
+            margin-left: 26px;
+        }
+
+        #selected-product-add .selected-product {
             border-bottom: 1px solid #ddd;
             padding-bottom: 10px;
             margin-bottom: 10px;

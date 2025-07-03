@@ -27,8 +27,7 @@ class StoreSupplierRequest extends FormRequest
             'suppliers.name'                             => 'required',
             'suppliers.phone'                            => 'required|regex:/^([0-9\s\-\+\(\)]*)$/|min:10|max:10',
             'suppliers.address'                          => 'required',
-            'representatives.name'                       => 'required',
-            'representatives.phone'                      => 'required|regex:/^([0-9\s\-\+\(\)]*)$/|min:10|max:10',
+         
         ];
     }
 

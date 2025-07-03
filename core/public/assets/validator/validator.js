@@ -118,7 +118,9 @@ function generateErrorMessage(code, values = []) {
     const errorMessages = {
         E001:   'Mật khẩu không để trống',
         TKS001: 'Tên khách sạn không được để trống',
+        TK001: 'Tên kho không được để trống',
         MS001:  'Mã cơ sở không được để trống',
+        MK001:  'Mã kho không được để trống',
         INHOA:  `${values} phải là in hoa`,
         P001:  `${values} không được để trống`,
         P002: `${values} phải là số`,

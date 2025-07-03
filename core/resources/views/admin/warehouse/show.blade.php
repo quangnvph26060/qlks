@@ -1,12 +1,18 @@
-@extends('admin.layouts.master_iframe')
-@section('panel')
-    <div class="row">
-        <div class="col-lg-6 col-md-12">
-            <div class="card">
-                <div class="card-header">
-                    <h5 class="card-title">Thông tin nhà cung cấp</h5>
-                </div>
-                <div class="card-body">
+<div class="row">
+    @if (!$warehouse->status)
+        <div class="action-btn">
+            <a href="{{ route('admin.return.create', $warehouse->id) }}" class="btn btn-sm btn-outline--danger"
+                id="btn-return"><i class="las la-sync"></i>Trả hàng</a>
+        </div>
+    @elseif($firstReturn && $firstReturn->status)
+        <a href="{{ route('admin.return.show', $warehouse->id) }}" class="btn btn-sm btn-outline--secondary"
+            id="btn-return">Chi tiết sản phẩm bị hoàn trả</a>
+    @endif
+
+    <div class="col-lg-6 col-md-12">
+        <div class="card">
+
+            {{-- <div class="card-body">
                     <table class="table table-bordered">
                         <thead>
                             <tr>
@@ -27,16 +33,24 @@
                             </tr>
                         </thead>
                     </table>
-                </div>
+                </div> --}}
+            <div class="card-body">
+                <select class="form-select" id="supplierSelect" name="supplier_id" aria-label="Chọn nhà cung cấp">
+                    <option selected disabled>--- Chọn nhà cung cấp ---</option>
+                    @foreach ($suppliers as $id => $name)
+                        <option value="{{ $id }}" {{ $id == $warehouse->supplier_id ? 'selected' : '' }}>
+                            {{ $name }}
+                        </option>
+                    @endforeach
+                </select>
             </div>
         </div>
-        <div class="col-lg-6 mt-xl-0 mt-3 col-md-12">
-            <div class="card">
-                <div class="card-header">
-                    <h5 class="card-title">Thông tin đơn hàng</h5>
-                </div>
-                <div class="card-body">
-                    <table class="table table-bordered">
+    </div>
+    <div class="col-lg-6 mt-xl-0 mt-3 col-md-12">
+        <div class="card">
+
+
+            {{-- <table class="table table-bordered">
                         <thead>
                             <tr>
                                 <th class="w-25 text-left"><i class="fas fa-receipt me-2"></i> Mã đơn hàng</th>
@@ -54,105 +68,200 @@
                                 <th class="text-left"><i class="fas fa-credit-card me-2"></i> Phương thức thanh toán</th>
                                 <td>Thanh toán khi nhận hàng</td>
                             </tr>
-                            {{-- {{ $warehouse->payments->payment_method->name }} --}}
+                          
                         </thead>
-                    </table>
-                </div>
+                    </table> --}}
+            <div class="card-body">
+                <select class="form-select mb-3" id="employeeSelect" name="employee_id" aria-label="Chọn nhân viên">
+                    <option selected disabled>Chọn nhân viên</option>
+                    @foreach ($admin as $id => $name)
+                        <option value="{{ $id }}" {{$id == $warehouse->created_by ? 'selected': ''}}>{{ $name->name }}</option>
+                    @endforeach
+                </select>
+             <select class="form-select" id="paymentMethod" name="payment_method_id" aria-label="Chọn phương thức thanh toán">
+    <option disabled {{ !$warehouse->payment_method_id ? 'selected' : '' }}>Chọn phương thức thanh toán</option>
+    <option value="1" {{ $warehouse->payment_method_id == 1 ? 'selected' : '' }}>Thanh toán khi nhận hàng</option>
+    <option value="2" {{ $warehouse->payment_method_id == 2 ? 'selected' : '' }}>Thanh toán chuyển khoản</option>
+</select>
+
+                <div class="payment-details mt-3 hidden" id="paymentDetails"></div>
             </div>
+
         </div>
-        <div class="col-md-12 mt-3">
-            <div class="card">
-                @php($sl = 0)
-                @foreach ($warehouse->entries ?? [] as $item)
-                    @php($sl += $item->quantity - $item->number_of_cancellations)
-                @endforeach
-                <div class="card-header d-flex justify-content-between">
-                    <h5 class="card-title">Chi tiết sản phẩm</h5>
-                    <div id="result-btn">
-                        @if ($warehouse->status == 1)
-                            <p class="badge badge--success">Hoàn thành</p>
-                        @elseif($sl == 0)
-                            <p class="badge badge--danger">Đã hủy</p>
-                        @elseif($sl > 0)
-                            <a id="complete" href="javascript:void(0)"
-                                class="btn btn-sm btn-outline--primary btn-return">Xác nhận đơn hàng</a>
-                        @endif
-                    </div>
-                </div>
-                <div class="card-body">
-                    <div class="table-responsive--sm table-responsive">
-                        <table class="table--light style--two table" id="data-table">
-                            <thead>
-                                <tr>
-                                    <th> Mã sản phẩm</th>
-                                    <th> Tên sản phẩm</th>
-                                    <th> Số lượng nhập</th>
-                                    <th> Số lượng hủy</th>
-                                    <th> Giá nhập</th>
-                                    <th> Giá bán</th>
-                                    <th> Thành tiền</th>
-                                </tr>
-                            </thead>
-                            <tbody>
-                                @php($sum = 0)
-                                @foreach ($warehouse->entries as $entryItem)
-                                    @php($sum += ($entryItem->quantity - $entryItem->number_of_cancellations) * $entryItem->product->import_price)
-                                    <tr>
-                                        <td data-label="Mã sản phẩm">{{ $entryItem->product->sku }}</td>
-                                        <td data-label="Tên sản phẩm">
-                                            <p id="ellipsis">{{ $entryItem->product->name }}</p>
-                                        </td>
-                                        <td data-label="Số lượng nhập">{{ $entryItem->quantity }}</td>
-                                        <td data-label="Số lượng nhập">{{ $entryItem->number_of_cancellations }}</td>
-                                        <td data-label="Giá nhập">{{ showAmount($entryItem->product->import_price) }}
-                                        </td>
-                                        <td data-label="Giá bán">{{ showAmount($entryItem->product->selling_price) }}
-                                        </td>
-                                        <td data-label="Thành tiền">
-                                            {{ showAmount(($entryItem->quantity - $entryItem->number_of_cancellations) * $entryItem->product->import_price) }}
-                                        </td>
-                                    </tr>
+    </div>
+    <div class="col-md-12 mt-3">
+        <div class="card">
+            @php($sl = 0)
+            @foreach ($warehouse->entries ?? [] as $item)
+                @php($sl += $item->quantity - $item->number_of_cancellations)
+            @endforeach
+            <div class="row mt-3">
+                <div class="col-12">
+                    <div class="card">
+                        <div class="card-header d-flex justify-content-between">
+                            <h5 class="card-title">Danh sách sản phẩm</h5>
+                            <div id="result-btn">
+                                @if ($warehouse->status == 1)
+                                    <p class="badge badge--success">Hoàn thành</p>
+                                @elseif($sl == 0)
+                                    <p class="badge badge--danger">Đã hủy</p>
+                                @elseif($sl > 0)
+                                    <a id="complete" href="javascript:void(0)"
+                                        class="btn btn-sm btn-outline--primary btn-return">Xác nhận đơn hàng</a>
+                                @endif
+                            </div>
+                        </div>
+                        <div class="card-body">
+                            <div class="d-flex fw-bold border-bottom pb-2 mb-2 justify-content-between"
+                                style="padding-left: 4px;">
+                                <div style="width: 150px;">Sản phẩm</div>
+                                <div style="width: 100px;">Giá</div>
+                                <div style="width: 120px;">Kho</div>
+                                <div style="width: 130px;">Số lượng</div>
+                                <div style="width: 37px;">Xóa</div>
+                            </div>
+                            <div id="selected-product-edit" style="height: 250px; overflow-y: auto;">
+                                @foreach ($warehouse->entries as $item)
+                                    <div class="selected-product d-flex justify-content-between align-items-center mb-2 py-2 border-bottom"
+                                        data-id="{{ $item->id }}">
+                                        <div class="product-name fw-bold me-3 flex-shrink-0" style="width: 150px;"
+                                            data-id="{{ $item->product_id }}">{{ $item->product->name }}
+                                        </div>
+
+                                        <div class="product-price text-success me-3 flex-shrink-0 price-edit"
+                                            style="width: 100px;" data-price="{{ $item->price }}">
+                                            {{ number_format($item->price, 0, ',', '.') }} VNĐ
+                                        </div>
+
+                                        <select name="warehouses[{{ $item->product_id }}]"
+                                            class="form-select form-select-sm me-3 flex-shrink-0" style="width: 120px;">
+                                            <option selected="" disabled="">Chọn kho</option>
+                                            @foreach ($warehouses as $k)
+                                                <option value="{{ $k->id }}"
+                                                    {{ $k->id == $item->warehouse_id ? 'selected' : '' }}>
+                                                    {{ $k->name }}</option>
+                                            @endforeach
+
+                                        </select>
+
+                                        <div class="quantity d-flex align-items-center me-3 flex-shrink-0"
+                                            style="width: 130px;">
+                                            <button type="button"
+                                                class="btn btn-outline-secondary btn-sm decrease-edit">-</button>
+                                            <input type="number" class="form-control mx-2 handled-focus"
+                                                name="products[{{ $item->product_id }}]" value="{{ $item->quantity }}"
+                                                min="1" style="width: 50px; text-align: center; height: 30px;">
+                                            <button type="button"
+                                                class="btn btn-outline-secondary btn-sm increase-edit">+</button>
+                                        </div>
+
+                                        <button class="btn btn-outline-danger btn-sm remove-product-edit flex-shrink-0"
+                                            style="width: 30px;" data-id="{{ $item->id }}">X</button>
+                                    </div>
                                 @endforeach
-                                <tr>
-                                    <td colspan="5"></td>
-                                    <td>
-                                        <h6>Thành tiền:</h6>
-                                    </td>
-                                    <td><strong>{{ showAmount($sum) }}</strong></td>
-                                </tr>
-                            </tbody>
-                        </table>
+                            </div>
+                        </div>
                     </div>
                 </div>
             </div>
         </div>
     </div>
-   @php($firstReturn = $warehouse->return->first())
-
-@push('breadcrumb-plugins')
-    @if (!$warehouse->status)
-        <div class="action-btn">
-            <a href="{{ route('admin.return.create', $warehouse->id) }}" class="btn btn-sm btn-outline--danger"
-                id="btn-return"><i class="las la-sync"></i>Trả hàng</a>
+    <div class="row mt-3">
+        <div class="col-12 d-flex justify-content-end align-items-end gap-3 flex-column">
+            <div>
+                <div class="fw-bold">Tổng cộng: <span class="total-price-edit text-success"> {{ number_format($warehouse->total, 0, ',', '.') }} VNĐ</span></div>
+            </div>
+            <button class="btn btn-primary" type="submit" id="confirmPayment">Lưu</button>
         </div>
-    @elseif($firstReturn && $firstReturn->status)
-        <a href="{{ route('admin.return.show', $warehouse->id) }}" class="btn btn-sm btn-outline--secondary"
-            id="btn-return">Chi tiết sản phẩm bị hoàn trả</a>
-    @endif
+    </div>
+</div>
+@php($firstReturn = $warehouse->return->first())
 
-    <a class="btn btn-sm btn-outline--primary" href="{{ route('admin.warehouse.index') }}">
-        <i class="las la-list"></i>@lang('Danh sách đơn hàng')
-    </a>
-@endpush
 
-@endsection
+
+
 
 @push('script')
     <script>
         (function($) {
             "use strict";
             $(document).ready(function() {
+                $.ajaxSetup({
+                    headers: {
+                        'X-CSRF-TOKEN': $('meta[name="csrf-token"]').attr('content')
+                    }
+                });
+                var warehouse = @json($warehouse);
+                // Cập nhật tổng tiền khi người dùng nhập số trực tiếp
+                $(document).on("blur", ".handled-focus", function() {
+                    const input = $(this);
+                    let value = parseInt(input.val());
+                    if (value < 1) {
+                        input.val(1); // Đảm bảo giá trị tối thiểu là 1
+                    }
+                    updateTotal();
+                });
 
+                // Hàm cập nhật tổng tiền
+                function updateTotal() {
+                    let total = 0;
+                    const selectedProducts = $('#selected-product-edit .selected-product');
+                    console.log(price);
+
+                    selectedProducts.each(function() {
+                        const price = parseFloat(
+                            $(this).find('.price-edit').text().replace('Giá: ', '').replace(' VND',
+                                '')
+                            .replace(/\./g, '')
+                        );
+
+
+
+                        const quantity = parseInt($(this).find('input[type="number"]').val());
+                        total += price * quantity;
+                    });
+
+                    $('.total-price-edit').text(total.toLocaleString('vi-VN') + ' VND');
+
+
+                    // Nếu không có sản phẩm nào, hiển thị thông báo
+                    if (total === 0) {
+                        $('#selected-product-edit').html(
+                            '<p class="text-danger text-center">Vui lòng chọn sản phẩm <strong>*</strong></p>'
+                        );
+                    } else {
+                        // Nếu có sản phẩm, không hiển thị thông báo
+                        if (selectedProducts.length > 0) {
+                            $('#selected-product-edit').find('p.text-danger.text-center')
+                                .remove(); // Xóa thông báo nếu có sản phẩm
+                        }
+                    }
+                }
+
+                // Tăng hoặc giảm số lượng sản phẩm
+                $(document).on("click", ".increase-edit", function() {
+                    const wrapper = $(this).closest('.selected-product');
+                    const input = wrapper.find('input[type=number]');
+                    let value = parseInt(input.val()) || 0;
+                    input.val(value + 1);
+                    updateTotal();
+                });
+
+                $(document).on("click", ".decrease-edit", function() {
+                    const wrapper = $(this).closest('.selected-product');
+                    const input = wrapper.find('input[type=number]');
+                    let value = parseInt(input.val()) || 0;
+                    if (value > 1) input.val(value - 1);
+                    updateTotal();
+                });
+
+
+
+                // Xóa sản phẩm khỏi danh sách
+                $(document).on("click", ".remove-product-edit", function() {
+                    $(this).closest('.selected-product').remove(); // Xóa sản phẩm khỏi DOM
+                    updateTotal(); // Cập nhật tổng tiền
+                });
                 $("#complete").on("click", function() {
                     Swal.fire({
                         title: 'Bạn chắc chắn chứ?',

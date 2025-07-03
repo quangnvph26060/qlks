@@ -1,6 +1,7 @@
 @extends('admin.layouts.master_iframe')
 @section('panel')
     <form action="" method="POST" id="supplierForm">
+        @csrf
         <div class="row">
             <div class="col-lg-12 col-md-12 col-sm-12">
                 <div class="card">

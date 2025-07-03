@@ -73,7 +73,6 @@
                 "route_name": "admin.hotel.room.facilities.all",
                 "menu_active": "admin.hotel.room.facilities.all"
             },
-          
             {
                 "keyword": [
                     "Danh mục khách hàng"
@@ -98,8 +97,7 @@
                 "route_name": "admin.hotel.customer.group.all",
                 "menu_active": "admin.hotel.customer.group.all"
             }
-            
-            
+          
         ]
     },
     "manage_booked": {
@@ -156,7 +154,7 @@
         "icon": "las la-clipboard-list",
         "menu_active": "admin.manage*",
         "submenu": [
-             {
+            {
                 "keyword": [
                     "Báo cáo định kì"
                 ],
@@ -174,7 +172,6 @@
                 "route_name": "admin.manage.room.status",
                 "menu_active": "admin.manage.room.status"
             },
-            
             {
                 "keyword": [
                     "Quản lý bảo trì & vệ sinh"
@@ -204,16 +201,15 @@
         "route_name": "admin.staff.index",
         "menu_active": "admin.staff.index"
     },
-     "warehouse_management": {
+    "warehouse_management": {
         "keyword": [
             "Quản lý kho"
         ],
         "title": "Quản lý kho",
         "icon": "fas fa-boxes-stacked",
-      
         "menu_active": "admin.warehouse.*",
-           "submenu": [
-             {
+        "submenu": [
+            {
                 "keyword": [
                     "Cài đặt nhà cung cấp"
                 ],
@@ -221,6 +217,14 @@
                 "icon": "las la-dollar-sign",
                 "route_name": "admin.supplier.index",
                 "menu_active": "admin.supplier.index"
+            },
+              {
+                "keyword": [
+                    "Danh mục kho"
+                ],
+                "title": "Danh mục kho",
+                "route_name": "admin.warehouse.warehouse",
+                "menu_active": "admin.warehouse.warehouse"
             },
             {
                 "keyword": [
@@ -248,7 +252,6 @@
                 "route_name": "admin.hotel.room.product.all",
                 "menu_active": "admin.hotel.room.product.all"
             }
-           
         ]
     },
     "general_settings": {
@@ -299,7 +302,6 @@
                 "route_name": "admin.ota.index",
                 "menu_active": "admin.ota.index"
             },
-           
             {
                 "keyword": [
                     "Cài đặt tiện nghi"
@@ -344,7 +346,7 @@
                 "keyword": [
                     "Cài đặt hướng/vỉew"
                 ],
-                "title":  "Cài đặt hướng/vỉew",
+                "title": "Cài đặt hướng/vỉew",
                 "route_name": "admin.hotel.direction.all",
                 "menu_active": "admin.hotel.direction.all"
             }

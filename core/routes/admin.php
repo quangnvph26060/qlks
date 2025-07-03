@@ -177,8 +177,13 @@ Route::middleware('admin', 'adminPermission')->prefix('admin')->group(function (
     // manage warehouse 
     Route::controller('WarehouseController')->prefix('warehouse')->name('warehouse.')->group(function () {
         Route::get('/', 'index')->name('index');
+        Route::get('/list', 'Warehouse')->name('warehouse');
         Route::get('create', 'create')->name('create');
         Route::post('create', 'store')->name('store');
+        Route::post('add/warehouse', 'addWarehouse')->name('add.warehouse');
+        Route::post('edit/warehouse/{id}', 'editWarehouse')->name('edit.warehouse');
+        Route::post('update/warehouse/{id}', 'updateWarehouse')->name('update.warehouse');
+        Route::post('delete/warehouse/{id}', 'deleteWarehouse')->name('delete.warehouse');
         Route::get('{id}/show', 'show')->name('show');
         Route::put('{id}/update', 'update')->name('update');
     });
