@@ -43,6 +43,7 @@ use Illuminate\Support\Facades\Log;
 use Symfony\Component\Console\Helper\Helper;
 use Symfony\Component\HttpKernel\Log\Logger;
 use App\Traits\HasTodayPrice;
+use Illuminate\Support\Facades\Http;
 
 class BookingController extends Controller
 {
@@ -1221,12 +1222,26 @@ class BookingController extends Controller
                 'subdomain'     => subdomain(),
                 'created_by'    => authAdmin()->id,
             ]);
+            $totalPaid = PaymentTransaction::where('receipts_and_payments_id', $receipt->id)->sum('amount');
         }
-        $totalPaid = PaymentTransaction::where('receipts_and_payments_id', $receipt->id)->sum('amount');
+
         // giá sản phẩm 
         $totalServicePayment = RoomServiceProduct::where('check_in_id', $checkinId)
             // ->where('room_code', $roomId)
             ->sum('total_payment');
+
+        // thông báo thanh toán thành công
+        $data = [
+            'invoice_code'  => $checkinId,
+            'amount'        => $amount,
+            'domain'        => subdomain(),
+        ];
+
+        try {
+            $response = Http::post('https://id.sgodata.com/api/detail-order', $data);
+        } catch (\Exception $e) {
+            Log::error('Gửi API thất bại: ' . $e->getMessage());
+        }
         return response()->json(
             [
                 'status' => 'success',
@@ -1235,6 +1250,8 @@ class BookingController extends Controller
             ]
         );
     }
+
+
     public function checkOutRoom(Request $request)
     {
         // Lấy checkin_id chính
@@ -1786,7 +1803,7 @@ class BookingController extends Controller
         $currentDateTime = now()->format('H:i d/m/Y');
 
         $booking = ReceiptAndPayment::with('paymentTransactions', 'paymentTransactions.creator')->where('checkin_id', $id)->firstOrFail();
-    
+
 
         $depositTotal = optional($booking->check_in)->isNotEmpty()
             ? $booking->check_in->sum('deposit_amount')
@@ -1807,14 +1824,14 @@ class BookingController extends Controller
         $booking->customer_needs_to_pay = $totalPayment - $paidCustomer - $depositTotal - $discountTotal;
         // Nếu muốn loại bỏ check_in ra khỏi response
         // $booking->setRelation('check_in', collect());
-       
+
         $hotelActive = HotelFacility::where('subdomain', subdomain())
             ->where('trang_thai', 1)
             ->first();
         $hotel = HotelConfiguration::where('hotel_facility_id', $hotelActive->id)
             ->first();
         $booked = $booking->check_in ?? $booking->room_booking;
-        return view('admin.print', compact('booking','hotel','currentDateTime','booked'));
+        return view('admin.print', compact('booking', 'hotel', 'currentDateTime', 'booked'));
     }
 
     public function changeCashierge(Request $request)
