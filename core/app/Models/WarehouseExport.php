@@ -2,12 +2,13 @@
 
 namespace App\Models;
 
+use App\Traits\BelongsToTenant;
 use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\Model;
-use App\Traits\BelongsToTenant;
-class WarehouseEntry extends Model
+
+class WarehouseExport extends Model
 {
-    use HasFactory,BelongsToTenant;
+    use HasFactory, BelongsToTenant;
 
     protected $fillable = [
         'supplier_id',
@@ -34,9 +35,12 @@ class WarehouseEntry extends Model
 
     public function entries()
     {
-        return $this->hasMany(WarehouseEntryItem::class,'warehouse_entry_id');
+        return $this->hasMany(WarehouseEntryItem::class);
     }
-
+    public function entriesexport()
+    {
+        return $this->hasMany(WarehouseEntryItem::class, 'warehouse_export_id');
+    }
     public function payments()
     {
         return $this->hasOne(Transaction::class);

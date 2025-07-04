@@ -11,6 +11,7 @@ class WarehouseEntryItem extends Model
 
     protected $fillable = [
         'warehouse_entry_id',
+        'warehouse_export_id',
         'product_id',
         'quantity',
         'warehouse_id',
@@ -22,6 +23,10 @@ class WarehouseEntryItem extends Model
     public function warehouseEntry()
     {
         return $this->belongsTo(WarehouseEntry::class);
+    }
+    public function warehouseExport()
+    {
+        return $this->belongsTo(WarehouseExport::class, 'warehouse_export_id');
     }
 
     public function product()

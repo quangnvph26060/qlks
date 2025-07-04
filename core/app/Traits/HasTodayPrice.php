@@ -14,7 +14,7 @@ trait HasTodayPrice
         $customWeekday = $carbonWeekday === 0 ? 8 : $carbonWeekday + 1;
 
         $setupPricings = SetupPricing::withoutTenant()
-          
+
             ->get()
             ->filter(function ($config) use ($customWeekday, $date) {
                 $requirements = json_decode($config->price_requirement, true);
@@ -168,7 +168,7 @@ trait HasTodayPrice
 
         return $result;
     }
-        public function getDates($startDate, $endDate)
+    public function getDates($startDate, $endDate)
     {
         $dates = [];
         $currentDate = Carbon::parse($startDate)->startOfDay();
@@ -182,7 +182,7 @@ trait HasTodayPrice
 
         return $dates;
     }
-          protected function getPricesBySetupPricingForMultipleDatesApi(array $dates)
+    protected function getPricesBySetupPricingForMultipleDatesApi(array $dates)
     {
         // $subdomain = subdomain();
         // $unitCode = unitCode();
@@ -247,4 +247,5 @@ trait HasTodayPrice
 
         return $result;
     }
+    
 }

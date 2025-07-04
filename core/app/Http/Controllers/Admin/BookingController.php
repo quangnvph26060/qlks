@@ -1231,10 +1231,26 @@ class BookingController extends Controller
             ->sum('total_payment');
 
         // thông báo thanh toán thành công
+        switch ($request->payment_pttt) {
+            case 'Tiền mặt':
+                $paymentId = 1;
+                break;
+            case 'Chuyển khoản ngân hàng':
+                $paymentId = 2;
+                break;
+            case 'Thẻ tín dụng':
+                $paymentId = 3;
+                break;
+            default:
+                $paymentId = null; // hoặc giá trị mặc định khác nếu không khớp
+                break;
+        }
         $data = [
-            'invoice_code'  => $checkinId,
-            'amount'        => $amount,
-            'domain'        => subdomain(),
+            'invoice_code'        => $checkinId,
+            'amount'              => $amount,
+            'domain'              => subdomain(),
+            'payment_method_id'   => $paymentId,
+            'payment_method_name' => $request->payment_pttt
         ];
 
         try {

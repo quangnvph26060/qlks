@@ -217,7 +217,7 @@
 
 
                     $.ajax({
-                        url: "{{ route('admin.warehouse.store') }}",
+                        url: "{{ route('admin.warehouse.export.store') }}",
                         type: "POST",
                         data: formData,
                         processData: false,
@@ -225,7 +225,7 @@
                         success: function(response) {
                             if (response.status) {
                                 window.location.href =
-                                    "{{ route('admin.warehouse.index') }}";
+                                    "{{ route('admin.warehouse.export.index') }}";
                             } else {
                                 const firstKey = Object.keys(response.errors)[0];
                                 const firstError = response.errors[firstKey];

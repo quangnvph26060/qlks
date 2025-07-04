@@ -2,36 +2,35 @@
 
 namespace App\Http\Controllers\Admin;
 
-use App\Models\Product;
-use App\Models\Category;
-use App\Models\SetupCode;
-use App\Models\Supplier;
-use App\Models\WarehouseEntryItem;
-use Illuminate\Http\Request;
-use App\Models\WarehouseEntry;
-use Illuminate\Support\Facades\DB;
-use Illuminate\Support\Facades\Log;
 use App\Http\Controllers\Controller;
 use App\Models\Admin;
+use App\Models\Category;
+use App\Models\Product;
+use App\Models\Supplier;
 use App\Models\Warehouse;
+use App\Models\WarehouseEntryItem;
+use App\Models\WarehouseExport;
 use App\Repositories\BaseRepository;
+use Illuminate\Http\Request;
+use Illuminate\Support\Facades\DB;
+use Illuminate\Support\Facades\Log;
 use Illuminate\Support\Facades\Validator;
 
-class WarehouseController extends Controller
+class WarehouseExportController extends Controller
 {
 
     protected $repository;
 
     public function __construct()
     {
-        $this->repository = new BaseRepository(new WarehouseEntry());
+        $this->repository = new BaseRepository(new WarehouseExport());
     }
     /**
      * Display a listing of the resource.
      */
     public function index()
     {
-        $pageTitle = "Danh sách nhập hàng";
+        $pageTitle = "Danh sách xuất hàng";
 
         $search = request()->get('search');
         $perPage = request()->get('perPage', 10);
@@ -54,7 +53,7 @@ class WarehouseController extends Controller
 
         if (request()->ajax()) {
             return response()->json([
-                'results' => view('admin.table.warehouse', compact('response'))->render(),
+                'results' => view('admin.table.warehouse_export', compact('response'))->render(),
                 'pagination' => view('vendor.pagination.custom', compact('response'))->render(),
             ]);
         }
@@ -64,7 +63,7 @@ class WarehouseController extends Controller
         $suppliers  = Supplier::query()->pluck('name', 'id');
         $admin      = Admin::where('unit_code', unitCode())->where('subdomain', subdomain())->get();
         $warehouse  = Warehouse::active()->get();
-        return view('admin.warehouse.index', compact('pageTitle', 'categories', 'suppliers', 'products', 'admin', 'warehouse'));
+        return view('admin.warehouse_exports.index', compact('pageTitle', 'categories', 'suppliers', 'products', 'admin', 'warehouse'));
     }
 
     /**
@@ -110,7 +109,7 @@ class WarehouseController extends Controller
         try {
             $total = 0;
 
-            $warehouse = WarehouseEntry::query()->create([
+            $warehouse = WarehouseExport::query()->create([
                 'supplier_id'        => $request->get('supplier_id'),
                 'reference_code'     => $this->repository->generateRandomString(),
                 'created_time'       => now(),
@@ -141,13 +140,15 @@ class WarehouseController extends Controller
                 // $product->increment('stock', $quantity);
 
                 // Tạo bản ghi chi tiết nhập
-                $warehouse->entries()->create([
-                    'product_id'    => $productId,
-                    'quantity'      => $quantity,
-                    'warehouse_id'  => $warehouseId,
-                    'price'         => $price,
-                    'type'          => 1
+                WarehouseEntryItem::create([
+                    'warehouse_export_id' => $warehouse->id,   // ID của phiếu xuất
+                    'product_id'          => $productId,
+                    'quantity'            => $quantity,
+                    'warehouse_id'        => $warehouseId,
+                    'price'               => $price,
+                    'type'                => 0
                 ]);
+
 
                 // Tính tổng
                 $total += $quantity * $price;
@@ -162,7 +163,7 @@ class WarehouseController extends Controller
 
             return response()->json([
                 'status' => true,
-                'message' => 'Tạo đơn hàng thành công.',
+                'message' => 'Tạo xuất hàng thành công.',
             ]);
         } catch (\Exception $exception) {
             DB::rollBack();
@@ -183,13 +184,13 @@ class WarehouseController extends Controller
     {
         $pageTitle = "Chi tiết đơn hàng";
         $suppliers = Supplier::query()->pluck('name', 'id');
-        $warehouse = WarehouseEntry::query()->with('supplier', 'returns', 'entries.product')->find($id);
+        $warehouse = WarehouseExport::query()->with('supplier', 'returns', 'entries.product')->find($id);
         $warehouses  = Warehouse::active()->get();
         $admin     = Admin::where('unit_code', unitCode())->where('subdomain', subdomain())->get();
         if (!$warehouse) {
             abort(404);
         }
-        return view('admin.warehouse.show', compact('pageTitle', 'warehouse', 'suppliers', 'admin', 'warehouses'));
+        return view('admin.warehouse_exports.show', compact('pageTitle', 'warehouse', 'suppliers', 'admin', 'warehouses'));
     }
 
     /**
@@ -208,13 +209,13 @@ class WarehouseController extends Controller
         DB::beginTransaction();
 
         try {
-            $warehouse = WarehouseEntry::query()->with(['entries.product'])->find($id);
+            $warehouse = WarehouseExport::query()->with(['entriesexport.product'])->find($id);
 
             $data = [];
 
             array_filter($warehouse->entries->toArray(), function ($value) use (&$data) {
                 $product = Product::query()->find($value['product_id']);
-                $product->increment('stock', $value['quantity'] - $value['number_of_cancellations']);
+                $product->decrement('stock', $value['quantity'] - $value['number_of_cancellations']); // trừ số lượng
 
                 $data[$value['product_id']] = [
                     'quantity' => $value['quantity'] - $value['number_of_cancellations'],
@@ -222,7 +223,7 @@ class WarehouseController extends Controller
                 ];
             });
 
-          //  $warehouse->stockEntries()->sync($data);
+           // $warehouse->stockEntries()->sync($data);
 
             $warehouse->update([
                 'status' => 1,
@@ -242,13 +243,13 @@ class WarehouseController extends Controller
      */
     public function destroy(string $id)
     {
-        $warehouse = WarehouseEntry::with('entries', 'returns')->find($id);
+        $warehouse = WarehouseExport::with('entries', 'returns')->find($id);
 
         if (!$warehouse) {
-            return back()->withErrors(['msg' => 'Không tìm thấy phiếu nhập.']);
+            return back()->withErrors(['msg' => 'Không tìm thấy phiếu xuất.']);
         }
         if ($warehouse->status == 1) {
-            return back()->withErrors(['msg' => 'Phiếu nhập đã được xác nhận, không thể xoá.']);
+            return back()->withErrors(['msg' => 'Phiếu xuất đã được xác nhận, không thể xoá.']);
         }
 
         DB::beginTransaction();
@@ -259,7 +260,7 @@ class WarehouseController extends Controller
                 // Trừ lại tồn kho nếu cần
                 $product = $entry->product;
                 if ($product) {
-                    $product->decrement('stock', $entry->quantity);
+                   // $product->decrement('stock', $entry->quantity);
                 }
 
                 $entry->delete();
@@ -274,114 +275,17 @@ class WarehouseController extends Controller
             $warehouse->delete();
 
             DB::commit();
-            return redirect()->route('admin.warehouse.index')->with('success', 'Xoá đơn nhập thành công.');
+            return redirect()->route('admin.warehouse.export.index')->with('success', 'Xoá đơn xuất thành công.');
         } catch (\Exception $e) {
             DB::rollBack();
             return back()->withErrors(['msg' => 'Xoá thất bại: ' . $e->getMessage()]);
         }
     }
 
-    // danh mục kho 
-    public function Warehouse()
-    {
-        $code   = SetupCode::where('menu_name', 'Danh mục kho')->value('code');
-        $count  = Warehouse::count();
-        $code   = $code ? $code . $count + 1 : '';
-        $warehouse = Warehouse::where('subdomain', subdomain())->paginate(10);
-        $emptyMessage = 'Không tìm thấy dữ liệu';
-        return view('admin.warehouse.warehouse', compact('warehouse', 'emptyMessage', 'code'));
-    }
-    public function addWarehouse(Request $request)
-    {
-        $request->merge([
-            'code' => strtoupper(trim($request->code))
-        ]);
-        $request->validate([
-            'code' => [
-                'required',
-                'string',
-                'regex:/^[A-Z0-9\-]+$/'
-            ],
-            'name' => 'required|string',
-        ]);
-        $exists = Warehouse::where('code', $request->code)
-            ->where('subdomain', subdomain())->exists();
-        if ($exists) {
-            return back()->withErrors(['code' => 'Mã kho đã tồn tại.'])->withInput();
-        }
-
-        $hotel = new Warehouse();
-        $hotel->code = $request->code;
-        $hotel->name = $request->name;
-        $hotel->subdomain =  subdomain();
-        $hotel->unit_code =  unitCode();
-        $hotel->status =  $request->status;
-        // save
-        $hotel->save();
-
-
-        $notify[] = ['success', 'Thêm kho thành công'];
-        return back()->withNotify($notify);
-    }
-    public function editWarehouse($id)
-    {
-        if (!$id) {
-            $notify[] = ['error', 'Không tìm thấy kho'];
-            return back()->withNotify($notify);
-        }
-        $hotel = Warehouse::find($id);
-        return response()->json([
-            'status' => 'success',
-            'data' => $hotel,
-        ]);
-    }
-    public function updateWarehouse($id, Request $request)
-    {
-        $request->merge([
-            'code' => strtoupper(trim($request->code))
-        ]);
-        $request->validate([
-            'code' => [
-                'required',
-                'string',
-                'regex:/^[A-Z0-9\-]+$/'
-            ],
-            'name' => 'required|string',
-        ]);
-
-        $hotel = Warehouse::find($id);
-        $exists = Warehouse::where('code', $request->code)
-            ->where('subdomain', subdomain())
-            ->where('id', '!=', $id) // bỏ qua bản ghi đang sửa
-            ->exists();
-
-        if ($exists) {
-            return back()->withErrors(['code' => 'Mã kho đã tồn tại.'])->withInput();
-        }
-
-        $hotel->code = $request->code;
-        $hotel->name = $request->name;
-        $hotel->subdomain =  subdomain();
-        $hotel->unit_code =  unitCode();
-        $hotel->status =  $request->status;
-
-        $hotel->save();
-
-        $notify[] = ['success', 'Cập nhật kho thành công'];
-        return back()->withNotify($notify);
-    }
-    public function deleteWarehouse($id)
-    {
-        Warehouse::destroy($id);
-        return response()->json([
-            'status' => 'success',
-            'message' => 'Xóa kho thành công',
-        ]);
-    }
     public function destroyWarehouseEntryItem($id)
     {
         $item = WarehouseEntryItem::find($id);
-
+        Log::info($item);
         if (!$item) {
             return response()->json(['status' => false, 'message' => 'Không tìm thấy sản phẩm.'], 404);
         }
@@ -389,7 +293,7 @@ class WarehouseController extends Controller
         DB::beginTransaction();
 
         try {
-            $entry = WarehouseEntry::find($item->warehouse_entry_id);
+            $entry = WarehouseExport::find($item->warehouse_export_id);
             $itemTotal = $item->quantity * $item->price;
 
             // Xoá item
@@ -433,7 +337,7 @@ class WarehouseController extends Controller
     }
     public function updateImportSlipe(Request $request)
     {
-        $item = WarehouseEntry::find($request->id);
+        $item = WarehouseExport::find($request->id);
 
         if (!$item) {
             return response()->json(['status' => false, 'message' => 'Không tìm thấy phiếu nhập.'], 404);

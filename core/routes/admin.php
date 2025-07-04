@@ -5,7 +5,7 @@ use App\Http\Controllers\Admin\GeneralSettingController;
 use App\Http\Controllers\Admin\PriceController;
 use App\Http\Controllers\Admin\TransactionController;
 use Illuminate\Support\Facades\Route;
-    use App\Http\Controllers\Admin\RoomImportExportController;
+use App\Http\Controllers\Admin\RoomImportExportController;
 
 
 
@@ -13,7 +13,7 @@ use Illuminate\Support\Facades\Route;
 ///
 Route::namespace('Auth')->group(function () {
 
-   
+
     Route::middleware('admin.guest')->group(function () {
         Route::controller('LoginController')->group(function () {
             Route::get('/', 'showLoginForm')->name('login');
@@ -71,7 +71,7 @@ Route::middleware('admin', 'adminPermission')->prefix('admin')->group(function (
         Route::post('switch-status/{id}', 'status')->name('status');
         Route::get('login/{id}', 'login')->name('login');
     });
-   
+
     // Manage Roles
     Route::controller('RolesController')->prefix('roles')->name('roles.')->group(function () {
         Route::get('', 'index')->name('index');
@@ -183,8 +183,25 @@ Route::middleware('admin', 'adminPermission')->prefix('admin')->group(function (
         Route::post('add/warehouse', 'addWarehouse')->name('add.warehouse');
         Route::post('edit/warehouse/{id}', 'editWarehouse')->name('edit.warehouse');
         Route::post('update/warehouse/{id}', 'updateWarehouse')->name('update.warehouse');
+        Route::post('import/slipe', 'updateImportSlipe')->name('update.import.slipe');
         Route::post('delete/warehouse/{id}', 'deleteWarehouse')->name('delete.warehouse');
         Route::get('{id}/show', 'show')->name('show');
+        Route::delete('{id}/destroy', 'destroy')->name('destroy');
+        Route::delete('{id}/warehouse/destory/item', 'destroyWarehouseEntryItem')->name('destroy.warehouse.item');
+        Route::put('{id}/update', 'update')->name('update');
+    });
+     // manage warehouse export
+    Route::controller('WarehouseExportController')->prefix('warehouse_export')->name('warehouse.export.')->group(function () {
+        Route::get('/', 'index')->name('index');
+        Route::get('/list', 'Warehouse')->name('warehouse');
+        Route::get('create', 'create')->name('create');
+        Route::post('create', 'store')->name('store');
+
+        Route::post('import/slipe', 'updateImportSlipe')->name('update.import.slipe');
+        Route::post('delete/warehouse/{id}', 'deleteWarehouse')->name('delete.warehouse');
+        Route::get('{id}/show', 'show')->name('show');
+        Route::delete('{id}/destroy', 'destroy')->name('destroy');
+        Route::delete('{id}/warehouse/destory/item', 'destroyWarehouseEntryItem')->name('destroy.warehouse.item');
         Route::put('{id}/update', 'update')->name('update');
     });
 
@@ -237,7 +254,7 @@ Route::middleware('admin', 'adminPermission')->prefix('admin')->group(function (
             Route::post('save/{id?}', 'save')->name('save');
             Route::post('status/{id}', 'status')->name('status');
             Route::post('statusAll', 'statusAll')->name('statusAll');
-              Route::post('changeDirections', 'changeDirections')->name('changeDirections');
+            Route::post('changeDirections', 'changeDirections')->name('changeDirections');
             Route::post('delete/{id}', 'delete')->name('delete');
 
             Route::get('check-slug', 'checkSlug')->name('check.slug');
@@ -274,7 +291,6 @@ Route::middleware('admin', 'adminPermission')->prefix('admin')->group(function (
             ->name('import.room.')
             ->group(function () {
                 Route::post('/', 'import')->name('store');
-                
             });
         //Manage amenities with room
         Route::controller('ManageRoomAmenitiesController')->name('room.amenities.')->prefix('roomAmenities')->group(function () {

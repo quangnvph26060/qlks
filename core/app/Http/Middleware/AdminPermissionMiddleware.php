@@ -24,14 +24,14 @@ class AdminPermissionMiddleware
             'admin.warehouse.create',
             'admin.product.index', //1
             'admin.product.filter',           // tìm kiếm sản phẩm
-            'admin.warehouse.store',          // thêm  nhập kho
+            'admin.warehouse.store',          // thêm phiếu nhập kho
             'admin.supplier.create',          // trang thêm nhà cung cấp
             'admin.supplier.store',           // thêm mới nhà cung cấp
             'admin.supplier.edit',            // sửa nhà cung cấp
             'admin.representative.edit',
             'admin.representative.update',    // sửa thông tin người đại diện
             'admin.supplier.destroy',         // xoá nhà cung cấp
-            'admin.warehouse.update',         // xác nhận trạng thái nhập hàng
+            'admin.warehouse.update',         // xác nhận trạng thái phiếu nhập hàng
             'admin.return.create',            // trả hàng
             'admin.return.store', // xác nhận hàng hỏng
             'admin.return.index', // trang trả hàng
@@ -41,6 +41,15 @@ class AdminPermissionMiddleware
             'admin.warehouse.edit.warehouse', // edit kho
             'admin.warehouse.update.warehouse', // update kho
             'admin.warehouse.delete.warehouse', // xoá kho
+            'admin.warehouse.destroy', // xoá phiếu nhập
+            'admin.warehouse.destroy.warehouse.item', // xoá sản phẩm trong chi tiết phiếu nhập khi chưa xác nhận
+            'admin.warehouse.update.import.slipe', // cập nhật thông tin phiếu nhập, cập nhật 3 select nhà cung cấp, nhân viện tạo, phương thức thanh toán
+            'admin.warehouse.export.index', // trang xuất kho 
+            'admin.warehouse.export.store', // thêm phiếu xuất kho
+            'admin.warehouse.export.destroy', // xoá xuất phiếu kho
+            'admin.warehouse.export.show', // chi tiết xuất kho
+            'admin.warehouse.export.update', //  xác nhận trạng thái phiếu xuất hàng
+            'admin.warehouse.export.destroy.warehouse.item',  // xoá sản phẩm trong chi tiết phiếu xuất khi chưa xác nhận
         ];
         /*
             'admin.revenue' => 'Danh thu trong màn thông kế'

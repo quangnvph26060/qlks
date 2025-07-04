@@ -380,7 +380,7 @@ function saveRoomStatusHistory($room_id, $start_date, $end_date, $status_code)
 }
 function savePayment($booking_id, $checkin_id, $room_price, $payment_method, $admin)
 {
-    ReceiptAndPayment::create([
+   return ReceiptAndPayment::create([
         'payment_id'       => getCode('HD', 12),
         'booking_id'       => $booking_id,
         'checkin_id'       => $checkin_id,

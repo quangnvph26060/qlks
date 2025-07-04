@@ -50,14 +50,14 @@
             {{-- <a class="btn btn-sm btn-primary" href="{{ route('admin.warehouse.create') }}"><i
                     class="las la-plus"></i></a> --}}
             <!-- Modal Nhập kho -->
-            <button class="btn btn-sm btn-primary" data-bs-toggle="modal" data-bs-target="#warehouseModaladd">
+            <button class="btn btn-sm btn-primary" data-bs-toggle="modal" data-bs-target="#warehouseexportModaladd">
                 <i class="las la-plus"></i>
             </button>
             <div class="modal fade" id="warehouseModal" tabindex="-1" aria-hidden="true">
                 <div class="modal-dialog modal-lg modal-dialog-centered">
                     <div class="modal-content">
                         <div class="modal-header">
-                            <h5 class="modal-title">Chi tiết phiếu nhập</h5>
+                            <h5 class="modal-title">Chi tiết phiếu xuất</h5>
                             <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Đóng"></button>
                         </div>
                         <div class="modal-body">
@@ -68,15 +68,15 @@
             </div>
 
 
-            <div class="modal fade" id="warehouseModaladd" tabindex="-1" aria-labelledby="warehouseModalLabel" aria-hidden="true">
+            <div class="modal fade" id="warehouseexportModaladd" tabindex="-1" aria-labelledby="warehouseModalLabel" aria-hidden="true">
                 <div class="modal-dialog modal-xl modal-dialog-scrollable">
                     <div class="modal-content">
                         <div class="modal-header">
-                            <h5 class="modal-title" id="warehouseModalLabel">Tạo phiếu nhập kho</h5>
+                            <h5 class="modal-title" id="warehouseModalLabel">Tạo phiếu xuất kho</h5>
                             <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Đóng"></button>
                         </div>
                         <div class="modal-body p-4">
-                            @include('admin.warehouse.create', [
+                            @include('admin.warehouse_exports.create', [
                                 'categories' => $categories,
                                 'suppliers' => $suppliers,
                                 'products' => $products,
@@ -121,7 +121,7 @@
             "use strict"
 
             $(document).ready(function() {
-                const apiUrl = '{{ route('admin.warehouse.index') }}';
+                const apiUrl = '{{ route('admin.warehouse.export.index') }}';
                 initDataFetch(apiUrl);
 
             });
@@ -233,7 +233,7 @@
                 const form = this; // Lưu lại form hiện tại
                 Swal.fire({
                     title: 'Xác nhận xoá?',
-                    text: 'Bạn có chắc muốn xoá phiếu nhập này không?',
+                    text: 'Bạn có chắc muốn xoá phiếu xuất này không?',
                     icon: 'warning',
                     showCancelButton: true,
                     confirmButtonColor: '#d33',

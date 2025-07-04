@@ -124,8 +124,8 @@ Route::namespace('Api')->name('api.')->group(function () {
     });
 });
 
- Route::get('/get-payment/{bookingCode}', [ApipublicController::class, 'getPayment']);
-
+//  Route::get('/get-payment/{bookingCode}', [ApipublicController::class, 'getPayment']);
+ Route::get('/get-payment', [ApipublicController::class, 'getPayment']);
 
 Route::post('/user/store', [UserController::class, 'store']);
 Route::post('/user/delete', [UserController::class, 'deleteAdmin']);

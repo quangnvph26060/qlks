@@ -28,12 +28,12 @@
                         <a href="javascript:void(0);" type="button"
                             class="btn btn-sm btn-primary open-warehouse-modal"
                              data-id="{{ $warehouse->id }}"
-                            data-url="{{ route('admin.warehouse.show', $warehouse->id) }}">
+                            data-url="{{ route('admin.warehouse.export.show', $warehouse->id) }}">
                             Sửa
                         </a>
                     </div>
                     <div class="dropdown-item hotel_delete">
-                        <form method="POST" action="{{ route('admin.warehouse.destroy', $warehouse->id) }}" class="delete-warehouse-form">
+                        <form method="POST" action="{{ route('admin.warehouse.export.destroy', $warehouse->id) }}" class="delete-warehouse-form">
                             @csrf
                             @method('DELETE')
                             <button type="submit" class="btn btn-danger btn-sm">Xoá</button>

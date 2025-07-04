@@ -237,12 +237,12 @@
             },
             {
                 "keyword": [
-                    "Hoàn hàng"
+                    "Xuất hàng"
                 ],
-                "title": "Hoàn hàng",
+                "title": "Xuất hàng",
                 "icon": "las la-dollar-sign",
-                "route_name": "admin.return.index",
-                "menu_active": "admin.return.index"
+                "route_name": "admin.warehouse.export.index",
+                "menu_active": "admin.warehouse.export.index"
             },
             {
                 "keyword": [

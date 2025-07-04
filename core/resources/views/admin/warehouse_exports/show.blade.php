@@ -111,12 +111,12 @@
                                 @elseif($sl == 0)
                                     <p class="badge badge--danger">Đã hủy</p>
                                 @elseif($sl > 0)
-                                    <form action="{{ route('admin.warehouse.update', $warehouse->id) }}" method="POST"
+                                    <form action="{{ route('admin.warehouse.export.update', $warehouse->id) }}" method="POST"
                                         style="display: inline;">
                                         @csrf
                                         @method('PUT')
                                         <button type="submit" class="btn btn-sm btn-outline--primary btn-return">
-                                            Xác nhận đơn hàng
+                                            Xác nhận đơn hàng 
                                         </button>
                                     </form>
                                 @endif
@@ -168,7 +168,7 @@
 
                                         <button class="btn btn-outline-danger btn-sm remove-product-edit flex-shrink-0"
                                             style="width: 30px;" data-id="{{ $item->id }}" 
-                                            data-url="{{ route('admin.warehouse.destroy.warehouse.item', $item->id) }}"
+                                            data-url="{{ route('admin.warehouse.export.destroy.warehouse.item', $item->id) }}"
                                             {{$warehouse->status == 1 ? 'disabled' :""}}>X</button>
                                     </div>
                                 @endforeach
