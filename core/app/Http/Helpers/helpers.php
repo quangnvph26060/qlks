@@ -121,23 +121,34 @@ function getTrx($length = 12)
     }
     return $randomString;
 }
-function getCode($prefix, $length = 12)
+function getCode($prefix, $length = 12, $modelClass = null, $column = 'code')
 {
     $characters       = 'ABCDEFGHIJKLMNOPQRSTUVWXYZ123456789';
     $charactersLength = strlen($characters);
+    $randomLength     = $length - strlen($prefix);
 
-    $randomLength = $length - strlen($prefix);
     if ($randomLength <= 0) {
         return substr($prefix, 0, $length);
     }
 
-    $randomString = '';
-    for ($i = 0; $i < $randomLength; $i++) {
-        $randomString .= $characters[rand(0, $charactersLength - 1)];
-    }
+    do {
+        $randomString = '';
+        for ($i = 0; $i < $randomLength; $i++) {
+            $randomString .= $characters[rand(0, $charactersLength - 1)];
+        }
 
-    return $prefix . $randomString;
+        $code = $prefix . $randomString;
+
+        $exists = false;
+        if ($modelClass && class_exists($modelClass)) {
+            $exists = $modelClass::where($column, $code)->exists();
+        }
+
+    } while ($exists); // lặp lại nếu mã đã tồn tại trong bảng
+
+    return $code;
 }
+
 function getAmount($amount, $length = 2)
 {
     $amount = round($amount ?? 0, $length);
@@ -381,7 +392,7 @@ function saveRoomStatusHistory($room_id, $start_date, $end_date, $status_code)
 function savePayment($booking_id, $checkin_id, $room_price, $payment_method, $admin)
 {
    return ReceiptAndPayment::create([
-        'payment_id'       => getCode('HD', 12),
+        'payment_id'       => getCode('HD', 12,ReceiptAndPayment::class,'payment_id'),
         'booking_id'       => $booking_id,
         'checkin_id'       => $checkin_id,
         'room_price'       => $room_price,

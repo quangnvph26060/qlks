@@ -51,7 +51,7 @@
         <div class="col-md-6">
             <div class="card h-100">
                 <div class="card-body">
-                  
+
                     <select class="form-select mb-3" id="employeeSelect" name="employee_id" aria-label="Chọn nhân viên">
                         <option selected disabled>Chọn nhân viên</option>
                         @foreach ($admin as $id => $name)
@@ -84,7 +84,8 @@
                         style="padding-left: 4px;">
                         <div style="width: 150px;">Sản phẩm</div>
                         <div style="width: 100px;">Giá</div>
-                        <div style="width: 120px;">Kho</div>
+                        <div style="width: 120px;">Từ kho</div>
+                        <div style="width: 120px;">Đến kho</div>
                         <div style="width: 130px;">Số lượng</div>
                         <div style="width: 37px;">Xóa</div>
                     </div>
@@ -170,21 +171,27 @@
                     $('#selected-product-add .selected-product').each(function() {
                         const productId = $(this).data('id');
                         const quantity = $(this).find('input[name^="products"]').val();
-                        const warehouseId = $(this).find('select[name^="warehouses"]').val();
+                        const warehouseIdTo = $(this).find('select[name^="warehouses_to"]')
+                        .val();
+                        const warehouseIdFrom = $(this).find('select[name^="warehouses_from"]')
+                            .val();
                         const price = $(this).find('.price').data('price');
 
-                        if (!warehouseId || !quantity || quantity <= 0) {
+                        if (!warehouseIdTo || !warehouseIdFrom || !quantity || quantity <= 0) {
                             valid = false;
                             return;
                         }
 
                         products.push({
-                            product_id: productId,
+                            product_id: parseInt(productId),
                             quantity: parseInt(quantity),
-                            warehouse_id: warehouseId,
+                            warehouse_id: parseInt(warehouseIdTo), // 👈 Đây là kho đích
+                            warehouse_from_id: parseInt(
+                            warehouseIdFrom), // ✅ Đây là kho nguồn mới thêm vào
                             price: parseFloat(price)
                         });
                     });
+
 
                     if (!valid) {
                         event.preventDefault();
@@ -212,12 +219,11 @@
                         formData.append(`products[${index}][product_id]`, item.product_id);
                         formData.append(`products[${index}][quantity]`, item.quantity);
                         formData.append(`products[${index}][warehouse_id]`, item.warehouse_id);
+                         formData.append(`products[${index}][warehouse_from_id]`, item.warehouse_from_id); // ✅ kho nguồn
                         formData.append(`products[${index}][price]`, item.price);
                     });
-
-
                     $.ajax({
-                        url: "{{ route('admin.warehouse.export.store') }}",
+                        url: "{{ route('admin.warehouse.transfer.store') }}",
                         type: "POST",
                         data: formData,
                         processData: false,
@@ -225,7 +231,7 @@
                         success: function(response) {
                             if (response.status) {
                                 window.location.href =
-                                    "{{ route('admin.warehouse.export.index') }}";
+                                    "{{ route('admin.warehouse.transfer.index') }}";
                             } else {
                                 const firstKey = Object.keys(response.errors)[0];
                                 const firstError = response.errors[firstKey];
@@ -282,11 +288,14 @@
                                ${Number(product.import_price).toLocaleString('vi-VN')}
                             </div>
                             
-                            <select name="warehouses[${productId}]" class="form-select form-select-sm me-3 flex-shrink-0" style="width: 120px;">
+                            <select name="warehouses_to[${productId}]" class="form-select form-select-sm me-3 flex-shrink-0" style="width: 120px;">
                                 <option selected disabled>Chọn kho</option>
                                 ${warehouseOptions}
                             </select>
-
+                            <select name="warehouses_from[${productId}]" class="form-select form-select-sm me-3 flex-shrink-0" style="width: 120px;">
+                                <option selected disabled>Chọn kho</option>
+                                ${warehouseOptions}
+                            </select>
                             <div class="quantity d-flex align-items-center me-3 flex-shrink-0" style="width: 130px;">
                                 <button type="button" class="btn btn-outline-secondary btn-sm decrease">-</button>
                                 <input type="number" class="form-control mx-2 handled-focus" name="products[${productId}]" value="1" min="1"

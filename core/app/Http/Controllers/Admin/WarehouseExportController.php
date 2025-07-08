@@ -6,6 +6,7 @@ use App\Http\Controllers\Controller;
 use App\Models\Admin;
 use App\Models\Category;
 use App\Models\Product;
+use App\Models\StockEntry;
 use App\Models\Supplier;
 use App\Models\Warehouse;
 use App\Models\WarehouseEntryItem;
@@ -218,12 +219,13 @@ class WarehouseExportController extends Controller
                 $product->decrement('stock', $value['quantity'] - $value['number_of_cancellations']); // trừ số lượng
 
                 $data[$value['product_id']] = [
-                    'quantity' => $value['quantity'] - $value['number_of_cancellations'],
-                    'entry_date' => now()->format('Y-m-d H:i:s')
+                    'quantity'    => $value['quantity'] - $value['number_of_cancellations'],
+                    'entry_date'  => now()->format('Y-m-d H:i:s'),
+                    'status'      => 0
                 ];
             });
 
-           // $warehouse->stockEntries()->sync($data);
+            $warehouse->stockEntries()->sync($data);
 
             $warehouse->update([
                 'status' => 1,
@@ -295,7 +297,7 @@ class WarehouseExportController extends Controller
         try {
             $entry = WarehouseExport::find($item->warehouse_export_id);
             $itemTotal = $item->quantity * $item->price;
-
+            StockEntry::where('product_id',$item->product_id)->where('warehouse_entry_id',$entry->id)->where('status',0)->delete();
             // Xoá item
             $item->delete();
 

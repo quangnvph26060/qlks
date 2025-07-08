@@ -48,6 +48,9 @@ class WarehouseExport extends Model
 
     public function stockEntries()
     {
-        return $this->belongsToMany(Product::class, 'stock_entries', 'product_id')->withPivot('quantity', 'entry_date')->withTimestamps();
+        // return $this->belongsToMany(Product::class, 'stock_entries', 'product_id')->withPivot('quantity', 'entry_date')->withTimestamps();
+        return $this->belongsToMany(Product::class, 'stock_entries', 'warehouse_entry_id', 'product_id')
+            ->withPivot('quantity', 'entry_date')
+            ->withTimestamps();
     }
 }

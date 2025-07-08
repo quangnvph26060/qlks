@@ -244,6 +244,24 @@
                 "route_name": "admin.warehouse.export.index",
                 "menu_active": "admin.warehouse.export.index"
             },
+             {
+                "keyword": [
+                    "Điểu chuyển"
+                ],
+                "title": "Điểu chuyển",
+                "icon": "las la-dollar-sign",
+                "route_name": "admin.warehouse.transfer.index",
+                "menu_active": "admin.warehouse.transfer.index"
+            },
+              {
+                "keyword": [
+                    "Tồn kho"
+                ],
+                "title": "Tồn kho",
+                "icon": "las la-dollar-sign",
+                "route_name": "admin.inventory.index",
+                "menu_active": "admin.warehouse.index"
+            },
             {
                 "keyword": [
                     "Danh mục sản phẩm"

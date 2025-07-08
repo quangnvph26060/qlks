@@ -150,7 +150,7 @@ class BookRoomController extends Controller
                 $roomBooking->save();
 
                 $check_in                     =  new CheckIn();
-                $check_in->check_in_id        = getCode('NP', 12); // ID đặt phòng
+                $check_in->check_in_id        = getCode('NP', 12,CheckIn::class,'check_in_id'); // ID đặt phòng
                 $check_in->id_room_booking    = $roomBooking->booking_id;               // ID phòng đặt (nếu có)
                 $check_in->room_code          = $roomBooking->room_code;                // Mã phòng
                 $check_in->document_date      = $roomBooking->document_date;      // Ngày chứng từ
@@ -376,18 +376,10 @@ class BookRoomController extends Controller
                 $admin_id = $request->name_staff ??  authAdmin()->id;
                 if ($index == 0) {
                     if ($request->method == 'check_in') {
-                        do {
-                            $generatedCode = getCode('NP', 12);
-                        } while (CheckIn::where('check_in_id', $generatedCode)->exists());
-
-                        $check_in->check_in_id = $generatedCode;
+                        $check_in->check_in_id = getCode('NP', 12,CheckIn::class,'check_in_id');
                         $bookingId = $check_in->check_in_id;
                     } else {
-                        do {
-                            $generatedCode = getCode('DP', 12);
-                        } while (RoomBooking::where('booking_id', $generatedCode)->exists());
-
-                        $check_in->booking_id = $generatedCode;
+                        $check_in->booking_id = getCode('NP', 12,RoomBooking::class,'check_in_id');
                         $bookingId = $check_in->booking_id;
                     }
                 } else {
@@ -542,7 +534,7 @@ class BookRoomController extends Controller
                     if ($checkRoom) {
                         $check_in = new CheckIn();
                         if ($index == 0) {
-                            $check_in->check_in_id   = getCode('NP', 12);
+                            $check_in->check_in_id   = getCode('NP', 12,CheckIn::class,'check_in_id');
                             $bookingId               = $check_in->check_in_id;
                         } else {
                             $check_in->check_in_id   = $bookingId;
@@ -588,7 +580,7 @@ class BookRoomController extends Controller
                     }
                 } else {
                     $check_in_new                 = new CheckIn();
-                    $check_in_new->check_in_id    = $bookingId ?? getCode('NP', 12);
+                    $check_in_new->check_in_id    = $bookingId ?? getCode('NP', 12,CheckIn::class,'check_in_id');
                     $check_in_new->id_room_booking = $request->id_room_booking;
                     $check_in_new->room_code      = $room['room'];
                     $check_in_new->document_date  = now();
@@ -858,11 +850,9 @@ class BookRoomController extends Controller
                 'updated_at' => now()
             ]);
         } else {
-            do {
-                $code = getCode('KH', 6);
-            } while (Customer::where('customer_code', $code)->exists());
+          
             $existingUser = Customer::create([
-                'customer_code' => $code,
+                'customer_code' => getCode('KH', 6,Customer::class,'customer_code'),
                 'name'          => $name,
                 'phone'         => $phone,
                 'unit_code'     =>  unitCode(),

@@ -5,6 +5,7 @@ namespace App\Http\Controllers\Admin;
 use App\Models\Product;
 use App\Models\Category;
 use App\Models\SetupCode;
+use App\Models\StockEntry;
 use App\Models\Supplier;
 use App\Models\WarehouseEntryItem;
 use Illuminate\Http\Request;
@@ -138,7 +139,7 @@ class WarehouseController extends Controller
                 }
 
                 // Cập nhật tồn kho
-                // $product->increment('stock', $quantity);
+              //  $product->increment('stock', $quantity);
 
                 // Tạo bản ghi chi tiết nhập
                 $warehouse->entries()->create([
@@ -217,12 +218,12 @@ class WarehouseController extends Controller
                 $product->increment('stock', $value['quantity'] - $value['number_of_cancellations']);
 
                 $data[$value['product_id']] = [
-                    'quantity' => $value['quantity'] - $value['number_of_cancellations'],
-                    'entry_date' => now()->format('Y-m-d H:i:s')
+                    'quantity'   => $value['quantity'] - $value['number_of_cancellations'],
+                    'entry_date' => now()->format('Y-m-d H:i:s'),
+                    'status'     => 1
                 ];
             });
-
-          //  $warehouse->stockEntries()->sync($data);
+           $warehouse->stockEntries()->sync($data);
 
             $warehouse->update([
                 'status' => 1,
@@ -391,7 +392,7 @@ class WarehouseController extends Controller
         try {
             $entry = WarehouseEntry::find($item->warehouse_entry_id);
             $itemTotal = $item->quantity * $item->price;
-
+            StockEntry::active()->where('product_id',$item->product_id)->where('warehouse_entry_id',$entry->id)->delete();
             // Xoá item
             $item->delete();
 

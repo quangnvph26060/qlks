@@ -1,0 +1,398 @@
+@extends('admin.layouts.master_iframe')
+@section('panel')
+    @include('admin.messages')
+    <div class="row">
+        <div class="col-lg-12">
+            <div class="card b-radius--10">
+                <div class="card-body p-0">
+                    <div class="table-responsive--md table-responsive p-2">
+                        <div class="d-flex justify-content-between mb-3">
+                            <div class="dt-length">
+                                <select name="example_length" style=" padding: 1px 3px; margin-right: 8px;"
+                                    aria-controls="example" class="perPage">
+                                    <option value="10">10</option>
+                                    <option value="25">25</option>
+                                    <option value="50">50</option>
+                                    <option value="100">100</option>
+                                </select><label for="perPage"> entries per page</label>
+                            </div>
+                            <div class="search">
+                                <label for="searchInput">Search:</label>
+                                <input class="searchInput"
+                                    style="padding: 1px 3px; border: 1px solid rgb(121, 117, 117, 0.5); margin-left: 8px;"
+                                    type="search" placeholder="Tìm kiếm...">
+                            </div>
+                        </div>
+                        <table class="table--light style--two table table-hover" id="data-table">
+                            <thead>
+                                <tr>
+                                    <th>Hành động</th>
+                                    <th>Mã phiếu</th>
+                                    <th>Từ kho</th>
+                                    <th>Đến kho</th>
+                                    <th>Trạng thái</th>
+                                </tr>
+                            </thead>
+                            <tbody>
+
+                            </tbody>
+                        </table>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    @can('')
+        @push('breadcrumb-plugins')
+            {{-- <a class="btn btn-sm btn-primary" href="{{ route('admin.warehouse.create') }}"><i
+                    class="las la-plus"></i></a> --}}
+            <!-- Modal Nhập kho -->
+            <button class="btn btn-sm btn-primary" data-bs-toggle="modal" data-bs-target="#warehouseexportModaladd">
+                <i class="las la-plus"></i>
+            </button>
+            <div class="modal fade" id="warehouseModal" tabindex="-1" aria-hidden="true">
+                <div class="modal-dialog modal-lg modal-dialog-centered">
+                    <div class="modal-content">
+                        <div class="modal-header">
+                            <h5 class="modal-title">Chi tiết phiếu xuất</h5>
+                            <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Đóng"></button>
+                        </div>
+                        <div class="modal-body">
+                            <!-- Nội dung chi tiết sẽ được load ở đây -->
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+
+            <div class="modal fade" id="warehouseexportModaladd" tabindex="-1" aria-labelledby="warehouseModalLabel" aria-hidden="true">
+                <div class="modal-dialog modal-xl modal-dialog-scrollable">
+                    <div class="modal-content">
+                        <div class="modal-header">
+                            <h5 class="modal-title" id="warehouseModalLabel">Tạo phiếu điều chuyển</h5>
+                            <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Đóng"></button>
+                        </div>
+                        <div class="modal-body p-4">
+                            @include('admin.transfer.create', [
+                                'categories' => $categories,
+                                'suppliers' => $suppliers,
+                                'products' => $products,
+                                'admin' => $admin,
+                                'warehouse' => $warehouse,
+                            ])
+
+                        </div>
+                    </div>
+                </div>
+            </div>
+        @endpush
+    @endcan
+@endsection
+@if ($errors->has('msg'))
+    <script>
+        Swal.fire({
+            icon: 'error',
+            title: 'Lỗi',
+            text: '{{ $errors->first('msg') }}',
+            confirmButtonColor: '#3085d6',
+        });
+    </script>
+@endif
+
+@if (session('success'))
+    <script>
+        Swal.fire({
+            icon: 'success',
+            title: 'Thành công',
+            text: '{{ session('success') }}',
+            confirmButtonColor: '#3085d6',
+        });
+    </script>
+@endif
+
+
+@push('script')
+    <script src="{{ asset('assets/admin/js/dataTable.js') }}"></script>
+    <script>
+        (function($) {
+            "use strict"
+
+            $(document).ready(function() {
+                const apiUrl = '{{ route('admin.warehouse.transfer.index') }}';
+                initDataFetch(apiUrl);
+
+            });
+            $(document).on('click', '.svg_menu_check_in', function(e) {
+                e.stopPropagation(); // Ngăn sự kiện lan ra ngoài
+
+                const $dropdown = $(this).closest('td').find('.menu_dropdown_check_in');
+
+                // Ẩn các dropdown khác
+                $('.menu_dropdown_check_in').not($dropdown).removeClass('show');
+
+                // Toggle dropdown hiện tại
+                $dropdown.toggleClass('show');
+            });
+
+            // Khi click ra ngoài thì ẩn menu
+            $(document).on('click', function() {
+                $('.menu_dropdown_check_in').removeClass('show');
+            });
+            $(document).on('click', '.confirmPayment-edit', function() {
+                const id = $(this).data('id');
+                const supplierVal = $('#supplierSelect').val();
+                const warehouseVal = $('#employeeSelect').val();
+                const paymentVal = $('#paymentMethod').val();
+                $.ajax({
+                    url: '{{ route('admin.warehouse.update.import.slipe') }}', 
+                    type: 'POST',
+                    data: {
+                        _token: $('meta[name="csrf-token"]').attr('content'),
+                        id: id,
+                        supplier_id: supplierVal,
+                        created_by: warehouseVal,
+                        payment_method_id: paymentVal
+                    },
+                    success: function(res) {
+                        if (res.status) {
+                            Swal.fire('Thành công', res.message, 'success');
+                             window.location.reload();
+                        } else {
+                            Swal.fire('Lỗi', res.message, 'error');
+                        }
+                    },
+                    error: function() {
+                        Swal.fire('Lỗi', 'Không thể cập nhật dữ liệu.', 'error');
+                    }
+                });
+
+            });
+            $(document).on('click', '.remove-product-edit', function() {
+                const $button = $(this);
+                const deleteUrl = $button.data('url');
+                const productItemId = $button.data('id');
+                Swal.fire({
+                    title: 'Xác nhận xoá?',
+                    text: 'Bạn có chắc muốn xoá sản phẩm này không?',
+                    icon: 'warning',
+                    showCancelButton: true,
+                    confirmButtonColor: '#d33',
+                    cancelButtonColor: '#3085d6',
+                    confirmButtonText: 'Xoá',
+                    cancelButtonText: 'Huỷ'
+                }).then((result) => {
+                    if (result.isConfirmed) {
+                        $.ajax({
+                            url: deleteUrl,
+                            type: 'DELETE',
+                            data: {
+                                _token: $('meta[name="csrf-token"]').attr('content')
+                            },
+                            success: function(res) {
+                                if (res.status) {
+                                    Swal.fire('Đã xoá!', res.message, 'success');
+                                    $('.selected-product[data-id="' + productItemId + '"]')
+                                        .remove();
+                                    if (res.entry_deleted) {
+                                        window.location.reload();
+                                    }
+                                } else {
+                                    Swal.fire('Lỗi', res.message, 'error');
+                                }
+                            },
+                            error: function() {
+                                Swal.fire('Lỗi', 'Không thể xoá sản phẩm.', 'error');
+                            }
+                        });
+                    }
+                });
+            });
+
+
+            $(document).on('click', '.open-warehouse-modal', function() {
+                const url = $(this).data('url'); // lấy route URL từ data-url
+
+                $.ajax({
+                    url: url,
+                    type: 'GET',
+                    success: function(data) {
+                        $('#warehouseModal .modal-body').html(data);
+                        $('#warehouseModal .modal-body').find("script").each(function() {
+                            $.globalEval(this.text || this.textContent || this.innerHTML ||
+                                '');
+                        });
+                        $('#warehouseModal').modal('show');
+                    }
+                });
+            });
+            $(document).on('submit', '.delete-warehouse-form', function(e) {
+                e.preventDefault(); // Ngăn form gửi ngay
+                const form = this; // Lưu lại form hiện tại
+                Swal.fire({
+                    title: 'Xác nhận xoá?',
+                    text: 'Bạn có chắc muốn xoá phiếu điều chuyển này không?',
+                    icon: 'warning',
+                    showCancelButton: true,
+                    confirmButtonColor: '#d33',
+                    cancelButtonColor: '#3085d6',
+                    confirmButtonText: 'Xoá',
+                    cancelButtonText: 'Huỷ'
+                }).then((result) => {
+                    if (result.isConfirmed) {
+                        form.submit(); // Gửi form nếu xác nhận
+                    }
+                });
+            });
+
+
+
+        })(jQuery);
+    </script>
+@endpush
+
+@push('style')
+    <script src="{{ asset('assets/admin/js/vendor/sweetalert2@11.js') }}"></script>
+
+    <style>
+        @media (min-width: 768px) {
+            .form-switch .form-check-input {
+                float: right
+            }
+        }
+
+        @media (min-width: 992px) {
+            .form-switch .form-check-input {
+                margin-left: 50%;
+                transform: translateX(-50%);
+                float: none;
+            }
+        }
+
+        .tooltip1 {
+            position: relative;
+            display: inline-block;
+        }
+
+        .tooltip1 .tooltiptext {
+            font-size: 8px;
+            visibility: hidden;
+            width: 150px;
+            background-color: black;
+            color: #fff;
+            text-align: center;
+            border-radius: 5px;
+            padding: 5px;
+            position: absolute;
+            z-index: 100;
+            bottom: 125%;
+            /* Vị trí tooltip */
+            left: 50%;
+            /* margin-left: -75px; */
+            /* Để căn giữa */
+            opacity: 0;
+            transition: opacity 0.3s;
+        }
+
+        .tooltip1:hover .tooltiptext {
+            visibility: visible;
+            opacity: 1;
+        }
+
+
+        .btn-toggle {
+            border: 1px solid #007bff;
+            background-color: #007bff;
+            color: #fff;
+            font-size: 1rem;
+            padding: 1px 4px;
+            cursor: pointer;
+            transition: background-color 0.3s, color 0.3s;
+            text-align: center;
+            line-height: 1;
+            border-radius: 50%;
+            font-family: 'Courier New', Courier, monospace;
+        }
+
+        .menu_dropdown_check_in .dropdown-item {
+            padding: 5px 10px;
+        }
+
+        .menu_dropdown_check_in {
+            display: none;
+            position: fixed;
+            background: white;
+            border: 1px solid #ccc;
+            box-shadow: 0 2px 10px rgba(0, 0, 0, 0.1);
+            z-index: 1000;
+        }
+
+        .menu_dropdown_check_in.show {
+            display: block;
+        }
+
+
+        .btn-toggle:hover {
+            background-color: #0056b3;
+            border-color: #0056b3;
+        }
+
+        .btn-toggle.collapsed {
+            background-color: red;
+            border-color: red;
+        }
+
+        .btn-toggle::after {
+            content: '+';
+            display: inline-block;
+        }
+
+        .btn-toggle.collapsed::after {
+            content: '−';
+        }
+
+        /* Hiệu ứng mở rộng và thu gọn */
+        .collapse {
+            overflow: hidden;
+            max-height: 0;
+            transition: max-height 0.5s ease, opacity 0.5s ease;
+            opacity: 0;
+        }
+
+        .collapse.show {
+            max-height: 200px;
+            /* Điều chỉnh theo nhu cầu */
+            opacity: 1;
+        }
+
+        .representatives-container {
+            display: flex;
+            align-items: center;
+            border-bottom: 1px solid #ddd;
+            /* Border-bottom for separation */
+            padding-bottom: 8px;
+            /* Optional padding */
+            margin-bottom: 8px;
+            /* Optional margin */
+        }
+
+        .representatives-label {
+            font-weight: bold;
+            margin-right: 8px;
+            /* Space between label and list */
+        }
+
+        .representatives-list {
+            flex: 1;
+            display: flex;
+            flex-wrap: wrap;
+        }
+
+        .representatives-list::after {
+            content: '';
+            /* Clear floats if needed */
+            display: block;
+            width: 100%;
+        }
+    </style>
+@endpush

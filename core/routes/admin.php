@@ -190,13 +190,12 @@ Route::middleware('admin', 'adminPermission')->prefix('admin')->group(function (
         Route::delete('{id}/warehouse/destory/item', 'destroyWarehouseEntryItem')->name('destroy.warehouse.item');
         Route::put('{id}/update', 'update')->name('update');
     });
-     // manage warehouse export
+    // manage warehouse export
     Route::controller('WarehouseExportController')->prefix('warehouse_export')->name('warehouse.export.')->group(function () {
         Route::get('/', 'index')->name('index');
         Route::get('/list', 'Warehouse')->name('warehouse');
         Route::get('create', 'create')->name('create');
         Route::post('create', 'store')->name('store');
-
         Route::post('import/slipe', 'updateImportSlipe')->name('update.import.slipe');
         Route::post('delete/warehouse/{id}', 'deleteWarehouse')->name('delete.warehouse');
         Route::get('{id}/show', 'show')->name('show');
@@ -204,7 +203,15 @@ Route::middleware('admin', 'adminPermission')->prefix('admin')->group(function (
         Route::delete('{id}/warehouse/destory/item', 'destroyWarehouseEntryItem')->name('destroy.warehouse.item');
         Route::put('{id}/update', 'update')->name('update');
     });
-
+    // manage transfer 
+    Route::controller('WarehouseTransferController')->prefix('warehouse_transfer')->name('warehouse.transfer.')->group(function () {
+        Route::get('/', 'index')->name('index');
+        Route::get('create', 'create')->name('create');
+        Route::post('create', 'store')->name('store');
+        Route::get('{id}/show', 'show')->name('show');
+          Route::delete('{id}/destroy', 'destroy')->name('destroy');
+        Route::put('{id}/update', 'update')->name('update');
+    });
     // manage return
     Route::controller('ReturnController')->prefix('return')->name('return.')->group(function () {
         Route::get('/', 'index')->name('index');
@@ -216,6 +223,7 @@ Route::middleware('admin', 'adminPermission')->prefix('admin')->group(function (
     // inventory
     Route::controller('InventoryController')->prefix('inventory')->name('inventory.')->group(function () {
         Route::get('/', 'index')->name('index');
+        Route::get('/get', 'get')->name('get');
     });
 
     Route::name('hotel.')->prefix('hotel')->group(function () {

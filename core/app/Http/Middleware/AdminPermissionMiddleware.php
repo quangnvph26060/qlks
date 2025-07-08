@@ -50,6 +50,13 @@ class AdminPermissionMiddleware
             'admin.warehouse.export.show', // chi tiết xuất kho
             'admin.warehouse.export.update', //  xác nhận trạng thái phiếu xuất hàng
             'admin.warehouse.export.destroy.warehouse.item',  // xoá sản phẩm trong chi tiết phiếu xuất khi chưa xác nhận
+            'admin.warehouse.transfer.index', // trang điều chuyển
+             'admin.warehouse.transfer.store', // thêm điều chuyển
+             'admin.warehouse.transfer.show', // chi tiết điều chuyển
+             'admin.warehouse.transfer.destroy',// xoá phiếu điều chuyển
+             'admin.warehouse.transfer.update',// xác nhận trạng thái phiếu điểu chuyển
+             'admin.inventory.index', // trang tồn kho
+             'admin.inventory.get', // api tồn kho 
         ];
         /*
             'admin.revenue' => 'Danh thu trong màn thông kế'

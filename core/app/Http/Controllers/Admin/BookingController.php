@@ -641,7 +641,7 @@ class BookingController extends Controller
                 return ApiResponse::error('Phòng đã được đổi trong ngày ' . Carbon::parse($request->date_new)->format('d-m-Y'), 200);
             }
             $roomChange = new RoomChange();
-            $roomChange->room_change_id     = getCode('DP', 12);
+            $roomChange->room_change_id     = getCode('DP', 12,RoomChange::class,'room_change_id');
             $roomChange->id_room_booking    = $roomBooking->booking_id;
             $roomChange->id_check_in        = "";
             $roomChange->old_room_code      = $roomBooking->room_change ?? $roomBooking->room_code;
@@ -741,7 +741,7 @@ class BookingController extends Controller
                 $roomChange = new RoomChange();
             }
 
-            $roomChange->room_change_id     = $roomChange->room_change_id ?? getCode('DP', 12);
+            $roomChange->room_change_id     = $roomChange->room_change_id ?? getCode('DP', 12,RoomChange::class,'room_change_id');
             $roomChange->id_room_booking    = $roomBooking->id_room_booking ?? "";
             $roomChange->id_check_in        = $roomBooking->check_in_id;
             $roomChange->old_room_code      = $roomBooking->room_code ?? $roomBooking->room_change;
@@ -1206,12 +1206,10 @@ class BookingController extends Controller
 
 
         if ($receipt) {
-            do {
-                $paymentCode = getCode('TT', 12);
-            } while (PaymentTransaction::where('payment_code', $paymentCode)->exists());
+           
 
             PaymentTransaction::create([
-                'payment_code'   =>  $paymentCode,
+                'payment_code'   =>  getCode('TT', 12,PaymentTransaction::class,'payment_code'),
                 'receipts_and_payments_id' => $receipt->id,
                 'amount'        => $amount,
                 'payment_method' => $request->payment_pttt,
