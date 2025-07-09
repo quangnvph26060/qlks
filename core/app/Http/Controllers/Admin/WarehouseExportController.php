@@ -79,6 +79,10 @@ class WarehouseExportController extends Controller
         return view('admin.warehouse.create', compact('pageTitle', 'categories', 'suppliers'));
     }
 
+    public function print(Request $request,$id){
+        $warehouse = WarehouseExport::with('entriesexport','admin')->findOrFail($id);
+        return view('admin.warehouse_exports.print', compact('warehouse'));
+    }
     /**
      * Store a newly created resource in storage.
      */
@@ -120,6 +124,7 @@ class WarehouseExportController extends Controller
                     ? $request->get('employee_id')
                     : authAdmin()->id,
                 'note'               => $request->get('note'),
+                'status'             => 1,
                 'subdomain'          => subdomain(),
                 'unit_code'          => unitCode(),
             ]);

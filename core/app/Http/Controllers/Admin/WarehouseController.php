@@ -121,7 +121,7 @@ class WarehouseController extends Controller
                     ? $request->get('employee_id')
                     : authAdmin()->id,
                 'note'               => $request->get('note'),
-
+                'status'             => 1,
                 'subdomain'          => subdomain(),
                 'unit_code'          => unitCode(),
             ]);

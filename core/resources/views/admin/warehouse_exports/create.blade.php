@@ -132,7 +132,7 @@
                                 <tr class="result-item" data-resource="{{ $product }}">
                                     <td>{{ $product->sku }}</td>
                                     <td>{{ $product->name }}</td>
-                                    <td>{{ number_format($product->import_price, 0, ',', '.') }} VND</td>
+                                    <td>{{ number_format($product->import_price, 0, ',', '.') }}</td>
 
                                 </tr>
                             @endforeach

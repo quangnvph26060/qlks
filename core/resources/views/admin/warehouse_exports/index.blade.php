@@ -50,9 +50,9 @@
             {{-- <a class="btn btn-sm btn-primary" href="{{ route('admin.warehouse.create') }}"><i
                     class="las la-plus"></i></a> --}}
             <!-- Modal Nhập kho -->
-          <button type="button" class="btn btn-primary btn-sm" onclick="location.reload();">
-    <i class="fa fa-repeat"></i>
-</button>
+            <button type="button" class="btn btn-primary btn-sm" onclick="location.reload();">
+                <i class="fa fa-repeat"></i>
+            </button>
             <button class="btn btn-sm btn-primary" data-bs-toggle="modal" data-bs-target="#warehouseexportModaladd">
                 <i class="las la-plus"></i>
             </button>
@@ -70,8 +70,10 @@
                 </div>
             </div>
 
+            <div id="print-area" style="display: none;"></div>
 
-            <div class="modal fade" id="warehouseexportModaladd" tabindex="-1" aria-labelledby="warehouseModalLabel" aria-hidden="true">
+            <div class="modal fade" id="warehouseexportModaladd" tabindex="-1" aria-labelledby="warehouseModalLabel"
+                aria-hidden="true">
                 <div class="modal-dialog modal-xl modal-dialog-scrollable">
                     <div class="modal-content">
                         <div class="modal-header">
@@ -128,6 +130,66 @@
                 initDataFetch(apiUrl);
 
             });
+            let isPrinting = false;
+let printTimeout;
+
+$(document).on('click', '.open-warehouse-modal-print', function () {
+    if (isPrinting) return;
+    isPrinting = true;
+
+    const url = $(this).data('url');
+
+    $.get(url, function (data) {
+        const printFrame = document.createElement('iframe');
+        printFrame.style.position = 'fixed';
+        printFrame.style.right = '0';
+        printFrame.style.bottom = '0';
+        printFrame.style.width = '0';
+        printFrame.style.height = '0';
+        printFrame.style.border = '0';
+        printFrame.setAttribute('id', 'print-frame');
+        document.body.appendChild(printFrame);
+
+        const frameWindow = printFrame.contentWindow || printFrame;
+        const printDoc = frameWindow.document;
+
+        printDoc.open();
+        printDoc.write(data);
+        printDoc.close();
+
+        const interval = setInterval(() => {
+            if (printDoc.readyState === 'complete') {
+                clearInterval(interval);
+
+                frameWindow.focus();
+                frameWindow.print();
+
+                // Nếu onafterprint không chạy (người dùng HỦY), vẫn reset sau 5s
+                printTimeout = setTimeout(() => {
+                    cleanUpPrint();
+                }, 5000);
+
+                frameWindow.onafterprint = () => {
+                    clearTimeout(printTimeout);
+                    cleanUpPrint();
+                };
+            }
+        }, 200);
+    });
+});
+
+function cleanUpPrint() {
+    const frame = document.getElementById('print-frame');
+    if (frame) {
+        document.body.removeChild(frame);
+    }
+    isPrinting = false;
+}
+
+
+
+
+
             $(document).on('click', '.svg_menu_check_in', function(e) {
                 e.stopPropagation(); // Ngăn sự kiện lan ra ngoài
 
@@ -150,7 +212,7 @@
                 const warehouseVal = $('#employeeSelect').val();
                 const paymentVal = $('#paymentMethod').val();
                 $.ajax({
-                    url: '{{ route('admin.warehouse.update.import.slipe') }}', 
+                    url: '{{ route('admin.warehouse.update.import.slipe') }}',
                     type: 'POST',
                     data: {
                         _token: $('meta[name="csrf-token"]').attr('content'),
@@ -162,7 +224,7 @@
                     success: function(res) {
                         if (res.status) {
                             Swal.fire('Thành công', res.message, 'success');
-                             window.location.reload();
+                            window.location.reload();
                         } else {
                             Swal.fire('Lỗi', res.message, 'error');
                         }

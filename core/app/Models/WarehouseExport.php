@@ -28,7 +28,9 @@ class WarehouseExport extends Model
     {
         return $this->belongsTo(Supplier::class);
     }
-
+    public function admin() {
+        return $this->belongsTo(Admin::class,'created_by');
+    }
     public function returns()
     {
         return $this->hasMany(ReturnGood::class);

@@ -193,6 +193,7 @@ Route::middleware('admin', 'adminPermission')->prefix('admin')->group(function (
     // manage warehouse export
     Route::controller('WarehouseExportController')->prefix('warehouse_export')->name('warehouse.export.')->group(function () {
         Route::get('/', 'index')->name('index');
+          Route::get('/print/{id}', 'print')->name('print');
         Route::get('/list', 'Warehouse')->name('warehouse');
         Route::get('create', 'create')->name('create');
         Route::post('create', 'store')->name('store');

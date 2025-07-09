@@ -57,6 +57,7 @@ class AdminPermissionMiddleware
              'admin.warehouse.transfer.update',// xác nhận trạng thái phiếu điểu chuyển
              'admin.inventory.index', // trang tồn kho
              'admin.inventory.get', // api tồn kho 
+             'admin.warehouse.export.print' // in phiếu xuất 
         ];
         /*
             'admin.revenue' => 'Danh thu trong màn thông kế'
