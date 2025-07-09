@@ -55,7 +55,7 @@
                 <i class="las la-plus"></i>
             </button>
             <div class="modal fade" id="warehouseModal" tabindex="-1" aria-hidden="true">
-                <div class="modal-dialog modal-lg modal-dialog-centered">
+                <div class="modal-dialog modal-lg modal-dialog-centered" style="--bs-modal-width: 933px; !important">
                     <div class="modal-content">
                         <div class="modal-header">
                             <h5 class="modal-title">Chi tiết phiếu xuất</h5>

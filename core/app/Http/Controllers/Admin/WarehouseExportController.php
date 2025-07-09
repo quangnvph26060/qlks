@@ -112,14 +112,14 @@ class WarehouseExportController extends Controller
 
             $warehouse = WarehouseExport::query()->create([
                 'supplier_id'        => $request->get('supplier_id'),
-                'reference_code'     => $this->repository->generateRandomString(),
+                'reference_code'     => getCode('PX', 12, WarehouseExport::class, 'reference_code'),
                 'created_time'       => now(),
                 'payment_method_id'  => $request->get('payment_method_id'),
                 'total'              => 0,
                 'created_by' => (empty($request->get('employee_id')) || $request->get('employee_id') === 'null')
                     ? $request->get('employee_id')
                     : authAdmin()->id,
-
+                'note'               => $request->get('note'),
                 'subdomain'          => subdomain(),
                 'unit_code'          => unitCode(),
             ]);

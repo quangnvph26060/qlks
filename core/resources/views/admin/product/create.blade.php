@@ -10,22 +10,30 @@
                     <div class="card-body">
 
                         <div class="row">
-                            <div class="form-group mb-3 col-lg-6">
-                                <label for="name" class="form-label">Tên sản phẩm</label>
+                            <div class="form-group mb-3 col-lg-3">
+                                <label for="sku" class="form-label required">Mã sản phẩm</label>
+                                <input type="text" name="sku" id="sku" class="form-control"
+                                    placeholder="Mã sản phẩm" value="{{ $code ?? '' }}">
+                                <small></small>
+                            </div>
+                            <div class="form-group mb-3 col-lg-3">
+                                <label for="name" class="form-label required">Tên sản phẩm</label>
                                 <input type="text" name="name" id="name" class="form-control"
                                     placeholder="Nhập tên sản phẩm">
                                 <small></small>
                             </div>
                             <div class="form-group mb-3 col-lg-3">
-                                <label for="import_price" class="form-label">Giá nhập</label>
-                                <input type="text" id="import_price_display" class="form-control price-input" placeholder="Giá nhập">
+                                <label for="import_price" class="form-label required">Giá nhập</label>
+                                <input type="text" id="import_price_display" class="form-control price-input"
+                                    placeholder="Giá nhập">
                                 <input type="hidden" name="import_price" id="import_price">
                                 <small></small>
                             </div>
 
                             <div class="form-group mb-3 col-lg-3">
-                                <label for="selling_price" class="form-label">Giá bán</label>
-                                <input type="text" id="selling_price_display" class="form-control price-input" placeholder="Giá bán">
+                                <label for="selling_price" class="form-label required">Giá bán</label>
+                                <input type="text" id="selling_price_display" class="form-control price-input"
+                                    placeholder="Giá bán">
                                 <input type="hidden" name="selling_price" id="selling_price">
                                 <small></small>
                             </div>
@@ -39,22 +47,17 @@
                     </div>
                 </div>
                 <div class="card mt-3">
-                    <div class="card-header">
+                    {{-- <div class="card-header">
                         <h5 class="card-title">Tồn kho</h5>
-                    </div>
+                    </div> --}}
                     <div class="card-body">
                         <div class="row">
-                            <div class="form-group mb-3 col-lg-6">
+                            {{-- <div class="form-group mb-3 col-lg-6">
                                 <label for="stock" class="form-label">Tồn kho</label>
                                 <input type="text" name="stock" id="stock" class="form-control"
                                     placeholder="Tồn kho" value="0">
-                            </div>
-                            <div class="form-group mb-3 col-lg-6">
-                                <label for="sku" class="form-label">SKU</label>
-                                <input type="text" name="sku" id="sku" class="form-control"
-                                    placeholder="Mã sản phẩm" value="{{ $code  ?? ""}}">
-                                <small></small>
-                            </div>
+                            </div> --}}
+
                             <div class="form-group mb-3 col-lg-6">
                                 <div class="form-check form-switch">
                                     <input class="form-check-input" name="is_published" type="checkbox" id="is_published"
@@ -124,22 +127,22 @@
         </div>
 
         <div class="card mt-3 pb-5">
-                        <div class="card-body">
-                            <div class="row">
-                                <div class="col-md-12">
-                                    <div class="form-group mb-0">
-                                        <button class="btn btn--primary w-100 h-45" type="submit">@lang('Xác nhận')
-                                        </button>
-                                    </div>
-                                    <!-- <div class="form-group mb-0">
-
-                                    <a href="javascript:void(0)" class="btn btn-outline--secondary btn-block" id="btn-reset">Đặt lại</a>
-                                    </div> -->
-
-                                </div>
-                            </div>
+            <div class="card-body">
+                <div class="row">
+                    <div class="col-md-12">
+                        <div class="form-group mb-0">
+                            <button class="btn btn--primary w-100 h-45" type="submit">@lang('Xác nhận')
+                            </button>
                         </div>
+                        <!-- <div class="form-group mb-0">
+
+                                        <a href="javascript:void(0)" class="btn btn-outline--secondary btn-block" id="btn-reset">Đặt lại</a>
+                                        </div> -->
+
                     </div>
+                </div>
+            </div>
+        </div>
     </form>
     @push('breadcrumb-plugins')
         <a class="btn btn-sm btn-outline--danger" href="{{ route('admin.hotel.setup.product.all') }}"><i
@@ -206,7 +209,8 @@
                         success: function(response) {
                             console.log(response);
                             if (response.status) {
-                                window.location.href = "{{ route('admin.hotel.setup.product.all') }}";
+                                window.location.href =
+                                    "{{ route('admin.hotel.setup.product.all') }}";
                             } else {
                                 resetForm(true);
                                 $.each(response.errors, function(index, message) {
@@ -224,8 +228,8 @@
         })(jQuery);
     </script>
     <script>
-        document.querySelectorAll('.price-input').forEach(function (displayInput) {
-            displayInput.addEventListener('input', function () {
+        document.querySelectorAll('.price-input').forEach(function(displayInput) {
+            displayInput.addEventListener('input', function() {
                 const rawValue = displayInput.value.replace(/[^0-9]/g, ''); // Chỉ giữ số
                 const formatted = rawValue ? Number(rawValue).toLocaleString('en-US') : '';
 
@@ -240,7 +244,6 @@
             });
         });
     </script>
-
 @endpush
 
 @push('style')

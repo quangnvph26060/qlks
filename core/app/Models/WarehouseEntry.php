@@ -19,7 +19,8 @@ class WarehouseEntry extends Model
         'subdomain',
         'created_time',
         'payment_method_id',
-        'created_by'
+        'created_by',
+        'note',
     ];
 
     public function supplier()

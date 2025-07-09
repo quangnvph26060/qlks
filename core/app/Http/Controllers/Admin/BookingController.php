@@ -383,6 +383,7 @@ class BookingController extends Controller
 
             if ($request->method === 'change_room') {
                 $dates = $this->getDates($request->dateId, $request->dateId);
+                $pricesByDateAndRoomType = $this->getPricesBySetupPricingForMultipleDates($dates);
             } else {
                 $dates = $this->getDates($request->checkInDate, $request->checkOutDate);
                 $pricesByDateAndRoomType = $this->getPricesBySetupPricingForMultipleDates($dates);
@@ -463,17 +464,17 @@ class BookingController extends Controller
             }
 
             $newRecords = [];
-            $appliedPrice = null;
+         //   $appliedPrice = null;
             foreach ($emptyRooms as $room) {
                 foreach ($dates as $date) {
                     $status = 0;
                     $check_booked = "Trống";
                     $selectedStatus = null;
 
-                    $roomRecords = $filteredResults->filter(function ($item) use ($room, $date) {
+                    $roomRecords       = $filteredResults->filter(function ($item) use ($room, $date) {
                         $formattedDate = Carbon::parse($date)->format('Y-m-d');
-                        $startDate = Carbon::parse($item->start_date)->format('Y-m-d');
-                        $endDate = Carbon::parse($item->end_date)->format('Y-m-d');
+                        $startDate     = Carbon::parse($item->start_date)->format('Y-m-d');
+                        $endDate       = Carbon::parse($item->end_date)->format('Y-m-d');
 
                         $daysDifference = Carbon::parse($startDate)->diffInDays(Carbon::parse($endDate));
 
@@ -516,19 +517,19 @@ class BookingController extends Controller
                         "check_booked"  => $check_booked,
                         "status"        => $status,
                         "room_type"     => $room->roomType,
-                        "applied_price" => $appliedPrice,
+                        "applied_price" => $appliedPrice ?? "",
                     ];
                 }
             }
 
             $roomType = RoomType::active()->get();
-            $rooms = Room::active();
+            $rooms    = Room::active();
+          //  Log::info($newRecords);
             if ($request->method === 'change_room') {
                 $rooms = $rooms->where('id', $request->roomId)->first();
             } else {
                 $rooms = $rooms->get();
             }
-
             $newRecordsUpdated = [];
             foreach ($newRecords as &$item) {
                 $roomIdExists = false;
@@ -550,8 +551,8 @@ class BookingController extends Controller
 
             if ($request->method === 'change_room') {
                 return response()->json([
-                    'status' => 'success',
-                    'data'   => $newRecordsUpdated,
+                    'status'             => 'success',
+                    'data'               => $newRecordsUpdated,
                     'room_number'        => $rooms,
                     'bookingId'          => $request->bookingId,
                     'roomId'             => $request->roomId,

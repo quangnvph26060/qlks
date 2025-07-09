@@ -206,7 +206,7 @@
             "Quản lý kho"
         ],
         "title": "Quản lý kho",
-        "icon": "fas fa-boxes-stacked",
+        "icon": "menu-icon las la-warehouse",
         "menu_active": "admin.warehouse.*",
         "submenu": [
             {

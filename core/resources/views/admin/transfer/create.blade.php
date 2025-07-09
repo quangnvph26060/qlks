@@ -19,19 +19,7 @@
         </div>
     </div>
 </div> --}}
-<div class="row">
-    <p class="add-room-product" style="width: 185px;">
-        <svg xmlns="http://www.w3.org/2000/svg" width="20" height="20" viewBox="0 0 24 24">
-            <g fill="currentColor" fill-rule="evenodd" clip-rule="evenodd">
-                <path
-                    d="M2 12C2 6.477 6.477 2 12 2s10 4.477 10 10s-4.477 10-10 10S2 17.523 2 12Zm10-8a8 8 0 1 0 0 16a8 8 0 0 0 0-16Z">
-                </path>
-                <path d="M13 7a1 1 0 1 0-2 0v4H7a1 1 0 1 0 0 2h4v4a1 1 0 1 0 2 0v-4h4a1 1 0 1 0 0-2h-4V7Z"></path>
-            </g>
-        </svg>
-        Chọn sản phẩm
-    </p>
-</div>
+
 <form action="" method="post" id="warehouseForm">
     {{-- Nhà cung cấp và thanh toán trên cùng hàng --}}
     <div class="row mt-3 mb-4">
@@ -45,6 +33,7 @@
                             <option value="{{ $id }}">{{ $name }}</option>
                         @endforeach
                     </select>
+                       <textarea name="note" id="note" cols="10" rows="3" class="mt-1" placeholder="Ghi chú"></textarea>
                 </div>
             </div>
         </div>
@@ -77,7 +66,24 @@
         <div class="col-12">
             <div class="card">
                 <div class="card-header">
-                    <h5 class="card-title">Sản phẩm</h5>
+                    <h5 class="card-title">
+                        <div class="row">
+                            <p class="add-room-product" style="width: 185px;">
+                                <svg xmlns="http://www.w3.org/2000/svg" width="20" height="20"
+                                    viewBox="0 0 24 24">
+                                    <g fill="currentColor" fill-rule="evenodd" clip-rule="evenodd">
+                                        <path
+                                            d="M2 12C2 6.477 6.477 2 12 2s10 4.477 10 10s-4.477 10-10 10S2 17.523 2 12Zm10-8a8 8 0 1 0 0 16a8 8 0 0 0 0-16Z">
+                                        </path>
+                                        <path
+                                            d="M13 7a1 1 0 1 0-2 0v4H7a1 1 0 1 0 0 2h4v4a1 1 0 1 0 2 0v-4h4a1 1 0 1 0 0-2h-4V7Z">
+                                        </path>
+                                    </g>
+                                </svg>
+                                Chọn sản phẩm
+                            </p>
+                        </div>
+                    </h5>
                 </div>
                 <div class="card-body">
                     <div class="d-flex fw-bold border-bottom pb-2 mb-2 justify-content-between"
@@ -87,6 +93,7 @@
                         <div style="width: 120px;">Từ kho</div>
                         <div style="width: 120px;">Đến kho</div>
                         <div style="width: 130px;">Số lượng</div>
+                        <div style="width: 130px;">Thành tiền</div>
                         <div style="width: 37px;">Xóa</div>
                     </div>
                     <div id="selected-product-add" style="height: 250px; overflow-y: auto;">
@@ -172,7 +179,7 @@
                         const productId = $(this).data('id');
                         const quantity = $(this).find('input[name^="products"]').val();
                         const warehouseIdTo = $(this).find('select[name^="warehouses_to"]')
-                        .val();
+                            .val();
                         const warehouseIdFrom = $(this).find('select[name^="warehouses_from"]')
                             .val();
                         const price = $(this).find('.price').data('price');
@@ -187,7 +194,7 @@
                             quantity: parseInt(quantity),
                             warehouse_id: parseInt(warehouseIdTo), // 👈 Đây là kho đích
                             warehouse_from_id: parseInt(
-                            warehouseIdFrom), // ✅ Đây là kho nguồn mới thêm vào
+                                warehouseIdFrom), // ✅ Đây là kho nguồn mới thêm vào
                             price: parseFloat(price)
                         });
                     });
@@ -213,13 +220,15 @@
                     formData.append('supplier_id', $('#supplierSelect').val());
                     formData.append('employee_id', $('#employeeSelect').val());
                     formData.append('payment_method_id', $('#paymentMethod').val());
+                    formData.append('note', $('#note').val());
 
                     // Thêm danh sách sản phẩm
                     products.forEach((item, index) => {
                         formData.append(`products[${index}][product_id]`, item.product_id);
                         formData.append(`products[${index}][quantity]`, item.quantity);
                         formData.append(`products[${index}][warehouse_id]`, item.warehouse_id);
-                         formData.append(`products[${index}][warehouse_from_id]`, item.warehouse_from_id); // ✅ kho nguồn
+                        formData.append(`products[${index}][warehouse_from_id]`, item
+                            .warehouse_from_id); // ✅ kho nguồn
                         formData.append(`products[${index}][price]`, item.price);
                     });
                     $.ajax({
@@ -279,6 +288,9 @@
                     let warehouseOptions = warehouse.map((w, index) =>
                         `<option value="${w.id}" ${index === 0 ? 'selected' : ''}>${w.name}</option>`
                     ).join('');
+                       let warehouseFromOptions = warehouse.map((w, index) =>
+                        `<option value="${w.id}" ${index === 1 ? 'selected' : ''}>${w.name}</option>`
+                    ).join('');
                     // Tạo HTML cho sản phẩm đã chọn
                     const selectedProductHtml = `
                         <div class="selected-product d-flex justify-content-between align-items-center mb-2 py-2 border-bottom" data-id="${productId}">
@@ -294,7 +306,7 @@
                             </select>
                             <select name="warehouses_from[${productId}]" class="form-select form-select-sm me-3 flex-shrink-0" style="width: 120px;">
                                 <option selected disabled>Chọn kho</option>
-                                ${warehouseOptions}
+                                ${warehouseFromOptions}
                             </select>
                             <div class="quantity d-flex align-items-center me-3 flex-shrink-0" style="width: 130px;">
                                 <button type="button" class="btn btn-outline-secondary btn-sm decrease">-</button>
@@ -302,7 +314,9 @@
                                     style="width: 58px; text-align: center; height: 30px;">
                                 <button type="button" class="btn btn-outline-secondary btn-sm increase">+</button>
                             </div>
+                               <div class="product-price text-success me-3 flex-shrink-0 price-product" style="width: 100px;">
 
+                            </div>
                             <button class="btn btn-outline-danger btn-sm remove-product flex-shrink-0" style="width: 30px;">X</button>
                         </div>
                     `;
@@ -347,6 +361,9 @@
 
                         const quantity = parseInt($(this).find('input[type="number"]').val());
                         total += price * quantity;
+                        const priceProduct = price * quantity;
+                        $(this).find('.price-product').text(priceProduct.toLocaleString('vi-VN') +
+                            ' VND');
                     });
 
                     $('.total-price').text(total.toLocaleString('vi-VN') + ' VND');

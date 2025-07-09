@@ -43,6 +43,7 @@
                         </option>
                     @endforeach
                 </select>
+                <textarea name="note" id="note" cols="10" rows="3" class="mt-1" placeholder="Ghi chú">{{ $warehouse->note }}</textarea>
             </div>
         </div>
     </div>
@@ -104,7 +105,7 @@
                 <div class="col-12">
                     <div class="card">
                         <div class="card-header d-flex justify-content-between">
-                            <h5 class="card-title">Danh sách sản phẩm</h5>
+                            <h5 class="card-title"></h5>
                             <div id="result-btn">
                                 @if ($warehouse->status == 1)
                                     <p class="badge badge--success">Hoàn thành</p>
@@ -127,8 +128,9 @@
                                 style="padding-left: 4px;">
                                 <div style="width: 150px;">Sản phẩm</div>
                                 <div style="width: 100px;">Giá</div>
-                                <div style="width: 120px;">Kho</div>
-                                <div style="width: 130px;">Số lượng</div>
+                                <div style="width: 120px;text-align: center">Kho</div>
+                                <div style="width: 130px;text-align: center">Số lượng</div>
+                                <div style="width: 130px;">Thành tiền</div>
                                 <div style="width: 37px;">Xóa</div>
                             </div>
                             <div id="selected-product-edit" style="height: 250px; overflow-y: auto;">
@@ -141,7 +143,7 @@
 
                                         <div class="product-price text-success me-3 flex-shrink-0 price-edit"
                                             style="width: 100px;" data-price="{{ $item->price }}">
-                                            {{ number_format($item->price, 0, ',', '.') }} VNĐ
+                                            {{ number_format($item->price, 0, ',', '.') }}
                                         </div>
 
                                         <select name="warehouses[{{ $item->product_id }}]"
@@ -165,11 +167,14 @@
                                             <button type="button"
                                                 class="btn btn-outline-secondary btn-sm increase-edit">+</button>
                                         </div>
+                                       <div class="product-price text-success me-3 flex-shrink-0 price-product" style="width: 100px;">
+                                            {{ number_format($item->quantity * $item->price, 0, ',', '.') }}
+                                        </div>
 
                                         <button class="btn btn-outline-danger btn-sm remove-product-edit flex-shrink-0"
-                                            style="width: 30px;" data-id="{{ $item->id }}" 
+                                            style="width: 30px;" data-id="{{ $item->id }}"
                                             data-url="{{ route('admin.warehouse.destroy.warehouse.item', $item->id) }}"
-                                            {{$warehouse->status == 1 ? 'disabled' :""}}>X</button>
+                                            {{ $warehouse->status == 1 ? 'disabled' : '' }}>X</button>
                                     </div>
                                 @endforeach
                             </div>
@@ -185,7 +190,8 @@
                 <div class="fw-bold">Tổng cộng: <span class="total-price-edit text-success">
                         {{ number_format($warehouse->total, 0, ',', '.') }} VNĐ</span></div>
             </div>
-            <button class="btn btn-primary confirmPayment-edit" type="submit" id="confirmPayment-edit" data-id="{{$warehouse->id}}" {{$warehouse->status == 1 ? 'disabled' :""}}>Lưu</button>
+            <button class="btn btn-primary confirmPayment-edit" type="submit" id="confirmPayment-edit"
+                data-id="{{ $warehouse->id }}" {{ $warehouse->status == 1 ? 'disabled' : '' }}>Lưu</button>
         </div>
     </div>
 </div>
@@ -235,6 +241,8 @@
 
                         const quantity = parseInt($(this).find('input[type="number"]').val());
                         total += price * quantity;
+                        // const priceProduct = price * quantity;
+                        // $(this).find('.price-product').text(priceProduct.toLocaleString('vi-VN') + ' VND');
                     });
 
                     $('.total-price-edit').text(total.toLocaleString('vi-VN') + ' VND');

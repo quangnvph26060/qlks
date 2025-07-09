@@ -32,7 +32,7 @@
                                         <th>@lang('Hành động')</th>
                                         <th style="width:20px">STT</th>
                                         <th>@lang('Mã sản phẩm')</th>
-                                        <th style="width:90px">@lang('Ảnh')</th>
+                                        {{-- <th style="width:90px">@lang('Ảnh')</th> --}}
                                         <th>@lang('Tên sản phẩm')</th>
                                         <th>@lang('Giá nhập')</th>
                                         <th>@lang('Giá bán')</th>
@@ -86,19 +86,19 @@
                                                 {{ $stt }}
                                             </td>
                                             <td data-label="@lang('Mã')">{{ $product->sku }}</td>
-                                            <td data-label="@lang('Ảnh')" style="text-align:center">
+                                            {{-- <td data-label="@lang('Ảnh')" style="text-align:center">
                                                 @if ($product->image_path)
                                                     <i class="fa fa-check" style="color:green;text-align: center"></i>
                                                 @else
                                                     <i class="fa fa-close" style="color:red;text-align: center"></i>
                                                 @endif
-                                            </td>
+                                            </td> --}}
                                             <td data-label="@lang('Tên sản phẩm')">
                                                 <p id="ellipsis">{{ $product->name ?? '' }}</p>
                                             </td>
-                                            <td data-label="@lang('Giá nhập')">{{ showAmount($product->import_price) }}
+                                            <td data-label="@lang('Giá nhập')"  style="text-align:right">{{ showAmount($product->import_price) }}
                                             </td>
-                                            <td data-label="@lang('Giá bán')">{{ showAmount($product->selling_price) }}
+                                            <td data-label="@lang('Giá bán')"  style="text-align:right">{{ showAmount($product->selling_price) }}
                                             </td>
                                             <td style="text-align:right" data-label="@lang('Tồn kho')">
                                                 {{ $product->stock ?? 0 }}</td>

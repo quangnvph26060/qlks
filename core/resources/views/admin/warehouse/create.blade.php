@@ -19,22 +19,10 @@
         </div>
     </div>
 </div> --}}
-<div class="row">
-    <p class="add-room-product" style="width: 185px;">
-        <svg xmlns="http://www.w3.org/2000/svg" width="20" height="20" viewBox="0 0 24 24">
-            <g fill="currentColor" fill-rule="evenodd" clip-rule="evenodd">
-                <path
-                    d="M2 12C2 6.477 6.477 2 12 2s10 4.477 10 10s-4.477 10-10 10S2 17.523 2 12Zm10-8a8 8 0 1 0 0 16a8 8 0 0 0 0-16Z">
-                </path>
-                <path d="M13 7a1 1 0 1 0-2 0v4H7a1 1 0 1 0 0 2h4v4a1 1 0 1 0 2 0v-4h4a1 1 0 1 0 0-2h-4V7Z"></path>
-            </g>
-        </svg>
-        Chọn sản phẩm
-    </p>
-</div>
+
 <form action="" method="post" id="warehouseForm">
     {{-- Nhà cung cấp và thanh toán trên cùng hàng --}}
-    <div class="row mt-3 mb-4">
+    <div class="row">
         <div class="col-md-6">
             <div class="card h-100">
 
@@ -45,13 +33,14 @@
                             <option value="{{ $id }}">{{ $name }}</option>
                         @endforeach
                     </select>
+                 <textarea name="note" id="note" cols="10" rows="3" class="mt-1" placeholder="Ghi chú"></textarea>
                 </div>
             </div>
         </div>
         <div class="col-md-6">
             <div class="card h-100">
                 <div class="card-body">
-                  
+
                     <select class="form-select mb-3" id="employeeSelect" name="employee_id" aria-label="Chọn nhân viên">
                         <option selected disabled>Chọn nhân viên</option>
                         @foreach ($admin as $id => $name)
@@ -77,15 +66,30 @@
         <div class="col-12">
             <div class="card">
                 <div class="card-header">
-                    <h5 class="card-title">Sản phẩm</h5>
+                    <div class="row">
+                        <p class="add-room-product" style="width: 185px;">
+                            <svg xmlns="http://www.w3.org/2000/svg" width="20" height="20" viewBox="0 0 24 24">
+                                <g fill="currentColor" fill-rule="evenodd" clip-rule="evenodd">
+                                    <path
+                                        d="M2 12C2 6.477 6.477 2 12 2s10 4.477 10 10s-4.477 10-10 10S2 17.523 2 12Zm10-8a8 8 0 1 0 0 16a8 8 0 0 0 0-16Z">
+                                    </path>
+                                    <path
+                                        d="M13 7a1 1 0 1 0-2 0v4H7a1 1 0 1 0 0 2h4v4a1 1 0 1 0 2 0v-4h4a1 1 0 1 0 0-2h-4V7Z">
+                                    </path>
+                                </g>
+                            </svg>
+                            Chọn sản phẩm
+                        </p>
+                    </div>
                 </div>
                 <div class="card-body">
                     <div class="d-flex fw-bold border-bottom pb-2 mb-2 justify-content-between"
                         style="padding-left: 4px;">
                         <div style="width: 150px;">Sản phẩm</div>
                         <div style="width: 100px;">Giá</div>
-                        <div style="width: 120px;">Kho</div>
-                        <div style="width: 130px;">Số lượng</div>
+                        <div style="width: 120px;text-align: center">Kho</div>
+                        <div style="width: 130px;text-align: center">Số lượng</div>
+                        <div style="width: 130px;">Thành tiền</div>
                         <div style="width: 37px;">Xóa</div>
                     </div>
                     <div id="selected-product-add" style="height: 250px; overflow-y: auto;">
@@ -100,7 +104,7 @@
     <div class="row mt-3">
         <div class="col-12 d-flex justify-content-end align-items-end gap-3 flex-column">
             <div>
-                <div class="fw-bold">Tổng cộng: <span class="total-price text-success"> 0 VND</span></div>
+                <div class="fw-bold">Tổng tiền: <span class="total-price text-success"> 0 VND</span></div>
             </div>
             <button class="btn btn-primary" type="submit" id="confirmPayment">Lưu</button>
         </div>
@@ -129,7 +133,6 @@
                                     <td>{{ $product->sku }}</td>
                                     <td>{{ $product->name }}</td>
                                     <td>{{ number_format($product->import_price, 0, ',', '.') }} VND</td>
-
                                 </tr>
                             @endforeach
                         </tbody>
@@ -206,6 +209,7 @@
                     formData.append('supplier_id', $('#supplierSelect').val());
                     formData.append('employee_id', $('#employeeSelect').val());
                     formData.append('payment_method_id', $('#paymentMethod').val());
+                    formData.append('note', $('#note').val());
 
                     // Thêm danh sách sản phẩm
                     products.forEach((item, index) => {
@@ -276,7 +280,8 @@
                     // Tạo HTML cho sản phẩm đã chọn
                     const selectedProductHtml = `
                         <div class="selected-product d-flex justify-content-between align-items-center mb-2 py-2 border-bottom" data-id="${productId}">
-                            <div class="product-name fw-bold me-3 flex-shrink-0" style="width: 150px;">${product.name}</div>
+                        <div class="product-name fw-bold me-3 flex-shrink-0 text-truncate" style="width: 150px; max-width: 150px; overflow: hidden; white-space: nowrap;">${product.name}</div>
+
                             
                             <div class="product-price text-success me-3 flex-shrink-0 price" style="width: 100px;" data-price="${product.import_price}">
                                ${Number(product.import_price).toLocaleString('vi-VN')}
@@ -293,7 +298,9 @@
                                     style="width: 58px; text-align: center; height: 30px;">
                                 <button type="button" class="btn btn-outline-secondary btn-sm increase">+</button>
                             </div>
+                             <div class="product-price text-success me-3 flex-shrink-0 price-product" style="width: 100px;">
 
+                            </div>
                             <button class="btn btn-outline-danger btn-sm remove-product flex-shrink-0" style="width: 30px;">X</button>
                         </div>
                     `;
@@ -335,9 +342,10 @@
                         );
 
 
-
                         const quantity = parseInt($(this).find('input[type="number"]').val());
                         total += price * quantity;
+                        const priceProduct = price * quantity;
+                        $(this).find('.price-product').text(priceProduct.toLocaleString('vi-VN') + ' VND');
                     });
 
                     $('.total-price').text(total.toLocaleString('vi-VN') + ' VND');

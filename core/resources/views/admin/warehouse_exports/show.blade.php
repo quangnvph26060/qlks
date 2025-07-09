@@ -42,7 +42,8 @@
                             {{ $name }}
                         </option>
                     @endforeach
-                </select>
+                </select>  
+                <textarea name="note" id="note" cols="10" rows="3" class="mt-1" placeholder="Ghi chú">{{ $warehouse->note }}</textarea>
             </div>
         </div>
     </div>
@@ -104,7 +105,7 @@
                 <div class="col-12">
                     <div class="card">
                         <div class="card-header d-flex justify-content-between">
-                            <h5 class="card-title">Danh sách sản phẩm</h5>
+                            <h5 class="card-title"></h5>
                             <div id="result-btn">
                                 @if ($warehouse->status == 1)
                                     <p class="badge badge--success">Hoàn thành</p>
@@ -125,10 +126,11 @@
                         <div class="card-body">
                             <div class="d-flex fw-bold border-bottom pb-2 mb-2 justify-content-between"
                                 style="padding-left: 4px;">
-                                <div style="width: 150px;">Sản phẩm</div>
+                                 <div style="width: 150px;">Sản phẩm</div>
                                 <div style="width: 100px;">Giá</div>
-                                <div style="width: 120px;">Kho</div>
-                                <div style="width: 130px;">Số lượng</div>
+                                <div style="width: 120px;text-align: center">Kho</div>
+                                <div style="width: 130px;text-align: center">Số lượng</div>
+                                <div style="width: 130px;">Thành tiền</div>
                                 <div style="width: 37px;">Xóa</div>
                             </div>
                             <div id="selected-product-edit" style="height: 250px; overflow-y: auto;">
@@ -165,7 +167,9 @@
                                             <button type="button"
                                                 class="btn btn-outline-secondary btn-sm increase-edit">+</button>
                                         </div>
-
+                                         <div class="product-price text-success me-3 flex-shrink-0 price-product" style="width: 100px;">
+                                            {{ number_format($item->quantity * $item->price, 0, ',', '.') }}
+                                        </div>
                                         <button class="btn btn-outline-danger btn-sm remove-product-edit flex-shrink-0"
                                             style="width: 30px;" data-id="{{ $item->id }}" 
                                             data-url="{{ route('admin.warehouse.export.destroy.warehouse.item', $item->id) }}"

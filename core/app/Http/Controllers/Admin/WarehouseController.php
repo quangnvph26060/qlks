@@ -113,13 +113,14 @@ class WarehouseController extends Controller
 
             $warehouse = WarehouseEntry::query()->create([
                 'supplier_id'        => $request->get('supplier_id'),
-                'reference_code'     => $this->repository->generateRandomString(),
+                'reference_code'     => getCode('PN', 12, WarehouseEntry::class, 'reference_code'),
                 'created_time'       => now(),
                 'payment_method_id'  => $request->get('payment_method_id'),
                 'total'              => 0,
                 'created_by' => (empty($request->get('employee_id')) || $request->get('employee_id') === 'null')
                     ? $request->get('employee_id')
                     : authAdmin()->id,
+                'note'               => $request->get('note'),
 
                 'subdomain'          => subdomain(),
                 'unit_code'          => unitCode(),
@@ -186,7 +187,7 @@ class WarehouseController extends Controller
         $suppliers = Supplier::query()->pluck('name', 'id');
         $warehouse = WarehouseEntry::query()->with('supplier', 'returns', 'entries.product')->find($id);
         $warehouses  = Warehouse::active()->get();
-        $admin     = Admin::where('unit_code', unitCode())->where('subdomain', subdomain())->get();
+        $admin       = Admin::where('unit_code', unitCode())->where('subdomain', subdomain())->get();
         if (!$warehouse) {
             abort(404);
         }

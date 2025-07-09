@@ -43,6 +43,7 @@
                         </option>
                     @endforeach
                 </select>
+                  <textarea name="note" id="note" cols="10" rows="3" class="mt-1" placeholder="Ghi chú">{{ $warehouse->note }}</textarea>
             </div>
         </div>
     </div>
@@ -133,6 +134,7 @@
                                 <div style="width: 120px;">Từ kho</div>
                                 <div style="width: 120px;">Đến kho</div>
                                 <div style="width: 130px;">Số lượng</div>
+                                   <div style="width: 130px;">Thành tiền</div>
                                 <div style="width: 37px;">Xóa</div>
                             </div>
                             <div id="selected-product-edit" style="height: 250px; overflow-y: auto;">
@@ -179,7 +181,9 @@
                                             <button type="button"
                                                 class="btn btn-outline-secondary btn-sm increase-edit">+</button>
                                         </div>
-
+                                        <div class="product-price text-success me-3 flex-shrink-0 price-product" style="width: 100px;">
+                                            {{ number_format($item->quantity * $item->price, 0, ',', '.') }}
+                                        </div>
                                         <button class="btn btn-outline-danger btn-sm remove-product-edit flex-shrink-0"
                                             style="width: 30px;" data-id="{{ $item->id }}" 
                                             data-url="{{ route('admin.warehouse.export.destroy.warehouse.item', $item->id) }}"
