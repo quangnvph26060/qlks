@@ -48,6 +48,9 @@
             {{-- <a class="btn btn-sm btn-primary" href="{{ route('admin.warehouse.create') }}"><i
                     class="las la-plus"></i></a> --}}
             <!-- Modal Nhập kho -->
+            <button type="button" class="btn btn-primary btn-sm" onclick="location.reload();">
+    <i class="fa fa-repeat"></i>
+</button>
             <button class="btn btn-sm btn-primary" data-bs-toggle="modal" data-bs-target="#warehouseexportModaladd">
                 <i class="las la-plus"></i>
             </button>

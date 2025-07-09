@@ -100,9 +100,16 @@
 
 @can('')
     @push('breadcrumb-plugins')
-        <a class="btn btn-sm btn-primary" id="openSupplierModal">
-            <i class="las la-plus"></i>
-        </a>
+        <div class="d-flex gap-2">
+          <button type="button" class="btn btn-primary btn-sm" onclick="location.reload();">
+    <i class="fa fa-repeat"></i>
+</button>
+
+
+            <a class="btn btn-sm btn-primary" id="openSupplierModal">
+                <i class="las la-plus"></i>
+            </a>
+        </div>
     @endpush
 @endcan
 
@@ -350,7 +357,16 @@
 @push('style')
     <script src="{{ asset('assets/admin/js/vendor/sweetalert2@11.js') }}"></script>
 
-    <style>
+    <style scoped>
+        .btn-sm.btn-primary {
+            min-width: 30px;
+            height: 30px;
+            padding: 0;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+        }
+
         .btn-toggle {
             border: 1px solid #007bff;
             background-color: #007bff;
