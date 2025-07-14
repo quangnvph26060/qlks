@@ -51,7 +51,7 @@
     </style>
 </head>
 <body>
-    <h2>Phiếu xuất kho #{{ $warehouse->reference_code }}</h2>
+    <h2>Phiếu nhập kho #{{ $warehouse->reference_code }}</h2>
 
     <div class="info">
         <p><strong>Ngày:</strong> {{ \Carbon\Carbon::parse($warehouse->created_time)->format('d/m/Y H:i') }}</p>
@@ -82,7 +82,7 @@
         </thead>
         <tbody>
             @php $total = 0; @endphp
-            @foreach ($warehouse->entriesexport as $item)
+            @foreach ($warehouse->entries as $item)
                 @php
                     $amount = $item->quantity * $item->price;
                     $total += $amount;

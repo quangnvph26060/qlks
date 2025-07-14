@@ -35,7 +35,10 @@
                     </table>
                 </div> --}}
             <div class="card-body">
-                <select class="form-select" id="supplierSelect" name="supplier_id" aria-label="Chọn nhà cung cấp">
+                <input type="text" class="form-control text-uppercase" id="warehouse_code" placeholder="Nhập mã phiếu"
+                    name="warehouse_code" value="{{ $warehouse->reference_code }}"
+                    style="height: 40px; text-transform: uppercase;">
+                <select class="form-select mt-1" id="supplierSelect" name="supplier_id" aria-label="Chọn nhà cung cấp">
                     <option selected disabled>--- Chọn nhà cung cấp ---</option>
                     @foreach ($suppliers as $id => $name)
                         <option value="{{ $id }}" {{ $id == $warehouse->supplier_id ? 'selected' : '' }}>
@@ -73,14 +76,21 @@
                         </thead>
                     </table> --}}
             <div class="card-body">
-                <select class="form-select mb-3" id="employeeSelect" name="employee_id" aria-label="Chọn nhân viên">
+                {{-- <select class="form-select mb-3" id="employeeSelect" name="employee_id" aria-label="Chọn nhân viên">
                     <option selected disabled>Chọn nhân viên</option>
                     @foreach ($admin as $id => $name)
                         <option value="{{ $id }}" {{ $id == $warehouse->created_by ? 'selected' : '' }}>
                             {{ $name->name }}</option>
                     @endforeach
-                </select>
-                <select class="form-select" id="paymentMethod" name="payment_method_id"
+                </select> --}}
+                @php
+                    use Carbon\Carbon;
+                @endphp
+
+                <input type="date" class="form-control" id="dateWarehouse" name="dateWarehouse"
+                    value="{{ $warehouse->created_time ? Carbon::parse($warehouse->created_time)->format('Y-m-d') : date('Y-m-d') }}"
+                    style="height:40px">
+                <select class="form-select mt-1" id="paymentMethod" name="payment_method_id"
                     aria-label="Chọn phương thức thanh toán">
                     <option disabled {{ !$warehouse->payment_method_id ? 'selected' : '' }}>Chọn phương thức thanh toán
                     </option>
@@ -127,10 +137,10 @@
                             <div class="d-flex fw-bold border-bottom pb-2 mb-2 justify-content-between"
                                 style="padding-left: 4px;">
                                 <div style="width: 150px;">Sản phẩm</div>
-                                <div style="width: 100px;">Giá</div>
-                                <div style="width: 120px;text-align: center">Kho</div>
                                 <div style="width: 130px;text-align: center">Số lượng</div>
+                                <div style="width: 100px;">Giá</div>
                                 <div style="width: 130px;">Thành tiền</div>
+                                <div style="width: 120px;text-align: center">Kho</div>
                                 <div style="width: 37px;">Xóa</div>
                             </div>
                             <div id="selected-product-edit" style="height: 250px; overflow-y: auto;">
@@ -140,12 +150,24 @@
                                         <div class="product-name fw-bold me-3 flex-shrink-0" style="width: 150px;"
                                             data-id="{{ $item->product_id }}">{{ $item->product->name }}
                                         </div>
-
+                                        <div class="quantity d-flex align-items-center me-3 flex-shrink-0"
+                                            style="width: 130px;">
+                                            {{-- <button type="button"
+                                                class="btn btn-outline-secondary btn-sm decrease-edit">-</button> --}}
+                                            <input type="number" class="form-control mx-2 handled-focus-edit"
+                                                name="products[{{ $item->product_id }}]" value="{{ $item->quantity }}"
+                                                min="1" style="width: 80px; text-align: center; height: 30px;">
+                                            {{-- <button type="button"
+                                                class="btn btn-outline-secondary btn-sm increase-edit">+</button> --}}
+                                        </div>
                                         <div class="product-price text-success me-3 flex-shrink-0 price-edit"
                                             style="width: 100px;" data-price="{{ $item->price }}">
                                             {{ number_format($item->price, 0, ',', '.') }}
                                         </div>
-
+                                        <div class="product-price text-success me-3 flex-shrink-0 price-product"
+                                            style="width: 100px;">
+                                            {{ number_format($item->quantity * $item->price, 0, ',', '.') }}
+                                        </div>
                                         <select name="warehouses[{{ $item->product_id }}]"
                                             class="form-select form-select-sm me-3 flex-shrink-0" style="width: 120px;">
                                             <option selected="" disabled="">Chọn kho</option>
@@ -157,24 +179,13 @@
 
                                         </select>
 
-                                        <div class="quantity d-flex align-items-center me-3 flex-shrink-0"
-                                            style="width: 130px;">
-                                            <button type="button"
-                                                class="btn btn-outline-secondary btn-sm decrease-edit">-</button>
-                                            <input type="number" class="form-control mx-2 handled-focus"
-                                                name="products[{{ $item->product_id }}]" value="{{ $item->quantity }}"
-                                                min="1" style="width: 58px; text-align: center; height: 30px;">
-                                            <button type="button"
-                                                class="btn btn-outline-secondary btn-sm increase-edit">+</button>
-                                        </div>
-                                       <div class="product-price text-success me-3 flex-shrink-0 price-product" style="width: 100px;">
-                                            {{ number_format($item->quantity * $item->price, 0, ',', '.') }}
-                                        </div>
+
+
 
                                         <button class="btn btn-outline-danger btn-sm remove-product-edit flex-shrink-0"
                                             style="width: 30px;" data-id="{{ $item->id }}"
                                             data-url="{{ route('admin.warehouse.destroy.warehouse.item', $item->id) }}"
-                                            {{ $warehouse->status == 1 ? 'disabled' : '' }}>X</button>
+                                            >X</button>
                                     </div>
                                 @endforeach
                             </div>
@@ -191,7 +202,7 @@
                         {{ number_format($warehouse->total, 0, ',', '.') }} VNĐ</span></div>
             </div>
             <button class="btn btn-primary confirmPayment-edit" type="submit" id="confirmPayment-edit"
-                data-id="{{ $warehouse->id }}" {{ $warehouse->status == 1 ? 'disabled' : '' }}>Lưu</button>
+                data-id="{{ $warehouse->id }}" >Lưu</button>
         </div>
     </div>
 </div>
@@ -215,14 +226,16 @@
                 });
                 var warehouse = @json($warehouse);
                 // Cập nhật tổng tiền khi người dùng nhập số trực tiếp
-                $(document).on("blur", ".handled-focus", function() {
+                $(document).on("blur", ".handled-focus-edit", function() {
                     const input = $(this);
                     let value = parseInt(input.val());
+                    
                     if (value < 1) {
                         input.val(1); // Đảm bảo giá trị tối thiểu là 1
                     }
                     updateTotal();
-                });
+                }); 
+             
 
                 // Hàm cập nhật tổng tiền
                 function updateTotal() {

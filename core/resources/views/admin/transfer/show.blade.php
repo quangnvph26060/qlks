@@ -35,15 +35,19 @@
                     </table>
                 </div> --}}
             <div class="card-body">
-                <select class="form-select" id="supplierSelect" name="supplier_id" aria-label="Chọn nhà cung cấp">
+                 <input type="text" class="form-control text-uppercase" id="warehouse_code" placeholder="Nhập mã phiếu"
+                    name="warehouse_code" value="{{ $warehouse->reference_code }}"
+                    style="height: 40px; text-transform: uppercase;">
+                <select class="form-select mt-1" id="supplierSelect" name="supplier_id" aria-label="Chọn nhà cung cấp">
                     <option selected disabled>--- Chọn nhà cung cấp ---</option>
                     @foreach ($suppliers as $id => $name)
-                        <option value="{{ $id }}" {{ $id == $warehouse->export->supplier_id ? 'selected' : '' }}>
+                        <option value="{{ $id }}"
+                            {{ $id == $warehouse->export->supplier_id ? 'selected' : '' }}>
                             {{ $name }}
                         </option>
                     @endforeach
                 </select>
-                  <textarea name="note" id="note" cols="10" rows="3" class="mt-1" placeholder="Ghi chú">{{ $warehouse->note }}</textarea>
+                <textarea name="note" id="note" cols="10" rows="3" class="mt-1" placeholder="Ghi chú">{{ $warehouse->note }}</textarea>
             </div>
         </div>
     </div>
@@ -73,23 +77,31 @@
                         </thead>
                     </table> --}}
             <div class="card-body">
-                {{-- @php
-                    echo $warehouse;
-                @endphp --}}
-                <select class="form-select mb-3" id="employeeSelect" name="employee_id" aria-label="Chọn nhân viên">
+              
+                {{-- <select class="form-select mb-3" id="employeeSelect" name="employee_id" aria-label="Chọn nhân viên">
                     <option selected disabled>Chọn nhân viên</option>
                     @foreach ($admin as $item)
                         <option value="{{ $item->id }}" {{ $item->id == $warehouse->created_by ? 'selected' : '' }}>
                             {{ $item->name }}</option>
                     @endforeach
-                </select>
-                <select class="form-select" id="paymentMethod" name="payment_method_id"
+                </select> --}}
+                 @php
+                    use Carbon\Carbon;
+                @endphp
+
+                <input type="date" class="form-control" id="dateWarehouse" name="dateWarehouse"
+                    value="{{ $warehouse->transfer_date ? Carbon::parse($warehouse->transfer_date)->format('Y-m-d') : date('Y-m-d') }}"
+                    style="height:40px">
+                <select class="form-select mt-1" id="paymentMethod" name="payment_method_id"
                     aria-label="Chọn phương thức thanh toán">
-                    <option disabled {{ !$warehouse->export->payment_method_id ? 'selected' : '' }}>Chọn phương thức thanh toán
+                    <option disabled {{ !$warehouse->export->payment_method_id ? 'selected' : '' }}>Chọn phương thức
+                        thanh toán
                     </option>
-                    <option value="1" {{ $warehouse->export->payment_method_id == 1 ? 'selected' : '' }}>Thanh toán khi
+                    <option value="1" {{ $warehouse->export->payment_method_id == 1 ? 'selected' : '' }}>Thanh toán
+                        khi
                         nhận hàng</option>
-                    <option value="2" {{ $warehouse->export->payment_method_id == 2 ? 'selected' : '' }}>Thanh toán chuyển
+                    <option value="2" {{ $warehouse->export->payment_method_id == 2 ? 'selected' : '' }}>Thanh toán
+                        chuyển
                         khoản</option>
                 </select>
 
@@ -115,12 +127,12 @@
                                 @elseif($sl == 0)
                                     <p class="badge badge--danger">Đã hủy</p>
                                 @elseif($sl > 0)
-                                    <form action="{{ route('admin.warehouse.transfer.update', $warehouse->id) }}" method="POST"
-                                        style="display: inline;">
+                                    <form action="{{ route('admin.warehouse.transfer.update', $warehouse->id) }}"
+                                        method="POST" style="display: inline;">
                                         @csrf
                                         @method('PUT')
                                         <button type="submit" class="btn btn-sm btn-outline--primary btn-return">
-                                            Xác nhận đơn hàng 
+                                            Xác nhận đơn hàng
                                         </button>
                                     </form>
                                 @endif
@@ -130,11 +142,11 @@
                             <div class="d-flex fw-bold border-bottom pb-2 mb-2 justify-content-between"
                                 style="padding-left: 4px;">
                                 <div style="width: 150px;">Sản phẩm</div>
+                                <div style="width: 130px;text-align: center">Số lượng</div>
                                 <div style="width: 100px;">Giá</div>
-                                <div style="width: 120px;">Từ kho</div>
-                                <div style="width: 120px;">Đến kho</div>
-                                <div style="width: 130px;">Số lượng</div>
-                                   <div style="width: 130px;">Thành tiền</div>
+                                <div style="width: 130px;">Thành tiền</div>
+                                <div style="width: 120px;text-align: center">Từ Kho</div>
+                                <div style="width: 120px;text-align: center">Đến Kho</div>
                                 <div style="width: 37px;">Xóa</div>
                             </div>
                             <div id="selected-product-edit" style="height: 250px; overflow-y: auto;">
@@ -144,13 +156,25 @@
                                         <div class="product-name fw-bold me-3 flex-shrink-0" style="width: 150px;"
                                             data-id="{{ $item->product_id }}">{{ $item->product->name }}
                                         </div>
-
+                                        <div class="quantity d-flex align-items-center me-3 flex-shrink-0"
+                                            style="width: 130px;">
+                                            {{-- <button type="button"
+                                                class="btn btn-outline-secondary btn-sm decrease-edit">-</button> --}}
+                                            <input type="number" class="form-control mx-2 handled-focus-edit"
+                                                name="products[{{ $item->product_id }}]" value="{{ $item->quantity }}"
+                                                min="1" style="width: 80px; text-align: center; height: 30px;">
+                                            {{-- <button type="button"
+                                                class="btn btn-outline-secondary btn-sm increase-edit">+</button> --}}
+                                        </div>
                                         <div class="product-price text-success me-3 flex-shrink-0 price-edit"
                                             style="width: 100px;" data-price="{{ $item->price }}">
-                                            {{ number_format($item->price, 0, ',', '.') }} VNĐ
+                                            {{ number_format($item->price, 0, ',', '.') }}
                                         </div>
-
-                                        <select name="warehouses_to[{{ $item->product_id }}]"
+                                         <div class="product-price text-success me-3 flex-shrink-0 price-product"
+                                            style="width: 100px;">
+                                            {{ number_format($item->quantity * $item->price, 0, ',', '.') }}
+                                        </div>
+                                        <select name="warehouses_to[{{ $item->product_id }}]" id="warehouses_to"
                                             class="form-select form-select-sm me-3 flex-shrink-0" style="width: 120px;">
                                             <option selected="" disabled="">Chọn kho</option>
                                             @foreach ($warehouses as $k)
@@ -160,7 +184,7 @@
                                             @endforeach
 
                                         </select>
-                                         <select name="warehouses_from[{{ $item->product_id }}]"
+                                        <select name="warehouses_from[{{ $item->product_id }}]" id="warehouses_from"
                                             class="form-select form-select-sm me-3 flex-shrink-0" style="width: 120px;">
                                             <option selected="" disabled="">Chọn kho</option>
                                             @foreach ($warehouses as $k)
@@ -171,23 +195,11 @@
 
                                         </select>
 
-                                        <div class="quantity d-flex align-items-center me-3 flex-shrink-0"
-                                            style="width: 130px;">
-                                            <button type="button"
-                                                class="btn btn-outline-secondary btn-sm decrease-edit">-</button>
-                                            <input type="number" class="form-control mx-2 handled-focus"
-                                                name="products[{{ $item->product_id }}]" value="{{ $item->quantity }}"
-                                                min="1" style="width: 58px; text-align: center; height: 30px;">
-                                            <button type="button"
-                                                class="btn btn-outline-secondary btn-sm increase-edit">+</button>
-                                        </div>
-                                        <div class="product-price text-success me-3 flex-shrink-0 price-product" style="width: 100px;">
-                                            {{ number_format($item->quantity * $item->price, 0, ',', '.') }}
-                                        </div>
+
+                                       
                                         <button class="btn btn-outline-danger btn-sm remove-product-edit flex-shrink-0"
-                                            style="width: 30px;" data-id="{{ $item->id }}" 
-                                            data-url="{{ route('admin.warehouse.export.destroy.warehouse.item', $item->id) }}"
-                                            {{$warehouse->status == 1 ? 'disabled' :""}}>X</button>
+                                            style="width: 30px;" data-id="{{ $item->id }}"
+                                            data-url="{{ route('admin.warehouse.export.destroy.warehouse.item', $item->id) }}">X</button>
                                     </div>
                                 @endforeach
                             </div>
@@ -204,7 +216,8 @@
                         {{ number_format($warehouse->export->total, 0, ',', '.') }} VNĐ
                     </span></div>
             </div>
-            <button class="btn btn-primary confirmPayment-edit" type="submit" id="confirmPayment-edit" data-id="{{$warehouse->id}}" {{$warehouse->status == 1 ? 'disabled' :""}}>Lưu</button>
+            <button class="btn btn-primary confirmPayment-edit" type="submit" id="confirmPayment-edit"
+                data-id="{{ $warehouse->id }}">Lưu</button>
         </div>
     </div>
 </div>

@@ -39,6 +39,14 @@
                             <button type="submit" class="btn btn-danger btn-sm">Xoá</button>
                         </form>
                     </div>
+                     <div class="dropdown-item booked_room_edit" style="padding: 3px 5px !important;">
+                        <a href="javascript:void(0);" type="button" style="padding: 5px 14px;  margin-top: -13px;"
+                            class="btn btn-sm btn-secondary open-warehouse-modal-print"
+                            data-id="{{ $warehouse->id }}"
+                            data-url="{{ route('admin.warehouse.print', $warehouse->id) }}">
+                            In
+                        </a>
+                    </div>
                 </div>
 
             </td>

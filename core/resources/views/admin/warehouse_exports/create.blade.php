@@ -27,27 +27,33 @@
             <div class="card h-100">
 
                 <div class="card-body">
-                    <select class="form-select" id="supplierSelect" name="supplier_id" aria-label="Chọn nhà cung cấp">
+                    <input type="text" class="form-control text-uppercase" id="warehouse_code"
+                        placeholder="Nhập mã phiếu" name="warehouse_code"
+                        style="height: 40px; text-transform: uppercase;">
+                    <select class="form-select mt-1" id="supplierSelect" name="supplier_id"
+                        aria-label="Chọn nhà cung cấp">
                         <option selected disabled>--- Chọn nhà cung cấp ---</option>
                         @foreach ($suppliers as $id => $name)
                             <option value="{{ $id }}">{{ $name }}</option>
                         @endforeach
                     </select>
-                      <textarea name="note" id="note" cols="10" rows="3" class="mt-1" placeholder="Ghi chú"></textarea>
+                    <textarea name="note" id="note" cols="10" rows="3" class="mt-1" placeholder="Ghi chú"></textarea>
                 </div>
             </div>
         </div>
         <div class="col-md-6">
             <div class="card h-100">
                 <div class="card-body">
-
-                    <select class="form-select mb-3" id="employeeSelect" name="employee_id" aria-label="Chọn nhân viên">
+                    <input type="date" class="form-control" id="dateWarehouse" name="dateWarehouse"
+                        value="{{ date('Y-m-d') }}" style="height:40px">
+                    {{-- <select class="form-select mb-3" id="employeeSelect" name="employee_id" aria-label="Chọn nhân viên">
                         <option selected disabled>Chọn nhân viên</option>
                         @foreach ($admin as $id => $name)
-                            <option value="{{ $id }}">{{ $name->name }}</option>
+                            <option value="{{ $id }}" {{ authAdmin()->id == $name->id ? 'selected' : '' }}>
+                                {{ $name->name }}</option>
                         @endforeach
-                    </select>
-                    <select class="form-select" id="paymentMethod" name="payment_method_id"
+                    </select> --}}
+                    <select class="form-select mt-1" id="paymentMethod" name="payment_method_id"
                         aria-label="Chọn phương thức thanh toán">
                         <option selected disabled>Chọn phương thức thanh toán</option>
                         <option value="1">Thanh toán khi nhận hàng</option>
@@ -85,11 +91,11 @@
                 <div class="card-body">
                     <div class="d-flex fw-bold border-bottom pb-2 mb-2 justify-content-between"
                         style="padding-left: 4px;">
-                         <div style="width: 150px;">Sản phẩm</div>
-                        <div style="width: 100px;">Giá</div>
-                        <div style="width: 120px;text-align: center">Kho</div>
+                        <div style="width: 150px;">Sản phẩm</div>
                         <div style="width: 130px;text-align: center">Số lượng</div>
+                        <div style="width: 100px;">Giá</div>
                         <div style="width: 130px;">Thành tiền</div>
+                        <div style="width: 120px;text-align: center">Kho</div>
                         <div style="width: 37px;">Xóa</div>
                     </div>
                     <div id="selected-product-add" style="height: 250px; overflow-y: auto;">
@@ -196,9 +202,19 @@
                         return;
                     }
 
-                    console.log("Danh sách sản phẩm đã chọn:", products);
+                    // console.log("Danh sách sản phẩm đã chọn:", products);
                     // alert('Đang xử lý thanh toán...');
                     // $('#warehouseForm').submit(); // gọi submit form chính
+                });
+                $(document).on('change', '#dateWarehouse', function() {
+                    const selectedDate = $(this).val();
+                    console.log('Ngày đã chọn:', selectedDate);
+
+                    // Thêm xử lý logic tại đây nếu cần
+                });
+                $(document).on('input', '#warehouse_code', function() {
+                    const upperValue = $(this).val().toUpperCase();
+                    $(this).val(upperValue); // cập nhật lại giá trị thật
                 });
 
                 $("#warehouseForm").on("submit", function(e) {
@@ -211,6 +227,8 @@
                     formData.append('employee_id', $('#employeeSelect').val());
                     formData.append('payment_method_id', $('#paymentMethod').val());
                     formData.append('note', $('#note').val());
+                    formData.append('warehouse_code', $('#warehouse_code').val());
+                    formData.append('date_warehouse', $('#dateWarehouse').val());
 
                     // Thêm danh sách sản phẩm
                     products.forEach((item, index) => {
@@ -261,6 +279,12 @@
                         }
                     });
                 });
+$(document).on('keydown', 'input[type="number"]', function(e) {
+    // Chặn phím "-" hoặc "e" (trên một số trình duyệt cho phép nhập ký tự này)
+    if (e.key === '-' || e.key === 'e') {
+        e.preventDefault();
+    }
+});
 
 
                 $(document).on("click", ".result-item", function(e) {
@@ -278,38 +302,59 @@
                     let warehouseOptions = warehouse.map((w, index) =>
                         `<option value="${w.id}" ${index === 0 ? 'selected' : ''}>${w.name}</option>`
                     ).join('');
+                    const firstWarehouseId = warehouse.length > 0 ? warehouse[0].id : null;
                     // Tạo HTML cho sản phẩm đã chọn
-                    const selectedProductHtml = `
+                    $.ajax({
+                        url: "{{ route('admin.warehouse.transfer.check-stock') }}",
+                        method: 'POST',
+                        data: {
+                            product_id: productId,
+                            warehouse_id: firstWarehouseId,
+                            _token: $('meta[name="csrf-token"]').attr('content')
+                        },
+                        success: function(response) {
+                            if (response.status) {
+                                const max = response.stock;
+                                const selectedProductHtml = `
                         <div class="selected-product d-flex justify-content-between align-items-center mb-2 py-2 border-bottom" data-id="${productId}">
                             <div class="product-name fw-bold me-3 flex-shrink-0" style="width: 150px;">${product.name}</div>
-                            
+                             <div class="quantity d-flex align-items-center me-3 flex-shrink-0" style="width: 130px;">
+                              
+                                <input type="number" class="form-control mx-2 handled-focus" name="products[${productId}]" value="1" min="1" max="${max}"
+                                    style="width: 80px; text-align: center; height: 30px;">
+                              
+                            </div>
                             <div class="product-price text-success me-3 flex-shrink-0 price" style="width: 100px;" data-price="${product.import_price}">
                                ${Number(product.import_price).toLocaleString('vi-VN')}
                             </div>
-                            
+                               <div class="product-price text-success me-3 flex-shrink-0 price-product" style="width: 100px;">
+
+                            </div>
                             <select name="warehouses[${productId}]" class="form-select form-select-sm me-3 flex-shrink-0" style="width: 120px;">
                                 <option selected disabled>Chọn kho</option>
                                 ${warehouseOptions}
                             </select>
 
-                            <div class="quantity d-flex align-items-center me-3 flex-shrink-0" style="width: 130px;">
-                                <button type="button" class="btn btn-outline-secondary btn-sm decrease">-</button>
-                                <input type="number" class="form-control mx-2 handled-focus" name="products[${productId}]" value="1" min="1"
-                                    style="width: 58px; text-align: center; height: 30px;">
-                                <button type="button" class="btn btn-outline-secondary btn-sm increase">+</button>
-                            </div>
-                            <div class="product-price text-success me-3 flex-shrink-0 price-product" style="width: 100px;">
-
-                            </div>
+                           
+                         
                             <button class="btn btn-outline-danger btn-sm remove-product flex-shrink-0" style="width: 30px;">X</button>
                         </div>
                     `;
 
-                    // Thêm sản phẩm vào tóm tắt
-                    $('#selected-product-add').append(selectedProductHtml);
+                                // Thêm vào DOM
+                                $('#selected-product-add').append(selectedProductHtml);
 
-                    // Cập nhật tổng tiền
-                    updateTotal();
+                                // Cập nhật tổng tiền
+                                updateTotal();
+
+                            } else {
+                                alert('Không tìm thấy thông tin sản phẩm trong kho.');
+                            }
+                        },
+                        error: function(xhr) {
+                            alert('Đã xảy ra lỗi khi kiểm tra tồn kho.');
+                        }
+                    });
                 });
 
                 function formattedNumber(number) {
@@ -318,17 +363,69 @@
                         maximumFractionDigits: 0
                     }) + ' VND';
                 }
+                $(document).on('change', 'select[name^="warehouses["]', function() {
+                    const selectedWarehouseId = $(this).val();
+                    const productId = $(this).attr('name').match(/\d+/)[0];
+
+                    $.ajax({
+                        url: "{{ route('admin.warehouse.transfer.check-stock') }}",
+                        method: 'POST',
+                        data: {
+                            product_id: productId,
+                            warehouse_id: selectedWarehouseId, // ✅ dùng selectedWarehouseId thay vì firstWarehouseId
+                            _token: $('meta[name="csrf-token"]').attr('content')
+                        },
+                        success: function(response) {
+                            if (response.status) {
+                                const maxStock = response.stock;
+
+                                // ✅ Cập nhật thuộc tính max của input theo productId
+                                $(`input[name="products[${productId}]"]`).attr('max',
+                                    maxStock);
+
+                            } else {
+                                alert('Không tìm thấy thông tin tồn kho.');
+                            }
+                        },
+                        error: function(xhr) {
+                            alert('Đã xảy ra lỗi khi kiểm tra tồn kho.');
+                        }
+                    });
+                });
 
 
                 // Cập nhật tổng tiền khi người dùng nhập số trực tiếp
                 $(document).on("blur", ".handled-focus", function() {
                     const input = $(this);
                     let value = parseInt(input.val());
-                    if (value < 1) {
-                        input.val(1); // Đảm bảo giá trị tối thiểu là 1
+                    const min = parseInt(input.attr('min')) || 1;
+                    const max = parseInt(input.attr('max')) || Infinity;
+
+                    // Đảm bảo giá trị không nhỏ hơn min
+                    if (value < min || isNaN(value)) {
+                        value = min;
                     }
+
+                    // Đảm bảo giá trị không vượt quá max
+                    if (value > max) {
+                        value = max;
+                        Swal.fire({
+                            toast: true,
+                            position: 'top-end', // góc phải phía trên
+                            icon: 'error',
+                            title: 'Đã nhập quá tồn kho',
+                            showConfirmButton: false,
+                            timer: 3000, // hiển thị trong 3 giây
+                            timerProgressBar: true
+                        });
+                    }
+
+                    input.val(value);
+
+                    // Gọi cập nhật tổng, nếu có
                     updateTotal();
                 });
+
 
                 // Hàm cập nhật tổng tiền
                 function updateTotal() {
@@ -345,8 +442,8 @@
 
                         const quantity = parseInt($(this).find('input[type="number"]').val());
                         total += price * quantity;
-                         const priceProduct = price * quantity;
-                        $(this).find('.price-product').text(priceProduct.toLocaleString('vi-VN') + ' VND');
+                        const priceProduct = price * quantity;
+                        $(this).find('.price-product').text(priceProduct.toLocaleString('vi-VN'));
                     });
 
                     $('.total-price').text(total.toLocaleString('vi-VN') + ' VND');

@@ -3,7 +3,7 @@
 
 <head>
     <meta charset="UTF-8">
-    <title>In phiếu xuất kho</title>
+    <title>In phiếu điều chuyển</title>
     <style>
         body {
             font-family: DejaVu Sans, sans-serif;
@@ -50,11 +50,12 @@
         }
     </style>
 </head>
+
 <body>
-    <h2>Phiếu xuất kho #{{ $warehouse->reference_code }}</h2>
+    <h2>Phiếu điều chuyển #{{ $warehouse->reference_code }}</h2>
 
     <div class="info">
-        <p><strong>Ngày:</strong> {{ \Carbon\Carbon::parse($warehouse->created_time)->format('d/m/Y H:i') }}</p>
+        <p><strong>Ngày:</strong> {{ \Carbon\Carbon::parse($warehouse->transfer_date)->format('d/m/Y H:i') }}</p>
         <p><strong>Người tạo:</strong> {{ $warehouse->admin->name ?? '---' }}</p>
         @php
             $pttt = [
@@ -63,10 +64,10 @@
             ];
         @endphp
 
-        <p>
+        {{-- <p>
             <strong>Phương thức thanh toán:</strong>
             {{ $pttt[$warehouse->payment_method_id] ?? '---' }}
-        </p>
+        </p> --}}
 
         <p><strong>Ghi chú:</strong> {{ $warehouse->note ?? '---' }}</p>
     </div>
@@ -78,11 +79,13 @@
                 <th>Số lượng</th>
                 <th>Đơn giá</th>
                 <th>Thành tiền</th>
+                <th>Từ kho</th>
+                <th>Đến kho</th>
             </tr>
         </thead>
         <tbody>
             @php $total = 0; @endphp
-            @foreach ($warehouse->entriesexport as $item)
+            @foreach ($warehouse->entry->entries as $item)
                 @php
                     $amount = $item->quantity * $item->price;
                     $total += $amount;
@@ -90,8 +93,10 @@
                 <tr>
                     <td>{{ $item->product->name ?? 'Mã: ' . $item->product_id }}</td>
                     <td>{{ $item->quantity }}</td>
-                    <td>{{ number_format($item->price, 0, ',', '.') }} VND</td>
-                    <td>{{ number_format($amount, 0, ',', '.') }} VND</td>
+                    <td>{{ number_format($item->price, 0, ',', '.') }} </td>
+                    <td>{{ number_format($amount, 0, ',', '.') }}</td>
+                    <td>{{ $warehouse->fromWarehouse->name }}</td>
+                    <td>{{ $warehouse->toWarehouse->name }}</td>
                 </tr>
             @endforeach
         </tbody>

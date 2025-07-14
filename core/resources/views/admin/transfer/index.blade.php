@@ -126,6 +126,60 @@
                 initDataFetch(apiUrl);
 
             });
+             let isPrinting = false;
+            let printTimeout;
+                        $(document).on('click', '.open-warehouse-modal-print', function() {
+                if (isPrinting) return;
+                isPrinting = true;
+
+                const url = $(this).data('url');
+
+                $.get(url, function(data) {
+                    const printFrame = document.createElement('iframe');
+                    printFrame.style.position = 'fixed';
+                    printFrame.style.right = '0';
+                    printFrame.style.bottom = '0';
+                    printFrame.style.width = '0';
+                    printFrame.style.height = '0';
+                    printFrame.style.border = '0';
+                    printFrame.setAttribute('id', 'print-frame');
+                    document.body.appendChild(printFrame);
+
+                    const frameWindow = printFrame.contentWindow || printFrame;
+                    const printDoc = frameWindow.document;
+
+                    printDoc.open();
+                    printDoc.write(data);
+                    printDoc.close();
+
+                    const interval = setInterval(() => {
+                        if (printDoc.readyState === 'complete') {
+                            clearInterval(interval);
+
+                            frameWindow.focus();
+                            frameWindow.print();
+
+                            // Nếu onafterprint không chạy (người dùng HỦY), vẫn reset sau 5s
+                            printTimeout = setTimeout(() => {
+                                cleanUpPrint();
+                            }, 5000);
+
+                            frameWindow.onafterprint = () => {
+                                clearTimeout(printTimeout);
+                                cleanUpPrint();
+                            };
+                        }
+                    }, 200);
+                });
+            });
+
+            function cleanUpPrint() {
+                const frame = document.getElementById('print-frame');
+                if (frame) {
+                    document.body.removeChild(frame);
+                }
+                isPrinting = false;
+            }
             $(document).on('click', '.svg_menu_check_in', function(e) {
                 e.stopPropagation(); // Ngăn sự kiện lan ra ngoài
 
@@ -142,20 +196,107 @@
             $(document).on('click', function() {
                 $('.menu_dropdown_check_in').removeClass('show');
             });
+             $(document).on("blur", ".handled-focus-edit", function() {
+                    const input = $(this);
+                    let value = parseInt(input.val());
+                    
+                    if (value < 1) {
+                        input.val(1); // Đảm bảo giá trị tối thiểu là 1
+                    }
+                    updateTotalEdit();
+                }); 
+             
+
+                // Hàm cập nhật tổng tiền
+                function updateTotalEdit() {
+                    let total = 0;
+                    const selectedProducts = $('#selected-product-edit .selected-product');
+
+                    selectedProducts.each(function() {
+                        const price = parseFloat(
+                            $(this).find('.price-edit').text().replace('Giá: ', '').replace(' VND',
+                                '')
+                            .replace(/\./g, '')
+                        );
+
+
+
+                        const quantity = parseInt($(this).find('input[type="number"]').val());
+                        total += price * quantity;
+                        const priceProduct = price * quantity;
+                        $(this).find('.price-product').text(priceProduct.toLocaleString('vi-VN') + '');
+                    });
+
+                    $('.total-price-edit').text(total.toLocaleString('vi-VN') + ' VND');
+
+
+                    // Nếu không có sản phẩm nào, hiển thị thông báo
+                    if (total === 0) {
+                        $('#selected-product-edit').html(
+                            '<p class="text-danger text-center">Vui lòng chọn sản phẩm <strong>*</strong></p>'
+                        );
+                    } else {
+                        // Nếu có sản phẩm, không hiển thị thông báo
+                        if (selectedProducts.length > 0) {
+                            $('#selected-product-edit').find('p.text-danger.text-center')
+                                .remove(); // Xóa thông báo nếu có sản phẩm
+                        }
+                    }
+                }
             $(document).on('click', '.confirmPayment-edit', function() {
                 const id = $(this).data('id');
                 const supplierVal = $('#supplierSelect').val();
                 const warehouseVal = $('#employeeSelect').val();
                 const paymentVal = $('#paymentMethod').val();
+                const dateWarehouse = $('#dateWarehouse').val();
+                const warehouse_code = $('#warehouse_code').val();
+                const note = $('#note').val();
+                const selectedProducts = $('#selected-product-edit .selected-product');
+                let productItems = [];
+
+                selectedProducts.each(function() {
+                    const $product = $(this);
+
+                    // ID của chi tiết xuất kho (item)
+                    const itemId = $product.data('id');
+
+                    // ID của sản phẩm
+                    const productId = $product.find('.product-name').data('id');
+
+                    // ID của kho
+                    const warehouses_from = $product.find('#warehouses_from').val();
+                    const warehouses_to = $product.find('#warehouses_to').val();
+                    // Số lượng
+                    const quantity = parseInt($product.find('input[type="number"]').val());
+
+                    // Đơn giá
+                    const price = parseFloat(
+                        $product.find('.price-edit').text().replace(/\./g, '').trim()
+                    );
+
+                    // Push vào mảng
+                    productItems.push({
+                        item_id: itemId,
+                        product_id: productId,
+                        warehouses_from: warehouses_from,
+                        warehouses_to: warehouses_to,
+                        quantity: quantity,
+                        price: price
+                    });
+                });
                 $.ajax({
-                    url: '{{ route('admin.warehouse.update.import.slipe') }}', 
+                    url: '{{ route('admin.warehouse.transfer.update.import.slipe') }}', 
                     type: 'POST',
                     data: {
                         _token: $('meta[name="csrf-token"]').attr('content'),
                         id: id,
                         supplier_id: supplierVal,
+                        dateWarehouse:   dateWarehouse,
+                        warehouse_code:  warehouse_code,
                         created_by: warehouseVal,
-                        payment_method_id: paymentVal
+                        payment_method_id: paymentVal,
+                        note: note,
+                        productItems: productItems,
                     },
                     success: function(res) {
                         if (res.status) {
@@ -164,10 +305,11 @@
                         } else {
                             Swal.fire('Lỗi', res.message, 'error');
                         }
-                    },
-                    error: function() {
-                        Swal.fire('Lỗi', 'Không thể cập nhật dữ liệu.', 'error');
                     }
+                    // ,
+                    // error: function() {
+                    //     Swal.fire('Lỗi', 'Không thể cập nhật dữ liệu.', 'error');
+                    // }
                 });
 
             });

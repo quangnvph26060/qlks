@@ -10,6 +10,9 @@ class StockEntry extends Model
 {
     use HasFactory, GlobalStatus;
 
+     protected $fillable = [
+        'quantity',
+    ];
     public function warehouse()
     {
         return $this->belongsTo(WarehouseEntry::class, 'warehouse_entry_id');

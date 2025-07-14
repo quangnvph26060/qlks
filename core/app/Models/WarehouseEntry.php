@@ -43,6 +43,9 @@ class WarehouseEntry extends Model
         return $this->hasOne(Transaction::class);
     }
 
+    public function admin() {
+        return $this->belongsTo(Admin::class,'created_by');
+    }
     public function stockEntries()
     {
        // return $this->belongsToMany(Product::class, 'stock_entries', 'product_id')->withPivot('quantity', 'entry_date')->withTimestamps();

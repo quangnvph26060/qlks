@@ -262,6 +262,14 @@
                 "route_name": "admin.inventory.index",
                 "menu_active": "admin.warehouse.index"
             },
+              {
+                "keyword": [
+                    "Cài đặt sản phẩm"
+                ],
+                "title": "Cài đặt sản phẩm",
+                "route_name": "admin.hotel.setup.product.all",
+                "menu_active": "admin.hotel.setup.product.all"
+            },
             {
                 "keyword": [
                     "Danh mục sản phẩm"
@@ -335,14 +343,6 @@
                 "title": "Cài đặt cơ sở vật chất",
                 "route_name": "admin.hotel.setup.facilities.all",
                 "menu_active": "admin.hotel.setup.facilities.all"
-            },
-            {
-                "keyword": [
-                    "Cài đặt sản phẩm"
-                ],
-                "title": "Cài đặt sản phẩm",
-                "route_name": "admin.hotel.setup.product.all",
-                "menu_active": "admin.hotel.setup.product.all"
             },
             {
                 "keyword": [

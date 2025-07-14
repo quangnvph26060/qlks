@@ -27,27 +27,32 @@
             <div class="card h-100">
 
                 <div class="card-body">
-                    <select class="form-select" id="supplierSelect" name="supplier_id" aria-label="Chọn nhà cung cấp">
+                    <input type="text" class="form-control text-uppercase" id="warehouse_code"
+                        placeholder="Nhập mã phiếu" name="warehouse_code"
+                        style="height: 40px; text-transform: uppercase;">
+                    <select class="form-select mt-1" id="supplierSelect" name="supplier_id"
+                        aria-label="Chọn nhà cung cấp">
                         <option selected disabled>--- Chọn nhà cung cấp ---</option>
                         @foreach ($suppliers as $id => $name)
                             <option value="{{ $id }}">{{ $name }}</option>
                         @endforeach
                     </select>
-                 <textarea name="note" id="note" cols="10" rows="3" class="mt-1" placeholder="Ghi chú"></textarea>
+                    <textarea name="note" id="note" cols="10" rows="3" class="mt-1" placeholder="Ghi chú"></textarea>
                 </div>
             </div>
         </div>
         <div class="col-md-6">
             <div class="card h-100">
                 <div class="card-body">
-
-                    <select class="form-select mb-3" id="employeeSelect" name="employee_id" aria-label="Chọn nhân viên">
+                    <input type="date" class="form-control" id="dateWarehouse" name="dateWarehouse"
+                        value="{{ date('Y-m-d') }}" style="height:40px">
+                    {{-- <select class="form-select mb-3" id="employeeSelect" name="employee_id" aria-label="Chọn nhân viên">
                         <option selected disabled>Chọn nhân viên</option>
                         @foreach ($admin as $id => $name)
-                            <option value="{{ $id }}">{{ $name->name }}</option>
+                            <option value="{{ $id }}" {{$name->id ==  authAdmin()->id ? 'selected' : ""}}>{{ $name->name }}</option>
                         @endforeach
-                    </select>
-                    <select class="form-select" id="paymentMethod" name="payment_method_id"
+                    </select> --}}
+                    <select class="form-select mt-1" id="paymentMethod" name="payment_method_id"
                         aria-label="Chọn phương thức thanh toán">
                         <option selected disabled>Chọn phương thức thanh toán</option>
                         <option value="1">Thanh toán khi nhận hàng</option>
@@ -86,10 +91,10 @@
                     <div class="d-flex fw-bold border-bottom pb-2 mb-2 justify-content-between"
                         style="padding-left: 4px;">
                         <div style="width: 150px;">Sản phẩm</div>
-                        <div style="width: 100px;">Giá</div>
-                        <div style="width: 120px;text-align: center">Kho</div>
                         <div style="width: 130px;text-align: center">Số lượng</div>
+                        <div style="width: 100px;">Giá</div>
                         <div style="width: 130px;">Thành tiền</div>
+                        <div style="width: 120px;text-align: center">Kho</div>
                         <div style="width: 37px;">Xóa</div>
                     </div>
                     <div id="selected-product-add" style="height: 250px; overflow-y: auto;">
@@ -118,7 +123,8 @@
                 <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
             </div>
             <div class="modal-body" style="height: 400px">
-                <div class="table-responsive">
+                <div class="table-responsive" style="max-height: 300px;
+    overflow-y: auto;">
                     <table class="table table-bordered table-hover align-middle">
                         <thead class="table-light">
                             <tr>
@@ -199,7 +205,16 @@
                     // alert('Đang xử lý thanh toán...');
                     // $('#warehouseForm').submit(); // gọi submit form chính
                 });
+                $(document).on('change', '#dateWarehouse', function() {
+                    const selectedDate = $(this).val();
+                    console.log('Ngày đã chọn:', selectedDate);
 
+                    // Thêm xử lý logic tại đây nếu cần
+                });
+                $(document).on('input', '#warehouse_code', function() {
+                    const upperValue = $(this).val().toUpperCase();
+                    $(this).val(upperValue); // cập nhật lại giá trị thật
+                });
                 $("#warehouseForm").on("submit", function(e) {
                     e.preventDefault();
 
@@ -210,6 +225,8 @@
                     formData.append('employee_id', $('#employeeSelect').val());
                     formData.append('payment_method_id', $('#paymentMethod').val());
                     formData.append('note', $('#note').val());
+                    formData.append('warehouse_code', $('#warehouse_code').val());
+                    formData.append('date_warehouse', $('#dateWarehouse').val());
 
                     // Thêm danh sách sản phẩm
                     products.forEach((item, index) => {
@@ -279,31 +296,37 @@
                     ).join('');
                     // Tạo HTML cho sản phẩm đã chọn
                     const selectedProductHtml = `
-                        <div class="selected-product d-flex justify-content-between align-items-center mb-2 py-2 border-bottom" data-id="${productId}">
-                        <div class="product-name fw-bold me-3 flex-shrink-0 text-truncate" style="width: 150px; max-width: 150px; overflow: hidden; white-space: nowrap;">${product.name}</div>
+                            <div class="selected-product d-flex justify-content-between align-items-center mb-2 py-2 border-bottom" data-id="${productId}">
+                                <div class="product-name fw-bold me-3 flex-shrink-0 text-truncate" style="width: 150px; max-width: 150px; overflow: hidden; white-space: nowrap;">
+                                    ${product.name}
+                                </div>
 
-                            
-                            <div class="product-price text-success me-3 flex-shrink-0 price" style="width: 100px;" data-price="${product.import_price}">
-                               ${Number(product.import_price).toLocaleString('vi-VN')}
-                            </div>
-                            
-                            <select name="warehouses[${productId}]" class="form-select form-select-sm me-3 flex-shrink-0" style="width: 120px;">
-                                <option selected disabled>Chọn kho</option>
-                                ${warehouseOptions}
-                            </select>
+                                <div class="quantity d-flex align-items-center me-3 flex-shrink-0" style="width: 130px;">
+                                    <input type="number" class="form-control mx-2 handled-focus" name="products[${productId}]"
+                                        value="1" min="1"
+                                        style="width: 80px; text-align: center; height: 30px;">
+                                </div>
 
-                            <div class="quantity d-flex align-items-center me-3 flex-shrink-0" style="width: 130px;">
-                                <button type="button" class="btn btn-outline-secondary btn-sm decrease">-</button>
-                                <input type="number" class="form-control mx-2 handled-focus" name="products[${productId}]" value="1" min="1"
-                                    style="width: 58px; text-align: center; height: 30px;">
-                                <button type="button" class="btn btn-outline-secondary btn-sm increase">+</button>
-                            </div>
-                             <div class="product-price text-success me-3 flex-shrink-0 price-product" style="width: 100px;">
+                                <div class="product-price text-success me-3 flex-shrink-0 price"
+                                    style="width: 100px;" data-price="${product.import_price}">
+                                    ${Number(product.import_price).toLocaleString('vi-VN')}
+                                </div>
 
+                                <div class="product-price text-success me-3 flex-shrink-0 price-product" style="width: 100px;">
+                                    <!-- Có thể thêm tổng tiền ở đây nếu cần -->
+                                </div>
+
+                                <div class="me-3 flex-shrink-0" style="width: 120px;">
+                                    <select name="warehouses[${productId}]" class="form-select form-select-sm">
+                                        <option selected disabled>Chọn kho</option>
+                                        ${warehouseOptions}
+                                    </select>
+                                </div>
+
+                                <button class="btn btn-outline-danger btn-sm remove-product flex-shrink-0" style="width: 30px;">X</button>
                             </div>
-                            <button class="btn btn-outline-danger btn-sm remove-product flex-shrink-0" style="width: 30px;">X</button>
-                        </div>
-                    `;
+                        `;
+
 
                     // Thêm sản phẩm vào tóm tắt
                     $('#selected-product-add').append(selectedProductHtml);
@@ -320,13 +343,11 @@
                 }
 
 
-                // Cập nhật tổng tiền khi người dùng nhập số trực tiếp
                 $(document).on("blur", ".handled-focus", function() {
                     const input = $(this);
                     let value = parseInt(input.val());
-                    if (value < 1) {
-                        input.val(1); // Đảm bảo giá trị tối thiểu là 1
-                    }
+                    input.val(value);
+                    // Gọi cập nhật tổng, nếu có
                     updateTotal();
                 });
 
@@ -345,7 +366,7 @@
                         const quantity = parseInt($(this).find('input[type="number"]').val());
                         total += price * quantity;
                         const priceProduct = price * quantity;
-                        $(this).find('.price-product').text(priceProduct.toLocaleString('vi-VN') + ' VND');
+                        $(this).find('.price-product').text(priceProduct.toLocaleString('vi-VN') + '');
                     });
 
                     $('.total-price').text(total.toLocaleString('vi-VN') + ' VND');
@@ -366,22 +387,22 @@
                 }
 
                 // Tăng hoặc giảm số lượng sản phẩm
-                $(document).on("click", ".increase", function() {
-                    const input = $(this).siblings('input');
-                    let value = parseInt(input.val());
+                // $(document).on("click", ".increase", function() {
+                //     const input = $(this).siblings('input');
+                //     let value = parseInt(input.val());
 
-                    input.val(value + 1);
-                    updateTotal();
-                });
+                //     input.val(value + 1);
+                //     updateTotal();
+                // });
 
-                $(document).on("click", ".decrease", function() {
-                    const input = $(this).siblings('input');
-                    let value = parseInt(input.val());
-                    if (value > 1) {
-                        input.val(value - 1);
-                    }
-                    updateTotal();
-                });
+                // $(document).on("click", ".decrease", function() {
+                //     const input = $(this).siblings('input');
+                //     let value = parseInt(input.val());
+                //     if (value > 1) {
+                //         input.val(value - 1);
+                //     }
+                //     updateTotal();
+                // });
 
                 // Xóa sản phẩm khỏi danh sách
                 $(document).on("click", ".remove-product", function() {

@@ -178,7 +178,7 @@
                         </form>
                     </div>
                     @if ($categories->hasPages())
-                        <div class="pager-wrap">
+                        <div class="pager-wrap d-flex     justify-content-end">
                             <div class="k-widget d-flex">
                                 <div class="pagination-tb" style="font-size: 13px;margin: 0 auto">
                                     {{ $categories->links('pagination::bootstrap-4') }}

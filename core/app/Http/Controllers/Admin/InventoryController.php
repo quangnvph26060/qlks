@@ -12,6 +12,7 @@ use App\Models\WarehouseExport;
 use App\Repositories\BaseRepository;
 use App\Rules\StockCheck;
 use Carbon\Carbon;
+use Illuminate\Support\Facades\Log;
 use Product;
 
 class InventoryController extends Controller
@@ -68,25 +69,26 @@ class InventoryController extends Controller
     }
     public function get(Request $request)
     {
-        $startDate = $request->input('start_date');
-        $endDate   = $request->input('end_date');
         $warehouseId = $request->input('warehouse_id');
-        $start = date('Y-m-d 00:00:00', strtotime($startDate));
-        $end   = date('Y-m-d 23:59:59', strtotime($endDate));
-     
+      
+
+        $startDate = request('start_date') ? Carbon::parse(request('start_date'))->toDateString() : null;
+        $endDate = request('end_date') ? Carbon::parse(request('end_date'))->toDateString() : null;
         // Query warehouse_entries
         $entries = WarehouseEntry::query()
             ->where('status', 1)
-            ->whereBetween('confirmation_date', [$start, $end])->with(['stockEntries', 'entries' => function ($query) use ($warehouseId) {
+            ->whereDate('created_time', '<=', $endDate)
+            ->with(['stockEntries', 'entries' => function ($query) use ($warehouseId) {
                 if ($warehouseId !== 'all') {
                     $query->where('warehouse_id', $warehouseId);
                 }
-            }]);;
+            }]);
 
         // Query warehouse_exports
         $exports = WarehouseExport::query()
             ->where('status', 1)
-            ->whereBetween('confirmation_date', [$start, $end])->with(['stockEntries', 'entriesexport' => function ($query) use ($warehouseId) {
+            ->whereDate('created_time', '<=', $endDate)
+            ->with(['stockEntries', 'entriesexport' => function ($query) use ($warehouseId) {
                 if ($warehouseId !== 'all') {
                     $query->where('warehouse_id', $warehouseId);
                 }
@@ -128,55 +130,73 @@ class InventoryController extends Controller
 
 
         // tính tồn đầu
-        $entries = $entryResults->pluck('entries')->flatten();
-        $exportResults = $exportResults->pluck('entriesexport')->flatten();
+        $entries = $entryResults->flatMap(function ($entry) {
+            return $entry->entries->map(function ($item) use ($entry) {
+                $item->created_time = $entry->created_time;
+                $item->action = 'import';
+                return $item;
+            });
+        });
 
-        $all = collect($entries)->map(function ($item) {
-            $item->action = 'import'; // dùng object thay vì mảng
-            return $item;
-        })->merge(
-            collect($exportResults)->map(function ($item) {
+        $exports = $exportResults->flatMap(function ($entry) {
+            return $entry->entriesexport->map(function ($item) use ($entry) {
+                $item->created_time = $entry->created_time;
                 $item->action = 'export';
                 return $item;
-            })
-        );
+            });
+        });
 
-        $grouped = $all->groupBy('product_id');
-        $fromDate = request('end_date') ? Carbon::parse(request('end_date')) : null;
-        $result = $grouped->map(function ($items, $productId) use($fromDate) {
-            $ton_dau = 0;
-            $nhap = 0;
-            $xuat = 0;
- 
-            foreach ($items as $item) {
-                $created = $item->created_at;
-                $created = Carbon::parse($item->created_at);
+        $all = $entries->merge($exports);
 
-                // Tồn đầu: nếu thời gian tạo < from_date
-                if ($fromDate && $created->lt($fromDate)) {
-                    if ($item->action === 'import') {
-                        $ton_dau += $item->quantity;
-                    } else {
-                        $ton_dau -= $item->quantity;
-                    }
-                }
-                if ($item->action === 'import') {
-                    $nhap += $item->quantity;
-                } else {
-                    $xuat += $item->quantity;
-                }
+
+        $summary = [];
+
+        foreach ($all as $item) {
+            $productId = $item->product_id;
+
+            // Chuyển created_time thành dạng Y-m-d để so sánh chính xác theo ngày
+            $createdDate = Carbon::parse($item->created_time)->toDateString();
+
+            // Khởi tạo nếu chưa có dữ liệu cho product_id
+            if (!isset($summary[$productId])) {
+                $summary[$productId] = [
+                    'product_name' => ModelsProduct::find($productId)?->name,
+                    'product_code' => ModelsProduct::find($productId)?->sku,
+                    'ton_dau'      => 0,
+                    'nhap'         => 0,
+                    'xuat'         => 0,
+                ];
             }
 
-            $ton_cuoi = $ton_dau + $nhap - $xuat;
+            // 👉 Tính tồn đầu: nếu ngày tạo < ngày bắt đầu
+            if ($startDate && $createdDate < $startDate) {
+                $summary[$productId]['ton_dau'] += $item->action === 'import'
+                    ? $item->quantity
+                    : -$item->quantity;
 
-            return [
-                'product_name' => ModelsProduct::find($productId)?->name,
-                'product_code' => ModelsProduct::find($productId)?->sku,
-                'ton_dau'    => $ton_dau,
-                'nhap'       => $nhap,
-                'xuat'       => $xuat,
-                'ton_cuoi'   => $ton_cuoi
-            ];
+                Log::info("Tồn đầu | {$createdDate} < {$startDate}");
+            }
+
+            // 👉 Tính nhập/xuất trong khoảng [start_date, end_date]
+            if (
+                $startDate && $endDate &&
+                $createdDate >= $startDate &&
+                $createdDate <= $endDate
+            ) {
+                if ($item->action === 'import') {
+                    $summary[$productId]['nhap'] += $item->quantity;
+                } else {
+                    $summary[$productId]['xuat'] += $item->quantity;
+                }
+
+                // Log::info("Trong khoảng | {$createdDate} từ {$startDate} đến {$endDate}");
+            }
+        }
+
+        // 👉 Tính tồn cuối
+        $result = collect($summary)->map(function ($item) {
+            $item['ton_cuoi'] = $item['ton_dau'] + $item['nhap'] - $item['xuat'];
+            return $item;
         })->values();
 
 
@@ -185,7 +205,8 @@ class InventoryController extends Controller
             'total_inventory' => $totalProduct, // tổng tồn kho
             'lowStockCount'   => $lowStockCount,
             'outOfStock'      => $outOfStock,
-            'data'            => $result
+            'data'            => $result,
+            // 'entryResults'    => $entryResults,
 
         ]);
     }

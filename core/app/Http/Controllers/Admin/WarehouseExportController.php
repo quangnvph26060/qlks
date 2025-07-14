@@ -79,8 +79,9 @@ class WarehouseExportController extends Controller
         return view('admin.warehouse.create', compact('pageTitle', 'categories', 'suppliers'));
     }
 
-    public function print(Request $request,$id){
-        $warehouse = WarehouseExport::with('entriesexport','admin')->findOrFail($id);
+    public function print(Request $request, $id)
+    {
+        $warehouse = WarehouseExport::with('entriesexport', 'admin')->findOrFail($id);
         return view('admin.warehouse_exports.print', compact('warehouse'));
     }
     /**
@@ -93,12 +94,14 @@ class WarehouseExportController extends Controller
             [
                 'supplier_id' => 'required|not_in:null,0,""', // thêm các giá trị không hợp lệ
                 'payment_method_id' => 'required|not_in:null,0,""',
+                'warehouse_code'    => 'nullable|unique:warehouse_exports,reference_code',
             ],
             [
                 'supplier_id.required' => 'Vui lòng chọn nhà cung cấp',
                 'supplier_id.not_in' => 'Nhà cung cấp không hợp lệ',
                 'payment_method_id.required' => 'Vui lòng chọn phương thức thanh toán',
                 'payment_method_id.not_in' => 'Phương thức thanh toán không hợp lệ',
+                'warehouse_code.unique' => 'Mã phiếu đã tồn tại',
             ]
         );
 
@@ -113,16 +116,22 @@ class WarehouseExportController extends Controller
 
         try {
             $total = 0;
+            $employeeId = $request->get('employee_id');
 
+            $createdBy = (!empty($employeeId) && $employeeId !== 'null' && $employeeId != 0)
+                ? $employeeId
+                : authAdmin()->id;
             $warehouse = WarehouseExport::query()->create([
                 'supplier_id'        => $request->get('supplier_id'),
-                'reference_code'     => getCode('PX', 12, WarehouseExport::class, 'reference_code'),
-                'created_time'       => now(),
+                'reference_code'     => filled($request->warehouse_code)
+                    ? $request->warehouse_code
+                    : getCode('PX', 12, WarehouseExport::class, 'reference_code'),
+
+
+                'created_time'       => $request->date_warehouse ?? date('Y-m-d'),
                 'payment_method_id'  => $request->get('payment_method_id'),
                 'total'              => 0,
-                'created_by' => (empty($request->get('employee_id')) || $request->get('employee_id') === 'null')
-                    ? $request->get('employee_id')
-                    : authAdmin()->id,
+                'created_by'         => $createdBy,
                 'note'               => $request->get('note'),
                 'status'             => 1,
                 'subdomain'          => subdomain(),
@@ -130,7 +139,7 @@ class WarehouseExportController extends Controller
             ]);
 
             $products = $request->input('products', []);
-
+            $data = [];
             foreach ($products as $item) {
                 $productId    = $item['product_id'];
                 $quantity     = $item['quantity'];
@@ -141,11 +150,11 @@ class WarehouseExportController extends Controller
                 if (!$product) {
                     throw new \Exception("Sản phẩm ID $productId không tồn tại.");
                 }
-
+                $product->decrement('stock', $quantity - $warehouse->number_of_cancellations);  // trừ số lượng sản phẩm 
                 // Cập nhật tồn kho
                 // $product->increment('stock', $quantity);
 
-                // Tạo bản ghi chi tiết nhập
+                // Tạo bản ghi chi tiết xuất
                 WarehouseEntryItem::create([
                     'warehouse_export_id' => $warehouse->id,   // ID của phiếu xuất
                     'product_id'          => $productId,
@@ -158,13 +167,18 @@ class WarehouseExportController extends Controller
 
                 // Tính tổng
                 $total += $quantity * $price;
+                $data[$productId] = [
+                    'quantity'    => $quantity - $warehouse->number_of_cancellations,
+                    'entry_date'  => now()->format('Y-m-d H:i:s'),
+                    'status'      => 0
+                ];
             }
 
             // Cập nhật tổng tiền
             $warehouse->update([
                 'total' => $total
             ]);
-
+            $warehouse->stockEntries()->sync($data);
             DB::commit();
 
             return response()->json([
@@ -191,6 +205,7 @@ class WarehouseExportController extends Controller
         $pageTitle = "Chi tiết đơn hàng";
         $suppliers = Supplier::query()->pluck('name', 'id');
         $warehouse = WarehouseExport::query()->with('supplier', 'returns', 'entries.product')->find($id);
+        Log::info($warehouse);
         $warehouses  = Warehouse::active()->get();
         $admin     = Admin::where('unit_code', unitCode())->where('subdomain', subdomain())->get();
         if (!$warehouse) {
@@ -255,9 +270,9 @@ class WarehouseExportController extends Controller
         if (!$warehouse) {
             return back()->withErrors(['msg' => 'Không tìm thấy phiếu xuất.']);
         }
-        if ($warehouse->status == 1) {
-            return back()->withErrors(['msg' => 'Phiếu xuất đã được xác nhận, không thể xoá.']);
-        }
+        // if ($warehouse->status == 1) {
+        //     return back()->withErrors(['msg' => 'Phiếu xuất đã được xác nhận, không thể xoá.']);
+        // }
 
         DB::beginTransaction();
 
@@ -267,7 +282,7 @@ class WarehouseExportController extends Controller
                 // Trừ lại tồn kho nếu cần
                 $product = $entry->product;
                 if ($product) {
-                   // $product->decrement('stock', $entry->quantity);
+                    // $product->decrement('stock', $entry->quantity);
                 }
 
                 $entry->delete();
@@ -302,7 +317,7 @@ class WarehouseExportController extends Controller
         try {
             $entry = WarehouseExport::find($item->warehouse_export_id);
             $itemTotal = $item->quantity * $item->price;
-            StockEntry::where('product_id',$item->product_id)->where('warehouse_entry_id',$entry->id)->where('status',0)->delete();
+            StockEntry::where('product_id', $item->product_id)->where('warehouse_entry_id', $entry->id)->where('status', 0)->delete();
             // Xoá item
             $item->delete();
 
@@ -344,21 +359,83 @@ class WarehouseExportController extends Controller
     }
     public function updateImportSlipe(Request $request)
     {
+        $data = Validator::make(
+            $request->all(),
+            [
+                'supplier_id'       => 'required|not_in:null,0,""',
+                'payment_method_id' => 'required|not_in:null,0,""',
+                'warehouse_code'    => 'nullable|unique:warehouse_exports,reference_code,' . $request->id,
+            ],
+            [
+                'supplier_id.required' => 'Vui lòng chọn nhà cung cấp',
+                'supplier_id.not_in' => 'Nhà cung cấp không hợp lệ',
+                'payment_method_id.required' => 'Vui lòng chọn phương thức thanh toán',
+                'payment_method_id.not_in' => 'Phương thức thanh toán không hợp lệ',
+                'warehouse_code.unique' => 'Mã phiếu đã tồn tại',
+            ]
+        );
+        if ($data->fails()) {
+            return response()->json([
+                'status' => false,
+                'errors' => $data->errors()
+            ]);
+        }
         $item = WarehouseExport::find($request->id);
-
         if (!$item) {
             return response()->json(['status' => false, 'message' => 'Không tìm thấy phiếu nhập.'], 404);
-        }
-        if ($item->status != 0) {
-            return response()->json(['status' => false, 'message' => 'Chỉ được cập nhật khi đơn nhập chưa được xác nhận.'], 403);
         }
         DB::beginTransaction();
         try {
             $item->payment_method_id = $request->payment_method_id;
-            $item->created_by = $request->created_by;
-            $item->supplier_id = $request->supplier_id;
-
+            $item->created_by        = $request->created_by;
+            $item->supplier_id       = $request->supplier_id;
+            $item->note              = $request->note;
+            $item->reference_code    =  filled($request->warehouse_code)
+                    ? $request->warehouse_code
+                    : getCode('PX', 12, WarehouseExport::class, 'reference_code');
+            $item->created_time      = $request->dateWarehouse;
             $item->save();
+            $productItems = $request->productItems;
+            foreach ($productItems as $product) {
+                $warehouseItem = WarehouseEntryItem::find($product['item_id']);
+                if (!$warehouseItem) {
+                    continue;
+                }
+
+                $productModel = Product::find($product['product_id']);
+                if (!$productModel) {
+                    throw new \Exception("Sản phẩm ID {$product['product_id']} không tồn tại.");
+                }
+
+                $stockEntry = StockEntry::where('warehouse_entry_id', $item->id)
+                    ->where('product_id', $product['product_id'])
+                    ->first();
+
+                if ($stockEntry) {
+                    $oldQuantity = $stockEntry->quantity;
+                    $newQuantity = $product['quantity'];
+
+                    // Tính lại tồn kho
+                    $newStock = $productModel->stock + $oldQuantity - $newQuantity;
+
+                    // Không để tồn kho âm
+                    if ($newStock < 0) {
+                        throw new \Exception("Không đủ tồn kho cho sản phẩm ID {$product['product_id']}.");
+                    }
+
+                    // Cập nhật tồn kho sản phẩm
+                    $productModel->update(['stock' => $newStock]);
+
+                    // Cập nhật stock entry
+                    $stockEntry->update(['quantity' => $newQuantity]);
+                }
+
+                // Cập nhật warehouse item
+                $warehouseItem->update([
+                    'quantity' => $product['quantity'],
+                    'warehouse_id' => $product['warehouse_id'],
+                ]);
+            }
             DB::commit();
             return response()->json(['status' => true, 'message' => 'Cập nhật thành công']);
         } catch (\Exception $e) {

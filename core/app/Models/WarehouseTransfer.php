@@ -44,4 +44,7 @@ class WarehouseTransfer extends Model
     {
         return $this->belongsTo(WarehouseEntry::class, 'entry_id','reference_code');
     }
+     public function admin() {
+        return $this->belongsTo(Admin::class,'created_by');
+    }
 }
