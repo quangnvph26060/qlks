@@ -46,7 +46,7 @@ class Room extends Model
 
     public function products()
     {
-        return $this->belongsToMany(Product::class, 'room_products', 'room_id', 'product_id')->withPivot('quantity');
+        return $this->belongsToMany(Product::class, 'room_products', 'room_id', 'product_id')->withPivot('quantity','warehouse_id');
     }
 
     // public function facilities()

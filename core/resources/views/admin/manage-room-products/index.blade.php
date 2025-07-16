@@ -13,6 +13,7 @@
                             <table class="table--light style--two table" id="data-table">
                                 <thead>
                                     <tr>
+                                        <th></th>
                                         @can('admin.hotel.room.product.all')
                                             <th>@lang('Hành động')</th>
                                         @endcan
@@ -119,11 +120,17 @@
 
                         {{-- Danh sách sản phẩm --}}
                         <div class="mb-4">
-                            <label class="form-label fw-semibold">Các sản phẩm <code>(Chọn và nhập số lượng)</code></label>
+                            {{-- <select name="warehouse_id" id="" class="form-control select-warehouse">
+                                @foreach ($warehouse as $item)
+                                    <option value="{{ $item->id }}">{{ $item->name }}</option>
+                                @endforeach
+                            </select> --}}
+                            <label class="form-label fw-semibold mt-1">Các sản phẩm <code>(Chọn và nhập số
+                                    lượng)</code></label>
 
-                            @if ($products->isNotEmpty())
-                                <div class="border rounded p-3" style="max-height: 250px; overflow-y: auto;">
-                                    @foreach ($products as $product)
+
+                            <div id="product-list" class="border rounded p-3" style="max-height: 250px; overflow-y: auto;">
+                                {{-- @foreach ($products as $product)
                                         <div class="mb-3 d-flex align-items-center justify-content-between">
                                             <div class="form-check flex-grow-1">
                                                 <input class="form-check-input product-checkbox" type="checkbox"
@@ -140,11 +147,9 @@
                                                     oninput="validateInput(this)">
                                             </div>
                                         </div>
-                                    @endforeach
-                                </div>
-                            @else
-                                <p>Chưa có sản phẩm nào!</p>
-                            @endif
+                                    @endforeach --}}
+                            </div>
+
                         </div>
 
                         <div class="modal-footer">
@@ -173,15 +178,20 @@
                         {{-- <input type="hidden" name="_method" id="method" value="POST"> --}}
                         <input type="hidden" name="id" id="recordId">
                         <div class="row">
-                            <div class="form-group mb-3">
+                            <div class=" mb-3">
                                 <label for="">Mã phòng</label>
                                 <select name="room_id" id="room-choice" class="form-control">
 
                                 </select>
                             </div>
                         </div>
-                        <div class="row">
-                            <div class="form-group mb-3">
+                        <div class="row p-2">
+                            {{-- <select name="warehouse_id" id="" class="form-control select-warehouse">
+                                @foreach ($warehouse as $item)
+                                    <option value="{{ $item->id }}">{{ $item->name }}</option>
+                                @endforeach
+                            </select> --}}
+                            <div class="form-group mb-3 mt-1">
                                 <label for="">Các sản phẩm <code>(Được chọn nhiều)</code></label>
                                 <div id="checkbox-facility" class="form-check-group mt-3 row"
                                     style="max-height: 250px; overflow-y: auto;">
@@ -233,12 +243,15 @@
             $(document).ready(function() {
                 const apiUrl = '{{ route('admin.hotel.room.product.all') }}';
                 initDataFetch(apiUrl);
-
+                window.toggleRepresentatives = function(id, button) {
+                    const row = document.getElementById('rep-' + id);
+                    row.classList.toggle('show');
+                    button.classList.toggle('collapsed');
+                };
                 $("#roomsAddFacilityForm").on('submit', function(e) {
                     e.preventDefault();
                     const url =
                         "{{ route('admin.hotel.room.product.store') }}";
-
                     $.ajax({
                         type: "POST",
                         url: url,
@@ -276,6 +289,13 @@
                         .length;
                     $('#checkAllRooms').prop('checked', allChecked);
                 });
+
+                function buildWarehouseOptions(selectedId) {
+                    return warehouses.map(item => {
+                        let selected = item.id == selectedId ? 'selected' : '';
+                        return `<option value="${item.id}" ${selected}>${item.name}</option>`;
+                    }).join('');
+                }
                 $(document).on('click', '.btn-edit', function() {
                     let id = $(this).data('id');
 
@@ -304,14 +324,18 @@
                                 // Tạo danh sách tiện ích (amenities)
                                 let amenitesContainer = $('#checkbox-facility');
                                 amenitesContainer.empty();
-                                console.log(response.products);
                                 response.products.forEach(facility => {
+
                                     let checked = response.selectedproducts
                                         .hasOwnProperty(facility.id) ? 'checked' :
                                         '';
                                     let disable = !checked ? 'disabled' : '';
                                     let quantity = checked ? response
-                                        .selectedproducts[facility.id] : '';
+                                        .selectedproducts[facility.id].quantity :
+                                        '';
+                                    let warehouse_id = response.selectedproducts[
+                                        facility.id]?.warehouse_id ?? '';
+
 
                                     amenitesContainer.append(`
                                     <div class=" mb-4 edit-checkbox" style="display: flex">
@@ -319,9 +343,14 @@
                                             <input class="form-check-input product-checkbox-edit" type="checkbox" value="${facility.id}" ${checked}
                                                 name="product_id[]" id="checkbox-facility-${facility.id}">
                                             <label class="form-check-label limit_name" for="checkbox-facility-${facility.id}">
-                                                ${facility.name}
+                                                ${facility.name}  (Tồn: ${facility.stock})
                                             </label>
                                         </div>
+                                         <div style="width: 120px;">
+                                        <select name="warehouse_id[${facility.id}]" data-id="${facility.id}" class="form-control form-control-sm select-warehouse-edit" style="height:33px">
+                                         ${buildWarehouseOptions(warehouse_id)}
+                                        </select>
+                                    </div>
                                         <div style="flex: 30%">
                                             <input type="number" name="stock[]" data-stock="${quantity}" class="input_number form-control form-control-sm" style="max-width: 80px" ${disable} value="${quantity}"
                                                 id="stock-${facility.id}" min="1" max="${facility.stock}" oninput="validateInput(this)">
@@ -360,6 +389,138 @@
                         }
                     });
                 });
+                const warehouses = @json($warehouse);
+
+                function handleWarehouseChange(selectElement) {
+
+                    const $select = $(selectElement);
+                    const warehouseId = $select.val() ?? "";
+                    const productId = $select.data('id') ?? ""; // ✅ Lấy từ data-id
+
+                    $.ajax({
+                        url: "{{ route('admin.hotel.room.product.admin.warehouse.get-products-by-warehouse') }}", // ✅ Route bạn định nghĩa trong web.php
+                        method: 'POST',
+                        data: {
+                            warehouse_id: warehouseId,
+                            product_id: productId,
+                            _token: $('meta[name="csrf-token"]').attr('content')
+                        },
+                        success: function(response) {
+                            if (response.status) {
+                                const container = $('#product-list');
+                                if (!productId) {
+                                    container.empty(); // Xóa tất cả trước khi render lại
+                                    response.products.forEach(product => {
+                                        renderProduct(product);
+                                    });
+                                } else {
+                                    // ✅ Trường hợp chỉ update dòng đang đổi select
+                                    const product = response.products[0]; // Vì chỉ trả về 1
+                                    const $row = $select.closest('.d-flex');
+
+                                    $row.find('label.form-check-label')
+                                        .html(`${product.name} (Tồn: ${product.quantity})`);
+                                    $row.find('input[type="number"]')
+                                        .attr('max', product.quantity);
+                                }
+                            } else {
+                                alert('Không tìm thấy sản phẩm trong kho.');
+                            }
+                        },
+                        error: function() {
+                            alert('Lỗi khi truy xuất dữ liệu từ kho.');
+                        }
+                    });
+                }
+
+                function renderProduct(product) {
+                    const container = $('#product-list');
+                    const html = `
+                                <div class="d-flex align-items-center justify-content-between mb-2 gap-2">
+                                    <div class="form-check flex-grow-1">
+                                        <input type="checkbox" class="form-check-input room-checkbox"
+                                            name="product_ids[]" value="${product.product_id}" id="product-${product.product_id}">
+                                        <label class="form-check-label" for="product-${product.product_id}">
+                                            ${product.name} (Tồn: ${product.quantity})
+                                        </label>
+                                    </div>
+                                    <div style="width: 120px;">
+                                        <select name="warehouse_id[${product.product_id}]" data-id="${product.product_id}" class="form-control form-control-sm select-warehouse" style="height:33px">
+                                            @foreach ($warehouse as $item)
+                                                <option value="{{ $item->id }}">{{ $item->name }}</option>
+                                            @endforeach
+                                        </select>
+                                    </div>
+                                    <div style="width: 120px;">
+                                        <input type="number"
+                                            name="stock[${product.product_id}]"
+                                            class="form-control form-control-sm"
+                                            id="stock-${product.product_id}"
+                                            max="${product.quantity}" min="1" 
+                                            oninput="validateInput(this)">
+                                    </div>
+
+                                
+                                </div>
+                                        `;
+
+                    container.append(html);
+                }
+
+                $(document).on('change', '.select-warehouse', function() {
+                    handleWarehouseChange(this);
+                });
+
+                $(document).on('change', '.select-warehouse-edit', function() {
+                    const $select = $(this);
+                    const warehouseId = $select.val(); // ✅ ID kho vừa chọn
+                    const productId = $select.data('id'); // ✅ ID sản phẩm
+
+                    // Gửi Ajax để lấy tồn kho của sản phẩm đó trong kho đó
+                    $.ajax({
+                        url: "{{ route('admin.hotel.room.product.admin.warehouse.get-products-by-warehouse') }}",
+                        method: 'POST',
+                        data: {
+                            warehouse_id: warehouseId,
+                            product_id: productId,
+                            _token: $('meta[name="csrf-token"]').attr('content')
+                        },
+                        success: function(response) {
+                            if (response.status && response.products.length) {
+                                const product = response.products[0];
+
+
+                                const $row = $select.closest('.edit-checkbox');
+                                $row.find('label.form-check-label').html(
+                                    `${product.name} (Tồn: ${product.quantity})`);
+
+                                // ✅ Cập nhật max trong ô input số lượng
+                                $row.find('input[type="number"]').attr('max', product
+                                    .quantity);
+                            } else {
+                                alert('Không tìm thấy tồn kho sản phẩm!');
+                            }
+                        },
+                        error: function() {
+                            alert('Lỗi khi truy vấn tồn kho!');
+                        }
+                    });
+                });
+
+                $(document).ready(function() {
+                    const selects = $('.select-warehouse');
+
+                    if (selects.length > 0) {
+                        selects.each(function() {
+                            handleWarehouseChange(this);
+                        });
+                    } else {
+                        // ✅ Nếu chưa có select nào, vẫn chạy 1 lần handleWarehouseChange với null hoặc mặc định
+                        handleWarehouseChange(null);
+                    }
+                });
+
+
 
 
                 $(document).on('click', '.btn-add', function() {
@@ -402,6 +563,7 @@
                     }).then((result) => {
                         if (result.isConfirmed) {
                             // ajax
+
                             $.ajax({
                                 url: `{{ route('admin.hotel.room.product.delete', '') }}/${dataId}`,
                                 type: 'POST',
@@ -620,10 +782,10 @@
         }
 
         /* .form-check-group {
-                            display: flex;
-                            flex-wrap: wrap;
-                            gap: 10px;
-                        } */
+                                                                                display: flex;
+                                                                                flex-wrap: wrap;
+                                                                                gap: 10px;
+                                                                            } */
 
         .form-check {
             margin-right: 15px;

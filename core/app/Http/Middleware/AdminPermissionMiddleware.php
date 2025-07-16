@@ -63,6 +63,7 @@ class AdminPermissionMiddleware
              'admin.warehouse.transfer.update.import.slipe', // chỉnh sửa phiếu điều chuyển  
              'admin.warehouse.transfer.check-stock', // check trong kho đó sản phẩm còn bao nhiêu
              'admin.warehouse.transfer.print', // in phiếu điều chuyển
+             'admin.hotel.room.product.admin.warehouse.get-products-by-warehouse' 
         ];
         /*
             'admin.revenue' => 'Danh thu trong màn thông kế'

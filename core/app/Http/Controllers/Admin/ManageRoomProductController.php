@@ -8,9 +8,11 @@ use App\Models\Product;
 use App\Models\Room;
 use App\Models\RoomType;
 use App\Models\RoomProduct;
-
+use App\Models\Warehouse;
+use App\Models\WarehouseEntryItem;
 use App\Repositories\BaseRepository;
 use Illuminate\Http\Request;
+use Illuminate\Support\Facades\DB;
 use Illuminate\Support\Facades\Log;
 use Illuminate\Support\Facades\Validator;
 use Termwind\Components\Dd;
@@ -27,6 +29,7 @@ class ManageRoomProductController extends Controller
     {
         $rooms = Room::where('status', 1)->get();
         $products = Product::where('is_published', 1)->where('stock', '>', 0)->get();
+        $warehouse = Warehouse::active()->get();
         $pageTitle = 'Danh sách sản phẩm của phòng';
         $search = request()->get('search');
         $perPage = request()->get('perPage', 10);
@@ -41,7 +44,7 @@ class ManageRoomProductController extends Controller
         $relations = ['products', 'roomType'];
         $requiredRelations = ['products'];
         $searchColumns = [
-            'code',
+            'code'
         ];
         $relationSearchColumns = [];
 
@@ -66,7 +69,7 @@ class ManageRoomProductController extends Controller
             ]);
         }
 
-        return view('admin.manage-room-products.index', compact('rooms', 'products', 'pageTitle', 'room_type'));
+        return view('admin.manage-room-products.index', compact('rooms', 'products', 'pageTitle', 'room_type', 'warehouse'));
     }
     // public function index()
     // {
@@ -114,7 +117,8 @@ class ManageRoomProductController extends Controller
 
             $product = Product::find($productId);
             if (!$product) continue;
-
+            $warehouseId = $request->warehouse_id[$productId] ?? null;
+            if (!$warehouseId) continue;
             // Tổng số cần trừ: quantity x số phòng
             $totalQuantityRequired = $quantity * count($request->room_ids);
 
@@ -133,15 +137,18 @@ class ManageRoomProductController extends Controller
 
                 $exists = $room->products()->where('products.id', $productId)->exists();
                 if (!$exists) {
+
                     $room->products()->attach($productId, [
-                        'quantity' => $quantity,
-                        'unit_code' => $unitCode,
-                        'subdomain' => $subdomain,
+                        'quantity'       => $quantity,
+                        'unit_code'      => $unitCode,
+                        'subdomain'      => $subdomain,
+                        'warehouse_id'   => $warehouseId,
                     ]);
 
                     // Chỉ giảm nếu thực sự đã gán
                     $product->decrement('stock', $quantity);
                 }
+                returnProductToWarehouseFromRoom($warehouseId, $productId, $quantity, $product->import_price, 'Xuất hàng', authAdmin()->id);
             }
         }
 
@@ -154,12 +161,18 @@ class ManageRoomProductController extends Controller
 
     public function edit($id)
     {
-        $rooms = Room::select('id', 'code')->get();
+        $rooms    = Room::select('id', 'code')->get();
         $roomEdit = Room::query()->find($id);
         $products = product::select('id', 'name', 'stock')->where('is_published', 1)->where('stock', '>', 0)->get();
-        $selectedproducts = $roomEdit->products->mapWithKeys(function ($product) {
-            return [$product->id => $product->pivot->quantity];
+        $selectedProducts = $roomEdit->products->mapWithKeys(function ($product) {
+            return [
+                $product->id => [
+                    'quantity' => $product->pivot->quantity,
+                    'warehouse_id' => $product->pivot->warehouse_id
+                ]
+            ];
         })->toArray();
+
 
         if (!$roomEdit) {
             return response()->json([
@@ -172,11 +185,12 @@ class ManageRoomProductController extends Controller
             'rooms' => $rooms,
             'roomEdit' => $roomEdit,
             'products' => $products,
-            'selectedproducts' => $selectedproducts,
+            'selectedproducts' => $selectedProducts,
         ]);
     }
     public function update(Request $request)
     {
+        Log::info($request->all());
         try {
             // Validate dữ liệu gửi lên
             $request->validate([
@@ -199,21 +213,60 @@ class ManageRoomProductController extends Controller
                 foreach ($productIds as $index => $productId) {
                     $quantity = (int) ($quantities[$index] ?? 0);
                     $product = Product::findOrFail($productId);
-
+                    $warehouseId = $request->warehouse_id[$productId] ?? null;
+                    if (!$warehouseId) continue;
                     // Kiểm tra xem sản phẩm đã có trong phòng chưa
                     $existing = $room->products()->where('product_id', $productId)->first();
                     $oldQuantity = $existing?->pivot->quantity ?? 0;
+                    $oldWarehouseId = $existing?->pivot->warehouse_id ?? null;
+                    // Nếu thay đổi số lượng hoặc đổi kho
+                    if ($warehouseId != $oldWarehouseId || $quantity != $oldQuantity) {
+                        // Trường hợp đổi kho
+                        if ($warehouseId != $oldWarehouseId) {
+                            if ($oldQuantity > 0 && $oldWarehouseId) {
+                                Log::info("Trả lại về kho cũ (phiếu nhập)", compact('productId', 'oldWarehouseId', 'oldQuantity'));
+                                addProductToWarehouse($request->room_id, $oldWarehouseId, $productId, $oldQuantity, $product->import_price, authAdmin()->id);
+                            }
+
+                            if ($quantity > 0 && $warehouseId) {
+                                Log::info("Xuất hàng sang kho mới", compact('productId', 'warehouseId', 'quantity'));
+                                returnProductToWarehouseFromRoom($warehouseId, $productId, $quantity, $product->import_price, "Chuyển kho", authAdmin()->id);
+                            }
+                        } elseif ($quantity != $oldQuantity) {
+                            $diff = abs($quantity - $oldQuantity);
+
+                            if ($quantity > $oldQuantity) {
+                                Log::info("Tăng số lượng (phiếu xuất)", compact('productId', 'diff'));
+                                returnProductToWarehouseFromRoom($warehouseId, $productId, $diff, $product->import_price, "Tăng số lượng", authAdmin()->id);
+                            } else {
+                                Log::info("Giảm số lượng (phiếu nhập)", compact('productId', 'diff'));
+                                addProductToWarehouse($request->room_id, $warehouseId, $productId, $diff, $product->import_price, authAdmin()->id);
+                            }
+                        }
+                    } else {
+                        Log::info("Không thay đổi gì",compact('productId'));
+                         // ❗️Vẫn thêm vào syncData để không bị xóa khi sync
+                        $syncData[$productId] = [
+                            'quantity'       => $oldQuantity,
+                            'warehouse_id'   => $oldWarehouseId,
+                            'unit_code'      => unitCode(),
+                            'subdomain'      => subdomain(),
+                        ];
+                        continue;
+                    }
+
 
                     // Cập nhật lại tồn kho (hoàn số cũ, trừ số mới)
-                    $product->update([
+                    $product->update(attributes: [
                         'stock' => $product->stock + $oldQuantity - $quantity,
                     ]);
 
                     // Gán dữ liệu cho pivot
                     $syncData[$productId] = [
-                        'quantity' => $quantity,
-                        'unit_code' => unitCode(),
-                        'subdomain' => subdomain(),
+                        'quantity'       => $quantity,
+                        'warehouse_id'   => $warehouseId,
+                        'unit_code'      => unitCode(),
+                        'subdomain'      => subdomain(),
                     ];
                 }
 
@@ -314,14 +367,48 @@ class ManageRoomProductController extends Controller
                 // Cộng lại số lượng vào tồn kho
                 $product->increment('stock', $roomProduct->quantity);
             }
+            addProductToWarehouse($roomId, $roomProduct->warehouse_id, $roomProduct->product_id, $roomProduct->quantity, $product->import_price, authAdmin()->id);
         }
-
         // Xóa hết bản ghi gán sản phẩm vào phòng
         RoomProduct::where('room_id', $roomId)->delete();
 
         return response()->json([
             'status' => 'success',
             'message' => 'Xóa sản phẩm và cập nhật tồn kho thành công',
+        ]);
+    }
+    public function getProductsByWarehouse(Request $request)
+    {
+        $query = WarehouseEntryItem::query();
+
+        // 🔍 Lọc nếu truyền giá trị hợp lệ
+        if (!is_null($request->warehouse_id) && $request->warehouse_id !== '') {
+            $query->where('warehouse_id', $request->warehouse_id);
+        }
+
+        if (!is_null($request->product_id) && $request->product_id !== '') {
+            $query->where('product_id', $request->product_id);
+        }
+
+        $products = $query
+            ->select(
+                'product_id',
+                DB::raw('SUM(CASE WHEN type = 1 THEN quantity WHEN type = 0 THEN -quantity ELSE 0 END) as quantity')
+            )
+            ->groupBy('product_id')
+            ->with('product:id,name')
+            ->get()
+            ->map(function ($item) {
+                return [
+                    'product_id' => $item->product_id,
+                    'name' => $item->product->name ?? 'Không rõ',
+                    'quantity' => $item->quantity
+                ];
+            });
+
+        return response()->json([
+            'status' => true,
+            'products' => $products
         ]);
     }
 }

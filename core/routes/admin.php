@@ -427,6 +427,9 @@ Route::middleware('admin', 'adminPermission')->prefix('admin')->group(function (
 
         Route::controller('ManageRoomProductController')->name('room.product.')->prefix('roomProduct')->group(function () {
             Route::get('', 'index')->name('all');
+            Route::post('/admin/warehouse/get-products-by-warehouse',  'getProductsByWarehouse')->name('admin.warehouse.get-products-by-warehouse');
+   
+
             Route::post('/rooms/add-product', 'store')->name('store');
             Route::get('room/edit-product/{id}', 'edit')->name('edit');
             Route::post('/rooms/update-product', 'update')->name('update');

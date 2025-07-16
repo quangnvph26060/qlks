@@ -17,8 +17,12 @@ use App\Models\Language;
 use App\Models\ReceiptAndPayment;
 use App\Models\Role;
 use App\Models\RoomBooking;
+use App\Models\RoomProduct;
 use App\Models\RoomServiceProduct;
 use App\Models\RoomStatusHistory;
+use App\Models\WarehouseEntry;
+use App\Models\WarehouseEntryItem;
+use App\Models\WarehouseExport;
 use App\Notify\Notify;
 use Carbon\Carbon;
 use Illuminate\Support\Facades\Cache;
@@ -29,6 +33,7 @@ use Intervention\Image\ImageManager;
 use Illuminate\Support\Facades\Storage;
 
 use Illuminate\Support\Facades\Auth;
+use Illuminate\Support\Facades\DB;
 
 // function systemDetails() {
 //     $system['name']          = 'viserhotel';
@@ -143,7 +148,6 @@ function getCode($prefix, $length = 12, $modelClass = null, $column = 'code')
         if ($modelClass && class_exists($modelClass)) {
             $exists = $modelClass::where($column, $code)->exists();
         }
-
     } while ($exists); // lặp lại nếu mã đã tồn tại trong bảng
 
     return $code;
@@ -391,8 +395,8 @@ function saveRoomStatusHistory($room_id, $start_date, $end_date, $status_code)
 }
 function savePayment($booking_id, $checkin_id, $room_price, $payment_method, $admin)
 {
-   return ReceiptAndPayment::create([
-        'payment_id'       => getCode('HD', 12,ReceiptAndPayment::class,'payment_id'),
+    return ReceiptAndPayment::create([
+        'payment_id'       => getCode('HD', 12, ReceiptAndPayment::class, 'payment_id'),
         'booking_id'       => $booking_id,
         'checkin_id'       => $checkin_id,
         'room_price'       => $room_price,
@@ -653,6 +657,90 @@ function subdomain()
 function isSuperAdmin()
 {
     return auth('admin')->user()?->role_id == 1;
+}
+
+
+function returnProductToWarehouseFromRoom ($warehouseId, $productId, $quantity, $price = 0, $note = null, $createdBy = null)
+{
+    DB::beginTransaction();
+    try {
+        $entry = WarehouseExport::create([
+            'reference_code' => getCode('PX', 12, WarehouseExport::class, 'reference_code'),
+            'supplier_id'        => "",
+            'note'               => $note,
+            'total'              => $quantity * $price,
+            'created_time'       =>  date('Y-m-d'),
+            'created_by'         => $createdBy,
+            'status'             => 1,
+            'subdomain'          => subdomain(),
+            'unit_code'          => unitCode(),
+        ]);
+
+        WarehouseEntryItem::create([
+            'warehouse_export_id' => $entry->id,
+            'warehouse_id' => $warehouseId,
+            'product_id' => $productId,
+            'quantity' => $quantity,
+            'price' => $price,
+            'type' => 0,
+        ]);
+
+        DB::commit();
+        return $entry;
+    } catch (\Exception $e) {
+        DB::rollBack();
+        throw $e;
+    }
+}
+
+
+function addProductToWarehouse($roomId, $warehouseId, $productId, $quantity, $price = 0,  $createdBy = null)
+{
+    DB::beginTransaction();
+    try {
+        // Tạo phiếu thu hồi (dạng export nhưng sẽ ghi nhận lại vào kho)
+        $entry = WarehouseEntry::create([
+            'reference_code'     => getCode('PN', 12, WarehouseEntry::class, 'reference_code'),
+            'supplier_id'        => "",
+            'note'               => "Thu hồi từ phòng {$roomId}",
+            'total'              => $quantity * $price,
+            'created_time'       =>  date('Y-m-d'),
+            'created_by'         => $createdBy,
+            'status'             => 1,
+            'subdomain'          => subdomain(),
+            'unit_code'          => unitCode(),
+        ]);
+
+        WarehouseEntryItem::create([
+            'warehouse_entry_id'=> $entry->id,
+            'warehouse_id'      => $warehouseId,
+            'product_id'        => $productId,
+            'quantity'          => $quantity,
+            'price'             => $price,
+            'type'              => 1, // nhập lại
+        ]);
+
+        // // Trừ hoặc xoá ở room_products
+        // $roomProduct = RoomProduct::where([
+        //     'room_id' => $roomId,
+        //     'warehouse_id' => $warehouseId,
+        //     'product_id' => $productId
+        // ])->first();
+
+        // if ($roomProduct) {
+        //     if ($roomProduct->quantity <= $quantity) {
+        //         $roomProduct->delete();
+        //     } else {
+        //         $roomProduct->decrement('quantity', $quantity);
+        //     }
+        // }
+
+        DB::commit();
+        return $entry;
+    } catch (\Exception $e) {
+        DB::rollBack();
+        throw $e;
+    }
 }
 // end setting and setup hotels
 function isImage($string)

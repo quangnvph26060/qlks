@@ -12,6 +12,7 @@ use BelongsToTenant;
     protected $fillable = [
         'room_id',
         'product_id',
+        'warehouse_id',
         'quantity',
         'unit_code',
         'subdomain'
