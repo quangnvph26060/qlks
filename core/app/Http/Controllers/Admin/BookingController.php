@@ -11,6 +11,7 @@ use App\Models\HotelConfiguration;
 use App\Models\HotelFacility;
 use App\Models\PaymentTransaction;
 use App\Models\RoomChange;
+use App\Models\RoomProduct;
 use App\Models\RoomStatusHistory;
 use App\Models\RoomType;
 use App\Models\Room;
@@ -34,6 +35,7 @@ use App\Models\RoomPricesWeekdayHour;
 use App\Models\RoomServiceProduct;
 use App\Models\RoomTypePrice;
 use App\Models\UserCleanroom;
+use App\Models\Warehouse;
 use Carbon\Carbon;
 use Hamcrest\Arrays\IsArray;
 use Illuminate\Pagination\LengthAwarePaginator;
@@ -464,7 +466,7 @@ class BookingController extends Controller
             }
 
             $newRecords = [];
-         //   $appliedPrice = null;
+            //   $appliedPrice = null;
             foreach ($emptyRooms as $room) {
                 foreach ($dates as $date) {
                     $status = 0;
@@ -524,7 +526,7 @@ class BookingController extends Controller
 
             $roomType = RoomType::active()->get();
             $rooms    = Room::active();
-          //  Log::info($newRecords);
+            //  Log::info($newRecords);
             if ($request->method === 'change_room') {
                 $rooms = $rooms->where('id', $request->roomId)->first();
             } else {
@@ -642,7 +644,7 @@ class BookingController extends Controller
                 return ApiResponse::error('Phòng đã được đổi trong ngày ' . Carbon::parse($request->date_new)->format('d-m-Y'), 200);
             }
             $roomChange = new RoomChange();
-            $roomChange->room_change_id     = getCode('DP', 12,RoomChange::class,'room_change_id');
+            $roomChange->room_change_id     = getCode('DP', 12, RoomChange::class, 'room_change_id');
             $roomChange->id_room_booking    = $roomBooking->booking_id;
             $roomChange->id_check_in        = "";
             $roomChange->old_room_code      = $roomBooking->room_change ?? $roomBooking->room_code;
@@ -742,7 +744,7 @@ class BookingController extends Controller
                 $roomChange = new RoomChange();
             }
 
-            $roomChange->room_change_id     = $roomChange->room_change_id ?? getCode('DP', 12,RoomChange::class,'room_change_id');
+            $roomChange->room_change_id     = $roomChange->room_change_id ?? getCode('DP', 12, RoomChange::class, 'room_change_id');
             $roomChange->id_room_booking    = $roomBooking->id_room_booking ?? "";
             $roomChange->id_check_in        = $roomBooking->check_in_id;
             $roomChange->old_room_code      = $roomBooking->room_code ?? $roomBooking->room_change;
@@ -984,7 +986,8 @@ class BookingController extends Controller
         $emptyMessage   = '';
         $pageTitle      =  'Lễ tân';
         $roomTypes      = RoomType::where('unit_code', unitCode())->where('status', 1)->get();
-        return view('admin.booking.receptionist.index', compact('roomTypes'));
+        $warehouses = Warehouse::active()->get();
+        return view('admin.booking.receptionist.index', compact('roomTypes', 'warehouses'));
     }
     public function roomBoookingHistory(Request $request)
     {
@@ -1207,10 +1210,10 @@ class BookingController extends Controller
 
 
         if ($receipt) {
-           
+
 
             PaymentTransaction::create([
-                'payment_code'   =>  getCode('TT', 12,PaymentTransaction::class,'payment_code'),
+                'payment_code'   =>  getCode('TT', 12, PaymentTransaction::class, 'payment_code'),
                 'receipts_and_payments_id' => $receipt->id,
                 'amount'        => $amount,
                 'payment_method' => $request->payment_pttt,
@@ -1269,58 +1272,104 @@ class BookingController extends Controller
 
     public function checkOutRoom(Request $request)
     {
-        // Lấy checkin_id chính
-        $checkinId = $request->mainRoomBookingId;
+        try {
+            // Lấy checkin_id chính
+            $checkinId = $request->mainRoomBookingId;
 
-        // Lặp qua danh sách roomData
-        foreach ($request->roomData as $room) {
-            $roomId = $room['roomId'];
-            $bookingId = $room['roomBookingId'];
+            // Lặp qua danh sách roomData
+            foreach ($request->roomData as $room) {
+                $roomId = $room['roomId'];
+                $bookingId = $room['roomBookingId'];
 
-            // Lấy thông tin check-in tương ứng
-            $checkIns = CheckIn::where('check_in_id', $checkinId)
-                // ->where('id', $bookingId)
-                ->get();
+                // Lấy thông tin check-in tương ứng
+                $checkIns = CheckIn::where('check_in_id', $checkinId)
+                    // ->where('id', $bookingId)
+                    ->get();
 
-            $totalAmount    = $checkIns->sum('total_amount');
-            $totalDeposit   = $checkIns->sum('deposit_amount');
-            $totalDiscount  = $checkIns->sum('discount');
-            $roomIs     = Room::where('id', $roomId)->first();
+                $totalAmount    = $checkIns->sum('total_amount');
+                $totalDeposit   = $checkIns->sum('deposit_amount');
+                $totalDiscount  = $checkIns->sum('discount');
+                $roomIs         = Room::where('id', $roomId)->first();
 
-            $receipt = ReceiptAndPayment::where('checkin_id', $checkinId)->first();
-            $totalPayment = PaymentTransaction::where('receipts_and_payments_id', $receipt->id)->sum('amount');
-
-
-            $totalServicePayment = RoomServiceProduct::where('check_in_id', $checkinId)
-                // ->where('room_code', $roomId)
-                ->sum('total_payment');
+                $receipt      = ReceiptAndPayment::where('checkin_id', $checkinId)->first();
+                $totalPayment = PaymentTransaction::where('receipts_and_payments_id', $receipt->id)->sum('amount');
 
 
+                $totalServicePayment = RoomServiceProduct::where('check_in_id', $checkinId)
+                    // ->where('room_code', $roomId)
+                    ->sum('total_payment');
 
-            $totalServiceFees = $totalServicePayment;
+                $roomServiceProducts =  RoomServiceProduct::where('check_in_id', $checkinId)->get();
+            
+                foreach ($roomServiceProducts as $item) {
+                    $productId    = $item->product_id;
+                    $warehouseId  = $item->warehouse_id;
+                    $usedQuantity = $item->quantity;
+                    $roomId       = $item->room_code;
+                    $product = Product::find($productId);
+                    if (!$product) continue;
+                    Log::info($product);
+                    // Tìm sản phẩm trong bảng room_products
+                    $roomProduct = RoomProduct::where('room_id', $roomId)
+                        ->where('product_id', $productId)
+                        ->where('warehouse_id', $warehouseId)
+                        ->first();
 
-            $due = ($totalAmount + $totalServiceFees - $totalDeposit -  $totalDiscount - $totalPayment);
-
-
-            if ($due <= 0 && $checkIns->count()) {
-                foreach ($checkIns as $check_in) {
-                    Room::where('id', $check_in->room_code)->update(['is_clean' => 0]);
-                    $roomToSave = $check_in->room_change ?? $check_in->room_code;
-                    saveRoomStatusHistory($roomToSave, $check_in->checkin_date, $check_in->checkout_date, 1);
+                    if ($roomProduct) {
+                        // Nếu có sản phẩm trong phòng
+                        if ($roomProduct->quantity >= $usedQuantity) {
+                            RoomProduct::where('room_id', $roomId)
+                            ->where('product_id', $productId)
+                            ->where('warehouse_id', $warehouseId)
+                            ->decrement('quantity', $usedQuantity);
+                        } else {
+                            // Trừ hết phần còn lại
+                            $remaining = $usedQuantity - $roomProduct->quantity;
+                           RoomProduct::where('room_id', $roomId)
+                            ->where('product_id', $productId)
+                            ->where('warehouse_id', $warehouseId)
+                            ->update(['quantity' => 0]);
+                            // Gọi hàm xuất kho với số lượng thiếu
+                            $product->decrement('stock', $remaining);
+                            returnProductToWarehouseFromRoom($warehouseId, $productId, $remaining, $item->price, 'Xuất hàng', authAdmin()->id);
+                          
+                        }
+                    } else {
+                        // Không có sản phẩm trong phòng → trừ kho hết luôn
+                         $product->decrement('stock', $usedQuantity);
+                        returnProductToWarehouseFromRoom($warehouseId, $productId, $usedQuantity, $item->price, 'Xuất hàng', authAdmin()->id);
+                    }
                 }
-            } else {
-                return response()->json([
-                    'status' => 'error',
-                    'error' => ' ' . $roomIs->room_number . ' chưa thanh toán đủ. Còn thiếu: ' . number_format($due, 0, ',', '.'),
+                $totalServiceFees = $totalServicePayment;
 
-                ]);
+                $due = ($totalAmount + $totalServiceFees - $totalDeposit -  $totalDiscount - $totalPayment);
+
+
+                if ($due <= 0 && $checkIns->count()) {
+                    foreach ($checkIns as $check_in) {
+                        Room::where('id', $check_in->room_code)->update(['is_clean' => 0]);
+                        $roomToSave = $check_in->room_change ?? $check_in->room_code;
+                        saveRoomStatusHistory($roomToSave, $check_in->checkin_date, $check_in->checkout_date, 1); // 1 phòng trống
+                    }
+                } else {
+                    return response()->json([
+                        'status' => 'error',
+                        'error' => ' ' . $roomIs->room_number . ' chưa thanh toán đủ. Còn thiếu: ' . number_format($due, 0, ',', '.'),
+
+                    ]);
+                }
             }
-        }
 
-        return response()->json([
-            'status' => 'success',
-            'success' => 'Trả phòng thành công'
-        ]);
+            return response()->json([
+                'status' => 'success',
+                'success' => 'Trả phòng thành công'
+            ]);
+        } catch (\Exception $e) {
+            return response()->json([
+                'status' => 'error',
+                'error' => 'Lỗi: ' . $e->getMessage() . ' tại dòng: ' . $e->getLine(),
+            ]);
+        }
     }
 
     public function changeCleanRoom(Request $request)

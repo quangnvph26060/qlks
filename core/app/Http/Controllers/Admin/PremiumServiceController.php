@@ -8,6 +8,7 @@ use App\Models\Product;
 use App\Models\ReceiptAndPayment;
 use App\Models\RoomServiceProduct;
 use App\Models\SetupCode;
+use App\Models\WarehouseEntryItem;
 use App\Repositories\BaseRepository;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\DB;
@@ -27,7 +28,7 @@ class PremiumServiceController extends Controller
         if (!empty($input)) {
             $premiumServices->where('name', 'like', '%' . $input . '%');
         }
-        $premiumServices = $premiumServices->paginate(10)->through(function($item) {
+        $premiumServices = $premiumServices->paginate(10)->through(function ($item) {
             $item->cost = number_format($item->cost, 0, ',', '.');
             return $item;
         });
@@ -106,22 +107,33 @@ class PremiumServiceController extends Controller
     }
     public function getAllService(Request $request)
     {
-        $input = $request->input('search');
-        $room_code = $request->input('room_code');
-        $check_in_id = $request->input('check_in_id');
-        $serviceInRoom = RoomServiceProduct::where('room_code', $room_code)
-            ->where('check_in_id', $check_in_id)
-            ->with('product', 'service')->get();
+        $input            = $request->input('search');
+        $room_code        = $request->input('room_code');
+        $check_in_id      = $request->input('check_in_id');
+        $warehouse_id    =  $request->input('warehouses_id');
+        // $serviceInRoom = RoomServiceProduct::where('room_code', $room_code)
+        //     ->where('check_in_id', $check_in_id)
+        //     ->with('product', 'service')->get();
 
-        $serviceInRoom->each(function ($item) {
-            if (!is_null($item->product)) {
-                $item->type = 'product';
-            } elseif (!is_null($item->service)) {
-                $item->type = 'premium_service';
-            } else {
-                $item->type = null; // fallback nếu cần
-            }
-        });
+        // $serviceInRoom->each(function ($item) {
+        //     if (!is_null($item->product)) {
+        //         $item->type = 'product';
+        //     } elseif (!is_null($item->service)) {
+        //         $item->type = 'premium_service';
+        //     } else {
+        //         $item->type = null; // fallback nếu cần
+        //     }
+        // });
+
+        $productStocks = WarehouseEntryItem::where('warehouse_id', $warehouse_id)
+            ->select(
+                'product_id',
+                DB::raw('SUM(CASE WHEN type = 1 THEN quantity ELSE 0 END) - SUM(CASE WHEN type = 0 THEN quantity ELSE 0 END) as stock')
+            )
+            ->groupBy('product_id')
+            ->having('stock', '>', 0)
+            ->get(); // 👈 không dùng pluck
+
 
         $premiumServices = PremiumService::query()
             ->active();
@@ -132,7 +144,7 @@ class PremiumServiceController extends Controller
         }
 
         $products = Product::query()
-            ->where('unit_code', unitCode());
+            ->where('stock', '>', 0);
 
         if (!empty($input)) {
             $products->where('name', 'like', '%' . $input . '%');
@@ -147,18 +159,66 @@ class PremiumServiceController extends Controller
             $item->type = 'product';
             return $item;
         });
+        $productStocks = $productStocks->toArray();
+
         $data = array_values(array_merge(
             $premiumServices->toArray(),
             $products->toArray()
         ));
 
+        $stockMap = collect($productStocks)->pluck('stock', 'product_id')->toArray();
 
-        return response()->json(['status' => 'success', 'data' => $data, 'serviceInRoom' => $serviceInRoom]);
+        $filtered = collect($data)
+            ->map(function ($item) use ($stockMap) {
+                if ($item['type'] === 'product' && isset($stockMap[$item['id']])) {
+                    $item['stock'] = $stockMap[$item['id']];
+                }
+                return $item;
+            })
+            ->filter(function ($item) use ($stockMap) {
+                // Nếu là product thì chỉ giữ nếu có stock
+                if ($item['type'] === 'product') {
+                    return isset($item['stock']);
+                }
+                return true; // Dịch vụ thì luôn giữ
+            })
+            ->values(); // reset index
+        $serviceInRoom = RoomServiceProduct::where('room_code', $room_code)
+            ->where('check_in_id', $check_in_id)
+            ->with('product', 'service')
+            ->get();
+
+        $serviceInRoom->each(function ($item) use ($stockMap) {
+            if (!is_null($item->product)) {
+                $item->type = 'product';
+                $productId = $item->product->id;
+
+                if (isset($stockMap[$productId])) {
+                    $item->product->stock = $stockMap[$productId];
+                }
+            } elseif (!is_null($item->service)) {
+                $item->type = 'premium_service';
+            } else {
+                $item->type = null; // fallback nếu cần
+            }
+        });
+
+
+
+
+
+        return response()->json([
+            'status' => 'success',
+            'data' => $filtered,
+            'serviceInRoom' => $serviceInRoom,
+            'demo' => $stockMap,
+        ]);
     }
     public function storeServices(Request $request)
     {
         $checkInId   = $request->data['checkin_id'];
         $roomCode    = $request->data['room_code'];
+        $warehouseId = $request->data['warehouse_id'];
         $bookingDate = now();
         $creator     = authAdmin()->id;
 
@@ -189,6 +249,7 @@ class PremiumServiceController extends Controller
                     'price'         => $product['price'],
                     'total_payment' => $product['price'] * $product['quantity'],
                     'creator'       => $creator,
+                    'warehouse_id'  => $warehouseId,
                     'unit_code'     => unitCode(),
                     'subdomain'     => subdomain(),
                     'created_at'    => now(),
@@ -222,7 +283,7 @@ class PremiumServiceController extends Controller
                     'total_payment' => $service['price'] * $service['quantity'],
                     'creator'       => $creator,
                     'unit_code'     => unitCode(),
-                      'subdomain'     => subdomain(),
+                    'subdomain'     => subdomain(),
                     'created_at'    => now(),
                     'updated_at'    => now(),
                 ]);
@@ -255,19 +316,19 @@ class PremiumServiceController extends Controller
                     'message' => 'Dịch vụ không tồn tại hoặc đã bị xoá trước đó.'
                 ], 404);
             }
-            // cập nhật lại bên thanh toán
-            $receiptAndPayment = ReceiptAndPayment::where('checkin_id', $service->check_in_id)
-                ->where('room_code', $service->room_code)
-                ->first();
-            // cập nhật lại giá dịch vụ
-            if ($receiptAndPayment) {
-                if ($receiptAndPayment->service_fee !== null && $receiptAndPayment->service_fee != 0) {
-                    $newServiceFee = $receiptAndPayment->service_fee - $service->total_payment;
-                    $receiptAndPayment->update([
-                        'service_fee' => $newServiceFee
-                    ]);
-                }
-            }
+            // // cập nhật lại bên thanh toán
+            // $receiptAndPayment = ReceiptAndPayment::where('checkin_id', $service->check_in_id)
+            //     ->where('room_code', $service->room_code)
+            //     ->first();
+            // // cập nhật lại giá dịch vụ
+            // if ($receiptAndPayment) {
+            //     if ($receiptAndPayment->service_fee !== null && $receiptAndPayment->service_fee != 0) {
+            //         $newServiceFee = $receiptAndPayment->service_fee - $service->total_payment;
+            //         $receiptAndPayment->update([
+            //             'service_fee' => $newServiceFee
+            //         ]);
+            //     }
+            // }
 
             $service->delete();
             DB::commit();

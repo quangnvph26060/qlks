@@ -161,7 +161,7 @@
         @include('admin.booking.partials.room_booking_edit')
         @include('admin.booking.partials.room_booking')
         @include('admin.booking.partials.change_room_booking')
-        @include('admin.booking.partials.modal_service')
+        @include('admin.booking.partials.modal_service',['warehouses'=>$warehouses]);
         <div class="modal fade" id="myModal-check-in-edit" tabindex="-1" role="dialog"
             aria-labelledby="myModalLabel-booking" aria-hidden="true">
 

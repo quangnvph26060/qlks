@@ -15,6 +15,12 @@
                         <input type="text" class="form-control mb-3" placeholder="Tìm kiếm..." id="searchServiceInput">
                         <input type="hidden" class="form-control mb-3" placeholder="Tìm kiếm..." id="check_in_id_service">
                         <input type="hidden" class="form-control mb-3" placeholder="Tìm kiếm..." id="room_code_service">
+                        <select name="" id="" class="form-control mb-3 warehouses-selected">
+                            @foreach ( $warehouses as $item )
+                              <option value="{{$item->id}}">{{$item->name}}</option>
+                            @endforeach
+                             
+                        </select>
                         <div class="btn-group mb-3" role="group">
                             <button class="btn btn-outline-primary active" onclick="filterItems('Tất cả')">Tất cả</button>
                             <button class="btn btn-outline-primary" onclick="filterItems('premium_service')">Dịch vụ</button>

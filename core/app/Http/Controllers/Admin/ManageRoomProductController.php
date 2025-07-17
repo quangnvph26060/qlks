@@ -135,9 +135,13 @@ class ManageRoomProductController extends Controller
                 $room = Room::find($roomId);
                 if (!$room) continue;
 
-                $exists = $room->products()->where('products.id', $productId)->exists();
-                if (!$exists) {
+                $existingPivot = $room->products()
+                    ->where('products.id', $productId)
+                    ->wherePivot('warehouse_id', $warehouseId) // nếu cần phân biệt theo warehouse
+                    ->first();
 
+                if (!$existingPivot) {
+                    // Nếu chưa tồn tại, thêm mới
                     $room->products()->attach($productId, [
                         'quantity'       => $quantity,
                         'unit_code'      => $unitCode,
@@ -145,7 +149,15 @@ class ManageRoomProductController extends Controller
                         'warehouse_id'   => $warehouseId,
                     ]);
 
-                    // Chỉ giảm nếu thực sự đã gán
+                    $product->decrement('stock', $quantity);
+                } else {
+                    // Nếu đã tồn tại, cập nhật quantity (tăng thêm)
+                    $currentQuantity = $existingPivot->pivot->quantity;
+
+                    $room->products()->updateExistingPivot($productId, [
+                        'quantity' => $currentQuantity + $quantity,
+                    ]);
+
                     $product->decrement('stock', $quantity);
                 }
                 returnProductToWarehouseFromRoom($warehouseId, $productId, $quantity, $product->import_price, 'Xuất hàng', authAdmin()->id);
@@ -190,7 +202,6 @@ class ManageRoomProductController extends Controller
     }
     public function update(Request $request)
     {
-        Log::info($request->all());
         try {
             // Validate dữ liệu gửi lên
             $request->validate([
@@ -244,8 +255,8 @@ class ManageRoomProductController extends Controller
                             }
                         }
                     } else {
-                        Log::info("Không thay đổi gì",compact('productId'));
-                         // ❗️Vẫn thêm vào syncData để không bị xóa khi sync
+                        Log::info("Không thay đổi gì", compact('productId'));
+                        // ❗️Vẫn thêm vào syncData để không bị xóa khi sync
                         $syncData[$productId] = [
                             'quantity'       => $oldQuantity,
                             'warehouse_id'   => $oldWarehouseId,

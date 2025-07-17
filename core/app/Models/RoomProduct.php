@@ -8,7 +8,7 @@ class RoomProduct extends Model
 {
 use BelongsToTenant;
     protected $table = 'room_products';
-
+ public $timestamps = false;
     protected $fillable = [
         'room_id',
         'product_id',

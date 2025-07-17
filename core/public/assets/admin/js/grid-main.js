@@ -529,6 +529,7 @@ function initViewScriptGird() {
         $('#add-service-room-booking').off("click").on("click", function () {
             var roomId = $(this).attr('data-room-id');
             var checkInId = $(this).attr('data-id');
+            const $select = $('.warehouses-selected');
             $.ajax({
                 url: getAllService,
                 type: 'GET',
@@ -536,6 +537,7 @@ function initViewScriptGird() {
                     search: "",
                     room_code: roomId,
                     check_in_id: checkInId,
+                    warehouses_id: $select.val(),
                 },
                 success: function (data) {
                     if (data.status === 'success') {
@@ -578,7 +580,7 @@ function initViewScriptGird() {
         $('#selectedItems').empty();
         selectedItems = [];
         var roomId = $(this).data('room-id');
-
+        var $select = $('.warehouses-selected');
         var checkInId = $(this).data('id');
         $.ajax({
             url: getAllService,
@@ -587,6 +589,7 @@ function initViewScriptGird() {
                 search: "",
                 room_code: roomId,
                 check_in_id: checkInId,
+                warehouses_id: $select.val(),
             },
             success: function (data) {
                 if (data.status === 'success') {
@@ -597,6 +600,7 @@ function initViewScriptGird() {
                             return {
                                 ...item,
                                 quantity: item.quantity,
+                                stock: item.stock,
                                 name: item?.product?.name ?? item?.service?.name,
                                 id: item?.product?.id ?? item?.service?.id,
                             };
@@ -1325,6 +1329,7 @@ function initViewScriptGird() {
                                 let priceString = $('.total_discount').text();
                                 let price = parseInt(priceString.replace(/\./g, '')) || 0;
 
+
                                 $('.total_payment').text(formatCurrency(payment));
 
                                 let paymentString = $('.total_payment').text();
@@ -1342,6 +1347,8 @@ function initViewScriptGird() {
                                     $('#print_invoice').prop('disabled', false);
                                     $('#print_sales_invoice').prop('disabled', false);
                                 }
+
+
                                 $('.total_balance').text(formatCurrency(totalBalance));
 
                             }
@@ -2548,14 +2555,37 @@ function renderList(data) {
 
 
 window.selectItem = function (item) {
-    const existing = selectedItems.find(i => i.name === item.name);
+    const existing = selectedItems.find(i => i.id === item.id);
+    console.log(item);
+
     if (existing) {
-        existing.quantity += 1;
+        if (item.type === 'product') {
+            if (existing.quantity < item.stock) {
+                existing.quantity += 1;
+            } else {
+                alert('Đã đạt số lượng tối đa trong kho!');
+            }
+        } else {
+            // Các loại khác (dịch vụ...) vẫn tăng bình thường
+            existing.quantity += 1;
+        }
     } else {
-        selectedItems.push({ ...item, quantity: 1 });
+        if (item.type === 'product') {
+            if (item.stock > 0) {
+                selectedItems.push({ ...item, quantity: 1 });
+            } else {
+                alert('Sản phẩm này đã hết hàng!');
+            }
+        } else {
+            // Các loại khác vẫn cho thêm luôn
+            selectedItems.push({ ...item, quantity: 1 });
+        }
     }
+
     renderSelected();
 }
+
+
 
 $(document).on('click', '.remove-btn-service', function () {
     let index = $(this).data('index');
@@ -2664,7 +2694,7 @@ function renderSelected() {
             <div class="col-md-2 text-end text-primary no-wrap price-service">${formatCurrency(item.price)}</div>
                 <div class="col-md-4 d-flex align-items-center justify-content-center gap-1">
                     <button class="btn btn-sm btn-outline-secondary" onclick="changeQty(${index}, -1)">-</button>
-                        <input type="number" min="1" value="${item.quantity}" onchange="updateQty(${index}, this.value)" class="form-control form-control-sm text-center" style="width: 60px;">
+                        <input type="number" min="1" value="${item.quantity}" onchange="updateQty(${index}, this.value)" max="${item.stock ?? item?.product?.stock}" class="form-control form-control-sm text-center" style="width: 60px;">
                     <button class="btn btn-sm btn-outline-secondary" onclick="changeQty(${index}, 1)">+</button>
                 </div>
             <div class="col-md-2 text-center">
@@ -2681,16 +2711,28 @@ function renderSelected() {
 window.updateQty = function (index, qty) {
     let quantity = parseInt(qty);
     if (isNaN(quantity) || quantity < 1) quantity = 1;
+
+    const maxStock = selectedItems[index].stock ?? selectedItems[index]?.product?.stock;
+    console.log(maxStock);
+
+    if (quantity > maxStock) quantity = maxStock;
+
     selectedItems[index].quantity = quantity;
     renderSelected();
 }
 
+
 window.changeQty = function (index, delta) {
     let newQty = selectedItems[index].quantity + delta;
     if (newQty < 1) newQty = 1;
+
+    const maxStock = selectedItems[index].stock ?? selectedItems[index]?.product?.stock;
+    if (newQty > maxStock) newQty = maxStock;
+
     selectedItems[index].quantity = newQty;
     renderSelected();
 }
+
 
 
 searchInput.addEventListener('input', renderList);
@@ -2699,7 +2741,7 @@ renderList();
 var debounceTimer;
 $('#searchServiceInput').on('input', function () {
     const value = $(this).val();
-
+    const $select = $('.warehouses-selected');
     clearTimeout(debounceTimer); // xóa timer cũ nếu người dùng vẫn đang gõ
 
     debounceTimer = setTimeout(function () {
@@ -2708,6 +2750,7 @@ $('#searchServiceInput').on('input', function () {
             type: 'GET',
             data: {
                 search: value,
+                warehouses_id: $select.val(),
             },
             success: function (data) {
                 if (data.status === 'success') {
@@ -2721,34 +2764,81 @@ $('#searchServiceInput').on('input', function () {
         });
     }, 300); // chờ 300ms sau lần gõ cuối cùng
 });
+$(document).ready(function () {
+    const $select = $('.warehouses-selected');
+
+    if ($select.length > 0) {
+
+        const initialValue = $select.val();
+        $.ajax({
+            url: getAllService,
+            type: 'GET',
+            data: {
+                warehouses_id: initialValue,
+            },
+            success: function (data) {
+                if (data.status === 'success') {
+                    renderList(data.data)
+                }
+            },
+            error: function (error) {
+                $('#loading').hide();
+                console.log('Error:', error);
+            }
+        });
+
+        // 👉 Lắng nghe sự kiện thay đổi
+        $select.on('change', function () {
+            const selectedId = $(this).val();
+            $.ajax({
+                url: getAllService,
+                type: 'GET',
+                data: {
+                    warehouses_id: selectedId,
+                },
+                success: function (data) {
+                    if (data.status === 'success') {
+                        renderList(data.data)
+                    }
+                },
+                error: function (error) {
+                    $('#loading').hide();
+                    console.log('Error:', error);
+                }
+            });
+        });
+    }
+});
 $('.btn-add-service').on('click', function () {
+    const $select = $('.warehouses-selected');
     let grouped = {
         premium_service: [],
         product: [],
         checkin_id: $('#check_in_id_service').val(),
         room_code: $('#room_code_service').val(),
+         warehouse_id: $select.val(),
     };
 
     $('#selectedItems .row').each(function () {
         const type = $(this).data('type');
         const id = $(this).data('id');
         const qty = $(this).find('input[type="number"]').val();
-
+      
         // Lấy giá từ cột thứ 2 (có class text-primary), bỏ "VND" và dấu chấm
         let priceText = $(this).find('.text-primary').text().trim(); // VD: "30.000 VND"
         let price = parseInt(priceText.replace(/\./g, '').replace(/[^0-9]/g, ''));
-
+        //123456
         if (grouped[type]) {
             grouped[type].push({
                 id: id,
                 quantity: parseInt(qty),
-                price: price
+                price: price,
             });
         } else {
             grouped[type] = [{
                 id: id,
                 quantity: parseInt(qty),
-                price: price
+                price: price,
             }];
         }
     });
@@ -2900,7 +2990,7 @@ $('.booking-form-pttt').on('submit', function (e) {
 
             if (response.status === 'success') {
                 notify('success', response.success);
-             $('#myModal-check-in-edit').modal('hide');
+                $('#myModal-check-in-edit').modal('hide');
                 $('#input_pttt').val('');
                 console.log(response.total);
 

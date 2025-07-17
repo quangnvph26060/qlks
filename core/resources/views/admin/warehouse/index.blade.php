@@ -6,15 +6,16 @@
             <div class="card b-radius--10">
                 <div class="card-body p-0">
                     <div class="table-responsive--md table-responsive p-2">
+                        <div class="pager-wrap d-flex justify-content-center">
+                            <div class="k-widget d-flex">
+                                <div class="pagination-tb" style="font-size: 13px;margin: 0 auto">
+                                    {{ $response->links('pagination::bootstrap-4') }}
+                                </div>
+                            </div>
+                        </div>
                         <div class="d-flex justify-content-between mb-3">
                             <div class="dt-length">
-                                <select name="example_length" style=" padding: 1px 3px; margin-right: 8px;"
-                                    aria-controls="example" class="perPage">
-                                    <option value="10">10</option>
-                                    <option value="25">25</option>
-                                    <option value="50">50</option>
-                                    <option value="100">100</option>
-                                </select><label for="perPage"> entries per page</label>
+
                             </div>
                             <div class="search">
                                 <label for="searchInput">Search:</label>
@@ -50,9 +51,9 @@
             {{-- <a class="btn btn-sm btn-primary" href="{{ route('admin.warehouse.create') }}"><i
                     class="las la-plus"></i></a> --}}
             <!-- Modal Nhập kho -->
-          <button type="button" class="btn btn-primary btn-sm" onclick="location.reload();">
-    <i class="fa fa-repeat"></i>
-</button>
+            <button type="button" class="btn btn-primary btn-sm" onclick="location.reload();">
+                <i class="fa fa-repeat"></i>
+            </button>
             <button class="btn btn-sm btn-primary" data-bs-toggle="modal" data-bs-target="#warehouseModaladd">
                 <i class="las la-plus"></i>
             </button>
@@ -185,14 +186,14 @@
                     });
                 });
                 $.ajax({
-                    url: '{{ route('admin.warehouse.update.import.slipe') }}', 
+                    url: '{{ route('admin.warehouse.update.import.slipe') }}',
                     type: 'POST',
                     data: {
                         _token: $('meta[name="csrf-token"]').attr('content'),
                         id: id,
                         supplier_id: supplierVal,
-                        dateWarehouse:   dateWarehouse,
-                        warehouse_code:  warehouse_code,
+                        dateWarehouse: dateWarehouse,
+                        warehouse_code: warehouse_code,
                         created_by: warehouseVal,
                         payment_method_id: paymentVal,
                         note: note,
@@ -201,7 +202,7 @@
                     success: function(res) {
                         if (res.status) {
                             Swal.fire('Thành công', res.message, 'success');
-                             window.location.reload();
+                            window.location.reload();
                         } else {
                             Swal.fire('Lỗi', res.message, 'error');
                         }
@@ -253,53 +254,53 @@
                 });
             });
 
-                $(document).on("blur", ".handled-focus-edit", function() {
-                    const input = $(this);
-                    let value = parseInt(input.val());
-                    
-                    if (value < 1) {
-                        input.val(1); // Đảm bảo giá trị tối thiểu là 1
-                    }
-                    updateTotalEdit();
-                }); 
-             
+            $(document).on("blur", ".handled-focus-edit", function() {
+                const input = $(this);
+                let value = parseInt(input.val());
 
-                // Hàm cập nhật tổng tiền
-                function updateTotalEdit() {
-                    let total = 0;
-                    const selectedProducts = $('#selected-product-edit .selected-product');
-
-                    selectedProducts.each(function() {
-                        const price = parseFloat(
-                            $(this).find('.price-edit').text().replace('Giá: ', '').replace(' VND',
-                                '')
-                            .replace(/\./g, '')
-                        );
+                if (value < 1) {
+                    input.val(1); // Đảm bảo giá trị tối thiểu là 1
+                }
+                updateTotalEdit();
+            });
 
 
+            // Hàm cập nhật tổng tiền
+            function updateTotalEdit() {
+                let total = 0;
+                const selectedProducts = $('#selected-product-edit .selected-product');
 
-                        const quantity = parseInt($(this).find('input[type="number"]').val());
-                        total += price * quantity;
-                        const priceProduct = price * quantity;
-                        $(this).find('.price-product').text(priceProduct.toLocaleString('vi-VN') + '');
-                    });
+                selectedProducts.each(function() {
+                    const price = parseFloat(
+                        $(this).find('.price-edit').text().replace('Giá: ', '').replace(' VND',
+                            '')
+                        .replace(/\./g, '')
+                    );
 
-                    $('.total-price-edit').text(total.toLocaleString('vi-VN') + ' VND');
 
 
-                    // Nếu không có sản phẩm nào, hiển thị thông báo
-                    if (total === 0) {
-                        $('#selected-product-edit').html(
-                            '<p class="text-danger text-center">Vui lòng chọn sản phẩm <strong>*</strong></p>'
-                        );
-                    } else {
-                        // Nếu có sản phẩm, không hiển thị thông báo
-                        if (selectedProducts.length > 0) {
-                            $('#selected-product-edit').find('p.text-danger.text-center')
-                                .remove(); // Xóa thông báo nếu có sản phẩm
-                        }
+                    const quantity = parseInt($(this).find('input[type="number"]').val());
+                    total += price * quantity;
+                    const priceProduct = price * quantity;
+                    $(this).find('.price-product').text(priceProduct.toLocaleString('vi-VN') + '');
+                });
+
+                $('.total-price-edit').text(total.toLocaleString('vi-VN') + ' VND');
+
+
+                // Nếu không có sản phẩm nào, hiển thị thông báo
+                if (total === 0) {
+                    $('#selected-product-edit').html(
+                        '<p class="text-danger text-center">Vui lòng chọn sản phẩm <strong>*</strong></p>'
+                    );
+                } else {
+                    // Nếu có sản phẩm, không hiển thị thông báo
+                    if (selectedProducts.length > 0) {
+                        $('#selected-product-edit').find('p.text-danger.text-center')
+                            .remove(); // Xóa thông báo nếu có sản phẩm
                     }
                 }
+            }
             $(document).on('click', '.open-warehouse-modal', function() {
                 const url = $(this).data('url'); // lấy route URL từ data-url
 

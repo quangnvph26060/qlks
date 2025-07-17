@@ -6,15 +6,23 @@
             <div class="card b-radius--10">
                 <div class="card-body p-0">
                     <div class="table-responsive--md table-responsive p-2">
+                         <div class="pager-wrap d-flex justify-content-center">
+                            <div class="k-widget d-flex">
+                                <div class="pagination-tb" style="font-size: 13px;margin: 0 auto">
+                                    {{ $response->links('pagination::bootstrap-4') }}
+                                </div>
+                            </div>
+                        </div>
                         <div class="d-flex justify-content-between mb-3">
+                            
                             <div class="dt-length">
-                                <select name="example_length" style=" padding: 1px 3px; margin-right: 8px;"
+                                {{-- <select name="example_length" style=" padding: 1px 3px; margin-right: 8px;"
                                     aria-controls="example" class="perPage">
                                     <option value="10">10</option>
                                     <option value="25">25</option>
                                     <option value="50">50</option>
                                     <option value="100">100</option>
-                                </select><label for="perPage"> entries per page</label>
+                                </select><label for="perPage"> entries per page</label> --}}
                             </div>
                             <div class="search">
                                 <label for="searchInput">Search:</label>

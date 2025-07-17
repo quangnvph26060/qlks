@@ -65,7 +65,7 @@ class WarehouseController extends Controller
         $suppliers  = Supplier::query()->pluck('name', 'id');
         $admin      = Admin::where('unit_code', unitCode())->where('subdomain', subdomain())->get();
         $warehouse  = Warehouse::active()->get();
-        return view('admin.warehouse.index', compact('pageTitle', 'categories', 'suppliers', 'products', 'admin', 'warehouse'));
+        return view('admin.warehouse.index', compact('pageTitle', 'categories', 'suppliers', 'products', 'admin', 'warehouse','response'));
     }
 
     /**

@@ -379,7 +379,7 @@ class BookRoomController extends Controller
                         $check_in->check_in_id = getCode('NP', 12,CheckIn::class,'check_in_id');
                         $bookingId = $check_in->check_in_id;
                     } else {
-                        $check_in->booking_id = getCode('NP', 12,RoomBooking::class,'check_in_id');
+                        $check_in->booking_id = getCode('DP', 12,RoomBooking::class,'booking_id');
                         $bookingId = $check_in->booking_id;
                     }
                 } else {
