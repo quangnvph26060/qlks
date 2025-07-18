@@ -391,7 +391,6 @@ class ManageRoomProductController extends Controller
     public function getProductsByWarehouse(Request $request)
     {
         $query = WarehouseEntryItem::query();
-
         // 🔍 Lọc nếu truyền giá trị hợp lệ
         if (!is_null($request->warehouse_id) && $request->warehouse_id !== '') {
             $query->where('warehouse_id', $request->warehouse_id);
@@ -402,6 +401,9 @@ class ManageRoomProductController extends Controller
         }
 
         $products = $query
+        ->whereHas('product', function ($q) {
+                $q->where('subdomain', subdomain())->where('unit_code', unitCode());
+            })
             ->select(
                 'product_id',
                 DB::raw('SUM(CASE WHEN type = 1 THEN quantity WHEN type = 0 THEN -quantity ELSE 0 END) as quantity')
