@@ -158,6 +158,13 @@
             $(document).on('click', '.add-room-product', function() {
                 $('#productModal').modal('show');
             });
+            document.addEventListener('input', function(e) {
+                if (e.target.classList.contains('money-input')) {
+                    let value = e.target.value.replace(/\D/g, ""); // Xóa ký tự không phải số
+                    value = Number(value).toLocaleString('vi-VN'); // Định dạng theo chuẩn Việt Nam
+                    e.target.value = value;
+                }
+            });
             var warehouse = @json($warehouse);
             $(document).ready(function() {
                 let debounceTimer;
@@ -179,7 +186,8 @@
 
                     $('#selected-product-add .selected-product').each(function() {
                         const productId = $(this).data('id');
-                        const quantity = $(this).find('input[name^="products"]').val();
+                          const quantityRaw = $(this).find('input[name^="products"]').val();
+                        const quantity = parseInt(quantityRaw.replace(/\./g, ''));
                         const warehouseId = $(this).find('select[name^="warehouses"]').val();
                         const price = $(this).find('.price').data('price');
 
@@ -279,12 +287,12 @@
                         }
                     });
                 });
-$(document).on('keydown', 'input[type="number"]', function(e) {
-    // Chặn phím "-" hoặc "e" (trên một số trình duyệt cho phép nhập ký tự này)
-    if (e.key === '-' || e.key === 'e') {
-        e.preventDefault();
-    }
-});
+                $(document).on('keydown', 'input[type="number"]', function(e) {
+                    // Chặn phím "-" hoặc "e" (trên một số trình duyệt cho phép nhập ký tự này)
+                    if (e.key === '-' || e.key === 'e') {
+                        e.preventDefault();
+                    }
+                });
 
 
                 $(document).on("click", ".result-item", function(e) {
@@ -320,8 +328,8 @@ $(document).on('keydown', 'input[type="number"]', function(e) {
                             <div class="product-name fw-bold me-3 flex-shrink-0" style="width: 150px;">${product.name}</div>
                              <div class="quantity d-flex align-items-center me-3 flex-shrink-0" style="width: 130px;">
                               
-                                <input type="number" class="form-control mx-2 handled-focus" name="products[${productId}]" value="1" min="1" max="${max}"
-                                    style="width: 80px; text-align: center; height: 30px;">
+                                <input type="text" class="form-control mx-2 handled-focus money-input" name="products[${productId}]" value="1" min="1" max="${max}"
+                                    style="width: 120px; text-align: center; height: 30px;">
                               
                             </div>
                             <div class="product-price text-success me-3 flex-shrink-0 price" style="width: 100px;" data-price="${product.import_price}">
@@ -397,34 +405,43 @@ $(document).on('keydown', 'input[type="number"]', function(e) {
                 // Cập nhật tổng tiền khi người dùng nhập số trực tiếp
                 $(document).on("blur", ".handled-focus", function() {
                     const input = $(this);
-                    let value = parseInt(input.val());
-                    const min = parseInt(input.attr('min')) || 1;
-                    const max = parseInt(input.attr('max')) || Infinity;
 
-                    // Đảm bảo giá trị không nhỏ hơn min
-                    if (value < min || isNaN(value)) {
+                    // Xoá dấu chấm để lấy số gốc
+                    let rawValue = input.val().replace(/\./g, '');
+                    let value = parseInt(rawValue);
+
+                    // Lấy min/max từ thuộc tính, mặc định min = 1, max = Infinity
+                    const min = parseInt(input.attr('min')) || 1;
+                    const max = parseInt(input.attr('max')) || 0;
+                   
+                    
+                    // Kiểm tra và xử lý giới hạn
+                    if (isNaN(value) || value < min) {
                         value = min;
                     }
 
-                    // Đảm bảo giá trị không vượt quá max
                     if (value > max) {
                         value = max;
+
+                        // Hiển thị thông báo lỗi nếu vượt max
                         Swal.fire({
                             toast: true,
-                            position: 'top-end', // góc phải phía trên
+                            position: 'top-end',
                             icon: 'error',
                             title: 'Đã nhập quá tồn kho',
                             showConfirmButton: false,
-                            timer: 3000, // hiển thị trong 3 giây
+                            timer: 3000,
                             timerProgressBar: true
                         });
                     }
 
-                    input.val(value);
+                    // Cập nhật lại giá trị đã định dạng
+                    input.val(value.toLocaleString('vi-VN'));
 
-                    // Gọi cập nhật tổng, nếu có
+                    // Gọi cập nhật tổng
                     updateTotal();
                 });
+
 
 
                 // Hàm cập nhật tổng tiền
@@ -440,7 +457,7 @@ $(document).on('keydown', 'input[type="number"]', function(e) {
 
 
 
-                        const quantity = parseInt($(this).find('input[type="number"]').val());
+                        const quantity = parseInt($(this).find('input[type="text"]').val().replace(/\./g, ''));
                         total += price * quantity;
                         const priceProduct = price * quantity;
                         $(this).find('.price-product').text(priceProduct.toLocaleString('vi-VN'));
@@ -450,6 +467,7 @@ $(document).on('keydown', 'input[type="number"]', function(e) {
 
 
                     // Nếu không có sản phẩm nào, hiển thị thông báo
+                    
                     if (total === 0) {
                         $('#selected-product-add').html(
                             '<p class="text-danger text-center">Vui lòng chọn sản phẩm <strong>*</strong></p>'

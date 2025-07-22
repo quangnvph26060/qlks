@@ -157,6 +157,13 @@
             $(document).on('click', '.add-room-product', function() {
                 $('#productModal').modal('show');
             });
+            document.addEventListener('input', function(e) {
+                if (e.target.classList.contains('money-input')) {
+                    let value = e.target.value.replace(/\D/g, ""); // Xóa ký tự không phải số
+                    value = Number(value).toLocaleString('vi-VN'); // Định dạng theo chuẩn Việt Nam
+                    e.target.value = value;
+                }
+            });
             var warehouse = @json($warehouse);
             $(document).ready(function() {
                 let debounceTimer;
@@ -178,7 +185,11 @@
 
                     $('#selected-product-add .selected-product').each(function() {
                         const productId = $(this).data('id');
-                        const quantity = $(this).find('input[name^="products"]').val();
+
+                        // 👇 Lấy quantity và loại bỏ dấu chấm
+                        const quantityRaw = $(this).find('input[name^="products"]').val();
+                        const quantity = parseInt(quantityRaw.replace(/\./g, ''));
+
                         const warehouseId = $(this).find('select[name^="warehouses"]').val();
                         const price = $(this).find('.price').data('price');
 
@@ -189,11 +200,12 @@
 
                         products.push({
                             product_id: productId,
-                            quantity: parseInt(quantity),
+                            quantity: quantity,
                             warehouse_id: warehouseId,
                             price: parseFloat(price)
                         });
                     });
+
 
                     if (!valid) {
                         event.preventDefault();
@@ -302,9 +314,9 @@
                                 </div>
 
                                 <div class="quantity d-flex align-items-center me-3 flex-shrink-0" style="width: 130px;">
-                                    <input type="number" class="form-control mx-2 handled-focus" name="products[${productId}]"
+                                    <input type="text" class="form-control mx-2 handled-focus money-input" name="products[${productId}]"
                                         value="1" min="1"
-                                        style="width: 80px; text-align: center; height: 30px;">
+                                        style="width: 100px; text-align: center; height: 30px;" >
                                 </div>
 
                                 <div class="product-price text-success me-3 flex-shrink-0 price"
@@ -345,11 +357,20 @@
 
                 $(document).on("blur", ".handled-focus", function() {
                     const input = $(this);
-                    let value = parseInt(input.val());
-                    input.val(value);
-                    // Gọi cập nhật tổng, nếu có
+
+                    // Xoá dấu chấm để lấy số gốc
+                    let rawValue = input.val().replace(/\./g, '');
+
+                    // Parse lại giá trị
+                    let value = parseInt(rawValue) || 0;
+
+                    // Set lại value đã định dạng
+                    input.val(value.toLocaleString('vi-VN'));
+
+                    // Gọi cập nhật tổng (nếu có)
                     updateTotal();
                 });
+
 
                 // Hàm cập nhật tổng tiền
                 function updateTotal() {
@@ -358,16 +379,22 @@
 
                     selectedProducts.each(function() {
                         const price = parseFloat(
-                            $(this).find('.price').text().replace('Giá: ', '').replace(' VND', '')
-                            .replace(/\./g, '')
+                            $(this).find('.price').text()
+                            .replace('Giá: ', '')
+                            .replace(' VND', '')
+                            .replace(/\./g, '') // Bỏ dấu chấm ngăn cách hàng nghìn
                         );
 
+                        // 🔧 Lấy giá trị số từ input đã format
+                        const quantityRaw = $(this).find('input[type="text"]').val().replace(/\./g, '');
+                        const quantity = parseInt(quantityRaw);
 
-                        const quantity = parseInt($(this).find('input[type="number"]').val());
-                        total += price * quantity;
                         const priceProduct = price * quantity;
+                        total += priceProduct;
+
                         $(this).find('.price-product').text(priceProduct.toLocaleString('vi-VN') + '');
                     });
+
 
                     $('.total-price').text(total.toLocaleString('vi-VN') + ' VND');
 

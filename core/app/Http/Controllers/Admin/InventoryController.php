@@ -13,7 +13,9 @@ use App\Repositories\BaseRepository;
 use App\Rules\StockCheck;
 use Carbon\Carbon;
 use Illuminate\Support\Facades\Log;
-use Product;
+
+use Illuminate\Pagination\LengthAwarePaginator;
+use Illuminate\Support\Collection;
 
 class InventoryController extends Controller
 {
@@ -70,7 +72,7 @@ class InventoryController extends Controller
     public function get(Request $request)
     {
         $warehouseId = $request->input('warehouse_id');
-      
+
 
         $startDate = request('start_date') ? Carbon::parse(request('start_date'))->toDateString() : null;
         $endDate = request('end_date') ? Carbon::parse(request('end_date'))->toDateString() : null;
@@ -194,20 +196,32 @@ class InventoryController extends Controller
         }
 
         // 👉 Tính tồn cuối
-        $result = collect($summary)->map(function ($item) {
+        $collection  = collect($summary)->map(function ($item) {
             $item['ton_cuoi'] = $item['ton_dau'] + $item['nhap'] - $item['xuat'];
             return $item;
         })->values();
 
 
+        $page = $request->get('page', 1); // trang hiện tại
+        $perPage = 10; // số bản ghi mỗi trang
+        $paginated = new LengthAwarePaginator(
+            $collection->forPage($page, $perPage)->values(), // data cho trang hiện tại
+            $collection->count(), // tổng số bản ghi
+            $perPage,
+            $page,
+            ['path' => url()->current()] // để tạo link phân trang đúng nếu cần
+        );
+
         return response()->json([
             'entries_sum'     => $entries_sum,
-            'total_inventory' => $totalProduct, // tổng tồn kho
+            'total_inventory' => $totalProduct,
             'lowStockCount'   => $lowStockCount,
             'outOfStock'      => $outOfStock,
-            'data'            => $result,
-            // 'entryResults'    => $entryResults,
-
+            'data'            => $paginated->items(), // chỉ dữ liệu của trang hiện tại
+            'current_page'    => $paginated->currentPage(),
+            'last_page'       => $paginated->lastPage(),
+            'total'           => $paginated->total(),
+            'per_page'        => $paginated->perPage(),
         ]);
     }
 }

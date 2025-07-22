@@ -162,6 +162,13 @@
             $(document).on('click', '.add-room-product', function() {
                 $('#productModal').modal('show');
             });
+            document.addEventListener('input', function(e) {
+                if (e.target.classList.contains('money-input')) {
+                    let value = e.target.value.replace(/\D/g, ""); // Xóa ký tự không phải số
+                    value = Number(value).toLocaleString('vi-VN'); // Định dạng theo chuẩn Việt Nam
+                    e.target.value = value;
+                }
+            });
             var warehouse = @json($warehouse);
             $(document).ready(function() {
                 let debounceTimer;
@@ -183,7 +190,8 @@
 
                     $('#selected-product-add .selected-product').each(function() {
                         const productId = $(this).data('id');
-                        const quantity = $(this).find('input[name^="products"]').val();
+                           const quantityRaw = $(this).find('input[name^="products"]').val();
+                        const quantity = parseInt(quantityRaw.replace(/\./g, ''));
                         const warehouseIdTo = $(this).find('select[name^="warehouses_to"]')
                             .val();
                         const warehouseIdFrom = $(this).find('select[name^="warehouses_from"]')
@@ -329,20 +337,20 @@ $(document).on('keydown', 'input[type="number"]', function(e) {
                                     <div class="selected-product d-flex justify-content-between align-items-center mb-2 py-2 border-bottom" data-id="${productId}">
                                         <div class="product-name fw-bold me-3 flex-shrink-0" style="width: 150px;">${product.name}</div>
                                         <div class="quantity d-flex align-items-center me-3 flex-shrink-0" style="width: 130px;">
-                                            <input type="number" class="form-control mx-2 handled-focus" name="products[${productId}]"
+                                            <input type="text" class="form-control mx-2 handled-focus money-input" name="products[${productId}]"
                                                 value="1" min="1" max="${max}"
-                                                style="width: 80px; text-align: center; height: 30px;">
+                                                style="width: 120px; text-align: center; height: 30px;">
                                         </div>
                                         <div class="product-price text-success me-3 flex-shrink-0 price" style="width: 100px;" data-price="${product.import_price}">
                                         ${Number(product.import_price).toLocaleString('vi-VN')}
                                         </div>
                                         <div class="product-price text-success me-3 flex-shrink-0 price-product" style="width: 100px;"></div>
 
-                                        <select name="warehouses_to[${productId}]" class="form-select form-select-sm me-3 flex-shrink-0" style="width: 120px;">
+                                        <select name="warehouses_from[${productId}]" class="form-select form-select-sm me-3 flex-shrink-0" style="width: 120px;">
                                             <option selected disabled>Chọn kho</option>
                                             ${warehouseOptions}
                                         </select>
-                                        <select name="warehouses_from[${productId}]" class="form-select form-select-sm me-3 flex-shrink-0" style="width: 120px;">
+                                        <select name="warehouses_to[${productId}]" class="form-select form-select-sm me-3 flex-shrink-0" style="width: 120px;">
                                             <option selected disabled>Chọn kho</option>
                                             ${warehouseFromOptions}
                                         </select>
@@ -408,9 +416,10 @@ $(document).on('keydown', 'input[type="number"]', function(e) {
                 // Cập nhật tổng tiền khi người dùng nhập số trực tiếp
                 $(document).on("blur", ".handled-focus", function() {
                     const input = $(this);
-                    let value = parseInt(input.val());
+                   let rawValue = input.val().replace(/\./g, '');
+                    let value = parseInt(rawValue);
                     const min = parseInt(input.attr('min')) || 1;
-                    const max = parseInt(input.attr('max')) || Infinity;
+                    const max = parseInt(input.attr('max')) || 0;
 
                     // Đảm bảo giá trị không nhỏ hơn min
                     if (value < min || isNaN(value)) {
@@ -431,7 +440,7 @@ $(document).on('keydown', 'input[type="number"]', function(e) {
                         });
                     }
 
-                    input.val(value);
+                   input.val(value.toLocaleString('vi-VN'));
 
                     // Gọi cập nhật tổng, nếu có
                     updateTotal();
@@ -450,7 +459,7 @@ $(document).on('keydown', 'input[type="number"]', function(e) {
 
 
 
-                        const quantity = parseInt($(this).find('input[type="number"]').val());
+                      const quantity = parseInt($(this).find('input[type="text"]').val().replace(/\./g, ''));
                         total += price * quantity;
                         const priceProduct = price * quantity;
                         $(this).find('.price-product').text(priceProduct.toLocaleString('vi-VN') +

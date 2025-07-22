@@ -10,13 +10,18 @@
                                 <i class="fas fa-building me-2"></i>
                                 Chọn kho hàng
                             </h4>
-                            <select class="form-select form-select-lg" id="warehouseSelect">
+                            <div class="d-flex gap-3 ">
+                                  <select class="form-select form-select-lg" id="warehouseSelect">
                                 <option value="all">Tất cả kho hàng</option>
                                 @foreach ($warehouses as $warehouse)
                                     <option value="{{ $warehouse->id }}">{{ $warehouse->name }}</option>
                                 @endforeach
                             </select>
+                           <button type="button" class="btn text-black bg-white btn-lg btn-no-hover" onclick="location.reload();">
+    <i class="fa fa-repeat"></i>
+</button>
 
+                            </div>
 
                         </div>
                         <div class="col-md-6 text-md-end">
@@ -112,7 +117,7 @@
                                 </tr>
                             </thead>
                             <tbody id="inventoryTableBody">
-                                <tr>
+                                {{-- <tr>
                                     <td><strong>SP001</strong></td>
                                     <td>iPhone 15 Pro Max 256GB</td>
                                     <td>Điện thoại</td>
@@ -129,14 +134,14 @@
                                     <td>360,000,000 ₫</td>
                                     <td><span class="badge status-badge medium-stock">Sắp hết</span></td>
 
-                                </tr>
+                                </tr> --}}
                             </tbody>
                         </table>
                     </div>
                     <div class="card-footer bg-white">
                         <nav class="" style="justify-content: center !important;margin-top: 10px">
-                            <ul class="pagination pagination-sm justify-content-center mb-0">
-                                <li class="page-item disabled">
+                            <ul id="pagination" class="pagination pagination-sm justify-content-center mb-0">
+                                {{-- <li class="page-item disabled">
                                     <span class="page-link" style="white-space: nowrap;">Trước</span>
                                 </li>
                                 <li class="page-item active">
@@ -144,7 +149,7 @@
                                 </li>
                                 <li class="page-item"><a class="page-link" href="#">2</a></li>
                                 <li class="page-item"><a class="page-link" href="#">3</a></li>
-                                <li class="page-item"><a class="page-link" href="#">Sau</a></li>
+                                <li class="page-item"><a class="page-link" href="#">Sau</a></li> --}}
                             </ul>
                         </nav>
                     </div>
@@ -244,72 +249,18 @@
         $(document).ready(function() {
             // Bắt sự kiện onchange bằng jQuery
             $('#warehouseSelect, #startDate, #endDate').on('change', function() {
-                updateWarehouseData();
+                updateWarehouseData(1);
             });
 
             // Hàm gọi AJAX để cập nhật dữ liệu
-            function updateWarehouseData() {
-                const warehouseId = $('#warehouseSelect').val();
-                const startDate = $('#startDate').val();
-                const endDate = $('#endDate').val();
 
-                $.ajax({
-                    url: '{{ route('admin.inventory.get') }}',
-                    method: 'GET',
-                    data: {
-                        warehouse_id: warehouseId,
-                        start_date: startDate,
-                        end_date: endDate
-                    },
-                    success: function(data) {
-                        $('#totalProducts').text(Number(data.total_inventory).toLocaleString('vi-VN'));
-                        const formattedTotal = new Intl.NumberFormat('vi-VN', {
-                            style: 'currency',
-                            currency: 'VND'
-                        }).format(data.entries_sum ?? 0);
 
-                        $('#totalValue').text(formattedTotal);
-                        $('#lowStockItems').text(data.lowStockCount);
-                        $('#outOfStock').text(data.outOfStock);
-                         renderInventory(data.data);
-                    },
-                    error: function(xhr) {
-                        console.error('Lỗi khi lấy dữ liệu tồn kho:', xhr.responseText);
-                    }
-                });
-            }
-          
 
-            const renderInventory = (data) => {
-                const tbody = document.getElementById('inventoryTableBody');
-                tbody.innerHTML = ''; // clear table
 
-                data.forEach(item => {
-                    let stockClass = 'high-stock';
-                    let stockText = 'Đủ hàng';
 
-                    if (item.ton_cuoi <= 5) {
-                        stockClass = 'low-stock';
-                        stockText = 'Hết hàng';
-                    } else if (item.ton_cuoi <= 10) {
-                        stockClass = 'medium-stock';
-                        stockText = 'Sắp hết';
-                    }
 
-                    const row = `
-                            <tr>
-                                <td><strong>${item.product_code ?? ""}</strong></td>
-                                <td>${item.product_name}</td>
-                                <td>${item.ton_dau}</td>
-                                <td>${item.nhap}</td>
-                                <td>${item.xuat}</td>
-                                <td>${item.ton_cuoi}</td>
-                            </tr>
-                        `;
 
-                    tbody.insertAdjacentHTML('beforeend', row);
-                });
-            };
+
             // Tự set ngày mặc định khi load trang
             const today = new Date();
             const firstDay = new Date(today.getFullYear(), today.getMonth(), 1);
@@ -319,8 +270,104 @@
             $('#endDate').val(formatDate(today));
 
             // Gọi lần đầu
-            updateWarehouseData();
+            updateWarehouseData(1);
+
         });
+
+        function renderServerPagination(currentPage, lastPage) {
+            const pagination = document.getElementById('pagination');
+            pagination.innerHTML = '';
+
+            // Nút Trước
+            pagination.innerHTML += `
+                    <li class="page-item ${currentPage === 1 ? 'disabled' : ''}">
+                        <a class="page-link" href="#" onclick="event.preventDefault(); updateWarehouseData(${currentPage - 1})" style="white-space: nowrap;">Trước</a>
+                    </li>
+                `;
+
+            // Các trang số
+            for (let i = 1; i <= lastPage; i++) {
+                pagination.innerHTML += `
+                        <li class="page-item ${currentPage === i ? 'active' : ''}">
+                            <a class="page-link" href="#" onclick="event.preventDefault(); updateWarehouseData(${i})">${i}</a>
+                        </li>
+                    `;
+            }
+
+            // Nút Sau
+            pagination.innerHTML += `
+                    <li class="page-item ${currentPage === lastPage ? 'disabled' : ''}">
+                        <a class="page-link" href="#" onclick="event.preventDefault(); updateWarehouseData(${currentPage + 1})">Sau</a>
+                    </li>
+                `;
+        }
+
+        function formatNumber(number) {
+            return Number(number).toLocaleString('en-US');
+        }
+        const renderInventory = (data) => {
+            const tbody = document.getElementById('inventoryTableBody');
+            tbody.innerHTML = ''; // clear table
+
+            data.forEach(item => {
+                let stockClass = 'high-stock';
+                let stockText = 'Đủ hàng';
+
+                if (item.ton_cuoi <= 5) {
+                    stockClass = 'low-stock';
+                    stockText = 'Hết hàng';
+                } else if (item.ton_cuoi <= 10) {
+                    stockClass = 'medium-stock';
+                    stockText = 'Sắp hết';
+                }
+
+                const row = `
+                            <tr>
+                                <td class="text-left"><strong>${item.product_code ?? ""}</strong></td>
+                                <td>${item.product_name}</td>
+                                <td class="text-right">${formatNumber(item.ton_dau)}</td>
+                                <td class="text-right">${formatNumber(item.nhap)}</td>
+                                <td class="text-right">${formatNumber(item.xuat)}</td>
+                                <td class="text-right">${formatNumber(item.ton_cuoi)}</td>
+                            </tr>
+                        `;
+
+                tbody.insertAdjacentHTML('beforeend', row);
+            });
+        };
+
+        function updateWarehouseData(page = 1) {
+            const warehouseId = $('#warehouseSelect').val();
+            const startDate = $('#startDate').val();
+            const endDate = $('#endDate').val();
+
+            $.ajax({
+                url: '{{ route('admin.inventory.get') }}',
+                method: 'GET',
+                data: {
+                    warehouse_id: warehouseId,
+                    start_date: startDate,
+                    end_date: endDate,
+                    page: page
+                },
+                success: function(data) {
+                    $('#totalProducts').text(Number(data.total_inventory).toLocaleString('vi-VN'));
+                    const formattedTotal = new Intl.NumberFormat('vi-VN', {
+                        style: 'currency',
+                        currency: 'VND'
+                    }).format(data.entries_sum ?? 0);
+
+                    $('#totalValue').text(formattedTotal);
+                    $('#lowStockItems').text(data.lowStockCount);
+                    $('#outOfStock').text(data.outOfStock);
+                    renderInventory(data.data);
+                    renderServerPagination(data.current_page, data.last_page);
+                },
+                error: function(xhr) {
+                    console.error('Lỗi khi lấy dữ liệu tồn kho:', xhr.responseText);
+                }
+            });
+        }
     </script>
 @endpush
 
@@ -331,6 +378,14 @@
         .stats-card {
             transition: transform 0.2s;
         }
+       
+    .btn-no-hover:hover {
+        background-color: white !important;
+        color: black !important;
+        border-color: transparent !important;
+        box-shadow: none !important;
+    }
+
 
         .stats-card:hover {
             transform: translateY(-5px);

@@ -65,7 +65,7 @@
                 <i class="las la-plus"></i>
             </button>
             <div class="modal fade" id="warehouseModal" tabindex="-1" aria-hidden="true">
-                <div class="modal-dialog modal-lg modal-dialog-centered">
+                <div class="modal-dialog modal-lg modal-dialog-centered" style="max-width:1000px">
                     <div class="modal-content">
                         <div class="modal-header">
                             <h5 class="modal-title">Chi tiết phiếu xuất</h5>
@@ -239,7 +239,8 @@
                     const warehouseId = $product.find('select').val();
 
                     // Số lượng
-                    const quantity = parseInt($product.find('input[type="number"]').val());
+                    const quantityRaw = $(this).find('input[name^="products"]').val();
+                    const quantity = parseInt(quantityRaw.replace(/\./g, ''));
 
                     // Đơn giá
                     const price = parseFloat(
@@ -344,7 +345,9 @@
             });
             $(document).on("blur", ".handled-focus-edit", function() {
                 const input = $(this);
-                let value = parseInt(input.val());
+                 let rawValue = input.val().replace(/\./g, '');
+
+                let value = parseInt(rawValue) || 0;
                 const min = parseInt(input.attr('min')) || 1;
                 const max = parseInt(input.attr('max')) || Infinity;
 
@@ -367,7 +370,7 @@
                         });
                 }
 
-                input.val(value);
+               input.val(value.toLocaleString('vi-VN'));
 
                 // Gọi cập nhật tổng, nếu có
                 updateTotalEdit();
@@ -387,7 +390,8 @@
 
 
 
-                    const quantity = parseInt($(this).find('input[type="number"]').val());
+                    const quantityRaw = $(this).find('input[type="text"]').val().replace(/\./g, '');
+                    const quantity = parseInt(quantityRaw);
                     total += price * quantity;
                     const priceProduct = price * quantity;
                     $(this).find('.price-product').text(priceProduct.toLocaleString('vi-VN'));

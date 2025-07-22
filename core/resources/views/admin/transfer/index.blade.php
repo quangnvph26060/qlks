@@ -6,7 +6,7 @@
             <div class="card b-radius--10">
                 <div class="card-body p-0">
                     <div class="table-responsive--md table-responsive p-2">
-                          <div class="pager-wrap d-flex justify-content-center">
+                        <div class="pager-wrap d-flex justify-content-center">
                             <div class="k-widget d-flex">
                                 <div class="pagination-tb" style="font-size: 13px;margin: 0 auto">
                                     {{ $response->links('pagination::bootstrap-4') }}
@@ -56,8 +56,8 @@
                     class="las la-plus"></i></a> --}}
             <!-- Modal Nhập kho -->
             <button type="button" class="btn btn-primary btn-sm" onclick="location.reload();">
-    <i class="fa fa-repeat"></i>
-</button>
+                <i class="fa fa-repeat"></i>
+            </button>
             <button class="btn btn-sm btn-primary" data-bs-toggle="modal" data-bs-target="#warehouseexportModaladd">
                 <i class="las la-plus"></i>
             </button>
@@ -76,7 +76,8 @@
             </div>
 
 
-            <div class="modal fade" id="warehouseexportModaladd" tabindex="-1" aria-labelledby="warehouseModalLabel" aria-hidden="true">
+            <div class="modal fade" id="warehouseexportModaladd" tabindex="-1" aria-labelledby="warehouseModalLabel"
+                aria-hidden="true">
                 <div class="modal-dialog modal-xl modal-dialog-scrollable">
                     <div class="modal-content">
                         <div class="modal-header">
@@ -133,9 +134,9 @@
                 initDataFetch(apiUrl);
 
             });
-             let isPrinting = false;
+            let isPrinting = false;
             let printTimeout;
-                        $(document).on('click', '.open-warehouse-modal-print', function() {
+            $(document).on('click', '.open-warehouse-modal-print', function() {
                 if (isPrinting) return;
                 isPrinting = true;
 
@@ -203,53 +204,72 @@
             $(document).on('click', function() {
                 $('.menu_dropdown_check_in').removeClass('show');
             });
-             $(document).on("blur", ".handled-focus-edit", function() {
-                    const input = $(this);
-                    let value = parseInt(input.val());
-                    
-                    if (value < 1) {
-                        input.val(1); // Đảm bảo giá trị tối thiểu là 1
-                    }
-                    updateTotalEdit();
-                }); 
-             
+            $(document).on("blur", ".handled-focus-edit", function() {
+                const input = $(this);
+                let rawValue = input.val().replace(/\./g, '');
+                let value = parseInt(rawValue) || 0;
+                const min = parseInt(input.attr('min')) || 1;
+                const max = parseInt(input.attr('max')) || Infinity;
+                // Đảm bảo giá trị không nhỏ hơn min
+                if (value < min || isNaN(value)) {
+                    value = min;
+                }
 
-                // Hàm cập nhật tổng tiền
-                function updateTotalEdit() {
-                    let total = 0;
-                    const selectedProducts = $('#selected-product-edit .selected-product');
-
-                    selectedProducts.each(function() {
-                        const price = parseFloat(
-                            $(this).find('.price-edit').text().replace('Giá: ', '').replace(' VND',
-                                '')
-                            .replace(/\./g, '')
-                        );
-
-
-
-                        const quantity = parseInt($(this).find('input[type="number"]').val());
-                        total += price * quantity;
-                        const priceProduct = price * quantity;
-                        $(this).find('.price-product').text(priceProduct.toLocaleString('vi-VN') + '');
+                // Đảm bảo giá trị không vượt quá max
+                if (value > max) {
+                    value = max;
+                    Swal.fire({
+                        toast: true,
+                        position: 'top-end', // góc phải phía trên
+                        icon: 'error',
+                        title: 'Đã nhập quá tồn kho',
+                        showConfirmButton: false,
+                        timer: 3000, // hiển thị trong 3 giây
+                        timerProgressBar: true
                     });
+                }
+                input.val(value.toLocaleString('vi-VN'));
+                updateTotalEdit();
+            });
 
-                    $('.total-price-edit').text(total.toLocaleString('vi-VN') + ' VND');
+
+            // Hàm cập nhật tổng tiền
+            function updateTotalEdit() {
+                let total = 0;
+                const selectedProducts = $('#selected-product-edit .selected-product');
+
+                selectedProducts.each(function() {
+                    const price = parseFloat(
+                        $(this).find('.price-edit').text().replace('Giá: ', '').replace(' VND',
+                            '')
+                        .replace(/\./g, '')
+                    );
 
 
-                    // Nếu không có sản phẩm nào, hiển thị thông báo
-                    if (total === 0) {
-                        $('#selected-product-edit').html(
-                            '<p class="text-danger text-center">Vui lòng chọn sản phẩm <strong>*</strong></p>'
-                        );
-                    } else {
-                        // Nếu có sản phẩm, không hiển thị thông báo
-                        if (selectedProducts.length > 0) {
-                            $('#selected-product-edit').find('p.text-danger.text-center')
-                                .remove(); // Xóa thông báo nếu có sản phẩm
-                        }
+
+                    const quantityRaw = $(this).find('input[type="text"]').val().replace(/\./g, '');
+                    const quantity = parseInt(quantityRaw);
+                    total += price * quantity;
+                    const priceProduct = price * quantity;
+                    $(this).find('.price-product').text(priceProduct.toLocaleString('vi-VN') + '');
+                });
+
+                $('.total-price-edit').text(total.toLocaleString('vi-VN') + ' VND');
+
+
+                // Nếu không có sản phẩm nào, hiển thị thông báo
+                if (total === 0) {
+                    $('#selected-product-edit').html(
+                        '<p class="text-danger text-center">Vui lòng chọn sản phẩm <strong>*</strong></p>'
+                    );
+                } else {
+                    // Nếu có sản phẩm, không hiển thị thông báo
+                    if (selectedProducts.length > 0) {
+                        $('#selected-product-edit').find('p.text-danger.text-center')
+                            .remove(); // Xóa thông báo nếu có sản phẩm
                     }
                 }
+            }
             $(document).on('click', '.confirmPayment-edit', function() {
                 const id = $(this).data('id');
                 const supplierVal = $('#supplierSelect').val();
@@ -263,19 +283,16 @@
 
                 selectedProducts.each(function() {
                     const $product = $(this);
-
                     // ID của chi tiết xuất kho (item)
                     const itemId = $product.data('id');
-
                     // ID của sản phẩm
                     const productId = $product.find('.product-name').data('id');
-
                     // ID của kho
                     const warehouses_from = $product.find('#warehouses_from').val();
                     const warehouses_to = $product.find('#warehouses_to').val();
                     // Số lượng
-                    const quantity = parseInt($product.find('input[type="number"]').val());
-
+                    const quantityRaw = $(this).find('input[name^="products"]').val();
+                    const quantity = parseInt(quantityRaw.replace(/\./g, ''));
                     // Đơn giá
                     const price = parseFloat(
                         $product.find('.price-edit').text().replace(/\./g, '').trim()
@@ -292,14 +309,14 @@
                     });
                 });
                 $.ajax({
-                    url: '{{ route('admin.warehouse.transfer.update.import.slipe') }}', 
+                    url: '{{ route('admin.warehouse.transfer.update.import.slipe') }}',
                     type: 'POST',
                     data: {
                         _token: $('meta[name="csrf-token"]').attr('content'),
                         id: id,
                         supplier_id: supplierVal,
-                        dateWarehouse:   dateWarehouse,
-                        warehouse_code:  warehouse_code,
+                        dateWarehouse: dateWarehouse,
+                        warehouse_code: warehouse_code,
                         created_by: warehouseVal,
                         payment_method_id: paymentVal,
                         note: note,
@@ -308,7 +325,7 @@
                     success: function(res) {
                         if (res.status) {
                             Swal.fire('Thành công', res.message, 'success');
-                             window.location.reload();
+                            window.location.reload();
                         } else {
                             Swal.fire('Lỗi', res.message, 'error');
                         }

@@ -51,14 +51,20 @@
             {{-- <a class="btn btn-sm btn-primary" href="{{ route('admin.warehouse.create') }}"><i
                     class="las la-plus"></i></a> --}}
             <!-- Modal Nhập kho -->
-            <button type="button" class="btn btn-primary btn-sm" onclick="location.reload();">
+            <button type="button" class="btn btn--primary" style="padding: 6px 12px 12px 12px;" onclick="location.reload();">
                 <i class="fa fa-repeat"></i>
             </button>
-            <button class="btn btn-sm btn-primary" data-bs-toggle="modal" data-bs-target="#warehouseModaladd">
+            <button class="btn gap-2  btn--primary" style="padding: 6px 12px 12px 12px;" data-bs-toggle="modal" data-bs-target="#warehouseModaladd">
                 <i class="las la-plus"></i>
             </button>
+            <button type="button" class="btn btn--primary gap-2 " data-bs-toggle="modal" data-bs-target="#importRoomModal" style="margin-left: 8px;">
+                <i class="fa-solid fa-file-import"></i> Import
+            </button>
+            <a href="{{ route('admin.warehouse.export') }}" class="btn btn--primary gap-2 btn-export-room" style="margin-left: 8px;">
+                            <i class="fa-solid fa-file-export"></i> Export
+                        </a>
             <div class="modal fade" id="warehouseModal" tabindex="-1" aria-hidden="true">
-                <div class="modal-dialog modal-lg modal-dialog-centered">
+                <div class="modal-dialog modal-lg modal-dialog-centered" style="max-width:1000px">
                     <div class="modal-content">
                         <div class="modal-header">
                             <h5 class="modal-title">Chi tiết phiếu nhập</h5>
@@ -71,7 +77,41 @@
                 </div>
             </div>
 
+             <!-- Modal import-->
+            <div class="modal fade" id="importRoomModal" tabindex="-1" aria-labelledby="importRoomModalLabel"
+                aria-hidden="true">
+                <div class="modal-dialog modal-dialog-centered">
+                    <div class="modal-content">
 
+                        <div class="modal-header">
+                            <h5 class="modal-title" id="importRoomModalLabel">Nhập phiếu từ file Excel</h5>
+                            <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Đóng"></button>
+                        </div>
+
+                        <div class="modal-body">
+                            <p>
+                                Xử lý dữ liệu (Tải về File mẫu: <a href="{{ asset('file/FileExcelPhieuNhap.xlsx') }}"
+                                    download>Excel File</a>):
+                            </p>
+                            {{-- <div class="alert alert-warning">
+                                <strong><i class="fa-solid fa-triangle-exclamation"></i> Lưu ý</strong><br>
+                                Hệ thống cho phép nhập tối đa <strong>1.000 phòng</strong> mỗi lần từ file
+                            </div> --}}
+
+                            <form action="{{ route('admin.warehouse.import.store') }}" method="POST"
+                                enctype="multipart/form-data">
+                                @csrf
+                                <div class="mb-3">
+                                    <label for="import_file" class="form-label">Chọn file Excel:</label>
+                                    <input class="form-control" type="file" id="import_file" name="file" required>
+                                </div>
+                                <button type="submit" class="btn btn-primary btn-import-room" style="float: right">Nhận</button>
+                            </form>
+                        </div>
+
+                    </div>
+                </div>
+            </div>
             <div class="modal fade" id="warehouseModaladd" tabindex="-1" aria-labelledby="warehouseModalLabel" aria-hidden="true">
                 <div class="modal-dialog modal-xl modal-dialog-scrollable">
                     <div class="modal-content">
@@ -169,7 +209,9 @@
                     const warehouseId = $product.find('select').val();
 
                     // Số lượng
-                    const quantity = parseInt($product.find('input[type="number"]').val());
+                   // 👇 Lấy quantity và loại bỏ dấu chấm
+                        const quantityRaw = $(this).find('input[name^="products"]').val();
+                        const quantity = parseInt(quantityRaw.replace(/\./g, ''));
 
                     // Đơn giá
                     const price = parseFloat(
@@ -253,16 +295,27 @@
                     }
                 });
             });
-
             $(document).on("blur", ".handled-focus-edit", function() {
                 const input = $(this);
-                let value = parseInt(input.val());
 
+                // Xoá dấu chấm để lấy số gốc
+                let rawValue = input.val().replace(/\./g, '');
+
+                // Parse lại thành số
+                let value = parseInt(rawValue) || 0;
+
+                // Đảm bảo tối thiểu là 1
                 if (value < 1) {
-                    input.val(1); // Đảm bảo giá trị tối thiểu là 1
+                    value = 1;
                 }
+
+                // Set lại giá trị đã format
+                input.val(value.toLocaleString('vi-VN'));
+
+                // Gọi cập nhật tổng sửa
                 updateTotalEdit();
             });
+
 
 
             // Hàm cập nhật tổng tiền
@@ -279,7 +332,8 @@
 
 
 
-                    const quantity = parseInt($(this).find('input[type="number"]').val());
+                      const quantityRaw = $(this).find('input[type="text"]').val().replace(/\./g, '');
+                        const quantity = parseInt(quantityRaw);
                     total += price * quantity;
                     const priceProduct = price * quantity;
                     $(this).find('.price-product').text(priceProduct.toLocaleString('vi-VN') + '');

@@ -2,6 +2,7 @@
 
 use App\Events\EventRegisterUser;
 use App\Exports\RoomsExport;
+use App\Exports\WarehouseEntryExport;
 use App\Http\Controllers\TestController;
 use App\Jobs\JobSendMail;
 use Illuminate\Support\Facades\Route;
@@ -34,7 +35,9 @@ Route::get('/check', function () {
 Route::get('/admin/export-rooms', function () {
     return Excel::download(new RoomsExport, 'danh_sach_phong.xlsx');
 })->name('admin.rooms.export');
-
+Route::get('/admin/warehouse_entry', function () {
+    return Excel::download(new WarehouseEntryExport, 'danh_sach_phieu_nhap.xlsx');
+})->name('admin.warehouse.export');
 Route::get('/test-notify', function () {
     $user = (object)[
         'id' => 1,

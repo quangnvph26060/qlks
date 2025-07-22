@@ -65,7 +65,7 @@ class WarehouseTransferController extends Controller
         $suppliers  = Supplier::query()->pluck('name', 'id');
         $admin      = Admin::where('unit_code', unitCode())->where('subdomain', subdomain())->get();
         $warehouse  = Warehouse::active()->get();
-        return view('admin.transfer.index', compact('pageTitle', 'categories', 'suppliers', 'products', 'admin', 'warehouse','response'));
+        return view('admin.transfer.index', compact('pageTitle', 'categories', 'suppliers', 'products', 'admin', 'warehouse', 'response'));
     }
 
     /**
@@ -197,7 +197,7 @@ class WarehouseTransferController extends Controller
                 WarehouseEntryItem::create([
                     'warehouse_export_id' => $export->id,
                     'product_id' => $productId,
-                    'warehouse_id' => $toWarehouse,
+                    'warehouse_id' => $fromWarehouse,
                     'quantity' => $quantity,
                     'price' => $price,
                     'type' => 0,
@@ -206,37 +206,37 @@ class WarehouseTransferController extends Controller
                 // Nhập kho
                 $entry->entries()->create([
                     'product_id' => $productId,
-                    'warehouse_id' => $fromWarehouse,
+                    'warehouse_id' => $toWarehouse,
                     'quantity' => $quantity,
                     'price' => $price,
                     'type' => 1,
                 ]);
 
                 $total += $quantity * $price;
-                $data[$productId] = [
-                    'quantity'    => $quantity - $export->number_of_cancellations,
-                    'entry_date'  => now()->format('Y-m-d H:i:s'),
-                    'status'      => 0
-                ];
-                $data1[$productId] = [
-                    'quantity'    => $quantity - $entry->number_of_cancellations,
-                    'entry_date'  => now()->format('Y-m-d H:i:s'),
-                    'status'      => 1
-                ];
+                // $data[$productId] = [
+                //     'quantity'    => $quantity - $export->number_of_cancellations,
+                //     'entry_date'  => now()->format('Y-m-d H:i:s'),
+                //     'status'      => 0
+                // ];
+                // $data1[$productId] = [
+                //     'quantity'    => $quantity - $entry->number_of_cancellations,
+                //     'entry_date'  => now()->format('Y-m-d H:i:s'),
+                //     'status'      => 1
+                // ];
             }
 
             // Cập nhật tổng tiền
             $export->update(['total' => $total]);
             $entry->update(['total' => $total]);
-            $export->stockEntries()->sync($data);
-            $entry->stockEntries()->sync($data1);
+            // $export->stockEntries()->sync($data);
+            // $entry->stockEntries()->sync($data1);
             // ✅ Tạo phiếu điều chuyển
             WarehouseTransfer::create([
                 'reference_code'    => filled($request->warehouse_code)
                     ? $request->warehouse_code
                     : getCode('DC', 12, WarehouseTransfer::class, 'reference_code'),
-                'from_warehouse_id' => $toWarehouse,
-                'to_warehouse_id'   => $fromWarehouse,
+                'from_warehouse_id' => $fromWarehouse,
+                'to_warehouse_id'   => $toWarehouse,
                 'export_id'         => $export->reference_code,
                 'entry_id'          => $entry->reference_code,
                 'transfer_date'     => $request->date_warehouse ?? date('Y-m-d'),
@@ -284,9 +284,9 @@ class WarehouseTransferController extends Controller
         if (!$transfer) {
             return back()->withErrors(['msg' => 'Không tìm thấy phiếu điều chuyển.']);
         }
-        if ($transfer->status == 1) {
-            return back()->withErrors(['msg' => 'Phiếu điều chuyển đã được xác nhận, không thể xoá.']);
-        }
+        // if ($transfer->status == 1) {
+        //     return back()->withErrors(['msg' => 'Phiếu điều chuyển đã được xác nhận, không thể xoá.']);
+        // }
 
         DB::beginTransaction();
 
@@ -385,7 +385,6 @@ class WarehouseTransferController extends Controller
 
     public function updateImportSlipe(Request $request)
     {
-        Log::info($request->all());
         $data = Validator::make(
             $request->all(),
             [
@@ -470,6 +469,8 @@ class WarehouseTransferController extends Controller
             $item->save();
 
             $productItems = $request->productItems;
+            $totalPrice  = 0;
+            $totalPrice1  = 0;
             foreach ($productItems as $product) {
                 $warehouseEntry = WarehouseEntry::where('reference_code', $item->entry_id)->first();
                 $warehouseExport = WarehouseExport::where('reference_code', $item->export_id)->first();
@@ -486,29 +487,21 @@ class WarehouseTransferController extends Controller
                     if (!$productModel) {
                         throw new \Exception("Sản phẩm ID {$product['product_id']} không tồn tại.");
                     }
-
-                    $stockEntry = StockEntry::where('warehouse_entry_id', $warehouseExport->id)
-                        ->where('product_id', $product['product_id'])
-                        ->first();
-
-                    if ($stockEntry) {
-                        $oldQuantity = $stockEntry->quantity;
-                        $newQuantity = $product['quantity'];
-
-                        // Tính lại tồn kho
-                        $newStock = $productModel->stock + $oldQuantity - $newQuantity;
-
-                        // Không để tồn kho âm
-                        if ($newStock < 0) {
-                            return response()->json(['status' => false, 'message' => 'Số lượng sản phẩm không đủ trong kho']);
-                        }
-
-                        // Cập nhật tồn kho sản phẩm
-                        $productModel->update(['stock' => $newStock]);
-
-                        // Cập nhật stock entry
-                        $stockEntry->update(['quantity' => $newQuantity]);
+                    $totalPrice += $product['quantity'] * $product['price'];
+                    if ($product['quantity'] == $warehouseItem->quantity) {
+                        continue;
                     }
+                    // Tính chênh lệch
+                    $oldQuantity = $warehouseItem->quantity;
+                    $newQuantity = $product['quantity'];
+                    $difference = $newQuantity - $oldQuantity;
+
+                    // Tính tồn kho mới
+                    $newStock = $productModel->stock - $difference;
+                    $productModel->stock = max(0, $newStock); // Nếu âm thì gán về 0
+                    // Cập nhật warehouse item
+                    $productModel->save();
+
 
                     // Cập nhật warehouse item
                     $warehouseItem->update([
@@ -527,28 +520,20 @@ class WarehouseTransferController extends Controller
                         throw new \Exception("Sản phẩm ID {$product['product_id']} không tồn tại.");
                     }
 
-                    $stockEntry = StockEntry::where('warehouse_entry_id', $warehouseEntry->id)
-                        ->where('product_id', $product['product_id'])
-                        ->first();
-
-                    if ($stockEntry) {
-                        $oldQuantity = $stockEntry->quantity;
-                        $newQuantity = $product['quantity'];
-
-                        // Tính lại tồn kho
-                        //   $newStock = $productModel->stock  + $newQuantity;
-                        $newStock = StockEntry::where('product_id', $stockEntry->product_id)->where('status', 1)->sum('quantity');
-                        // Không để tồn kho âm
-                        if ($newStock < 0) {
-                            throw new \Exception("Không đủ tồn kho cho sản phẩm ID {$product['product_id']}.");
-                        }
-
-                        // Cập nhật tồn kho sản phẩm
-                        $productModel->update(['stock' => $newStock]);
-
-                        // Cập nhật stock entry
-                        $stockEntry->update(['quantity' => $newQuantity]);
+                    $totalPrice1 += $product['quantity'] * $product['price'];
+                    if ($product['quantity'] == $warehouseItem->quantity) {
+                        continue;
                     }
+                    // Tính chênh lệch
+                    $oldQuantity = $warehouseItem->quantity;
+                    $newQuantity = $product['quantity'];
+                    $difference = $newQuantity - $oldQuantity;
+
+                    // Tính tồn kho mới
+                    $newStock = $productModel->stock + $difference;
+                    $productModel->stock = max(0, $newStock); // Nếu âm thì gán về 0
+                    // Cập nhật warehouse item
+                    $productModel->save();
 
                     // Cập nhật warehouse item
                     $warehouseItem->update([
@@ -560,6 +545,15 @@ class WarehouseTransferController extends Controller
                     'from_warehouse_id' => $product['warehouses_to'],
                     'to_warehouse_id'   => $product['warehouses_from'],
                 ]);
+            }
+            if (isset($warehouseExport)) {
+                $warehouseExport->total = $totalPrice;
+                $warehouseExport->save();
+            }
+
+            if (isset($warehouseEntry)) {
+                $warehouseEntry->total = $totalPrice1;
+                $warehouseEntry->save();
             }
             DB::commit();
             return response()->json(['status' => true, 'message' => 'Cập nhật thành công']);
@@ -606,7 +600,7 @@ class WarehouseTransferController extends Controller
     }
     public function print(Request $request, $id)
     {
-        $warehouse = WarehouseTransfer::with('toWarehouse','fromWarehouse', 'admin','entry.entries','entry.entries.product','export')->findOrFail($id);
+        $warehouse = WarehouseTransfer::with('toWarehouse', 'fromWarehouse', 'admin', 'entry.entries', 'entry.entries.product', 'export')->findOrFail($id);
         Log::info($warehouse);
         return view('admin.transfer.print', compact('warehouse'));
     }

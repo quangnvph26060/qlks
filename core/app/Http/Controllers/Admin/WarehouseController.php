@@ -17,6 +17,7 @@ use App\Models\Admin;
 use App\Models\Warehouse;
 use App\Repositories\BaseRepository;
 use Illuminate\Support\Facades\Validator;
+use Maatwebsite\Excel\Facades\Excel;
 
 class WarehouseController extends Controller
 {
@@ -65,7 +66,7 @@ class WarehouseController extends Controller
         $suppliers  = Supplier::query()->pluck('name', 'id');
         $admin      = Admin::where('unit_code', unitCode())->where('subdomain', subdomain())->get();
         $warehouse  = Warehouse::active()->get();
-        return view('admin.warehouse.index', compact('pageTitle', 'categories', 'suppliers', 'products', 'admin', 'warehouse','response'));
+        return view('admin.warehouse.index', compact('pageTitle', 'categories', 'suppliers', 'products', 'admin', 'warehouse', 'response'));
     }
 
     /**
@@ -161,18 +162,18 @@ class WarehouseController extends Controller
 
                 // Tính tổng
                 $total += $quantity * $price;
-                 $data[$productId] = [
-                    'quantity'    => $quantity - $warehouse->number_of_cancellations,
-                    'entry_date'  => now()->format('Y-m-d H:i:s'),
-                    'status'      => 1
-                ];
+                // $data[$productId] = [
+                //     'quantity'    => $quantity - $warehouse->number_of_cancellations,
+                //     'entry_date'  => now()->format('Y-m-d H:i:s'),
+                //     'status'      => 1
+                // ];
             }
 
             // Cập nhật tổng tiền
             $warehouse->update([
                 'total' => $total
             ]);
-              $warehouse->stockEntries()->sync($data);
+            //  $warehouse->stockEntries()->sync($data);
             DB::commit();
 
             return response()->json([
@@ -236,13 +237,13 @@ class WarehouseController extends Controller
                 $product = Product::query()->find($value['product_id']);
                 $product->increment('stock', $value['quantity'] - $value['number_of_cancellations']);
 
-                $data[$value['product_id']] = [
-                    'quantity'   => $value['quantity'] - $value['number_of_cancellations'],
-                    'entry_date' => now()->format('Y-m-d H:i:s'),
-                    'status'     => 1
-                ];
+                // $data[$value['product_id']] = [
+                //     'quantity'   => $value['quantity'] - $value['number_of_cancellations'],
+                //     'entry_date' => now()->format('Y-m-d H:i:s'),
+                //     'status'     => 1
+                // ];
             });
-            $warehouse->stockEntries()->sync($data);
+            // $warehouse->stockEntries()->sync($data);
 
             $warehouse->update([
                 'status' => 1,
@@ -466,7 +467,7 @@ class WarehouseController extends Controller
                 'warehouse_code.unique' => 'Mã phiếu đã tồn tại',
             ]
         );
-         if ($data->fails()) {
+        if ($data->fails()) {
             return response()->json([
                 'status' => false,
                 'errors' => $data->errors()
@@ -485,11 +486,11 @@ class WarehouseController extends Controller
             $item->supplier_id       = $request->supplier_id;
             $item->note              = $request->note;
             $item->reference_code    =  filled($request->warehouse_code)
-                                        ? $request->warehouse_code
-                                        : getCode('PX', 12, WarehouseEntry::class, 'reference_code');
+                ? $request->warehouse_code
+                : getCode('PX', 12, WarehouseEntry::class, 'reference_code');
             $item->created_time      = $request->dateWarehouse;
-            $item->save();
             $productItems            = $request->productItems;
+            $totalPrice = 0;
             foreach ($productItems as $product) {
                 $warehouseItem = WarehouseEntryItem::find($product['item_id']);
                 if (!$warehouseItem) {
@@ -500,36 +501,28 @@ class WarehouseController extends Controller
                 if (!$productModel) {
                     throw new \Exception("Sản phẩm ID {$product['product_id']} không tồn tại.");
                 }
-
-                $stockEntry = StockEntry::where('warehouse_entry_id', $item->id)
-                    ->where('product_id', $product['product_id'])
-                    ->first();
-
-                if ($stockEntry) {
-                    $oldQuantity = $stockEntry->quantity;
-                    $newQuantity = $product['quantity'];
-
-                    // Tính lại tồn kho
-                 //   $newStock = $productModel->stock  + $newQuantity;
-                   $newStock = StockEntry::where('product_id', $stockEntry->product_id)->where('status', 1)->sum('quantity');
-                    // Không để tồn kho âm
-                    if ($newStock < 0) {
-                        throw new \Exception("Không đủ tồn kho cho sản phẩm ID {$product['product_id']}.");
-                    }
-
-                    // Cập nhật tồn kho sản phẩm
-                    $productModel->update(['stock' => $newStock]);
-
-                    // Cập nhật stock entry
-                    $stockEntry->update(['quantity' => $newQuantity]);
+                $totalPrice += $product['quantity'] * $product['price'];
+                if ($product['quantity'] == $warehouseItem->quantity) {
+                    continue;
                 }
+                // Tính chênh lệch
+                $oldQuantity = $warehouseItem->quantity;
+                $newQuantity = $product['quantity'];
+                $difference = $newQuantity - $oldQuantity;
 
+                // Tính tồn kho mới
+                $newStock = $productModel->stock + $difference;
+                $productModel->stock = max(0, $newStock); // Nếu âm thì gán về 0
                 // Cập nhật warehouse item
+                $productModel->save();
                 $warehouseItem->update([
                     'quantity' => $product['quantity'],
                     'warehouse_id' => $product['warehouse_id'],
                 ]);
             }
+
+            $item->total =  $totalPrice;
+            $item->save();
             DB::commit();
             return response()->json(['status' => true, 'message' => 'Cập nhật thành công']);
         } catch (\Exception $e) {
@@ -539,5 +532,182 @@ class WarehouseController extends Controller
                 'message' => 'Lỗi xoá: ' . $e->getMessage()
             ], 500);
         }
+    }
+    public function import(Request $request)
+    {
+        if (!$request->hasFile('file')) {
+            return back()->with('error', 'Không có file nào được gửi lên.');
+        }
+
+        $file = $request->file('file');
+
+        if (!$file->isValid()) {
+            return back()->with('error', 'File không hợp lệ.');
+        }
+
+        // Tạo đường dẫn lưu tạm trong storage
+        $tempPath = storage_path('app/temp');
+        if (!file_exists($tempPath)) {
+            mkdir($tempPath, 0777, true);
+        }
+
+        // Tạo tên file mới tạm thời
+        $filename = uniqid() . '.' . $file->getClientOriginalExtension();
+        $filePath = $file->move($tempPath, $filename);
+
+        try {
+            $data = Excel::toArray([], $filePath->getRealPath());
+            // Lấy sheet đầu tiên (thường là $data[0])
+            $rawRows = $data[0];
+
+            // Bỏ qua dòng tiêu đề (header)
+            $header = array_shift($rawRows);
+
+            // Lọc các dòng không hoàn toàn null
+            $filteredRows = array_filter($rawRows, function ($row) {
+                return array_filter($row, fn($value) => !is_null($value)) !== [];
+            });
+
+            // Nếu muốn chèn lại header vào đầu
+            array_unshift($filteredRows, $header);
+
+            // Gán lại vào $data nếu bạn muốn giữ nguyên cấu trúc
+            $data[0] = $filteredRows;
+
+            // Kiểm tra kết quả
+            $errors = $this->importData($data);
+            if (file_exists($filePath)) {
+                unlink($filePath);
+            }
+            $notify = [];
+
+            if (!empty($errors)) {
+                foreach ($errors as $error) {
+                    $notify[] = ['error', $error];
+                }
+            } else {
+                $notify[] = ['success', 'Thêm dữ liệu thành công'];
+            }
+
+            return back()->withNotify($notify);
+        } catch (\Throwable $e) {
+            Log::error('[IMPORT ERROR] ' . $e->getMessage(), ['file' => $file?->getClientOriginalName()]);
+            return back()->with('error', 'Đã xảy ra lỗi khi xử lý file Excel.');
+        }
+
+        // $notify[] = ['success', 'Thêm dữ liệu thành công'];
+
+
+        // return back()->withNotify($notify);
+    }
+    protected function importData(array $data)
+    {
+        $rows = $data[0] ?? [];
+        $errors = [];
+        if (count($rows) < 2) {
+            Log::warning('Import Room: Không có dữ liệu để import');
+            return;
+        }
+
+        // Lấy dòng đầu tiên làm header
+        $header = $rows[0];
+        $dataRows = array_slice($rows, 1);
+        foreach ($dataRows as $row) {
+
+            if (array_filter($row, fn($v) => !is_null($v)) === []) {
+                continue;
+            }
+
+            // Gộp header và dữ liệu thành key => value
+            $mapped = array_combine($header, $row);
+
+            // Map về đúng tên cột trong DB
+            $roomData = [
+                'ma_phieu'       => $mapped['Mã phiếu'] ?? null,
+                'ngay_nhap'      => $mapped['Ngày nhập'] ?? null,
+                'ma_san_pham'    => $mapped['Mã sản phẩm'] ?? null,
+                'so_luong'       => $mapped['Số lượng'] ?? null,
+                'ma_nha_cung_cap' => $mapped['Mã nhà cung cấp'] ?? null,
+                'ma_kho'         => $mapped['Mã kho'] ?? null,
+                'ghi_chu'        => $mapped['Ghi chú'] ?? null,
+            ];
+            try {
+                $product = Product::where('sku', $roomData['ma_san_pham'])->first();
+                $warehouse = Warehouse::where('code', $roomData['ma_kho'])->first();
+                $supplier = Supplier::where('supplier_id', $roomData['ma_nha_cung_cap'])->first();
+                if (!$product || !$warehouse || !$supplier) {
+                    continue;
+                }
+                $maPhieu = $roomData['ma_phieu'];
+
+                if ($maPhieu) {
+                    $maPhieu = strtoupper($maPhieu);
+                   
+                    $existingEntry = WarehouseEntry::where('reference_code', $maPhieu)->first();
+                    if ($existingEntry) {
+                        $existingItem = WarehouseEntryItem::where('warehouse_entry_id', $existingEntry->id)
+                            ->where('product_id', $product->id)
+                            ->first();
+                        if ($existingItem) {
+                            $existingItem->update([
+                                'quantity' => $existingItem->quantity + (int) $roomData['so_luong'],
+                            ]);
+                             $existingEntry->update([
+                                'total' => $existingEntry->total +  ((int) $roomData['so_luong'] * $product->import_price),
+                            ]);
+                            continue;
+                        } else {
+                            WarehouseEntryItem::create([
+                                'warehouse_entry_id' => $existingEntry->id,
+                                'product_id'         => $product->id,
+                                'quantity'           => $roomData['so_luong'],
+                                'price'              => $product->import_price,
+                                'warehouse_id'       => $warehouse->id,
+                            ]);
+                             continue;
+                        }
+                    }
+                } else {
+                    // Tạo mã mới nếu không có mã
+                    $maPhieu = getCode('PN', 12, WarehouseEntry::class, 'reference_code');
+                }
+
+
+                $warehouseEntry = WarehouseEntry::create([
+                    'reference_code'   => $maPhieu,
+                    'warehouse_id'     => $warehouse->id,
+                    'supplier_id'      => $supplier->id,
+                    'created_time'     => \Carbon\Carbon::createFromFormat('d/m/Y', $roomData['ngay_nhap'])->format('Y-m-d'),
+                    'note'             => $roomData['ghi_chu'] ?? '',
+                    'created_by'       => authAdmin()->id,
+                    'status'           => 1,
+                    'total'            => (int) $roomData['so_luong'] * $product->import_price,
+                    'subdomain'        => subdomain(),
+                    'unit_code'        => unitCode(),
+                    'payment_method_id' => 1,
+
+                ]);
+
+                // Tạo WarehouseEntryItem tương ứng
+                WarehouseEntryItem::create([
+                    'warehouse_entry_id' => $warehouseEntry->id,
+                    'product_id'         => $product->id,
+                    'quantity'           => $roomData['so_luong'],
+                    'price'              => $product->import_price ?? 0,
+                    'warehouse_id'       => $warehouse->id,
+                    'type'               => 1,
+                ]);
+                // Cập nhật tồn kho
+                $product->increment('stock', $roomData['so_luong']);
+            } catch (\Throwable $e) {
+                Log::error('Import Room Error', [
+                    'message'  => $e->getMessage(),
+                    'line'     => $e->getLine(),
+                    'file'     => $e->getFile(),
+                    'row_data' => $roomData,
+                ]);
+            }
+        }
+        return $errors;
     }
 }

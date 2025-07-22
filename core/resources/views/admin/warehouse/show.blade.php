@@ -154,9 +154,10 @@
                                             style="width: 130px;">
                                             {{-- <button type="button"
                                                 class="btn btn-outline-secondary btn-sm decrease-edit">-</button> --}}
-                                            <input type="number" class="form-control mx-2 handled-focus-edit"
+                                            <input type="text"
+                                                class="form-control mx-2 handled-focus-edit money-input"
                                                 name="products[{{ $item->product_id }}]" value="{{ $item->quantity }}"
-                                                min="1" style="width: 80px; text-align: center; height: 30px;">
+                                                min="1" style="width: 117px; text-align: center; height: 30px;">
                                             {{-- <button type="button"
                                                 class="btn btn-outline-secondary btn-sm increase-edit">+</button> --}}
                                         </div>
@@ -184,8 +185,7 @@
 
                                         <button class="btn btn-outline-danger btn-sm remove-product-edit flex-shrink-0"
                                             style="width: 30px;" data-id="{{ $item->id }}"
-                                            data-url="{{ route('admin.warehouse.destroy.warehouse.item', $item->id) }}"
-                                            >X</button>
+                                            data-url="{{ route('admin.warehouse.destroy.warehouse.item', $item->id) }}">X</button>
                                     </div>
                                 @endforeach
                             </div>
@@ -202,7 +202,7 @@
                         {{ number_format($warehouse->total, 0, ',', '.') }} VNĐ</span></div>
             </div>
             <button class="btn btn-primary confirmPayment-edit" type="submit" id="confirmPayment-edit"
-                data-id="{{ $warehouse->id }}" >Lưu</button>
+                data-id="{{ $warehouse->id }}">Lưu</button>
         </div>
     </div>
 </div>
@@ -225,17 +225,37 @@
                     }
                 });
                 var warehouse = @json($warehouse);
+
                 // Cập nhật tổng tiền khi người dùng nhập số trực tiếp
                 $(document).on("blur", ".handled-focus-edit", function() {
                     const input = $(this);
-                    let value = parseInt(input.val());
-                    
+
+                    // Xoá dấu chấm để lấy số gốc
+                    let rawValue = input.val().replace(/\./g, '');
+
+                    // Parse lại giá trị
+                    let value = parseInt(rawValue) || 0;
+
+                    // Nếu nhỏ hơn 1 thì gán lại là 1
                     if (value < 1) {
-                        input.val(1); // Đảm bảo giá trị tối thiểu là 1
+                        value = 1;
                     }
+
+                    // Gán lại giá trị đã định dạng
+                    input.val(value.toLocaleString('vi-VN'));
+
+                    // Gọi cập nhật tổng
                     updateTotal();
-                }); 
-             
+                });
+
+
+                document.addEventListener('input', function(e) {
+                    if (e.target.classList.contains('money-input')) {
+                        let value = e.target.value.replace(/\D/g, ""); // Xóa ký tự không phải số
+                        value = Number(value).toLocaleString('vi-VN'); // Định dạng theo chuẩn Việt Nam
+                        e.target.value = value;
+                    }
+                });
 
                 // Hàm cập nhật tổng tiền
                 function updateTotal() {
@@ -252,7 +272,7 @@
 
 
 
-                        const quantity = parseInt($(this).find('input[type="number"]').val());
+                        const quantity = parseInt($(this).find('input[type="text"]')).val().replace(/\./g, '');
                         total += price * quantity;
                         // const priceProduct = price * quantity;
                         // $(this).find('.price-product').text(priceProduct.toLocaleString('vi-VN') + ' VND');
@@ -276,21 +296,21 @@
                 }
 
                 // Tăng hoặc giảm số lượng sản phẩm
-                $(document).on("click", ".increase-edit", function() {
-                    const wrapper = $(this).closest('.selected-product');
-                    const input = wrapper.find('input[type=number]');
-                    let value = parseInt(input.val()) || 0;
-                    input.val(value + 1);
-                    updateTotal();
-                });
+                // $(document).on("click", ".increase-edit", function() {
+                //     const wrapper = $(this).closest('.selected-product');
+                //     const input = wrapper.find('input[type=number]');
+                //     let value = parseInt(input.val()) || 0;
+                //     input.val(value + 1);
+                //     updateTotal();
+                // });
 
-                $(document).on("click", ".decrease-edit", function() {
-                    const wrapper = $(this).closest('.selected-product');
-                    const input = wrapper.find('input[type=number]');
-                    let value = parseInt(input.val()) || 0;
-                    if (value > 1) input.val(value - 1);
-                    updateTotal();
-                });
+                // $(document).on("click", ".decrease-edit", function() {
+                //     const wrapper = $(this).closest('.selected-product');
+                //     const input = wrapper.find('input[type=number]');
+                //     let value = parseInt(input.val()) || 0;
+                //     if (value > 1) input.val(value - 1);
+                //     updateTotal();
+                // });
 
 
 

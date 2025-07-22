@@ -86,7 +86,7 @@
                 <span class="badge {{ $badgeClass }}">{{ $statusText }}</span>
             </td>
 
-            <td data-label="Tổng tiền">{{ showAmount($total) }}</td>
+            <td data-label="Tổng tiền" class="text-right">{{ showAmount($total) }}</td>
         </tr>
     @endforeach
 @else

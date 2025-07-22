@@ -156,23 +156,19 @@
                                             style="width: 130px;">
                                             {{-- <button type="button"
                                                 class="btn btn-outline-secondary btn-sm decrease-edit">-</button> --}}
-                                            <input type="number" class="form-control mx-2 handled-focus-edit"
+                                            <input type="text" class="form-control mx-2 handled-focus-edit money-input"
                                                 name="products[{{ $item->product_id }}]" value="{{ $item->quantity }}"
                                                 min="1" max="{{ $item->product['stock'] }}"
-                                                style="width: 80px; text-align: center; height: 30px;">
+                                                style="width: 117px; text-align: center; height: 30px;">
                                             {{-- <button type="button"
                                                 class="btn btn-outline-secondary btn-sm increase-edit">+</button> --}}
                                         </div>
                                         <div class="product-price text-success me-3 flex-shrink-0 price-edit"
-                                            style="width: 100px;" data-price="{{ $item->price }}">
+                                            style="width: 100px; white-space: nowrap;" data-price="{{ $item->price }}">
                                             {{ number_format($item->price, 0, ',', '.') }}
                                         </div>
-
-
-
-
                                         <div class="product-price text-success me-3 flex-shrink-0 price-product"
-                                            style="width: 100px;">
+                                            style="width: 100px; white-space: nowrap;">
                                             {{ number_format($item->quantity * $item->price, 0, ',', '.') }}
                                         </div>
                                         <select name="warehouses[{{ $item->product_id }}]"
@@ -230,7 +226,8 @@
                 // Cập nhật tổng tiền khi người dùng nhập số trực tiếp
                 $(document).on("blur", ".handled-focus-edit", function() {
                     const input = $(this);
-                    let value = parseInt(input.val());
+                     let rawValue = input.val().replace(/\./g, '');
+                    let value = parseInt(rawValue) || 0;
                     const min = parseInt(input.attr('min')) || 1;
                     const max = parseInt(input.attr('max')) || Infinity;
 
@@ -249,7 +246,13 @@
                     // Gọi cập nhật tổng, nếu có
                     updateTotal();
                 });
-
+                 document.addEventListener('input', function(e) {
+                    if (e.target.classList.contains('money-input')) {
+                        let value = e.target.value.replace(/\D/g, ""); // Xóa ký tự không phải số
+                        value = Number(value).toLocaleString('vi-VN'); // Định dạng theo chuẩn Việt Nam
+                        e.target.value = value;
+                    }
+                });
                 // Hàm cập nhật tổng tiền
                 function updateTotal() {
                     let total = 0;
@@ -265,7 +268,7 @@
 
 
 
-                        const quantity = parseInt($(this).find('input[type="number"]').val());
+                        const quantity = parseInt($(this).find('input[type="text"]')).val().replace(/\./g, '');
                         total += price * quantity;
                     });
 

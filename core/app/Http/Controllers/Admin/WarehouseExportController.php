@@ -167,18 +167,18 @@ class WarehouseExportController extends Controller
 
                 // Tính tổng
                 $total += $quantity * $price;
-                $data[$productId] = [
-                    'quantity'    => $quantity - $warehouse->number_of_cancellations,
-                    'entry_date'  => now()->format('Y-m-d H:i:s'),
-                    'status'      => 0
-                ];
+                // $data[$productId] = [
+                //     'quantity'    => $quantity - $warehouse->number_of_cancellations,
+                //     'entry_date'  => now()->format('Y-m-d H:i:s'),
+                //     'status'      => 0
+                // ];
             }
 
             // Cập nhật tổng tiền
             $warehouse->update([
                 'total' => $total
             ]);
-            $warehouse->stockEntries()->sync($data);
+           // $warehouse->stockEntries()->sync($data);
             DB::commit();
 
             return response()->json([
@@ -394,8 +394,9 @@ class WarehouseExportController extends Controller
                     ? $request->warehouse_code
                     : getCode('PX', 12, WarehouseExport::class, 'reference_code');
             $item->created_time      = $request->dateWarehouse;
-            $item->save();
+          
             $productItems = $request->productItems;
+            $totalPrice = 0;
             foreach ($productItems as $product) {
                 $warehouseItem = WarehouseEntryItem::find($product['item_id']);
                 if (!$warehouseItem) {
@@ -406,36 +407,29 @@ class WarehouseExportController extends Controller
                 if (!$productModel) {
                     throw new \Exception("Sản phẩm ID {$product['product_id']} không tồn tại.");
                 }
-
-                $stockEntry = StockEntry::where('warehouse_entry_id', $item->id)
-                    ->where('product_id', $product['product_id'])
-                    ->first();
-
-                if ($stockEntry) {
-                    $oldQuantity = $stockEntry->quantity;
-                    $newQuantity = $product['quantity'];
-
-                    // Tính lại tồn kho
-                    $newStock = $productModel->stock + $oldQuantity - $newQuantity;
-
-                    // Không để tồn kho âm
-                    if ($newStock < 0) {
-                        throw new \Exception("Không đủ tồn kho cho sản phẩm ID {$product['product_id']}.");
-                    }
-
-                    // Cập nhật tồn kho sản phẩm
-                    $productModel->update(['stock' => $newStock]);
-
-                    // Cập nhật stock entry
-                    $stockEntry->update(['quantity' => $newQuantity]);
+                  $totalPrice += $product['quantity'] * $product['price'];
+                if ($product['quantity'] == $warehouseItem->quantity) {
+                    continue;
                 }
+                // Tính chênh lệch
+                $oldQuantity = $warehouseItem->quantity;
+                $newQuantity = $product['quantity'];
+                $difference = $newQuantity - $oldQuantity;
 
+                // Tính tồn kho mới
+                $newStock = $productModel->stock - $difference;
+                $productModel->stock = max(0, $newStock); // Nếu âm thì gán về 0
+                // Cập nhật warehouse item
+                  $productModel->save();
+              
                 // Cập nhật warehouse item
                 $warehouseItem->update([
                     'quantity' => $product['quantity'],
                     'warehouse_id' => $product['warehouse_id'],
                 ]);
             }
+            $item->total =  $totalPrice;
+            $item->save();
             DB::commit();
             return response()->json(['status' => true, 'message' => 'Cập nhật thành công']);
         } catch (\Exception $e) {
