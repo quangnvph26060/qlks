@@ -8,6 +8,7 @@ use App\Models\SetupCode;
 use App\Models\StockEntry;
 use App\Models\Supplier;
 use App\Models\WarehouseEntryItem;
+use App\Models\WarehouseEntryLog;
 use Illuminate\Http\Request;
 use App\Models\WarehouseEntry;
 use Illuminate\Support\Facades\DB;
@@ -174,6 +175,12 @@ class WarehouseController extends Controller
                 'total' => $total
             ]);
             //  $warehouse->stockEntries()->sync($data);
+            WarehouseEntryLog::create([
+                'warehouse_entry_id' => $warehouse->id,
+                'user_id'            => authAdmin()->id,
+                'action'             => 'created',
+            ]);
+
             DB::commit();
 
             return response()->json([
@@ -523,6 +530,12 @@ class WarehouseController extends Controller
 
             $item->total =  $totalPrice;
             $item->save();
+            WarehouseEntryLog::create([
+                'warehouse_entry_id' => $item->id,
+                'user_id'            => authAdmin()->id,
+                'action'             => 'updated',
+            ]);
+
             DB::commit();
             return response()->json(['status' => true, 'message' => 'Cập nhật thành công']);
         } catch (\Exception $e) {
@@ -532,6 +545,22 @@ class WarehouseController extends Controller
                 'message' => 'Lỗi xoá: ' . $e->getMessage()
             ], 500);
         }
+    }
+    public function getLogs($id){
+         $logs = WarehouseEntryLog::where('warehouse_entry_id', $id)
+        ->with('admin') // eager load thông tin user
+        ->orderBy('created_at', 'asc')
+        ->get()
+        ->map(function ($log) {
+            return [
+               'user_name'  => optional($log->admin)->name ?? 'Không rõ',
+                'timestamp' => $log->created_at->format('d/m/Y H:i:s'),
+                'action'    => $log->action === 'created' ? 'Tạo phiếu' : 'Cập nhật phiếu',
+
+            ];
+        });
+
+    return response()->json($logs);
     }
     public function import(Request $request)
     {
@@ -642,7 +671,7 @@ class WarehouseController extends Controller
 
                 if ($maPhieu) {
                     $maPhieu = strtoupper($maPhieu);
-                   
+
                     $existingEntry = WarehouseEntry::where('reference_code', $maPhieu)->first();
                     if ($existingEntry) {
                         $existingItem = WarehouseEntryItem::where('warehouse_entry_id', $existingEntry->id)
@@ -652,7 +681,7 @@ class WarehouseController extends Controller
                             $existingItem->update([
                                 'quantity' => $existingItem->quantity + (int) $roomData['so_luong'],
                             ]);
-                             $existingEntry->update([
+                            $existingEntry->update([
                                 'total' => $existingEntry->total +  ((int) $roomData['so_luong'] * $product->import_price),
                             ]);
                             continue;
@@ -664,7 +693,7 @@ class WarehouseController extends Controller
                                 'price'              => $product->import_price,
                                 'warehouse_id'       => $warehouse->id,
                             ]);
-                             continue;
+                            continue;
                         }
                     }
                 } else {

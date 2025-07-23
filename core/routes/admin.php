@@ -187,6 +187,7 @@ Route::middleware('admin', 'adminPermission')->prefix('admin')->group(function (
         Route::post('import/slipe', 'updateImportSlipe')->name('update.import.slipe');
         Route::post('delete/warehouse/{id}', 'deleteWarehouse')->name('delete.warehouse');
         Route::get('{id}/show', 'show')->name('show');
+        Route::get('/warehouse-entries/{id}/logs',  'getLogs')->name('get.logs');
         Route::delete('{id}/destroy', 'destroy')->name('destroy');
         Route::delete('{id}/warehouse/destory/item', 'destroyWarehouseEntryItem')->name('destroy.warehouse.item');
         Route::put('{id}/update', 'update')->name('update');
@@ -205,6 +206,7 @@ Route::middleware('admin', 'adminPermission')->prefix('admin')->group(function (
         Route::delete('{id}/destroy', 'destroy')->name('destroy');
         Route::delete('{id}/warehouse/destory/item', 'destroyWarehouseEntryItem')->name('destroy.warehouse.item');
         Route::put('{id}/update', 'update')->name('update');
+        Route::get('/warehouse-export/{id}/logs',  'getLogs')->name('get.logs');
     });
     // manage transfer 
     Route::controller('WarehouseTransferController')->prefix('warehouse_transfer')->name('warehouse.transfer.')->group(function () {
@@ -213,7 +215,7 @@ Route::middleware('admin', 'adminPermission')->prefix('admin')->group(function (
           Route::get('/print/{id}', 'print')->name('print');
         Route::post('create', 'store')->name('store');
         Route::post('/check-stock',  'checkStock')->name('check-stock');
-
+        Route::get('/warehouse-transfer/{id}/logs',  'getLogs')->name('get.logs');
          Route::post('import/slipe', 'updateImportSlipe')->name('update.import.slipe');
         Route::get('{id}/show', 'show')->name('show');
           Route::delete('{id}/destroy', 'destroy')->name('destroy');

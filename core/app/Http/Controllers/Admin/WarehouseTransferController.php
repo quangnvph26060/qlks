@@ -13,6 +13,7 @@ use App\Models\WarehouseEntry;
 use App\Models\WarehouseEntryItem;
 use App\Models\WarehouseExport;
 use App\Models\WarehouseTransfer;
+use App\Models\WarehouseTransferLog;
 use App\Repositories\BaseRepository;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\DB;
@@ -231,7 +232,7 @@ class WarehouseTransferController extends Controller
             // $export->stockEntries()->sync($data);
             // $entry->stockEntries()->sync($data1);
             // ✅ Tạo phiếu điều chuyển
-            WarehouseTransfer::create([
+            $transfer =      WarehouseTransfer::create([
                 'reference_code'    => filled($request->warehouse_code)
                     ? $request->warehouse_code
                     : getCode('DC', 12, WarehouseTransfer::class, 'reference_code'),
@@ -248,7 +249,11 @@ class WarehouseTransferController extends Controller
                     : authAdmin()->id,
                 'status'            => 1,
             ]);
-
+            WarehouseTransferLog::create([
+                'warehouse_transfer_id' => $transfer->id,
+                'user_id'            => authAdmin()->id,
+                'action'             => 'updated',
+            ]);
             DB::commit();
 
             return response()->json([
@@ -264,6 +269,22 @@ class WarehouseTransferController extends Controller
                 'message' => $exception->getMessage()
             ]);
         }
+    }
+    public function getLogs($id)
+    {
+        $logs = WarehouseTransferLog::where('warehouse_transfer_id', $id)
+            ->with('admin') // eager load thông tin user
+            ->orderBy('created_at', 'asc')
+            ->get()
+            ->map(function ($log) {
+                return [
+                    'user_name'  => optional($log->admin)->name ?? 'Không rõ',
+                    'timestamp' => $log->created_at->format('d/m/Y H:i:s'),
+                    'action'    => $log->action === 'created' ? 'Tạo phiếu' : 'Cập nhật phiếu',
+                ];
+            });
+
+        return response()->json($logs);
     }
     public function show(string $id)
     {
@@ -555,6 +576,11 @@ class WarehouseTransferController extends Controller
                 $warehouseEntry->total = $totalPrice1;
                 $warehouseEntry->save();
             }
+             WarehouseTransferLog::create([
+                'warehouse_transfer_id' => $item->id,
+                'user_id'            => authAdmin()->id,
+                'action'             => 'updated',
+            ]);
             DB::commit();
             return response()->json(['status' => true, 'message' => 'Cập nhật thành công']);
         } catch (\Exception $e) {

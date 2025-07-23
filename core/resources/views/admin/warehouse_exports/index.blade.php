@@ -6,7 +6,7 @@
             <div class="card b-radius--10">
                 <div class="card-body p-0">
                     <div class="table-responsive--md table-responsive p-2">
-                         <div class="pager-wrap d-flex justify-content-center">
+                        <div class="pager-wrap d-flex justify-content-center">
                             <div class="k-widget d-flex">
                                 <div class="pagination-tb" style="font-size: 13px;margin: 0 auto">
                                     {{ $response->links('pagination::bootstrap-4') }}
@@ -14,7 +14,7 @@
                             </div>
                         </div>
                         <div class="d-flex justify-content-between mb-3">
-                            
+
                             <div class="dt-length">
                                 {{-- <select name="example_length" style=" padding: 1px 3px; margin-right: 8px;"
                                     aria-controls="example" class="perPage">
@@ -97,6 +97,35 @@
                                 'warehouse' => $warehouse,
                             ])
 
+                        </div>
+                    </div>
+                </div>
+            </div>
+            <div class="modal fade" id="slipDetailModal" tabindex="-1" aria-labelledby="slipDetailModalLabel" aria-hidden="true">
+                <div class="modal-dialog modal-lg modal-dialog-centered">
+                    <div class="modal-content">
+                        <div class="modal-header">
+                            <h5 class="modal-title" id="slipDetailModalLabel">Lịch sử sửa đổi phiếu</h5>
+                            <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+                        </div>
+                        <div class="modal-body">
+                            <div class="table-responsive">
+                                <table class="table table-striped table-hover table-sm">
+                                    <thead>
+                                        <tr>
+                                            <th>Người thực hiện</th>
+                                            <th>Thời gian</th>
+                                            <th>Mô tả</th>
+                                        </tr>
+                                    </thead>
+                                    <tbody id="modificationHistoryTableBody">
+                                        <!-- Lịch sử sửa đổi sẽ được thêm vào đây bằng JavaScript -->
+                                    </tbody>
+                                </table>
+                            </div>
+                        </div>
+                        <div class="modal-footer">
+                            <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Đóng</button>
                         </div>
                     </div>
                 </div>
@@ -214,6 +243,41 @@
             $(document).on('click', function() {
                 $('.menu_dropdown_check_in').removeClass('show');
             });
+            $(document).on('click', '.openSlipDetailBtn', function() {
+                const entryId = $(this).data('id');
+                var slipDetailModal = new bootstrap.Modal(document.getElementById('slipDetailModal'));
+                slipDetailModal.show();
+                const tbody = $('#modificationHistoryTableBody');
+                tbody.empty().append('<tr><td colspan="3">Đang tải dữ liệu...</td></tr>');
+                const getLogsRoute = "{{ route('admin.warehouse.export.get.logs', ['id' => '__ID__']) }}";
+                const url = getLogsRoute.replace('__ID__', entryId);
+                $.ajax({
+                    url: url, // 👉 Route xử lý lấy log
+                    method: 'GET',
+                    success: function(response) {
+                        tbody.empty(); // Xoá dòng "Đang tải..."
+
+                        if (response.length === 0) {
+                            tbody.append('<tr><td colspan="3">Không có lịch sử</td></tr>');
+                            return;
+                        }
+
+                        response.forEach(function(log) {
+                            const row = `
+                        <tr>
+                            <td>${log.user_name ?? 'Không rõ'}</td>
+                            <td class="text-center">${log.timestamp}</td>
+                            <td class="text-center">${log.action}</td>
+                        </tr>
+                    `;
+                            tbody.append(row);
+                        });
+                    },
+                    error: function() {
+                        tbody.empty().append('<tr><td colspan="3">Lỗi khi tải dữ liệu</td></tr>');
+                    }
+                });
+            });
             $(document).on('click', '.confirmPayment-edit', function() {
                 const id = $(this).data('id');
                 const supplierVal = $('#supplierSelect').val();
@@ -263,10 +327,10 @@
                     data: {
                         _token: $('meta[name="csrf-token"]').attr('content'),
                         id: id,
-                        supplier_id:     supplierVal,
-                        dateWarehouse:   dateWarehouse,
-                        warehouse_code:  warehouse_code,
-                        created_by:      warehouseVal,
+                        supplier_id: supplierVal,
+                        dateWarehouse: dateWarehouse,
+                        warehouse_code: warehouse_code,
+                        created_by: warehouseVal,
                         payment_method_id: paymentVal,
                         note: note,
                         productItems: productItems,
@@ -345,7 +409,7 @@
             });
             $(document).on("blur", ".handled-focus-edit", function() {
                 const input = $(this);
-                 let rawValue = input.val().replace(/\./g, '');
+                let rawValue = input.val().replace(/\./g, '');
 
                 let value = parseInt(rawValue) || 0;
                 const min = parseInt(input.attr('min')) || 1;
@@ -359,18 +423,18 @@
                 // Đảm bảo giá trị không vượt quá max
                 if (value > max) {
                     value = max;
-                       Swal.fire({
-                            toast: true,
-                            position: 'top-end', // góc phải phía trên
-                            icon: 'error',
-                            title: 'Đã nhập quá tồn kho',
-                            showConfirmButton: false,
-                            timer: 3000, // hiển thị trong 3 giây
-                            timerProgressBar: true
-                        });
+                    Swal.fire({
+                        toast: true,
+                        position: 'top-end', // góc phải phía trên
+                        icon: 'error',
+                        title: 'Đã nhập quá tồn kho',
+                        showConfirmButton: false,
+                        timer: 3000, // hiển thị trong 3 giây
+                        timerProgressBar: true
+                    });
                 }
 
-               input.val(value.toLocaleString('vi-VN'));
+                input.val(value.toLocaleString('vi-VN'));
 
                 // Gọi cập nhật tổng, nếu có
                 updateTotalEdit();

@@ -65,6 +65,9 @@ class AdminPermissionMiddleware
              'admin.warehouse.transfer.print', // in phiếu điều chuyển
              'admin.hotel.room.product.admin.warehouse.get-products-by-warehouse',
              'admin.warehouse.import.store', // import phiếu nhập
+             'admin.warehouse.get.logs', // chi tiết phiếu nhập ai là ngươiuf tạo, cập nhật
+             'admin.warehouse.export.get.logs',// chi tiết phiếu  xuất ai là ngươiuf tạo, cập nhật
+             'admin.warehouse.transfer.get.logs', // chi tiết phiếu  điều chuyển ai là ngươiuf tạo, cập nhật
         ];
         /*
             'admin.revenue' => 'Danh thu trong màn thông kế'

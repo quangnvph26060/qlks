@@ -106,6 +106,9 @@
                 </select>
 
                 <div class="payment-details mt-3 hidden" id="paymentDetails"></div>
+                 <button type="button" class="btn btn-sm btn--primary mt-1 openSlipDetailBtn" data-id="{{ $warehouse->id }}">
+                    Chi tiết phiếu
+                </button>
             </div>
 
         </div>

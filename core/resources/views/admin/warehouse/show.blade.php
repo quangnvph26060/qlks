@@ -101,6 +101,13 @@
                 </select>
 
                 <div class="payment-details mt-3 hidden" id="paymentDetails"></div>
+                <button type="button" class="btn btn-sm btn--primary mt-1 openSlipDetailBtn" data-id="{{ $warehouse->id }}">
+                    Chi tiết phiếu
+                </button>
+
+
+
+
             </div>
 
         </div>
@@ -214,6 +221,7 @@
 
 
 
+
 @push('script')
     <script>
         (function($) {
@@ -272,7 +280,8 @@
 
 
 
-                        const quantity = parseInt($(this).find('input[type="text"]')).val().replace(/\./g, '');
+                        const quantity = parseInt($(this).find('input[type="text"]')).val().replace(
+                            /\./g, '');
                         total += price * quantity;
                         // const priceProduct = price * quantity;
                         // $(this).find('.price-product').text(priceProduct.toLocaleString('vi-VN') + ' VND');
@@ -311,6 +320,7 @@
                 //     if (value > 1) input.val(value - 1);
                 //     updateTotal();
                 // });
+
 
 
 

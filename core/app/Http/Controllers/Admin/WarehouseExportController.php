@@ -11,6 +11,7 @@ use App\Models\Supplier;
 use App\Models\Warehouse;
 use App\Models\WarehouseEntryItem;
 use App\Models\WarehouseExport;
+use App\Models\WarehouseExportLog;
 use App\Repositories\BaseRepository;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\DB;
@@ -64,7 +65,7 @@ class WarehouseExportController extends Controller
         $suppliers  = Supplier::query()->pluck('name', 'id');
         $admin      = Admin::where('unit_code', unitCode())->where('subdomain', subdomain())->get();
         $warehouse  = Warehouse::active()->get();
-        return view('admin.warehouse_exports.index', compact('pageTitle', 'categories', 'suppliers', 'products', 'admin', 'warehouse','response'));
+        return view('admin.warehouse_exports.index', compact('pageTitle', 'categories', 'suppliers', 'products', 'admin', 'warehouse', 'response'));
     }
 
     /**
@@ -178,7 +179,12 @@ class WarehouseExportController extends Controller
             $warehouse->update([
                 'total' => $total
             ]);
-           // $warehouse->stockEntries()->sync($data);
+            // $warehouse->stockEntries()->sync($data);
+             WarehouseExportLog::create([
+                'warehouse_export_id' => $warehouse->id,
+                'user_id'            => authAdmin()->id,
+                'action'             => 'created',
+            ]);
             DB::commit();
 
             return response()->json([
@@ -391,10 +397,10 @@ class WarehouseExportController extends Controller
             $item->supplier_id       = $request->supplier_id;
             $item->note              = $request->note;
             $item->reference_code    =  filled($request->warehouse_code)
-                    ? $request->warehouse_code
-                    : getCode('PX', 12, WarehouseExport::class, 'reference_code');
+                ? $request->warehouse_code
+                : getCode('PX', 12, WarehouseExport::class, 'reference_code');
             $item->created_time      = $request->dateWarehouse;
-          
+
             $productItems = $request->productItems;
             $totalPrice = 0;
             foreach ($productItems as $product) {
@@ -407,7 +413,7 @@ class WarehouseExportController extends Controller
                 if (!$productModel) {
                     throw new \Exception("Sản phẩm ID {$product['product_id']} không tồn tại.");
                 }
-                  $totalPrice += $product['quantity'] * $product['price'];
+                $totalPrice += $product['quantity'] * $product['price'];
                 if ($product['quantity'] == $warehouseItem->quantity) {
                     continue;
                 }
@@ -420,8 +426,8 @@ class WarehouseExportController extends Controller
                 $newStock = $productModel->stock - $difference;
                 $productModel->stock = max(0, $newStock); // Nếu âm thì gán về 0
                 // Cập nhật warehouse item
-                  $productModel->save();
-              
+                $productModel->save();
+
                 // Cập nhật warehouse item
                 $warehouseItem->update([
                     'quantity' => $product['quantity'],
@@ -430,6 +436,12 @@ class WarehouseExportController extends Controller
             }
             $item->total =  $totalPrice;
             $item->save();
+             WarehouseExportLog::create([
+                'warehouse_export_id' => $item->id,
+                'user_id'            => authAdmin()->id,
+                'action'             => 'updated',
+            ]);
+
             DB::commit();
             return response()->json(['status' => true, 'message' => 'Cập nhật thành công']);
         } catch (\Exception $e) {
@@ -439,5 +451,21 @@ class WarehouseExportController extends Controller
                 'message' => 'Lỗi xoá: ' . $e->getMessage()
             ], 500);
         }
+    }
+    public function getLogs($id)
+    {
+        $logs = WarehouseExportLog::where('warehouse_export_id', $id)
+            ->with('admin') // eager load thông tin user
+            ->orderBy('created_at', 'asc')
+            ->get()
+            ->map(function ($log) {
+                return [
+                    'user_name'  => optional($log->admin)->name ?? 'Không rõ',
+                    'timestamp' => $log->created_at->format('d/m/Y H:i:s'),
+                    'action'    => $log->action === 'created' ? 'Tạo phiếu' : 'Cập nhật phiếu',
+                ];
+            });
+
+        return response()->json($logs);
     }
 }

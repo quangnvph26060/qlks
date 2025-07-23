@@ -54,15 +54,18 @@
             <button type="button" class="btn btn--primary" style="padding: 6px 12px 12px 12px;" onclick="location.reload();">
                 <i class="fa fa-repeat"></i>
             </button>
-            <button class="btn gap-2  btn--primary" style="padding: 6px 12px 12px 12px;" data-bs-toggle="modal" data-bs-target="#warehouseModaladd">
+            <button class="btn gap-2  btn--primary" style="padding: 6px 12px 12px 12px;" data-bs-toggle="modal"
+                data-bs-target="#warehouseModaladd">
                 <i class="las la-plus"></i>
             </button>
-            <button type="button" class="btn btn--primary gap-2 " data-bs-toggle="modal" data-bs-target="#importRoomModal" style="margin-left: 8px;">
+            <button type="button" class="btn btn--primary gap-2 " data-bs-toggle="modal" data-bs-target="#importRoomModal"
+                style="margin-left: 8px;">
                 <i class="fa-solid fa-file-import"></i> Import
             </button>
-            <a href="{{ route('admin.warehouse.export') }}" class="btn btn--primary gap-2 btn-export-room" style="margin-left: 8px;">
-                            <i class="fa-solid fa-file-export"></i> Export
-                        </a>
+            <a href="{{ route('admin.warehouse.export') }}" class="btn btn--primary gap-2 btn-export-room"
+                style="margin-left: 8px;">
+                <i class="fa-solid fa-file-export"></i> Export
+            </a>
             <div class="modal fade" id="warehouseModal" tabindex="-1" aria-hidden="true">
                 <div class="modal-dialog modal-lg modal-dialog-centered" style="max-width:1000px">
                     <div class="modal-content">
@@ -76,10 +79,37 @@
                     </div>
                 </div>
             </div>
-
-             <!-- Modal import-->
-            <div class="modal fade" id="importRoomModal" tabindex="-1" aria-labelledby="importRoomModalLabel"
-                aria-hidden="true">
+            <div class="modal fade" id="slipDetailModal" tabindex="-1" aria-labelledby="slipDetailModalLabel" aria-hidden="true">
+                <div class="modal-dialog modal-lg modal-dialog-centered">
+                    <div class="modal-content">
+                        <div class="modal-header">
+                            <h5 class="modal-title" id="slipDetailModalLabel">Lịch sử sửa đổi phiếu</h5>
+                            <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+                        </div>
+                        <div class="modal-body">
+                            <div class="table-responsive">
+                      <table class="table table-striped table-hover table-sm">
+                          <thead>
+                              <tr>
+                                  <th>Người thực hiện</th>
+                                  <th>Thời gian</th>
+                                  <th>Mô tả</th>
+                              </tr>
+                          </thead>
+                          <tbody id="modificationHistoryTableBody">
+                              <!-- Lịch sử sửa đổi sẽ được thêm vào đây bằng JavaScript -->
+                          </tbody>
+                      </table>
+                  </div>
+                        </div>
+                        <div class="modal-footer">
+                            <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Đóng</button>
+                        </div>
+                    </div>
+                </div>
+            </div>
+            <!-- Modal import-->
+            <div class="modal fade" id="importRoomModal" tabindex="-1" aria-labelledby="importRoomModalLabel" aria-hidden="true">
                 <div class="modal-dialog modal-dialog-centered">
                     <div class="modal-content">
 
@@ -90,16 +120,15 @@
 
                         <div class="modal-body">
                             <p>
-                                Xử lý dữ liệu (Tải về File mẫu: <a href="{{ asset('file/FileExcelPhieuNhap.xlsx') }}"
-                                    download>Excel File</a>):
+                                Xử lý dữ liệu (Tải về File mẫu: <a href="{{ asset('file/FileExcelPhieuNhap.xlsx') }}" download>Excel
+                                    File</a>):
                             </p>
                             {{-- <div class="alert alert-warning">
                                 <strong><i class="fa-solid fa-triangle-exclamation"></i> Lưu ý</strong><br>
                                 Hệ thống cho phép nhập tối đa <strong>1.000 phòng</strong> mỗi lần từ file
                             </div> --}}
 
-                            <form action="{{ route('admin.warehouse.import.store') }}" method="POST"
-                                enctype="multipart/form-data">
+                            <form action="{{ route('admin.warehouse.import.store') }}" method="POST" enctype="multipart/form-data">
                                 @csrf
                                 <div class="mb-3">
                                     <label for="import_file" class="form-label">Chọn file Excel:</label>
@@ -112,7 +141,8 @@
                     </div>
                 </div>
             </div>
-            <div class="modal fade" id="warehouseModaladd" tabindex="-1" aria-labelledby="warehouseModalLabel" aria-hidden="true">
+            <div class="modal fade" id="warehouseModaladd" tabindex="-1" aria-labelledby="warehouseModalLabel"
+                aria-hidden="true">
                 <div class="modal-dialog modal-xl modal-dialog-scrollable">
                     <div class="modal-content">
                         <div class="modal-header">
@@ -209,9 +239,9 @@
                     const warehouseId = $product.find('select').val();
 
                     // Số lượng
-                   // 👇 Lấy quantity và loại bỏ dấu chấm
-                        const quantityRaw = $(this).find('input[name^="products"]').val();
-                        const quantity = parseInt(quantityRaw.replace(/\./g, ''));
+                    // 👇 Lấy quantity và loại bỏ dấu chấm
+                    const quantityRaw = $(this).find('input[name^="products"]').val();
+                    const quantity = parseInt(quantityRaw.replace(/\./g, ''));
 
                     // Đơn giá
                     const price = parseFloat(
@@ -254,6 +284,41 @@
                     // }
                 });
 
+            });
+            $(document).on('click', '.openSlipDetailBtn', function() {
+                const entryId = $(this).data('id');
+                var slipDetailModal = new bootstrap.Modal(document.getElementById('slipDetailModal'));
+                slipDetailModal.show();
+                const tbody = $('#modificationHistoryTableBody');
+                tbody.empty().append('<tr><td colspan="3">Đang tải dữ liệu...</td></tr>');
+                 const getLogsRoute = "{{ route('admin.warehouse.get.logs', ['id' => '__ID__']) }}";
+                  const url = getLogsRoute.replace('__ID__', entryId);
+                $.ajax({
+                    url: url, // 👉 Route xử lý lấy log
+                    method: 'GET',
+                    success: function(response) {
+                        tbody.empty(); // Xoá dòng "Đang tải..."
+
+                        if (response.length === 0) {
+                            tbody.append('<tr><td colspan="3">Không có lịch sử</td></tr>');
+                            return;
+                        }
+
+                        response.forEach(function(log) {
+                            const row = `
+                        <tr>
+                            <td>${log.user_name ?? 'Không rõ'}</td>
+                            <td class="text-center">${log.timestamp}</td>
+                            <td class="text-center">${log.action}</td>
+                        </tr>
+                    `;
+                            tbody.append(row);
+                        });
+                    },
+                    error: function() {
+                        tbody.empty().append('<tr><td colspan="3">Lỗi khi tải dữ liệu</td></tr>');
+                    }
+                });
             });
             $(document).on('click', '.remove-product-edit', function() {
                 const $button = $(this);
@@ -332,8 +397,8 @@
 
 
 
-                      const quantityRaw = $(this).find('input[type="text"]').val().replace(/\./g, '');
-                        const quantity = parseInt(quantityRaw);
+                    const quantityRaw = $(this).find('input[type="text"]').val().replace(/\./g, '');
+                    const quantity = parseInt(quantityRaw);
                     total += price * quantity;
                     const priceProduct = price * quantity;
                     $(this).find('.price-product').text(priceProduct.toLocaleString('vi-VN') + '');

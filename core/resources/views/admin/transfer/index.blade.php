@@ -97,6 +97,35 @@
                     </div>
                 </div>
             </div>
+              <div class="modal fade" id="slipDetailModal" tabindex="-1" aria-labelledby="slipDetailModalLabel" aria-hidden="true">
+                <div class="modal-dialog modal-lg modal-dialog-centered">
+                    <div class="modal-content">
+                        <div class="modal-header">
+                            <h5 class="modal-title" id="slipDetailModalLabel">Lịch sử sửa đổi phiếu</h5>
+                            <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+                        </div>
+                        <div class="modal-body">
+                            <div class="table-responsive">
+                                <table class="table table-striped table-hover table-sm">
+                                    <thead>
+                                        <tr>
+                                            <th>Người thực hiện</th>
+                                            <th>Thời gian</th>
+                                            <th>Mô tả</th>
+                                        </tr>
+                                    </thead>
+                                    <tbody id="modificationHistoryTableBody">
+                                        <!-- Lịch sử sửa đổi sẽ được thêm vào đây bằng JavaScript -->
+                                    </tbody>
+                                </table>
+                            </div>
+                        </div>
+                        <div class="modal-footer">
+                            <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Đóng</button>
+                        </div>
+                    </div>
+                </div>
+            </div>
         @endpush
     @endcan
 @endsection
@@ -128,7 +157,41 @@
     <script>
         (function($) {
             "use strict"
+             $(document).on('click', '.openSlipDetailBtn', function() {
+                const entryId = $(this).data('id');
+                var slipDetailModal = new bootstrap.Modal(document.getElementById('slipDetailModal'));
+                slipDetailModal.show();
+                const tbody = $('#modificationHistoryTableBody');
+                tbody.empty().append('<tr><td colspan="3">Đang tải dữ liệu...</td></tr>');
+                 const getLogsRoute = "{{ route('admin.warehouse.transfer.get.logs', ['id' => '__ID__']) }}";
+                  const url = getLogsRoute.replace('__ID__', entryId);
+                $.ajax({
+                    url: url, // 👉 Route xử lý lấy log
+                    method: 'GET',
+                    success: function(response) {
+                        tbody.empty(); // Xoá dòng "Đang tải..."
 
+                        if (response.length === 0) {
+                            tbody.append('<tr><td colspan="3">Không có lịch sử</td></tr>');
+                            return;
+                        }
+
+                        response.forEach(function(log) {
+                            const row = `
+                        <tr>
+                            <td>${log.user_name ?? 'Không rõ'}</td>
+                            <td class="text-center">${log.timestamp}</td>
+                            <td class="text-center">${log.action}</td>
+                        </tr>
+                    `;
+                            tbody.append(row);
+                        });
+                    },
+                    error: function() {
+                        tbody.empty().append('<tr><td colspan="3">Lỗi khi tải dữ liệu</td></tr>');
+                    }
+                });
+            });
             $(document).ready(function() {
                 const apiUrl = '{{ route('admin.warehouse.transfer.index') }}';
                 initDataFetch(apiUrl);
