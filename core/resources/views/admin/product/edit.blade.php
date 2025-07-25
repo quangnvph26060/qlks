@@ -11,7 +11,13 @@
                     <div class="card-body">
 
                         <div class="row">
-                            <div class="form-group mb-3 col-lg-6">
+                              <div class="form-group mb-3 col-lg-3">
+                                <label for="sku" class="form-label">Mã sản phẩm</label>
+                                <input value="{{ $product->sku }}" type="text" name="sku" id="sku"
+                                    class="form-control" placeholder="Mã sản phẩm">
+                                <small></small>
+                            </div>
+                            <div class="form-group mb-3 col-lg-3">
                                 <label for="name" class="form-label">Tên sản phẩm</label>
                                 <input type="text" name="name" id="name" value="{{ $product->name }}"
                                     class="form-control" placeholder="Nhập tên sản phẩm">
@@ -52,22 +58,17 @@
                     </div>
                 </div>
                 <div class="card mt-3">
-                    <div class="card-header">
+                    {{-- <div class="card-header">
                         <h5 class="card-title">Tồn kho</h5>
-                    </div>
+                    </div> --}}
                     <div class="card-body">
                         <div class="row">
-                            <div class="form-group mb-3 col-lg-6">
+                            {{-- <div class="form-group mb-3 col-lg-6">
                                 <label for="stock" class="form-label">Tồn kho</label>
                                 <input type="text" value="{{ $product->stock }}" name="stock" id="stock"
                                     class="form-control" placeholder="Tồn kho">
-                            </div>
-                            <div class="form-group mb-3 col-lg-6">
-                                <label for="sku" class="form-label">SKU</label>
-                                <input value="{{ $product->sku }}" type="text" name="sku" id="sku"
-                                    class="form-control" placeholder="Mã sản phẩm">
-                                <small></small>
-                            </div>
+                            </div> --}}
+                          
                             <div class="form-group mb-3 col-lg-6">
                                 <div class="form-check form-switch">
                                     <input class="form-check-input" name="is_published" type="checkbox" id="is_published"
@@ -98,7 +99,7 @@
                         </div>
                     </div>
                 </div>
-                <div class="card mt-3">
+                {{-- <div class="card mt-3">
                     <div class="card-header">
                         <h5 class="card-title">Thương hiệu</h5>
                     </div>
@@ -115,7 +116,7 @@
                             <small></small>
                         </div>
                     </div>
-                </div>
+                </div> --}}
                 <div class="card mt-3">
                     <div class="card-header">
                         <h5 class="card-title">Ảnh đại diện</h5>

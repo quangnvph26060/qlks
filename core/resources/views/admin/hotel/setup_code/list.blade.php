@@ -250,6 +250,9 @@
 @push('script')
     <script>
         $(document).ready(function() {
+            document.getElementById('add-code').addEventListener('input', function() {
+                this.value = this.value.toUpperCase();
+            });
             var formEconomyEdit = {
                 'code': {
                     'element': document.getElementById('add-code'),

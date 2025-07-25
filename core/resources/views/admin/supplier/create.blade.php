@@ -1,15 +1,16 @@
  <div class="modal fade" id="supplierModal" tabindex="-1" role="dialog" aria-hidden="true">
      <div class="modal-dialog modal-lg">
          <div class="modal-content">
-            <div class="modal-header" style=" display: flex;
+             <div class="modal-header"
+                 style=" display: flex;
                     justify-content: end;
                     align-items: end;">
-                    <button type="button" class="close" data-bs-dismiss="modal" aria-label="Đóng">
-                        <span aria-hidden="true">&times;</span>
-                    </button>
+                 <button type="button" class="close" data-bs-dismiss="modal" aria-label="Đóng">
+                     <span aria-hidden="true">&times;</span>
+                 </button>
              </div>
              <div class="modal-body" id="supplierModalContent">
-               
+
                  <form action="" method="POST" id="supplierForm">
                      @csrf
                      <div class="row">
@@ -36,19 +37,20 @@
                                              <small></small>
                                          </div>
                                          <div class="form-group mb-3 col-lg-6 col-md-6 col-sm-12">
+                                             <label for="suppliers.address"
+                                                 class="control-label required">@lang('Địa chỉ')</label>
+                                             <input type="text" name="suppliers[address]" id="suppliers.address"
+                                                 class="form-control" placeholder="Nhập địa chỉ">
+                                             <small></small>
+                                         </div>
+                                         <div class="form-group mb-3 col-lg-6 col-md-6 col-sm-12">
                                              <label for="suppliers.email"
                                                  class="control-label ">@lang('Địa chỉ email')</label>
                                              <input type="email" name="suppliers[email]" id="suppliers.email"
                                                  class="form-control" placeholder="Nhập địa chỉ email">
                                              <small></small>
                                          </div>
-                                         <div class="form-group mb-3 col-lg-6 col-md-6 col-sm-12">
-                                             <label for="suppliers.address"
-                                                 class="control-label required">@lang('Địa chỉ')</label>
-                                             <input type="text" name="suppliers[address]" id="suppliers.address"
-                                                 class="form-control" placeholder="Nhập địa chỉ email">
-                                             <small></small>
-                                         </div>
+
                                          <div class="form-group mb-3 col-lg-6 col-md-6 col-sm-12">
                                              <label for="suppliers.phone"
                                                  class="control-label required">@lang('Số điện thoại')</label>
@@ -56,14 +58,14 @@
                                                  class="form-control" placeholder="Nhập số điện thoại">
                                              <small></small>
                                          </div>
-                                         <div class="form-group mb-3 col-lg-6 col-md-6 col-sm-12">
+                                         {{-- <div class="form-group mb-3 col-lg-6 col-md-6 col-sm-12">
                                              <label for="suppliers.account_number"
                                                  class="control-label ">@lang('Số tài khoản')</label>
                                              <input type="text" name="suppliers[account_number]"
                                                  id="suppliers.account_number" class="form-control"
                                                  placeholder="Nhập số tài khoản ngân hàng">
                                              <small></small>
-                                         </div>
+                                         </div> --}}
                                          <div class="form-group mb-3 col-lg-6 col-md-6 col-sm-12">
                                              <label for="suppliers.tax_code"
                                                  class="control-label">@lang('Mã số thuế')</label>
@@ -71,7 +73,7 @@
                                                  class="form-control" placeholder="Nhập số tài khoản ngân hàng">
                                              <small></small>
                                          </div>
-                                         <div class="form-group mb-3 col-lg-6 col-md-6 col-sm-12">
+                                         {{-- <div class="form-group mb-3 col-lg-6 col-md-6 col-sm-12">
                                              <label for="suppliers.bank_id"
                                                  class="control-label">@lang('Ngân hàng')</label>
                                              <select name="suppliers[bank_id]" id="suppliers.bank_id"
@@ -82,7 +84,7 @@
                                                  @endforeach
                                              </select>
                                              <small></small>
-                                         </div>
+                                         </div> --}}
                                          <div class="form-group mb-3 col-6">
                                              <div class="form-check form-switch">
                                                  <input class="form-check-input" type="checkbox" name="is_active"
@@ -136,7 +138,8 @@
                              </div>
                          </div> --}}
 
-                         <div class="form-group col-12 mt-3 d-flex gap-2" style="    display: flex
+                         <div class="form-group col-12 mt-3 d-flex gap-2"
+                             style="    display: flex
 ;
     justify-content: end;
     align-items: end;">

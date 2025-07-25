@@ -68,6 +68,7 @@ class AdminPermissionMiddleware
              'admin.warehouse.get.logs', // chi tiết phiếu nhập ai là ngươiuf tạo, cập nhật
              'admin.warehouse.export.get.logs',// chi tiết phiếu  xuất ai là ngươiuf tạo, cập nhật
              'admin.warehouse.transfer.get.logs', // chi tiết phiếu  điều chuyển ai là ngươiuf tạo, cập nhật
+             'admin.supplier.update'
         ];
         /*
             'admin.revenue' => 'Danh thu trong màn thông kế'

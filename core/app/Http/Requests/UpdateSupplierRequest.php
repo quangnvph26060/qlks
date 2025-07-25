@@ -4,6 +4,7 @@ namespace App\Http\Requests;
 
 use Illuminate\Foundation\Http\FormRequest;
 use Illuminate\Http\Exceptions\HttpResponseException;
+use Illuminate\Validation\Rule;
 
 class UpdateSupplierRequest extends FormRequest
 {
@@ -23,52 +24,45 @@ class UpdateSupplierRequest extends FormRequest
     public function rules(): array
     {
         return [
-            'supplier_id'                      => 'max:6|unique:suppliers,supplier_id,' . $this->id,
-            'name'                             => 'required',
-            'email'                            => 'required|email|unique:suppliers',
-            'phone'                            => 'required|regex:/^([0-9\s\-\+\(\)]*)$/|min:10|max:10',
-            'address'                          => 'required',
-            'account_number'                   => 'required|integer',
-            'tax_code'                         => 'required|integer',
-            'bank_id'                          => 'required|integer',
+            'supplier_id' => ['required', 'string', Rule::unique('suppliers', 'supplier_id')->ignore($this->id)],
+            'name'        => ['required', 'string'],
+            'address'     => ['nullable', 'string'],
+            'email'       => ['nullable', 'email', Rule::unique('suppliers', 'email')->ignore($this->id)],
+            'phone'       => ['nullable', 'regex:/^([0-9\s\-\+\(\)]*)$/', 'digits:10'],
+            'tax_code'    => ['nullable', 'string'],
         ];
     }
+
 
     public function messages(): array
     {
         return [
-            'supplier_id.max'                  => 'Mã nhà cung cấp không được quá 6 ký tự',
-            'supplier_id.unique'               => 'Mã nhà cung cập đã tồn tại',
-            'name.required'                    => 'Vui lòng nhập :attribute!',
-            'email.required'                   => 'Vui lòng nhập :attribute!',
-            'email.email'                      => ':attribute không đúng định dạng!',
-            'email.unique'                     => ':attribute đã tồn tại!',
-            'phone.required'                   => 'Vui lòng nhập :attribute!',
-            'phone.regex'                      => ':attribute không đúng định dạng!',
-            'phone.max'                        => ':attribute không đúng định dạng!',
-            'phone.min'                        => ':attribute không đúng định dạng!',
-            'address.required'                 => 'Vui lòng nhập :attribute!',
-            'account_number.required'          => 'Vui lòng nhập :attribute!',
-            'account_number.integer'           => ':attribute không đúng định dạng!',
-            'tax_code.required'                => 'Vui lòng nhập :attribute!',
-            'tax_code.integer'                 => ':attribute không đúng định dạng!',
-            'bank_id.required'                 => 'Vui lòng nhập :attribute!',
-            'bank_id.integer'                  => ':attribute không đúng định dạng!',
+            'supplier_id.required' => 'Vui lòng nhập :attribute!',
+            'supplier_id.max'      => ':attribute không được vượt quá 6 ký tự!',
+            'supplier_id.unique'   => ':attribute đã tồn tại!',
+
+            'name.required'        => 'Vui lòng nhập :attribute!',
+
+            'email.email'          => ':attribute không đúng định dạng!',
+            'email.unique'         => ':attribute đã tồn tại!',
+
+            'phone.regex'          => ':attribute không đúng định dạng!',
+            'phone.digits'         => ':attribute phải có đúng 10 chữ số!',
         ];
     }
 
     public function attributes(): array
     {
         return [
-            'name'                             => 'tên nhà cung cấp',
-            'email'                            => 'Email',
-            'phone'                            => 'số điện thoại',
-            'address'                          => 'địa chỉ',
-            'account_number'                   => 'số tài khoản',
-            'tax_code'                         => 'mã số thuế',
-            'bank_id'                          => 'tên ngân hàng',
+            'supplier_id' => 'mã nhà cung cấp',
+            'name'        => 'tên nhà cung cấp',
+            'address'     => 'địa chỉ',
+            'email'       => 'email',
+            'phone'       => 'số điện thoại',
+            'tax_code'    => 'mã số thuế',
         ];
     }
+
 
     protected function failedValidation(\Illuminate\Contracts\Validation\Validator $validator)
     {

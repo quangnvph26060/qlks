@@ -101,14 +101,24 @@
 @can('')
     @push('breadcrumb-plugins')
         <div class="d-flex gap-2">
-          <button type="button" class="btn btn-primary btn-sm" onclick="location.reload();">
-    <i class="fa fa-repeat"></i>
-</button>
+            <button type="button" class="btn btn-primary btn-sm" onclick="location.reload();">
+                <i class="fa fa-repeat"></i>
+            </button>
 
 
             <a class="btn btn-sm btn-primary" id="openSupplierModal">
                 <i class="las la-plus"></i>
             </a>
+            <!-- Modal HTML -->
+            <div class="modal fade" id="editSupplierModal" tabindex="-1" aria-labelledby="editSupplierLabel"
+                aria-hidden="true">
+                <div class="modal-dialog modal-lg">
+                    <div class="modal-content" id="editSupplierModalContent">
+                        <!-- Nội dung sẽ được load bằng JS -->
+                    </div>
+                </div>
+            </div>
+
         </div>
     @endpush
 @endcan
@@ -149,6 +159,7 @@
                             if (response.status) {
                                 window.location.href =
                                     "{{ route('admin.supplier.index') }}";
+
                             } else {
                                 $('small').removeClass('invalid-feedback').html('');
                                 $('input, select').removeClass('is-invalid');
@@ -245,7 +256,99 @@
                         }
                     })
                 })
+                $(document).on('click', '.edit_supplier', function() {
+                    const supplierId = $(this).data('id');
+                    const urlTemplate = $(this).data('route'); // lấy route mẫu từ data-route
+                    const finalUrl = urlTemplate.replace(':id', supplierId); // thay thế id vào
 
+                    $.ajax({
+                        url: finalUrl,
+                        type: 'GET',
+                        dataType: 'json',
+                        success: function(response) {
+                            if (response.status === 'success') {
+                                const s = response.data;
+
+                                // Tạo form HTML từ dữ liệu JSON
+                                const html = `
+                        <form id="editSupplierForm" data-id="${s.id}">
+                            <div class="modal-header">
+                                <h5 class="modal-title">Cập nhật nhà cung cấp</h5>
+                                <button type="button" class="btn-close" data-bs-dismiss="modal"></button>
+                            </div>
+                            <div class="modal-body row">
+                                <div class="form-group col-md-6">
+                                    <label>Mã nhà cung cấp</label>
+                                    <input type="text" name="supplier_id" value="${s.supplier_id ?? ''}" class="form-control">
+                                </div>
+                                <div class="form-group col-md-6">
+                                    <label>Tên nhà cung cấp</label>
+                                    <input type="text" name="name" value="${s.name ?? ''}" class="form-control">
+                                </div>
+                               
+                                 <div class="form-group col-md-6">
+                                    <label>Địa chỉ</label>
+                                    <input type="text" name="address" value="${s.address ?? ''}" class="form-control">
+                                </div>
+                                  <div class="form-group col-md-6">
+                                    <label> Địa chỉ email</label>
+                                    <input type="text" name="email" value="${s.email ?? ''}" class="form-control">
+                                </div>
+                                <div class="form-group col-md-6">
+                                    <label>Số điện thoại</label>
+                                    <input type="text" name="phone" value="${s.phone ?? ''}" class="form-control">
+                                </div>
+                                 <div class="form-group col-md-6">
+                                    <label>Mã số thuế</label>
+                                    <input type="text" name="tax_code" value="${s.tax_code ?? ''}" class="form-control">
+                                </div>
+                              
+                            </div>
+                            <div class="modal-footer">
+                                <button type="submit" class="btn btn-primary">Cập nhật</button>
+                                <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Đóng</button>
+                            </div>
+                        </form>`;
+
+                                $('#editSupplierModalContent').html(html);
+                                $('#editSupplierModal').modal('show');
+                            }
+                        },
+                        error: function(xhr) {
+                            alert('Không lấy được dữ liệu nhà cung cấp.');
+                        }
+                    });
+                });
+               $(document).on('submit', '#editSupplierForm', function(e) {
+                    e.preventDefault();
+                     const supplierId = $(this).data('id');
+                     const url = "{{ route('admin.supplier.update', ':id') }}".replace(':id', supplierId);
+                   
+                    $.ajax({
+                        url: url,
+                        type: "PUT",
+                        data: $(this).serializeArray(),
+                        success: function(response) {
+                            if (response.status) {
+                                window.location.href =
+                                "{{ route('admin.supplier.index') }}";
+                            } else {
+                                $('small').removeClass('invalid-feedback').html('');
+                                $('input, select').removeClass('is-invalid');
+
+                                $.each(response.errors, function(index, message) {
+                                    $(`input[id="${index}"], select[id="${index}"]`)
+                                        .addClass('is-invalid')
+                                        .siblings('small')
+                                        .addClass('invalid-feedback').html(message);
+                                });
+                            }
+                        },
+                        error: function(xhr, status, error) {
+                            console.log(xhr);
+                        }
+                    })
+                });
                 $(document).on('click', '.edit-representative', function() {
 
                     var representativeId = $(this).data('id');

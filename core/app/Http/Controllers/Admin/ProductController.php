@@ -198,13 +198,13 @@ class ProductController extends Controller
         $pageTitle = "Cập nhật sản phẩm";
         $product = Product::query()->find($id);
         $categories = Category::query()->pluck('name', 'id');
-        $brands = Brand::query()->pluck('name', 'id');
+      //  $brands = Brand::query()->pluck('name', 'id');
 
         if (!$product) {
             return redirect()->route('admin.product.index')->with('error', 'Không tìm thấy sản phẩm!');
         }
 
-        return view('admin.product.edit', compact('product', 'brands', 'categories', 'pageTitle'));
+        return view('admin.product.edit', compact('product', 'categories', 'pageTitle'));
     }
 
     /**

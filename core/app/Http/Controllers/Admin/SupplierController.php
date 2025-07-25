@@ -2,6 +2,7 @@
 
 namespace App\Http\Controllers\Admin;
 
+use App\Http\Requests\UpdateSupplierRequest;
 use App\Models\Bank;
 use App\Models\SetupCode;
 use App\Models\Supplier;
@@ -11,7 +12,7 @@ use Illuminate\Support\Facades\Log;
 use App\Http\Controllers\Controller;
 use App\Repositories\BaseRepository;
 use App\Http\Requests\StoreSupplierRequest;
-use App\Http\Requests\UpdateSupplierRequest;
+use Illuminate\Validation\Rule;
 
 class SupplierController extends Controller
 {
@@ -89,10 +90,11 @@ class SupplierController extends Controller
             DB::beginTransaction();
             try {
                 $data                           = $request->validated();
-
                 $data['suppliers']['is_active'] = $request->is_active ? 1 : 0;
                 $data['suppliers']['unit_code'] = unitCode(); // ví dụ mã đơn vị
                 $data['suppliers']['subdomain'] = subdomain(); // ví dụ subdomain
+                $data['suppliers']['email']    =  $request->suppliers['email'];
+                $data['suppliers']['tax_code']    =  $request->suppliers['tax_code'];
                 $supplier                       = Supplier::create($data['suppliers']);
 
                 // $supplier->supplier_representatives()->create($data['representatives']);
@@ -133,45 +135,44 @@ class SupplierController extends Controller
         $pageTitle = "Cập nhật thông tin nhà cung cấp";
         $banks = Bank::query()->pluck('name', 'id');
         $supplier = Supplier::find($id);
-        return view('admin.supplier.edit', compact('pageTitle', 'banks', 'supplier'));
+        // return view('admin.supplier.edit', compact('pageTitle', 'banks', 'supplier'));
+        return response()->json([
+            'status' => 'success',
+            'data' => $supplier
+        ]);
     }
 
     /**
      * Update the specified resource in storage.
      */
-    public function update(UpdateSupplierRequest $request, string $id)
-    {
+        public function update(UpdateSupplierRequest $request, string $id)
 
+    {
         if ($request->ajax()) {
+            
+
             DB::beginTransaction();
             try {
-                $supplier = Supplier::find($id);
-
-                $data                           = $request->validated();
-
-                dd($data);
-
-                $data['is_active'] = $request->is_active ? 1 : 0;
-
-                $supplier->update($data);
+                $supplier = Supplier::findOrFail($id); // nên dùng findOrFail để rõ lỗi
+                $validated = $request->validated(); 
+                $validated['is_active'] = $request->is_active ? 1 : 0;
+                
+                $supplier->update($validated);
 
                 DB::commit();
 
-                session()->flash('success', 'Cập nhật thông tin nhà cung cấp thành công.');
+                session()->flash('success', 'Cập nhật thông tin nhà cung cấp thành công.');
 
                 return response()->json([
-                    'status'    => true,
+                    'status' => true,
                 ]);
             } catch (\Exception $exception) {
-
-                dd($exception->getMessage());
                 DB::rollBack();
                 Log::error($exception->getMessage());
-                $this->repository->logError($exception);
 
                 return response()->json([
-                    'status'    => false,
-                    'message'   => 'Đã có lỗi xay ra, vui lòng thử lại sau!',
+                    'status' => false,
+                    'message' => 'Đã có lỗi xảy ra, vui lòng thử lại sau!',
                 ]);
             }
         }

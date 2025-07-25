@@ -1,7 +1,7 @@
 @foreach ($response as $item)
     <tr style="border-bottom: 1px solid #dee2e6">
         <td>
-             {{ $loop->iteration }}
+            {{ $loop->iteration }}
             {{-- <button class="btn btn-link btn-toggle" type="button"
                 onclick=" toggleRepresentatives('{{ $item->id }}', this)"></button> --}}
         </td>
@@ -18,10 +18,17 @@
             <div class="dropdown menu_dropdown_check_in" id="dropdown-menu-{{ $item->id }}"
                 style="display: none; position: absolute; z-index: 99999999999999; background: #fff; box-shadow: 0 2px 8px rgba(0,0,0,0.15); border-radius: 5px;">
                 <div class="dropdown-item">
-                    <a class="btn btn-sm btn-outline--primary cuModalBtn edit_supplier"
+                    {{-- <a class="btn btn-sm btn-outline--primary cuModalBtn edit_supplier"
                         href="{{ route('admin.supplier.edit', $item->id) }}" data-id="{{ $item->id }}"
                         data-modal_title="@lang('Cập nhật danh mục')" type="button"
-                        style="color: black !important; border: none;">Sửa</a>
+                        style="color: black !important; border: none;">Sửa</a> --}}
+                    <a href="javascript:void(0)" class="btn btn-sm btn-outline--primary edit_supplier"
+                        data-id="{{ $item->id }}" data-route="{{ route('admin.supplier.edit', ['id' => ':id']) }}"
+                        data-modal_title="Cập nhật nhà cung cấp">
+                        Sửa
+                    </a>
+
+
                 </div>
                 <div class="dropdown-item booked_room_detail">
                     <button class="btn-delete icon-delete-room" data-id="{{ $item->id }}"
