@@ -193,6 +193,21 @@
     <script>
         (function($) {
             "use strict"
+          $(document).on('click', '.pagination a', function(e) {
+    e.preventDefault();
+    const url = new URL($(this).attr('href'));
+    const page = url.searchParams.get("page");
+
+    $.ajax({
+        url: window.location.href.split('?')[0], // Giữ nguyên URL chính
+        data: { page: page },
+        success: function(data) {
+            $('#table-data').html(data.results);
+            $('.pagination').html(data.pagination);
+        }
+    });
+});
+
 
             $(document).ready(function() {
                 const apiUrl = '{{ route('admin.warehouse.index') }}';

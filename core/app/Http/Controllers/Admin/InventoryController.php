@@ -216,7 +216,7 @@ class InventoryController extends Controller
             'entries_sum'     => $entries_sum,
             'total_inventory' => $totalProduct,
             'lowStockCount'   => $lowStockCount,
-            'outOfStock'      => $outOfStock,
+            'outOfStock'      => $outOfStock, // sản phẩm sắp hết hàng
             'data'            => $paginated->items(), // chỉ dữ liệu của trang hiện tại
             'current_page'    => $paginated->currentPage(),
             'last_page'       => $paginated->lastPage(),
