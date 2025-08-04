@@ -32,7 +32,7 @@
                                         <th>@lang('Mã hàng')</th>
                                         <th>@lang('Ảnh')</th>
                                         <th>@lang('Tên sản phẩm')</th>
-                                        <th>@lang('Giá nhập')</th>
+                                        {{-- <th>@lang('Giá nhập')</th> --}}
                                         <th>@lang('Giá bán')</th>
                                         <th>@lang('Tồn kho')</th>
                                         @can([])

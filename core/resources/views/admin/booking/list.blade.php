@@ -1,6 +1,5 @@
 @extends('admin.layouts.master_iframe')
 @section('panel')
-    
     <div class="row">
         <div class="pagination-container"></div>
 
@@ -77,18 +76,24 @@
 
         </div>
         <div style="  position: absolute;  right: 43px; display: flex;    gap: 10px;">
-            <button onclick="toggleView('viewBox')" data-view="viewBox" class="btn btn-primary btn-submit-search-book btn-toggle-view">
+            <button onclick="toggleView('viewBox')" data-view="viewBox"
+                class="btn btn-primary btn-submit-search-book btn-toggle-view">
                 <svg fill="white" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 16 16" width="24" height="24">
-                    <path fill="white" d="M5.75 7.5h7.5a.75.75 0 0 1 0 1.5h-7.5a.75.75 0 0 1 0-1.5Zm0 5h7.5a.75.75 0 0 1 0 1.5h-7.5a.75.75 0 0 1 0-1.5Zm-4-10h6.5a.75.75 0 0 1 0 1.5h-6.5a.75.75 0 0 1 0-1.5ZM2 14a1 1 0 1 1 0-2 1 1 0 0 1 0 2Zm1-6a1 1 0 1 1-2 0 1 1 0 0 1 2 0Zm10.314-3.082L11.07 2.417A.25.25 0 0 1 11.256 2h4.488a.25.25 0 0 1 .186.417l-2.244 2.5a.25.25 0 0 1-.372 0Z"></path>
+                    <path fill="white"
+                        d="M5.75 7.5h7.5a.75.75 0 0 1 0 1.5h-7.5a.75.75 0 0 1 0-1.5Zm0 5h7.5a.75.75 0 0 1 0 1.5h-7.5a.75.75 0 0 1 0-1.5Zm-4-10h6.5a.75.75 0 0 1 0 1.5h-6.5a.75.75 0 0 1 0-1.5ZM2 14a1 1 0 1 1 0-2 1 1 0 0 1 0 2Zm1-6a1 1 0 1 1-2 0 1 1 0 0 1 2 0Zm10.314-3.082L11.07 2.417A.25.25 0 0 1 11.256 2h4.488a.25.25 0 0 1 .186.417l-2.244 2.5a.25.25 0 0 1-.372 0Z">
+                    </path>
                 </svg>
             </button>
-            
-            <button onclick="toggleView('viewModel')" data-view="viewModel" class="btn btn-primary btn-submit-search-book btn-toggle-view">
+
+            <button onclick="toggleView('viewModel')" data-view="viewModel"
+                class="btn btn-primary btn-submit-search-book btn-toggle-view">
                 <svg fill="white" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 16 16" width="16" height="16">
-                    <path fill="white" d="M1.75 2.5h10.5a.75.75 0 0 1 0 1.5H1.75a.75.75 0 0 1 0-1.5Zm4 5h8.5a.75.75 0 0 1 0 1.5h-8.5a.75.75 0 0 1 0-1.5Zm0 5h8.5a.75.75 0 0 1 0 1.5h-8.5a.75.75 0 0 1 0-1.5ZM2.5 7.75v6a.75.75 0 0 1-1.5 0v-6a.75.75 0 0 1 1.5 0Z"></path>
+                    <path fill="white"
+                        d="M1.75 2.5h10.5a.75.75 0 0 1 0 1.5H1.75a.75.75 0 0 1 0-1.5Zm4 5h8.5a.75.75 0 0 1 0 1.5h-8.5a.75.75 0 0 1 0-1.5Zm0 5h8.5a.75.75 0 0 1 0 1.5h-8.5a.75.75 0 0 1 0-1.5ZM2.5 7.75v6a.75.75 0 0 1-1.5 0v-6a.75.75 0 0 1 1.5 0Z">
+                    </path>
                 </svg>
             </button>
-            
+
         </div>
         <div class="modal fade" id="addRoomModal" tabindex="-1" aria-hidden="true" style="overflow: unset">
             <div class="modal-dialog modal-dialog-centered" style="top: 4px">
@@ -203,7 +208,7 @@
         }
 
         updateScroll();
-      
+
         var findCustomerUrl = '{{ route('admin.find.customer') }}';
         var checkInDetailUrl = "{{ route('admin.booking.check.in.details', ['id' => ':id']) }}";
         var allCheckInUrl = "{{ route('admin.booking.all.check.in') }}";
@@ -230,12 +235,130 @@
 
 @push('style')
     <style scoped>
-        .table .background-tr{
+        .modal-content {
+            height: 84vh !important;
+        }
+
+        /* Khi màn hình lớn hơn 1200px (hoặc tùy bạn chọn kích thước) */
+        @media screen and (min-height: 800px) {
+            .modal-content {
+                height: 100vh !important;
+            }
+
+            .custom-gap-lg {
+                gap: 4px !important;
+            }
+
+            .table-responsive {
+                height: 320px !important;
+            }
+        }
+
+        @media (max-width: 768px) {
+            .modal-content {
+                padding: 10px;
+            }
+
+            .modal .form-control {
+                font-size: 14px;
+            }
+
+            .modal-title {
+                font-size: 18px;
+            }
+
+            .modal-body {
+                padding: 10px;
+            }
+        }
+
+        .modal-content {
+            height: 700px;
+        }
+
+        .modal-body {
+            /* max-height: 75vh; */
+            overflow-y: auto;
+        }
+
+        /* Responsive form container */
+        .customer-input-container,
+        .result-add-customer {
+            width: 100%;
+        }
+
+        .table-scroll-wrapper {
+            overflow-x: auto;
+            overflow-y: hidden;
+            /* Ẩn scroll dọc nếu có */
+            white-space: nowrap;
+            /* Ngăn các phần tử con xuống dòng */
+            max-width: 100%;
+        }
+
+
+        /* Đảm bảo input và select không bị quá to */
+        .customer-input-container input,
+        .customer-input-container select,
+        .result-add-customer input,
+        .result-add-customer select {
+            width: 100%;
+            font-size: 0.95rem;
+            padding: 6px 10px;
+        }
+
+        /* Giảm padding và font nếu màn hình nhỏ */
+        @media (max-width: 768px) {
+            .form-control {
+                font-size: 14px;
+                padding: 6px 8px;
+            }
+
+            .form-label {
+                font-size: 14px;
+                margin-bottom: 4px;
+            }
+
+            .btn,
+            .add-room-booking {
+                font-size: 13px !important;
+                padding: 6px 8px !important;
+            }
+
+            .modal-body {
+                padding: 10px;
+            }
+        }
+
+        body {
+            font-size: clamp(13px, 1.6vw, 16px);
+            /* Nhỏ nhất 13px, lớn nhất 16px */
+        }
+
+        h5,
+        h4,
+        .modal-title {
+            font-size: clamp(16px, 2vw, 17px);
+        }
+
+        button,
+        .form-control,
+        .form-select,
+        label,
+        p {
+            font-size: clamp(12px, 1.5vw, 15px);
+        }
+    </style>
+    <style scoped>
+        .table .background-tr {
             height: 37px;
         }
+
         #data-table th {
-    padding: 6px !important;    line-height: 1 !important;
-}
+            padding: 6px !important;
+            line-height: 1 !important;
+        }
+
         #show-room tr td {
             padding: 6px 2px !important;
             line-height: 0;

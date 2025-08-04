@@ -18,10 +18,9 @@
 
                             </div>
                             <div class="search">
-                                <label for="searchInput">Search:</label>
-                                <input class="searchInput"
-                                    style="padding: 1px 3px; border: 1px solid rgb(121, 117, 117, 0.5); margin-left: 8px;"
-                                    type="search" placeholder="Tìm kiếm...">
+                                <input class="searchInput" class="form-control"
+                                    style="height: 35px; border: 1px solid rgb(121, 117, 117, 0.5); margin-left: 8px;"
+                                    type="search" placeholder="Tìm kiếm mã phiếu">
                             </div>
                         </div>
                         <table class="table--light style--two table table-hover" id="data-table">
@@ -51,23 +50,26 @@
             {{-- <a class="btn btn-sm btn-primary" href="{{ route('admin.warehouse.create') }}"><i
                     class="las la-plus"></i></a> --}}
             <!-- Modal Nhập kho -->
-            <button type="button" class="btn btn--primary" style="padding: 6px 12px 12px 12px;" onclick="location.reload();">
+            <!-- Nút reload -->
+            <button type="button" class="btn btn--primary btn-icon-35" onclick="location.reload();">
                 <i class="fa fa-repeat"></i>
             </button>
-            <button class="btn gap-2  btn--primary" style="padding: 6px 12px 12px 12px;" data-bs-toggle="modal"
-                data-bs-target="#warehouseModaladd">
+
+            <!-- Nút mở modal -->
+            <button class="btn btn--primary btn-icon-35" data-bs-toggle="modal" data-bs-target="#warehouseModaladd">
                 <i class="las la-plus"></i>
             </button>
-            <button type="button" class="btn btn--primary gap-2 " data-bs-toggle="modal" data-bs-target="#importRoomModal"
-                style="margin-left: 8px;">
+
+            <button type="button" class="btn btn--primary gap-2 d-flex justify-content-center align-items-center"
+                data-bs-toggle="modal" data-bs-target="#importRoomModal" style="margin-left: 8px;height: 35px;">
                 <i class="fa-solid fa-file-import"></i> Import
             </button>
             <a href="{{ route('admin.warehouse.export') }}" class="btn btn--primary gap-2 btn-export-room"
-                style="margin-left: 8px;">
+                style="margin-left: 8px; height: 35px;">
                 <i class="fa-solid fa-file-export"></i> Export
             </a>
             <div class="modal fade" id="warehouseModal" tabindex="-1" aria-hidden="true">
-                <div class="modal-dialog modal-lg modal-dialog-centered" style="max-width:1000px">
+                <div class="modal-dialog modal-xl" >
                     <div class="modal-content">
                         <div class="modal-header">
                             <h5 class="modal-title">Chi tiết phiếu nhập</h5>
@@ -79,6 +81,7 @@
                     </div>
                 </div>
             </div>
+
             <div class="modal fade" id="slipDetailModal" tabindex="-1" aria-labelledby="slipDetailModalLabel" aria-hidden="true">
                 <div class="modal-dialog modal-lg modal-dialog-centered">
                     <div class="modal-content">
@@ -87,20 +90,20 @@
                             <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
                         </div>
                         <div class="modal-body">
-                            <div class="table-responsive">
-                      <table class="table table-striped table-hover table-sm">
-                          <thead>
-                              <tr>
-                                  <th>Người thực hiện</th>
-                                  <th>Thời gian</th>
-                                  <th>Mô tả</th>
-                              </tr>
-                          </thead>
-                          <tbody id="modificationHistoryTableBody">
-                              <!-- Lịch sử sửa đổi sẽ được thêm vào đây bằng JavaScript -->
-                          </tbody>
-                      </table>
-                  </div>
+                            <div class="table-responsive" style="max-height: 300px; overflow-y: auto;">
+                                <table class="table table-striped table-hover table-sm">
+                                    <thead>
+                                        <tr>
+                                            <th>Người thực hiện</th>
+                                            <th>Thời gian</th>
+                                            <th>Mô tả</th>
+                                        </tr>
+                                    </thead>
+                                    <tbody id="modificationHistoryTableBody">
+                                        <!-- Lịch sử sửa đổi sẽ được thêm vào đây bằng JavaScript -->
+                                    </tbody>
+                                </table>
+                            </div>
                         </div>
                         <div class="modal-footer">
                             <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Đóng</button>
@@ -111,7 +114,7 @@
             <!-- Modal import-->
             <div class="modal fade" id="importRoomModal" tabindex="-1" aria-labelledby="importRoomModalLabel" aria-hidden="true">
                 <div class="modal-dialog modal-dialog-centered">
-                    <div class="modal-content">
+                    <div class="modal-content" style="height: 260px">
 
                         <div class="modal-header">
                             <h5 class="modal-title" id="importRoomModalLabel">Nhập phiếu từ file Excel</h5>
@@ -131,8 +134,9 @@
                             <form action="{{ route('admin.warehouse.import.store') }}" method="POST" enctype="multipart/form-data">
                                 @csrf
                                 <div class="mb-3">
-                                    <label for="import_file" class="form-label">Chọn file Excel:</label>
-                                    <input class="form-control" type="file" id="import_file" name="file" required>
+                                    <label for="import_file" class="form-label d-block">Chọn file Excel:</label>
+                                    <input class="form-control" type="file" id="import_file" name="file"
+                                        accept=".xlsx,.xls,.csv" required>
                                 </div>
                                 <button type="submit" class="btn btn-primary btn-import-room" style="float: right">Nhận</button>
                             </form>
@@ -143,7 +147,7 @@
             </div>
             <div class="modal fade" id="warehouseModaladd" tabindex="-1" aria-labelledby="warehouseModalLabel"
                 aria-hidden="true">
-                <div class="modal-dialog modal-xl modal-dialog-scrollable">
+                <div class="modal-dialog modal-xl" style="overflow: visible;">
                     <div class="modal-content">
                         <div class="modal-header">
                             <h5 class="modal-title" id="warehouseModalLabel">Tạo phiếu nhập kho</h5>
@@ -193,20 +197,22 @@
     <script>
         (function($) {
             "use strict"
-          $(document).on('click', '.pagination a', function(e) {
-    e.preventDefault();
-    const url = new URL($(this).attr('href'));
-    const page = url.searchParams.get("page");
+            $(document).on('click', '.pagination a', function(e) {
+                e.preventDefault();
+                const url = new URL($(this).attr('href'));
+                const page = url.searchParams.get("page");
 
-    $.ajax({
-        url: window.location.href.split('?')[0], // Giữ nguyên URL chính
-        data: { page: page },
-        success: function(data) {
-            $('#table-data').html(data.results);
-            $('.pagination').html(data.pagination);
-        }
-    });
-});
+                $.ajax({
+                    url: window.location.href.split('?')[0], // Giữ nguyên URL chính
+                    data: {
+                        page: page
+                    },
+                    success: function(data) {
+                        $('#table-data').html(data.results);
+                        $('.pagination').html(data.pagination);
+                    }
+                });
+            });
 
 
             $(document).ready(function() {
@@ -260,7 +266,7 @@
 
                     // Đơn giá
                     const price = parseFloat(
-                        $product.find('.price-edit').text().replace(/\./g, '').trim()
+                        $product.find('.price-edit').val().replace(/\./g, '').trim()
                     );
 
                     // Push vào mảng
@@ -306,8 +312,8 @@
                 slipDetailModal.show();
                 const tbody = $('#modificationHistoryTableBody');
                 tbody.empty().append('<tr><td colspan="3">Đang tải dữ liệu...</td></tr>');
-                 const getLogsRoute = "{{ route('admin.warehouse.get.logs', ['id' => '__ID__']) }}";
-                  const url = getLogsRoute.replace('__ID__', entryId);
+                const getLogsRoute = "{{ route('admin.warehouse.get.logs', ['id' => '__ID__']) }}";
+                const url = getLogsRoute.replace('__ID__', entryId);
                 $.ajax({
                     url: url, // 👉 Route xử lý lấy log
                     method: 'GET',
@@ -322,9 +328,9 @@
                         response.forEach(function(log) {
                             const row = `
                         <tr>
-                            <td>${log.user_name ?? 'Không rõ'}</td>
+                            <td class="text-center">${log.user_name ?? 'Không rõ'}</td>
                             <td class="text-center">${log.timestamp}</td>
-                            <td class="text-center">${log.action}</td>
+                            <td class="text-left">${log.action}</td>
                         </tr>
                     `;
                             tbody.append(row);
@@ -395,7 +401,26 @@
                 // Gọi cập nhật tổng sửa
                 updateTotalEdit();
             });
+            $(document).on("blur", ".price-edit", function() {
+                const input = $(this);
 
+                // Xoá dấu chấm để lấy số gốc
+                let rawValue = input.val().replace(/\./g, '');
+
+                // Parse lại thành số
+                let value = parseInt(rawValue) || 0;
+
+                // Đảm bảo tối thiểu là 1
+                if (value < 1) {
+                    value = 1;
+                }
+
+                // Set lại giá trị đã format
+                input.val(value.toLocaleString('vi-VN'));
+
+                // Gọi cập nhật tổng sửa
+                updateTotalEdit();
+            });
 
 
             // Hàm cập nhật tổng tiền
@@ -405,7 +430,7 @@
 
                 selectedProducts.each(function() {
                     const price = parseFloat(
-                        $(this).find('.price-edit').text().replace('Giá: ', '').replace(' VND',
+                        $(this).find('.price-edit').val().replace('Giá: ', '').replace(' VND',
                             '')
                         .replace(/\./g, '')
                     );
@@ -578,6 +603,16 @@
             opacity: 1;
         }
 
+        .btn-icon-35 {
+            height: 35px;
+            width: 35px;
+            padding: 0;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 16px;
+            /* tuỳ bạn */
+        }
 
         .btn-toggle {
             border: 1px solid #007bff;
@@ -628,6 +663,25 @@
 
         .btn-toggle.collapsed::after {
             content: '−';
+        }
+
+        #selected-product-edit {
+            height: clamp(70px, 20vh, 120px) !important;
+            overflow-y: auto;
+            font-size: clamp(10px, 1.6vh, 15px);
+        }
+
+        @media screen and (min-width: 1200px) {
+            #selected-product-edit {
+                height: clamp(70px, 250px, 250px) !important;
+
+            }
+
+            .clamp-responsive {
+                /* height: clamp(200px, 5vw, 200px) !important; */
+            }
+
+
         }
 
         /* Hiệu ứng mở rộng và thu gọn */

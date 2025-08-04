@@ -123,11 +123,11 @@ $(document).ready(function () {
 
     if (savedView === "calendar") {
         htmlrow = `
-            <input type="date" id="startDate" class="form-control w-auto" style="height: 40px" placeholder="Từ ngày">
-            <input type="date" id="endDate" class="form-control w-auto" style="height: 40px" placeholder="Đến ngày">
+            <input type="date" id="startDate" class="form-control w-auto" style="height: 35px" placeholder="Từ ngày">
+            <input type="date" id="endDate" class="form-control w-auto" style="height: 35px" placeholder="Đến ngày">
         `;
     } else {
-        htmlrow = `<input type="date" id="startDate" class="form-control w-auto" style="height: 40px">`;
+        htmlrow = `<input type="date" id="startDate" class="form-control w-auto" style="height: 35px">`;
     }
 
     $('#date-input-booking').html(htmlrow);
@@ -2051,15 +2051,14 @@ function initViewScriptGird() {
                              <td>
                                 <div class="d-flex align-items-center justify-content-start" style="gap: 3px">
                                     <input type="date" name="checkInDate" id="date-book-room" class="form-control date-book-room"  value="${key == 'room-booked' ? selectedDate : item.date}" readonly>
-
-                                    <input type="time" name="checkInTime" id="time-book-room" class="form-control time-book-room"   value="${timeBookRoom}">
+                                    <input type="time" name="checkInTime" id="time-book-room" class="form-control time-book-room"   value="${timeBookRoom}" style=" display: flex;justify-content: flex-start;width: 110px;padding: 1px 9px !important;">
                                 </div>
                             </td>
                             <td>
                                 <div class="d-flex align-items-center justify-content-start" style="gap: 3px">
                                     <input type="date" name="checkOutDate"  class="form-control date-book-room" readonly  value="${date.toISOString().split('T')[0]}">
 
-                                    <input type="time" name="checkOutTime" id="time-book-room" class="form-control time-book-room"  value="${timeBookRoom}">
+                                    <input type="time" name="checkOutTime" id="time-book-room" class="form-control time-book-room"  value="${timeBookRoom}"style=" display: flex;justify-content: flex-start;width: 110px;padding: 1px 9px !important;">
 
                                 </div>
                             </td>

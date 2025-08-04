@@ -37,8 +37,8 @@ class StoreProductRequest extends FormRequest
                         ->where('subdomain', $this->input('subdomain'))
                     ),
             ],
-            'import_price' => 'required|numeric',
-            'selling_price' => 'required|numeric|gt:import_price',
+            // 'import_price' => 'required|numeric',
+            'selling_price' => 'required|numeric',
             'description' => 'nullable',
             'sku' => [
                 'required',
@@ -65,7 +65,7 @@ class StoreProductRequest extends FormRequest
             'sku.unique' => 'SKU đã tồn tại',
             'import_price.required' => 'Giá nhập không được để trống.',
             'selling_price.required' => 'Giá bán không được để trống.',
-            'selling_price.gt' => 'Giá bán phải lớn hơn giá nhập.',
+            // 'selling_price.gt' => 'Giá bán phải lớn hơn giá nhập.',
             'category_id.required' => 'Vui lòng chọn danh mục.',
         ];
     }

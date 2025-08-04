@@ -3,9 +3,9 @@ function initGridMain(data) {
 
     let htmlrow = '';
     if (savedView === "calendar") {
-        htmlrow = `  <input type="date" id="startDate" class="form-control w-auto" style="height: 40px"
+        htmlrow = `  <input type="date" id="startDate" class="form-control w-auto" style="height: 35px"
                         placeholder="Từ ngày">
-                    <input type="date" id="endDate" class="form-control w-auto" style="height: 40px"
+                    <input type="date" id="endDate" class="form-control w-auto" style="height: 35"
                         placeholder="Đến ngày"></input>`
             ;
     }
@@ -55,7 +55,7 @@ function initGridMain(data) {
         const headerRow = document.getElementById("headerRow");
         const tableBody = document.getElementById("tableBody");
 
-        headerRow.innerHTML = "<th>Phòng</th>";
+        headerRow.innerHTML = '<th class="w-10">Phòng</th>';
         tableBody.innerHTML = "";
 
         let showHours = startDate.toDateString() === endDate.toDateString();
@@ -95,19 +95,21 @@ function initGridMain(data) {
             for (let roomType in groupedRooms) {
 
 
-                tableBody.innerHTML += `<tr class="room-type-header">
-                    <td colspan="${dateHeaders.length + 1}" style="background:#ddd; font-weight:bold;">
+                tableBody.innerHTML += `<tr class="room-type-header" style="height:35px">
+                    <td colspan="${dateHeaders.length + 1}" style="background:#ddd; font-weight:bold;height:35px; padding:0px 0px !important">
                        <span style="float: left;font-size: 13px;">  ${roomType}</span>
                     </td>
                 </tr>`;
 
                 groupedRooms[roomType].forEach(room => {
-                    let row = `<tr><td class="text-left" 
+                    let row = `<tr><td class="text-left truncate-text d-flex flex-column"  style="line-height:3px"
                     data-room-type-id="${room['room_type_id']}" 
                      data-room-id="${room['id']}" 
-                    data-price=${room['room_type']['room_type_price']['unit_price']} 
-
-                    >${room.room_number}</td>`;
+                    data-price=${room['applied_price']['unit_price']} 
+                    title="${room.room_number}">
+                    <span style="font-size:13px;font-weight:bold;"> ${room.room_number}</span>
+                    <span style="font-size:10px;font-weight:600;">Tình trạng phòng: ${room.room_fix == 1 ? "🛠 Phòng đang sửa" : (room.is_clean ? "✨ Sạch" : "🚨 Chưa dọn")}</span>
+                    </td>`;
 
 
                     if (showHours) {
@@ -333,7 +335,7 @@ function initGridMain(data) {
             realtimeLine.style.display = "none";
         }
 
-        checkRealtimeCheckout(now); // Kiểm tra checkout
+      //  checkRealtimeCheckout(now); // Kiểm tra checkout
     }
     let rooms = null; // Biến lưu danh sách phòng, chỉ cập nhật mỗi 30 phút
     let lastUpdatedTime = 0; // Thời điểm cập nhật cuối cùng
@@ -356,7 +358,6 @@ function initGridMain(data) {
     setInterval(updateRoomsData, CHECK_INTERVAL);
 
     async function checkRealtimeCheckout(now) {
-
         try {
             rooms.forEach(room => {
                 room.room_booking_history.map(booking => {
@@ -619,7 +620,7 @@ function initGridMain(data) {
                         }
                         seenRooms.add(key);
                         var tr = `
-                        <tr  data-status="0" data-room-id="${roomId}"  data-room-type-id="${roomTypeId}" data-date="${item.date}">
+                        <tr  data-status="0" data-room-id="${roomId}" data-price="${item.room.applied_price['unit_price']}"  data-room-type-id="${roomTypeId}" data-date="${item.date}">
                             <td>
                                 <input type="checkbox">
                             </td>
@@ -642,19 +643,27 @@ function initGridMain(data) {
                                     <input type="date" name="checkInDate" id="date-book-room" class="form-control date-book-room"  value="${item.date}" readonly>
 
                                     <input type="time" name="checkInTime" id="time-book-room" class="form-control time-book-room"   
-                                    value="${currentdate && currentdate.trim() !== "" ? currentdate : item.room['room_type']['room_type_price']['setup_pricing']['check_in_time']}">
+                                    value="${currentdate && currentdate.trim() !== "" ? currentdate : item.room['room_type']['room_type_price']['setup_pricing']['check_in_time']}" style="    display: flex
+;
+    justify-content: flex-start;
+    width: 110px;
+    padding: 1px 9px !important;">
                                 </div>
                             </td>
                             <td>
                                 <div class="d-flex align-items-center justify-content-start" style="gap: 3px">
                                    <input type="date" name="checkOutDate"  class="form-control date-book-room" readonly  value="${date.toISOString().split('T')[0]}">
 
-                                    <input type="time" name="checkOutTime" id="time-book-room" class="form-control time-book-room"  value="${item.room['room_type']['room_type_price']['setup_pricing']['check_out_time']}">
+                                    <input type="time" name="checkOutTime" id="time-book-room" class="form-control time-book-room"  value="${item.room['room_type']['room_type_price']['setup_pricing']['check_out_time']}"style="    display: flex
+;
+    justify-content: flex-start;
+    width: 110px;
+    padding: 1px 9px !important;">
 
                                 </div>
                             </td>
                             <td>
-                                 <p id="price" data-price="${item.room['room_type']['room_type_price']['unit_price']}">${formatCurrency(item.room['room_type']['room_type_price']['unit_price'])}</p>
+                                 <p id="price" data-price="${item.room['applied_price']['unit_price']}">${formatCurrency(item.room['applied_price']['unit_price'])}</p>
                             </td>
                             <td>
                                   <input type="text" class="form-control deposit number-input money-input"  name="deposit"  placeholder="0">
@@ -1236,7 +1245,7 @@ function initGridMain(data) {
     document.getElementById("startDate").addEventListener("change", generateTable);
     document.getElementById("endDate").addEventListener("change", generateTable);
 
-    setInterval(updateRealtime, 1000);
+    setInterval(updateRealtime, 1800000);
     initDates();
 };
 initGridMain("", "");

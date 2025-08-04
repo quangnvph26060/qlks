@@ -572,16 +572,15 @@ function addRoomInBooking(data, list) {
                     const timeDateIn = targetId === 'list-booking-edit' ? item.room['room_type']['room_type_price']['setup_pricing']['check_in_time'] : item.checkin_datetime;
                     var tr = `
                             <tr  data-status="0" data-room-id="${roomId}"  data-room-type-id="${roomTypeId}" data-date="${item.date}" data-price="${item.room['applied_price']['unit_price']}">
-                                <td>
+                                <td class="" style="width:22px">
                                     <input type="checkbox">
                                 </td>
 
-                                <td>
+                                <td title="${item.room['room_number']}">
                                     <p class="room__name"> ${item.room['room_number']}</p>
                                 </td>
-                                 <td>
-                                     <input type="number" min="1" name="adult" class="form-control adult"  value="1"  style="margin-left: 16px;">
-
+                                 <td class="w-10">
+                                    <input type="number" min="1" name="adult" class="form-control adult"  value="1">
                                 </td>
                                 <td >
                                     <select id="bookingType" class="form-select" name="optionRoom" style="width: 93px; font-size:15px">
@@ -594,7 +593,7 @@ function addRoomInBooking(data, list) {
                                         <input type="date" name="checkInDate" id="date-book-room" class="form-control date-book-room"  value="${item.date}" readonly>
 
                                         <input type="time" name="checkInTime" id="time-book-room" class="form-control time-book-room"
-                                           value="${timeDateIn}">
+                                           value="${timeDateIn}" style=" display: flex;justify-content: flex-start;width: 110px;padding: 1px 9px !important;">
                                     </div>
                                 </td>
                                 <td>
@@ -604,7 +603,7 @@ function addRoomInBooking(data, list) {
 
                                         <input type="time" name="checkOutTime" id="time-book-room"
                                          class="form-control time-book-room"  
-                                         value="${timeDateIn}">
+                                         value="${timeDateIn}" style=" display: flex;justify-content: flex-start;width: 110px;padding: 1px 9px !important;">
 
                                     </div>
                                 </td>
@@ -846,7 +845,7 @@ $(document).on('click', '.booked_room_edit', function () {
                             var tr = `
                                     <tr data-room-id="${room.room_id}" data-status="${room.status}" data-price="${room.total_amount}"
                                     data-room-booking-id="${room.id}"  data-room-type-id="${room.room_type_id}"  class="${room.status === 1 ? "check_in_status" : ""}">
-                                        <td>
+                                        <td style="width:22px">
                                             <input type="checkbox">
                                         </td>
 

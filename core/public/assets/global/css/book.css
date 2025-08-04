@@ -1,30 +1,37 @@
-
-
 .custom-input-giam-gia {
     width: 50% !important;
     padding: 0px 0px 0px 0px !important;
     outline: none;
     border: none;
-    border-bottom: 1px solid #ccc; /* Border ở dưới cùng */
-    text-align: right; /* Hiển thị giá trị từ bên trái input */
+    border-bottom: 1px solid #ccc;
+    /* Border ở dưới cùng */
+    text-align: right;
+    /* Hiển thị giá trị từ bên trái input */
 }
+
 .custom-input:focus {
     outline: none;
     border: none;
-    border-bottom: 1px solid #ccc; /* Border ở dưới cùng */
-    text-align: right; /* Hiển thị giá trị từ bên trái input */
+    border-bottom: 1px solid #ccc;
+    /* Border ở dưới cùng */
+    text-align: right;
+    /* Hiển thị giá trị từ bên trái input */
 }
+
 .financial-list {
     width: 30%;
     list-style-type: none;
     padding: 0;
 }
+
 .financial-item {
     display: flex;
     justify-content: space-between;
     padding: 5px;
 }
-.delete-room-booking,.delete-room-booking-edit{
+
+.delete-room-booking,
+.delete-room-booking-edit {
     border: 1px solid #f03514;
     border-radius: 8px;
     cursor: pointer;
@@ -36,7 +43,8 @@
     border-radius: 8px;
     box-shadow: 0 4px 10px rgba(0, 0, 0, 0.2);
 }
-.add-book-room{
+
+.add-book-room {
     cursor: pointer;
     text-wrap: nowrap;
     padding: 4px 12px;
@@ -45,25 +53,23 @@
     border-color: #2e6da4;
     border-radius: 5px;
 }
-.adult__main{
+
+.adult__main {
     white-space: nowrap;
 }
+
 /* .modal-dialog{
     max-width: 1200px;
     max-height: 700px;
 } */
 
-.table-responsive{
-    /* overflow-y: scroll; */
-    height: auto;
-    /* scrollbar-width: none; */
-}
 
-.z__index-mod{
+
+.z__index-mod {
     z-index: 99999;
 }
 
-html.modal-open, 
+html.modal-open,
 body.modal-open {
     overflow: hidden !important;
 }
@@ -76,18 +82,22 @@ body.modal-open {
     padding: 0;
     height: 20px;
 }
-.overflow-add-room{
+
+.overflow-add-room {
     overflow-y: scroll;
     height: 529px;
 }
-.overflow-change-room{
+
+.overflow-change-room {
     overflow-y: scroll;
     height: 265px;
 }
+
 .custom-input:focus {
     outline: none;
 }
-.input-ghichu{
+
+.input-ghichu {
     border-top: none;
     border-left: none;
     border-right: none;
@@ -95,14 +105,18 @@ body.modal-open {
     padding: 0px !important;
     width: 400px;
 }
-.book_name{
+
+.book_name {
     max-height: 2em;
     overflow: hidden;
     text-overflow: ellipsis;
     white-space: nowrap;
 }
-.add-room-booking, .add_product_service,.add-room-booking-edit{
-   
+
+.add-room-booking,
+.add_product_service,
+.add-room-booking-edit {
+
     padding: 4px 10px;
     border: 1px solid #337ab7;
     border-radius: 8px;
@@ -110,24 +124,29 @@ body.modal-open {
     color: #337ab7;
 }
 
-.icon-delete-room:hover{
+.icon-delete-room:hover {
     cursor: pointer;
     color: red;
 
 }
-.datphong{
-   
-}
+
+.datphong {}
+
 .input-field-search-book {
     height: 35px;
     width: 25%;
     border: 1px solid rgb(121, 117, 117, 0.5);
     margin-left: 8px;
 }
-.color-red{
+
+.color-red {
     color: red !important;
 }
-.btn-submit-search-book,.btn-submit-sync-book,.add-book-room,.check-in-room{
+
+.btn-submit-search-book,
+.btn-submit-sync-book,
+.add-book-room,
+.check-in-room {
     padding-right: 15px;
     padding-left: 15px;
     height: 35px;
@@ -171,15 +190,18 @@ body.modal-open {
 .m-top-10 {
     margin-top: -10px;
 }
-.search-main{
+
+.search-main {
     gap: 14px;
 }
+
 /* .d-flex {
     gap: 10px;
 } */
-.w-260px{
+.w-260px {
     width: 260px;
 }
+
 .main-booking-modal {
     background: #ddd;
     padding: 8px 10px;
@@ -191,11 +213,16 @@ body.modal-open {
 .modal-dialog1 {
     max-width: 700px !important;
 }
-#productModal .modal-dialog, #serviceModal .modal-dialog{
+
+#productModal .modal-dialog,
+#serviceModal .modal-dialog {
     max-width: none !important;
 }
+
 @media (min-width: 576px) {
-    #productModal .modal-dialog, #serviceModal .modal-dialog{
+
+    #productModal .modal-dialog,
+    #serviceModal .modal-dialog {
         max-width: none !important;
     }
 }
@@ -215,21 +242,25 @@ textarea {
     height: 36px;
     border-radius: 4px;
 }
-.table-responsive {
-    display: block;
-    height: 170px; /* Giới hạn chiều cao */
-    overflow-y: scroll; /* Bật cuộn dọc */
-    scrollbar-width: none; /* Ẩn thanh cuộn trên Firefox */
-    -ms-overflow-style: none; /* Ẩn thanh cuộn trên IE và Edge */
+
+.table-scroll-wrapper {
+    width: 100%;
+    overflow-x: auto;
+    height: clamp(100px, 30vh, 330px);
+    /* chiều cao cố định, responsive */
+    overflow-y: scroll;
+    scrollbar-width: none;
+    /* Firefox */
+    -ms-overflow-style: none;
 }
 
-/* Ẩn thanh cuộn trên Chrome, Safari */
-.table-responsive::-webkit-scrollbar {
-    display: none;
-}
-#list-booking tr,#list-booking-edit tr {
+
+
+#list-booking tr,
+#list-booking-edit tr {
     vertical-align: top;
 }
+
 .row.mb-2.text-center.fw-bold {
     font-weight: bold;
 }
@@ -286,7 +317,7 @@ hr {
 
 .modal-content {
     max-height: 90vh;
-    overflow-y: auto; 
+    overflow-y: auto;
     scrollbar-width: none;
 }
 
@@ -296,7 +327,8 @@ hr {
         /* max-width: 95vw; */
     }
 }
-.main-hour-out{
+
+.main-hour-out {
     padding-right: 8px;
     padding-left: 8px;
     cursor: pointer;
@@ -304,6 +336,7 @@ hr {
     border: 1px solid #337ab7;
     border-radius: 8px;
 }
+
 #serviceModal,
 #productModal {
     background: #3e454552;
@@ -441,13 +474,16 @@ h5 {
     border: 1px solid gray;
     border-radius: 8px;
 }
-.status-dirty{
+
+.status-dirty {
     border: 1px solid gray;
 }
-.text-checkoutlate{
+
+.text-checkoutlate {
     color: red !important;
     font-size: 14px;
 }
+
 .status-occupied *:not(svg),
 .status-available *:not(svg),
 .status-incoming *:not(svg),
@@ -457,9 +493,10 @@ h5 {
 }
 
 
-.gap-10{
-    gap:10px;
+.gap-10 {
+    gap: 10px;
 }
+
 .room-info {
     font-size: 14px;
 }
@@ -566,16 +603,19 @@ h5 {
     font-weight: bold;
 }
 
-.add_premium_service,.add_product_room{
+.add_premium_service,
+.add_product_room {
     white-space: nowrap;
     color: black;
 }
-.dropdown-main-booked{
+
+.dropdown-main-booked {
     display: none;
     position: absolute;
     padding: 10px;
     line-height: 30px;
 }
+
 .status-label-checkout {
     background-color: #d1f5d3;
     color: #2d884d;
@@ -583,22 +623,26 @@ h5 {
     border-radius: 15px;
     font-size: 12px;
 }
-.main-icon-booked{
+
+.main-icon-booked {
     gap: 19px;
     cursor: pointer;
     display: flex;
     align-items: center;
 }
+
 .icon-money-checkout {
     color: green;
     font-size: 16px;
     margin-left: 10px;
 }
-.detail-row-checkout{
+
+.detail-row-checkout {
     display: flex;
     width: 398px;
     justify-content: space-between;
 }
+
 .room-details-checkout .detail-row-user {
     display: flex;
     justify-content: space-between;
@@ -634,7 +678,7 @@ h5 {
 .customer-input-container {
     position: relative;
     width: 100%;
-   
+
 }
 
 .customer-form-control {
@@ -662,9 +706,11 @@ h5 {
     margin: 0;
     font-size: 15px;
 }
-.price-booked{
+
+.price-booked {
     color: white;
 }
+
 #customer-name {
     padding: 10px;
     /* border: 2px solid #007BFF; */
@@ -778,16 +824,19 @@ h5 {
 .cancel-booking {
     width: 50%;
 }
-.message-error-edit{
+
+.message-error-edit {
     display: none;
     padding: 5px 10px;
     font-size: 13px
 }
-.message-error{
+
+.message-error {
     display: none;
     padding: 5px 10px;
     font-size: 13px
 }
+
 .btn--danger-service {
     color: #fff;
     cursor: pointer;
@@ -807,10 +856,12 @@ h5 {
     border-color: #2e6da4;
     border-radius: 5px;
 }
+
 .alert-paragraph {
     display: inline-block;
     padding: 3px 20px;
-    background-color: #f44336; /* Màu đỏ */
+    background-color: #f44336;
+    /* Màu đỏ */
     color: white;
     border-radius: 5px;
     text-align: center;
@@ -818,9 +869,11 @@ h5 {
 }
 
 .alert-paragraph:hover {
-    background-color: #d32f2f; /* Màu đỏ sáng khi hover */
+    background-color: #d32f2f;
+    /* Màu đỏ sáng khi hover */
 }
-.btn-dat-truoc{
+
+.btn-dat-truoc {
     text-wrap: nowrap;
     color: #fff;
     background-color: #4634ff;
@@ -841,8 +894,9 @@ h5 {
     padding: 8px 0;
     z-index: 1000;
     right: 18px;
-  }
-  .menu_dropdown_check_in {
+}
+
+.menu_dropdown_check_in {
     display: none;
     position: absolute;
     background-color: #fff;
@@ -852,50 +906,60 @@ h5 {
     padding: 8px 0;
     z-index: 1000;
     /* right: 18px; */
-  }
-  .menu_dropdown_check_in.show {
-    display: block;
-  }
+}
 
-  .menu_dropdown.show {
+.menu_dropdown_check_in.show {
     display: block;
-  }
+}
 
-  .dropdown-item {
+.menu_dropdown.show {
+    display: block;
+}
+
+.dropdown-item {
     padding: 8px 16px;
     cursor: pointer;
     font-size: 14px;
-  }
-  .mobi-table th {
+}
+
+.mobi-table th {
     padding: 12px 3px !important;
 }
-.note_room{
-    padding: 0px 0px 0px 3px !important; 
-}
-  .dropdown-item:hover {
-    background-color: #f0f0f0;
-  }
 
-  svg {
+.note_room {
+    /* padding: 0px 0px 0px 3px !important; */
+}
+
+.dropdown-item:hover {
+    background-color: #f0f0f0;
+}
+
+svg {
     cursor: pointer;
-  }
-.deposit,.discount{
+}
+
+.deposit,
+.discount {
     padding: 0px 3px !important;
     text-align: end;
     /* width: 135px !important; */
 
 }
-.time-book-room{
+
+.time-book-room {
     width: 109px;
     padding: 2px 7px !important;
 }
-.date-book-room{
+
+.date-book-room {
     width: 115px;
     padding: 2px 7px !important;
 }
-.fz-13{
+
+.fz-13 {
     font-size: 13px;
 }
+
 .search-container {
     width: 50%;
     display: flex;
@@ -938,7 +1002,7 @@ h5 {
 
 
 #show-customer th,
-#show-booked-room th{
+#show-booked-room th {
     line-height: 1 !important;
     padding: 6px !important;
 }
@@ -950,37 +1014,45 @@ h5 {
     white-space: nowrap;
     /* Ngăn xuống dòng để giảm chiều cao */
 }
+
 .table-fz-13,
 .table-fz-13 th,
 .table-fz-13 td {
     font-size: 13px;
 }
+
 .btn-receive {
     display: inline-block;
     padding: 0px 10px;
     border: 1px solid #337ab7;
-    color: #337ab7; 
-    border-radius: 15px; 
-    font-size: 13px; 
+    color: #337ab7;
+    border-radius: 15px;
+    font-size: 13px;
     text-align: center;
     cursor: pointer;
 }
 
-.adult{
+.adult {
     width: 60px;
     height: 30px;
     text-align: center;
 }
-#checkInRoom.modal, #checkOutRoom.modal {
-    z-index: 1056; /* Cao hơn modal mặc định (1055) */
+
+#checkInRoom.modal,
+#checkOutRoom.modal {
+    z-index: 1056;
+    /* Cao hơn modal mặc định (1055) */
 }
-.increase,.reduce{
+
+.increase,
+.reduce {
     padding: 0px 7px;
     cursor: pointer;
     border-radius: 50%;
     border: 1px solid;
 }
-.input-css-main{
+
+.input-css-main {
     direction: ltr;
     padding: 0px !important;
     width: 170px;
@@ -988,19 +1060,23 @@ h5 {
     border: none;
     border-bottom: 1px solid #ddd;
 }
+
 .input-css-main:focus {
-    border-bottom: 1px solid #ddd; /* Đổi màu đường viền dưới khi input được focus */
+    border-bottom: 1px solid #ddd;
+    /* Đổi màu đường viền dưới khi input được focus */
 }
-.button-reduce{
-        gap: 14px;
-        display: flex;
-        align-items: center;
-        padding: 10px 20px;
-        margin: 5px;
-        border-radius: 5px;
-      
+
+.button-reduce {
+    gap: 14px;
+    display: flex;
+    align-items: center;
+    padding: 10px 20px;
+    margin: 5px;
+    border-radius: 5px;
+
 }
-.button-reduce input{
+
+.button-reduce input {
     width: 54px;
     padding: 0px 0px 0px 0px;
     text-align: center;
@@ -1008,31 +1084,37 @@ h5 {
     border-bottom: 1px solid #ccc;
     border-radius: 0px;
 }
-.nhan-phong{
+
+.nhan-phong {
     border-radius: 3.2px;
     background: #337ab7;
-    color: white; 
+    color: white;
     height: 35px;
 }
-.text-green{
+
+.text-green {
     color: #279656;
 }
-.text-origin{
+
+.text-origin {
     color: #ff8800;
 }
-.group-booked-room{
+
+.group-booked-room {
     font-size: 14px;
 }
-.select-cancel-room{
+
+.select-cancel-room {
     border-radius: 8px;
     color: #5b6e88;
 }
+
 .btn-qua-gio-nhan {
-    border:  1px solid white;
-    background-color: #6c757d; 
-    border-radius: 20px; 
-    padding: 8px 10px; 
-    font-size: 11px; 
+    border: 1px solid white;
+    background-color: #6c757d;
+    border-radius: 20px;
+    padding: 8px 10px;
+    font-size: 11px;
     display: inline-flex;
     align-items: center;
     justify-content: center;
@@ -1041,26 +1123,29 @@ h5 {
 }
 
 .btn-qua-gio-nhan i {
-    margin-right: 8px; 
+    margin-right: 8px;
 }
-.note-booked-room{
+
+.note-booked-room {
     gap: 5px;
     cursor: pointer;
 }
+
 .modal-content {
     border-radius: 8px;
     box-shadow: 0 4px 10px rgba(0, 0, 0, 0.2);
 }
 
 textarea.form-control {
-    border-color: #337ab7; /* Màu viền cho textarea */
+    border-color: #337ab7;
+    /* Màu viền cho textarea */
 }
 
-.sua_dat_phong{
+.sua_dat_phong {
     text-wrap: nowrap;
     padding: 5px 12px;
     color: #2e6da4;
-    border:1px solid #2e6da4;
+    border: 1px solid #2e6da4;
     border-color: #2e6da4;
     border-radius: 5px;
 }
@@ -1070,10 +1155,12 @@ textarea.form-control {
 .add-serve-mobi {
     width: 50%;
 }
-.flex-wrap-mobi{
+
+.flex-wrap-mobi {
     overflow-y: scroll;
     max-height: 200px;
 }
+
 @media (max-width:768px) {
     .mobi-table td {
         padding: 10px !important;
@@ -1110,9 +1197,11 @@ textarea.form-control {
     .w-100 {
         width: unset !important;
     }
-    .w-10{
+
+    .w-10 {
         width: 10px !important;
     }
+
     .flex-wrap-mobi {
         flex-direction: column;
     }

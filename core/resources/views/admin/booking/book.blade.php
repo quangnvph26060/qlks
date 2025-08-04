@@ -35,9 +35,9 @@
             </div>
 
         </div>
-        @include('admin.booking.partials.room_booking')
+
         @include('admin.booking.partials.room_booking_edit')
-        @include('admin.booking.partials.confirm-room')
+        @include('admin.booking.partials.confirm-room')  @include('admin.booking.partials.room_booking')
     </div>
 @endsection
 
@@ -46,6 +46,7 @@
         {{-- <a class="btn btn-sm btn--primary" href="{{ route('admin.booking.all') }}">
             <i class="la la-list"></i>@lang('Tất cả các đặt phòng')
         </a> --}}
+      
         <div class="d-flex">
             <div class="d-flex" style="gap: 10px">
                 <a class="btn btn-sm btn--primary add-book-room" style="margin-left: 10px">
@@ -192,7 +193,7 @@
         var checkInUrl = "{{ route('admin.room.check.in', ['id' => ':id']) }}";
         var deleteBookedRoomUrl = "{{ route('admin.booking.delete-booked-room', ['id' => ':id']) }}";
         var checkBookedRoomUrl = "{{ route('admin.booking.check-booked-room-del', ['id' => ':id']) }}"; // xoá đặt phòng
-        var findCustomerUrl = '{{ route("admin.find.customer") }}'; // chọn khách
+        var findCustomerUrl = '{{ route('admin.find.customer') }}'; // chọn khách
         var getCustomerStaff = "{{ route('admin.get.customer.staff') }}"; // nguồn khách
         var changeRoomBooking = "{{ route('admin.booking.changeRoomBooking') }}";
     </script>
@@ -208,7 +209,6 @@
                 }
             });
         });
-     
     </script>
 @endpush
 @push('style')
@@ -216,6 +216,7 @@
         .table .background-tr {
             height: 37px;
         }
+
         .data-table td {
             height: 30px !important;
             overflow: hidden;
@@ -325,14 +326,130 @@
         }
 
         #data-table th {
-    padding: 6px !important;    line-height: 1 !important;
-}
+            padding: 6px !important;
+            line-height: 1 !important;
+        }
+
         #dropdown-menu {
             left: 108px;
             position: fixed;
             z-index: 9999;
             background: white;
             box-shadow: 0px 4px 10px rgba(0, 0, 0, 0.2);
+        }
+    </style>
+
+    <style scoped>
+        .modal-content {
+            height: 100vh !important;
+        }
+
+        /* Khi màn hình lớn hơn 1200px (hoặc tùy bạn chọn kích thước) */
+        @media screen and (min-height: 800px) {
+            .modal-content {
+                height: 100vh !important;
+            }
+
+            .custom-gap-lg {
+                gap: 4px !important;
+            }
+
+            .table-responsive {
+                /* border: 1px solid gray;
+                border-radius: 5px;
+                height: 210px !important; */
+            }
+            /* #list-booking{
+                border: 1px solid gray;
+                border-radius: 5px;
+                height: 210px !important;
+            } */
+        }
+
+        @media (max-width: 768px) {
+            .modal-content {
+                padding: 10px;
+            }
+
+            .modal .form-control {
+                font-size: 14px;
+            }
+
+            .modal-title {
+                font-size: 18px;
+            }
+
+            .modal-body {
+                padding: 10px;
+            }
+        }
+
+        .modal-content {
+            height: 700px;
+        }
+
+        .modal-body {
+            /* max-height: 75vh; */
+            overflow-y: auto;
+        }
+
+        /* Responsive form container */
+        .customer-input-container,
+        .result-add-customer {
+            width: 100%;
+        }
+
+
+        /* Đảm bảo input và select không bị quá to */
+        .customer-input-container input,
+        .customer-input-container select,
+        .result-add-customer input,
+        .result-add-customer select {
+            width: 100%;
+            font-size: 0.95rem;
+            padding: 6px 10px;
+        }
+
+        /* Giảm padding và font nếu màn hình nhỏ */
+        @media (max-width: 768px) {
+            .form-control {
+                font-size: 14px;
+                padding: 6px 8px;
+            }
+
+            .form-label {
+                font-size: 14px;
+                margin-bottom: 4px;
+            }
+
+            .btn,
+            .add-room-booking {
+                font-size: 13px !important;
+                padding: 6px 8px !important;
+            }
+
+            .modal-body {
+                padding: 10px;
+            }
+        }
+
+        body {
+            font-size: clamp(13px, 1.6vw, 16px);
+            /* Nhỏ nhất 13px, lớn nhất 16px */
+        }
+
+        h5,
+        h4,
+        .modal-title {
+            font-size: clamp(16px, 2vw, 17px);
+        }
+
+        button,
+        .form-control,
+        .form-select,
+        label,
+        p {
+            font-size: clamp(12px, 1.5vw, 15px);
         }
     </style>
 @endpush

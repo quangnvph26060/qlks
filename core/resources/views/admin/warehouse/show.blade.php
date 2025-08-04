@@ -1,5 +1,4 @@
-<div class="row">
-    {{-- @if (!$warehouse->status)
+{{-- @if (!$warehouse->status)
         <div class="action-btn">
             <a href="{{ route('admin.return.create', $warehouse->id) }}" class="btn btn-sm btn-outline--danger"
                 id="btn-return"><i class="las la-sync"></i>Trả hàng</a>
@@ -9,219 +8,169 @@
             id="btn-return">Chi tiết sản phẩm bị hoàn trả</a>
     @endif --}}
 
-    <div class="col-lg-6 col-md-12">
-        <div class="card">
+<div class="row">
+    <div class="col-lg-6 ">
 
-            {{-- <div class="card-body">
-                    <table class="table table-bordered">
-                        <thead>
-                            <tr>
-                                <th class="w-25 text-left"><i class="fas fa-user me-2"></i> Tên nhà cung cấp</th>
-                                <td>{{ $warehouse->supplier->name ?? '' }}</td>
-                            </tr>
-                            <tr>
-                                <th class="text-left"><i class="fas fa-phone me-2"></i> Số điện thoại</th>
-                                <td>{{ $warehouse->supplier->phone ?? '' }}</td>
-                            </tr>
-                            <tr>
-                                <th class="text-left"><i class="fas fa-envelope me-2"></i> Email</th>
-                                <td>{{ $warehouse->supplier->email ?? '' }}</td>
-                            </tr>
-                            <tr>
-                                <th class="text-left"><i class="fas fa-map-marker-alt me-2"></i> Địa chỉ</th>
-                                <td>{{ $warehouse->supplier->address ?? '' }}</td>
-                            </tr>
-                        </thead>
-                    </table>
-                </div> --}}
-            <div class="card-body">
-                <input type="text" class="form-control text-uppercase" id="warehouse_code" placeholder="Nhập mã phiếu"
-                    name="warehouse_code" value="{{ $warehouse->reference_code }}"
-                    style="height: 40px; text-transform: uppercase;">
-                <select class="form-select mt-1" id="supplierSelect" name="supplier_id" aria-label="Chọn nhà cung cấp">
-                    <option selected disabled>--- Chọn nhà cung cấp ---</option>
-                    @foreach ($suppliers as $id => $name)
-                        <option value="{{ $id }}" {{ $id == $warehouse->supplier_id ? 'selected' : '' }}>
-                            {{ $name }}
-                        </option>
-                    @endforeach
-                </select>
-                <textarea name="note" id="note" cols="10" rows="3" class="mt-1" placeholder="Ghi chú">{{ $warehouse->note }}</textarea>
-            </div>
-        </div>
-    </div>
-    <div class="col-lg-6 mt-xl-0 mt-3 col-md-12">
-        <div class="card">
-
-
-            {{-- <table class="table table-bordered">
-                        <thead>
-                            <tr>
-                                <th class="w-25 text-left"><i class="fas fa-receipt me-2"></i> Mã đơn hàng</th>
-                                <td>{{ $warehouse->reference_code ?? '' }}</td>
-                            </tr>
-                            <tr>
-                                <th class="text-left"><i class="fas fa-money-bill-wave me-2"></i> Tổng tiền</th>
-                                <td>{{ showAmount($warehouse->total) ?? '' }}</td>
-                            </tr>
-                            <tr>
-                                <th class="text-left"><i class="fas fa-calendar-alt me-2"></i> Ngày tạo</th>
-                                <td>{{ \Carbon\Carbon::parse($warehouse->confirmation_date)->format('d/m/Y') ?? '' }}</td>
-                            </tr>
-                            <tr>
-                                <th class="text-left"><i class="fas fa-credit-card me-2"></i> Phương thức thanh toán</th>
-                                <td>Thanh toán khi nhận hàng</td>
-                            </tr>
-                          
-                        </thead>
-                    </table> --}}
-            <div class="card-body">
-                {{-- <select class="form-select mb-3" id="employeeSelect" name="employee_id" aria-label="Chọn nhân viên">
-                    <option selected disabled>Chọn nhân viên</option>
-                    @foreach ($admin as $id => $name)
-                        <option value="{{ $id }}" {{ $id == $warehouse->created_by ? 'selected' : '' }}>
-                            {{ $name->name }}</option>
-                    @endforeach
-                </select> --}}
-                @php
-                    use Carbon\Carbon;
-                @endphp
-
-                <input type="date" class="form-control" id="dateWarehouse" name="dateWarehouse"
-                    value="{{ $warehouse->created_time ? Carbon::parse($warehouse->created_time)->format('Y-m-d') : date('Y-m-d') }}"
-                    style="height:40px">
-                <select class="form-select mt-1" id="paymentMethod" name="payment_method_id"
-                    aria-label="Chọn phương thức thanh toán">
-                    <option disabled {{ !$warehouse->payment_method_id ? 'selected' : '' }}>Chọn phương thức thanh toán
-                    </option>
-                    <option value="1" {{ $warehouse->payment_method_id == 1 ? 'selected' : '' }}>Thanh toán khi
-                        nhận hàng</option>
-                    <option value="2" {{ $warehouse->payment_method_id == 2 ? 'selected' : '' }}>Thanh toán chuyển
-                        khoản</option>
-                </select>
-
-                <div class="payment-details mt-3 hidden" id="paymentDetails"></div>
-                <button type="button" class="btn btn-sm btn--primary mt-1 openSlipDetailBtn" data-id="{{ $warehouse->id }}">
-                    Chi tiết phiếu
-                </button>
-
-
-
-
-            </div>
-
-        </div>
-    </div>
-    <div class="col-md-12 mt-3">
-        <div class="card">
-            @php($sl = 0)
-            @foreach ($warehouse->entries ?? [] as $item)
-                @php($sl += $item->quantity - $item->number_of_cancellations)
+        <input type="text" class="form-control text-uppercase" id="warehouse_code" placeholder="Nhập mã phiếu"
+            name="warehouse_code" value="{{ $warehouse->reference_code }}"
+            style="height: 40px; text-transform: uppercase;">
+        <select class="form-select mt-1" id="supplierSelect" name="supplier_id" aria-label="Chọn nhà cung cấp">
+            <option selected disabled>--- Chọn nhà cung cấp ---</option>
+            @foreach ($suppliers as $id => $name)
+                <option value="{{ $id }}" {{ $id == $warehouse->supplier_id ? 'selected' : '' }}>
+                    {{ $name }}
+                </option>
             @endforeach
-            <div class="row mt-3">
-                <div class="col-12">
-                    <div class="card">
-                        <div class="card-header d-flex justify-content-between">
-                            <h5 class="card-title"></h5>
-                            <div id="result-btn">
-                                @if ($warehouse->status == 1)
-                                    <p class="badge badge--success">Hoàn thành</p>
-                                @elseif($sl == 0)
-                                    <p class="badge badge--danger">Đã hủy</p>
-                                @elseif($sl > 0)
-                                    <form action="{{ route('admin.warehouse.update', $warehouse->id) }}" method="POST"
-                                        style="display: inline;">
-                                        @csrf
-                                        @method('PUT')
-                                        <button type="submit" class="btn btn-sm btn-outline--primary btn-return">
-                                            Xác nhận đơn hàng
-                                        </button>
-                                    </form>
-                                @endif
-                            </div>
+        </select>
+
+    </div>
+    <div class="col-lg-6">
+
+        @php
+            use Carbon\Carbon;
+        @endphp
+
+        <input type="date" class="form-control" id="dateWarehouse" name="dateWarehouse"
+            value="{{ $warehouse->created_time ? Carbon::parse($warehouse->created_time)->format('Y-m-d') : date('Y-m-d') }}"
+            style="height:40px">
+        <select class="form-select mt-1" id="paymentMethod" name="payment_method_id"
+            aria-label="Chọn phương thức thanh toán">
+            <option disabled {{ !$warehouse->payment_method_id ? 'selected' : '' }}>Chọn phương thức thanh toán
+            </option>
+            <option value="1" {{ $warehouse->payment_method_id == 1 ? 'selected' : '' }}>Thanh toán khi
+                nhận hàng</option>
+            <option value="2" {{ $warehouse->payment_method_id == 2 ? 'selected' : '' }}>Thanh toán chuyển
+                khoản</option>
+        </select>
+
+
+
+
+
+    </div>
+    <div class="col-12 mt-2">
+        <textarea name="note" id="note" rows="2" placeholder="Ghi chú">{{ $warehouse->note }}</textarea>
+        <button type="button" class="btn btn-sm btn--primary mt-1 openSlipDetailBtn" data-id="{{ $warehouse->id }}">
+            Chi tiết phiếu
+        </button>
+    </div>
+</div>
+<div class="col-md-12">
+    <div class="card">
+        @php($sl = 0)
+        @foreach ($warehouse->entries ?? [] as $item)
+            @php($sl += $item->quantity - $item->number_of_cancellations)
+        @endforeach
+        <div class="row">
+            <div class="col-12">
+                {{-- <div class="card-header d-flex justify-content-between">
+                    <h5 class="card-title"></h5>
+                    <div id="result-btn">
+                        @if ($warehouse->status == 1)
+                            <p class="badge badge--success">Hoàn thành</p>
+                        @elseif($sl == 0)
+                            <p class="badge badge--danger">Đã hủy</p>
+                        @elseif($sl > 0)
+                            <form action="{{ route('admin.warehouse.update', $warehouse->id) }}" method="POST"
+                                style="display: inline;">
+                                @csrf
+                                @method('PUT')
+                                <button type="submit" class="btn btn-sm btn-outline--primary btn-return">
+                                    Xác nhận đơn hàng
+                                </button>
+                            </form>
+                        @endif
+                    </div>
+                </div> --}}
+                <div class="card-body">
+                    <div class="d-flex fw-bold border-bottom pb-2 mb-2 justify-content-between"
+                        style="padding-left: 4px;">
+                        <div style="width: 150px; font-weight: bold;" class="responsive-text">Sản
+                            phẩm
                         </div>
-                        <div class="card-body">
-                            <div class="d-flex fw-bold border-bottom pb-2 mb-2 justify-content-between"
-                                style="padding-left: 4px;">
-                                <div style="width: 150px;">Sản phẩm</div>
-                                <div style="width: 130px;text-align: center">Số lượng</div>
-                                <div style="width: 100px;">Giá</div>
-                                <div style="width: 130px;">Thành tiền</div>
-                                <div style="width: 120px;text-align: center">Kho</div>
-                                <div style="width: 37px;">Xóa</div>
-                            </div>
-                            <div id="selected-product-edit" style="height: 250px; overflow-y: auto;">
-                                @foreach ($warehouse->entries as $item)
-                                    <div class="selected-product d-flex justify-content-between align-items-center mb-2 py-2 border-bottom"
-                                        data-id="{{ $item->id }}">
-                                        <div class="product-name fw-bold me-3 flex-shrink-0" style="width: 150px;"
-                                            data-id="{{ $item->product_id }}">{{ $item->product->name }}
-                                        </div>
-                                        <div class="quantity d-flex align-items-center me-3 flex-shrink-0"
-                                            style="width: 130px;">
-                                            {{-- <button type="button"
+                        <div style="width: 130px;text-align: center; font-weight: bold;"class="responsive-text">
+                            Số lượng</div>
+                        <div
+                            style="width: 100px; font-weight: bold;"class="responsive-text d-flex justify-content-center">
+                            Giá
+                        </div>
+                        <div style="width: 130px; font-weight: bold;"class="responsive-text">Thành
+                            tiền
+                        </div>
+                        <div style="width: 120px;text-align: center;  font-weight: bold;"class="responsive-text">
+                            Kho</div>
+                        <div style="width: 37px; font-weight: bold;"class="responsive-text">Xóa
+                        </div>
+                    </div>
+                    <div id="selected-product-edit" style="height: 250px; overflow-y: auto;">
+                        @foreach ($warehouse->entries as $item)
+                            <div class="selected-product d-flex justify-content-between align-items-center mb-1"
+                                data-id="{{ $item->id }}">
+                                <div class="product-name me-3 flex-shrink-0 responsive-text" style="width: 150px; "
+                                    data-id="{{ $item->product_id }}">
+                                    {{ $item->product->name }}
+                                </div>
+                                <div class="quantity d-flex align-items-center me-3 flex-shrink-0"
+                                    style="width: 130px;">
+                                    {{-- <button type="button"
                                                 class="btn btn-outline-secondary btn-sm decrease-edit">-</button> --}}
-                                            <input type="text"
-                                                class="form-control mx-2 handled-focus-edit money-input"
-                                                name="products[{{ $item->product_id }}]" value="{{ $item->quantity }}"
-                                                min="1" style="width: 117px; text-align: center; height: 30px;">
-                                            {{-- <button type="button"
+                                    <input type="text"
+                                        class="form-control no-border mx-2 handled-focus-edit money-input responsive-text"
+                                        name="products[{{ $item->product_id }}]" value="{{ $item->quantity }}"
+                                        min="1"
+                                        style="width: 100%; text-align: center; height: 30px !important; ">
+                                    {{-- <button type="button"
                                                 class="btn btn-outline-secondary btn-sm increase-edit">+</button> --}}
-                                        </div>
-                                        <div class="product-price text-success me-3 flex-shrink-0 price-edit"
+                                </div>
+                                {{-- <div class="product-price text-success me-3 flex-shrink-0 price-edit"
                                             style="width: 100px;" data-price="{{ $item->price }}">
                                             {{ number_format($item->price, 0, ',', '.') }}
-                                        </div>
-                                        <div class="product-price text-success me-3 flex-shrink-0 price-product"
-                                            style="width: 100px;">
-                                            {{ number_format($item->quantity * $item->price, 0, ',', '.') }}
-                                        </div>
-                                        <select name="warehouses[{{ $item->product_id }}]"
-                                            class="form-select form-select-sm me-3 flex-shrink-0" style="width: 120px;">
-                                            <option selected="" disabled="">Chọn kho</option>
-                                            @foreach ($warehouses as $k)
-                                                <option value="{{ $k->id }}"
-                                                    {{ $k->id == $item->warehouse_id ? 'selected' : '' }}>
-                                                    {{ $k->name }}</option>
-                                            @endforeach
+                                        </div> --}}
+                                <div style="width: 130px;">
 
-                                        </select>
+                                    <input type="text"
+                                        class="form-control no-border text-success me-3 flex-shrink-0 price-edit money-input responsive-text"
+                                        style="width: 100%;height: 30px !important; " data-price="{{ $item->price }}"
+                                        value="{{ number_format($item->price, 0, ',', '.') }}">
+                                </div>
+                                <div class="product-price text-success me-3 flex-shrink-0 price-product responsive-text"
+                                    style="width: 100px;font-size: 15px ">
+                                    {{ number_format($item->quantity * $item->price, 0, ',', '.') }}
+                                </div>
+                                <select name="warehouses[{{ $item->product_id }}]"
+                                    class="form-select form-select-sm me-3 flex-shrink-0 responsive-text"
+                                    style="width: 120px; height: 30px !important; ">
+                                    <option selected="" disabled="">Chọn kho</option>
+                                    @foreach ($warehouses as $k)
+                                        <option value="{{ $k->id }}"
+                                            {{ $k->id == $item->warehouse_id ? 'selected' : '' }}>
+                                            {{ $k->name }}</option>
+                                    @endforeach
 
-
-
-
-                                        <button class="btn btn-outline-danger btn-sm remove-product-edit flex-shrink-0"
-                                            style="width: 30px;" data-id="{{ $item->id }}"
-                                            data-url="{{ route('admin.warehouse.destroy.warehouse.item', $item->id) }}">X</button>
-                                    </div>
-                                @endforeach
+                                </select>
+                                <button class="btn btn-outline-danger btn-sm remove-product-edit flex-shrink-0"
+                                    data-id="{{ $item->id }}"
+                                    data-url="{{ route('admin.warehouse.destroy.warehouse.item', $item->id) }}">X</button>
                             </div>
-                        </div>
+                        @endforeach
                     </div>
                 </div>
             </div>
         </div>
     </div>
-    <div class="row mt-3">
-        <div class="col-12 d-flex justify-content-end align-items-end gap-3 flex-column">
-            <div>
-                <div class="fw-bold">Tổng cộng: <span class="total-price-edit text-success">
-                        {{ number_format($warehouse->total, 0, ',', '.') }} VNĐ</span></div>
-            </div>
-            <button class="btn btn-primary confirmPayment-edit" type="submit" id="confirmPayment-edit"
-                data-id="{{ $warehouse->id }}">Lưu</button>
+</div>
+<div class="row">
+    <div class="col-12 d-flex justify-content-end align-items-end gap-3 flex-column">
+        <div>
+            <div class="fw-bold">Tổng cộng: <span class="total-price-edit text-success">
+                    {{ number_format($warehouse->total, 0, ',', '.') }} VNĐ</span></div>
         </div>
+        <button class="btn btn-primary confirmPayment-edit" type="submit" id="confirmPayment-edit"
+            data-id="{{ $warehouse->id }}">Lưu</button>
     </div>
 </div>
+
 {{-- @php($firstReturn = optional($warehouse->returns)->first()) --}}
-
-
-
-
-
-
-
-
 @push('script')
     <script>
         (function($) {
@@ -394,7 +343,7 @@
 @push('style')
     <script src="{{ asset('assets/admin/js/vendor/sweetalert2@11.js') }}"></script>
 
-    <style>
+    <style scoped>
         @media (max-width: 992px) {
             .mt-md-3 {
                 margin-top: 1.5rem !important;
@@ -413,6 +362,303 @@
             overflow: hidden;
             /* Ẩn phần văn bản bị tràn */
             text-overflow: ellipsis;/
+        }
+    </style>
+    <style scoped>
+        /* Modal auto-scaling */
+        .modal-dialog {
+            max-width: min(1000px, 95vw);
+            height: min(95vh, 800px);
+            margin: clamp(10px, 2.5vh, 1.75rem) auto;
+        }
+
+        .modal-content {
+            height: 100%;
+            display: flex;
+            flex-direction: column;
+        }
+
+        .modal-header {
+            flex-shrink: 0;
+            padding: clamp(8px, 2vh, 1rem) clamp(12px, 3vw, 1.5rem);
+        }
+
+        .modal-title {
+            font-size: clamp(14px, 2.5vh, 1.25rem);
+        }
+
+        .modal-body {
+            flex: 1;
+            overflow-y: auto;
+            padding: clamp(8px, 2vh, 1.5rem);
+        }
+
+        /* Form elements responsive */
+        .form-control,
+        .form-select {
+            height: clamp(28px, 4vh, 40px) !important;
+            font-size: clamp(10px, 1.6vh, 14px) !important;
+            /* padding: clamp(3px, 0.8vh, 8px) clamp(6px, 1.2vh, 12px) !important; */
+        }
+
+        textarea.form-control {
+            height: clamp(35px, 6vh, 60px) !important;
+            resize: none;
+        }
+
+        /* Card responsive */
+        .card {
+            margin-bottom: clamp(6px, 1.2vh, 1rem);
+        }
+
+        .card-body {
+            padding: clamp(6px, 1.2vh, 1rem);
+        }
+
+        .card-header {
+            padding: clamp(4px, 0.8vh, 0.75rem) clamp(6px, 1.2vh, 1rem);
+        }
+
+        .card-title {
+            font-size: clamp(12px, 2vh, 16px);
+            margin-bottom: clamp(4px, 0.8vh, 0.5rem);
+        }
+
+        /* Badge responsive */
+        .badge {
+            font-size: clamp(9px, 1.4vh, 12px) !important;
+            padding: clamp(2px, 0.4vh, 4px) clamp(4px, 0.8vh, 8px) !important;
+        }
+
+        /* Button responsive */
+        .btn {
+            padding: clamp(3px, 0.6vh, 6px) clamp(8px, 1.6vh, 12px);
+            font-size: clamp(10px, 1.6vh, 14px);
+        }
+
+        .btn-sm {
+            padding: clamp(2px, 0.4vh, 4px) clamp(6px, 1.2vh, 8px);
+            font-size: clamp(9px, 1.4vh, 12px);
+        }
+
+        /* Product header responsive */
+        .product-header {
+            padding: clamp(3px, 0.6vh, 8px) clamp(2px, 0.4vh, 4px);
+            margin-bottom: clamp(3px, 0.6vh, 8px);
+        }
+
+        .product-header>div {
+            font-size: clamp(9px, 1.4vh, 13px) !important;
+            font-weight: bold !important;
+            line-height: clamp(11px, 1.8vh, 16px);
+        }
+
+        /* Product items responsive */
+        .selected-product {
+            padding: clamp(3px, 0.6vh, 8px) clamp(2px, 0.4vh, 4px);
+            border-bottom: 1px solid #e9ecef;
+        }
+
+        .selected-product .product-name {
+            font-size: clamp(9px, 1.4vh, 13px) !important;
+            line-height: clamp(11px, 1.8vh, 16px);
+        }
+
+        .selected-product input[type="text"] {
+            height: clamp(24px, 3.5vh, 30px) !important;
+            font-size: clamp(9px, 1.4vh, 13px) !important;
+            text-align: center;
+            padding: clamp(2px, 0.4vh, 4px) !important;
+        }
+
+        .selected-product .product-price {
+            font-size: clamp(9px, 1.4vh, 13px) !important;
+            line-height: clamp(11px, 1.8vh, 16px);
+        }
+
+        .selected-product select {
+            height: clamp(24px, 3.5vh, 30px) !important;
+            font-size: clamp(9px, 1.4vh, 13px) !important;
+            padding: clamp(2px, 0.4vh, 4px) clamp(4px, 0.8vh, 8px) !important;
+        }
+
+        /* Product list area responsive */
+       
+
+        /* Column widths responsive */
+        .col-product {
+            width: clamp(100px, 18vw, 150px) !important;
+        }
+
+        .col-quantity {
+            width: clamp(80px, 15vw, 130px) !important;
+        }
+
+        .col-price {
+            width: clamp(70px, 12vw, 100px) !important;
+        }
+
+        .col-total {
+            width: clamp(80px, 15vw, 130px) !important;
+        }
+
+        .col-warehouse {
+            width: clamp(80px, 14vw, 120px) !important;
+        }
+
+        .col-delete {
+            width: clamp(25px, 5vw, 37px) !important;
+        }
+
+        /* Total section responsive */
+        .total-section {
+            margin-top: clamp(6px, 1.2vh, 1rem);
+            padding-top: clamp(6px, 1.2vh, 1rem);
+            border-top: 1px solid #e9ecef;
+        }
+
+        .total-price-edit {
+            font-size: clamp(12px, 2vh, 18px) !important;
+            font-weight: 600;
+        }
+
+        /* Gap responsive */
+        .gap-3 {
+            gap: clamp(6px, 1.2vh, 1rem) !important;
+        }
+
+        /* Margin/Padding responsive */
+        .mt-1 {
+            margin-top: clamp(2px, 0.4vh, 0.25rem) !important;
+        }
+
+        .mt-3 {
+            margin-top: clamp(6px, 1.2vh, 1rem) !important;
+        }
+
+        .mb-2 {
+            margin-bottom: clamp(3px, 0.6vh, 0.5rem) !important;
+        }
+
+        .pb-2 {
+            padding-bottom: clamp(3px, 0.6vh, 0.5rem) !important;
+        }
+
+        .me-3 {
+            margin-right: clamp(6px, 1.2vh, 1rem) !important;
+        }
+
+        /* Very small screens */
+        @media (max-height: 600px) {
+            .modal-dialog {
+                height: 98vh;
+                margin: 1vh auto;
+            }
+
+            .modal-body {
+                padding: 6px;
+            }
+
+            .card-body {
+                padding: 4px;
+            }
+
+            #selected-product-edit {
+                height: 80px !important;
+            }
+
+            .form-control,
+            .form-select {
+                height: 24px !important;
+                font-size: 9px !important;
+            }
+
+            textarea.form-control {
+                height: 30px !important;
+            }
+
+            .selected-product input[type="text"],
+            .selected-product select {
+                height: 20px !important;
+                font-size: 8px !important;
+            }
+        }
+
+        @media (max-height: 500px) {
+            .modal-dialog {
+                height: 99vh;
+                margin: 0.5vh auto;
+            }
+
+            .modal-header {
+                padding: 4px 8px;
+            }
+
+            .modal-body {
+                padding: 4px;
+            }
+
+            #selected-product-edit {
+                height: 60px !important;
+            }
+
+            .card {
+                margin-bottom: 3px;
+            }
+
+            .product-header>div {
+                font-size: 8px !important;
+            }
+
+            .selected-product .product-name,
+            .selected-product .product-price {
+                font-size: 8px !important;
+            }
+        }
+
+        /* Landscape mobile */
+        @media (max-height: 450px) and (orientation: landscape) {
+            .row .col-lg-6 {
+                flex: 0 0 50%;
+                max-width: 50%;
+            }
+
+            #selected-product-edit {
+                height: 50px !important;
+            }
+
+            .product-header>div {
+                font-size: 7px !important;
+            }
+        }
+
+        /* Extra responsive adjustments */
+        @media (max-width: 768px) {
+            .modal-dialog {
+                max-width: 98vw;
+            }
+
+            .col-lg-6 {
+                margin-bottom: clamp(4px, 0.8vh, 8px);
+            }
+        }
+
+        /* Custom scrollbar for product list */
+        #selected-product-edit::-webkit-scrollbar {
+            width: clamp(3px, 0.6vh, 6px);
+        }
+
+        #selected-product-edit::-webkit-scrollbar-track {
+            background: #f1f1f1;
+        }
+
+        #selected-product-edit::-webkit-scrollbar-thumb {
+            background: #c1c1c1;
+            border-radius: 3px;
+        }
+
+        #selected-product-edit::-webkit-scrollbar-thumb:hover {
+            background: #a8a8a8;
         }
     </style>
 @endpush

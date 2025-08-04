@@ -439,12 +439,31 @@ function addRoomInBooking(data, list) {
 
                 const formattedDates = `${yyyys}-${mms}-${dds}`;
                 const formattedTimes = `${hoursss}:${minutesss}`;
-                let date = ""
 
                 let timeBookRoom = "";
-                const seenRooms = new Set();
+                const existingRows = Array.from(document.querySelectorAll('#list-booking tr')).map(row => {
+                    return {
+                        roomId: row.getAttribute('data-room-id'), // string
+                        date: row.getAttribute('data-date'),       // string
+                    };
+                });
+
+                // const filteredData = response.data.filter(item => {
+                //     return !existingRows.some(row =>
+                //         row.roomId === String(item.room["id"]) && row.date === item.date
+                //     );
+                // });
+
+                // console.log("Existing rows:", existingRows);
+                // console.log("Filtered data (not duplicated):", filteredData);
+
                 let totalPrice = 0;
                 response.data.forEach(item => {
+                    const isDuplicate = existingRows.some(row =>
+                        row.roomId === String(item.room["id"]) && row.date === item.date
+                    );
+
+                    if (isDuplicate) return;
                     let date = new Date(item.date);
                     date = new Date(item.date);
                     date.setDate(date.getDate() + 1);
@@ -453,8 +472,8 @@ function addRoomInBooking(data, list) {
                     const roomTypeId = item.room_type["id"];
 
                     const tr = `
-        <tr data-room-id="${roomId}" data-room-type-id="${roomTypeId}" data-date="${formattedDates}" data-price="${item.room['applied_price']['unit_price']}">
-            <td>
+        <tr data-room-id="${roomId}" data-room-type-id="${roomTypeId}" data-date="${item.date}" data-price="${item.room['applied_price']['unit_price']}">
+            <td style="width:22px">
                 <input type="checkbox">
             </td>
 
@@ -476,14 +495,14 @@ function addRoomInBooking(data, list) {
             <td>
                 <div class="d-flex align-items-center justify-content-start" style="gap: 3px">
                     <input type="date" name="checkInDate" id="date-book-room" class="form-control date-book-room" value="${item.date}" readonly>
-                    <input type="time" name="checkInTime" id="time-book-room" class="form-control time-book-room" value="${timeBookRoom}">
+                    <input type="time" name="checkInTime" id="time-book-room" class="form-control time-book-room" value="${timeBookRoom}"style=" display: flex;justify-content: flex-start;width: 110px;padding: 1px 9px !important;">
                 </div>
             </td>
 
             <td>
                 <div class="d-flex align-items-center justify-content-start" style="gap: 3px">
                     <input type="date" name="checkOutDate" class="form-control date-book-room" readonly value="${date.toISOString().split('T')[0]}">
-                    <input type="time" name="checkOutTime" id="time-book-room" class="form-control time-book-room" value="${timeBookRoom}">
+                    <input type="time" name="checkOutTime" id="time-book-room" class="form-control time-book-room" value="${timeBookRoom}"style=" display: flex;justify-content: flex-start;width: 110px;padding: 1px 9px !important;">
                 </div>
             </td>
 
@@ -597,7 +616,7 @@ function validator(checkInDate, checkOutDate, dataRowValue) {
 }
 
 function getDatesBetween(checkInDate, checkInTime, checkOutDate, checkOutTime, room, roomType, adult, note,
-    deposit, discount, roomBookingId,priceRoom) {
+    deposit, discount, roomBookingId, priceRoom) {
 
     let dates = [];
     let currentDate = new Date(checkInDate);
@@ -632,7 +651,7 @@ function getDatesBetween(checkInDate, checkInTime, checkOutDate, checkOutTime, r
             deposit: deposit,
             discount: discount,
             bookingId: roomBookingId,
-            priceRoom:priceRoom
+            priceRoom: priceRoom
         });
         break;
     }
@@ -849,7 +868,7 @@ $(document).on('click', '.booked_room_edit', function () {
                                     data-price="${room.total_amount}"
                                     data-room-type-id="${room.room_type_id}"
                                     class="${room.status === 1 ? "check_in_status" : ""}">
-                                        <td>
+                                        <td style="width:22px">
                                             <input type="checkbox">
                                         </td>
 
@@ -861,7 +880,7 @@ $(document).on('click', '.booked_room_edit', function () {
                                         </td>
                                         <td >
                                             <select id="bookingType" class="form-select" name="optionRoom" style="width: 93px; font-size:15px">
-                                                <option value="ngay">Ngày</option>
+                                                <option value="ngay">Ngày 123123</option>
                                                 <option value="gio">Giờ</option>
                                             </select>
                                         </td>
@@ -1166,7 +1185,7 @@ $('.booking-form-edit').on('submit', function (e) {
             deposit: deposit,
             discount: discount,
             roomBookingId: roomBookingId,
-            priceRoom:priceRoom,
+            priceRoom: priceRoom,
         });
     });
     if (hasError) {
@@ -1334,7 +1353,7 @@ function findRoomBookingId(id) {
 
                         var tr = `
                         <tr data-room-booking-id="${room.booking_id}" data-price="${room.total_amount}"  data-room-id="${room.room_code}"  data-room-type-id="${room.room_type}" data-date="${datePart}">
-                            <td>
+                            <td style="width:22px">
                                 <input type="checkbox">
                             </td>
 
@@ -1801,7 +1820,7 @@ $('.booking-form').on('submit', function (e) {
     // Duyệt qua từng dòng trong bảng
     $('#list-booking tr').each(function () {
         var roomId = $(this).data('room-id');
-       var priceRoom = $(this).data('price');
+        var priceRoom = $(this).data('price');
         var roomBookingId = $(this).data('room-booking-id');
         var roomTypeId = $(this).data('room-type-id');
         var checkInDate = $(this).find('input[name="checkInDate"]').val();

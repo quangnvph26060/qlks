@@ -1,6 +1,15 @@
 @extends('admin.layouts.master_iframe')
 @section('panel')
     @include('admin.messages')
+    @if ($categories->hasPages())
+        <div class="pager-wrap d-flex     justify-content-center mt-2 mb-2">
+            <div class="k-widget d-flex">
+                <div class="pagination-tb" style="font-size: 13px;margin: 0 auto">
+                    {{ $categories->links('pagination::bootstrap-4') }}
+                </div>
+            </div>
+        </div>
+    @endif
     <div class="row">
         <!-- Khối bên phải: Danh sách danh mục -->
         <div class="col-md-12">
@@ -34,9 +43,9 @@
                                         <th>@lang('Mã sản phẩm')</th>
                                         {{-- <th style="width:90px">@lang('Ảnh')</th> --}}
                                         <th>@lang('Tên sản phẩm')</th>
-                                        <th>@lang('Giá nhập')</th>
+                                        {{-- <th>@lang('Giá nhập')</th> --}}
                                         <th>@lang('Giá bán')</th>
-                                        <th>@lang('Tồn kho')</th>
+                                        {{-- <th>@lang('Tồn kho')</th> --}}
                                         <th>@lang('Xuất bản')</th>
 
                                     </tr>
@@ -50,32 +59,32 @@
                                                 <button class="btn btn-link btn-toggle" type="button"
                                                     onclick=" toggleRepresentatives('{{ $product->id }}', this)"></button>
                                             </td>
-                                                <td style="width:20px;text-align:center !important">
-                                                    <svg class="svg_menu_check_in" xmlns="http://www.w3.org/2000/svg"
-                                                        width="30" height="30" viewBox="0 0 21 21">
-                                                        <g fill="currentColor" fill-rule="evenodd">
-                                                            <circle cx="10.5" cy="10.5" r="1" />
-                                                            <circle cx="10.5" cy="5.5" r="1" />
-                                                            <circle cx="10.5" cy="15.5" r="1" />
-                                                        </g>
-                                                    </svg>
-                                                    <div class="dropdown menu_dropdown_check_in" id="dropdown-menu"
-                                                        style="position:fixed">
-                                                        <div class="dropdown-item"><a
-                                                                href="{{ route('admin.product.edit', $product->id) }}"
-                                                                style="color:black">
-                                                                Sửa
-                                                            </a>
-                                                        </div>
-
-                                                        <div class="dropdown-item booked_room_detail"> <button
-                                                                class=" btn-delete icon-delete-room"
-                                                                data-id="{{ $product->id }}"
-                                                                data-modal_title="@lang('Xóa trạng thái')" type="button"
-                                                                data-pro="0"> Xoá</div>
-
+                                            <td style="width:20px;text-align:center !important">
+                                                <svg class="svg_menu_check_in" xmlns="http://www.w3.org/2000/svg"
+                                                    width="30" height="30" viewBox="0 0 21 21">
+                                                    <g fill="currentColor" fill-rule="evenodd">
+                                                        <circle cx="10.5" cy="10.5" r="1" />
+                                                        <circle cx="10.5" cy="5.5" r="1" />
+                                                        <circle cx="10.5" cy="15.5" r="1" />
+                                                    </g>
+                                                </svg>
+                                                <div class="dropdown menu_dropdown_check_in" id="dropdown-menu"
+                                                    style="position:fixed">
+                                                    <div class="dropdown-item"><a
+                                                            href="{{ route('admin.product.edit', $product->id) }}"
+                                                            style="color:black">
+                                                            Sửa
+                                                        </a>
                                                     </div>
-                                                </td>
+
+                                                    <div class="dropdown-item booked_room_detail"> <button
+                                                            class=" btn-delete icon-delete-room"
+                                                            data-id="{{ $product->id }}"
+                                                            data-modal_title="@lang('Xóa trạng thái')" type="button"
+                                                            data-pro="0"> Xoá</div>
+
+                                                </div>
+                                            </td>
                                             <td data-label="STT" style="text-align:right">
                                                 @php
                                                     $stt =
@@ -96,12 +105,14 @@
                                             <td data-label="@lang('Tên sản phẩm')">
                                                 <p id="ellipsis">{{ $product->name ?? '' }}</p>
                                             </td>
-                                            <td data-label="@lang('Giá nhập')"  style="text-align:right">{{ showAmount($product->import_price) }}
+                                            {{-- <td data-label="@lang('Giá nhập')" style="text-align:right">
+                                                {{ showAmount($product->import_price) }}
+                                            </td> --}}
+                                            <td data-label="@lang('Giá bán')" style="text-align:right">
+                                                {{ showAmount($product->selling_price) }}
                                             </td>
-                                            <td data-label="@lang('Giá bán')"  style="text-align:right">{{ showAmount($product->selling_price) }}
-                                            </td>
-                                            <td style="text-align:right" data-label="@lang('Tồn kho')">
-                                                {{ $product->stock ?? 0 }}</td>
+                                            {{-- <td style="text-align:right" data-label="@lang('Tồn kho')">
+                                                {{ $product->stock ?? 0 }}</td> --}}
                                             <td data-label="@lang('Ảnh')" style="text-align:center;width:100px">
                                                 @if ($product->is_published == 1)
                                                     <i class="fa fa-check" style="color:green;text-align: center"></i>
@@ -177,15 +188,7 @@
                             </div>
                         </form>
                     </div>
-                    @if ($categories->hasPages())
-                        <div class="pager-wrap d-flex     justify-content-end">
-                            <div class="k-widget d-flex">
-                                <div class="pagination-tb" style="font-size: 13px;margin: 0 auto">
-                                    {{ $categories->links('pagination::bootstrap-4') }}
-                                </div>
-                            </div>
-                        </div>
-                    @endif
+
                 </div>
             </div>
         @endpush

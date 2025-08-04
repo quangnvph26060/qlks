@@ -38,11 +38,11 @@ $(document).ready(function () {
     let htmlrow = '';
     if (savedView === "calendar") {
         htmlrow = `
-            <input type="date" id="startDate" class="form-control w-auto" style="height: 40px" placeholder="Từ ngày">
-            <input type="date" id="endDate" class="form-control w-auto" style="height: 40px" placeholder="Đến ngày">
+            <input type="date" id="startDate" class="form-control w-auto" style="height: 35px" placeholder="Từ ngày">
+            <input type="date" id="endDate" class="form-control w-auto" style="height: 35px" placeholder="Đến ngày">
         `;
     } else {
-        htmlrow = `<input type="date" id="startDate" class="form-control w-auto" style="height: 40px">`;
+        htmlrow = `<input type="date" id="startDate" class="form-control w-auto" style="height: 35px">`;
     }
 
     $('#date-input-booking').html(htmlrow);

@@ -1009,26 +1009,35 @@ class BookingController extends Controller
             $query->whereIn('is_clean', $room_clean);
         });
 
-        if ($method === 'room' && !empty($value)) {
-            $rooms = $rooms->where('room_number', $value);
-        }
-        // Nếu tìm kiếm theo khách hàng
-        if ($method === 'customer' && !empty($value)) {
-            $rooms->whereHas('roomBookingHistory.checkInData', function ($query) use ($value) {
-                $query->where('customer_name', 'LIKE', "%$value%");
-            })->orWhereHas('roomBookingHistory.bookingData', function ($query) use ($value) {
-                $query->where('customer_name', 'LIKE', "%$value%");
-            });
-        }
-        if ($method === 'customer' && !empty($value)) {
-            $rooms->where(function ($query) use ($value) {
-                $query->whereHas('roomBookingHistory.checkInData', function ($q) use ($value) {
+
+        // $rooms = $rooms->where('room_number', $value);
+
+        // // Nếu tìm kiếm theo khách hàng
+
+        // $rooms->whereHas('roomBookingHistory.checkInData', function ($query) use ($value) {
+        //     $query->where('customer_name', 'LIKE', "%$value%");
+        // })->orWhereHas('roomBookingHistory.bookingData', function ($query) use ($value) {
+        //     $query->where('customer_name', 'LIKE', "%$value%");
+        // });
+
+
+        // $rooms->where(function ($query) use ($value) {
+        //     $query->whereHas('roomBookingHistory.checkInData', function ($q) use ($value) {
+        //         $q->where('customer_name', 'LIKE', "%$value%");
+        //     })->orWhereHas('roomBookingHistory.bookingData', function ($q) use ($value) {
+        //         $q->where('customer_name', 'LIKE', "%$value%");
+        //     });
+        // });
+        $rooms = $rooms->where(function ($query) use ($value) {
+            $query->where('room_number', 'LIKE', "%$value%")
+                ->orWhereHas('roomBookingHistory.checkInData', function ($q) use ($value) {
                     $q->where('customer_name', 'LIKE', "%$value%");
-                })->orWhereHas('roomBookingHistory.bookingData', function ($q) use ($value) {
+                })
+                ->orWhereHas('roomBookingHistory.bookingData', function ($q) use ($value) {
                     $q->where('customer_name', 'LIKE', "%$value%");
                 });
-            });
-        }
+        });
+
 
         $rooms->with([
             'roomType',
@@ -1300,7 +1309,7 @@ class BookingController extends Controller
                     ->sum('total_payment');
 
                 $roomServiceProducts =  RoomServiceProduct::where('check_in_id', $checkinId)->get();
-            
+
                 foreach ($roomServiceProducts as $item) {
                     $productId    = $item->product_id;
                     $warehouseId  = $item->warehouse_id;
@@ -1319,24 +1328,23 @@ class BookingController extends Controller
                         // Nếu có sản phẩm trong phòng
                         if ($roomProduct->quantity >= $usedQuantity) {
                             RoomProduct::where('room_id', $roomId)
-                            ->where('product_id', $productId)
-                            ->where('warehouse_id', $warehouseId)
-                            ->decrement('quantity', $usedQuantity);
+                                ->where('product_id', $productId)
+                                ->where('warehouse_id', $warehouseId)
+                                ->decrement('quantity', $usedQuantity);
                         } else {
                             // Trừ hết phần còn lại
                             $remaining = $usedQuantity - $roomProduct->quantity;
-                           RoomProduct::where('room_id', $roomId)
-                            ->where('product_id', $productId)
-                            ->where('warehouse_id', $warehouseId)
-                            ->update(['quantity' => 0]);
+                            RoomProduct::where('room_id', $roomId)
+                                ->where('product_id', $productId)
+                                ->where('warehouse_id', $warehouseId)
+                                ->update(['quantity' => 0]);
                             // Gọi hàm xuất kho với số lượng thiếu
                             $product->decrement('stock', $remaining);
                             returnProductToWarehouseFromRoom($warehouseId, $productId, $remaining, $item->price, 'Xuất hàng', authAdmin()->id);
-                          
                         }
                     } else {
                         // Không có sản phẩm trong phòng → trừ kho hết luôn
-                         $product->decrement('stock', $usedQuantity);
+                        $product->decrement('stock', $usedQuantity);
                         returnProductToWarehouseFromRoom($warehouseId, $productId, $usedQuantity, $item->price, 'Xuất hàng', authAdmin()->id);
                     }
                 }

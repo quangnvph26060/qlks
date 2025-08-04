@@ -332,7 +332,7 @@
                 
                 // Thêm tab dashboard
                 $('#tabs').append(`
-                        <button id="tab-dashboard" class="tab-btn" onclick="switchTab('dashboard')">
+                        <button id="tab-dashboard" class="tab-btn" onclick="switchTab('dashboard')"style="height:35px">
                             ${menuTitle} <span onclick="closeTab(event, 'dashboard')" style="margin-left: 4px; cursor: pointer;"> <i class="las la-times"></i></span>
                         </button>
                     `);
@@ -361,7 +361,8 @@
                 'margin-bottom': '',
                 'left': ''
             });
-
+           
+            
             const parts = url.split('/');
 
 
@@ -373,7 +374,7 @@
             if ($('#tab-' + tabId).length === 0) {
                 // Thêm tab mới
                 $('#tabs').append(`
-                    <button id="tab-${tabId}" class="tab-btn" onclick="switchTab('${iframeId}')">
+                    <button id="tab-${tabId}" class="tab-btn" onclick="switchTab('${iframeId}')" style="height:35px">
                         ${menuTitle} <span onclick="closeTab(event, '${iframeId}')" style="margin-left: 4px; cursor: pointer;"> <i class="las la-times"></i></span>
                     </button>
                 `);

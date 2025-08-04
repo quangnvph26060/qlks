@@ -10,27 +10,27 @@
                     <div class="card-body">
 
                         <div class="row">
-                            <div class="form-group mb-3 col-lg-3">
+                            <div class="form-group mb-3 col-lg-4">
                                 <label for="sku" class="form-label required">Mã sản phẩm</label>
                                 <input type="text" name="sku" id="sku" class="form-control"
                                     placeholder="Mã sản phẩm" value="{{ $code ?? '' }}">
                                 <small></small>
                             </div>
-                            <div class="form-group mb-3 col-lg-3">
+                            <div class="form-group mb-3 col-lg-4">
                                 <label for="name" class="form-label required">Tên sản phẩm</label>
                                 <input type="text" name="name" id="name" class="form-control"
                                     placeholder="Nhập tên sản phẩm">
                                 <small></small>
                             </div>
-                            <div class="form-group mb-3 col-lg-3">
+                            {{-- <div class="form-group mb-3 col-lg-3">
                                 <label for="import_price" class="form-label required">Giá nhập</label>
                                 <input type="text" id="import_price_display" class="form-control price-input"
                                     placeholder="Giá nhập">
                                 <input type="hidden" name="import_price" id="import_price">
                                 <small></small>
-                            </div>
+                            </div> --}}
 
-                            <div class="form-group mb-3 col-lg-3">
+                            <div class="form-group mb-3 col-lg-4">
                                 <label for="selling_price" class="form-label required">Giá bán</label>
                                 <input type="text" id="selling_price_display" class="form-control price-input"
                                     placeholder="Giá bán">

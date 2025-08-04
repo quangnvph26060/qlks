@@ -106,11 +106,11 @@ class ProductController extends Controller
     public function search(Request $request)
     {
         $pageTitle = '';
-        if ($request->input('sku') == '' && $request->input('name') == '') {
+        if ($request->input('source_code') == '' && $request->input('source_name') == '') {
             $categories = Product::query()->orderBy('id', 'desc')->where('unit_code', unitCode())->paginate(10);
         } else {
-            $categories = Product::where('sku', 'LIKE', '%' . $request->input('sku') . '%')
-                ->where('name', 'LIKE', '%' . $request->input('name') . '%')
+            $categories = Product::where('sku', 'LIKE', '%' . $request->input('source_code') . '%')
+                ->where('name', 'LIKE', '%' . $request->input('source_name') . '%')
                 ->where('unit_code', unitCode())
                 ->orderBy('id', 'desc')->paginate(10);
         }

@@ -509,7 +509,7 @@ class WarehouseController extends Controller
                     throw new \Exception("Sản phẩm ID {$product['product_id']} không tồn tại.");
                 }
                 $totalPrice += $product['quantity'] * $product['price'];
-                if ($product['quantity'] == $warehouseItem->quantity) {
+                if ($product['quantity'] == $warehouseItem->quantity && $product['price']  ==  $warehouseItem->price) {
                     continue;
                 }
                 // Tính chênh lệch
@@ -523,8 +523,9 @@ class WarehouseController extends Controller
                 // Cập nhật warehouse item
                 $productModel->save();
                 $warehouseItem->update([
-                    'quantity' => $product['quantity'],
-                    'warehouse_id' => $product['warehouse_id'],
+                    'quantity'     => $product['quantity'] ?? 0,
+                    'price'        => $product['price'] ?? 0,
+                    'warehouse_id' => $product['warehouse_id'] ?? null,
                 ]);
             }
 
@@ -546,21 +547,22 @@ class WarehouseController extends Controller
             ], 500);
         }
     }
-    public function getLogs($id){
-         $logs = WarehouseEntryLog::where('warehouse_entry_id', $id)
-        ->with('admin') // eager load thông tin user
-        ->orderBy('created_at', 'asc')
-        ->get()
-        ->map(function ($log) {
-            return [
-               'user_name'  => optional($log->admin)->name ?? 'Không rõ',
-                'timestamp' => $log->created_at->format('d/m/Y H:i:s'),
-                'action'    => $log->action === 'created' ? 'Tạo phiếu' : 'Cập nhật phiếu',
+    public function getLogs($id)
+    {
+        $logs = WarehouseEntryLog::where('warehouse_entry_id', $id)
+            ->with('admin') // eager load thông tin user
+            ->orderBy('created_at', 'asc')
+            ->get()
+            ->map(function ($log) {
+                return [
+                    'user_name'  => optional($log->admin)->name ?? 'Không rõ',
+                    'timestamp' => $log->created_at->format('d/m/Y H:i:s'),
+                    'action'    => $log->action === 'created' ? 'Tạo phiếu' : 'Cập nhật phiếu',
 
-            ];
-        });
+                ];
+            });
 
-    return response()->json($logs);
+        return response()->json($logs);
     }
     public function import(Request $request)
     {
@@ -652,18 +654,20 @@ class WarehouseController extends Controller
 
             // Map về đúng tên cột trong DB
             $roomData = [
-                'ma_phieu'       => $mapped['Mã phiếu'] ?? null,
-                'ngay_nhap'      => $mapped['Ngày nhập'] ?? null,
-                'ma_san_pham'    => $mapped['Mã sản phẩm'] ?? null,
-                'so_luong'       => $mapped['Số lượng'] ?? null,
+                'ma_phieu'        => $mapped['Mã phiếu'] ?? null,
+                'ngay_nhap'       => $mapped['Ngày nhập'] ?? null,
+                'ma_san_pham'     => $mapped['Mã sản phẩm'] ?? null,
+                'gia_ban'         => $mapped['Giá bán'] ?? null,
+                'thanh_tien'      => $mapped['Thành tiền'] ?? null,
+                'so_luong'        => $mapped['Số lượng'] ?? null,
                 'ma_nha_cung_cap' => $mapped['Mã nhà cung cấp'] ?? null,
-                'ma_kho'         => $mapped['Mã kho'] ?? null,
-                'ghi_chu'        => $mapped['Ghi chú'] ?? null,
+                'ma_kho'          => $mapped['Mã kho'] ?? null,
+                'ghi_chu'         => $mapped['Ghi chú'] ?? null,
             ];
             try {
-                $product = Product::where('sku', $roomData['ma_san_pham'])->first();
-                $warehouse = Warehouse::where('code', $roomData['ma_kho'])->first();
-                $supplier = Supplier::where('supplier_id', $roomData['ma_nha_cung_cap'])->first();
+                $product   = Product::where('sku', trim($roomData['ma_san_pham']))->first();
+                $warehouse = Warehouse::where('code', trim($roomData['ma_kho']))->first();
+                $supplier  = Supplier::where('supplier_id', trim($roomData['ma_nha_cung_cap']))->first();
                 if (!$product || !$warehouse || !$supplier) {
                     continue;
                 }
@@ -673,6 +677,7 @@ class WarehouseController extends Controller
                     $maPhieu = strtoupper($maPhieu);
 
                     $existingEntry = WarehouseEntry::where('reference_code', $maPhieu)->first();
+
                     if ($existingEntry) {
                         $existingItem = WarehouseEntryItem::where('warehouse_entry_id', $existingEntry->id)
                             ->where('product_id', $product->id)
@@ -680,19 +685,26 @@ class WarehouseController extends Controller
                         if ($existingItem) {
                             $existingItem->update([
                                 'quantity' => $existingItem->quantity + (int) $roomData['so_luong'],
+                                'price'    => (int) $roomData['gia_ban'],
                             ]);
                             $existingEntry->update([
                                 'total' => $existingEntry->total +  ((int) $roomData['so_luong'] * $product->import_price),
                             ]);
+                            $product->increment('stock', $roomData['so_luong']);
                             continue;
                         } else {
                             WarehouseEntryItem::create([
                                 'warehouse_entry_id' => $existingEntry->id,
                                 'product_id'         => $product->id,
                                 'quantity'           => $roomData['so_luong'],
-                                'price'              => $product->import_price,
+                                'price'              => $roomData['gia_ban'],
                                 'warehouse_id'       => $warehouse->id,
                             ]);
+                            $addedTotal = (int) $roomData['so_luong'] * (int) $roomData['gia_ban'];
+                            $existingEntry->update([
+                                'total' => $existingEntry->total + $addedTotal,
+                            ]);
+                            $product->increment('stock', $roomData['so_luong']);
                             continue;
                         }
                     }
@@ -710,7 +722,7 @@ class WarehouseController extends Controller
                     'note'             => $roomData['ghi_chu'] ?? '',
                     'created_by'       => authAdmin()->id,
                     'status'           => 1,
-                    'total'            => (int) $roomData['so_luong'] * $product->import_price,
+                    'total'            => (int) $roomData['so_luong'] * (int) $roomData['gia_ban'],
                     'subdomain'        => subdomain(),
                     'unit_code'        => unitCode(),
                     'payment_method_id' => 1,
@@ -722,7 +734,7 @@ class WarehouseController extends Controller
                     'warehouse_entry_id' => $warehouseEntry->id,
                     'product_id'         => $product->id,
                     'quantity'           => $roomData['so_luong'],
-                    'price'              => $product->import_price ?? 0,
+                    'price'              => $roomData['gia_ban'] ?? 0,
                     'warehouse_id'       => $warehouse->id,
                     'type'               => 1,
                 ]);
