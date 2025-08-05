@@ -206,10 +206,10 @@
 
         .pagination .page-item .page-link,
         .pagination .page-item span {
-            width: 22px !important;
+            /* width: 22px !important;
             height: auto !important;
             background-color: #4634ff !important;
-            color: white !important;
+            color: white !important; */
         }
 
         .pagination .page-item.active .page-link {

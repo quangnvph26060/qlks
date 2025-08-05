@@ -11,7 +11,7 @@
                                 Chọn kho hàng
                             </h4>
                             <div class="d-flex gap-3 ">
-                                  <select class="form-select form-select-lg" id="warehouseSelect">
+                                  <select class="form-select" id="warehouseSelect" style="height: 35px">
                                 <option value="all">Tất cả kho hàng</option>
                                 @foreach ($warehouses as $warehouse)
                                     <option value="{{ $warehouse->id }}">{{ $warehouse->name }}</option>

@@ -46,7 +46,7 @@
                                         {{-- <th>@lang('Giá nhập')</th> --}}
                                         <th>@lang('Giá bán')</th>
                                         {{-- <th>@lang('Tồn kho')</th> --}}
-                                        <th>@lang('Xuất bản')</th>
+                                        <th>@lang('Trạng thái')</th>
 
                                     </tr>
                                 </thead>
@@ -214,10 +214,19 @@
 
         .pagination .page-item .page-link,
         .pagination .page-item span {
-            width: 22px !important;
-            height: auto !important;
-            background-color: #4634ff !important;
-            color: white !important;
+            /* width: 22px !important;
+                height: auto !important;
+                background-color: #4634ff !important;
+                color: white !important; */
+        }
+
+        #data-table td,
+        #data-table th {
+            padding-top: 0.5px !important;
+            padding-bottom: 0.5px !important;
+            line-height: 1.2 !important;
+            height: 35px !important;
+            vertical-align: middle;
         }
 
         .pagination .page-item.active .page-link {
