@@ -845,13 +845,13 @@ function initViewScriptGird() {
                                         <div class="d-flex align-items-center justify-content-start" style="gap: 3px">
                                            <input type="date" name="checkInDate" id="date-book-room" class="form-control date-book-room"  value="${datePart}" readonly>
 
-                                    <input type="time" name="checkInTime" id="time-book-room" class="form-control time-book-room"  value="${timePart}" >
+                                    <input type="time" name="checkInTime" id="time-book-room" class="form-control time-book-room"  value="${timePart}" style=" display: flex;justify-content: flex-start;width: 110px;padding: 1px 9px !important;">
                                         </div>
                                     </td>
                                     <td>
                                         <div class="d-flex align-items-center justify-content-start" style="gap: 3px">
                                             <input type="date" name="checkOutDate"  class="form-control date-book-room" readonly value="${dateOut}">
-                                            <input type="time" name="checkOutTime" id="time-book-room" class="form-control time-book-room" value="${timeOut}"  value="">
+                                            <input type="time" name="checkOutTime" id="time-book-room" class="form-control time-book-room" value="${timeOut}"  value=""style=" display: flex;justify-content: flex-start;width: 110px;padding: 1px 9px !important;">
                                         </div>
                                     </td>
                                     <td>
@@ -1230,14 +1230,14 @@ function initViewScriptGird() {
                                                 <div class="d-flex align-items-center justify-content-start" style="gap: 10px">
                                                     <input type="date" name="checkInDate" id="date-book-room" class="form-control date-book-room"  value="${formattedDates}" readonly>
     
-                                                    <input type="time" name="checkInTime" id="time-book-room" class="form-control time-book-room"  value="${checkinTime}" >
+                                                    <input type="time" name="checkInTime" id="time-book-room" class="form-control time-book-room"  value="${checkinTime}"style=" display: flex;justify-content: flex-start;width: 110px;padding: 1px 9px !important;">
                                                 </div>
                                             </td>
                                             <td>
                                                 <div class="d-flex align-items-center justify-content-start" style="gap: 10px">
                                                     <input type="date" name="checkOutDate"  class="form-control date-book-room" value="${checkoutDate}" readonly>
     
-                                                    <input type="time" name="checkOutTime" id="time-book-room" class="form-control time-book-room"  value="${checkoutTime}" >
+                                                    <input type="time" name="checkOutTime" id="time-book-room" class="form-control time-book-room"  value="${checkoutTime}"style=" display: flex;justify-content: flex-start;width: 110px;padding: 1px 9px !important;">
     
                                                 </div>
                                             </td>
@@ -1620,14 +1620,14 @@ function initViewScriptGird() {
                                                 <div class="d-flex align-items-center justify-content-start" style="gap: 10px">
                                                     <input type="date" name="checkInDate" id="date-book-room" class="form-control date-book-room"  value="${checkinDate}" readonly>
     
-                                                    <input type="time" name="checkInTime" id="time-book-room" class="form-control time-book-room"  value="${checkinTime}" >
+                                                    <input type="time" name="checkInTime" id="time-book-room" class="form-control time-book-room"  value="${checkinTime}" style=" display: flex;justify-content: flex-start;width: 110px;padding: 1px 9px !important;">
                                                 </div>
                                             </td>
                                             <td>
                                                 <div class="d-flex align-items-center justify-content-start" style="gap: 10px">
                                                     <input type="date" name="checkOutDate"  class="form-control date-book-room" value="${checkoutDate}" readonly>
     
-                                                    <input type="time" name="checkOutTime" id="time-book-room" class="form-control time-book-room"  value="${checkoutTime}" >
+                                                    <input type="time" name="checkOutTime" id="time-book-room" class="form-control time-book-room"  value="${checkoutTime}" style=" display: flex;justify-content: flex-start;width: 110px;padding: 1px 9px !important;">
     
                                                 </div>
                                             </td>

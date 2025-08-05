@@ -129,15 +129,7 @@
                                                 <!-- Thêm các số điện thoại khác ở đây -->
                                             </select> --}}
                                     </div>
-                                    <div class="col-md-8 ">
-                                        <input type="hidden" name="customer_code" id="customer_code">
-                                        {{-- <label for="phone" class="form-label">Nguồn khách</label> --}}
-                                        {{-- <input type="text" id="phone" name="phone" class="form-control"
-                                            placeholder="Số điện thoại"> --}}
-                                        <select id="select-customer-source" name="customer_source" class="form-control "
-                                            style="width: 100%; height: 35px;">
-                                        </select>
-                                    </div>
+
                                     <div class="col-md-8  d-flex align-items-center result-add-customer"
                                         style="gap:10px">
                                         <input type="checkbox" name="insert_customer" style="width: 15px !important;">
@@ -192,6 +184,15 @@
                                         </div>
                                     </div>
                                     <div class="col-md-8 mt-1">
+                                        <input type="hidden" name="customer_code" id="customer_code">
+                                        {{-- <label for="phone" class="form-label">Nguồn khách</label> --}}
+                                        {{-- <input type="text" id="phone" name="phone" class="form-control"
+                                            placeholder="Số điện thoại"> --}}
+                                        <select id="select-customer-source" name="customer_source"
+                                            class="form-control " style="width: 100%; height: 35px;">
+                                        </select>
+                                    </div>
+                                    <div class="col-md-8 mt-1">
                                         {{-- <label for="phone" class="form-label ">Nhân viên </label> --}}
                                         <div class="d-flex align-items-center justify-content-start"
                                             style="gap: 10px">
@@ -229,41 +230,41 @@
                             </p>
                         </div>
                         <!-- Row: Labels -->
-                        <div class="table-responsive mt-1">
-                            <table class="table mobi-table" id="data-table">
-                                <thead>
-                                    <tr class="text-center fw-bold main-booking-modal">
-                                        {{-- <th>Hạng phòng</th> --}}
-                                        <th></th>
-                                        <th>Phòng</th>
-                                        <th>SL</th>
-                                        <th>Hình thức</th>
-                                        <th class="d-flex gap-10">Ngày nhận phòng
-                                            {{-- <span class="main-hour-out"
-                                                id="hour_current">Hiện tại</span> --}}
-                                        </th>
-                                        <th>Ngày trả phòng</th>
-                                        <th>Tiền phòng</th>
-                                        <th>Tiền cọc</th>
-                                        <th>Giảm giá</th>
-                                        <th>Ghi chú</th>
-                                        {{-- <th class="d-flex justify-content-between align-items-center">Dự kiến
-                                        <span>Thành tiền</span>
-                                    </th> --}}
-                                    </tr>
-                                </thead>
-                                {{-- <input type="text" class="room_type_id" name="room_type_id"hidden> --}}
-                                {{-- <input type="text" class="room_type" name="room_type"hidden>
-                                <input type="text" class="username-user1" name="guest_name" hidden>
-                                <input type="text" class="email-user1" name="email" hidden>
-                                <input type="text" class="mobile-user" name="mobile" hidden>
-                                <input type="text" class="address-user" name="address" hidden>
-                                <input type="text" class="guest_type" name="guest_type" hidden> --}}
-                                <tbody id="list-booking">
+                        <div class="table-scroll-wrapper">
+                            <div class="table-responsive mt-1">
+                                <table class="table table-bordered text-center" id="data-table">
+                                    <thead class="table-light position-sticky top-0">
+                                        <tr class="fw-bold main-booking-modal">
+                                            <th class="w-10"></th>
+                                            <th>Phòng</th>
+                                            <th>SL</th>
+                                            <th>Hình thức</th>
+                                            <th>Ngày nhận phòng</th>
+                                            <th>Ngày trả phòng</th>
+                                            <th>Tiền phòng</th>
+                                            <th>Tiền cọc</th>
+                                            <th>Giảm giá</th>
+                                            <th>Ghi chú</th>
+                                        </tr>
+                                    </thead>
 
-                                </tbody>
+                                    <tbody id="list-booking" class="list-booking-scroll">
+                                        <!-- Nội dung động -->
+                                    </tbody>
 
-                            </table>
+                                    <tfoot class="table-group-divider">
+                                        <tr>
+                                            <td colspan="6">Tổng tiền: </td>
+                                            <td class="text-primary fw-bold"><span class="total_amount">0</span></td>
+                                            <td class="text-success fw-bold"><span class="total_deposit">0</span></td>
+                                            <td class="text-info fw-bold"><span class="total_discount">0</span></td>
+                                            <td></td>
+                                        </tr>
+                                    </tfoot>
+                                </table>
+                            </div>
+
+
                         </div>
                         <div class="alert-danger message-error" role="alert">
 
@@ -293,19 +294,19 @@
 
                             </div>
                             <ul class="financial-list">
-                                <li class="financial-item">
+                                {{-- <li class="financial-item">
                                     <span>Tiền phòng</span>
                                     <span class="total_amount">0</span>
                                 </li>
                                 <li class="financial-item highlighted">
                                     <span>Giảm giá</span>
                                     <span class="total_discount">0</span>
-                                    {{-- <input type="text" id="discountInput" class="custom-input-giam-gia"> --}}
+                                    <input type="text" id="discountInput" class="custom-input-giam-gia">
                                 </li>
                                 <li class="financial-item">
                                     <span>Tiền cọc</span>
                                     <span class="total_deposit">0</span>
-                                </li>
+                                </li> --}}
                                 <li class="financial-item">
                                     <span>Còn lại</span>
                                     <span class="total_balance">0</span>

@@ -21,7 +21,7 @@
     #grid-main {
         width: 100%;
         height: 110vh;
-        overflow: auto;
+        /* overflow: auto; */
         white-space: nowrap;
         scrollbar-width: thin;
     }

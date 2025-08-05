@@ -236,7 +236,18 @@
 @push('style')
     <style scoped>
         .modal-content {
-            height: 84vh !important;
+            height: 100vh !important;
+        }
+
+        .table-scroll-wrapper {
+            width: 100%;
+            overflow-x: auto;
+            height: clamp(100px, 30vh, 330px);
+            /* chiều cao cố định, responsive */
+            overflow-y: scroll;
+            scrollbar-width: none;
+            /* Firefox */
+            -ms-overflow-style: none;
         }
 
         /* Khi màn hình lớn hơn 1200px (hoặc tùy bạn chọn kích thước) */
@@ -287,14 +298,7 @@
             width: 100%;
         }
 
-        .table-scroll-wrapper {
-            overflow-x: auto;
-            overflow-y: hidden;
-            /* Ẩn scroll dọc nếu có */
-            white-space: nowrap;
-            /* Ngăn các phần tử con xuống dòng */
-            max-width: 100%;
-        }
+      
 
 
         /* Đảm bảo input và select không bị quá to */
