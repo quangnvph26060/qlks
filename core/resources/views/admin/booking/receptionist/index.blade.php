@@ -393,9 +393,12 @@
                                             <tfoot class="table-group-divider">
                                                 <tr>
                                                     <td colspan="6">Tổng tiền: </td>
-                                                    <td class="text-primary fw-bold text-end"><span class="total_amount">0</span></td>
-                                                    <td class="text-success fw-bold text-end"><span class="total_deposit">0</span></td>
-                                                    <td class="text-info fw-bold text-end"><span class="total_discount">0</span></td>
+                                                    <td class="text-primary fw-bold text-end"><span
+                                                            class="total_amount">0</span></td>
+                                                    <td class="text-success fw-bold text-end"><span
+                                                            class="total_deposit">0</span></td>
+                                                    <td class="text-info fw-bold text-end"><span
+                                                            class="total_discount">0</span></td>
                                                     <td></td>
                                                 </tr>
                                             </tfoot>
@@ -1056,7 +1059,73 @@
             return isValid;
         }
 
+        $('.delete-room-booking-edit-letan').on('click', function() {
 
+            let selectedBookingIds = [];
+            Swal.fire({
+                title: 'Bạn có chắc chắn xoá phòng này không',
+                text: 'Bạn có chắc chắn xoá phòng này không',
+                icon: 'warning',
+                showCancelButton: true,
+                confirmButtonText: 'Đồng ý',
+                cancelButtonText: 'Hủy bỏ',
+                reverseButtons: true
+            }).then((result) => {
+                if (result.isConfirmed) {
+                    let selectedRows = [];
+                    $('#list-booking-edit-letan tr').each(function() {
+                        var checkbox = $(this).find('input[type="checkbox"]');
+                        if (checkbox.prop('checked')) {
+                            var bookingId = $(this).data('room-booking-id');
+                            selectedBookingIds.push(bookingId);
+                            $(this).remove();
+                            selectedRows.push($(this));
+                        }
+                    });
+                    $.ajax({
+                        url: deleteCheckin,
+                        type: 'POST',
+                        data: {
+                            data: JSON.stringify(selectedBookingIds),
+                            method: "LETAN",
+                        },
+                        success: function(response) {
+                            if (response.status === 'success') {
+                                // loadRoomBookings();
+                                $('#myModal-check-in-edit').modal('hide');
+                                window.location.reload();
+                                let totalPrice = 0;
+                                totalPrice = calculateTotalPrice();
+                                $('.total_amount').text(formatCurrency(totalPrice));
+                                // $('#total_balance').text(formatCurrency(totalPrice));
+                                notify('success', response.message);
+                                selectedRows.forEach(row => row.remove());
+                                let remainingRows = $('#list-booking-edit tr')
+                                    .length;
+                                if (remainingRows === 0) {
+                                    $('#myModal-check-in-edit').modal('hide');
+                                }
+                            } else {
+                                Swal.fire({
+                                    title: response.message,
+                                    text: response.message,
+                                    icon: 'warning',
+                                    showCancelButton: true,
+                                    confirmButtonText: 'Đồng ý',
+                                    cancelButtonText: 'Hủy bỏ',
+                                    reverseButtons: true
+                                })
+                            }
+                        },
+                        error: function(error) {
+                            $('#loading').hide();
+                            console.log('Error:', error);
+                        }
+                    });
+                }
+            });
+
+        });
 
         $('.booking-form').on('submit', function(e) {
             e.preventDefault();
@@ -1703,6 +1772,7 @@
         script.id = scriptId;
         // script.type = 'module';
         script.src = `{{ asset('assets/admin/js/${view}-main.js') }}?t=${new Date().getTime()}`;
+
         script.onload = function() {
             if (typeof initViewScript === "function") {
                 initViewScript(); // Gọi lại hàm này sau khi script được tải
@@ -1737,8 +1807,8 @@
             let selectedDate = $('#startDate').val();
             initGridMain('', selectedDate);
         });
-                //trả phòng
-        $(document).off("click", ".btn-checkout-room").on("click", ".btn-checkout-room", function (e) {
+        //trả phòng
+        $(document).off("click", ".btn-checkout-room").on("click", ".btn-checkout-room", function(e) {
             e.preventDefault();
 
             let mainRoomBookingId = $('#id_room_booking').val();
@@ -1746,7 +1816,7 @@
             let selectedBookingIds = [];
             let roomData = [];
 
-            $('#list-booking-edit-letan tr').each(function () {
+            $('#list-booking-edit-letan tr').each(function() {
                 let checkbox = $(this).find('input[type="checkbox"]');
                 let isChecked = checkbox.prop('checked');
 
@@ -1773,7 +1843,7 @@
                     selectedBookingIds: selectedBookingIds,
                     roomData: roomData
                 },
-                success: function (data) {
+                success: function(data) {
                     if (data.status == 'success') {
                         notify('success', data.success);
                         $('#myModal-check-in-edit').modal('hide');
@@ -1783,14 +1853,14 @@
                         notify('error', data.error);
                     }
                 },
-                error: function (error) {
+                error: function(error) {
                     $('#loading').hide();
                     console.log('Error:', error);
                 }
             });
         });
         // in hoá đơn bán hàng
-        $(document).off("click", ".btn-sales-invoice").on("click", ".btn-sales-invoice", function (e) {
+        $(document).off("click", ".btn-sales-invoice").on("click", ".btn-sales-invoice", function(e) {
             e.preventDefault();
 
             let mainRoomBookingId = $('#id_room_booking').val();
@@ -1799,7 +1869,7 @@
             $.ajax({
                 url: printUrl,
                 type: 'GET',
-                success: function (html) {
+                success: function(html) {
                     // Tạo iframe ẩn để in
                     let printWindow = window.open('', '', 'width=800,height=600');
                     printWindow.document.write(`
@@ -1818,7 +1888,7 @@
             `);
                     printWindow.document.close();
                 },
-                error: function () {
+                error: function() {
                     alert("Lỗi khi lấy hóa đơn.");
                 }
             });
@@ -1866,8 +1936,14 @@
         document.querySelectorAll('.view').forEach(el => el.style.display = 'none');
         document.getElementById(view + 'View').style.display = 'block';
         loadScript(view);
-        localStorage.setItem('selectedView', view);
 
+        let currentView = localStorage.getItem('selectedView') || 'list';
+        if (currentView !== view) {
+            console.log('load trang');
+            
+            localStorage.setItem('selectedView', view);
+            location.reload();
+        }
 
     }
 </script>

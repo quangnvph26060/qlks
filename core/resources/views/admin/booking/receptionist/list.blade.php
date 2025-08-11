@@ -62,7 +62,7 @@
     .menu-main-list {
         display: none;
         position: absolute;
-        right: -122px;
+        right: -64px;
         top: 40px;
         background: white;
         box-shadow: 0 2px 6px rgba(0, 0, 0, 0.2);

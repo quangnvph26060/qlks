@@ -992,7 +992,92 @@ function initViewScriptGird() {
                 $('#changeRoomModal').addClass('z__index-mod');
             });
         });
+        //trả phòng
+        $(document).off("click", ".btn-checkout-room").on("click", ".btn-checkout-room", function (e) {
+            e.preventDefault();
 
+            let mainRoomBookingId = $('#id_room_booking').val();
+
+            let selectedBookingIds = [];
+            let roomData = [];
+
+            $('#list-booking-edit-letan tr').each(function () {
+                let checkbox = $(this).find('input[type="checkbox"]');
+                let isChecked = checkbox.prop('checked');
+
+                let bookingId = $(this).data('room-booking-id');
+                let roomId = $(this).data('room-id');
+
+                if (isChecked) {
+                    selectedBookingIds.push(bookingId);
+                }
+
+                roomData.push({
+                    roomId: roomId,
+                    roomBookingId: bookingId
+                });
+            });
+
+
+
+            $.ajax({
+                url: checkOutRoomUrl,
+                type: 'POST',
+                data: {
+                    mainRoomBookingId: mainRoomBookingId,
+                    selectedBookingIds: selectedBookingIds,
+                    roomData: roomData
+                },
+                success: function (data) {
+                    if (data.status == 'success') {
+                        notify('success', data.success);
+                        $('#myModal-check-in-edit').modal('hide');
+                        let selectedDate = $('#startDate').val();
+                        initGridMain('', selectedDate);
+                    } else {
+                        notify('error', data.error);
+                    }
+                },
+                error: function (error) {
+                    $('#loading').hide();
+                    console.log('Error:', error);
+                }
+            });
+        });
+        // in hoá đơn bán hàng
+        $(document).off("click", ".btn-sales-invoice").on("click", ".btn-sales-invoice", function (e) {
+            e.preventDefault();
+
+            let mainRoomBookingId = $('#id_room_booking').val();
+            let printUrl = printSalesInvoice.replace('__ID__', mainRoomBookingId);
+
+            $.ajax({
+                url: printUrl,
+                type: 'GET',
+                success: function (html) {
+                    // Tạo iframe ẩn để in
+                    let printWindow = window.open('', '', 'width=800,height=600');
+                    printWindow.document.write(`
+                <html>
+                    <head>
+                        <title>In hóa đơn</title>
+                        <style>
+                            body { font-family: DejaVu Sans, sans-serif; padding: 20px; }
+                            h3 { text-align: center; }
+                        </style>
+                    </head>
+                    <body onload="window.print(); window.close();">
+                        ${html}
+                    </body>
+                </html>
+            `);
+                    printWindow.document.close();
+                },
+                error: function () {
+                    alert("Lỗi khi lấy hóa đơn.");
+                }
+            });
+        });
 
 
         let paymentTransaction = [];

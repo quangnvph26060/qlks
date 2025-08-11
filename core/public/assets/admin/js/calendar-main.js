@@ -103,8 +103,8 @@ function initGridMain(data) {
 
                 groupedRooms[roomType].forEach(room => {
 
-                  
-                    
+
+
 
                     let row = `<tr><td class=" text-left truncate-text d-flex flex-column"  style="line-height:6px"
                     data-room-type-id="${room['room_type_id']}" 
@@ -284,7 +284,7 @@ function initGridMain(data) {
                             let finalRoomType = styles.length > 0 ? styles[0].roomType : "";
                             let finalRoomId = styles.length > 0 ? styles[0].roomId : "";
                             let finalbookDate = styles.length > 0 ? styles[0].bookDate : "";
-                            row += `<td style="cursor: pointer;" class="${finalClass}" data-date="${finalbookDate}"  data-room-id="${finalRoomId}" data-room-type-id="${finalRoomType}"  data-id="${finalId}" data-booking="${finalBookingId}" style="background: ${finalStyle};"></td>`;
+                            row += `<td  class="${finalClass}" data-date="${finalbookDate}"  data-room-id="${finalRoomId}" data-room-type-id="${finalRoomType}"  data-id="${finalId}" data-booking="${finalBookingId}" style="cursor: pointer;background: ${finalStyle};"></td>`;
 
                         });
                     }
@@ -564,21 +564,16 @@ function initGridMain(data) {
                             room: roomId,
                             room_type: roomType,
                             date: date,
-                        }
+                        };
                         roomBooking(data, "");
-
                     }
                 } else {
                     if (td.className === "room_book") {
                         // đặt phòng
                         roomBooked(Id, bookingId);
-                        console.log('456');
-
                     } else {
                         // thanh toán
                         checkIn(Id, bookingId);
-                        console.log('123');
-
                     }
                 }
 
@@ -587,19 +582,34 @@ function initGridMain(data) {
 
             } else {
                 if (roomName && date && roomPrice) {
-                    const startDate = new Date(document.getElementById("startDate").value);
-                    let currentDate = new Date(startDate).toISOString().split('T')[0];
-                    function formatTime(time) {
-                        let [hour, minute] = time.split(":").map(num => num.padStart(2, '0'));
-                        return `${hour}:${minute}:00`;
+                    const parts = date.split("/");
+                    let formattedDate;
+                    let time = "";
+                    if (parts.length === 3) {
+                        let [day, month, year] = parts.map(p => p.trim());
+                        month = month.padStart(2, "0");
+                        day = day.padStart(2, "0");
+                        formattedDate = `${year}-${month}-${day}`;
+                    } else {
+                        // Lấy ngày hiện tại
+                        const now = new Date();
+                        const yyyy = now.getFullYear();
+                        const mm = String(now.getMonth() + 1).padStart(2, "0");
+                        const dd = String(now.getDate()).padStart(2, "0");
+                        formattedDate = `${yyyy}-${mm}-${dd}`;
+                        time = date;
                     }
+
                     let data = {
                         room: roomId,
                         room_type: roomType,
-                        date: currentDate,
-                    }
-                    roomBooking(data, formatTime(date));
+                        date: formattedDate,
+                    };
+
+                    roomBooking(data, formattedDate, time);
                 }
+
+
             }
 
             // Hiển thị thông tin
@@ -680,7 +690,7 @@ function initGridMain(data) {
         // $('#total_deposit').text(formatCurrency(totalPrice));
         return totalPrice;
     }
-    function roomBooking(data, currentdate) {
+    function roomBooking(data, currentdate, time) {
         $.ajax({
             url: checkRoomBookingUrl,
             type: 'POST',
@@ -689,6 +699,34 @@ function initGridMain(data) {
                 method: 'LETAN',
             },
             success: function (response) {
+               if (time) {
+                // Nếu time có giá trị thật → dùng luôn
+                result = time;
+            } else if (typeof date_booking !== 'undefined' && date_booking) {
+                // Nếu có date_booking → lấy ngày giờ từ đó
+                const date_yyyy = date_booking.getFullYear();
+                const date_mm = String(date_booking.getMonth() + 1).padStart(2, '0');
+                const date_dd = String(date_booking.getDate()).padStart(2, '0');
+                const date_hour = String(date_booking.getHours()).padStart(2, '0');
+                const date_minutes = String(date_booking.getMinutes()).padStart(2, '0');
+
+                const formattedDates = `${date_yyyy}-${date_mm}-${date_dd}`;
+                const formattedTimes = `${date_hour}:${date_minutes}`;
+
+                result = (formattedDates === currentdate) ? formattedTimes : "12:00";
+            } else {
+                // Nếu không có date_booking → dùng ngày giờ hiện tại
+                const now = new Date();
+                const date_hour = String(now.getHours()).padStart(2, '0');
+                const date_minutes = String(now.getMinutes()).padStart(2, '0');
+                result = (currentdate === now.toISOString().slice(0, 10))
+                    ? `${date_hour}:${date_minutes}`
+                    : "12:00";
+            }
+            
+                
+
+
                 $('#list-booking-edit').empty();
                 $('#list-booking').empty();
                 $('#list-booking-edit-letan').empty();
@@ -763,22 +801,15 @@ function initGridMain(data) {
                                     <input type="date" name="checkInDate" id="date-book-room" class="form-control date-book-room"  value="${item.date}" readonly>
 
                                     <input type="time" name="checkInTime" id="time-book-room" class="form-control time-book-room"   
-                                    value="${currentdate && currentdate.trim() !== "" ? currentdate : item.room['room_type']['room_type_price']['setup_pricing']['check_in_time']}" style="    display: flex
-;
-    justify-content: flex-start;
-    width: 110px;
-    padding: 1px 9px !important;">
+                                    value="${result ?? item.room['room_type']['room_type_price']['setup_pricing']['check_in_time']}" 
+                                    style="display: flex; justify-content: flex-start;  width: 110px; padding: 1px 9px !important;">
                                 </div>
                             </td>
                             <td>
                                 <div class="d-flex align-items-center justify-content-start" style="gap: 3px">
                                    <input type="date" name="checkOutDate"  class="form-control date-book-room" readonly  value="${date.toISOString().split('T')[0]}">
-
-                                    <input type="time" name="checkOutTime" id="time-book-room" class="form-control time-book-room"  value="${item.room['room_type']['room_type_price']['setup_pricing']['check_out_time']}"style="    display: flex
-;
-    justify-content: flex-start;
-    width: 110px;
-    padding: 1px 9px !important;">
+                                    <input type="time" name="checkOutTime" id="time-book-room" class="form-control time-book-room"  value="${item.room['room_type']['room_type_price']['setup_pricing']['check_out_time']}"style="    display: flex;
+                                    justify-content: flex-start;  width: 110px;padding: 1px 9px !important;">
 
                                 </div>
                             </td>
@@ -1407,7 +1438,7 @@ function initGridMain(data) {
         const date_hour = String(date_booking.getHours()).padStart(2, '0'); // Giờ
         const date_minutes = String(date_booking.getMinutes()).padStart(2, '0'); // Phút
         $('.booking-form-pttt').attr('action', paymentRoomUrl); // thanh toán
-         $('#select-option-pttt_error1').text('');
+        $('#select-option-pttt_error1').text('');
         const formattedDates = `${date_yyyy}-${date_mm}-${date_dd}`;
         const formattedTimes = `${date_hour}:${date_minutes}`;
         var url = checkInEditUrl.replace(':id', dataId);
@@ -1774,31 +1805,31 @@ function initGridMain(data) {
         });
     }
     function validatePhone(value) {
-    const allErrors = document.querySelectorAll("[id='phone_error']");
-    const phoneInputs = document.querySelectorAll("input[name='phone']");
-    const trimmed = value.trim();
+        const allErrors = document.querySelectorAll("[id='phone_error']");
+        const phoneInputs = document.querySelectorAll("input[name='phone']");
+        const trimmed = value.trim();
 
-    let isValid = true;
+        let isValid = true;
 
-    allErrors.forEach((errorSpan, index) => {
-        const input = phoneInputs[index];
+        allErrors.forEach((errorSpan, index) => {
+            const input = phoneInputs[index];
 
-        if (trimmed === "") {
-            errorSpan.textContent = "Số điện thoại không để trống.";
-            input.classList.add("is-invalid");
-            isValid = false;
-        } else if (!/^\d+$/.test(trimmed)) {
-            errorSpan.textContent = "Số điện thoại chỉ được chứa chữ số.";
-            input.classList.add("is-invalid");
-            isValid = false;
-        } else {
-            errorSpan.textContent = "";
-            input.classList.remove("is-invalid");
-        }
-    });
+            if (trimmed === "") {
+                errorSpan.textContent = "Số điện thoại không để trống.";
+                input.classList.add("is-invalid");
+                isValid = false;
+            } else if (!/^\d+$/.test(trimmed)) {
+                errorSpan.textContent = "Số điện thoại chỉ được chứa chữ số.";
+                input.classList.add("is-invalid");
+                isValid = false;
+            } else {
+                errorSpan.textContent = "";
+                input.classList.remove("is-invalid");
+            }
+        });
 
-    return isValid;
-}
+        return isValid;
+    }
     $('.btn-book-pttt').off('click').on('click', function (e) {
 
 
