@@ -103,7 +103,7 @@ function initGridMain(data) {
 
                 groupedRooms[roomType].forEach(room => {
 
-                    console.log(room);
+                  
                     
 
                     let row = `<tr><td class=" text-left truncate-text d-flex flex-column"  style="line-height:6px"
@@ -284,7 +284,7 @@ function initGridMain(data) {
                             let finalRoomType = styles.length > 0 ? styles[0].roomType : "";
                             let finalRoomId = styles.length > 0 ? styles[0].roomId : "";
                             let finalbookDate = styles.length > 0 ? styles[0].bookDate : "";
-                            row += `<td class="${finalClass}" data-date="${finalbookDate}"  data-room-id="${finalRoomId}" data-room-type-id="${finalRoomType}"  data-id="${finalId}" data-booking="${finalBookingId}" style="background: ${finalStyle};"></td>`;
+                            row += `<td style="cursor: pointer;" class="${finalClass}" data-date="${finalbookDate}"  data-room-id="${finalRoomId}" data-room-type-id="${finalRoomType}"  data-id="${finalId}" data-booking="${finalBookingId}" style="background: ${finalStyle};"></td>`;
 
                         });
                     }
