@@ -4,7 +4,14 @@
         <div class="col-lg-12">
             <div class="card b-radius--10">
                 <div class="card-body p-0">
-                    <div class="table-responsive--md table-responsive">
+                    <div class="table-responsive--md table-responsive p-2">
+                        <div class="pager-wrap  d-flex justify-content-center mb-1">
+                            <div class="k-widget d-flex">
+                                <div class="pagination-tb" style="font-size: 13px;margin: 0 auto">
+                                    {{ $rooms->links('pagination::bootstrap-4') }}
+                                </div>
+                            </div>
+                        </div>
                         <table class="table--light style--two table " id="data-table">
                             <thead>
                                 <tr>
@@ -346,13 +353,7 @@
                     </div>
                 </form>
             </div>
-            <div class="pager-wrap">
-                <div class="k-widget d-flex">
-                    <div class="pagination-tb" style="font-size: 13px;margin: 0 auto">
-                        {{ $rooms->links('pagination::bootstrap-4') }}
-                    </div>
-                </div>
-            </div>
+
             <!-- Modal import-->
             <div class="modal fade" id="importRoomModal" tabindex="-1" aria-labelledby="importRoomModalLabel"
                 aria-hidden="true">
@@ -381,7 +382,8 @@
                                     <label for="import_file" class="form-label">Chọn file Excel:</label>
                                     <input class="form-control" type="file" id="import_file" name="file" required>
                                 </div>
-                                <button type="submit" class="btn btn-primary btn-import-room" style="float: right">Nhận</button>
+                                <button type="submit" class="btn btn-primary btn-import-room"
+                                    style="float: right">Nhận</button>
                             </form>
                         </div>
 
@@ -442,7 +444,7 @@
 @push('style-lib')
     <link rel="stylesheet" type="text/css" href="{{ asset('assets/admin/css/daterangepicker.css') }}">
     <link rel="stylesheet" href="{{ asset('assets/global/css/modal.css') }}">
-    <style>
+    {{-- <style>
         .pagination .page-item .page-link,
         .pagination .page-item span {
             width: 22px !important;
@@ -454,7 +456,7 @@
         .pagination .page-item.active .page-link {
             background-color: #071251 !important;
         }
-    </style>
+    </style> --}}
 @endpush
 @push('script')
     <script src="{{ asset('assets/admin/js/highlighter22.js') }}"></script>
@@ -533,8 +535,8 @@
                     return;
                 }
                 var room_direction = $('#room_direction').val();
-                if(room_direction === ""){
-                    notify('error','Chọn hướng phòng');
+                if (room_direction === "") {
+                    notify('error', 'Chọn hướng phòng');
                     return;
                 }
                 $.ajax({
@@ -542,7 +544,7 @@
                     method: 'POST',
                     data: {
                         ids: selectedIds,
-                        direction_id:room_direction ,
+                        direction_id: room_direction,
                     },
                     success: function(response) {
                         console.log("Thành công:", response);
@@ -738,6 +740,20 @@
         .btn-toggle:hover {
             background-color: #0056b3;
             border-color: #0056b3;
+        }
+
+        .pagination .page-item .page-link,
+        .pagination .page-item span {
+            font-size: 0.875rem;
+            display: flex;
+            width: 36px;
+            height: 36px;
+            margin: 0 3px;
+            padding: 0;
+            border-radius: 3px !important;
+            align-items: center;
+            justify-content: center;
+            color: #5b6e88;
         }
 
         #data-table td {
