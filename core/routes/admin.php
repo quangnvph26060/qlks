@@ -450,7 +450,7 @@ Route::middleware('admin', 'adminPermission')->prefix('admin')->group(function (
 
     Route::controller('BookRoomController')->group(function () {
         Route::get('book-room', 'room')->name('book.room');
-        Route::post('room-book', 'book')->name('room.book');
+        Route::post('room-book', 'book')->name( 'room.book');
         Route::post('room-book-check-in', 'roomBookToCheckIn')->name('room.booked.check.in');
         Route::post('check-in-update', 'checkInUpdate')->name('check.in.update');
         Route::post('room-book-edit', 'bookEdit')->name('room.book.edit');
@@ -597,7 +597,7 @@ Route::middleware('admin', 'adminPermission')->prefix('admin')->group(function (
         Route::get('delayed/checkout', 'delayedCheckouts')->name('delayed.booking.checkout');
         Route::get('receptionist', 'Receptionist')->name('receptionist.booking.receptionist');
         Route::get('user-clean-room', 'listUserCleanRoom')->name('listUserCleanRoom.booking.listUserCleanRoom');
-        Route::get('user-room-fix', 'listUserFixRoom')->name('listUserFixRoom.booking.listUserFixRoom');
+        Route::get('user-room-fix', action: 'listUserFixRoom')->name('listUserFixRoom.booking.listUserFixRoom');
         Route::get('housekeeping-maintenance-room', 'viewHousekeepingMaintenance')->name('viewHousekeepingMaintenance.booking.viewHousekeepingMaintenance');
         Route::get('booking-action-history', 'bookingActionHistory')->name('bookingActionHistory.booking.bookingActionHistory');
         Route::get('get-booking-action-history', 'getbookingActionHistory')->name('getbookingActionHistory.booking.getbookingActionHistory');

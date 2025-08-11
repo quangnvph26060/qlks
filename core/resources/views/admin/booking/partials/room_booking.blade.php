@@ -233,9 +233,9 @@
                                     <tfoot class="table-group-divider">
                                         <tr>
                                             <td colspan="6">Tổng tiền: </td>
-                                            <td class="text-primary fw-bold"><span class="total_amount">0</span></td>
-                                            <td class="text-success fw-bold"><span class="total_deposit">0</span></td>
-                                            <td class="text-info fw-bold"><span class="total_discount">0</span></td>
+                                            <td class="text-primary fw-bold text-end"><span class="total_amount">0</span></td>
+                                            <td class="text-success fw-bold text-end"><span class="total_deposit">0</span></td>
+                                            <td class="text-info fw-bold text-end"><span class="total_discount">0</span></td>
                                             <td></td>
                                         </tr>
                                     </tfoot>

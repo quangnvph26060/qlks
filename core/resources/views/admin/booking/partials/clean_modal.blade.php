@@ -9,7 +9,7 @@
                     <div class="modal-body">
                         <p class="mb-0 fs-5">
                             Chuyển trạng thái buồng phòng <strong></strong> thành
-                            <span class="text-danger fw-bold status-text"></span>?
+                            <span class=" fw-bold status-text"></span>?
                         </p>
                     </div>
 
@@ -22,6 +22,7 @@
         </div>
         <style>
             .modal-content-room-clean{
-                height: 25vh !important;
+             height: clamp(25vh, 36vh, 36vh) !important;
+            overflow-y: auto;
             }
         </style>

@@ -21,6 +21,7 @@
 </div>
 <style>
     .modal-content-room-fix {
-        height: 25vh !important;
+       height: clamp(25vh, 36vh, 36vh) !important;
+    overflow-y: auto;
     }
 </style>

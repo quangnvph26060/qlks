@@ -119,14 +119,7 @@
                                             placeholder="Nhập ghi chú...">
                                     </div> --}}
 
-                                    <div class="col-md-8  ">
-                                        <input type="hidden" name="customer_code" id="customer_code">
-                                        {{-- <label for="phone" class="form-label">Nguồn khách</label> --}}
-                                        {{-- <input type="text" id="phone" name="phone" class="form-control"
-                                            placeholder="Số điện thoại"> --}}
-                                            <select id="select-customer-source-edit" name="customer_source" class="form-control " style="width: 100%;height: 35px;">
-                                            </select>
-                                    </div>
+                                  
                                     <div class="col-md-8 mb-3 mt-3 d-flex align-items-center result-add-customer" style="gap:10px">
                                         <input type="checkbox" style="width: 15px !important;" name="insert_customer"> <p style="font-size: 13px">Lưu thông tin khách</p>
                                     </div>
@@ -177,6 +170,14 @@
                                             </select>
                                         </div>
                                     </div>
+                                      <div class="col-md-8 mt-1 ">
+                                        <input type="hidden" name="customer_code" id="customer_code">
+                                        {{-- <label for="phone" class="form-label">Nguồn khách</label> --}}
+                                        {{-- <input type="text" id="phone" name="phone" class="form-control"
+                                            placeholder="Số điện thoại"> --}}
+                                            <select id="select-customer-source-edit" name="customer_source" class="form-control " style="width: 100%;height: 35px;">
+                                            </select>
+                                    </div>
                                 </div>
                             </div>
                         </div>
@@ -225,9 +226,9 @@
                                     <tfoot class="table-group-divider">
                                         <tr>
                                             <td colspan="6">Tổng tiền: </td>
-                                            <td class="text-primary fw-bold"><span class="total_amount">0</span></td>
-                                            <td class="text-success fw-bold"><span class="total_deposit">0</span></td>
-                                            <td class="text-info fw-bold"><span class="total_discount">0</span></td>
+                                            <td class="text-primary fw-bold text-end"><span class="total_amount">0</span></td>
+                                            <td class="text-success fw-bold text-end"><span class="total_deposit">0</span></td>
+                                            <td class="text-info fw-bold text-end"><span class="total_discount">0</span></td>
                                             <td></td>
                                         </tr>
                                     </tfoot>
@@ -264,7 +265,8 @@
                         </div>
                     </div>
                     <div class="d-flex justify-content-end" style="gap: 10px;">
-                        <button type="button" data-row="booked" class="btn-dat-truoc btn-book-edit">Lưu</button>
+                        <p type="button" data-method="check_in" data-url="{{ route('admin.room.booked.check.in') }}" class="btn btn-success btn-check-in-room">Nhận phòng</p>
+                        <button type="button" data-row="booked" class="btn-dat-truoc btn-book-edit ">Lưu</button>
                         <p type="button" data-row="booked" class="alert-paragraph close_modal">Hủy</p>
                     </div>
                 </form>

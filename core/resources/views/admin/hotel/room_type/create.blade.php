@@ -457,6 +457,10 @@
     @can('admin.hotel.room.type.all')
         <x-back route="{{ route('admin.hotel.room.type.all') }}" />
     @endcan
+    <div id="loading-overlay">
+    <div class="loading-spinner"></div>
+</div>
+
 @endpush
 
 @push('script-lib')
@@ -469,6 +473,32 @@
 
 @push('style')
     <style>
+        #loading-overlay {
+    position: fixed;
+    top: 0;
+    left: 0;
+    width: 100%;
+    height: 100%;
+    background: rgba(255,255,255,0.7);
+    display: none; /* Ẩn mặc định */
+    align-items: center;
+    justify-content: center;
+    z-index: 9999;
+}
+
+.loading-spinner {
+    width: 50px;
+    height: 50px;
+    border: 5px solid #ccc;
+    border-top-color: #007bff;
+    border-radius: 50%;
+    animation: spin 1s linear infinite;
+}
+
+@keyframes spin {
+    to { transform: rotate(360deg); }
+}
+
         .info {
             margin-left: 5px;
         }
@@ -597,8 +627,7 @@
             /* font-size: 18px; */
             line-height: 25px;
         }
-    </style>
-    <style>
+   
         .qty-input {
             border: 1px solid #ccc;
             width: 140px;
@@ -631,13 +660,16 @@
 
 @push('script')
     <script>
+        document.querySelector('form').addEventListener('submit', function() {
+    document.getElementById('loading-overlay').style.display = 'flex';
+});
+
         //Chuyển mọi ký tự trong input room_type_id thành uppercased
         $(document).ready(function() {
             $('input[name="room_type_id"]').on('input', function() {
                 this.value = this.value.toUpperCase();
             });
         });
-
         (function($) {
             "use strict";
             let bedTypes = @json($bedTypes);
@@ -741,7 +773,7 @@
                 preloaded: preloaded,
                 imagesInputName: 'images',
                 preloadedInputName: 'old',
-                maxSize: 2 * 1024 * 1024,
+                maxSize: 10 * 1024 * 1024,
                 maxFiles: 6
             });
 
