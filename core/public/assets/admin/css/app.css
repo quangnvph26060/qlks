@@ -5916,7 +5916,18 @@ th.w-85 {
 .navbar-user .icon i {
     font-size: 0.875rem;
 }
+@media (max-width: 768px) {
+    .navbar-user__name {
+        display: none;
+    }
+    .navbar-user .icon {
+    padding-left: 0px;
+}
+.profile-dropdown{
+    margin-top: 0px;
+}
 
+}
 .navbar__action-list {
     display: -ms-flexbox;
     display: flex;
