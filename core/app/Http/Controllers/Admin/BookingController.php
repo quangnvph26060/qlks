@@ -805,7 +805,7 @@ class BookingController extends Controller
                     saveRoomStatusHistory($roomBooking->room_code, $roomBooking->checkin_date, $roomBooking->checkout_date, 1); // phòng cũ 
                 }
             }
-            $roomBooking->total_amount = $isRoom['roomType']['roomTypePrice']['unit_price'];
+            $roomBooking->total_amount = $isRoom['applied_price']['unit_price']; // giá tiền của phòng mới
             $roomBooking->checkin_date = now();
             $roomBooking->room_change  = $isRoom->id;
             $roomBooking->save();
@@ -1074,14 +1074,24 @@ class BookingController extends Controller
             $check_ins = $check_ins->whereHas('roomBookingHistory');
 
             $check_ins->with([
+                // 'roomBookingHistory' => function ($query) use ($date) {
+                //     if (!empty($date)) {
+                //         $query->whereDate('start_date', '<=', $date)
+                //             ->whereDate('end_date', '>', Carbon::parse($date)->subDay());
+                //     }
+                // },
                 'roomBookingHistory' => function ($query) use ($date) {
                     if (!empty($date)) {
                         $query->whereDate('start_date', '<=', $date)
-                            ->whereDate('end_date', '>', Carbon::parse($date)->subDay());
+                            ->whereDate('end_date', '>', Carbon::parse($date)->subDay())
+                            ->groupBy( 'room_id', 'start_date', 'end_date');
                     }
                 },
                 'roomBookingHistory.roomStatus',
-                'roomBookingHistory.checkInData',
+                'roomBookingHistory.checkInData' => function ($query) {
+                    $query->select('check_in.*')
+                        ->groupBy('check_in_id', 'room_code'); // loại trùng
+                },
                 'roomBookingHistory.bookingData',
             ]);
             $check_ins = $check_ins->get();

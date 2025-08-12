@@ -1,6 +1,6 @@
 <div class="modal fade" id="changeRoomModal" tabindex="-1" aria-hidden="true" style="overflow: unset">
     <div class="modal-dialog modal-dialog-centered" style="top: 4px">
-        <div class="modal-content">
+        <div class="modal-content change-room-content">
             <div class="modal-header">
                 <h5 class="modal-title">Đổi phòng <span> - </span> <span class="customer-name"> </span><span> - </span> <span class="booking-id"></span> </h5>
                 <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
@@ -65,7 +65,15 @@
         box-shadow: 2px 2px 10px rgba(0, 0, 0, 0.1);
         transition: transform 0.3s ease-in-out;
     }
-   
+        .change-room-content{
+            height: 55vh !important;
+        }
+   @media screen and (min-height: 800px) {
+    .change-room-content {
+        width: 73% !important;
+        height: 37vh !important;
+    }
+}
            .room-box:hover {
                transform: scale(1.05);
            }

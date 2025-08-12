@@ -4,6 +4,7 @@ namespace App\Models;
 
 use Illuminate\Database\Eloquent\Model;
 use App\Traits\BelongsToTenant;
+use Illuminate\Support\Facades\DB;
 
 class RoomStatusHistory extends Model
 {
@@ -54,6 +55,20 @@ class RoomStatusHistory extends Model
                             ->whereColumn('room_status_history.room_id', '=', 'check_in.room_code'); // So sánh với room_code
                     });
             })
-            ->select('check_in.*');
+            ->leftJoin('receipts_and_payments', 'receipts_and_payments.checkin_id', '=', 'check_in.check_in_id')
+            // Join tiếp sang bảng payments
+            ->leftJoin('payment_transactions', 'payment_transactions.receipts_and_payments_id', '=', 'receipts_and_payments.id')
+           ->select(
+    'check_in.*',
+    DB::raw('
+        (
+            SELECT SUM(pt.amount)
+            FROM receipts_and_payments rp
+            LEFT JOIN payment_transactions pt
+                ON pt.receipts_and_payments_id = rp.id
+            WHERE rp.checkin_id = check_in.check_in_id
+        ) as total_amount_paid
+    ')
+);
     }
 }
