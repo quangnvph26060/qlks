@@ -400,8 +400,8 @@
                                     <input type="checkbox" data-width="80%" data-size="large"
                                            data-onstyle="-success" data-offstyle="-danger"
                                            data-bs-toggle="toggle" data-height="35"
-                                           data-on="@lang('Enable')" data-off="@lang('Disable')"
-                                           name="status" @checked(old('status', @$roomType->status) == 1)>
+                                           data-on="@lang('Hoạt động')" data-off="@lang('Không hoạt động')"
+                                           name="status" @checked(old('status', @$roomType->status ?? 1) == 1)>
                                 </div>
                             </div>
 

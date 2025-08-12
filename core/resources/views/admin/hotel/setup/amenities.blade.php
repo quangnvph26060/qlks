@@ -20,7 +20,7 @@
                                     <div class="mb-3">
                                         <label for="statusCode" class="form-label">Mã tiện nghi</label>
                                         <input type="text" class="form-control " name="code" id="add-code"
-                                            placeholder="Nhập mã" value="">
+                                            placeholder="Nhập mã" value="{{$code}}">
                                         <span class="invalid-feedback d-block" style="font-weight: 500"
                                             id="code_error"></span>
                                     </div>

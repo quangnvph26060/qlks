@@ -51,7 +51,7 @@ class AmenitiesController extends Controller
         // ->orderBy('title')
         // ->paginate(getPaginate());
         $count = Amenity::count();
-        $code = SetupCode::where('menu_name', 'Cài đặt tiện nghi')->value('code');
+        $code = SetupCode::where('menu_name', 'Danh mục tiện nghi')->value('code');
         $code = $code ? $code . $count + 1 : '';
         $amenities = Amenity::orderBy('id', 'desc')->paginate(10);
         $emptyMessage = 'Không tìm thấy dữ liệu';

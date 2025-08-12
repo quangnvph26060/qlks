@@ -35,8 +35,8 @@ class FacilityController extends Controller
     {
         $pageTitle = 'Danh sách cơ sở vật chất';
         $count = Facility::count();
-        $code = SetupCode::where('menu_name', 'Cài đặt tiện nghi')->value('code');
-        $code = $code ? $code . $count + 1 : '';
+        $iscode = SetupCode::where('menu_name', 'Danh mục cơ sở vật chất')->value('code');
+        $code = $iscode ? $iscode . $count + 1 : '';
         $facilities = Facility::orderBy('id', 'desc')->where('unit_code',unitCode())->paginate(10);;
         $emptyMessage = 'Không tìm thấy dữ liệu';
         return view('admin.hotel.setup.facility', compact('pageTitle', 'facilities', 'emptyMessage','code'));

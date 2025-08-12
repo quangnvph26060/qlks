@@ -57,22 +57,7 @@
                 "route_name": "admin.hotel.premium.service.all",
                 "menu_active": "admin.hotel.premium.service.all"
             },
-            {
-                "keyword": [
-                    "Danh mục tiện nghi"
-                ],
-                "title": "Danh mục tiện nghi ",
-                "route_name": "admin.hotel.room.amenities.all",
-                "menu_active": "admin.hotel.room.amenities.all"
-            },
-            {
-                "keyword": [
-                    "Danh mục cơ sở vật chất "
-                ],
-                "title": "Danh mục cơ sở vật chất ",
-                "route_name": "admin.hotel.room.facilities.all",
-                "menu_active": "admin.hotel.room.facilities.all"
-            },
+           
             {
                 "keyword": [
                     "Danh mục khách hàng"
@@ -96,6 +81,22 @@
                 "title": "Danh mục nhóm khách",
                 "route_name": "admin.hotel.customer.group.all",
                 "menu_active": "admin.hotel.customer.group.all"
+            },
+             {
+                "keyword": [
+                    "Danh mục tiện nghi"
+                ],
+                "title": "Danh mục tiện nghi",
+                "route_name": "admin.hotel.setup.amenities.all",
+                "menu_active": "admin.hotel.setup.amenities.all"
+            },
+            {
+                "keyword": [
+                    "Danh mục cơ sở vật chất"
+                ],
+                "title": "Danh mục cơ sở vật chất",
+                "route_name": "admin.hotel.setup.facilities.all",
+                "menu_active": "admin.hotel.setup.facilities.all"
             }
           
         ]
@@ -146,6 +147,22 @@
                 "title": "Chi phí",
                 "route_name": "admin.booking.checked.out.list",
                 "menu_active": "admin.booking.checked.out.list"
+            },
+             {
+                "keyword": [
+                    "Cập nhật tiện nghi phòng"
+                ],
+                "title": "Cập nhật tiện nghi phòng",
+                "route_name": "admin.hotel.room.amenities.all",
+                "menu_active": "admin.hotel.room.amenities.all"
+            },
+            {
+                "keyword": [
+                    "Cập nhật cơ sở vật chất phòng"
+                ],
+                "title": "Cập nhật cơ sở vật chất phòng",
+                "route_name": "admin.hotel.room.facilities.all",
+                "menu_active": "admin.hotel.room.facilities.all"
             }
         ]
     },
@@ -328,22 +345,7 @@
                 "route_name": "admin.ota.index",
                 "menu_active": "admin.ota.index"
             },
-            {
-                "keyword": [
-                    "Cài đặt tiện nghi"
-                ],
-                "title": "Cài đặt tiện nghi",
-                "route_name": "admin.hotel.setup.amenities.all",
-                "menu_active": "admin.hotel.setup.amenities.all"
-            },
-            {
-                "keyword": [
-                    "Cài đặt cơ sở vật chất"
-                ],
-                "title": "Cài đặt cơ sở vật chất",
-                "route_name": "admin.hotel.setup.facilities.all",
-                "menu_active": "admin.hotel.setup.facilities.all"
-            },
+           
             {
                 "keyword": [
                     "Cài đặt mã"

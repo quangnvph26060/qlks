@@ -2,10 +2,11 @@
 @section('panel')
     <div class="row d-flex align-items-center" style="padding: 10px">
         <div class="col-md-6 d-flex" style="justify-content: start;gap:10px;height: 35px;">
-            <div class="view-toggle">
-                <button id="listViewBtn" class="active" onclick="changeView('list')">
-                    <span class="icon"> <i class="fa-solid fa-bars"></i></span> <span class="text">Danh Sách</span>
+              <button id="listViewBtn" class="active" onclick="changeView('list')">
+                    <span class="icon"> <i class="fa-solid fa-bars"></i></span> <span class="text">Danh Sách phòng đặt</span>
                 </button>
+            <div class="view-toggle">
+              
                 <button id="gridViewBtn" onclick="changeView('calendar')">
                     <span class="icon"><i class="fa-solid fa-sliders"></i></span> <span class="text"
                         style="display: none;">Lưới</span>

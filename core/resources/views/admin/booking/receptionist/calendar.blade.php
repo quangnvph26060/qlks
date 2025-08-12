@@ -68,7 +68,7 @@
     }
 
     #calendarView {
-        max-height: 450px;
+        /* max-height: 450px; */
         overflow-y: auto;
         scrollbar-width: thin;
         scrollbar-color: #888 #f1f1f1;

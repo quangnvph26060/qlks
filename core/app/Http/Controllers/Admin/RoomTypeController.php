@@ -306,9 +306,9 @@ class RoomTypeController extends Controller
         }
         $room_type = RoomType::all();
         $code =  $request->input('code');
-
+        $roomDirections   = RoomDirection::pluck('name', 'id');
         $pageTitle   = 'Danh sách phòng';
-        return view('admin.hotel.room_type.list', compact('pageTitle', 'room_type', 'rooms', 'code'));
+        return view('admin.hotel.room_type.list', compact('pageTitle', 'room_type', 'rooms', 'code','roomDirections'));
         // $typeList    = Room::with('amenities', 'facilities', 'products')->latest()->paginate(getPaginate());
         // return view('admin.hotel.room_type.list', compact('pageTitle', 'typeList'));
 

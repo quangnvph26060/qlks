@@ -19,7 +19,7 @@
                                     <!-- Input 1 -->
                                     <div class="mb-3">
                                         <label for="statusCode" class="form-label">Mã cơ sở vật chất</label>
-                                        <input type="text" class="form-control " value="" name="code"
+                                        <input type="text" class="form-control " value="{{$code}}" name="code"
                                             id="add-code" placeholder="Nhập mã">
                                         <span class="invalid-feedback d-block" style="font-weight: 500"
                                             id="code_error"></span>
@@ -245,6 +245,8 @@
 
         })(jQuery);
         var code = "{{ $code }}";
+       
+        
         $(document).ready(function() {
             var formEconomyEdit = {
                 'code': {
