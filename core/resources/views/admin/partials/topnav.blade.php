@@ -140,6 +140,22 @@
         cursor: pointer;
     }
 
+    .iframe-main {
+        width: calc(100% - 265px);
+        right: 1;
+        position: fixed;
+        z-index: 999;
+        margin-top: 33px;
+        border: none;
+        display: none;
+    }
+
+    @media (max-width: 768px) {
+        .iframe-main {
+            width: 100%;
+        }
+    }
+
     .tab-container {
         display: flex;
         gap: 8px;
@@ -323,13 +339,13 @@
             if ($('#tab-dashboard').length === 0) {
                 const menuTitle = "Thống kê"; // hoặc lấy từ đâu đó nếu cần
                 $('#tabs').css({
-                     'position': 'absolute',
+                    'position': 'absolute',
                     'margin-bottom': '10px',
                     'left': '34px'
                 });
                 const baseUrl = `${window.location.protocol}//${window.location.hostname}`;
                 const dashboardUrl = `${baseUrl}/admin/dashboard`;
-                
+
                 // Thêm tab dashboard
                 $('#tabs').append(`
                         <button id="tab-dashboard" class="tab-btn" onclick="switchTab('dashboard')"style="height:35px">
@@ -337,11 +353,12 @@
                         </button>
                     `);
 
-                // Thêm iframe dashboard
+                // Thêm iframe dashboard width: calc(100% - 265px);
                 $('#frame').append(`
-                    <iframe name="main" id="dashboard" class="frame vh-100" 
+                    <iframe name="main" id="dashboard" class="frame vh-100 iframe-main" 
                         src="${dashboardUrl}" 
-                        style="width: calc(100% - 265px); right: 1; position: fixed; z-index: 999; margin-top: 33px; border: none; display: none;">
+                        >
+                      
                     </iframe>
                 `);
             }
@@ -356,13 +373,13 @@
             if (url === "javascript:void(0)") {
                 return; // Nếu URL là "javascript:void(0)", không xử lý
             }
-              $('#tabs').css({
+            $('#tabs').css({
                 'position': '',
                 'margin-bottom': '',
                 'left': ''
             });
-           
-            
+
+
             const parts = url.split('/');
 
 
@@ -379,19 +396,19 @@
                     </button>
                 `);
 
-                // Thêm iframe mới
+                // Thêm iframe mới width: calc(100% - 265px);
                 $('#frame').append(`
-                    <iframe name="main" id="${iframeId}" class="frame vh-100" 
+                    <iframe name="main" id="${iframeId}" class="frame vh-100 iframe-main" 
                         src="${url}"
-                        style="width: calc(100% - 265px); right: 1; position: fixed; z-index: 999; margin-top: 33px; border: none; display: none;">
+                       >
                     </iframe>
                 `);
 
-                
+
             }
-          
-            
-           
+
+
+
             // Chuyển sang tab đó
             switchTab(iframeId);
         }

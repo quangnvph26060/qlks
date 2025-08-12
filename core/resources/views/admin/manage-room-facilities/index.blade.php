@@ -195,19 +195,7 @@
     <link rel="stylesheet" type="text/css" href="{{ asset('assets/admin/css/daterangepicker.css') }}">
     <link rel="stylesheet" href="{{ asset('assets/global/css/modal.css') }}">
 
-    <style>
-        .pagination .page-item .page-link,
-        .pagination .page-item span {
-            width: 22px !important;
-            height: auto !important;
-            background-color: #4634ff !important;
-            color: white !important;
-        }
-
-        .pagination .page-item.active .page-link {
-            background-color: #071251 !important;
-        }
-    </style>
+   
 @endpush
 
 @push('script')
@@ -426,6 +414,19 @@
 
 @push('style')
     <style>
+         .pagination .page-item .page-link,
+        .pagination .page-item span {
+            font-size: 0.875rem;
+            display: flex;
+            width: 36px;
+            height: 36px;
+            margin: 0 3px;
+            padding: 0;
+            border-radius: 3px !important;
+            align-items: center;
+            justify-content: center;
+            color: #5b6e88;
+        }
         .radio-container {
             display: flex;
             align-items: center;
