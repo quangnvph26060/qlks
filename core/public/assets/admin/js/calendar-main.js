@@ -113,7 +113,7 @@ function initGridMain(data) {
                     data-name="${room['room_number']}"
                     title="${room.room_number}">
                         <span style="font-size:13px;font-weight:bold;" class="name_number"> ${room.room_number}</span>
-                        <span class="mt-0" style="font-size:10px;font-weight:bold;" class="room-number-name"> ${room?.direction?.name}</span>
+                        <span class="mt-0" style="font-size:10px;font-weight:bold;" class="room-number-name"> ${room?.direction?.name ?? ""}</span>
                         <span class=" ${room.room_fix == 1 ? 'modal_fixroom' : 'modal_clean'}" style="font-size:10px;font-weight:600;cursor: pointer;">Tình trạng phòng: <span class="text-ttp"style="font-size:10px;font-weight:600;"> ${room.room_fix == 1 ? "🛠 Phòng đang sửa" : (room.is_clean ? "✨ Sạch" : "🚨 Chưa dọn")} </span></span>
                     </td>`;
 
