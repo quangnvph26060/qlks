@@ -135,36 +135,40 @@
     @push('breadcrumb-plugins')
         <div class="card-body mt-1">
             <div class="row">
-                <div class="col-md-12 col-sm-12 d-flex">
-                    <a class="mr-1" href="{{ route('admin.hotel.customer.all') }}">
-                        <button class="btn btn--primary" data-modal_title="Làm mới">
-                            <i class="fa fa-repeat p-1"></i>
-                        </button>
-                    </a>
-                    @can('admin.hotel.customer.store')
-                    <a>
-                        <button class="btn btn--primary" data-modal_title="Thêm mới khách hàng" type="button"
-                            data-bs-toggle="modal" data-bs-target="#customer" style="margin-left:10px">
-                            <i class="las la-plus p-1"></i>
-                        </button>
-                    </a>
+                <div class="col-md-12 col-sm-12 d-flex stack-mobile">
+                   <div>
+                        <a class="mr-1" href="{{ route('admin.hotel.customer.all') }}">
+                            <button class="btn btn--primary" data-modal_title="Làm mới">
+                                <i class="fa fa-repeat p-1"></i>
+                            </button>
+                        </a>
+                        @can('admin.hotel.customer.store')
+                        <a>
+                            <button class="btn btn--primary" data-modal_title="Thêm mới khách hàng" type="button"
+                                data-bs-toggle="modal" data-bs-target="#customer" style="margin-left:10px">
+                                <i class="las la-plus p-1"></i>
+                            </button>
+                        </a>
                     @endcan
+                   </div>
                     <form role="form" enctype="multipart/form-data" action="{{ route('admin.hotel.customer.search') }}">
                         <div class="form-group position-relative mb-0">
-                            <input class="searchInput" name="customer_code"
-                                style="height: 35px;width:20%;border: 1px solid rgb(121, 117, 117, 0.5);margin-left: 8px;"
-                                placeholder="Mã khách hàng" value="{{ $customer_code ?? '' }}">
-                            <input class="searchInput" name="name"
-                                style="height: 35px;width:20%;border: 1px solid rgb(121, 117, 117, 0.5); margin-left: 8px;"
-                                placeholder="Tên khách hàng" value="{{ $name ?? '' }}">
-                            <input class="searchInput" name="phone"
-                                style="height: 35px;width:20%;border: 1px solid rgb(121, 117, 117, 0.5); margin-left: 8px;"
-                                placeholder="Điện thoại" value="{{ $phone ?? '' }}">
-                            <input class="searchInput" name="address"
-                                style="height: 35px;width:20%;border: 1px solid rgb(121, 117, 117, 0.5); margin-left: 8px;"
-                                placeholder="Địa chỉ" value="{{ $address ?? '' }}">
+                           
+                                    <input class="searchInput" name="customer_code"
+                                    style="height: 35px;width:20%;border: 1px solid rgb(121, 117, 117, 0.5);margin-left: 8px;"
+                                    placeholder="Mã khách hàng" value="{{ $customer_code ?? '' }}">
+                                    <input class="searchInput" name="name"
+                                        style="height: 35px;width:20%;border: 1px solid rgb(121, 117, 117, 0.5); margin-left: 8px;"
+                                        placeholder="Tên khách hàng" value="{{ $name ?? '' }}">
+                                    <input class="searchInput" name="phone"
+                                        style="height: 35px;width:20%;border: 1px solid rgb(121, 117, 117, 0.5); margin-left: 8px;"
+                                        placeholder="Điện thoại" value="{{ $phone ?? '' }}">
+                                    <input class="searchInput" name="address"
+                                        style="height: 35px;width:20%;border: 1px solid rgb(121, 117, 117, 0.5); margin-left: 8px;"
+                                        placeholder="Địa chỉ" value="{{ $address ?? '' }}">
+                           
                             <a>
-                                <button type="submit" class="btn btn--primary">
+                                <button type="submit" class="btn btn--primary btn-icon">
                                     <i class="las la-search p-1"></i>
                                 </button>
                             </a>
@@ -837,3 +841,29 @@
         })(jQuery);
     </script>
 @endpush
+<style scoped>
+    @media (max-width: 768px) {
+    .stack-mobile {
+        flex-direction: column !important; /* đổi từ row sang column */
+        gap: 8px; /* khoảng cách giữa các item */
+        padding-left: 5px !important;
+        padding-right: 5px !important;
+    }
+
+    .stack-mobile > div,
+    .stack-mobile form {
+        width: 100% !important;
+    }
+
+    .stack-mobile input.searchInput {
+        width: 100% !important;
+        margin-left: 0 !important;
+        margin-top: 8px;
+    }
+.stack-mobile .btn-icon{
+    margin-top: 5px !important;
+}
+  
+}
+
+</style>

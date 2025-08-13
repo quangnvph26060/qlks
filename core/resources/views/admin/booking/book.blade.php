@@ -57,7 +57,7 @@
                 </a>
             </div>
 
-            <div class="form-group position-relative mb-0" style="display: flex;gap: 10px;">
+            <div class="form-group position-relative" style="display: flex;gap: 10px;">
                 <input class="searchInput input-field-search-book" name="booking_code" placeholder="Mã đặt phòng"
                     id="booking_code">
                 <input class="searchInput input-field-search-book" name="room_name" placeholder="Tên phòng" id="room_name">

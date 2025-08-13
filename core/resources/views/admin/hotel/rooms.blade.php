@@ -4,7 +4,7 @@
     <div class="card-body mt-1">
         <div class="row">
 
-            <div class="col-md-12 d-flex">
+            <div class="col-md-12 d-flex align-items-center justify-content-center">
                 <a class="mr-1" href="{{ route('admin.hotel.room.all') }}">
                     <button class="btn btn--primary" data-modal_title="Làm mới">
                         <i class="fa fa-repeat p-1"></i>
@@ -18,8 +18,8 @@
                         </button>
                     </a>
                 @endcan
-                <form role="form" enctype="multipart/form-data" action="{{ route('admin.hotel.room.all') }}"
-                    method="GET" id="searchForm">
+                <form role="form" enctype="multipart/form-data"  action="{{ route('admin.hotel.room.all') }}"
+                    method="GET" id="searchForm" style="margin-bottom: 0px">
                     <div class="form-group position-relative mb-0">
                         <input placeholder="Nhập Mã/Tên loại phòng"
                             style="height: 35px;border: 1px solid rgb(121, 117, 117, 0.5);margin-left: 8px;" name="keyword"
@@ -549,7 +549,7 @@
 
 @push('style')
     <style>
-        @media (max-width: 768px) {
+        /* @media (max-width: 768px) {
             #searchForm {
                 order: 2;
                 width: 100% !important;
@@ -562,6 +562,6 @@
                 margin-right: 3rem !important;
                 margin-left: 3rem !important;
             }
-        }
+        } */
     </style>
 @endpush

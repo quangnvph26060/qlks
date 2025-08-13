@@ -4,9 +4,9 @@
 
 <div class="sidebar bg--dark" id="sidebar">
     {{-- <button class="toggle-btn" id="toggle-btn">&#8592;</button> --}}
-    {{-- <button class="res-sidebar-close-btn">
-        <i class="las la-angle-left"></i>
-    </button> --}}
+    <button class="res-sidebar-close-btn">
+       <i class="las la-times"></i>
+    </button>
     <div class="sidebar__inner">
         <div class="sidebar__logo">
             <a href="{{ route('admin.display') }}" class="sidebar__main-logo">
@@ -194,13 +194,12 @@
                 window.open(href, '_blank');
             }
         });
-            // $('.res-sidebar-open-btn').on('click', function () {
-            //     console.log(123);
-            //     $('.sidebar').addClass('open');
-            // });
+            $('.res-sidebar-open-btn').on('click', function () {
+                $('.sidebar').addClass('open');
+            });
 
             $('.res-sidebar-close-btn').on('click', function() {
-                $('.sidebar').addClass('open');
+                $('.sidebar').removeClass('open');
             });
         });
     </script>

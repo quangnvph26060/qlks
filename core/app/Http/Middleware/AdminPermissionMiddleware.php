@@ -68,7 +68,10 @@ class AdminPermissionMiddleware
              'admin.warehouse.get.logs', // chi tiết phiếu nhập ai là ngươiuf tạo, cập nhật
              'admin.warehouse.export.get.logs',// chi tiết phiếu  xuất ai là ngươiuf tạo, cập nhật
              'admin.warehouse.transfer.get.logs', // chi tiết phiếu  điều chuyển ai là ngươiuf tạo, cập nhật
-             'admin.supplier.update'
+             'admin.supplier.update',
+             'admin.hotel.customer.search', // tìm kiếm danh mục khách hàng 
+             'admin.hotel.customer.source.search', // tìm kiếm danh mục nguồn khách
+             'admin.hotel.customer.check'
         ];
         /*
             'admin.revenue' => 'Danh thu trong màn thông kế'

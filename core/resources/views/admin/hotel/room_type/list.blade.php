@@ -125,10 +125,10 @@
                     {{ optional($type->direction)->name }}
 
                 </td>
-                <td data-label="Số người" class="w-10 text-right">
+                <td data-label="Số người" style="width: 10px;" class=" text-right">
                     {{ $type->total_adult }}
                 </td>
-                <td data-label="Số giường" class="w-10 text-right">
+                <td data-label="Số giường" style="width: 10px;" class=" text-right">
                     {{ $type->beds }}
                 </td>
                 {{-- <td data-label="Hình ảnh">     
@@ -277,24 +277,26 @@
     <div class="card-body mt-1">
         <div class="row">
 
-            <div class="col-md-12 d-flex">
+            <div class="col-md-12 d-flex  stack-mobile">
 
-                <a class="mr-1" href="{{ route('admin.hotel.room.type.all') }}">
-                    <button class="btn btn--primary" data-modal_title="Làm mới">
-                        <i class="fa fa-repeat p-1"></i>
-                    </button>
-                </a>
-                @can('admin.hotel.room.type.create')
-                    <a href="{{ route('admin.hotel.room.type.create') }}">
-                        <button class="btn btn--primary" data-modal_title="Thêm mới phòng" type="button"
-                            style="margin-left:10px">
-                            <i class="las la-plus p-1"></i>
+                <div>
+                    <a class="mr-1" href="{{ route('admin.hotel.room.type.all') }}">
+                        <button class="btn btn--primary" data-modal_title="Làm mới">
+                            <i class="fa fa-repeat p-1"></i>
                         </button>
                     </a>
-                @endcan
-                <form role="form" enctype="multipart/form-data" action="{{ route('admin.hotel.room.type.search') }}">
+                    @can('admin.hotel.room.type.create')
+                        <a href="{{ route('admin.hotel.room.type.create') }}">
+                            <button class="btn btn--primary" data-modal_title="Thêm mới phòng" type="button"
+                                style="margin-left:10px">
+                                <i class="las la-plus p-1"></i>
+                            </button>
+                        </a>
+                    @endcan
+                </div>
+                <form role="form" enctype="multipart/form-data" action="{{ route('admin.hotel.room.type.search') }}" >
                     @csrf
-                    <div class="form-group mb-0" style="display: flex;">
+                    <div class="form-group mb-0 stack-mobile" style="display: flex;">
                         <input class="searchInput" name="code"
                             style="height: 35px;border: 1px solid rgb(121, 117, 117, 0.5);"
                             placeholder="Mã phòng/Tên phòng" value="{{ $code ?? '' }}">
@@ -317,36 +319,39 @@
 
                         </select>
 
-                        <button type="submit" class="btn btn--primary" style="margin-left: 8px;">
-                            <i class="las la-search p-1"></i>
-                        </button>
-                        <!-- Nút bấm -->
-                        <button type="button" class="btn btn--primary gap-2 " data-bs-toggle="modal"
-                            data-bs-target="#importRoomModal" style="margin-left: 8px;">
-                            <i class="fa-solid fa-file-import"></i> Import
-                        </button>
-
-                        <a href="{{ route('admin.rooms.export') }}" class="btn btn--primary gap-2 btn-export-room"
-                            style="margin-left: 8px;">
-                            <i class="fa-solid fa-file-export"></i> Export
-                        </a>
-
-                        <!-- Nút thao tác -->
-                        <div class="dropdown-hover d-none"
-                            style="position: relative; display: inline-block; margin-left: 8px;">
-                            <button type="button" class="btn btn--primary gap-2 ">
-                                <i class="fas fa-ellipsis-v"></i> Thao tác
+                        <div>
+                            <button type="submit" class="btn btn--primary" style="margin-left: 8px;">
+                                <i class="las la-search p-1"></i>
                             </button>
-                            <!-- Cách 1: button -->
+                            <!-- Nút bấm -->
+                            <button type="button" class="btn btn--primary gap-2 " data-bs-toggle="modal"
+                                data-bs-target="#importRoomModal" style="margin-left: 8px;">
+                                <i class="fa-solid fa-file-import"></i> Import
+                            </button>
 
-                            <!-- Menu tùy chọn hiển thị khi hover -->
-                            <div class="dropdown-menu-custom">
-                                <a href="#" class="dropdown-item change-room-status"
-                                    id="btn-change-status-room">Chuyển trạng thái</a>
-                                <a href="#"
-                                    class="dropdown-item change-room-direction"id="btn-change-direction-room">Chuyển hướng
-                                    phòng</a>
-                                {{-- <a href="#" class="dropdown-item change-room-status">Chuyển loại phòng</a> --}}
+                            <a href="{{ route('admin.rooms.export') }}" class="btn btn--primary gap-2 btn-export-room"
+                                style="margin-left: 8px;">
+                                <i class="fa-solid fa-file-export"></i> Export
+                            </a>
+
+                            <!-- Nút thao tác -->
+                            <div class="dropdown-hover d-none"
+                                style="position: relative; display: inline-block; margin-left: 8px;">
+                                <button type="button" class="btn btn--primary gap-2 ">
+                                    <i class="fas fa-ellipsis-v"></i> Thao tác
+                                </button>
+                                <!-- Cách 1: button -->
+
+                                <!-- Menu tùy chọn hiển thị khi hover -->
+                                <div class="dropdown-menu-custom">
+                                    <a href="#" class="dropdown-item change-room-status"
+                                        id="btn-change-status-room">Chuyển trạng thái</a>
+                                    <a href="#"
+                                        class="dropdown-item change-room-direction"id="btn-change-direction-room">Chuyển
+                                        hướng
+                                        phòng</a>
+                                    {{-- <a href="#" class="dropdown-item change-room-status">Chuyển loại phòng</a> --}}
+                                </div>
                             </div>
                         </div>
 
@@ -842,5 +847,15 @@
         .menu_dropdown_check_in {
             right: auto !important;
         }
+        @media (max-width: 768px) {
+    .stack-mobile {
+        flex-direction: column !important;
+        gap: 8px; /* khoảng cách giữa các item */
+    }
+
+    .stack-mobile > * {
+        width: 100% !important; /* mỗi item full chiều ngang */
+    }
+}
     </style>
 @endpush

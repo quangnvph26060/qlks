@@ -9,6 +9,9 @@ use App\Models\SetupCode;
 use App\Models\RoomBooking;
 use App\Models\HotelFacility;
 use Illuminate\Http\Request;
+use Illuminate\Validation\Rule;
+use Illuminate\Support\Facades\Log;
+use Illuminate\Validation\ValidationException;
 
 class CustomerController extends Controller
 {
@@ -18,7 +21,7 @@ class CustomerController extends Controller
         $count  = Customer::count();
         $code   = $code ? $code . $count + 1 : '';
         $pageTitle = '';
-        
+
         $customers = Customer::orderBy('id', 'desc')->paginate(10);
         $unit_codes = HotelFacility::select('ma_coso')->where('subdomain', subdomain())->get();
         return view('admin.hotel.customer.list', compact('pageTitle', 'customers', 'unit_codes', 'code'));
@@ -30,28 +33,51 @@ class CustomerController extends Controller
     //    }
     public function store(Request $request)
     {
-        $request->validate([
-            // 'email' => 'required|string',
-            'customer_code' => 'required|string',
-            'name' => 'required|string',
-            // 'phone' => 'required|numeric',
+        try {
+            $request->validate([
+                'customer_code' => 'required|string',
+                'name'          => 'required|string',
+                'email'         => [
+                    'nullable',
+                    'email',
+                    Rule::unique('customers')->where(function ($query) {
+                        return $query->where('subdomain', subdomain())
+                            ->where('unit_code', unitCode());
+                    })
+                ],
+            ], [
+                'email.unique' => 'Email đã tồn tại trong hệ thống.',
+            ]);
 
-        ]);
-        $customer = new Customer();
-        $customer->customer_code = $request->customer_code;
-        $customer->name = $request->name;
-        $customer->phone = $request->phone ?? '';
-        $customer->email = $request->email ?? '';
-        $customer->address = $request->address ?? '';
-        $customer->group_code = $request->group_code ?? '';
-        $customer->note = $request->note ?? '';
-        $customer->status = $request->status;
-        $customer->source_code = $request->source_code;
-        $customer->unit_code =  unitCode();
-        $customer->subdomain =  subdomain();
-        $customer->save();
-        $notify[] = ['success', 'Thêm khách hàng thành công'];
-        return back()->withNotify($notify);
+            $customer = new Customer();
+            $customer->customer_code = $request->customer_code;
+            $customer->name          = $request->name;
+            $customer->phone         = $request->phone ?? '';
+            $customer->email         = $request->email ?? '';
+            $customer->address       = $request->address ?? '';
+            $customer->group_code    = $request->group_code ?? '';
+            $customer->note          = $request->note ?? '';
+            $customer->status        = $request->status;
+            $customer->source_code   = $request->source_code;
+            $customer->unit_code     = unitCode();
+            $customer->subdomain     = subdomain();
+            $customer->save();
+
+            $notify[] = ['success', 'Thêm khách hàng thành công'];
+            return back()->withNotify($notify);
+        } catch (ValidationException $e) {
+            // Bắt lỗi validate riêng
+            $errors = $e->validator->errors()->all();
+            $notify = [];
+            foreach ($errors as $error) {
+                $notify[] = ['error', $error];
+            }
+            return back()->withNotify($notify)->withInput();
+        } catch (\Exception $e) {
+            Log::error('Lỗi thêm khách hàng: ' . $e->getMessage());
+            $notify[] = ['error', 'Email đã tồn tại trong hệ thống'];
+            return back()->withNotify($notify)->withInput();
+        }
     }
     public function edit($id)
     {
@@ -80,7 +106,7 @@ class CustomerController extends Controller
                 $customer->address = $request->address ?? '';
                 $customer->group_code = $request->group_code ?? '';
                 $customer->note = $request->note ?? '';
-                 $customer->source_code = $request->source_code;
+                $customer->source_code = $request->source_code;
                 $customer->status = $request->status;
                 // $customer->unit_code =  $request->unit_code;
                 $customer->save();
@@ -96,7 +122,7 @@ class CustomerController extends Controller
             $customer->address = $request->address ?? '';
             $customer->group_code = $request->group_code ?? '';
             $customer->note = $request->note ?? '';
-             $customer->source_code = $request->source_code;
+            $customer->source_code = $request->source_code;
             $customer->status = $request->status;
             // $customer->unit_code =  $request->unit_code;
             $customer->save();

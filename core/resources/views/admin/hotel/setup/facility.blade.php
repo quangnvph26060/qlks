@@ -59,8 +59,9 @@
                     </div>
                 </div>
                 <div class="row">
-                    <div class="col-md-12 col-sm-12 d-flex">
-                        <a class="mr-1" href="{{ route('admin.hotel.setup.facilities.all') }}">
+                    <div class="col-md-12 col-sm-12 d-flex stack-mobile">
+                      <div>
+                          <a class="mr-1" href="{{ route('admin.hotel.setup.facilities.all') }}">
                             <button class="btn btn--primary" data-modal_title="Làm mới">
                                 <i class="fa fa-repeat p-1"></i>
                             </button>
@@ -72,6 +73,7 @@
                                 <i class="las la-plus  p-1"></i>
                             </button>
                         </a>
+                      </div>
                         <form role="form" enctype="multipart/form-data"
                             action="{{ route('admin.hotel.setup.facilities.search') }}">
                             <div class="form-group position-relative mb-0">
@@ -242,7 +244,9 @@
             $('.iconPicker').iconpicker().on('iconpickerSelected', function(e) {
                 $('.iconPicker').val(`<i class="${e.iconpickerValue}"></i>`);
             });
-
+             document.getElementById('add-code').addEventListener('input', function () {
+        this.value = this.value.toUpperCase();
+    });
         })(jQuery);
         var code = "{{ $code }}";
        
@@ -467,4 +471,30 @@
             background: #4634ff38;
         }
     </style>
+    <style scoped>
+    @media (max-width: 768px) {
+    .stack-mobile {
+        flex-direction: column !important; /* đổi từ row sang column */
+        gap: 8px; /* khoảng cách giữa các item */
+        padding-left: 5px !important;
+        padding-right: 5px !important;
+    }
+
+    .stack-mobile > div,
+    .stack-mobile form {
+        width: 100% !important;
+    }
+
+    .stack-mobile input.searchInput {
+        width: 100% !important;
+        margin-left: 0 !important;
+        margin-top: 8px;
+    }
+.stack-mobile .btn-icon{
+    margin-top: 5px !important;
+}
+  
+}
+
+</style>
 @endpush

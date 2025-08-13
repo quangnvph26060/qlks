@@ -81,7 +81,7 @@
                                             </div>
                                         @endcan
                                     </td>
-                                    <td data-label="STT" style="text-align:right;width:20px">
+                                    <td style="text-align:right;width:20px">
 
                                         {{ $id + 1 }}
                                     </td>
@@ -133,19 +133,6 @@
 @push('style-lib')
     <link rel="stylesheet" type="text/css" href="{{ asset('assets/admin/css/daterangepicker.css') }}">
     <link rel="stylesheet" href="{{ asset('assets/global/css/modal.css') }}">
-    <style>
-        .pagination .page-item .page-link,
-        .pagination .page-item span {
-            width: 22px !important;
-            height: auto !important;
-            background-color: #4634ff !important;
-            color: white !important;
-        }
-
-        .pagination .page-item.active .page-link {
-            background-color: #071251 !important;
-        }
-    </style>
 @endpush
 @push('script')
     <script src="{{ asset('assets/admin/js/highlighter22.js') }}"></script>
@@ -479,7 +466,20 @@
 @endpush
 
 @push('style')
-    <style>
+    <style scoped>
+        /* @media (max-width: 768px) {
+            td {
+                width: auto !important;
+                background-color: transparent !important;
+                text-align: left !important;
+                padding: 9px !important;
+            }
+            .table.table--light.style--two tbody td{
+                padding: 12px !important;
+            }
+        } */
+        
+
         .system-search-icon {
             position: absolute;
             left: 0;

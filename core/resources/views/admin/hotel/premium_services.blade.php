@@ -3,7 +3,7 @@
 @section('panel')
     <div class="row">
         @push('breadcrumb-plugins')
-            <div class="col-md-12 d-flex">
+            <div class="col-md-12 d-flex align-items-center">
 
                 <a class="mr-1" href="{{ route('admin.hotel.premium.service.all') }}">
                     <button class="btn btn--primary" data-modal_title="Làm mới">
@@ -19,8 +19,8 @@
                 </a>
                 @endcan
                 <form role="form" enctype="multipart/form-data" action="{{ route('admin.hotel.premium.service.all') }}"
-                    method="GET" id="searchForm">
-                    <div class="form-group position-relative mb-0">
+                    method="GET" id="searchForm" style="margin: 0px">
+                    <div class="form-group position-relative">
                         <input placeholder="Nhập tên dịch vụ"
                             style="height: 35px;border: 1px solid rgb(121, 117, 117, 0.5);margin-left: 8px;" name="name"
                             id="searchInput" value="{{ $input }}">
@@ -312,24 +312,9 @@
 @endpush
 @push('style')
     <style>
-        @media (max-width: 768px) {
-            #searchForm {
-                order: 2;
-                width: 100% !important;
-                margin-top: 15px !important;
-
-            }
-
-            #searchForm .input-group {
-                justify-content: center !important;
-            }
-
-            .breadcrumb-plugins>button {
-                order: 1;
-                width: 100% !important;
-                margin-right: 3rem !important;
-                margin-left: 3rem !important;
-            }
-        }
+      
+          .form-group{
+        margin-bottom: 0px !important;
+          }
     </style>
 @endpush

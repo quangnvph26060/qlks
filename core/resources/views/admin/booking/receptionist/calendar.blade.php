@@ -72,7 +72,7 @@
         overflow-y: auto;
         scrollbar-width: thin;
         scrollbar-color: #888 #f1f1f1;
-        height: 100vh;
+        /* height: 100vh; */
     }
 
     .highlight-hour,

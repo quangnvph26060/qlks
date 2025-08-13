@@ -1,21 +1,24 @@
 @extends('admin.layouts.master_iframe')
 @section('panel')
     <div class="row d-flex align-items-center" style="padding: 10px">
-        <div class="col-md-6 d-flex" style="justify-content: start;gap:10px;height: 35px;">
-              <button id="listViewBtn" class="active" onclick="changeView('list')">
-                    <span class="icon"> <i class="fa-solid fa-bars"></i></span> <span class="text">Danh Sách phòng đặt</span>
+        <div class="col-md-6 d-flex stack-mobile" style="justify-content: start;gap:10px;height: 35px;">
+            <div class="d-flex gap-2">
+                <button id="listViewBtn" class="active" onclick="changeView('list')">
+                    <span class="icon"> <i class="fa-solid fa-bars"></i></span> <span class="text">Danh Sách phòng
+                        đặt</span>
                 </button>
-            <div class="view-toggle">
-              
-                <button id="gridViewBtn" onclick="changeView('calendar')">
-                    <span class="icon"><i class="fa-solid fa-sliders"></i></span> <span class="text"
-                        style="display: none;">Lưới</span>
-                </button>
-                <button id="tableViewBtn" onclick="changeView('grid')">
-                    <span class="icon"> <i class="fa-solid fa-th-large"></i></span> <span class="text"
-                        style="display: none;">Sơ đồ</span>
-                </button>
+                <div class="view-toggle">
 
+                    <button id="gridViewBtn" onclick="changeView('calendar')">
+                        <span class="icon"><i class="fa-solid fa-sliders"></i></span> <span class="text"
+                            style="display: none;">Lưới</span>
+                    </button>
+                    <button id="tableViewBtn" onclick="changeView('grid')">
+                        <span class="icon"> <i class="fa-solid fa-th-large"></i></span> <span class="text"
+                            style="display: none;">Sơ đồ</span>
+                    </button>
+
+                </div>
             </div>
             <div class="search-container">
                 <!-- Dropdown (Bên trái) -->
@@ -55,13 +58,22 @@
             </div>
         </div>
         <div class="col-md-6" id="booking-time">
-            <div style="float: right; gap: 10px;height: 35px;" class="d-flex">
-                <div id="date-input-booking" style="display: flex;gap: 10px;">
+            <div class="row g-2">
+                <div class="col-12 col-md-auto d-flex gap-2">
+                     <div id="date-input-booking" style="display: flex;gap: 10px;">
                 </div>
-
-                <p class="btn btn-primary change-room d-flex align-items-center add-book-room"
-                    style="font-size:13px; gap: 5px;"><i class="la la-plus"></i> Đặt phòng</p>
+                </div>
+                <div class="col-12 col-md d-flex gap-2">
+                    <p class="btn btn-primary change-room d-flex align-items-center add-book-room"
+                    style="font-size:13px; gap: 5px;"><span class="d-none-mobi"><i class="la la-plus"></i></span> Đặt phòng</p>
+                </div>
             </div>
+
+            {{-- <div style="float: right; gap: 10px;height: 35px;" class="d-flex   stack-mobile">
+              
+
+               
+            </div> --}}
         </div>
     </div>
     <div class="row" style="padding: 10px">
@@ -162,7 +174,7 @@
         @include('admin.booking.partials.room_booking_edit')
         @include('admin.booking.partials.room_booking')
         @include('admin.booking.partials.change_room_booking')
-        @include('admin.booking.partials.modal_service', ['warehouses' => $warehouses]);
+        @include('admin.booking.partials.modal_service', ['warehouses' => $warehouses])
         <div class="modal fade" id="myModal-check-in-edit" tabindex="-1" role="dialog"
             aria-labelledby="myModalLabel-booking" aria-hidden="true">
 
@@ -1941,7 +1953,7 @@
         let currentView = localStorage.getItem('selectedView') || 'list';
         if (currentView !== view) {
             console.log('load trang');
-            
+
             localStorage.setItem('selectedView', view);
             location.reload();
         }
@@ -2181,7 +2193,18 @@
         display: inline-block;
         padding: 3px 20px;
     }
+    @media (max-width: 768px) {
+    .stack-mobile {
+        flex-direction: column !important;
+        gap: 10px;
+        height: 100px !important;
+    }
 
+    .stack-mobile > div {
+        width: 100% !important;
+    }
+    
+}
 
 
     .overflow-add-room {
