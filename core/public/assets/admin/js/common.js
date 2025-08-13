@@ -35,11 +35,11 @@ function showCustomer(value = "", option_customer_source = "") {
             data.data.forEach(function (item) {
                 var tr = `
                 <tr class="customer-row">
-                    <td class="text-left "> ${item.customer_code} </td>
-                    <td class="text-left "> ${item.name} </td>
-                    <td class="text-right"> ${item.phone} </td>
-                    <td class="text-left "> ${item.source_code} </td>
-                    <td class="text-center">
+                    <td  data-label="Mã khách hàng" class="text-left "> ${item.customer_code} </td>
+                    <td  data-label="Tên khách hàng"class="text-left "> ${item.name} </td>
+                    <td  data-label="Số điện thoại"class="text-right"> ${item.phone} </td>
+                    <td   data-label="Nguồn khách hàng" data-label=""class="text-left "> ${item.source_code} </td>
+                    <td  data-label="Thao tác"class="text-center">
                         <input type="radio" name="customer_select" data-id="${item.id}">
                     </td>
                 </tr>
@@ -286,12 +286,12 @@ function changeRoom(Id, bookingId, roomId, dateId, name) {
                     let firstRowClass = isFirst ? "first-row" : "";
                     var tr = `
                         <tr class="${firstRowClass}">
-                            <td style="${isFirst ? 'font-weight: bold;' : ''}" class="text-left"> ${item.room_type['name']} </td>
-                            <td style="${isFirst ? 'font-weight: bold;' : ''}"class="text-left"> ${item.room_number} </td>
-                            <td style="${isFirst ? 'font-weight: bold;' : ''}"class="text-left"> ${formatDate(item.date)} </td>
-                            <td style="${isFirst ? 'font-weight: bold;' : ''}"class="text-left w-10  ${rowClass} "> ${item.check_booked} </td>
-                            <td style="${isFirst ? 'font-weight: bold;' : ''}"class="text-right"> ${formatCurrency(item.applied_price)} </td>
-                            <td class="text-center">
+                            <td data-label="Hạng phòng" style="${isFirst ? 'font-weight: bold;' : ''}" class="text-left"> ${item.room_type['name']} </td>
+                            <td data-label="Tên phòng" style="${isFirst ? 'font-weight: bold;' : ''}"class="text-left"> ${item.room_number} </td>
+                            <td data-label="Ngày" style="${isFirst ? 'font-weight: bold;' : ''}"class="text-left"> ${formatDate(item.date)} </td>
+                            <td  data-label="Trạng thái phòng" style="${isFirst ? 'font-weight: bold;' : ''}"class="text-left w-10  ${rowClass} "> ${item.check_booked} </td>
+                            <td  data-label="Giá" style="${isFirst ? 'font-weight: bold;' : ''}"class="text-right"> ${formatCurrency(item.applied_price)} </td>
+                            <td data-label="Thao tác" class="text-center">
                                 <input type="radio" name="change-room" ${item.status == 1 ? 'disabled' : ''}
                                     data-date="${item.date}"
                                     data-id="${item.id}"

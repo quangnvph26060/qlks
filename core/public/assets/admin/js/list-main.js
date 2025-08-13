@@ -109,9 +109,9 @@ function initGridMain(data, date) {
                                 .forEach(checkIn => {
                                         roomHTML += `
                                               <tr class="main-row" data-booking="${checkIn['check_in_id']}">
-                                                <td>${dem}</td>
-                                                  <td class="w-20" style="position: relative;">
-                                                    <div class="d-flex align-items-center justify-content-center" style="gap:10px;">
+                                                <td data-label="STT">${dem}</td>
+                                                  <td data-label="Hành động" style="position: relative; width:20px">
+                                                    <div class="d-flex align-items-center justify-content-center justify-content-mobi" style="gap:10px;">
                                                                <button class="menu-toggle-btn" data-dem="${dem}" >
                                                                 <svg class="" xmlns="http://www.w3.org/2000/svg" width="30" height="30" viewBox="0 0 21 21"><g fill="currentColor" fill-rule="evenodd"><circle cx="10.5" cy="10.5" r="1"></circle><circle cx="10.5" cy="5.5" r="1"></circle><circle cx="10.5" cy="15.5" r="1"></circle></g></svg>
                                                             </button>
@@ -141,23 +141,23 @@ function initGridMain(data, date) {
                                                         >Thanh toán</div>
                                                     </div>
                                                 </td>
-                                                <td>${checkIn['check_in_id']}</td>
-                                                <td>
+                                                <td data-label="Mã đặt phòng">${checkIn['check_in_id']}</td>
+                                                <td data-label="Phòng">
                                                     <span style="color:red">${item['room_number']}</span>
                                                 <br>  <span class="status-clean">${item['is_clean'] == 1 ? "✨ Sạch" : "🚨 Chưa dọn"}</span></td>
                                                 
                                                 
-                                                <td>${checkIn['customer_name']} <br> ${checkIn['phone_number'] ?? 'N/A'}</td>
-                                                <td class="w-10">${formatDateTime(checkIn['checkin_date'])}</td>
-                                                <td class="w-10">${formatDateTime(checkIn['checkout_date'])}</td>
-                                               <td class="text-right">
+                                                <td data-label="Khách hàng">${checkIn['customer_name']} <br> ${checkIn['phone_number'] ?? 'N/A'}</td>
+                                                <td data-label="Giờ nhận" style="width:10px">${formatDateTime(checkIn['checkin_date'])}</td>
+                                                <td  data-label="Giờ trả" style="width:10px">${formatDateTime(checkIn['checkout_date'])}</td>
+                                               <td  data-label="Tổng cộng" class="text-right">
                                                     ${formatCurrency(
                                                         Number(checkIn.room_change_info?.total_amount ?? checkIn.total_amount) +
                                                         Number(checkIn.check_in_service_products)
                                                     )}
                                                 </td>
 
-                                                 <td class="text-right">
+                                                 <td  data-label="Khách đã trả" class="text-right">
                                                     ${formatCurrency(parseInt(checkIn['deposit_amount']) + parseInt(checkIn['discount']) + parseInt(checkIn['total_amount_paid']))}
                                                 </td>
                                               
@@ -172,9 +172,9 @@ function initGridMain(data, date) {
                                 if (booked['room_id'] === checkIn['room_code']) {
                                     roomHTML += `
                                             <tr class="main-row" data-booking="${checkIn['booking_id']}">
-                                                <td>${dem}</td>
-                                                 <td class="w-20" style="position: relative;">
-                                                    <div class="d-flex align-items-center justify-content-center" style="gap:10px;">
+                                                <td data-label="STT">${dem}</td>
+                                                 <td data-label="Hành động" style="position: relative; width:20px">
+                                                    <div class="d-flex align-items-center justify-content-center justify-content-mobi" style="gap:10px;">
                                                           
                                                             <button class="menu-toggle-btn" data-dem="${dem}" >
                                                             <svg class="" xmlns="http://www.w3.org/2000/svg" width="30" height="30" viewBox="0 0 21 21"><g fill="currentColor" fill-rule="evenodd"><circle cx="10.5" cy="10.5" r="1"></circle><circle cx="10.5" cy="5.5" r="1"></circle><circle cx="10.5" cy="15.5" r="1"></circle></g></svg>
@@ -186,13 +186,13 @@ function initGridMain(data, date) {
                                                         <div class="dropdown-item delete-booked-room" data-id="${checkIn['id']}">Hủy phòng</div>
                                                     </div>
                                                 </td>
-                                                <td>${checkIn['booking_id']}</td>
-                                                <td><span style="color:#ebb579">${item['room_number']}</span> <br>  <span class="status-clean">${item['is_clean'] == 1 ? "✨ Sạch" : "🚨 Chưa dọn"}</span></td>
-                                                <td>${checkIn['customer_name']} <br> ${checkIn['phone_number'] ?? 'N/A'}</td>
-                                                <td class="w-10">${formatDateTime(checkIn['checkin_date'])}</td>
-                                                <td class="w-10">${formatDateTime(checkIn['checkout_date'])}</td>
-                                                <td class="text-right">${formatCurrency(checkIn['total_amount'])}</td>
-                                                <td class="text-right">
+                                                <td data-label="Mã đặt phòng">${checkIn['booking_id']}</td>
+                                                <td data-label="Phòng"><span style="color:#ebb579">${item['room_number']}</span> <br>  <span class="status-clean">${item['is_clean'] == 1 ? "✨ Sạch" : "🚨 Chưa dọn"}</span></td>
+                                                <td data-label="Khách hàng">${checkIn['customer_name']} <br> ${checkIn['phone_number'] ?? 'N/A'}</td>
+                                                <td data-label="Giờ nhận" style="width:10px">${formatDateTime(checkIn['checkin_date'])}</td>
+                                                <td data-label="Giờ trả" style="width:10px">${formatDateTime(checkIn['checkout_date'])}</td>
+                                                <td data-label="Tổng cộng" class="text-right">${formatCurrency(checkIn['total_amount'])}</td>
+                                                <td data-label="Khách đã trả" class="text-right">
                                                     ${formatCurrency(parseInt(checkIn['deposit_amount']) + parseInt(checkIn['discount']) + parseInt(checkIn['total_amount_paid']))}
                                                 </td>
                                             </tr>
@@ -597,7 +597,7 @@ function changeRoom(Id, bookingId, roomId, dateId, name) {
                     let firstRowClass = isFirst ? "first-row" : "";
                     var tr = `
                                 <tr class="${firstRowClass}">
-                                    <td style="${isFirst ? 'font-weight: bold;' : ''}" class="text-left"> ${item.room_type['name']} </td>
+                                    <td data-label="Hạng phòng" style="${isFirst ? 'font-weight: bold;' : ''}" class="text-left"> ${item.room_type['name']} </td>
                                     <td style="${isFirst ? 'font-weight: bold;' : ''}"class="text-left"> ${item.room_number} </td>
                                     <td style="${isFirst ? 'font-weight: bold;' : ''}"class="text-left"> ${formatDatee(item.date)} </td>
                                     <td style="${isFirst ? 'font-weight: bold;' : ''}"class="text-left w-10  ${rowClass} "> ${item.check_booked} </td>

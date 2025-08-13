@@ -208,9 +208,9 @@
                             </p>
                         </div>
                         <!-- Row: Labels -->
-                        <div class="table-scroll-wrapper">
+                        <div class="table-scroll-wrapper table-responsive--md">
                             <div class="table-responsive mt-1">
-                                <table class="table table-bordered text-center" id="data-table">
+                                <table class="table table-bordered text-center table--light width-mobi-table" id="data-table">
                                     <thead class="table-light position-sticky top-0">
                                         <tr class="fw-bold main-booking-modal">
                                             <th class="w-10"></th>
@@ -232,10 +232,10 @@
 
                                     <tfoot class="table-group-divider">
                                         <tr>
-                                            <td colspan="6">Tổng tiền: </td>
-                                            <td class="text-primary fw-bold text-end"><span class="total_amount">0</span></td>
-                                            <td class="text-success fw-bold text-end"><span class="total_deposit">0</span></td>
-                                            <td class="text-info fw-bold text-end"><span class="total_discount">0</span></td>
+                                            <td class="d-none-mobi" colspan="6">Tổng tiền: </td>
+                                            <td data-label="Tiền phòng" class="text-primary fw-bold text-end"><span class="total_amount">0</span></td>
+                                            <td  data-label="Tiền giảm giá" class="text-success fw-bold text-end"><span class="total_deposit">0</span></td>
+                                            <td   data-label="Tiền đặt cọc" class="text-info fw-bold text-end"><span class="total_discount">0</span></td>
                                             <td></td>
                                         </tr>
                                     </tfoot>

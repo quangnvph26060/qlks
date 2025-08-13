@@ -15,7 +15,8 @@
                 </div>
             </div>
             <div class="modal-body overflow-add-room">
-                <table class="table--light style--two  table mt-10" id="data-table">
+             <div class="table-responsive--md ">
+                   <table class="table--light style--two  table mt-10" id="data-table">
                     <thead>
                         <tr>
                             <th data-table="Mã khách hàng" class="text-left">Mã khách hàng</th>
@@ -31,6 +32,7 @@
                     </tbody>
 
                 </table>
+             </div>
             </div>
             <div class="d-flex justify-content-end" style="gap: 10px;padding: 7px 31px">
                 <p data-row="booked" class=" btn-dat-truoc  add-customer-booked" style="cursor: pointer">Lưu

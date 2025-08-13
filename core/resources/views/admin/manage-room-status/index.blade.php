@@ -316,11 +316,11 @@
                             let firstRowClass = isFirst ? "first-row" : "";
                             var tr = `
                                         <tr class="${firstRowClass}">
-                                            <td  class="text-left"> ${item.room_type['name']} </td>
-                                            <td class="text-left"> ${item.room_number} </td>
-                                            <td class="text-left"> ${formatDate(item.date)} </td>
-                                            <td class="text-left ${rowClass}"> ${item.check_booked} </td>
-                                            <td class="text-right"> ${formatCurrency(item.applied_price)} </td>
+                                            <td data-label="Hạng phòng" class="text-left"> ${item.room_type['name']} </td>
+                                            <td data-label="Tên phòng" class="text-left"> ${item.room_number} </td>
+                                            <td data-label="Ngày"class="text-left"> ${formatDate(item.date)} </td>
+                                            <td data-label="Trạng thái phòng"class="text-left ${rowClass}"> ${item.check_booked} </td>
+                                            <td cdata-label="Giá"lass="text-right"> ${formatCurrency(item.applied_price)} </td>
                                         </tr>
                                     `;
                             tbody.append(tr);

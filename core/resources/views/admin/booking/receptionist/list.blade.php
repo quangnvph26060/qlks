@@ -1,16 +1,17 @@
-<div class="card b-radius--10 scroll-container-main">
+<div class="table-responsive--md">
+    <div class="card b-radius--10 scroll-container-main">
     <table class="table--light style--two table">
         <thead>
             <tr>
-                <th>STT</th>
-                <th class="w-30">Hành động</th>
-                <th>Mã đặt phòng</th>
-                <th>Phòng</th>
-                <th>Khách hàng</th>
-                <th>Giờ nhận</th>
-                <th>Giờ trả</th>
-                <th>Tổng cộng</th>
-                <th>Khách đã trả</th>
+                <th data-label="STT">STT</th>
+                <th data-label="Hành động" style="width:30px">Hành động</th>
+                <th data-label="Mã đặt phòng">Mã đặt phòng</th>
+                <th data-label="Phòng">Phòng</th>
+                <th  data-label="Khách hàng">Khách hàng</th>
+                <th  data-label="Giờ nhận">Giờ nhận</th>
+                <th  data-label="Giờ trả">Giờ trả</th>
+                <th  data-label="Tổng cộng">Tổng cộng</th>
+                <th  data-label="Khách đã trả">Khách đã trả</th>
             </tr>
         </thead>
         <tbody id="booking-table">
@@ -19,6 +20,8 @@
         </tbody>
     </table>
 </div>
+</div>
+
 
 @push('scripts-book')
     <script src="{{ asset('assets/admin/js/list-main.js') }}"></script>
@@ -86,7 +89,11 @@
         background-color: #e3f2d6;
         font-weight: bold;
     }
-
+    @media (max-width: 991px) {
+    .justify-content-mobi{
+        justify-content: end !important;
+    }
+}
     tr:hover {
         background-color: #f1f1f1;
     }

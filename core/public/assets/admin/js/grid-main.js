@@ -1211,17 +1211,17 @@ function initViewScriptGird() {
                                         data-room-type-id="${room.room_type_id}"
                                         data-price="${room.total_amount}"
                                         class="${room.status === 1 ? "check_in_status" : ""}">
-                                            <td>
+                                            <td data-label="Hành động">
                                                 <input type="checkbox">
                                             </td>
     
-                                            <td>
+                                            <td data-label="Phòng">
                                                 <p class="room__name"> ${room.room_number}</p>
                                             </td>
-                                            <td>
+                                            <td data-label="Số lượng">
                                                 <input type="number" min="1" name="adult" class="form-control adult"  value="${room.guest_count}"  style="margin-left: 16px;">
                                             </td>
-                                            <td >
+                                            <td data-label="Hình thức">
                                                 <select id="bookingType" class="form-select" name="optionRoom" style="width: 93px; font-size:15px">
                                                     <option value="ngay">Ngày</option>
                                                     <option value="gio">Giờ</option>
@@ -1903,7 +1903,7 @@ function initViewScriptGird() {
                             let firstRowClass = isFirst ? "first-row" : "";
                             var tr = `
                                 <tr class="${firstRowClass}">
-                                    <td style="${isFirst ? 'font-weight: bold;' : ''}" class="text-left"> ${item.room_type['name']} </td>
+                                    <td  data-label="Hạng phòng" style="${isFirst ? 'font-weight: bold;' : ''}" class="text-left"> ${item.room_type['name']} </td>
                                     <td style="${isFirst ? 'font-weight: bold;' : ''}"class="text-left"> ${item.room_number} </td>
                                     <td style="${isFirst ? 'font-weight: bold;' : ''}"class="text-left"> ${formatDatee(item.date)} </td>
                                     <td style="${isFirst ? 'font-weight: bold;' : ''}"class="text-left w-10  ${rowClass} "> ${item.check_booked} </td>
@@ -2032,30 +2032,30 @@ function initViewScriptGird() {
 
                             var tr = `
                         <tr  data-status="0" data-room-id="${roomId}" data-price="${totalPrice}"  data-room-type-id="${roomTypeId}" data-date="${item.date}">
-                            <td>
+                            <td data-label="Hành động">
                                 <input type="checkbox">
                             </td>
 
-                            <td>
+                            <td  data-label="Phòng">
                                 <p class="room__name"> ${item.room['room_number']}</p>
                             </td>
-                             <td>
+                             <td  data-label="Số lượng">
                                  <input type="number" min="1" name="adult" class="form-control adult"  value="1"  >
 
                             </td>
-                            <td >
+                            <td  data-label="Hình thức">
                                 <select id="bookingType" class="form-select" name="optionRoom" style="width: 93px; font-size:15px">
                                      <option value="ngay">Ngày</option>
                                      <option value="gio">Giờ</option>
                                 </select>
                             </td>
-                             <td>
+                             <td data-label="Ngày nhận">
                                 <div class="d-flex align-items-center justify-content-start" style="gap: 3px">
                                     <input type="date" name="checkInDate" id="date-book-room" class="form-control date-book-room"  value="${key == 'room-booked' ? selectedDate : item.date}" readonly>
                                     <input type="time" name="checkInTime" id="time-book-room" class="form-control time-book-room"   value="${timeBookRoom}" style=" display: flex;justify-content: flex-start;width: 110px;padding: 1px 9px !important;">
                                 </div>
                             </td>
-                            <td>
+                            <td data-label="Ngày trả">
                                 <div class="d-flex align-items-center justify-content-start" style="gap: 3px">
                                     <input type="date" name="checkOutDate"  class="form-control date-book-room" readonly  value="${date.toISOString().split('T')[0]}">
 
@@ -2063,7 +2063,7 @@ function initViewScriptGird() {
 
                                 </div>
                             </td>
-                           <td>
+                           <td data-label="Tiền phòng">
                                 <p id="price" class="d-flex justify-content-center"
                                 data-price="${totalPrice ?? 0}">
                                 ${totalPrice != null
@@ -2072,13 +2072,13 @@ function initViewScriptGird() {
                                 </p>
                             </td>
 
-                            <td>
+                            <td data-label="Tiền cọc">
                                   <input type="text" class="form-control deposit number-input money-input"  name="deposit"  placeholder="0">
                             </td>
-                             <td>
+                             <td data-label="Giảm giá">
                                   <input type="text" class="form-control discount number-input-discount money-input"  name="discount"  placeholder="0">
                             </td>
-                            <td>
+                            <td data-label="Ghi chú">
                                 <input type="text" name="note_room" class="form-control note_room" value="" id="note">
                             </td>
                         </tr>

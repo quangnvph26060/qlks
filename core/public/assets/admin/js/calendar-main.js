@@ -55,7 +55,7 @@ function initGridMain(data) {
         const headerRow = document.getElementById("headerRow");
         const tableBody = document.getElementById("tableBody");
 
-        headerRow.innerHTML = '<th class="w-10">Phòng</th>';
+        headerRow.innerHTML = '<th  style="width:10px">Phòng</th>';
         tableBody.innerHTML = "";
 
         let showHours = startDate.toDateString() === endDate.toDateString();
@@ -106,7 +106,7 @@ function initGridMain(data) {
 
 
 
-                    let row = `<tr><td class=" text-left truncate-text d-flex flex-column"  style="line-height:6px"
+                    let row = `<tr><td class=" text-left truncate-text d-flex flex-column width-mobi"  style="line-height:6px"
                     data-room-type-id="${room['room_type_id']}" 
                     data-room-id="${room['id']}" 
                     data-price="${room['applied_price']['unit_price']}"
@@ -779,24 +779,24 @@ function initGridMain(data) {
                         seenRooms.add(key);
                         var tr = `
                         <tr  data-status="0" data-room-id="${roomId}" data-price="${item.room.applied_price['unit_price']}"  data-room-type-id="${roomTypeId}" data-date="${item.date}">
-                            <td>
+                            <td data-label="Hành động">
                                 <input type="checkbox">
                             </td>
 
-                            <td>
+                            <td data-label="Tên phòng">
                                 <p class="room__name"> ${item.room['room_number']}</p>
                             </td>
-                             <td>
+                             <td data-label="Số lượng">
                                  <input type="number" min="1" name="adult" class="form-control adult"  value="1"  >
 
                             </td>
-                            <td >
+                            <td data-label="Hình thức">
                                 <select id="bookingType" class="form-select" name="optionRoom" style="width: 93px; font-size:15px">
                                      <option value="ngay">Ngày</option>
                                      <option value="gio">Giờ</option>
                                 </select>
                             </td>
-                             <td>
+                             <td data-label="Ngày nhận">
                                 <div class="d-flex align-items-center justify-content-start" style="gap: 3px">
                                     <input type="date" name="checkInDate" id="date-book-room" class="form-control date-book-room"  value="${item.date}" readonly>
 
@@ -805,7 +805,7 @@ function initGridMain(data) {
                                     style="display: flex; justify-content: flex-start;  width: 110px; padding: 1px 9px !important;">
                                 </div>
                             </td>
-                            <td>
+                            <td data-label="Ngày trả">
                                 <div class="d-flex align-items-center justify-content-start" style="gap: 3px">
                                    <input type="date" name="checkOutDate"  class="form-control date-book-room" readonly  value="${date.toISOString().split('T')[0]}">
                                     <input type="time" name="checkOutTime" id="time-book-room" class="form-control time-book-room"  value="${item.room['room_type']['room_type_price']['setup_pricing']['check_out_time']}"style="    display: flex;
@@ -813,16 +813,16 @@ function initGridMain(data) {
 
                                 </div>
                             </td>
-                            <td>
+                            <td data-label="Tiền phòng">
                                  <p id="price" data-price="${item.room['applied_price']['unit_price']}">${formatCurrency(item.room['applied_price']['unit_price'])}</p>
                             </td>
-                            <td>
+                            <td data-label="Tiền cọc">
                                   <input type="text" class="form-control deposit number-input money-input"  name="deposit"  placeholder="0">
                             </td>
-                             <td>
+                             <td data-label="Giảm giá">
                                   <input type="text" class="form-control discount number-input-discount money-input"  name="discount"  placeholder="0">
                             </td>
-                            <td>
+                            <td data-label="Ghi chú">
                                 <input type="text" name="note_room" class="form-control note_room" value="" id="note">
                             </td>
                         </tr>
@@ -995,30 +995,30 @@ function initGridMain(data) {
                                 var tr = `
                                         <tr data-price="${room.total_amount}" data-room-id="${room.room_id}" data-status="${room.status}"
                                         data-room-booking-id="${room.id}" data-room-type-id="${room.room_type_id}"  class="${room.status === 1 ? "check_in_status" : ""}">
-                                            <td>
+                                            <td data-label="Hành động">
                                                 <input type="checkbox">
                                             </td>
     
-                                            <td>
+                                            <td data-label="Tên phòng">
                                                 <p class="room__name"> ${room.room_number}</p>
                                             </td>
-                                            <td>
+                                            <td data-label="Số lượng">
                                                 <input type="number" min="1" name="adult" class="form-control adult"  value="${room.guest_count}"  style="margin-left: 16px;">
                                             </td>
-                                            <td >
+                                            <td data-label="Hình thức">
                                                 <select id="bookingType" class="form-select" name="optionRoom" style="width: 93px; font-size:15px">
                                                     <option value="ngay">Ngày</option>
                                                     <option value="gio">Giờ</option>
                                                 </select>
                                             </td>
-                                            <td>
+                                            <td data-label="Ngày nhận">
                                                 <div class="d-flex align-items-center justify-content-start" style="gap: 10px">
                                                     <input type="date" name="checkInDate" id="date-book-room" class="form-control date-book-room"  value="${checkinDate}" readonly>
     
                                                     <input type="time" name="checkInTime" id="time-book-room" class="form-control time-book-room"  value="${checkinTime}" >
                                                 </div>
                                             </td>
-                                            <td>
+                                            <td data-label="Ngày trả">
                                                 <div class="d-flex align-items-center justify-content-start" style="gap: 10px">
                                                     <input type="date" name="checkOutDate"  class="form-control date-book-room" value="${checkoutDate}" readonly>
     
@@ -1026,16 +1026,16 @@ function initGridMain(data) {
     
                                                 </div>
                                             </td>
-                                            <td>
+                                            <td data-label="Tiền phòng">
                                                 <p id="price" data-price="${room.total_amount}">${formatCurrency(room.total_amount)}</p>
                                             </td>
-                                            <td>
+                                            <td data-label="Tiền cọc">
                                                 <input type="text" class="form-control deposit number-input money-input"  name="deposit" value="${formatCurrencyEdit(room.deposit_amount)}" placeholder="0">
                                             </td>
-                                              <td>
+                                              <td data-label="Giảm giá">
                                                 <input type="text" class="form-control discount number-input-discount money-input"   name="discount" value="${formatCurrencyEdit(room.discount ?? 0)}" placeholder="0">
                                             </td>
-                                            <td>
+                                            <td data-label="Ghi chú">
                                                 <input type="text" name="note_room" class="form-control note_room" value="${room.note}" id="note">
                                             </td>
     

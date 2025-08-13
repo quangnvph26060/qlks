@@ -5160,7 +5160,15 @@ th.w-85 {
     .d-none-mobi{
         display: none;
     }
-
+    .financial-list{
+        width: 100% !important;
+    }
+    .width-mobi{
+        width: 200px !important;
+    }
+    .width-mobi-table{
+        width: 500px !important;
+    }
     .container-fluid {
         overflow-x: auto !important;
         margin-bottom: 100px !important;

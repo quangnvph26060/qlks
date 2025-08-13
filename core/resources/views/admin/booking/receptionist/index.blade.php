@@ -60,12 +60,13 @@
         <div class="col-md-6" id="booking-time">
             <div class="row g-2">
                 <div class="col-12 col-md-auto d-flex gap-2">
-                     <div id="date-input-booking" style="display: flex;gap: 10px;">
-                </div>
+                    <div id="date-input-booking" style="display: flex;gap: 10px;">
+                    </div>
                 </div>
                 <div class="col-12 col-md d-flex gap-2">
                     <p class="btn btn-primary change-room d-flex align-items-center add-book-room"
-                    style="font-size:13px; gap: 5px;"><span class="d-none-mobi"><i class="la la-plus"></i></span> Đặt phòng</p>
+                        style="font-size:13px; gap: 5px;"><span class="d-none-mobi"><i class="la la-plus"></i></span> Đặt
+                        phòng</p>
                 </div>
             </div>
 
@@ -111,30 +112,29 @@
                         <h5 class="modal-title">Chọn Phòng</h5>
                         <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
                     </div>
-                    <div class=" mt-2 d-flex mb-2" style="gap: 10px;justify-content: space-around;">
-                        <div class="">
-                            <label for="">Chọn loại phòng</label>
-                            <select class="form-select" id="selected-hang-phong">
-
-
-                            </select>
+                    <div class="row mt-2 mb-2 ">
+                        <div class="col-12 col-md">
+                            <label>Chọn loại phòng</label>
+                            <select class="form-select" id="selected-hang-phong"></select>
                         </div>
-                        <div class="">
-                            <label for="">Chọn tên phòng</label>
-                            <select class="form-select" id="selected-name-phong">
 
-                            </select>
+                        <div class="col-12 col-md">
+                            <label>Chọn tên phòng</label>
+                            <select class="form-select" id="selected-name-phong"></select>
                         </div>
-                        <div class="">
-                            <label for="">Từ ngày</label>
-                            <input type="date" class="form-control " id="date-chon-phong-in" style="height: 38px">
+
+                        <div class="col-12 col-md">
+                            <label>Từ ngày</label>
+                            <input type="date" class="form-control" id="date-chon-phong-in" style="height: 38px">
                         </div>
-                        <div class="">
-                            <label for="">Đến ngày</label>
+
+                        <div class="col-12 col-md">
+                            <label>Đến ngày</label>
                             <input type="date" class="form-control" id="date-chon-phong-out" style="height: 38px">
                         </div>
-                        <div class="">
-                            <label for="">Trạng thái phòng</label>
+
+                        <div class="col-12 col-md">
+                            <label>Trạng thái phòng</label>
                             <select class="form-select" id="status-room">
                                 <option value="">Chọn trạng tên phòng</option>
                                 <option value="Trống">Trống</option>
@@ -143,24 +143,28 @@
                             </select>
                         </div>
                     </div>
+
                     <div class="modal-body overflow-add-room">
-                        <table class=" table--light style--two table">
-                            <thead>
-                                <tr>
-                                    <th data-table="Hạng phòng">Hạng phòng</th>
-                                    <th data-table="Phòng">Tên phòng</th>
-                                    <th data-table="Ngày">Ngày</th>
-                                    <th data-table="Trạng thái phòng">Trạng thái phòng</th>
-                                    <th data-table="Giá">Giá</th>
-                                    <th data-table="Thao tác">Thao tác</th>
-                                </tr>
-                            </thead>
+                        <div class="table-responsive--md">
+                            <table class=" table--light style--two table">
+                                <thead>
+                                    <tr>
+                                        <th data-table="Hạng phòng">Hạng phòng</th>
+                                        <th data-table="Phòng">Tên phòng</th>
+                                        <th data-table="Ngày">Ngày</th>
+                                        <th data-table="Trạng thái phòng">Trạng thái phòng</th>
+                                        <th data-table="Giá">Giá</th>
+                                        <th data-table="Thao tác">Thao tác</th>
+                                    </tr>
+                                </thead>
 
-                            <tbody id="show-room">
+                                <tbody id="show-room">
 
-                            </tbody>
+                                </tbody>
 
-                        </table>
+                            </table>
+                        </div>
+
                     </div>
                     <div class="d-flex justify-content-end" style="gap: 10px;padding: 7px 31px">
                         <p type="button" data-row="booked" class=" btn-dat-truoc  add-room-list">Lưu
@@ -382,8 +386,8 @@
                                 </div>
                                 <!-- Row: Labels -->
                                 <div class="table-scroll-wrapper">
-                                    <div class="table-responsive mt-1">
-                                        <table class="table table-bordered text-center" id="data-table">
+                                    <div class="table-responsive mt-1 table-responsive--md ">
+                                        <table class=" table--light table table-bordered text-center" id="data-table">
                                             <thead class="table-light position-sticky top-0">
                                                 <tr class="fw-bold main-booking-modal">
                                                     <th class="w-10"></th>
@@ -1366,45 +1370,45 @@
                             // item.room['room_type']['room_type_price']['setup_pricing']['check_out_time']
                             var tr = `
                             <tr  data-status="0" data-price="${item.room['applied_price']['unit_price']}" data-room-id="${roomId}"  data-room-type-id="${roomTypeId}" data-date="${item.date}">
-                                <td>
+                                <td data-label="Hành động"> 
                                     <input type="checkbox">
                                 </td>
 
-                                <td>
+                                <td data-label="Tên phòng">
                                     <p class="room__name"> ${item.room['room_number']}</p>
                                 </td>
-                                 <td>
+                                 <td data-label="Số lượng">
                                      <input type="number" min="1" name="adult" class="form-control adult"  value="1"  >
 
                                 </td>
-                                <td >
+                                <td data-label="Hình thức">
                                     <select id="bookingType" class="form-select" name="optionRoom" style="width: 93px; font-size:15px">
                                          <option value="ngay">Ngày</option>
                                          <option value="gio">Giờ</option>
                                     </select>
                                 </td>
-                                 <td>
+                                 <td data-label="Ngày nhận">
                                     <div class="d-flex align-items-center justify-content-start" style="gap: 3px">
                                         <input type="date" name="checkInDate" id="date-book-room" class="form-control date-book-room"  value="${item.date}" readonly>
                                         <input type="time" name="checkInTime" id="time-book-room" class="form-control time-book-room"   value="${item.checkin_datetime}" style=" display: flex;justify-content: flex-start;width: 110px;padding: 1px 9px !important;">
                                     </div>
                                 </td>
-                                <td>
+                                <td data-label="Ngày trả">
                                     <div class="d-flex align-items-center justify-content-start" style="gap: 3px">
                                         <input type="date" name="checkOutDate"  class="form-control date-book-room" readonly  value="${date.toISOString().split('T')[0]}">
                                         <input type="time" name="checkOutTime" id="time-book-room" class="form-control time-book-room"  value="${item.checkin_datetime}"style=" display: flex;justify-content: flex-start;width: 110px;padding: 1px 9px !important;">
                                     </div>
                                 </td>
-                                <td>
+                                <td data-label="Tiền phòng">
                                      <p id="price" data-price="${item.room['applied_price']['unit_price']}">${formatCurrency(item.room['applied_price']['unit_price'])}</p>
                                 </td>
-                                <td>
+                                <td data-label="Tiền cọc">
                                       <input type="text" class="form-control deposit number-input money-input"  name="deposit"  placeholder="0">
                                 </td>
-                                 <td>
+                                 <td data-label="Giảm giá">
                                       <input type="text" class="form-control discount number-input-discount money-input"  name="discount"  placeholder="0">
                                 </td>
-                                <td>
+                                <td data-label="Ghi chú">
                                     <input type="text" name="note_room" class="form-control note_room" value="" id="note">
                                 </td>
                             </tr>
@@ -1598,12 +1602,12 @@
                         let firstRowClass = isFirst ? "first-row" : "";
                         var tr = `
                         <tr class="${firstRowClass}">
-                            <td style="${isFirst ? 'font-weight: bold;' : ''}" class="text-left"> ${item.room_type['name']} </td>
-                            <td style="${isFirst ? 'font-weight: bold;' : ''}"class="text-left"> ${item.room_number} </td>
-                            <td style="${isFirst ? 'font-weight: bold;' : ''}"class="text-left"> ${formatDate(item.date)} </td>
-                            <td style="${isFirst ? 'font-weight: bold;' : ''}"class="text-left ${rowClass}"> ${item.check_booked} </td>
-                            <td style="${isFirst ? 'font-weight: bold;' : ''}"class="text-right">${formatCurrency(item.applied_price)} </td>
-                            <td>
+                            <td data-label="Hạng phòng" style="${isFirst ? 'font-weight: bold;' : ''}" class="text-left"> ${item.room_type['name']} </td>
+                            <td data-label="Tên phòng"style="${isFirst ? 'font-weight: bold;' : ''}"class="text-left"> ${item.room_number} </td>
+                            <td data-label="Ngày"style="${isFirst ? 'font-weight: bold;' : ''}"class="text-left"> ${formatDate(item.date)} </td>
+                            <td data-label="Trạng thái phòng"style="${isFirst ? 'font-weight: bold;' : ''}"class="text-left ${rowClass}"> ${item.check_booked} </td>
+                            <td data-label="Giá"style="${isFirst ? 'font-weight: bold;' : ''}"class="text-right">${formatCurrency(item.applied_price)} </td>
+                            <td data-label="Thao tác">
                                 <input type="checkbox" ${item.status == 1 ? 'disabled' : ''} ${item.checkbox !== undefined ? 'checked disabled' : ''} data-date="${item.date}" data-id="${item.id}" data-room_type_id="${item.room_type_id}" id="checkbox-${item.id}">
                             </td>
                         </tr>
@@ -1740,11 +1744,11 @@
                 data.data.forEach(function(item) {
                     var tr = `
                 <tr class="customer-row">
-                    <td class="text-left "> ${item.customer_code} </td>
-                    <td class="text-left "> ${item.name} </td>
-                    <td class="text-right"> ${item.phone} </td>
-                    <td class="text-left "> ${item.group_code} </td>
-                    <td class="text-center">
+                    <td data-label="Mã khách hàng" class="text-left "> ${item.customer_code} </td>
+                    <td  data-label="Tên khách hàng" class="text-left "> ${item.name} </td>
+                    <td data-label="Số điện thoại" class="text-right"> ${item.phone} </td>
+                    <td data-label="Nguồn khách hàng" class="text-left "> ${item.group_code} </td>
+                    <td data-label="Thao tác" class="text-center">
                         <input type="radio" name="customer_select" data-id="${item.id}">
                     </td>
                 </tr>
@@ -2193,18 +2197,19 @@
         display: inline-block;
         padding: 3px 20px;
     }
-    @media (max-width: 768px) {
-    .stack-mobile {
-        flex-direction: column !important;
-        gap: 10px;
-        height: 100px !important;
-    }
 
-    .stack-mobile > div {
-        width: 100% !important;
+    @media (max-width: 768px) {
+        .stack-mobile {
+            flex-direction: column !important;
+            gap: 10px;
+            height: 100px !important;
+        }
+
+        .stack-mobile>div {
+            width: 100% !important;
+        }
+
     }
-    
-}
 
 
     .overflow-add-room {
