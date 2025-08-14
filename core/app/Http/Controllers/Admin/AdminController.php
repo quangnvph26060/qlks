@@ -78,7 +78,7 @@ class AdminController extends Controller
         $roomIdsWithCheckIn = RoomStatusHistory::where('status_code', 3)
             ->pluck('room_id')->where('end_date', '>', Carbon::now())
             ->toArray();
-       $latePaymentRoom = RoomStatusHistory::where('status_code', 3)
+        $latePaymentRoom = RoomStatusHistory::where('status_code', 3)
             ->where('end_date', '<', Carbon::now())
             ->pluck('room_id')
             ->toArray();
@@ -120,31 +120,31 @@ class AdminController extends Controller
             'roomTypePercents'
         ));
     }
-   public function revenue(Request $request)
-{
-    $labels = $request->input('labels'); // ["01", "02", ..., "31"]
-    $month = $request->input('month');   // 5 => tháng 5
-    $year = $request->input('year');     // 2025
+    public function revenue(Request $request)
+    {
+        $labels = $request->input('labels'); // ["01", "02", ..., "31"]
+        $month = $request->input('month');   // 5 => tháng 5
+        $year = $request->input('year');     // 2025
 
-    $dataValues = [];
-    $sumRevenue = 0;
+        $dataValues = [];
+        $sumRevenue = 0;
 
-    foreach ($labels as $day) {
-        $dateStart = sprintf('%04d-%02d-%02d 00:00:00', $year, $month, $day);
-        $dateEnd   = sprintf('%04d-%02d-%02d 23:59:59', $year, $month, $day);
+        foreach ($labels as $day) {
+            $dateStart = sprintf('%04d-%02d-%02d 00:00:00', $year, $month, $day);
+            $dateEnd   = sprintf('%04d-%02d-%02d 23:59:59', $year, $month, $day);
 
-        $totalAmount =(float) PaymentTransaction::whereBetween('paid_at', [$dateStart, $dateEnd])
-            ->sum('amount');
+            $totalAmount = (float) PaymentTransaction::whereBetween('paid_at', [$dateStart, $dateEnd])->where('unit_code',unitCode())->where('subdomain',subdomain())
+                ->sum('amount');
 
-        $dataValues[] = $totalAmount;
-        $sumRevenue += $totalAmount;
+            $dataValues[] = $totalAmount;
+            $sumRevenue += $totalAmount;
+        }
+
+        return response()->json([
+            'dataValues' => $dataValues,
+            'sum_revenue' => $sumRevenue
+        ]);
     }
-
-    return response()->json([
-        'dataValues' => $dataValues,
-        'sum_revenue' => $sumRevenue
-    ]);
-}
 
     private function getAllDates($startDate, $endDate)
     {

@@ -302,6 +302,8 @@
 
 
         function createBarChart(labels, dataValues) {
+           // labels = labels.slice(0, 12);
+            
             return new Chart(ctx2, {
                 type: 'bar',
                 data: {
