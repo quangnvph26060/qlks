@@ -572,23 +572,23 @@ function addRoomInBooking(data, list) {
                     const timeDateIn = targetId === 'list-booking-edit' ? item.room['room_type']['room_type_price']['setup_pricing']['check_in_time'] : item.checkin_datetime;
                     var tr = `
                             <tr  data-status="0" data-room-id="${roomId}"  data-room-type-id="${roomTypeId}" data-date="${item.date}" data-price="${item.room['applied_price']['unit_price']}">
-                                <td class="" style="width:22px">
+                                <td data-label="Hành động" class="" style="width:22px">
                                     <input type="checkbox">
                                 </td>
 
-                                <td title="${item.room['room_number']}">
+                                <td data-label="Tên phòng"  title="${item.room['room_number']}">
                                     <p class="room__name"> ${item.room['room_number']}</p>
                                 </td>
-                                 <td class="w-10">
+                                 <td data-label="Số lượng" style="width:10px" class="so_luong_mobi">
                                     <input type="number" min="1" name="adult" class="form-control adult"  value="1">
                                 </td>
-                                <td >
+                                <td data-label="Hình thức" class="hinh_thuc_mobi">
                                     <select id="bookingType" class="form-select" name="optionRoom" style="width: 93px; font-size:15px">
                                          <option value="ngay">Ngày</option>
                                          <option value="gio">Giờ</option>
                                     </select>
                                 </td>
-                                 <td>
+                                 <td  data-label="Ngày nhận"class="date-mobi">
                                     <div class="d-flex align-items-center justify-content-start" style="gap: 3px">
                                         <input type="date" name="checkInDate" id="date-book-room" class="form-control date-book-room"  value="${item.date}" readonly>
 
@@ -596,7 +596,7 @@ function addRoomInBooking(data, list) {
                                            value="${timeDateIn}" style=" display: flex;justify-content: flex-start;width: 110px;padding: 1px 9px !important;">
                                     </div>
                                 </td>
-                                <td>
+                                <td data-label="Ngày trả"class="date-mobi">
                                     <div class="d-flex align-items-center justify-content-start" style="gap: 3px">
                                         <input type="date" name="checkOutDate"  class="form-control date-book-room" readonly  value="${date.toISOString().split('T')[0]}">
                                         
@@ -607,16 +607,16 @@ function addRoomInBooking(data, list) {
 
                                     </div>
                                 </td>
-                                <td>
+                                <td data-label="Tiền phòng">
                                      <p id="price" data-price="${item.room['applied_price']['unit_price']}">${formatCurrency(item.room['applied_price']['unit_price'])}</p>
                                 </td>
-                                <td>
+                                <td data-label="Giảm giá">
                                       <input type="text" class="form-control deposit number-input money-input"  name="deposit"  placeholder="0">
                                 </td>
-                                 <td>
+                                 <td data-label="Tiền cọc">
                                       <input type="text" class="form-control discount number-input-discount money-input"  name="discount"  placeholder="0">
                                 </td>
-                                <td>
+                                <td data-label="Ghi chú">
                                     <input type="text" name="note_room" class="form-control note_room" value="" id="note">
                                 </td>
                             </tr>
@@ -845,30 +845,30 @@ $(document).on('click', '.booked_room_edit', function () {
                             var tr = `
                                     <tr data-room-id="${room.room_id}" data-status="${room.status}" data-price="${room.total_amount}"
                                     data-room-booking-id="${room.id}"  data-room-type-id="${room.room_type_id}"  class="${room.status === 1 ? "check_in_status" : ""}">
-                                        <td style="width:22px">
+                                        <td data-label="Hành động" style="width:22px">
                                             <input type="checkbox">
                                         </td>
 
-                                        <td>
+                                        <td data-label="Tên phòng" >
                                             <p class="room__name"> ${room.room_number}</p>
                                         </td>
-                                        <td>
+                                        <td data-label="Số lượng" class="so_luong_mobi">
                                             <input type="number" min="1" name="adult" class="form-control adult"  value="${room.guest_count}"  style="margin-left: 16px;">
                                         </td>
-                                        <td >
+                                        <td data-label="Hình thức" class="hinh_thuc_mobi">
                                             <select id="bookingType" class="form-select" name="optionRoom" style="width: 93px; font-size:15px">
                                                 <option value="ngay">Ngày</option>
                                                 <option value="gio">Giờ</option>
                                             </select>
                                         </td>
-                                        <td>
+                                        <td data-label="Ngày nhận"class="date-mobi">
                                             <div class="d-flex align-items-center justify-content-start" style="gap: 10px">
                                                 <input type="date" name="checkInDate" id="date-book-room" class="form-control date-book-room"  value="${checkinDate}" readonly>
 
                                                 <input type="time" name="checkInTime" id="time-book-room" class="form-control time-book-room"  value="${checkinTime}" style=" display: flex;justify-content: flex-start;width: 110px;padding: 1px 9px !important;">
                                             </div>
                                         </td>
-                                        <td>
+                                        <td data-label="Ngày trả"class="date-mobi">
                                             <div class="d-flex align-items-center justify-content-start" style="gap: 10px">
                                                 <input type="date" name="checkOutDate"  class="form-control date-book-room" value="${checkoutDate}" readonly>
 
@@ -876,16 +876,16 @@ $(document).on('click', '.booked_room_edit', function () {
 
                                             </div>
                                         </td>
-                                        <td>
+                                        <td data-label="Tiền phòng">
                                             <p id="price" data-price="${room.total_amount}">${formatCurrency(room.total_amount)}</p>
                                         </td>
-                                        <td>
+                                        <td data-label="Tiền cọc">
                                             <input type="text" class="form-control deposit number-input money-input"  name="deposit" value="${formatCurrencyEdit(room.deposit_amount)}" placeholder="0">
-                                        </td>
-                                          <td>
+                                        </td >
+                                        <td data-label="Giảm giá">
                                             <input type="text" class="form-control discount number-input-discount money-input"   name="discount" value="${formatCurrencyEdit(room.discount ?? 0)}" placeholder="0">
                                         </td>
-                                        <td>
+                                        <td data-label="Ghi chú">
                                             <input type="text" name="note_room" class="form-control note_room" value="${room.note}" id="note">
                                         </td>
 
@@ -1578,27 +1578,27 @@ function loadRoomBookings(page = 1, data) {
                         if (idx === 0) {
                             html += `
                                         <tr data-id="${record['id']}" class="table-row">
-                                            <td>
+                                            <td data-label="" class="d-none-mobi">
                                                 <button class="btn btn-link btn-toggle" type="button"
                                                     onclick="toggleRepresentatives('${record['booking_id']}', this)"></button>
                                             </td>
-                                            <td class="text-center w-10" >
+                                            <td data-label="Hành động" class="text-center " style="width:10px" >
                                                 <svg class="svg_menu_check_in" xmlns="http://www.w3.org/2000/svg" width="30" height="30" viewBox="0 0 21 21"><g fill="currentColor" fill-rule="evenodd"><circle cx="10.5" cy="10.5" r="1"/><circle cx="10.5" cy="5.5" r="1"/><circle cx="10.5" cy="15.5" r="1"/></g></svg>
                                                 <div class="dropdown menu_dropdown_check_in" id="dropdown-menu">
                                                     <div class="dropdown-item booked_room_edit" data-room-id="${record['booking_id']}">Sửa</div>
                                                     <div class="dropdown-item delete-booked-room" data-room-id="${record['booking_id']}">Xóa </div>
                                                 </div>
                                             </td>
-                                            <td class="text-right">${index + 1}</td>
-                                            <td class="text-left w-10">${record['booking_id']}</td>
-                                            <td class="text-right w-10">${bookingData.length}</td>
-                                            <td class="text-right">${formatDateTime(record['document_date'])}</td>
-                                            <td class="text-left">${record['customer_name'] ? record['customer_name'] : 'N/A'}</td>
-                                            <td class="text-right">${record['phone_number'] ? record['phone_number'] : 'N/A'}</td>
-                                            <td class="text-right w-10">${totalGuests}</td>
-                                            <td class="text-right">${formatCurrency(totalPrice)}</td>
-                                            <td class="text-right">${formatCurrency(totalAmount)}</td>
-                                            <td class="text-right">${formatCurrency(totalDiscount)}</td>
+                                            <td data-label="STT"class="text-right">${index + 1}</td>
+                                            <td data-label="Mã đặt hàng" class="text-left "style="width:10px" >${record['booking_id']}</td>
+                                            <td data-label="SL Phòng"class="text-right "style="width:10px" >${bookingData.length}</td>
+                                            <td data-label="Ngày chứng từ"class="text-right">${formatDateTime(record['document_date'])}</td>
+                                            <td data-label="Tên khách hàng"class="text-left">${record['customer_name'] ? record['customer_name'] : 'N/A'}</td>
+                                            <td data-label="Số điện thoại"class="text-right">${record['phone_number'] ? record['phone_number'] : 'N/A'}</td>
+                                            <td data-label="Số lượng người"class="text-right "style="width:10px" >${totalGuests}</td>
+                                            <td data-label="Tổng tiền"class="text-right">${formatCurrency(totalPrice)}</td>
+                                            <td data-label="Tổng đặt cọc"class="text-right">${formatCurrency(totalAmount)}</td>
+                                            <td data-label="Tổng giảm gía"class="text-right">${formatCurrency(totalDiscount)}</td>
                                         </tr>
                                           <tr class="collapse ${currentView === 'viewModel' ? "show" : ""}" id="rep-${firstRecord['booking_id']}">
                                     <td colspan="12">

@@ -23,7 +23,7 @@
                     </svg>
                 </div>
                 <div class="col-8 overflow-change-room">
-                    <div class="modal-body " style="padding: 0px">
+                    <div class="table-responsive mt-1 table-responsive--md" style="padding: 0px">
                         <table class=" table--light style--two table ">
                             <thead>
                                 <tr>

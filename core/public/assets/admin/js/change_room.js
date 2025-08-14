@@ -45,12 +45,12 @@ function loadRoomBookings(page = 1, data) {
                         if (idx === 0) {
                             html += `
                                         <tr data-id="${record['id']}" class="table-row">
-                                            <td>
+                                            <td  data-label="" class="d-none-mobi">
                                                 <button class="btn btn-link btn-toggle" type="button"
                                                     onclick="toggleRepresentatives('${record['check_in_id']}', this)"></button>
                                             </td>
-                                            <td class="text-center w-10">
-                                                <svg class="svg_menu_check_in" xmlns="http://www.w3.org/2000/svg" width="30" height="30" viewBox="0 0 21 21"><g fill="currentColor" fill-rule="evenodd"><circle cx="10.5" cy="10.5" r="1"/><circle cx="10.5" cy="5.5" r="1"/><circle cx="10.5" cy="15.5" r="1"/></g></svg>
+                                            <td data-label="Hành động" class="text-center " style="width:10px">
+                                                <svg class="svg_menu_check_in " xmlns="http://www.w3.org/2000/svg" width="30" height="30" viewBox="0 0 21 21"><g fill="currentColor" fill-rule="evenodd"><circle cx="10.5" cy="10.5" r="1"/><circle cx="10.5" cy="5.5" r="1"/><circle cx="10.5" cy="15.5" r="1"/></g></svg>
                                                 <div class="dropdown menu_dropdown_check_in" id="dropdown-menu">
                                                     <div class="dropdown-item booked_room_edit" data-room-id="${record['check_in_id']}">Sửa phòng</div>
                                                     <div class="dropdown-item booked_room" data-room-id="${record['id']}">Nhận phòng</div>
@@ -58,17 +58,17 @@ function loadRoomBookings(page = 1, data) {
                                                     <div class="dropdown-item delete-booked-room" data-room-id="${record['booking_id']}">Xóa phòng</div>
                                                 </div>
                                             </td>
-                                            <td class="text-right">${index + 1}</td>
-                                            <td class="text-left w-10" >${record['check_in_id']}</td>
+                                            <td data-label="STT"class="text-right">${index + 1}</td>
+                                            <td data-label="Mã nhận phòng"class="text-left " style="width:10px">${record['check_in_id']}</td>
 
-                                            <td class="text-right w-10">${bookingData.length}</td>
-                                            <td class="text-right">${formatDateTime(record['document_date'])}</td>
-                                            <td class="text-left">${record['customer_name'] ? record['customer_name'] : 'N/A'}</td>
-                                            <td class="text-right">${record['phone_number'] ? record['phone_number'] : 'N/A'}</td>
-                                            <td class="text-right w-10">${totalGuests}</td>
-                                            <td class="text-right">${formatCurrency(totalPrice)}</td>
-                                            <td class="text-right">${formatCurrency(totalAmount)}</td>
-                                            <td class="text-right">${formatCurrency(totalDiscount)}</td>
+                                            <td data-label="SL phòng"class="text-right "style="width:10px">${bookingData.length}</td>
+                                            <td data-label="Ngày chứng từ"class="text-right">${formatDateTime(record['document_date'])}</td>
+                                            <td data-label="Tên khách hàng"class="text-left">${record['customer_name'] ? record['customer_name'] : 'N/A'}</td>
+                                            <td data-label="Số điện thoại"class="text-right">${record['phone_number'] ? record['phone_number'] : 'N/A'}</td>
+                                            <td data-label="SL người"class="text-right "style="width:10px">${totalGuests}</td>
+                                            <td data-label="Tổng tiền"class="text-right">${formatCurrency(totalPrice)}</td>
+                                            <td  data-label="Tổng đặt cọc"class="text-right">${formatCurrency(totalAmount)}</td>
+                                            <td data-label="Tổng giảm giá" class="text-right">${formatCurrency(totalDiscount)}</td>
                                         </tr>
                                           <tr class="collapse ${currentView === 'viewModel' ? "show" : ""}" id="rep-${firstRecord['check_in_id']}">
                                     <td colspan="12">
@@ -162,6 +162,12 @@ $(document).ready(function () {
         $('#room_name').val('');
         $('#name_book').val('');
         loadRoomBookings();
+    });
+     $(document).on('click', '.svg_menu_check_in', function (e) {
+        e.stopPropagation();
+        const $dropdown = $(this).siblings('.menu_dropdown_check_in');
+        $('.menu_dropdown_check_in').not($dropdown).removeClass('show');
+        $dropdown.toggleClass('show');
     });
     // tìm kiếm 
     $(document).on('click', '.btn-submit-search-book', function () {

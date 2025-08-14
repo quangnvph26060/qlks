@@ -13,14 +13,14 @@
                 @can('admin.hotel.premium.service.save')
                 <a>
                     <button class="btn btn--primary cuModalBtn" data-modal_title="@lang('Thêm mới dịch vụ')" type="button"
-                        style="margin-left:10px">
+                        style="margin-left:4px">
                         <i class="las la-plus p-1"></i>
                     </button>
                 </a>
                 @endcan
                 <form role="form" enctype="multipart/form-data" action="{{ route('admin.hotel.premium.service.all') }}"
                     method="GET" id="searchForm" style="margin: 0px">
-                    <div class="form-group position-relative">
+                    <div class="form-group position-relative mb-0 d-flex gap-2">
                         <input placeholder="Nhập tên dịch vụ"
                             style="height: 35px;border: 1px solid rgb(121, 117, 117, 0.5);margin-left: 8px;" name="name"
                             id="searchInput" value="{{ $input }}">

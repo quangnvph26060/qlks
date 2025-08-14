@@ -27,7 +27,7 @@
                                 @endcan
                             </tr>
                         </thead>
-                        <tbody class="data-table">
+                        <tbody class="data-table style-td">
                         </tbody>
                     </table>
 
@@ -47,12 +47,12 @@
             <i class="la la-list"></i>@lang('Tất cả các đặt phòng')
         </a> --}}
       
-        <div class="d-flex">
+        <div class="d-flex  flex-wrap gap-3">
             <div class="d-flex" style="gap: 10px">
-                <a class="btn btn-sm btn--primary add-book-room" style="margin-left: 10px">
+                <a class="btn btn-sm btn--primary add-book-room d-flex justify-content-center align-items-center" style="margin-left: 10px">
                     <i class="la la-plus"></i>
                 </a>
-                <a class="btn btn-sm btn--primary btn-submit-sync-book">
+                <a class="btn btn-sm btn--primary btn-submit-sync-book d-flex justify-content-center align-items-center">
                     <i class="las la-sync"></i>
                 </a>
             </div>
@@ -66,12 +66,12 @@
                     <input type="date" class="form-control " id="date-chon-phong-out" style="height: 35px">
                 </div> --}}
                 <input class="searchInput input-field-search-book" name="name" placeholder="Tên khách hàng" id="name_book">
-                <button type="submit" class="btn btn-primary btn-submit-search-book">
+                <button type="submit" class="btn btn-primary btn-submit-search-book d-flex justify-content-center align-items-center">
                     <i class="las la-search"></i>
                 </button>
 
             </div>
-            <div style="  position: absolute;  right: 43px; display: flex;    gap: 10px;">
+            <div class="d-none-mobi toggle-style" >
                 <button onclick="toggleView('viewBox')" data-view="viewBox"
                     class="btn btn-primary btn-submit-search-book btn-toggle-view">
                     <svg fill="white" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 16 16" width="24" height="24">
@@ -95,7 +95,7 @@
         <div class="modal fade" id="addRoomModal" tabindex="-1" aria-hidden="true" style="overflow: unset">
             <div class="modal-dialog modal-dialog-centered" style="top: 4px">
                 <div class="modal-content" style="height: 100vh;">
-                    <div class="modal-header">
+                    {{-- <div class="modal-header">
                         <h5 class="modal-title">Chọn Phòng</h5>
                         <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
                     </div>
@@ -130,8 +130,10 @@
                                 <option value="Đã nhận">Đã nhận</option>
                             </select>
                         </div>
-                    </div>
-                    <div class="modal-body overflow-add-room">
+                    </div> --}}
+                    @include('admin/booking/partials/search-chose-room')
+                   <div class="table-responsive--md table-responsive">
+                     <div class="modal-body overflow-add-room table-responsive--md">
                         <table class=" table--light style--two table ">
                             <thead>
                                 <tr>
@@ -150,6 +152,7 @@
 
                         </table>
                     </div>
+                   </div>
                     <div class="d-flex justify-content-end" style="gap: 10px;padding: 7px 31px">
                         <p data-row="booked" class=" btn-dat-truoc  add-room-list" style="cursor: pointer">Lưu
                         </p>
@@ -261,11 +264,28 @@
                 font-size: 12px;
                 /* Reduce font size on smaller screens */
             }
-
+ #show-room tr td {
+    padding: 15px 2px !important;
+ }
             .table td,
             .table th {
                 padding: 5px;
                 /* Reduce padding for more compact view */
+            }
+            .style-td td{
+                display: flex;
+                justify-content: end;
+                align-items: center;
+            }
+            .svg_menu_check_in{
+                margin-top: -13px;
+            }
+            #dropdown-menu{
+                left:276px !important;
+                line-height: 10px;
+            }
+            [data-label]::before {
+                padding: 10px 9px !important;
             }
         }
 
@@ -277,7 +297,9 @@
             z-index: 9 !important;
         }
 
-
+.toggle-style{
+    position: absolute;  right: 43px; display: flex;    gap: 10px;
+}
 
 
         /* Căn lề trái cho Mã khách hàng & Tên khách hàng */

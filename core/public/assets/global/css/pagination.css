@@ -1,9 +1,21 @@
 .pagination-container {
+    height: 35px;
+    white-space: nowrap;
     display: flex;
     justify-content: center;
     /* margin-top: 20px; */
 }
-
+@media (max-width: 768px) {
+    .pagination-container {
+        overflow-x: auto;
+        -webkit-overflow-scrolling: touch; /* mượt hơn trên iOS */
+        justify-content: flex-start; /* để các nút nằm sát trái khi scroll */
+        padding-bottom: 5px; /* tránh cắt bóng đổ */
+    }
+    .pagination-container > * {
+        flex: 0 0 auto; /* tránh bị co lại */
+    }
+}
 .pagination-container button {
     background-color: #005AA1;
     color: white;

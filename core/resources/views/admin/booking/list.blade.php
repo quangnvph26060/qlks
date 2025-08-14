@@ -54,28 +54,34 @@
         {{-- <a class="btn btn-sm btn--primary" href="{{ route('admin.book.room') }}">
             <i class="la la-hand-o-right"></i>@lang('Thêm phòng mới')
         </a> --}}
-        <a class="btn btn-sm btn--primary check-in-room" style="margin-left: 10px">
-            <i class="la la-plus"></i>
-        </a>
-        <a class="btn btn-sm btn--primary btn-submit-sync-book">
-            <i class="las la-sync"></i>
-        </a>
-        <div class="form-group position-relative mb-0" style="display: flex;gap: 10px;">
-            <input class="searchInput input-field-search-book" name="booking_code" placeholder="Mã nhận phòng"
-                id="booking_code">
-            {{-- <select class="searchInput input-field-search-book"  name="room_code" id="select_room_number"></select> --}}
-            <input class="searchInput input-field-search-book" name="room_name" placeholder="Tên phòng" id="room_name">
-            {{-- <div class="d-flex" style="gap: 10px">
+        <div class="d-flex  flex-wrap gap-3">
+            <div class="d-flex   flex-wrap gap-3" style="gap: 10px">
+                <a class="btn btn-sm btn--primary check-in-room d-flex justify-content-center align-items-center"
+                    style="margin-left: 10px">
+                    <i class="la la-plus"></i>
+                </a>
+                <a class="btn btn-sm btn--primary btn-submit-sync-book d-flex justify-content-center align-items-center">
+                    <i class="las la-sync"></i>
+                </a>
+            </div>
+            <div class="form-group position-relative" style="display: flex;gap: 10px;">
+                <input class="searchInput input-field-search-book" name="booking_code" placeholder="Mã nhận phòng"
+                    id="booking_code">
+                {{-- <select class="searchInput input-field-search-book"  name="room_code" id="select_room_number"></select> --}}
+                <input class="searchInput input-field-search-book" name="room_name" placeholder="Tên phòng" id="room_name">
+                {{-- <div class="d-flex" style="gap: 10px">
             <input type="date" class="form-control " id="date-chon-phong-in" style="height: 35px">
             <input type="date" class="form-control " id="date-chon-phong-out" style="height: 35px">
           </div> --}}
-            <input class="searchInput input-field-search-book" name="name" placeholder="Tên khách hàng" id="name_book">
-            <button type="submit" class="btn btn-primary btn-submit-search-book">
-                <i class="las la-search"></i>
-            </button>
+                <input class="searchInput input-field-search-book" name="name" placeholder="Tên khách hàng" id="name_book">
+                <button type="submit"
+                    class="btn btn-primary btn-submit-search-book d-flex justify-content-center align-items-center">
+                    <i class="las la-search"></i>
+                </button>
 
+            </div>
         </div>
-        <div style="  position: absolute;  right: 43px; display: flex;    gap: 10px;">
+        <div class="d-none-mobi toggle-style">
             <button onclick="toggleView('viewBox')" data-view="viewBox"
                 class="btn btn-primary btn-submit-search-book btn-toggle-view">
                 <svg fill="white" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 16 16" width="24" height="24">
@@ -98,60 +104,27 @@
         <div class="modal fade" id="addRoomModal" tabindex="-1" aria-hidden="true" style="overflow: unset">
             <div class="modal-dialog modal-dialog-centered" style="top: 4px">
                 <div class="modal-content" style="height: 100vh;">
-                    <div class="modal-header">
-                        <h5 class="modal-title">Chọn Phòng</h5>
-                        <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
-                    </div>
-                    <div class=" mt-2 d-flex mb-2" style="gap: 10px;justify-content: space-around;">
-                        <div class="">
-                            <label for="">Chọn loại phòng</label>
-                            <select class="form-select" id="selected-hang-phong">
+                    @include('admin/booking/partials/search-chose-room')
+                    <div class="table-responsive--md table-responsive">
+                        <div class="modal-body overflow-add-room">
+                            <table class=" table--light style--two table">
+                                <thead>
+                                    <tr>
+                                        <th data-table="Hạng phòng">Hạng phòng</th>
+                                        <th data-table="Phòng">Tên phòng</th>
+                                        <th data-table="Ngày">Ngày</th>
+                                        <th data-table="Trạng thái phòng">Trạng thái phòng</th>
+                                        <th data-table="Giá">Giá</th>
+                                        <th data-table="Thao tác">Thao tác</th>
+                                    </tr>
+                                </thead>
 
+                                <tbody id="show-room">
 
-                            </select>
+                                </tbody>
+
+                            </table>
                         </div>
-                        <div class="">
-                            <label for="">Chọn tên phòng</label>
-                            <select class="form-select" id="selected-name-phong">
-
-                            </select>
-                        </div>
-                        <div class="">
-                            <label for="">Từ ngày</label>
-                            <input type="date" class="form-control " id="date-chon-phong-in" style="height: 38px">
-                        </div>
-                        <div class="">
-                            <label for="">Đến ngày</label>
-                            <input type="date" class="form-control" id="date-chon-phong-out" style="height: 38px">
-                        </div>
-                        <div class="">
-                            <label for="">Trạng thái phòng</label>
-                            <select class="form-select" id="status-room">
-                                <option value="">Chọn trạng tên phòng</option>
-                                <option value="Trống">Trống</option>
-                                <option value="Đã đặt">Đã đặt</option>
-                                <option value="Đã nhận">Đã nhận</option>
-                            </select>
-                        </div>
-                    </div>
-                    <div class="modal-body overflow-add-room">
-                        <table class=" table--light style--two table">
-                            <thead>
-                                <tr>
-                                    <th data-table="Hạng phòng">Hạng phòng</th>
-                                    <th data-table="Phòng">Tên phòng</th>
-                                    <th data-table="Ngày">Ngày</th>
-                                    <th data-table="Trạng thái phòng">Trạng thái phòng</th>
-                                    <th data-table="Giá">Giá</th>
-                                    <th data-table="Thao tác">Thao tác</th>
-                                </tr>
-                            </thead>
-
-                            <tbody id="show-room">
-
-                            </tbody>
-
-                        </table>
                     </div>
                     <div class="d-flex justify-content-end" style="gap: 10px;padding: 7px 31px">
                         <p type="button" data-row="booked" class=" btn-dat-truoc  add-room-list">Lưu
@@ -265,6 +238,10 @@
             }
         }
 
+        #show-room tr td {
+            padding: 15px 2px !important;
+        }
+
         @media (max-width: 768px) {
             .modal-content {
                 padding: 10px;
@@ -281,10 +258,36 @@
             .modal-body {
                 padding: 10px;
             }
+
+            .style-td td {
+                display: flex;
+                justify-content: end;
+                align-items: center;
+            }
+
+            .svg_menu_check_in {
+                margin-top: -13px;
+            }
+
+            #dropdown-menu {
+                left: 276px !important;
+                line-height: 10px;
+            }
+
+            [data-label]::before {
+                padding: 10px 9px !important;
+            }
         }
 
         .modal-content {
             height: 700px;
+        }
+
+        .toggle-style {
+            position: absolute;
+            right: 43px;
+            display: flex;
+            gap: 10px;
         }
 
         .modal-body {
@@ -298,7 +301,7 @@
             width: 100%;
         }
 
-      
+
 
 
         /* Đảm bảo input và select không bị quá to */

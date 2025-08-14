@@ -4,7 +4,7 @@
         <div class="col-md-6 d-flex stack-mobile" style="justify-content: start;gap:10px;height: 35px;">
             <div class="d-flex gap-2">
                 <button id="listViewBtn" class="active" onclick="changeView('list')">
-                    <span class="icon"> <i class="fa-solid fa-bars"></i></span> <span class="text">Danh Sách phòng
+                    <span class="icon"> <i class="fa-solid fa-bars"></i></span> <span class="text">Danh sách phòng
                         đặt</span>
                 </button>
                 <div class="view-toggle">
@@ -388,7 +388,7 @@
                                 <div class="table-scroll-wrapper">
                                     <div class="table-responsive mt-1 table-responsive--md ">
                                         <table class=" table--light table table-bordered text-center" id="data-table">
-                                            <thead class="table-light position-sticky top-0">
+                                            <thead class=" position-sticky top-0">
                                                 <tr class="fw-bold main-booking-modal">
                                                     <th class="w-10"></th>
                                                     <th>Phòng</th>
@@ -1377,23 +1377,23 @@
                                 <td data-label="Tên phòng">
                                     <p class="room__name"> ${item.room['room_number']}</p>
                                 </td>
-                                 <td data-label="Số lượng">
+                                 <td data-label="Số lượng" class="so_luong_mobi">
                                      <input type="number" min="1" name="adult" class="form-control adult"  value="1"  >
 
                                 </td>
-                                <td data-label="Hình thức">
+                                <td data-label="Hình thức" class="hinh_thuc_mobi">
                                     <select id="bookingType" class="form-select" name="optionRoom" style="width: 93px; font-size:15px">
                                          <option value="ngay">Ngày</option>
                                          <option value="gio">Giờ</option>
                                     </select>
                                 </td>
-                                 <td data-label="Ngày nhận">
+                                 <td data-label="Ngày nhận" class="date-mobi">
                                     <div class="d-flex align-items-center justify-content-start" style="gap: 3px">
                                         <input type="date" name="checkInDate" id="date-book-room" class="form-control date-book-room"  value="${item.date}" readonly>
                                         <input type="time" name="checkInTime" id="time-book-room" class="form-control time-book-room"   value="${item.checkin_datetime}" style=" display: flex;justify-content: flex-start;width: 110px;padding: 1px 9px !important;">
                                     </div>
                                 </td>
-                                <td data-label="Ngày trả">
+                                <td data-label="Ngày trả" class="date-mobi">
                                     <div class="d-flex align-items-center justify-content-start" style="gap: 3px">
                                         <input type="date" name="checkOutDate"  class="form-control date-book-room" readonly  value="${date.toISOString().split('T')[0]}">
                                         <input type="time" name="checkOutTime" id="time-book-room" class="form-control time-book-room"  value="${item.checkin_datetime}"style=" display: flex;justify-content: flex-start;width: 110px;padding: 1px 9px !important;">

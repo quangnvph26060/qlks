@@ -51,7 +51,7 @@
 
 
 <div class="modal fade" id="myModal-booking" tabindex="-1" role="dialog" aria-labelledby="myModalLabel-booking"
-    aria-hidden="true" style="padding-bottom: 0px !important">
+    aria-hidden="true" style="padding-bottom: 0px">
     {{-- padding: 115px 10px 0px; --}}
     <div class="modal-dialog modal-dialog-centered modal-xl" role="document" style=" width: 100%;">
         <div class="modal-content">
@@ -208,10 +208,11 @@
                             </p>
                         </div>
                         <!-- Row: Labels -->
-                        <div class="table-scroll-wrapper table-responsive--md">
-                            <div class="table-responsive mt-1">
-                                <table class="table table-bordered text-center table--light width-mobi-table" id="data-table">
-                                    <thead class="table-light position-sticky top-0">
+                        <div class="table-scroll-wrapper ">
+                            <div class="table-responsive mt-1 table-responsive--md">
+                                <table class="table table-bordered text-center table--light width-mobi-table"
+                                    id="data-table">
+                                    <thead class=" position-sticky top-0">
                                         <tr class="fw-bold main-booking-modal">
                                             <th class="w-10"></th>
                                             <th>Phòng</th>
@@ -233,9 +234,12 @@
                                     <tfoot class="table-group-divider">
                                         <tr>
                                             <td class="d-none-mobi" colspan="6">Tổng tiền: </td>
-                                            <td data-label="Tiền phòng" class="text-primary fw-bold text-end"><span class="total_amount">0</span></td>
-                                            <td  data-label="Tiền giảm giá" class="text-success fw-bold text-end"><span class="total_deposit">0</span></td>
-                                            <td   data-label="Tiền đặt cọc" class="text-info fw-bold text-end"><span class="total_discount">0</span></td>
+                                            <td data-label="Tiền phòng" class="text-primary fw-bold text-end"><span
+                                                    class="total_amount">0</span></td>
+                                            <td data-label="Tiền giảm giá" class="text-success fw-bold text-end"><span
+                                                    class="total_deposit">0</span></td>
+                                            <td data-label="Tiền đặt cọc" class="text-info fw-bold text-end"><span
+                                                    class="total_discount">0</span></td>
                                             <td></td>
                                         </tr>
                                     </tfoot>
@@ -341,3 +345,10 @@
         updateScroll();
     });
 </script>
+<style scoped>
+    @media (max-width:768px) {
+        .modal {
+            padding-bottom: 75px !important;
+        }
+    }
+</style>

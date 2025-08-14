@@ -222,8 +222,12 @@ aria-hidden="true">
     </div>
 </div>
 </div>
+
 <style scoped>
- /* .table td{
-    padding: 15px 5px !important;
- } */
+    @media (max-width:768px) {
+        .modal {
+            padding-bottom: 75px !important;
+        }
+    }
 </style>
+

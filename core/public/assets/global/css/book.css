@@ -323,9 +323,10 @@ hr {
 
 
 @media (max-width: 768px) {
-    .modal-dialog {
-        /* max-width: 95vw; */
-    }
+   .room__name {
+    text-align: right;
+}
+
 }
 
 .main-hour-out {
@@ -967,7 +968,7 @@ svg {
     gap: 8px;
     /* Khoảng cách giữa input và button */
 }
-
+}
 .search-container select,
 .search-container input,
 .search-container p {
@@ -1209,4 +1210,9 @@ textarea.form-control {
     .card-body {
         padding: 0px !important;
     }
+   
+    .search-container {
+        width: 100% !important;
+    }
+
 }

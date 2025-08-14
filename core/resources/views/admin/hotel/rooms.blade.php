@@ -13,14 +13,14 @@
                 @can('admin.hotel.room.add')
                     <a>
                         <button class="btn btn--primary" data-bs-target="#addModal" data-bs-toggle="modal"
-                            style="margin-left:10px">
+                            style="margin-left:4px">
                             <i class="las la-plus p-1"></i>
                         </button>
                     </a>
                 @endcan
                 <form role="form" enctype="multipart/form-data"  action="{{ route('admin.hotel.room.all') }}"
                     method="GET" id="searchForm" style="margin-bottom: 0px">
-                    <div class="form-group position-relative mb-0">
+                    <div class="form-group position-relative mb-0 d-flex gap-2">
                         <input placeholder="Nhập Mã/Tên loại phòng"
                             style="height: 35px;border: 1px solid rgb(121, 117, 117, 0.5);margin-left: 8px;" name="keyword"
                             id="searchInput" value="{{ request('keyword') }}">

@@ -5158,7 +5158,7 @@ th.w-85 {
         place-content: center;
     }   
     .d-none-mobi{
-        display: none;
+        display: none !important;
     }
     .financial-list{
         width: 100% !important;
@@ -5167,7 +5167,14 @@ th.w-85 {
         width: 200px !important;
     }
     .width-mobi-table{
-        width: 500px !important;
+        width: 100% !important;
+    }
+    .so_luong_mobi,
+    .hinh_thuc_mobi,
+    .date-mobi{
+
+        display: flex !important;
+        justify-content: end;
     }
     .container-fluid {
         overflow-x: auto !important;

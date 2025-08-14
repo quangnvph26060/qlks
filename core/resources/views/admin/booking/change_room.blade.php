@@ -1,6 +1,5 @@
 @extends('admin.layouts.master_iframe')
 @section('panel')
-
     <div class="row">
         <div class="pagination-container"></div>
         <div class="card b-radius--10 scroll-container-main">
@@ -23,7 +22,7 @@
                                 <th>Giảm giá</th>
                             </tr>
                         </thead>
-                        <tbody  class="data-table">
+                        <tbody class="data-table">
                         </tbody>
                     </table>
                 </div>
@@ -49,40 +48,51 @@
         {{-- <a class="btn btn-sm btn--primary check-in-room"  style="margin-left: 10px">
             <i class="la la-plus"></i>
         </a> --}}
-        <a class="btn btn-sm btn--primary btn-submit-sync-book">
-            <i class="las la-sync"></i>
-        </a>
-        <div class="form-group position-relative mb-0" style="display: flex;gap: 10px;">
-            <input class="searchInput input-field-search-book" name="booking_code" placeholder="Mã nhận phòng" id="booking_code">
-            <input class="searchInput input-field-search-book" name="room_name" placeholder="Tên phòng" id="room_name">
-          {{-- <div class="d-flex" style="gap: 10px">
+        <div class="d-flex  flex-wrap gap-3">
+               <div class="d-flex" style="gap: 10px">
+            <a class="btn btn-sm btn--primary btn-submit-sync-book d-flex justify-content-center align-items-center">
+                <i class="las la-sync"></i>
+            </a>
+        </div>
+            <div class="form-group position-relative " style="display: flex;gap: 10px;">
+                <input class="searchInput input-field-search-book" name="booking_code" placeholder="Mã nhận phòng"
+                    id="booking_code">
+                <input class="searchInput input-field-search-book" name="room_name" placeholder="Tên phòng" id="room_name">
+                {{-- <div class="d-flex" style="gap: 10px">
             <input type="date" class="form-control " id="date-chon-phong-in" style="height: 35px">
             <input type="date" class="form-control " id="date-chon-phong-out" style="height: 35px">
           </div> --}}
-            <input class="searchInput input-field-search-book" name="name" placeholder="Tên khách hàng" id="name_book">
-            <button type="submit" class="btn btn-primary btn-submit-search-book">
-                <i class="las la-search"></i>
-            </button>
-          
-        </div>
-        <div style="  position: absolute;  right: 43px; display: flex;    gap: 10px;">
-            <button onclick="toggleView('viewBox')" data-view="viewBox" class="btn btn-primary btn-submit-search-book btn-toggle-view">
-                <svg fill="white" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 16 16" width="24" height="24">
-                    <path fill="white" d="M5.75 7.5h7.5a.75.75 0 0 1 0 1.5h-7.5a.75.75 0 0 1 0-1.5Zm0 5h7.5a.75.75 0 0 1 0 1.5h-7.5a.75.75 0 0 1 0-1.5Zm-4-10h6.5a.75.75 0 0 1 0 1.5h-6.5a.75.75 0 0 1 0-1.5ZM2 14a1 1 0 1 1 0-2 1 1 0 0 1 0 2Zm1-6a1 1 0 1 1-2 0 1 1 0 0 1 2 0Zm10.314-3.082L11.07 2.417A.25.25 0 0 1 11.256 2h4.488a.25.25 0 0 1 .186.417l-2.244 2.5a.25.25 0 0 1-.372 0Z"></path>
-                </svg>
-            </button>
-            
-            <button onclick="toggleView('viewModel')" data-view="viewModel" class="btn btn-primary btn-submit-search-book btn-toggle-view">
-                <svg fill="white" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 16 16" width="16" height="16">
-                    <path fill="white" d="M1.75 2.5h10.5a.75.75 0 0 1 0 1.5H1.75a.75.75 0 0 1 0-1.5Zm4 5h8.5a.75.75 0 0 1 0 1.5h-8.5a.75.75 0 0 1 0-1.5Zm0 5h8.5a.75.75 0 0 1 0 1.5h-8.5a.75.75 0 0 1 0-1.5ZM2.5 7.75v6a.75.75 0 0 1-1.5 0v-6a.75.75 0 0 1 1.5 0Z"></path>
-                </svg>
-            </button>
-            
+                <input class="searchInput input-field-search-book" name="name" placeholder="Tên khách hàng" id="name_book">
+                <button type="submit" class="btn btn-primary btn-submit-search-book d-flex justify-content-center align-items-center">
+                    <i class="las la-search"></i>
+                </button>
+
+            </div>
+            <div class="d-none-mobi toggle-style">
+                <button onclick="toggleView('viewBox')" data-view="viewBox"
+                    class="btn btn-primary btn-submit-search-book btn-toggle-view">
+                    <svg fill="white" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 16 16" width="24" height="24">
+                        <path fill="white"
+                            d="M5.75 7.5h7.5a.75.75 0 0 1 0 1.5h-7.5a.75.75 0 0 1 0-1.5Zm0 5h7.5a.75.75 0 0 1 0 1.5h-7.5a.75.75 0 0 1 0-1.5Zm-4-10h6.5a.75.75 0 0 1 0 1.5h-6.5a.75.75 0 0 1 0-1.5ZM2 14a1 1 0 1 1 0-2 1 1 0 0 1 0 2Zm1-6a1 1 0 1 1-2 0 1 1 0 0 1 2 0Zm10.314-3.082L11.07 2.417A.25.25 0 0 1 11.256 2h4.488a.25.25 0 0 1 .186.417l-2.244 2.5a.25.25 0 0 1-.372 0Z">
+                        </path>
+                    </svg>
+                </button>
+
+                <button onclick="toggleView('viewModel')" data-view="viewModel"
+                    class="btn btn-primary btn-submit-search-book btn-toggle-view">
+                    <svg fill="white" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 16 16" width="16" height="16">
+                        <path fill="white"
+                            d="M1.75 2.5h10.5a.75.75 0 0 1 0 1.5H1.75a.75.75 0 0 1 0-1.5Zm4 5h8.5a.75.75 0 0 1 0 1.5h-8.5a.75.75 0 0 1 0-1.5Zm0 5h8.5a.75.75 0 0 1 0 1.5h-8.5a.75.75 0 0 1 0-1.5ZM2.5 7.75v6a.75.75 0 0 1-1.5 0v-6a.75.75 0 0 1 1.5 0Z">
+                        </path>
+                    </svg>
+                </button>
+
+            </div>
         </div>
         <div class="modal fade" id="addRoomModal" tabindex="-1" aria-hidden="true" style="overflow: unset">
             <div class="modal-dialog modal-dialog-centered" style="top: 4px">
                 <div class="modal-content" style="height: 100vh;">
-                    <div class="modal-header">
+                    {{-- <div class="modal-header">
                         <h5 class="modal-title">Chọn Phòng</h5>
                         <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
                     </div>
@@ -117,26 +127,31 @@
                                 <option value="Đã nhận">Đã nhận</option>
                             </select>
                         </div>
+                    </div> --}}
+
+                    @include('admin/booking/partials/search-chose-room')
+                    <div class="table-responsive--md table-responsive">
+                        <div class="modal-body overflow-add-room">
+                            <table class=" table--light style--two table">
+                                <thead>
+                                    <tr>
+                                        <th data-table="Hạng phòng">Hạng phòng</th>
+                                        <th data-table="Phòng">Tên phòng</th>
+                                        <th data-table="Ngày">Ngày</th>
+                                        <th data-table="Trạng thái phòng">Trạng thái phòng</th>
+                                        <th data-table="Giá">Giá</th>
+                                        <th data-table="Thao tác">Thao tác</th>
+                                    </tr>
+                                </thead>
+
+                                <tbody id="show-room">
+
+                                </tbody>
+
+                            </table>
+                        </div>
                     </div>
-                    <div class="modal-body overflow-add-room">
-                        <table class=" table--light style--two table">
-                            <thead>
-                                <tr>
-                                    <th data-table="Hạng phòng">Hạng phòng</th>
-                                    <th data-table="Phòng">Tên phòng</th>
-                                    <th data-table="Ngày">Ngày</th>
-                                    <th data-table="Trạng thái phòng">Trạng thái phòng</th>
-                                    <th data-table="Giá">Giá</th>
-                                    <th data-table="Thao tác">Thao tác</th>
-                                </tr>
-                            </thead>
 
-                            <tbody id="show-room">
-
-                            </tbody>
-
-                        </table>
-                    </div>
                     <div class="d-flex justify-content-end" style="gap: 10px;padding: 7px 31px">
                         <p type="button" data-row="booked" class=" btn-dat-truoc  add-room-list">Lưu
                         </p>
@@ -150,10 +165,10 @@
 @endcan
 
 @push('script-lib')
-<script src="{{ asset('assets/admin/js/toggle_view.js') }}"></script>
+    <script src="{{ asset('assets/admin/js/toggle_view.js') }}"></script>
     <script src="{{ asset('assets/admin/js/common.js') }}"></script>
     <script src="{{ asset('assets/validator/validator.js') }}"></script>
-    <script  src="{{ asset('assets/admin/js/change_room.js') }}"></script>
+    <script src="{{ asset('assets/admin/js/change_room.js') }}"></script>
     <script src="{{ asset('assets/admin/js/moment.min.js') }}"></script>
     <script src="{{ asset('assets/admin/js/daterangepicker.min.js') }}"></script>
 @endpush
@@ -165,7 +180,7 @@
 @endpush
 
 @push('script')
-<script>
+    <script>
         $(document).ready(function() {
             $("#date-chon-phong-in").on("change", function() {
                 let checkInDate = new Date($(this).val());
@@ -176,28 +191,29 @@
                 }
             });
         });
+
         function updateScroll() {
-        const listBooking = document.getElementById("list-booking");
-        const rows = listBooking.querySelectorAll("tr");
+            const listBooking = document.getElementById("list-booking");
+            const rows = listBooking.querySelectorAll("tr");
 
-        if (rows.length > 3) {
-            listBooking.style.display = "block";
-            listBooking.style.height = "150px"; // Giới hạn chiều cao
-            listBooking.style.overflowY = "auto"; // Hiển thị thanh cuộn
-        } else {
-            listBooking.style.height = "none";
-            listBooking.style.overflowY = "visible"; // Không có thanh cuộn nếu ít hơn hoặc bằng 3 hàng
+            if (rows.length > 3) {
+                listBooking.style.display = "block";
+                listBooking.style.height = "150px"; // Giới hạn chiều cao
+                listBooking.style.overflowY = "auto"; // Hiển thị thanh cuộn
+            } else {
+                listBooking.style.height = "none";
+                listBooking.style.overflowY = "visible"; // Không có thanh cuộn nếu ít hơn hoặc bằng 3 hàng
+            }
         }
-    }
 
-    updateScroll();
+        updateScroll();
         window.toggleRepresentatives = function(id, button) {
             const rows = document.querySelectorAll('[id="rep-' + id + '"]'); // Lấy tất cả các hàng có cùng ID
             rows.forEach(row => row.classList.toggle('show')); // Toggle từng hàng
 
             button.classList.toggle('collapsed'); // Toggle trạng thái button
         };
-        var allCheckInUrl =  "{{ route('admin.booking.all.change.room') }}";
+        var allCheckInUrl = "{{ route('admin.booking.all.change.room') }}";
         var showRoomUrl = "{{ route('admin.booking.showRoom') }}";
         // var findCustomerUrl = '{{ route('admin.find.customer') }}';
         // var checkInDetailUrl = "{{ route('admin.booking.check.in.details', ['id' => ':id']) }}";
@@ -215,8 +231,8 @@
         // var findRoomBookingIdUrl = '{{ route('admin.find.room.booking') }}';
         // var deleteRoomEdit = '{{ route('admin.room.booking.delete') }}';
         // var roomBook = "{{ route('admin.room.book') }}";
-        // var CheckInUrl = "{{route('admin.room.booked.check.in')}}";
-</script>
+        // var CheckInUrl = "{{ route('admin.room.booked.check.in') }}";
+    </script>
 @endpush
 
 @push('style')
@@ -224,28 +240,34 @@
         .table .background-tr {
             height: 30px;
         }
+
         #data-table th {
-            padding: 6px !important;    
+            padding: 6px !important;
             line-height: 1 !important;
         }
+
         #show-room tr td {
             padding: 6px 2px !important;
-            line-height: 0;   
+            line-height: 0;
         }
+
         .table td {
             height: 37px !important;
         }
+
         #dropdown-menu {
-           
-            position: fixed; 
-            z-index: 9999; 
-            background: white; 
+
+            position: fixed;
+            z-index: 9999;
+            background: white;
             box-shadow: 0px 4px 10px rgba(0, 0, 0, 0.2);
         }
+
         .table-responsive--md {
             overflow-x: auto;
-           
+
         }
+
         @media (max-width: 768px) {
             .table--light {
                 font-size: 12px;
@@ -257,8 +279,16 @@
                 padding: 5px;
                 /* Reduce padding for more compact view */
             }
+  #dropdown-menu {
+    right: 10;
+  }
+            .style-mobi {
+                flex-direction: column;
+            }
         }
-
+.toggle-style{
+    position: absolute;  right: 43px; display: flex;    gap: 10px;
+}
         .booking-table td {
             white-space: unset;
         }
@@ -276,6 +306,7 @@
         .card {
             box-shadow: none;
         }
+
         .background-primary {
             background: #0b138d;
         }

@@ -30,7 +30,7 @@
 </div>
 </div>
 <div class="modal fade" id="myModal-check-in-edit" tabindex="-1" role="dialog" aria-labelledby="myModalLabel-booking"
-    aria-hidden="true" style="padding-bottom: 0px !important">
+    aria-hidden="true" style="padding-bottom: 0px">
 
     <div class="modal-dialog modal-dialog-centered" role="document" style="width: 100%;">
         <div class="modal-content">
@@ -47,9 +47,9 @@
                     @csrf
                     <div class="row">
                         {{-- <h5 class="modal-title" id="myModalLabel-booking">Thông tin khách hàng</h5> --}}
-                        <div class="row">
+                        
                             <div class="col-md-6">
-                                <div class="d-flex flex-column custom-gapl-lg">
+                                <div class="d-flex flex-column custom-gap-lg">
                                     {{-- <div class="mb-3 mt-2">
                                         <label for="email" class="form-label required">Email</label>
                                        <select class="form-select" name="" id="">
@@ -69,7 +69,7 @@
                                         </div>
                                         {{-- <label for="phone" class="form-label required">Tên khách hàng</label> --}}
 
-                                        <div class="d-flex">
+                                       
                                             <div class="col-md-8">
                                                 <input type="text" name="name" style="height: 35px" id="name_edit"
                                                     class="form-control name-edit" placeholder="Tên khách hàng">
@@ -78,7 +78,7 @@
                                             </div>
                                             <input type="hidden" name="id_room_booking" id="id_room_booking"
                                                 class="form-control id_room_booking">
-                                        </div>
+                                        
 
                                         {{-- <div class="d-flex customer-svg-icon" style="gap: 5px">
                                         <svg xmlns="http://www.w3.org/2000/svg" class="camera-svg-icon-add" width="20"
@@ -197,7 +197,7 @@
                                     </div>
                                 </div>
                             </div>
-                        </div>
+                        
                         {{-- <datalist id="customer-names">
                             @forelse ($userList as $user)
                                 <option value="{{ $user->customer_code }}">
@@ -224,9 +224,9 @@
                         </div>
                         <!-- Row: Labels -->
                         <div class="table-scroll-wrapper">
-                            <div class="table-responsive mt-1">
-                                <table class="table table-bordered text-center" id="data-table">
-                                    <thead class="table-light position-sticky top-0">
+                            <div class="table-responsive mt-1 table-responsive--md">
+                                <table class="table table-bordered  table--light text-center" id="data-table">
+                                    <thead class=" position-sticky top-0">
                                         <tr class="fw-bold main-booking-modal">
                                             <th class="w-10"></th>
                                             <th>Phòng</th>
@@ -247,10 +247,10 @@
 
                                     <tfoot class="table-group-divider">
                                         <tr>
-                                            <td colspan="6">Tổng tiền: </td>
-                                            <td class="text-primary fw-bold text-end"><span class="total_amount">0</span></td>
-                                            <td class="text-success fw-bold text-end"><span class="total_deposit">0</span></td>
-                                            <td class="text-info fw-bold text-end"><span class="total_discount">0</span></td>
+                                            <td class="d-none-mobi"colspan="6">Tổng tiền: </td>
+                                            <td data-label="Tiền phòng"class="text-primary fw-bold text-end"><span class="total_amount">0</span></td>
+                                            <td data-label="Tiền giảm giá"class="text-success fw-bold text-end"><span class="total_deposit">0</span></td>
+                                            <td data-label="Tiền đặt cọc"class="text-info fw-bold text-end"><span class="total_discount">0</span></td>
                                             <td></td>
                                         </tr>
                                     </tfoot>
@@ -322,3 +322,10 @@
         updateScroll();
     });
 </script>
+<style scoped>
+    @media (max-width:768px) {
+        .modal {
+            padding-bottom: 75px !important;
+        }
+    }
+</style>
