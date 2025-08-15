@@ -14,7 +14,7 @@
         @endphp
 
         <tr data-id="{{ $warehouse->id }}">
-            <td style="width:20px" data-label="Hành động">
+            <td data-label="Hành động" style="width:20px" data-label="Hành động">
                 <svg class="svg_menu_check_in" xmlns="http://www.w3.org/2000/svg" width="30" height="30"
                     viewBox="0 0 21 21">
                     <g fill="currentColor" fill-rule="evenodd">

@@ -1,6 +1,6 @@
 @extends('admin.layouts.master_iframe')
 @section('panel')
-    <div class="row">
+   
         <div class="row">
             <div class="col-12">
                 <div class="warehouse-selector">
@@ -10,24 +10,25 @@
                                 <i class="fas fa-building me-2"></i>
                                 Chọn kho hàng
                             </h4>
-                            <div class="d-flex gap-3 ">
-                                  <select class="form-select" id="warehouseSelect" style="height: 35px">
-                                <option value="all">Tất cả kho hàng</option>
-                                @foreach ($warehouses as $warehouse)
-                                    <option value="{{ $warehouse->id }}">{{ $warehouse->name }}</option>
-                                @endforeach
-                            </select>
-                           <button type="button" class="btn text-black bg-white btn-lg btn-no-hover" onclick="location.reload();">
-    <i class="fa fa-repeat"></i>
-</button>
+                            <div class="d-flex gap-3 mb-1 mb-md-0">
+                                <select class="form-select" id="warehouseSelect" style="height: 35px">
+                                    <option value="all">Tất cả kho hàng</option>
+                                    @foreach ($warehouses as $warehouse)
+                                        <option value="{{ $warehouse->id }}">{{ $warehouse->name }}</option>
+                                    @endforeach
+                                </select>
+                                <button type="button" class="btn text-black bg-white btn-lg btn-no-hover"
+                                    onclick="location.reload();">
+                                    <i class="fa fa-repeat"></i>
+                                </button>
 
                             </div>
 
                         </div>
-                        <div class="col-md-6 text-md-end">
-                            <div class="d-flex flex-column align-items-md-end">
-                                <div class="d-flex gap-2">
-                                    <input type="date" class="form-control form-control-sm bg-white text-black"
+                        <div class="col-md-6   text-md-end ">
+                            <div class="d-flex flex-column align-items-md-end ">
+                                <div class="d-md-flex">
+                                    <input type="date" class="form-control  mb-1 mb-md-0 form-control-sm bg-white text-black"
                                         id="startDate">
                                     <input type="date" class="form-control form-control-sm bg-white text-black"
                                         id="endDate">
@@ -90,7 +91,7 @@
         <div class="row">
             <div class="col-12">
                 <div class="table-container p-2">
-                    <div class="card-header bg-white d-flex justify-content-between align-items-center mb-2">
+                    <div class="card-header bg-white d-md-flex flex-column flex-md-row justify-content-between align-items-center mb-2">
                         <h5 class="mb-0">
                             <i class="fas fa-list me-2"></i>
                             Danh sách sản phẩm tồn kho
@@ -104,7 +105,7 @@
                             </button>
                         </div>
                     </div>
-                    <div class="table-responsive">
+                    <div class="table-responsive--md">
                         <table class="table table-hover mb-0 table--light style--two">
                             <thead class="table-light ">
                                 <tr>
@@ -156,7 +157,7 @@
                 </div>
             </div>
         </div>
-    </div> {{-- ✅ Kết thúc row chính --}}
+   
 @endsection
 
 
@@ -323,12 +324,12 @@
 
                 const row = `
                             <tr>
-                                <td class="text-left"><strong>${item.product_code ?? ""}</strong></td>
-                                <td>${item.product_name}</td>
-                                <td class="text-right">${formatNumber(item.ton_dau)}</td>
-                                <td class="text-right">${formatNumber(item.nhap)}</td>
-                                <td class="text-right">${formatNumber(item.xuat)}</td>
-                                <td class="text-right">${formatNumber(item.ton_cuoi)}</td>
+                                <td data-label="Mã SP" class="text-left"><strong>${item.product_code ?? ""}</strong></td>
+                                <td  data-label="Tên sản phẩm">${item.product_name}</td>
+                                <td data-label="Tồn đâu" class="text-right">${formatNumber(item.ton_dau)}</td>
+                                <td  data-label="Nhập"class="text-right">${formatNumber(item.nhap)}</td>
+                                <td data-label="Xuất" class="text-right">${formatNumber(item.xuat)}</td>
+                                <td  data-label="Tồn cuối"class="text-right">${formatNumber(item.ton_cuoi)}</td>
                             </tr>
                         `;
 
@@ -378,13 +379,13 @@
         .stats-card {
             transition: transform 0.2s;
         }
-       
-    .btn-no-hover:hover {
-        background-color: white !important;
-        color: black !important;
-        border-color: transparent !important;
-        box-shadow: none !important;
-    }
+
+        .btn-no-hover:hover {
+            background-color: white !important;
+            color: black !important;
+            border-color: transparent !important;
+            box-shadow: none !important;
+        }
 
 
         .stats-card:hover {
@@ -426,6 +427,11 @@
             background-color: #ffc107;
             color: black;
         }
+@media (max-width: 575.98px) {
+    .h-sm-100 {
+        height: auto !important;
+    }
+}
 
         .high-stock {
             background-color: #28a745;

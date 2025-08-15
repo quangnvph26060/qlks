@@ -23,7 +23,7 @@
                         <nav class="mt-3 justify-content-center mb-2">
                             <ul class="pagination justify-content-center" id="pagination"></ul>
                         </nav>
-                        <div class="table-responsive--sm">
+                        <div class="table-responsive--sm table-responsive">
                             <table class="table--light style--two table" id="data-table">
                                 <thead>
                                     <tr>
@@ -191,13 +191,13 @@
 
                             tbody.append(`
                                 <tr>
-                                    <td>${index + 1 + ((currentPage - 1) * 10)}</td>
-                                    <td>${item.booking_id}</td>
-                                    <td>${roomName}</td>
-                                    <td>${item.remark}</td>
-                                    <td>${formatDatetime(createdAt)}</td>
-                                    <td>${adminName}</td>
-                                    <td>${actions}</td>
+                                    <td data-label="STT">${index + 1 + ((currentPage - 1) * 10)}</td>
+                                    <td data-label="Đặt phòng">${item.booking_id}</td>
+                                    <td data-label="Tên phòng">${roomName}</td>
+                                    <td data-label="Tình trạng">${item.remark}</td>
+                                    <td data-label="Ngày tạo">${formatDatetime(createdAt)}</td>
+                                    <td data-label="Nhân viên">${adminName}</td>
+                                    <td data-label="Hành động">${actions}</td>
                                 </tr>
                             `);
                         });

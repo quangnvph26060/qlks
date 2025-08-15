@@ -271,6 +271,9 @@
                 padding: 5px;
                 /* Reduce padding for more compact view */
             }
+            .status-mobi{
+               margin-top: -10px;
+            }
         }
 
         .booking-table td {

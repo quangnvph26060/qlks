@@ -278,20 +278,20 @@ function loadRoomBookings(page = 1, data) {
                                         //     </div>
                                         // </td>
                     html += `<tr data-id="${record['id']}" id="invoice-${record.payment_id}" class="table-row">
-                                        <td>
+                                        <td class="d-none-mobi">
                                             <button class="btn btn-link btn-toggle" type="button" onclick="toggleRepresentatives(${record['id']}, this)">
                                             </button>
                                         </td>
-                                       <td class="text-right w-10">${idx + 1}</td>
+                                       <td  data-label="STT"class="text-right" style="widht:10px">${idx + 1}</td>
                                        
-                                        <td class="text-left w-10">${record['payment_id']}</td>
+                                        <td data-label="Mã thanh toán" class="text-left "style="widht:10px">${record['payment_id']}</td>
 
-                                        <td class="text-left">${formatDateTime(record['created_date'])}</td>
-                                        <td class="text-right">${formatCurrency(record['room_price'])}</td>
-                                         <td class="text-right">${formatCurrency(record['deposit_total'])}</td>
-                                          <td class="text-right">${formatCurrency(record['discount_total'])}</td>
-                                        <td class="text-right">${formatCurrency(record['payment_total'])}</td>
-                                        <td class="text-left">${record['status_badge']}</td>
+                                        <td data-label="Ngày chứng từ" class="text-left">${formatDateTime(record['created_date'])}</td>
+                                        <td data-label="Tổng tiền" class="text-right">${formatCurrency(record['room_price'])}</td>
+                                         <td  data-label="Đặt cọc"class="text-right">${formatCurrency(record['deposit_total'])}</td>
+                                          <td  data-label="Giảm giá"class="text-right">${formatCurrency(record['discount_total'])}</td>
+                                        <td  data-label="Khách đã trả"class="text-right">${formatCurrency(record['payment_total'])}</td>
+                                        <td  data-label="Trạng thái"class="text-left ">${record['status_badge']}</td>
                                     </tr>`
 
                     html += `<tr id="rep-${record['id']}" class="child-table-row" style="display:none;">

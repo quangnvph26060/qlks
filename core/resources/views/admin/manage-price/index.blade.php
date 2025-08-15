@@ -292,26 +292,26 @@
 
                                 html += `
                                     <tr data-id="${element.id}">
-                                        <td class="text-left"> ${element.room_type['code']} </td>
-                                        <td class="text-left"> ${element.setup_pricing['price_code']} </td>
+                                        <td data-label="Mã loại phòng"class="text-left"> ${element.room_type['code']} </td>
+                                        <td data-label="Mã giá"class="text-left"> ${element.setup_pricing['price_code']} </td>
 
-                                        <td class="text-right">
+                                        <td data-label="Thời gian hiệu lực"class="text-right">
                                             ${formatDate(element.price_validity_period)}
                                         </td>
-                                         <td class="text-right">
+                                         <td data-label="Đơn giá"class="text-right">
                                             ${formatCurrency(element.unit_price)}
                                         </td >
 
-                                        <td class="text-right">
+                                        <td data-label="Quá giờ"class="text-right">
                                             ${formatCurrency(element.overtime_price)}
                                         </td>
 
-                                        <td class="text-right">
+                                        <td data-label="Quá người"class="text-right">
                                             ${formatCurrency(element.extra_person_price)}
                                         </td>
 
-                                        <td class="text-left"> ${ element.unit_code } </td>
-                                        <td class="text-center d-flex main-icon" >
+                                        <td data-label="Mã đơn vị"class="text-left"> ${ element.unit_code } </td>
+                                        <td data-label="Thao tác" class="text-center d-flex main-icon justify-content-end" >
                                             <button class="btn btn-sm btn-outline--danger btn-delete icon-delete-room" style="    padding: 5px 8px;"
                                                 data-id="${element.id}" data-modal_title="@lang('Xóa cài đặt tính giá ')"type="button"
                                                 data-pro="0">

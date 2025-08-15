@@ -39,11 +39,10 @@
     </div>
     @can('')
         @push('breadcrumb-plugins')
-            @push('breadcrumb-plugins')
-                <div class="card-body mt-1">
-                    <div class="row">
-
-                        <div class="col-md-12 d-flex">
+            <div class="card-body">
+                <div class="row">
+                    <div class="col-md-12 col-sm-12 d-flex flex-column flex-md-row gap-1">
+                        <div>
                             <a href="{{ route('admin.hotel.room.product.all') }}">
                                 <button type="button" class="btn btn--primary"data-modal_title="Làm mới">
                                     <i class="fa fa-repeat p-1"></i>
@@ -54,25 +53,27 @@
                                 <a>
                                     <button type="button" class="btn btn--primary btn-add " style="margin-left:8px">
                                         <i class="las la-plus p-1 "></i>
-
                                     </button>
                                 </a>
                             @endcan
-                            <form role="form" enctype="multipart/form-data" action="{{ route('admin.hotel.room.product.search') }}">
-                                <div class="form-group mb-0" style="display: flex;">
-                                    <input class="searchInput" name="code"
-                                        style="height: 35px;border: 1px solid rgb(121, 117, 117, 0.5);margin-left:8px"
+                        </div>
+                        <div>
+                            <form role="form" enctype="multipart/form-data"
+                                action="{{ route('admin.hotel.room.product.search') }}">
+                                <div class="d-flex flex-column flex-md-row gap-1">
+                                    <input class="searchInput mb-2" name="code"
+                                        style="height: 35px;border: 1px solid rgb(121, 117, 117, 0.5);"
                                         placeholder="Mã phòng/Tên phòng" value="{{ $code ?? '' }}">
 
                                     <select name="room_type_id" class="form-control choose ml-1" id="tim-loai-phong"
-                                        style="width:250px;margin-left: 8px;height: 35px">
+                                        style="width:250px;height: 35px">
                                         <option value="">--Chọn loại phòng--</option>
                                         @foreach ($room_type as $type)
                                             <option value="{{ $type->id }}">{{ $type->name }}</option>
                                         @endforeach
                                     </select>
 
-                                    <button type="submit" class="btn btn--primary" style="margin-left: 8px;">
+                                    <button type="submit" class="btn btn--primary" style="height: 35px; width:65px">
                                         <i class="las la-search p-1"></i>
                                     </button>
                                 </div>
@@ -80,9 +81,9 @@
                         </div>
                     </div>
                 </div>
+            </div>
 
-                </div>
-            @endpush
+            </div>
         @endpush
     @endcan
     <div class="modal fade" id="staticBackdrop" data-bs-backdrop="static" data-bs-keyboard="false" tabindex="-1"
@@ -782,10 +783,10 @@
         }
 
         /* .form-check-group {
-                                                                                display: flex;
-                                                                                flex-wrap: wrap;
-                                                                                gap: 10px;
-                                                                            } */
+                                                                                        display: flex;
+                                                                                        flex-wrap: wrap;
+                                                                                        gap: 10px;
+                                                                                    } */
 
         .form-check {
             margin-right: 15px;
@@ -808,6 +809,14 @@
             white-space: nowrap;
             overflow: hidden;
             text-overflow: ellipsis;
+        }
+
+        @media (max-width: 767.98px) {
+
+            .searchInput,
+            .choose {
+                width: 100% !important;
+            }
         }
 
         .limitname {

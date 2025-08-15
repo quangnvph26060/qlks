@@ -221,11 +221,11 @@
 
                             tbody.append(`
                                 <tr>
-                                    <td>${index + 1}</td>
-                                    <td>${roomName}</td>
-                                    <td>${formatDatetime(createdAt)}</td>
-                                    <td>${adminName}</td>
-                                    <td>${actions}</td>
+                                    <td data-label="STT">${index + 1}</td>
+                                    <td  data-label="Tên phòng">${roomName}</td>
+                                    <td data-label="Ngày tạo">${formatDatetime(createdAt)}</td>
+                                    <td data-label="Nhân viên">${adminName}</td>
+                                    <td data-label="Hành động">${actions}</td>
                                 </tr>
                             `);
                         });
@@ -276,11 +276,11 @@
 
                         tbody.append(`
                             <tr>
-                                <td>${index + 1}</td>
-                                <td>${roomName}</td>
-                                <td>${formatDatetime(createdAt)}</td>
-                                <td>${adminName}</td>
-                                <td>${actions}</td>
+                                <td data-label="STT">${index + 1}</td>
+                                <td data-label="Tên phòng">${roomName}</td>
+                                <td data-label="Ngày tạo">${formatDatetime(createdAt)}</td>
+                                <td data-label="Nhân viên">${adminName}</td>
+                                <td data-label="Hành động">${actions}</td>
                             </tr>
                         `);
                     });

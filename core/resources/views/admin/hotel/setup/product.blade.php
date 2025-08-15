@@ -55,11 +55,11 @@
                                         <tr data-id="{{ $product->id }}">
 
 
-                                            <td style="width:20px;">
+                                            <td class="d-none-mobi" style="width:20px;">
                                                 <button class="btn btn-link btn-toggle" type="button"
                                                     onclick=" toggleRepresentatives('{{ $product->id }}', this)"></button>
                                             </td>
-                                            <td style="width:20px;text-align:center !important">
+                                            <td style="width:20px;">
                                                 <svg class="svg_menu_check_in" xmlns="http://www.w3.org/2000/svg"
                                                     width="30" height="30" viewBox="0 0 21 21">
                                                     <g fill="currentColor" fill-rule="evenodd">
@@ -159,34 +159,38 @@
         @push('breadcrumb-plugins')
             <div class="card-body">
                 <div class="row">
-                    <div class="col-md-12 col-sm-12 d-flex">
+                    <div class="col-md-12 col-sm-12 d-flex flex-column flex-md-row gap-1">
 
-                        <a class="mr-1" href="{{ route('admin.hotel.setup.product.all') }}">
-                            <button class="btn btn--primary" data-modal_title="Làm mới">
-                                <i class="fa fa-repeat p-1"></i>
-                            </button>
-                        </a>
-                        <a href="{{ route('admin.product.create') }}">
-                            <button class="btn btn--primary" style="margin-left:10px">
-                                <i class="las la-plus  p-1"></i>
-                            </button>
-                        </a>
-                        <form role="form" enctype="multipart/form-data"
-                            action="{{ route('admin.hotel.setup.product.search') }}">
-                            <div class="form-group position-relative mb-0">
-                                <input class="searchInput" name="source_code"
-                                    style="height: 35px;border: 1px solid rgb(121, 117, 117, 0.5);margin-left: 8px;"
-                                    placeholder="Mã sản phẩm" value="{{ $sku ?? '' }}">
-                                <input class="searchInput" name="source_name"
-                                    style="height: 35px;border: 1px solid rgb(121, 117, 117, 0.5); margin-left: 8px;"
-                                    placeholder="Tên sản phẩm" value="{{ $name ?? '' }}">
-                                <a>
-                                    <button type="submit" class="btn btn--primary">
-                                        <i class="las la-search p-1"></i>
-                                    </button>
-                                </a>
-                            </div>
-                        </form>
+                        <div class="">
+                            <a class="mr-1" href="{{ route('admin.hotel.setup.product.all') }}">
+                                <button class="btn btn--primary" data-modal_title="Làm mới">
+                                    <i class="fa fa-repeat p-1"></i>
+                                </button>
+                            </a>
+                            <a href="{{ route('admin.product.create') }}">
+                                <button class="btn btn--primary" style="margin-left:10px">
+                                    <i class="las la-plus  p-1"></i>
+                                </button>
+                            </a>
+                        </div>
+                        <div class="">
+                            <form role="form" enctype="multipart/form-data"
+                                action="{{ route('admin.hotel.setup.product.search') }}">
+                                <div class="form-group position-relative">
+                                    <input class="searchInput mb-2" name="source_code"
+                                        style="height: 35px;border: 1px solid rgb(121, 117, 117, 0.5);"
+                                        placeholder="Mã sản phẩm" value="{{ $sku ?? '' }}">
+                                    <input class="searchInput" name="source_name"
+                                        style="height: 35px;border: 1px solid rgb(121, 117, 117, 0.5);"
+                                        placeholder="Tên sản phẩm" value="{{ $name ?? '' }}">
+                                    <a>
+                                        <button type="submit" class="btn btn--primary">
+                                            <i class="las la-search p-1"></i>
+                                        </button>
+                                    </a>
+                                </div>
+                            </form>
+                        </div>
                     </div>
 
                 </div>
@@ -215,9 +219,9 @@
         .pagination .page-item .page-link,
         .pagination .page-item span {
             /* width: 22px !important;
-                height: auto !important;
-                background-color: #4634ff !important;
-                color: white !important; */
+                        height: auto !important;
+                        background-color: #4634ff !important;
+                        color: white !important; */
         }
 
         #data-table td,
@@ -420,7 +424,11 @@
             /* Điều chỉnh theo nhu cầu */
             opacity: 1;
         }
-
+@media (max-width: 767.98px) {
+    .searchInput {
+        width: 100% !important;
+    }
+}
         .representatives-container {
             display: flex;
             align-items: center;
@@ -460,5 +468,10 @@
             /* Ẩn phần văn bản bị tràn */
             text-overflow: ellipsis;/
         }
+       @media (max-width: 767.98px) {
+         #ellipsis {
+              max-width: none !important;
+         }
+       }
     </style>
 @endpush

@@ -33,117 +33,117 @@
     </div>
     @can('')
         @push('breadcrumb-plugins')
-            <div class="card-body mt-1">
-                <div class="row">
+         <div class="card-body mt-1">
+    <div class="d-flex flex-column flex-lg-row align-items-lg-center gap-2">
+        
+        <!-- Nút Làm mới & Thêm -->
+        <div class="d-flex flex-wrap gap-2">
+            <a href="{{ route('admin.hotel.room.facilities.all') }}">
+                <button type="button" class="btn btn--primary" data-modal_title="Làm mới">
+                    <i class="fa fa-repeat p-1"></i>
+                </button>
+            </a>
+            @can('admin.hotel.room.facilities.store')
+                <button type="button" class="btn btn--primary btn-add">
+                    <i class="las la-plus p-1"></i>
+                </button>
+            @endcan
+        </div>
 
-                    <div class="col-md-12 d-flex">
-                        <a href="{{ route('admin.hotel.room.facilities.all') }}">
-                            <button type="button" class="btn btn--primary"data-modal_title="Làm mới">
-                                <i class="fa fa-repeat p-1"></i>
+        <!-- Form tìm kiếm -->
+        <form class="d-flex flex-wrap flex-lg-nowrap align-items-center gap-2 mb-0"
+              role="form" enctype="multipart/form-data"
+              action="{{ route('admin.hotel.room.facilities.search') }}">
+            
+            <!-- Ô nhập mã phòng -->
+            <input type="text" class="form-control searchInput" name="code"
+                   placeholder="Mã phòng/Tên phòng" value="{{ $code ?? '' }}">
+            
+            <!-- Chọn loại phòng -->
+            <select name="room_type_id" class="form-control choose" id="tim-loai-phong">
+                <option value="">--Chọn loại phòng--</option>
+                @foreach ($room_type as $type)
+                    <option value="{{ $type->id }}">{{ $type->name }}</option>
+                @endforeach
+            </select>
 
-                            </button>
-                        </a>
-                        @can('admin.hotel.room.facilities.store')
-                            <a>
-                                <button type="button" class="btn btn--primary btn-add " style="margin-left:8px">
-                                    <i class="las la-plus p-1 "></i>
+            <!-- Nút tìm kiếm -->
+            <button type="submit" class="btn btn--primary">
+                <i class="las la-search p-1"></i>
+            </button>
+        </form>
+    </div>
+</div>
 
-                                </button>
-                            </a>
-                        @endcan
-                        <form role="form" enctype="multipart/form-data"
-                            action="{{ route('admin.hotel.room.facilities.search') }}">
-                            <div class="form-group mb-0" style="display: flex;">
-                                <input class="searchInput" name="code"
-                                    style="height: 35px;border: 1px solid rgb(121, 117, 117, 0.5);margin-left:8px"
-                                    placeholder="Mã phòng/Tên phòng" value="{{ $code ?? '' }}">
-
-                                <select name="room_type_id" class="form-control choose ml-1" id="tim-loai-phong"
-                                    style="width:250px;margin-left: 8px;height: 35px">
-                                    <option value="">--Chọn loại phòng--</option>
-                                    @foreach ($room_type as $type)
-                                        <option value="{{ $type->id }}">{{ $type->name }}</option>
-                                    @endforeach
-                                </select>
-
-                                <button type="submit" class="btn btn--primary" style="margin-left: 8px;">
-                                    <i class="las la-search p-1"></i>
-                                </button>
-                            </div>
-                        </form>
-                    </div>
-
-                </div>
-
-            </div>
         @endpush
     @endcan
 
     <div class="modal fade" id="staticBackdrop" data-bs-backdrop="static" data-bs-keyboard="false" tabindex="-1"
-    aria-labelledby="staticBackdropLabel" aria-hidden="true">
-    <div class="modal-dialog modal-lg">
-        <div class="modal-content">
-            <div class="modal-header">
-                <h5 class="modal-title" id="staticBackdropLabel">Thêm tiện nghi vào phòng</h5>
-                <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
-            </div>
+        aria-labelledby="staticBackdropLabel" aria-hidden="true">
+        <div class="modal-dialog modal-lg">
+            <div class="modal-content">
+                <div class="modal-header">
+                    <h5 class="modal-title" id="staticBackdropLabel">Thêm tiện nghi vào phòng</h5>
+                    <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+                </div>
 
-            <div class="modal-body">
-                <form id="roomsAddFacilityForm" method="POST" action="">
-                    @csrf
-                    <input type="hidden" name="_method" id="method" value="POST">
-                    <input type="hidden" name="id" id="recordId">
+                <div class="modal-body">
+                    <form id="roomsAddFacilityForm" method="POST" action="">
+                        @csrf
+                        <input type="hidden" name="_method" id="method" value="POST">
+                        <input type="hidden" name="id" id="recordId">
 
-                    {{-- Danh sách mã phòng --}}
-                    <div class="mb-4">
-                        <label class="form-label fw-semibold">Mã Phòng</label>
-                        <div class="form-check mb-2">
-                            <input type="checkbox" class="form-check-input" id="checkAllRooms">
-                            <label for="checkAllRooms" class="form-check-label">Chọn tất cả phòng</label>
-                        </div>
-                        <div class="border rounded p-3 scroll-box" style="max-height: 200px; overflow-y: auto;">
-                            @foreach ($rooms as $room)
-                                <div class="form-check">
-                                    <input type="checkbox" class="form-check-input room-checkbox"
-                                           name="room_ids[]" value="{{ $room->id }}" id="room-{{ $room->id }}">
-                                    <label class="form-check-label" for="room-{{ $room->id }}">{{ $room->code }}</label>
-                                </div>
-                            @endforeach
-                        </div>
-                    </div>
-
-                    {{-- Danh sách tiện nghi --}}
-                    <div class="mb-4">
-                        <label class="form-label fw-semibold">Các tiện nghi <code>(Được chọn nhiều)</code></label>
-                        @if ($facilities->isNotEmpty())
+                        {{-- Danh sách mã phòng --}}
+                        <div class="mb-4">
+                            <label class="form-label fw-semibold">Mã Phòng</label>
+                            <div class="form-check mb-2">
+                                <input type="checkbox" class="form-check-input" id="checkAllRooms">
+                                <label for="checkAllRooms" class="form-check-label">Chọn tất cả phòng</label>
+                            </div>
                             <div class="border rounded p-3 scroll-box" style="max-height: 200px; overflow-y: auto;">
-                                @foreach ($facilities as $facility)
+                                @foreach ($rooms as $room)
                                     <div class="form-check">
-                                        <input class="form-check-input" type="checkbox" value="{{ $facility->id }}"
-                                               name="facilities_id[]" id="facility-{{ $facility->id }}">
-                                        <label class="form-check-label" for="facility-{{ $facility->id }}">
-                                            {{ $facility->title }}
-                                        </label>
+                                        <input type="checkbox" class="form-check-input room-checkbox" name="room_ids[]"
+                                            value="{{ $room->id }}" id="room-{{ $room->id }}">
+                                        <label class="form-check-label"
+                                            for="room-{{ $room->id }}">{{ $room->code }}</label>
                                     </div>
                                 @endforeach
                             </div>
-                        @else
-                            <p>Chưa có tiện nghi nào!</p>
-                        @endif
-                    </div>
+                        </div>
 
-                    <div class="modal-footer">
-                        <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Đóng</button>
-                        @if ($facilities->isNotEmpty())
-                            <button type="submit" class="btn btn-primary">Thực hiện</button>
-                        @endif
-                    </div>
-                </form>
+                        {{-- Danh sách tiện nghi --}}
+                        <div class="mb-4">
+                            <label class="form-label fw-semibold">Các tiện nghi <code>(Được chọn nhiều)</code></label>
+                            @if ($facilities->isNotEmpty())
+                                <div class="border rounded p-3 scroll-box" style="max-height: 200px; overflow-y: auto;">
+                                    @foreach ($facilities as $facility)
+                                        <div class="form-check">
+                                            <input class="form-check-input" type="checkbox" value="{{ $facility->id }}"
+                                                name="facilities_id[]" id="facility-{{ $facility->id }}">
+                                            <label class="form-check-label" for="facility-{{ $facility->id }}">
+                                                {{ $facility->title }}
+                                            </label>
+                                        </div>
+                                    @endforeach
+                                </div>
+                            @else
+                                <p>Chưa có tiện nghi nào!</p>
+                            @endif
+                        </div>
+
+                        <div class="modal-footer">
+                            <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Đóng</button>
+                            @if ($facilities->isNotEmpty())
+                                <button type="submit" class="btn btn-primary">Thực hiện</button>
+                            @endif
+                        </div>
+                    </form>
+                </div>
+
             </div>
-
         </div>
     </div>
-</div>
 
     <div class="modal fade" id="showEditRoomFacility" data-bs-backdrop="static" data-bs-keyboard="false" tabindex="-1"
         aria-labelledby="staticBackdropLabel" aria-hidden="true">
@@ -194,8 +194,6 @@
 @push('style-lib')
     <link rel="stylesheet" type="text/css" href="{{ asset('assets/admin/css/daterangepicker.css') }}">
     <link rel="stylesheet" href="{{ asset('assets/global/css/modal.css') }}">
-
-   
 @endpush
 
 @push('script')
@@ -236,14 +234,14 @@
                         }
                     });
                 })
-                 $('#checkAllRooms').on('change', function() {
+                $('#checkAllRooms').on('change', function() {
                     $('.room-checkbox').prop('checked', this.checked);
                 });
 
                 // Nếu bỏ chọn 1 phòng => bỏ check all
                 $('.room-checkbox').on('change', function() {
                     const allChecked = $('.room-checkbox').length === $('.room-checkbox:checked')
-                    .length;
+                        .length;
                     $('#checkAllRooms').prop('checked', allChecked);
                 });
                 $(document).on('click', '.btn-edit', function() {
@@ -264,7 +262,8 @@
                                     let selected = room.id === response.roomEdit
                                         .id ? 'selected' :
                                         '';
-                                          let disabled = room.id !== response.roomEdit.id ? 'disabled class="text-muted"' : '';
+                                    let disabled = room.id !== response.roomEdit
+                                        .id ? 'disabled class="text-muted"' : '';
                                     roomSelect.append(
                                         `<option value="${room.id}" ${selected} ${disabled}>${room.code}</option>`
                                     );
@@ -414,7 +413,7 @@
 
 @push('style')
     <style>
-         .pagination .page-item .page-link,
+        .pagination .page-item .page-link,
         .pagination .page-item span {
             font-size: 0.875rem;
             display: flex;
@@ -427,6 +426,7 @@
             justify-content: center;
             color: #5b6e88;
         }
+
         .radio-container {
             display: flex;
             align-items: center;
@@ -511,6 +511,9 @@
                 flex-wrap: nowrap !important;
             }
 
+            .menu_dropdown_check_in {
+                right: 10px;
+            }
         }
 
         .form-check-group {
@@ -534,10 +537,4 @@
             line-height: 25px;
         }
     </style>
-@endpush
-
-@push('style-lib')
-@endpush
-
-@push('script-lib')
 @endpush

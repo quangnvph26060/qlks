@@ -4,7 +4,7 @@
         <tr data-id="{{ $room->id }}">
 
 
-            <td style="width:20px">
+            <td data-label="Hành động" style="width:20px">
                 <svg class="svg_menu_check_in" xmlns="http://www.w3.org/2000/svg" width="30" height="30"
                     viewBox="0 0 21 21">
                     <g fill="currentColor" fill-rule="evenodd">
@@ -36,7 +36,7 @@
 
             </td>
 
-            <th data-label="STT">
+            <th data-label="STT" style="text-align:right">
                 @php
                     $stt = $response->total() - ($response->currentPage() - 1) * $response->perPage() + $id;
                 @endphp

@@ -41,36 +41,45 @@
     @can('admin.hotel.room.search')
         @push('breadcrumb-plugins')
             <!-- Form tìm kiếm trực tiếp -->
-            <div class=" mt-2 d-flex mb-2" style="gap: 10px;justify-content: space-around;">
-                <div class="">
-                    <label for="">Chọn loại phòng</label>
-                    <select class="form-select" id="selected-hang-phong">
-                    </select>
-                </div>
-                <div class="">
-                    <label for="">Chọn tên phòng</label>
-                    <select class="form-select" id="selected-name-phong">
+          <div class="mt-2 mb-2">
+    <div class="row g-3">
+        <!-- Chọn loại phòng -->
+        <div class="col-12 col-md-2">
+            <label for="selected-hang-phong" class="form-label">Chọn loại phòng</label>
+            <select class="form-select" id="selected-hang-phong"></select>
+        </div>
 
-                    </select>
-                </div>
-                <div class="">
-                    <label for="">Từ ngày</label>
-                    <input type="date" class="form-control " id="date-chon-phong-in" style="height: 38px">
-                </div>
-                <div class="">
-                    <label for="">Đến ngày</label>
-                    <input type="date" class="form-control" id="date-chon-phong-out" style="height: 38px">
-                </div>
-                <div class="">
-                    <label for="">Trạng thái phòng</label>
-                    <select class="form-select" id="status-room">
-                        <option value="">Chọn trạng tên phòng</option>
-                        <option value="Trống">Trống</option>
-                        <option value="Đã đặt">Đã đặt</option>
-                        <option value="Đã nhận">Đã nhận</option>
-                    </select>
-                </div>
-            </div>
+        <!-- Chọn tên phòng -->
+        <div class="col-12 col-md-2">
+            <label for="selected-name-phong" class="form-label">Chọn tên phòng</label>
+            <select class="form-select" id="selected-name-phong"></select>
+        </div>
+
+        <!-- Từ ngày -->
+        <div class="col-12 col-md-2">
+            <label for="date-chon-phong-in" class="form-label">Từ ngày</label>
+            <input type="date" class="form-control" id="date-chon-phong-in">
+        </div>
+
+        <!-- Đến ngày -->
+        <div class="col-12 col-md-2">
+            <label for="date-chon-phong-out" class="form-label">Đến ngày</label>
+            <input type="date" class="form-control" id="date-chon-phong-out">
+        </div>
+
+        <!-- Trạng thái phòng -->
+        <div class="col-12 col-md-2">
+            <label for="status-room" class="form-label">Trạng thái phòng</label>
+            <select class="form-select" id="status-room">
+                <option value="">Chọn trạng thái phòng</option>
+                <option value="Trống">Trống</option>
+                <option value="Đã đặt">Đã đặt</option>
+                <option value="Đã nhận">Đã nhận</option>
+            </select>
+        </div>
+    </div>
+</div>
+
         @endpush
     @endcan
 

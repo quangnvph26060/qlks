@@ -2,11 +2,11 @@
 @section('panel')
     <div class="row">
         <div class="col-12">
-
             <div class="card-body">
                 <div class="row">
-                    <div class="col-md-12 col-sm-12 d-flex">
-                        <a class="mr-1" href="{{ route('admin.hotel.setup.code.all') }}">
+                    <div class="col-md-12 col-sm-12 d-flex flex-column flex-md-row gap-1">
+                       <div>
+                         <a class="mr-1" href="{{ route('admin.hotel.setup.code.all') }}">
                             <button class="btn btn--primary" data-modal_title="Làm mới">
                                 <i class="fa fa-repeat p-1"></i>
                             </button>
@@ -17,14 +17,16 @@
                                 <i class="las la-plus  p-1"></i>
                             </button>
                         </a>
-                        <form role="form" enctype="multipart/form-data"
+                       </div>
+                       <div>
+                         <form role="form" enctype="multipart/form-data"
                             action="{{ route('admin.hotel.setup.code.search') }}">
                             <div class="form-group position-relative mb-0">
-                                <input class="searchInput" name="code"
-                                    style="height: 35px;border: 1px solid rgb(121, 117, 117, 0.5);margin-left: 8px;"
+                                <input class="searchInput mb-2" name="code"
+                                    style="height: 35px;border: 1px solid rgb(121, 117, 117, 0.5);"
                                     placeholder="Mã mặc định">
                                 <input class="searchInput" name="menu_name"
-                                    style="height: 35px;border: 1px solid rgb(121, 117, 117, 0.5); margin-left: 8px;"
+                                    style="height: 35px;border: 1px solid rgb(121, 117, 117, 0.5); "
                                     placeholder="Tên menu">
                                 <a>
                                     <button type="submit" class="btn btn--primary"
@@ -35,6 +37,7 @@
 
                             </div>
                         </form>
+                       </div>
                     </div>
 
                 </div>
@@ -403,7 +406,13 @@
         .system-search-icon~.form-control {
             padding-left: 45px;
         }
+ @media (max-width: 767.98px) {
 
+            .searchInput,
+            .choose {
+                width: 100% !important;
+            }
+        }
         .widget-seven .widget-seven__content-amount {
             font-size: 22px;
         }

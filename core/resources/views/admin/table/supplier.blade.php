@@ -1,11 +1,11 @@
 @foreach ($response as $item)
     <tr style="border-bottom: 1px solid #dee2e6">
-        <td>
+        <td data-label="STT">
             {{ $loop->iteration }}
             {{-- <button class="btn btn-link btn-toggle" type="button"
                 onclick=" toggleRepresentatives('{{ $item->id }}', this)"></button> --}}
         </td>
-        <td style="position: relative;">
+        <td  data-label="Hành động" style="position: relative;">
             <svg class="svg_menu_check_in" xmlns="http://www.w3.org/2000/svg" width="30" height="30"
                 viewBox="0 0 21 21" onclick="toggleDropdown(event, {{ $item->id }})" style="cursor: pointer;">
                 <g fill="currentColor" fill-rule="evenodd">
@@ -38,11 +38,11 @@
             </div>
         </td>
 
-        <td>{{ $item->supplier_id ?? 'Chưa có mã nhà cung cấp' }}</td>
-        <td>{{ $item->name }}</td>
-        <td>{{ $item->email }}</td>
-        <td>{{ $item->phone }}</td>
-        <td>{{ $item->address }}</td>
+        <td  data-label="Mã nhà cung cấp">{{ $item->supplier_id ?? 'Chưa có mã nhà cung cấp' }}</td>
+        <td  data-label="Tên nhà cung cấp">{{ $item->name }}</td>
+        <td  data-label="Email">{{ $item->email }}</td>
+        <td  data-label="Số điện thoại">{{ $item->phone }}</td>
+        <td  data-label="Địa chỉ">{{ $item->address }}</td>
 
 
 

@@ -71,7 +71,9 @@ class AdminPermissionMiddleware
              'admin.supplier.update',
              'admin.hotel.customer.search', // tìm kiếm danh mục khách hàng 
              'admin.hotel.customer.source.search', // tìm kiếm danh mục nguồn khách
-             'admin.hotel.customer.check'
+             'admin.hotel.customer.check',
+             'admin.hotel.room.amenities.search',
+             'admin.hotel.room.product.search'
         ];
         /*
             'admin.revenue' => 'Danh thu trong màn thông kế'

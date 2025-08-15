@@ -11,7 +11,7 @@
 
                     </select> --}}
                     <input type="text" class="form-control" id="search_input_booked" placeholder="Tìm kiếm">
-                    <div style="  position: absolute;  right: 43px; display: flex;    gap: 10px;">
+                    <div class="d-none-mobi toggle-style">
                         <button onclick="toggleView('viewBox')" data-view="viewBox" class="btn btn-primary btn-submit-search-book btn-toggle-view">
                             <svg fill="white" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 16 16" width="24" height="24">
                                 <path fill="white" d="M5.75 7.5h7.5a.75.75 0 0 1 0 1.5h-7.5a.75.75 0 0 1 0-1.5Zm0 5h7.5a.75.75 0 0 1 0 1.5h-7.5a.75.75 0 0 1 0-1.5Zm-4-10h6.5a.75.75 0 0 1 0 1.5h-6.5a.75.75 0 0 1 0-1.5ZM2 14a1 1 0 1 1 0-2 1 1 0 0 1 0 2Zm1-6a1 1 0 1 1-2 0 1 1 0 0 1 2 0Zm10.314-3.082L11.07 2.417A.25.25 0 0 1 11.256 2h4.488a.25.25 0 0 1 .186.417l-2.244 2.5a.25.25 0 0 1-.372 0Z"></path>
@@ -29,7 +29,8 @@
             </div>
             
             <div class="modal-body overflow-add-room">
-                <table class="table--light style--two table mt-10" id="data-table">
+               <div class="table-responsive--md">
+                 <table class="table--light style--two table mt-10" id="data-table">
                     <thead>
                         <tr>
                             <th></th>
@@ -50,6 +51,7 @@
                     </tbody>
 
                 </table>
+               </div>
             </div>
             <div class="d-flex justify-content-end" style="gap: 10px;padding: 7px 31px">
                 <p data-row="booked" class=" btn-dat-truoc  add-booked-room-form" style="cursor: pointer">Lưu
@@ -59,3 +61,8 @@
         </div>
     </div>
 </div>
+<style scoped>
+    .toggle-style{
+    position: absolute;  right: 43px; display: flex;    gap: 10px;
+}
+</style>

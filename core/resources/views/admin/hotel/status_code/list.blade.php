@@ -5,8 +5,9 @@
 
             <div class="card-body">
                 <div class="row">
-                    <div class="col-md-12 col-sm-12 d-flex">
-                        <a class="mr-1" href="{{ route('admin.hotel.status.code.all') }}">
+                   <div class="col-md-12 col-sm-12 d-flex flex-column flex-md-row gap-1">
+                       <div>
+                         <a class="mr-1" href="{{ route('admin.hotel.status.code.all') }}">
                             <button class="btn btn--primary" data-modal_title="Làm mới">
                                 <i class="fa fa-repeat p-1"></i>
                             </button>
@@ -20,15 +21,17 @@
                             </button>
                         </a>
                         @endcan
-                        <form role="form" enctype="multipart/form-data"
+                       </div>
+                      <div>
+                          <form role="form" enctype="multipart/form-data"
                             action="{{ route('admin.hotel.status.code.search') }}">
                             @csrf
-                            <div class="form-group position-relative mb-0">
-                                <input class="searchInput" name="status_code"
-                                    style="height: 35px;border: 1px solid rgb(121, 117, 117, 0.5);margin-left: 8px;"
+                            <div class="form-group position-relative">
+                                <input class="searchInput mb-2" name="status_code"
+                                    style="height: 35px;border: 1px solid rgb(121, 117, 117, 0.5);"
                                     placeholder="Mã trạng thái">
                                 <input class="searchInput" name="status_name"
-                                    style="height: 35px;border: 1px solid rgb(121, 117, 117, 0.5); margin-left: 8px;"
+                                    style="height: 35px;border: 1px solid rgb(121, 117, 117, 0.5);"
                                     placeholder="Tên trạng thái">
                                 <a>
                                     <button type="submit" class="btn btn--primary"
@@ -39,6 +42,7 @@
 
                             </div>
                         </form>
+                      </div>
                     </div>
                     @if ($status_codes->hasPages())
                         <div class="pager-wrap">
@@ -438,7 +442,13 @@
         .system-search-icon~.form-control {
             padding-left: 45px;
         }
+ @media (max-width: 767.98px) {
 
+            .searchInput,
+            .choose {
+                width: 100% !important;
+            }
+        }
         .widget-seven .widget-seven__content-amount {
             font-size: 22px;
         }

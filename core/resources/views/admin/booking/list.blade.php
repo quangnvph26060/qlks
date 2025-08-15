@@ -389,7 +389,9 @@
                 font-size: 12px;
                 /* Reduce font size on smaller screens */
             }
-
+              #show-room tr td {
+                padding: 12px 2px !important;
+              }
             .table td,
             .table th {
                 padding: 5px;

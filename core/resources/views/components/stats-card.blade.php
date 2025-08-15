@@ -1,5 +1,5 @@
-<div class="col-lg-3 col-md-6 mb-3">
-    <div class="card stats-card h-100 border-0 shadow">
+<div class="col-12 col-sm-6 col-md-6 col-lg-3 mb-3">
+    <div class="card stats-card h-sm-100 border-0 shadow">
         <div class="card-body text-center">
             <div class="mb-2 text-{{ $color }}">
                 <i class="{{ $icon }} fa-2x"></i>

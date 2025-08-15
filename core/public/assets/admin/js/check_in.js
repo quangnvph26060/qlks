@@ -1636,20 +1636,20 @@ function showBookedRoom(value = "", option_customer_source = "") {
                     if (idx === 0) {
                         tr += `
 
-                            <tr data-id="${record['id']}">
-                                <td>
+                            <tr  data-id="${record['id']}">
+                                <td  data-label="" class="d-none-mobi">
                                     <button class="btn btn-link btn-toggle" type="button"
                                     onclick="toggleRepresentatives('${record['booking_id']}', this)"></button>
                                 </td>
-                                <td class="text-left">${record['booking_id']}</td>
-                                <td class="text-right">${bookingData.length}</td>
-                                <td class="text-right">${formatDateTime(record['document_date'])}</td>
-                                <td class="text-left">${record['customer_name'] ? record['customer_name'] : 'N/A'}</td>
-                                <td class="text-right">${record['phone_number'] ? record['phone_number'] : 'N/A'}</td>
-                                <td class="text-right">${totalGuests}</td>
-                                <td class="text-right">${formatCurrency(totalPrice)}</td>
-                                <td class="text-right">${formatCurrency(totalAmount)}</td>
-                                <td class="text-right">${formatCurrency(totalDiscount)}</td>
+                                <td data-label="Mã đặt phòng"class="text-left">${record['booking_id']}</td>
+                                <td data-label="SL phòng"class="text-right">${bookingData.length}</td>
+                                <td data-label="Ngày chứng từ"class="text-right">${formatDateTime(record['document_date'])}</td>
+                                <td data-label="Tên khách hàng"class="text-left">${record['customer_name'] ? record['customer_name'] : 'N/A'}</td>
+                                <td data-label="Số điện thoại"class="text-right">${record['phone_number'] ? record['phone_number'] : 'N/A'}</td>
+                                <td data-label="Số lượng người "class="text-right">${totalGuests}</td>
+                                <td data-label="Tổng tiền "class="text-right">${formatCurrency(totalPrice)}</td>
+                                <td data-label="Tổng đặt cọc"class="text-right">${formatCurrency(totalAmount)}</td>
+                                <td data-label="Tổng giảm giá"class="text-right">${formatCurrency(totalDiscount)}</td>
                             </tr>
                             <tr class="collapse ${currentView === 'viewModel' ? "show" : ""}" id="rep-${firstRecord['booking_id']}">
                                     <td colspan="12">

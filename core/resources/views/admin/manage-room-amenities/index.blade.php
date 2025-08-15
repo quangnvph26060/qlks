@@ -36,53 +36,46 @@
     </div>
     @can('')
         @push('breadcrumb-plugins')
-            <div class="card-body mt-1">
-                <div class="row">
-
-                    <div class="col-md-12 d-flex">
-                        <a href="{{ route('admin.hotel.room.amenities.all') }}">
-                            <button type="button" class="btn btn--primary"data-modal_title="Làm mới">
-                                <i class="fa fa-repeat p-1"></i>
-                            </button>
-                        </a>
-                        @can('admin.hotel.room.amenities.store')
-                            <a>
-                                <button type="button" class="btn btn--primary btn-add " style="margin-left:8px">
-                                    <i class="las la-plus p-1 "></i>
-                                </button>
-                            </a>
-                        @endcan
-                        <form role="form" enctype="multipart/form-data"
-                            action="{{ route('admin.hotel.room.amenities.search') }}">
-                            <div class="form-group mb-0" style="display: flex;">
-                                <input class="searchInput" name="code"
-                                    style="height: 35px;border: 1px solid rgb(121, 117, 117, 0.5);margin-left:8px"
-                                    placeholder="Mã phòng/Tên phòng" value="{{ $code ?? '' }}">
-
-                                <select name="room_type_id" class="form-control choose ml-1" id="tim-loai-phong"
-                                    style="width:250px;margin-left: 8px;height: 35px">
-                                    <option value="">--Chọn loại phòng--</option>
-                                    @foreach ($room_type as $type)
-                                        <option value="{{ $type->id }}">{{ $type->name }}</option>
-                                    @endforeach
-                                </select>
-
-                                <button type="submit" class="btn btn--primary" style="margin-left: 8px;">
-                                    <i class="las la-search p-1"></i>
-                                </button>
-                            </div>
-                        </form>
-                    </div>
-                    {{-- <div class="pager-wrap">
-                        <div class="k-widget d-flex">
-                            <div class="pagination-tb" style="font-size: 13px;margin: 0 auto">
-                                {{ $rooms->links('pagination::bootstrap-4') }}
-                            </div>
-                        </div>
-                    </div> --}}
+         <div class="card-body mt-1">
+    <div class="row">
+        <div class="col-12">
+            <div class="d-flex flex-column flex-lg-row align-items-lg-center gap-2">
+                <!-- Nút Làm mới & Thêm -->
+                <div class="d-flex flex-wrap gap-2">
+                    <a href="{{ route('admin.hotel.room.amenities.all') }}">
+                        <button type="button" class="btn btn--primary" data-modal_title="Làm mới">
+                            <i class="fa fa-repeat p-1"></i>
+                        </button>
+                    </a>
+                    @can('admin.hotel.room.amenities.store')
+                        <button type="button" class="btn btn--primary btn-add">
+                            <i class="las la-plus p-1"></i>
+                        </button>
+                    @endcan
                 </div>
 
+                <!-- Form tìm kiếm -->
+                <form class="d-flex flex-wrap flex-lg-nowrap align-items-center gap-2 mb-0"
+                      role="form" enctype="multipart/form-data"
+                      action="{{ route('admin.hotel.room.amenities.search') }}">
+                    <input class="form-control searchInput" name="code"
+                           placeholder="Mã phòng/Tên phòng"
+                           value="{{ $code ?? '' }}">
+                    <select name="room_type_id" class="form-control choose" id="tim-loai-phong">
+                        <option value="">--Chọn loại phòng--</option>
+                        @foreach ($room_type as $type)
+                            <option value="{{ $type->id }}">{{ $type->name }}</option>
+                        @endforeach
+                    </select>
+                    <button type="submit" class="btn btn--primary">
+                        <i class="las la-search p-1"></i>
+                    </button>
+                </form>
             </div>
+        </div>
+    </div>
+</div>
+
         @endpush
     @endcan
 
@@ -263,7 +256,7 @@
                 // Nếu bỏ chọn 1 phòng => bỏ check all
                 $('.room-checkbox').on('change', function() {
                     const allChecked = $('.room-checkbox').length === $('.room-checkbox:checked')
-                    .length;
+                        .length;
                     $('#checkAllRooms').prop('checked', allChecked);
                 });
                 $(document).on('click', '.btn-edit', function() {
@@ -284,7 +277,8 @@
                                     let selected = room.id === response.roomEdit
                                         .id ? 'selected' :
                                         '';
-                                            let disabled = room.id !== response.roomEdit.id ? 'disabled class="text-muted"' : '';
+                                    let disabled = room.id !== response.roomEdit
+                                        .id ? 'disabled class="text-muted"' : '';
                                     roomSelect.append(
                                         `<option value="${room.id}" ${selected}  ${disabled}>${room.code}</option>`
                                     );
@@ -538,12 +532,10 @@
             .flex-nowrap {
                 flex-wrap: nowrap !important;
             }
+
+            .menu_dropdown_check_in {
+                right: 10px;
+            }
         }
     </style>
-@endpush
-
-@push('style-lib')
-@endpush
-
-@push('script-lib')
 @endpush

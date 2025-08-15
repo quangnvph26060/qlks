@@ -2,12 +2,12 @@
     @foreach ($response as $id => $room)
         @if ($room->products->count())
             <tr data-id="{{ $room->id }}">
-                <td>
+                <td data-label="" class="d-none-mobi">
                     <button class="btn btn-link btn-toggle" type="button"
                         onclick=" toggleRepresentatives('{{ $room->id }}', this)"></button>
                 </td>
                 @can('admin.hotel.room.product.all')
-                    <td style="width:20px">
+                    <td style="width:20px" data-label="Hành động">
                         <svg class="svg_menu_check_in" xmlns="http://www.w3.org/2000/svg" width="30" height="30"
                             viewBox="0 0 21 21">
                             <g fill="currentColor" fill-rule="evenodd">

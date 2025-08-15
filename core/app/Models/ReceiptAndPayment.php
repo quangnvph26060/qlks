@@ -50,7 +50,7 @@ class ReceiptAndPayment extends Model
             $text = 'Thành công';
         }
         return new Attribute(
-            get: fn() => "<span class='badge badge--$className'>" . trans($text) . "</span>",
+            get: fn() => "<span class='badge status-mobi badge--$className'>" . trans($text) . "</span>",
         );
     }
     public function checkIn(): Attribute

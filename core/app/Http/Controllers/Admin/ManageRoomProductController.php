@@ -64,8 +64,8 @@ class ManageRoomProductController extends Controller
         $room_type = RoomType::all();
         if (request()->ajax()) {
             return response()->json([
-                'results' => view('admin.table.manage-product-room', compact('response'))->render(),
-                'pagination' => view('vendor.pagination.custom', compact('response'))->render(),
+                'results' => view('admin.table.manage-product-room', compact('response','warehouse'))->render(),
+                'pagination' => view('vendor.pagination.custom', compact('response','warehouse'))->render(),
             ]);
         }
 
@@ -343,11 +343,12 @@ class ManageRoomProductController extends Controller
 
                 ->orderBy('id', 'desc')->paginate(10);
         }
+          $warehouse = Warehouse::active()->get();
         $products = Product::where('is_published', 1)->where('stock', '>', 0)->get();
         $room_type = RoomType::where('unit_code', unitCode())->get();
         $code =  $request->input('code');
         $pageTitle = 'Danh sách cơ sở vật chất của phòng';
-        return view('admin.manage-room-products.index', compact('rooms', 'products', 'pageTitle', 'room_type', 'code'));
+        return view('admin.manage-room-products.index', compact('rooms','warehouse', 'products', 'pageTitle', 'room_type', 'code'));
     }
     public function ajax(Request $request)
     {

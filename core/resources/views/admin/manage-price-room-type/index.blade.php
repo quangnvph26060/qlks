@@ -557,15 +557,15 @@
                             // <td>${formatDate(startDate)} - ${ formatDate(endDate) 	}</td>
                             html += `
                                 <tr data-id="${element.id}">
-                                    <td class="text-left">${element.price_code}</td>
-                                    <td>${element.price_name}</td>
-                                    <td>${formattedData}</td>
+                                    <td data-label="Mã giá"class="text-left">${element.price_code}</td>
+                                    <td data-label="Tên giá">${element.price_name}</td>
+                                    <td data-label="Ngày thực hiện">${formattedData}</td>
 
-                                    <td class="text-right">${element.round_time	}</td>
-                                    <td>${element.description	}</td>
+                                    <td data-label="Làm tròn"class="text-right">${element.round_time	}</td>
+                                    <td data-label="Mô tả">${element.description	}</td>
 
                                    
-                                    <td>
+                                    <td data-label="Thao tác">
                                         <a class="btn btn-sm btn-outline--primary btn-edit-setup-pricing"
                                             data-id="${element.id}">
                                             <i class="la la-pencil"></i>
