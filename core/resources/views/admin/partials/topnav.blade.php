@@ -21,9 +21,9 @@
 <nav class="navbar-wrapper bg--dark d-flex flex-wrap top-menu">
     <div style="align-items: baseline;" class="navbar__right">
 
-      
+
         <ul class="navbar__action-list d-flex justify-content-between">
-              <button type="button" class="res-sidebar-open-btn me-3 mb-3"><i class="las la-bars"></i></button>
+            <button type="button" class="res-sidebar-open-btn me-3 mb-3"><i class="las la-bars"></i></button>
             <div id="tabs" class="tab-container" style="display: flex; gap: 8px; margin-bottom: 10px;"></div>
             <div id="frame" style="position: relative;"></div>
             <div class="d-flex" style="margin-bottom: 12px">
@@ -168,12 +168,13 @@
         scrollbar-width: none;
         /* Firefox */
     }
-/* Mobile (dưới 768px) */
-@media (max-width: 768px) {
-   .tab-container{
-    display: none !important;
-   }
-}
+
+    /* Mobile (dưới 768px) */
+    @media (max-width: 768px) {
+        .tab-container {
+            display: none !important;
+        }
+    }
 
     /* Để ẩn scrollbar nếu muốn, hoặc tùy chỉnh cho đẹp */
     .tab-container::-webkit-scrollbar {
@@ -386,7 +387,7 @@
                 'left': ''
             });
 
-
+            $('.sidebar').removeClass('open'); // click chuyển trang duới mobi thì ẩn sibar đi 
             const parts = url.split('/');
 
 

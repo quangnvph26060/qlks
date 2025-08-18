@@ -364,9 +364,9 @@
             },
             {
                 "keyword": [
-                    "Cài đặt hướng/vỉew"
+                    "Cài đặt hướng/view"
                 ],
-                "title": "Cài đặt hướng/vỉew",
+                "title": "Cài đặt hướng/view",
                 "route_name": "admin.hotel.direction.all",
                 "menu_active": "admin.hotel.direction.all"
             }
