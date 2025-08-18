@@ -60,7 +60,7 @@
                 <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
             </div>
             <div class="modal-body"
-                style="padding: 5px 5px 12px 15px; overflow-x: auto; scrollbar-width: none; -ms-overflow-style: none;">
+                style="padding: 5px 5px 12px 15px; overflow-x: auto; scrollbar-width: none; -ms-overflow-style: none; margin-bottom: 20px;">
 
 
 
