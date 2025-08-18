@@ -83,8 +83,7 @@
                                     <div class="col-md-1 mb-1" style="margin-left: 2px">
                                         <p class="btn btn--primary modal--search-customer"
                                             style="white-space: nowrap; font-size: 13px;height: 35px" id="btn-search">
-                                            Tìm
-                                            khách</p>
+                                            Tìm khách</p>
                                     </div>
                                     <div class="">
                                         {{-- <label for="name" class="form-label required">Tên khách hàng</label> --}}
@@ -253,30 +252,27 @@
 
                         </div>
 
+                        <div class="flex-column justify-content-end" style="gap: 10px;">
 
-
-                    </div>
-                    <div class="flex-column justify-content-end" style="gap: 10px;">
-
-                        <div class=" d-flex justify-content-between mb-2">
-                            <div class="col-md-3">
-                                @php
-                                    $routeName = Route::currentRouteName();
-                                @endphp
-                                @if ($routeName === 'admin.receptionist.booking.receptionist')
-                                    <select id="select-option-pttt" name="payment_pttt" class="form-control "
-                                        style="width: 100%;">
-                                        <option value="">Chọn phương thức thanh toán</option>
-                                        <option value="Tiền mặt">Tiền mặt</option>
-                                        <option value="Chuyển khoản ngân hàng">Chuyển khoản ngân hàng</option>
-                                        <option value="Thẻ tín dụng">Thẻ tín dụng</option>
-                                    </select>
-                                    <span class="invalid-feedback d-block"
-                                        style="font-weight: 500"id="select-option-pttt_error"></span>
-                                @endif
-                            </div>
-                            <ul class="financial-list">
-                                {{-- <li class="financial-item">
+                            <div class=" d-flex justify-content-between mb-2">
+                                <div class="col-md-3">
+                                    @php
+                                        $routeName = Route::currentRouteName();
+                                    @endphp
+                                    @if ($routeName === 'admin.receptionist.booking.receptionist')
+                                        <select id="select-option-pttt" name="payment_pttt" class="form-control "
+                                            style="width: 100%;">
+                                            <option value="">Chọn phương thức thanh toán</option>
+                                            <option value="Tiền mặt">Tiền mặt</option>
+                                            <option value="Chuyển khoản ngân hàng">Chuyển khoản ngân hàng</option>
+                                            <option value="Thẻ tín dụng">Thẻ tín dụng</option>
+                                        </select>
+                                        <span class="invalid-feedback d-block"
+                                            style="font-weight: 500"id="select-option-pttt_error"></span>
+                                    @endif
+                                </div>
+                                <ul class="financial-list">
+                                    {{-- <li class="financial-item">
                                     <span>Tiền phòng</span>
                                     <span class="total_amount">0</span>
                                 </li>
@@ -285,23 +281,26 @@
                                     <span class="total_discount">0</span>
                                     <input type="text" id="discountInput" class="custom-input-giam-gia">
                                 </li> --}}
-                                {{-- <li class="financial-item">
+                                    {{-- <li class="financial-item">
                                     <span>Tiền cọc</span>
                                     <span class="total_deposit">0</span>
                                 </li> --}}
-                                <li class="financial-item">
-                                    <span>Còn lại</span>
-                                    <span class="total_balance">0</span>
-                                </li>
+                                    <li class="financial-item">
+                                        <span>Còn lại</span>
+                                        <span class="total_balance">0</span>
+                                    </li>
 
-                            </ul>
+                                </ul>
+                            </div>
+
+                        </div>
+                        <div class="d-flex justify-content-end" style="gap: 10px;">
+                            <button type="button" data-row="booked" class="btn-dat-truoc btn-book">Lưu</button>
+                            <p type="button" data-row="booked" class="alert-paragraph close_modal">Hủy</p>
                         </div>
 
                     </div>
-                    <div class="d-flex justify-content-end" style="gap: 10px;">
-                        <button type="button" data-row="booked" class="btn-dat-truoc btn-book">Lưu</button>
-                        <p type="button" data-row="booked" class="alert-paragraph close_modal">Hủy</p>
-                    </div>
+
                 </form>
             </div>
         </div>
