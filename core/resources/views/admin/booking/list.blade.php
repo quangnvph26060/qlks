@@ -245,7 +245,7 @@
 
         @media (max-width: 768px) {
             .modal-content {
-                margin-bottom: 25px !important;
+                margin-bottom: 35px !important;
                 padding: 10px;
             }
 
