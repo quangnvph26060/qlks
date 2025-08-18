@@ -7,14 +7,14 @@
                     <span class="icon"> <i class="fa-solid fa-bars"></i></span> <span class="text">Danh sách phòng
                         đặt</span>
                 </button>
-                <div class="view-toggle">
+                <div class="view-toggle w-100-mobi">
 
-                    <button id="gridViewBtn" onclick="changeView('calendar')">
-                        <span class="icon"><i class="fa-solid fa-sliders"></i></span> <span class="text"
+                    <button id="gridViewBtn" onclick="changeView('calendar')" class="w-50-mobi">
+                        <span class="icon"><i class="fa-solid fa-sliders"></i></span> <span class="text d-block-mobi"
                             style="display: none;">Lưới</span>
                     </button>
-                    <button id="tableViewBtn" onclick="changeView('grid')">
-                        <span class="icon"> <i class="fa-solid fa-th-large"></i></span> <span class="text"
+                    <button id="tableViewBtn" onclick="changeView('grid')" class="w-50-mobi">
+                        <span class="icon"> <i class="fa-solid fa-th-large"></i></span> <span class="text d-block-mobi"
                             style="display: none;">Sơ đồ</span>
                     </button>
 
@@ -2104,6 +2104,18 @@
 
         .table-responsive {
             height: 290px !important;
+        }
+    }
+
+    @media (max-width: 768px) {
+        .w-100-mobi{
+            width: 100% !important;
+        }
+         .w-50-mobi{
+            width: 50% !important;
+        }
+        .d-block-mobi{
+            display: inline !important;
         }
     }
 
