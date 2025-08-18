@@ -45,7 +45,7 @@
                                         <td>
                                             <input type="checkbox" class="checkbox-item" data-id="{{ $type->id }}">
                                         </td>
-                                        <td>
+                                        <td class="d-none-mobi">
                                             <button class="btn btn-link btn-toggle" type="button"
                                                 onclick=" toggleRepresentatives('{{ $type->id }}', this)">
                                             </button>
@@ -294,7 +294,7 @@
                         </a>
                     @endcan
                 </div>
-                <form role="form" enctype="multipart/form-data" action="{{ route('admin.hotel.room.type.search') }}" >
+                <form role="form" enctype="multipart/form-data" action="{{ route('admin.hotel.room.type.search') }}">
                     @csrf
                     <div class="form-group mb-0 stack-mobile" style="display: flex;">
                         <input class="searchInput" name="code"
@@ -842,20 +842,27 @@
                 margin-top: 15px
             }
 
+            .menu_dropdown_check_in {
+                right: 40px !important;
+            }
+
+            .svg_menu_check_in {
+              margin-top: -10px;
+            }
+
         }
 
-        .menu_dropdown_check_in {
-            right: auto !important;
-        }
         @media (max-width: 768px) {
-    .stack-mobile {
-        flex-direction: column !important;
-        gap: 8px; /* khoảng cách giữa các item */
-    }
+            .stack-mobile {
+                flex-direction: column !important;
+                gap: 8px;
+                /* khoảng cách giữa các item */
+            }
 
-    .stack-mobile > * {
-        width: 100% !important; /* mỗi item full chiều ngang */
-    }
-}
+            .stack-mobile>* {
+                width: 100% !important;
+                /* mỗi item full chiều ngang */
+            }
+        }
     </style>
 @endpush
