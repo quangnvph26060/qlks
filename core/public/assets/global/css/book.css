@@ -246,7 +246,7 @@ textarea {
 .table-scroll-wrapper {
     width: 100%;
     overflow-x: auto;
-    height: clamp(100px, 30vh, 330px);
+    height: clamp(100px, 20vh, 330px);
     /* chiều cao cố định, responsive */
     overflow-y: scroll;
     scrollbar-width: none;
