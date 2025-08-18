@@ -139,7 +139,7 @@
                             <table class=" table--light style--two table ">
                                 <thead>
                                     <tr>
-                                        <th data-table="Hạng phòng" class="text-left">Hạng phòng 123123</th>
+                                        <th data-table="Hạng phòng" class="text-left">Hạng phòng</th>
                                         <th data-table="Phòng" class="text-left">Tên phòng</th>
                                         <th data-table="Ngày" class="text-left">Ngày</th>
                                         <th data-table="Trạng thái phòng" class="text-left">Trạng thái phòng</th>

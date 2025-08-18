@@ -49,11 +49,11 @@
             <i class="la la-plus"></i>
         </a> --}}
         <div class="d-flex  flex-wrap gap-3">
-               <div class="d-flex" style="gap: 10px">
-            <a class="btn btn-sm btn--primary btn-submit-sync-book d-flex justify-content-center align-items-center">
-                <i class="las la-sync"></i>
-            </a>
-        </div>
+            <div class="d-flex" style="gap: 10px">
+                <a class="btn btn-sm btn--primary btn-submit-sync-book d-flex justify-content-center align-items-center">
+                    <i class="las la-sync"></i>
+                </a>
+            </div>
             <div class="form-group position-relative " style="display: flex;gap: 10px;">
                 <input class="searchInput input-field-search-book" name="booking_code" placeholder="Mã nhận phòng"
                     id="booking_code">
@@ -63,7 +63,8 @@
             <input type="date" class="form-control " id="date-chon-phong-out" style="height: 35px">
           </div> --}}
                 <input class="searchInput input-field-search-book" name="name" placeholder="Tên khách hàng" id="name_book">
-                <button type="submit" class="btn btn-primary btn-submit-search-book d-flex justify-content-center align-items-center">
+                <button type="submit"
+                    class="btn btn-primary btn-submit-search-book d-flex justify-content-center align-items-center">
                     <i class="las la-search"></i>
                 </button>
 
@@ -149,14 +150,15 @@
                                 </tbody>
 
                             </table>
+                            <div class="d-flex justify-content-end mt-1" style="gap: 10px;">
+                                <p type="button" data-row="booked" class=" btn-dat-truoc  add-room-list">Lưu
+                                </p>
+                                <p type="button" data-row="booked" class="alert-paragraph close_modal_booked_room">Hủy</p>
+                            </div>
                         </div>
                     </div>
 
-                    <div class="d-flex justify-content-end" style="gap: 10px;padding: 7px 31px">
-                        <p type="button" data-row="booked" class=" btn-dat-truoc  add-room-list">Lưu
-                        </p>
-                        <p type="button" data-row="booked" class="alert-paragraph close_modal_booked_room">Hủy</p>
-                    </div>
+
                 </div>
             </div>
         </div>
@@ -279,16 +281,23 @@
                 padding: 5px;
                 /* Reduce padding for more compact view */
             }
-  #dropdown-menu {
-    right: 10;
-  }
+
+            #dropdown-menu {
+                right: 10;
+            }
+
             .style-mobi {
                 flex-direction: column;
             }
         }
-.toggle-style{
-    position: absolute;  right: 43px; display: flex;    gap: 10px;
-}
+
+        .toggle-style {
+            position: absolute;
+            right: 43px;
+            display: flex;
+            gap: 10px;
+        }
+
         .booking-table td {
             white-space: unset;
         }

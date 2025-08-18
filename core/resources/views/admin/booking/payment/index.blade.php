@@ -130,12 +130,13 @@
                             </tbody>
 
                         </table>
-                    </div>
-                    <div class="d-flex justify-content-end" style="gap: 10px;padding: 7px 31px">
+                         <div class="d-flex justify-content-end mt-1" style="gap: 10px;">
                         <p data-row="booked" class=" btn-dat-truoc  add-room-list" style="cursor: pointer">Lưu
                         </p>
                         <p type="button" data-row="booked" class="alert-paragraph close_modal_booked_room">Hủy</p>
                     </div>
+                    </div>
+                   
                 </div>
             </div>
         </div>
