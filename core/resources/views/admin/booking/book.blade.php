@@ -368,9 +368,9 @@
 
         /* Khi màn hình lớn hơn 1200px (hoặc tùy bạn chọn kích thước) */
         @media screen and (min-height: 800px) {
-            .modal-content {
+            /* .modal-content {
                 height: 100vh !important;
-            }
+            } */
 
             .custom-gap-lg {
                 gap: 4px !important;
@@ -391,6 +391,7 @@
         @media (max-width: 768px) {
             .modal-content {
                 padding: 10px;
+                height: 85vh !important;
             }
 
             .modal .form-control {
@@ -407,7 +408,7 @@
         }
 
         .modal-content {
-            height: 700px;
+            height: 710px;
         }
 
         .modal-body {
