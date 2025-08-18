@@ -28,6 +28,12 @@
     <link rel="stylesheet" href="{{ asset('assets/admin/css/detail.css') }}">
 
     @stack('style')
+    <style>
+        html,
+        body {
+            touch-action: manipulation;
+        }
+    </style>
 </head>
 
 <body>
@@ -47,7 +53,9 @@
 
     <script src="{{ asset('assets/global/js/select2.min.js') }}"></script>
     <script src="{{ asset('assets/admin/js/app.js') }}"></script>
-    <script src="{{ asset('assets/admin/js/cu-modal.js') }}?v={{ filemtime(public_path('assets/admin/js/cu-modal.js')) }}"></script>
+    <script
+        src="{{ asset('assets/admin/js/cu-modal.js') }}?v={{ filemtime(public_path('assets/admin/js/cu-modal.js')) }}">
+    </script>
     <script src="{{ asset('assets/admin/js/vendor/sweetalert2@11.js') }}"></script>
     <script src="https://cdn.jsdelivr.net/npm/flatpickr"></script>
 
@@ -66,7 +74,9 @@
         });
 
         (function($) {
-
+            document.addEventListener('gesturestart', function(e) {
+                e.preventDefault();
+            });
             $.ajaxSetup({
                 headers: {
                     'X-CSRF-TOKEN': $('meta[name="csrf-token"]').attr('content')
