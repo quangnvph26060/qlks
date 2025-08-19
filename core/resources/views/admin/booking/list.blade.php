@@ -259,6 +259,7 @@
 
             .modal-body {
                 padding: 10px;
+                margin-bottom: 50px;
             }
 
             .style-td td {
@@ -336,6 +337,7 @@
 
             .modal-body {
                 padding: 10px;
+                margin-bottom: 50px;
             }
         }
 

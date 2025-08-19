@@ -2,10 +2,12 @@
     <div class="modal-dialog modal-dialog-centered" style="top: 4px">
         <div class="modal-content change-room-content">
             <div class="modal-header">
-                <h5 class="modal-title">Đổi phòng <span> - </span> <span class="customer-name"> </span><span> - </span> <span class="booking-id"></span> </h5>
+                <h5 class="modal-title">Đổi phòng <span> - </span> <span class="customer-name"> </span><span> - </span>
+                    <span class="booking-id"></span> </h5>
                 <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
             </div>
-            <form  id="btn-change-booking-room" action="{{ route('admin.booking.changeRoomBooking') }}" method="POST" class="row">
+            <form id="btn-change-booking-room" action="{{ route('admin.booking.changeRoomBooking') }}" method="POST"
+                class="row">
                 @csrf
                 <div class="col-3 d-flex justify-content-center align-items-center">
                     <div class="room-box">
@@ -36,19 +38,20 @@
                                 </tr>
                             </thead>
 
-                            <tbody id="show-room-change" >
+                            <tbody id="show-room-change">
 
                             </tbody>
 
                         </table>
+                        <div class="d-flex justify-content-end" style="gap: 10px;padding: 8px 29px">
+                            <p data-row="booked" class=" btn-dat-truoc  change-booking-room" style="cursor: pointer">Lưu
+                            </p>
+                            <p type="button" data-row="booked" class="alert-paragraph close_modal_booked_room">Hủy</p>
+                        </div>
                     </div>
                 </div>
-         
-                <div class="d-flex justify-content-end" style="gap: 10px;padding: 8px 29px">
-                    <p data-row="booked" class=" btn-dat-truoc  change-booking-room" style="cursor: pointer">Lưu
-                    </p>
-                    <p type="button" data-row="booked" class="alert-paragraph close_modal_booked_room">Hủy</p>
-                </div> 
+
+
             </form>
         </div>
     </div>
@@ -65,31 +68,37 @@
         box-shadow: 2px 2px 10px rgba(0, 0, 0, 0.1);
         transition: transform 0.3s ease-in-out;
     }
-        .change-room-content{
-            height: 55vh !important;
-        }
-   @media screen and (min-height: 800px) {
+
     .change-room-content {
-        width: 73% !important;
-        height: 37vh !important;
+        height: 55vh !important;
     }
-}
-           .room-box:hover {
-               transform: scale(1.05);
-           }
-   
-           .room-name,.room-number {
-               font-size: 20px;
-               font-weight: bold;
-               color: #007bff;
-               margin-bottom: 5px;
-           }
-   
-           .booking-date {
-               font-size: 16px;
-               color: #555;
-           }
-           .booking-id , .customer-name{
-            color: #34495e;
-           }
-   </style>
+
+    @media screen and (min-height: 800px) {
+        .change-room-content {
+            width: 73% !important;
+            height: 37vh !important;
+        }
+    }
+
+    .room-box:hover {
+        transform: scale(1.05);
+    }
+
+    .room-name,
+    .room-number {
+        font-size: 20px;
+        font-weight: bold;
+        color: #007bff;
+        margin-bottom: 5px;
+    }
+
+    .booking-date {
+        font-size: 16px;
+        color: #555;
+    }
+
+    .booking-id,
+    .customer-name {
+        color: #34495e;
+    }
+</style>
