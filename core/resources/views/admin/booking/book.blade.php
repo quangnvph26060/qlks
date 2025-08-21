@@ -223,7 +223,11 @@
          .d-block-mobi {
             display: none;
         }
-
+ .data-table td {
+            height: 30px !important;
+            overflow: hidden;
+            white-space: nowrap;
+        }
         /* Mobile: các nút nằm ngang trong 1 hàng */
         @media (max-width: 768px) {
             .d-block-mobi .action-buttons {
@@ -242,16 +246,15 @@
             .d-block-mobi {
                 display: block;
             }
+              .data-table td {
+                 height: auto !important;
+              }
         }
         .table .background-tr {
             height: 37px;
         }
 
-        .data-table td {
-            height: 30px !important;
-            overflow: hidden;
-            white-space: nowrap;
-        }
+       
 
         .dt-column-title {
             color: white !important;
