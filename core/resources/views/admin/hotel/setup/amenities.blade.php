@@ -129,7 +129,7 @@
                         </thead>
                         <tbody id="main-table-hotel">
                             @forelse($amenities as $id => $item)
-                                <tr data-id="{{ $item->id }}">
+                                <tr data-id="{{ $item->id }}" class={{ $id % 2 !== 0 ? 'bg-white' : 'bg-gray' }}>
                                     <td class="d-none-mobi" style="width:20px;">
                                         <svg class="svg_menu_check_in" xmlns="http://www.w3.org/2000/svg" width="30"
                                             height="30" viewBox="0 0 21 21">

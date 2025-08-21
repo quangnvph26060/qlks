@@ -19,8 +19,8 @@
                                 </tr>
                             </thead>
                             <tbody>
-                                @forelse($facilities as $item)
-                                    <tr>
+                                @forelse($facilities as $id => $item)
+                                    <tr class={{ $id % 2 !== 0 ? 'bg-white' : 'bg-gray' }}>
                                         <td>{{ $loop->iteration }}</td>
                                         <td>{{ $item->code ?? 'Chưa có mã tiện nghi' }}</td>
                                         <td>{{ $item->title }}</td>

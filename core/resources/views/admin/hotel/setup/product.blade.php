@@ -52,7 +52,7 @@
                                 </thead>
                                 <tbody>
                                     @foreach ($categories as $id => $product)
-                                        <tr data-id="{{ $product->id }}">
+                                        <tr data-id="{{ $product->id }}" class={{ $id % 2 !== 0 ? 'bg-white' : 'bg-gray' }}>
 
 
                                             <td class="d-none-mobi" style="width:20px;">

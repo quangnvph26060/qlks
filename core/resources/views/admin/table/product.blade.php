@@ -1,5 +1,5 @@
-@foreach ($response as $product)
-    <tr data-id="{{ $product->id }}">
+@foreach ($response as $id => $product)
+    <tr data-id="{{ $product->id }}" class={{ $id % 2 !== 0 ? 'bg-white' : 'bg-gray' }}>
         <td>
             <button class="btn btn-link btn-toggle" type="button"
                 onclick=" toggleRepresentatives('{{ $product->id }}', this)"></button>

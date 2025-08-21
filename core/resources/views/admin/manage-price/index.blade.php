@@ -283,7 +283,7 @@
                             var data = response.data;
                             var html = '';
 
-                            data.forEach(element => {
+                            data.forEach((element, index)  => {
                                 const startDate = new Date(
                                     `${element.setup_pricing['effective_start_date']}`);
                                 const endDate = new Date(
@@ -291,7 +291,7 @@
 
 
                                 html += `
-                                    <tr data-id="${element.id}">
+                                    <tr data-id="${element.id}" class="${index % 2 === 0 ? 'bg-white' : 'bg-gray'}">
                                         <td data-label="Mã loại phòng"class="text-left"> ${element.room_type['code']} </td>
                                         <td data-label="Mã giá"class="text-left"> ${element.setup_pricing['price_code']} </td>
 

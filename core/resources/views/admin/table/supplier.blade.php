@@ -1,5 +1,5 @@
-@foreach ($response as $item)
-    <tr style="border-bottom: 1px solid #dee2e6">
+@foreach ($response as $id => $item)
+    <tr style="border-bottom: 1px solid #dee2e6" class={{ $id % 2 !== 0 ? 'bg-white' : 'bg-gray' }}>
         <td data-label="STT">
             {{ $loop->iteration }}
             {{-- <button class="btn btn-link btn-toggle" type="button"

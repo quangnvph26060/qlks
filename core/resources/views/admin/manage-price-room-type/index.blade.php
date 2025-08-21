@@ -515,7 +515,7 @@
                         var data = response.data;
                         var html = '';
 
-                        data.forEach(element => {
+                        data.forEach((element, index)  => {
                             // Biến chứa dữ liệu cần định dạng
                             const priceRequirementData = element.price_requirement;
                             let formattedData;
@@ -556,7 +556,7 @@
                             // const endDate = new Date(`${element.effective_end_date}`);
                             // <td>${formatDate(startDate)} - ${ formatDate(endDate) 	}</td>
                             html += `
-                                <tr data-id="${element.id}">
+                                <tr data-id="${element.id}" class="${index % 2 === 0 ? 'bg-white' : 'bg-gray'}">
                                     <td data-label="Mã giá"class="text-left">${element.price_code}</td>
                                     <td data-label="Tên giá">${element.price_name}</td>
                                     <td data-label="Ngày thực hiện">${formattedData}</td>

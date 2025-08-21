@@ -17,8 +17,8 @@
                                 </tr>
                             </thead>
                             <tbody>
-                                @forelse($facilities as $item)
-                                    <tr>
+                                @forelse($facilities as $id =>  $item)
+                                    <tr class={{ $id % 2 !== 0 ? 'bg-white' : 'bg-gray' }}>
                                         <td><span class="me-2">{{ $facilities->firstItem() + $loop->index }}.</span> {{ $item->title }}</td>
                                         <td> @php echo $item->icon @endphp </td>
                                         <td> @php echo $item->statusBadge @endphp </td>
