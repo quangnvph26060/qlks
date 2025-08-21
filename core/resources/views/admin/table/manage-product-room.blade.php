@@ -7,7 +7,7 @@
                         onclick=" toggleRepresentatives('{{ $room->id }}', this)"></button>
                 </td>
                 @can('admin.hotel.room.product.all')
-                    <td style="width:20px" data-label="Hành động">
+                    <td style="width:20px" data-label="Hành động" class="d-none-mobi">
                         <svg class="svg_menu_check_in" xmlns="http://www.w3.org/2000/svg" width="30" height="30"
                             viewBox="0 0 21 21">
                             <g fill="currentColor" fill-rule="evenodd">
@@ -38,11 +38,11 @@
 
                     </td>
                 @endcan
-                <th data-label="STT" style="text-align:right">
+                <td data-label="STT" style="text-align:right">
                     @php
                         $stt = $response->total() - ($response->currentPage() - 1) * $response->perPage() + $id;
                     @endphp
-                    {{ $stt }}</th>
+                    {{ $stt }}</td>
                 <td data-label="Mã phòng">{{ $room->code }}</td>
                 <td data-label="Loại phòng">{{ $room->roomType->name }}</td>
                 <td data-label="Số phòng">{{ $room->room_number }}</td>
@@ -55,6 +55,26 @@
                         <p>Chưa có sản phẩm nào !</p>
                     @endif
 
+                </td>
+                <td class="d-block-mobi">
+                <div class="action-buttons gap-2">
+                             @can(['admin.hotel.room.product.edit', 'admin.hotel.room.product.update'])
+                                <div class="dropdown-item booked_room_edit d-flex justify-content-center"   style=" background: orange;color: white !important;border-radius: 4px;border: none">
+                                    <a class="btn btn-sm btn-outline--primary btn-edit" data-id="{{ $room->id }}"
+                                          style=" background: orange;color: white !important;border-radius: 4px;border: none"
+                                        data-modal_title="@lang('Cập nhật sản phẩm')" type="button">
+                                        @lang('Sửa')
+                                    </a>
+                                </div>
+                            @endcan
+                            @can('admin.hotel.room.product.delete')
+                                <div class="dropdown-item booked_room_detail d-flex justify-content-center"  style=" background: red;color: white !important;border-radius: 4px;border: none">
+                                    <button class=" btn-delete" data-id="{{ $room->id }}"   style=" background: red;color: white !important;border-radius: 4px;border: none"
+                                        data-modal_title="@lang('Hoàn kho')" type="button">
+                                        Hoàn kho
+                                </div>
+                            @endcan
+                    </div>
                 </td>
 
             </tr>
@@ -111,7 +131,7 @@
         }
 
         #data-table td {
-            height: 37px !important;
+            height: auto !important;
         }
 
         .btn-toggle.collapsed {

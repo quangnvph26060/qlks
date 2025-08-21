@@ -46,7 +46,7 @@
                         <tbody id="main-table-hotel">
                             @forelse($warehouse as $id => $item)
                                 <tr data-id="{{ $item->id }}" class="{{ $id % 2 !== 0 ? 'bg-white' : 'bg-gray' }}">
-                                    <td style="width:20px">
+                                    <td style="width:20px" class="d-none-mobi">
                                         <svg class="svg_menu_check_in" xmlns="http://www.w3.org/2000/svg" width="30"
                                             height="30" viewBox="0 0 21 21">
                                             <g fill="currentColor" fill-rule="evenodd">
@@ -85,21 +85,45 @@
 
                                         {{ $id + 1 }}
                                     </td>
-                                    <td>
+                                    <td data-label="Mã kho">
                                         {{ $item->code }}
                                     </td>
 
-                                    <td>
+                                    <td data-label="Tên kho">
                                         {{ $item->name }}
                                     </td>
-                                    <td style="width:50px;text-align: center" class="status-hotel">
+                                    <td style="width:50px;text-align: center" data-label="Trạng thái" class="status-hotel">
                                         @if ($item->status == 1)
                                             <i class="fa fa-check" style="color:green;text-align: center"></i>
                                         @else
                                             <i class="fa fa-close" style="color:red;text-align: center"></i>
                                         @endif
                                     </td>
-
+                                    <td class="d-block-mobi">
+                                        <div class="action-buttons gap-2">
+                                              @can(['admin.hotel.setting.setup.edit.hotel'])
+                                                    <div class="dropdown-item booked_room_edit d-flex justify-content-center" style=" background: orange;padding: 4px;color: white !important;border-radius: 4px;border: none">
+                                                        <a class="btn btn-sm btn-outline--primary btn-edit-hotel"
+                                                            data-id="{{ $item->id }}" data-bs-toggle="modal"
+                                                            data-bs-target="#setup-hotel"
+                                                            style=" background: orange;color: white !important;border-radius: 4px;border: none"
+                                                            data-modal_title="@lang('Cập nhật kho')" type="button">
+                                                            Sửa
+                                                        </a>
+                                                    </div>
+                                                @endcan
+                                                @can(['admin.hotel.setting.setup.delete.hotel'])
+                                                    <div class="dropdown-item hotel_delete d-flex justify-content-center" style=" background: red;color: white !important;border-radius: 4px;border: none">
+                                                        <button class=" btn-delete-hotel icon-delete-room"
+                                                            data-id="{{ $item->id }}" data-modal_title="@lang('Xóa')"
+                                                            style=" background: red;color: white !important;border-radius: 4px;border: none"
+                                                            type="button">
+                                                            Xóa
+                                                        </button>
+                                                    </div>
+                                                @endcan
+                                        </div>
+                                    </td>
 
                                 </tr>
                             @empty
@@ -165,7 +189,7 @@
                             'func': function(value) {
                                 return checkRequired(value);
                             },
-                            'message': generateErrorMessage('P001','Mã kho')
+                            'message': generateErrorMessage('P001', 'Mã kho')
                         },
                         // {
                         //     'func': function(value) {
@@ -182,7 +206,7 @@
                             'func': function(value) {
                                 return checkRequired(value); // check trống
                             },
-                                'message': generateErrorMessage('P001','Tên kho')
+                            'message': generateErrorMessage('P001', 'Tên kho')
                         }, // viết tiếp điều kiện validate vào đây (validations)
                     ]
                 },
@@ -215,7 +239,7 @@
                                     <div class="mb-3">
                                         <label for="hotelName" class="form-label">Mã kho</label>
                                         <input type="text" class="form-control  text-uppercase" name="code" id="code"
-                                            placeholder="Nhập mã kho" value="{{$code}}">
+                                            placeholder="Nhập mã kho" value="{{ $code }}">
                                         <span class="invalid-feedback d-block" style="font-weight: 500"
                                             id="ma_coso_error"></span>
                                     </div>
@@ -478,6 +502,30 @@
 
 @push('style')
     <style>
+        .d-block-mobi {
+            display: none;
+        }
+
+        /* Mobile: các nút nằm ngang trong 1 hàng */
+        @media (max-width: 768px) {
+            .d-block-mobi .action-buttons {
+                display: flex;
+                flex-wrap: nowrap;
+                justify-content: space-between;
+            }
+
+            .d-block-mobi .action-buttons .btn {
+                flex: 1;
+                /* nút tự dàn đều */
+                margin: 0 2px;
+                /* khoảng cách nhỏ */
+            }
+
+            .d-block-mobi {
+                display: block;
+            }
+        }
+
         .system-search-icon {
             position: absolute;
             left: 0;
@@ -510,9 +558,10 @@
         #add-code {
             text-transform: uppercase;
         }
-.text-uppercase {
-    text-transform: uppercase;
-}
+
+        .text-uppercase {
+            text-transform: uppercase;
+        }
 
         a.item-link:focus,
         a.item-link:hover {

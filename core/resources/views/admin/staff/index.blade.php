@@ -25,7 +25,7 @@
                                     <tr>
                                         <td>{{ $loop->index + $allStaff->firstItem() }}</td>
                                         @can(['admin.staff.*'])
-                                            <td>
+                                            <td class="d-none-mobi">
                                                 <div class="">
                                                     @if ($staff->id > 1)
                                                         <div class="dropdown text-end">
@@ -74,10 +74,10 @@
                                                 </div>
                                             </td>
                                         @endcan
-                                        <td>{{ $staff->username }}</td>
-                                        <td>{{ $staff->name }}</td>
-                                        <td>{{ $staff->email }}</td>
-                                        <td>
+                                        <td data-label="Tên người dùng">{{ $staff->username }}</td>
+                                        <td data-label="Tên">{{ $staff->name }}</td>
+                                        <td data-label="Email">{{ $staff->email }}</td>
+                                        <td data-label="Vai trò">
                                             @if ($staff->role)
                                                 {{ $staff->role->name }}
                                             @else
@@ -85,10 +85,44 @@
                                             @endif
                                         </td>
 
-                                        <td>
+                                        <td data-label="Trạng thái">
                                             @php
                                                 echo $staff->statusBadge;
                                             @endphp
+                                        </td>
+                                        <td class="d-block-mobi">
+                                            <div class="action-buttons gap-2">
+                                                @can('admin.staff.save')
+                                                    <button class="dropdown-item cuModalBtn"
+                                                        data-modal_title="@lang('Cập nhật nhân viên')"
+                                                        data-resource="{{ $staff }}">
+                                                        <i class="la la-pencil"></i> @lang('Sửa')
+                                                    </button>
+                                                @endcan
+
+                                                @can('admin.staff.status')
+                                                    @if ($staff->status)
+                                                        <button class="dropdown-item confirmationBtn text-danger"
+                                                            data-action="{{ route('admin.staff.status', $staff->id) }}"
+                                                            data-question="@lang('Bạn có chắc chắn cấm nhân viên này?')">
+                                                            <i class="las la-user-alt-slash"></i> @lang('Cấm')
+                                                        </button>
+                                                    @else
+                                                        <button class="dropdown-item confirmationBtn text-success"
+                                                            data-action="{{ route('admin.staff.status', $staff->id) }}"
+                                                            data-question="@lang('Bạn có chắc chắn bỏ lệnh cấm nhân viên này không?')">
+                                                            <i class="las la-user-check"></i> @lang('Bỏ cấm')
+                                                        </button>
+                                                    @endif
+                                                @endcan
+
+                                                @can('admin.staff.login')
+                                                    <a class="dropdown-item"
+                                                        href="{{ route('admin.staff.login', $staff->id) }}" target="_blank">
+                                                        <i class="las la-sign-in-alt"></i> @lang('Đăng nhập')
+                                                    </a>
+                                                @endcan
+                                            </div>
                                         </td>
 
                                     </tr>
@@ -222,6 +256,30 @@
     </script>
 @endpush
 <style>
+    
+            .d-block-mobi {
+            display: none;
+        }
+
+        /* Mobile: các nút nằm ngang trong 1 hàng */
+        @media (max-width: 768px) {
+            .d-block-mobi .action-buttons {
+                display: flex;
+                flex-wrap: nowrap;
+                justify-content: space-between;
+            }
+
+            .d-block-mobi .action-buttons .btn {
+                flex: 1;
+                /* nút tự dàn đều */
+                margin: 0 2px;
+                /* khoảng cách nhỏ */
+            }
+
+            .d-block-mobi {
+                display: block;
+            }
+        }
     .menu-toggle-btn {
         background: none;
         border: none;

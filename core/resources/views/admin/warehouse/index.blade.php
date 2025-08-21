@@ -559,6 +559,29 @@
     <script src="{{ asset('assets/admin/js/vendor/sweetalert2@11.js') }}"></script>
 
     <style>
+          .d-block-mobi {
+            display: none;
+        }
+
+        /* Mobile: các nút nằm ngang trong 1 hàng */
+        @media (max-width: 768px) {
+            .d-block-mobi .action-buttons {
+                display: flex;
+                flex-wrap: nowrap;
+                justify-content: space-between;
+            }
+
+            .d-block-mobi .action-buttons .btn {
+                flex: 1;
+                /* nút tự dàn đều */
+                margin: 0 2px;
+                /* khoảng cách nhỏ */
+            }
+
+            .d-block-mobi {
+                display: block;
+            }
+        }
         @media (min-width: 768px) {
             .form-switch .form-check-input {
                 float: right

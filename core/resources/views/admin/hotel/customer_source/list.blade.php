@@ -17,7 +17,7 @@
                         <tbody id="main-table-hotel">
                             @forelse($customer_sources as $id => $item)
                                 <tr data-id="{{ $item->id }}" class="{{ $id % 2 !== 0 ? 'bg-white' : 'bg-gray' }}">
-                                    <td style="width:20px;">
+                                    <td class="d-none-mobi" style="width:20px;">
                                         <svg class="svg_menu_check_in" xmlns="http://www.w3.org/2000/svg" width="30"
                                             height="30" viewBox="0 0 21 21">
                                             <g fill="currentColor" fill-rule="evenodd">
@@ -29,7 +29,7 @@
 
                                         <div class="dropdown menu_dropdown_check_in" id="dropdown-menu"
                                             style="position:fixed">
-                                            @can(['admin.hotel.customer.source.edit','admin.hotel.customer.source.update'])
+                                            @can(['admin.hotel.customer.source.edit', 'admin.hotel.customer.source.update'])
                                                 <div class="dropdown-item"><a data-id="{{ $item->id }}"
                                                         class="btn-edit-source" data-bs-toggle="modal"
                                                         data-bs-target="#edit-customer-source" style="color:black">
@@ -55,14 +55,36 @@
                                         @endphp
                                         {{ $stt }}
                                     </td>
-                                    <td>
+                                    <td data-label="Mã nguồn">
                                         {{ $item->source_code }}
                                     </td>
 
-                                    <td>
+                                    <td data-label="Tên nguồn">
                                         {{ $item->source_name }}
                                     </td>
-
+                                    <td class="d-block-mobi">
+                                        <div class="action-buttons gap-2">
+                                            @can(['admin.hotel.customer.source.edit', 'admin.hotel.customer.source.update'])
+                                                <div class="dropdown-item d-flex justify-content-center"
+                                                    style="background: orange;border-radius: 4px"><a
+                                                        data-id="{{ $item->id }}" class="btn-edit-source"
+                                                        data-bs-toggle="modal" data-bs-target="#edit-customer-source"
+                                                        style="color:white;background: orange;border-radius: 4px">
+                                                        Sửa
+                                                    </a>
+                                                </div>
+                                            @endcan
+                                            @can('admin.hotel.customer.source.delete')
+                                                <div class="dropdown-item booked_room_detail  d-flex justify-content-center"
+                                                    style="background: red;border-radius: 4px">
+                                                    <button class=" btn-delete icon-delete-room" data-id="{{ $item->id }}"
+                                                        data-modal_title="@lang('Xóa nguồn khách')" type="button"
+                                                        data-pro="0"style="background: red;border-radius: 4px;color:white">
+                                                        Xóa
+                                                </div>
+                                            @endcan
+                                        </div>
+                                    </td>
 
                                 </tr>
                             @empty
@@ -82,21 +104,21 @@
                 <div class="row">
                     <div class="col-md-12 col-sm-12 d-flex stack-mobile">
 
-                      <div>
-                          <a class="mr-1" href="{{ route('admin.hotel.customer.source.all') }}">
-                            <button class="btn btn--primary" data-modal_title="Làm mới">
-                                <i class="fa fa-repeat p-1"></i>
-                            </button>
-                        </a>
-                        @can('admin.hotel.customer.source.store')
-                            <a>
-                                <button class="btn btn--primary" data-modal_title="Thêm mới nguồn khách hàng" type="button"
-                                    data-bs-toggle="modal" data-bs-target="#customer-source" style="margin-left:10px">
-                                    <i class="las la-plus  p-1"></i>
+                        <div>
+                            <a class="mr-1" href="{{ route('admin.hotel.customer.source.all') }}">
+                                <button class="btn btn--primary" data-modal_title="Làm mới">
+                                    <i class="fa fa-repeat p-1"></i>
                                 </button>
                             </a>
-                        @endcan
-                      </div>
+                            @can('admin.hotel.customer.source.store')
+                                <a>
+                                    <button class="btn btn--primary" data-modal_title="Thêm mới nguồn khách hàng" type="button"
+                                        data-bs-toggle="modal" data-bs-target="#customer-source" style="margin-left:10px">
+                                        <i class="las la-plus  p-1"></i>
+                                    </button>
+                                </a>
+                            @endcan
+                        </div>
                         <form role="form" enctype="multipart/form-data"
                             action="{{ route('admin.hotel.customer.source.search') }}">
                             <div class="form-group position-relative mb-0">
@@ -244,7 +266,7 @@
 
 @push('script')
     <script>
-         $(document).on('input', 'input[name="source_code"]', function() {
+        $(document).on('input', 'input[name="source_code"]', function() {
             this.value = this.value.toUpperCase();
         });
         $(document).ready(function() {
@@ -432,29 +454,55 @@
         }
     </style>
     <style scoped>
-    @media (max-width: 768px) {
-    .stack-mobile {
-        flex-direction: column !important; /* đổi từ row sang column */
-        gap: 8px; /* khoảng cách giữa các item */
-        padding-left: 5px !important;
-        padding-right: 5px !important;
-    }
+        @media (max-width: 768px) {
+            .stack-mobile {
+                flex-direction: column !important;
+                /* đổi từ row sang column */
+                gap: 8px;
+                /* khoảng cách giữa các item */
+                padding-left: 5px !important;
+                padding-right: 5px !important;
+            }
 
-    .stack-mobile > div,
-    .stack-mobile form {
-        width: 100% !important;
-    }
+            .stack-mobile>div,
+            .stack-mobile form {
+                width: 100% !important;
+            }
 
-    .stack-mobile input.searchInput {
-        width: 100% !important;
-        margin-left: 0 !important;
-        margin-top: 8px;
-    }
-.stack-mobile .btn-icon{
-    margin-top: 5px !important;
-}
-  
-}
+            .stack-mobile input.searchInput {
+                width: 100% !important;
+                margin-left: 0 !important;
+                margin-top: 8px;
+            }
 
-</style>
+            .stack-mobile .btn-icon {
+                margin-top: 5px !important;
+            }
+
+        }
+
+        .d-block-mobi {
+            display: none;
+        }
+
+        /* Mobile: các nút nằm ngang trong 1 hàng */
+        @media (max-width: 768px) {
+            .d-block-mobi .action-buttons {
+                display: flex;
+                flex-wrap: nowrap;
+                justify-content: space-between;
+            }
+
+            .d-block-mobi .action-buttons .btn {
+                flex: 1;
+                /* nút tự dàn đều */
+                margin: 0 2px;
+                /* khoảng cách nhỏ */
+            }
+
+            .d-block-mobi {
+                display: block;
+            }
+        }
+    </style>
 @endpush

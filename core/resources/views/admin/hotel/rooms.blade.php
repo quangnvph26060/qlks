@@ -18,7 +18,7 @@
                         </button>
                     </a>
                 @endcan
-                <form role="form" enctype="multipart/form-data"  action="{{ route('admin.hotel.room.all') }}"
+                <form role="form" enctype="multipart/form-data" action="{{ route('admin.hotel.room.all') }}"
                     method="GET" id="searchForm" style="margin-bottom: 0px">
                     <div class="form-group position-relative mb-0 d-flex gap-2">
                         <input placeholder="Nhập Mã/Tên loại phòng"
@@ -68,7 +68,7 @@
                                 @forelse($rooms as $id => $room)
                                     <tr class="{{ $id % 2 !== 0 ? 'bg-white' : 'bg-gray' }}">
                                         @can('admin.hotel.*')
-                                            <td style="width:20px;">
+                                            <td class="d-none-mobi" style="width:20px;">
 
                                                 <svg class="svg_menu_check_in" xmlns="http://www.w3.org/2000/svg" width="30"
                                                     height="30" viewBox="0 0 21 21">
@@ -100,20 +100,39 @@
                                             </td>
                                         @endcan
 
-                                        <td style="text-align:right">
+                                        <td data-label="STT" style="text-align:right">
                                             {{ $id + 1 }}
                                         </td>
-                                        <td> {{ $room->code ?? 'Chưa có mã phòng' }}</td>
-                                        <td>{{ __($room->name) }}</td>
+                                        <td data-label="Mã loại phòng"> {{ $room->code ?? 'Chưa có mã phòng' }}</td>
+                                        <td data-label="Tên loại phòng">{{ __($room->name) }}</td>
 
-                                        <td style="width:50px;text-align: center">
+                                        <td data-label="Trạng thái" style="width:50px;text-align: center">
                                             @if ($room->status == 1)
                                                 <i class="fa fa-check" style="color:green;text-align: center"></i>
                                             @else
                                                 <i class="fa fa-close" style="color:red;text-align: center"></i>
                                             @endif
                                         </td>
-
+                                        <td class="d-block-mobi">
+                                            <div class="action-buttons gap-2">
+                                                @can('admin.hotel.room.update')
+                                                    <div class="dropdown-item d-flex justify-content-center" style="background: orange;border-radius: 4px">
+                                                        <button data-resource="{{ $room }}" style="background: orange;color: white"
+                                                            class="btn-edit-customer editBtn" data-bs-toggle="modal"
+                                                            data-bs-target="#edit-customer" style="color:black">
+                                                            Sửa
+                                                        </button>
+                                                    </div>
+                                                @endcan
+                                                @can('admin.hotel.room.delete')
+                                                    <div class="dropdown-item booked_room_detail d-flex justify-content-center"style="background: red;border-radius: 4px">
+                                                        <button class="btn-delete icon-delete-room" style="background: red;color: white"
+                                                            data-id="{{ $room->id }}" data-modal_title="@lang('Xóa loại phòng')"
+                                                            type="button" data-pro="0">Xóa</button>
+                                                    </div>
+                                                @endcan
+                                            </div>
+                                        </td>
                                     </tr>
                                 @empty
                                     <tr>
@@ -144,7 +163,8 @@
                         <div class="modal-body">
                             <div class="form-group">
                                 <label>@lang('Mã loại phòng')</label>
-                                <input class="form-control" name="code" value="{{ $code }}" type="text" required>
+                                <input class="form-control" name="code" value="{{ $code }}" type="text"
+                                    required>
                             </div>
                             <div class="form-group">
                                 <label>@lang('Tên loại phòng')</label>
@@ -258,6 +278,29 @@
 
         .upload-box:hover {
             border-color: #999;
+        }   
+        .d-block-mobi {
+            display: none;
+        }
+
+        /* Mobile: các nút nằm ngang trong 1 hàng */
+        @media (max-width: 768px) {
+            .d-block-mobi .action-buttons {
+                display: flex;
+                flex-wrap: nowrap;
+                justify-content: space-between;
+            }
+
+            .d-block-mobi .action-buttons .btn {
+                flex: 1;
+                /* nút tự dàn đều */
+                margin: 0 2px;
+                /* khoảng cách nhỏ */
+            }
+
+            .d-block-mobi {
+                display: block;
+            }
         }
 
         .upload-label {
@@ -550,18 +593,18 @@
 @push('style')
     <style>
         /* @media (max-width: 768px) {
-            #searchForm {
-                order: 2;
-                width: 100% !important;
-                margin-top: 15px !important;
-            }
+                #searchForm {
+                    order: 2;
+                    width: 100% !important;
+                    margin-top: 15px !important;
+                }
 
-            .breadcrumb-plugins>button {
-                order: 1;
-                width: 100% !important;
-                margin-right: 3rem !important;
-                margin-left: 3rem !important;
-            }
-        } */
+                .breadcrumb-plugins>button {
+                    order: 1;
+                    width: 100% !important;
+                    margin-right: 3rem !important;
+                    margin-left: 3rem !important;
+                }
+            } */
     </style>
 @endpush

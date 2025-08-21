@@ -5,39 +5,39 @@
             <div class="card-body">
                 <div class="row">
                     <div class="col-md-12 col-sm-12 d-flex flex-column flex-md-row gap-1">
-                       <div>
-                         <a class="mr-1" href="{{ route('admin.hotel.setup.code.all') }}">
-                            <button class="btn btn--primary" data-modal_title="Làm mới">
-                                <i class="fa fa-repeat p-1"></i>
-                            </button>
-                        </a>
-                        <a>
-                            <button class="btn btn--primary" data-modal_title="Thêm mới mã mặc định" type="button"
-                                data-bs-toggle="modal" data-bs-target="#modal-add-code" style="margin-left:10px">
-                                <i class="las la-plus  p-1"></i>
-                            </button>
-                        </a>
-                       </div>
-                       <div>
-                         <form role="form" enctype="multipart/form-data"
-                            action="{{ route('admin.hotel.setup.code.search') }}">
-                            <div class="form-group position-relative mb-0">
-                                <input class="searchInput mb-2" name="code"
-                                    style="height: 35px;border: 1px solid rgb(121, 117, 117, 0.5);"
-                                    placeholder="Mã mặc định">
-                                <input class="searchInput" name="menu_name"
-                                    style="height: 35px;border: 1px solid rgb(121, 117, 117, 0.5); "
-                                    placeholder="Tên menu">
-                                <a>
-                                    <button type="submit" class="btn btn--primary"
-                                        style="padding-right:15px;padding-left:15px">
-                                        <i class="las la-search p-1"></i>
-                                    </button>
-                                </a>
+                        <div>
+                            <a class="mr-1" href="{{ route('admin.hotel.setup.code.all') }}">
+                                <button class="btn btn--primary" data-modal_title="Làm mới">
+                                    <i class="fa fa-repeat p-1"></i>
+                                </button>
+                            </a>
+                            <a>
+                                <button class="btn btn--primary" data-modal_title="Thêm mới mã mặc định" type="button"
+                                    data-bs-toggle="modal" data-bs-target="#modal-add-code" style="margin-left:10px">
+                                    <i class="las la-plus  p-1"></i>
+                                </button>
+                            </a>
+                        </div>
+                        <div>
+                            <form role="form" enctype="multipart/form-data"
+                                action="{{ route('admin.hotel.setup.code.search') }}">
+                                <div class="form-group position-relative mb-0">
+                                    <input class="searchInput mb-2" name="code"
+                                        style="height: 35px;border: 1px solid rgb(121, 117, 117, 0.5);"
+                                        placeholder="Mã mặc định">
+                                    <input class="searchInput" name="menu_name"
+                                        style="height: 35px;border: 1px solid rgb(121, 117, 117, 0.5); "
+                                        placeholder="Tên menu">
+                                    <a>
+                                        <button type="submit" class="btn btn--primary"
+                                            style="padding-right:15px;padding-left:15px">
+                                            <i class="las la-search p-1"></i>
+                                        </button>
+                                    </a>
 
-                            </div>
-                        </form>
-                       </div>
+                                </div>
+                            </form>
+                        </div>
                     </div>
 
                 </div>
@@ -75,7 +75,7 @@
                                             'Danh mục tiện nghi',
                                             'Cài đặt tính giá',
                                             'Danh mục cơ sở vật chất',
-                                            'Cài đặt sản phẩm',
+                                            'Cài đặt sản phẩm vào phòng',
                                             'Cài đặt nhà cung cấp',
                                             'Danh mục người dùng',
                                             'Danh mục khách hàng',
@@ -176,8 +176,8 @@
                         </thead>
                         <tbody id="main-table-hotel">
                             @forelse($setup_codes as $id => $item)
-                                <tr data-id="{{ $item->id }}">
-                                    <td style="width:20px;">
+                                <tr data-id="{{ $item->id }}" class="{{ $id % 2 == 0 ? 'bg-white' : 'bg-gray' }}">
+                                    <td style="width:20px;" class="d-none-mobi">
                                         <svg class="svg_menu_check_in" xmlns="http://www.w3.org/2000/svg" width="30"
                                             height="30" viewBox="0 0 21 21">
                                             <g fill="currentColor" fill-rule="evenodd">
@@ -202,7 +202,7 @@
 
                                         </div>
                                     </td>
-                                    <td style="width:20px;text-align:right">
+                                    <td data-label="STT" style="width:20px;text-align:right">
                                         @php
                                             $stt =
                                                 $setup_codes->total() -
@@ -212,11 +212,28 @@
                                         {{ $stt }}
                                     </td>
 
-                                    <td>
+                                    <td data-label="Tên danh mục">
                                         {{ $item->menu_name }}
                                     </td>
-                                    <td>
+                                    <td data-label="Mã mặc định">
                                         {{ $item->code }}
+                                    </td>
+                                    <td class="d-block-mobi">
+                                        <div class="action-buttons gap-2">
+                                            <div class="dropdown-item d-flex justify-content-center"  style=" background: orange;color: white !important;border-radius: 4px;border: none;padding: 4px;"><a data-id="{{ $item->id }}"
+                                                    class="btn-edit-status" data-bs-toggle="modal"
+                                                     style=" background: orange;color: white !important;border-radius: 4px;border: none;padding: 4px;"
+                                                    data-bs-target="#status-code">
+                                                    Sửa
+                                                </a>
+                                            </div>
+
+                                            <div class="dropdown-item booked_room_detail d-flex justify-content-center"  style=" background: red;color: white !important;border-radius: 4px;border: none;padding: 4px;"> <button
+                                                    class=" btn-delete icon-delete-room" data-id="{{ $item->id }}"
+                                                    data-modal_title="@lang('Xóa trạng thái')" type="button"
+                                                     style=" background: red;color: white !important;border-radius: 4px;border: none;padding: 4px;"
+                                                    data-pro="0">Xóa</div>
+                                        </div>
                                     </td>
                                 </tr>
                             @empty
@@ -241,6 +258,30 @@
     <link rel="stylesheet" href="{{ asset('assets/global/css/modal.css') }}">
 
     <style>
+        .d-block-mobi {
+            display: none;
+        }
+
+        /* Mobile: các nút nằm ngang trong 1 hàng */
+        @media (max-width: 768px) {
+            .d-block-mobi .action-buttons {
+                display: flex;
+                flex-wrap: nowrap;
+                justify-content: space-between;
+            }
+
+            .d-block-mobi .action-buttons .btn {
+                flex: 1;
+                /* nút tự dàn đều */
+                margin: 0 2px;
+                /* khoảng cách nhỏ */
+            }
+
+            .d-block-mobi {
+                display: block;
+            }
+        }
+
         .navbar__right {
             display: none;
         }
@@ -406,13 +447,15 @@
         .system-search-icon~.form-control {
             padding-left: 45px;
         }
- @media (max-width: 767.98px) {
+
+        @media (max-width: 767.98px) {
 
             .searchInput,
             .choose {
                 width: 100% !important;
             }
         }
+
         .widget-seven .widget-seven__content-amount {
             font-size: 22px;
         }

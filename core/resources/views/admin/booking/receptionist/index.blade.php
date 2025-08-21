@@ -2242,7 +2242,12 @@
         z-index: 2000;
         padding: 20px;
     }
-
+    @media (max-width: 768px) {
+    .filter-sidebar {
+        width: 80%;
+        right: -80%; /* nhớ chỉnh lại theo % để nó ẩn ra ngoài */
+    }
+}
     hr {
         margin: 5px !important;
     }

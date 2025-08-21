@@ -150,8 +150,9 @@
                                     <tbody>
 
                                         @foreach ($data as $index => $item)
-                                            <tr>
-                                                <td style="width:20px" data-label="Hành động" class="position-relative">
+                                            <tr class="{{ $index % 2 == 0 ? 'bg-white' : 'bg-gray' }}">
+                                                <td style="width:20px" data-label="Hành động"
+                                                    class="position-relative d-none-mobi">
                                                     <svg class="svg_menu_check_in" xmlns="http://www.w3.org/2000/svg"
                                                         width="30" height="30" viewBox="0 0 21 21"
                                                         style="cursor:pointer"
@@ -192,10 +193,41 @@
                                                     </div>
                                                 </td>
 
-                                                <td>{{ $index + 1 }}</td>
-                                                <td>{{ $item->ota['name'] }}</td>
-                                                <td>{{ $item->discount_code }}%</td>
-                                                <td>{!! $item->status_badge !!}</td>
+                                                <td data-label="STT">{{ $index + 1 }}</td>
+                                                <td data-label="OTA">{{ $item->ota['name'] }}</td>
+                                                <td data-label="Giảm giá">{{ $item->discount_code }}%</td>
+                                                <td data-label="Tr.thái">{!! $item->status_badge !!}</td>
+                                                <td class="d-block-mobi">
+                                                    <div class="action-buttons gap-2">
+                                                        <div style=" background: orange;color: white !important;border-radius: 4px;border: none;padding: 4px;"
+                                                            class="dropdown-item booked_room_edit d-flex justify-content-center">
+                                                            <a class="btn btn-sm btn-outline--primary btn-edit-ota"
+                                                                style=" background: orange;color: white !important;border-radius: 4px;border: none;padding: 4px;"
+                                                                data-id="{{ $item->id }}"
+                                                                data-ota-id="{{ $item->ota_id }}"
+                                                                data-discount="{{ $item->discount_code }}"
+                                                                data-allowed-room-types='@json($item->allowed_room_types ?? [])'
+                                                                data-allowed-rooms='@json($item->allowed_rooms ?? [])'
+                                                                data-allow-all-rooms="{{ $item->allow_all_rooms }}"
+                                                                data-status="{{ $item->status }}" data-bs-toggle="modal"
+                                                                data-bs-target="#otaModal"
+                                                                style="color:black !important;border:none;padding:5px"
+                                                                type="button">
+                                                                Sửa
+                                                            </a>
+
+                                                        </div>
+                                                        <div style=" background: red;color: white !important;border-radius: 4px;border: none;padding: 4px;"
+                                                            class="dropdown-item hotel_delete d-flex justify-content-center">
+                                                            <button class="btn-delete-ota icon-delete-room"
+                                                                style=" background: red;color: white !important;border-radius: 4px;border: none;padding: 4px;"
+                                                                data-id="{{ $item->id }}" data-modal_title="Xóa"
+                                                                type="button">
+                                                                Xóa
+                                                            </button>
+                                                        </div>
+                                                    </div>
+                                                </td>
                                             </tr>
                                         @endforeach
 
@@ -333,43 +365,67 @@
                 $('input[type=checkbox]').prop('checked', false);
             });
 
-           $('.btn-edit-ota').on('click', function () {
-        const form = $('#otaModal form')[0];
-        form.reset();
-        $('#otaModalLabel').text('Cập nhật OTA');
+            $('.btn-edit-ota').on('click', function() {
+                const form = $('#otaModal form')[0];
+                form.reset();
+                $('#otaModalLabel').text('Cập nhật OTA');
 
-        $('#editId').val($(this).data('id'));
-        $('#otaSelect').val($(this).data('ota-id'));
-        $('#discountCode').val($(this).data('discount'));
-        $('#statusSelect').val($(this).data('status'));
+                $('#editId').val($(this).data('id'));
+                $('#otaSelect').val($(this).data('ota-id'));
+                $('#discountCode').val($(this).data('discount'));
+                $('#statusSelect').val($(this).data('status'));
 
-        // Reset các checkbox
-        $('input[type=checkbox]').prop('checked', false);
+                // Reset các checkbox
+                $('input[type=checkbox]').prop('checked', false);
 
-        const allowAll = $(this).data('allow-all-rooms');
-        const allowedRoomTypes = $(this).data('allowed-room-types') || [];
-        const allowedRooms = $(this).data('allowed-rooms') || [];
+                const allowAll = $(this).data('allow-all-rooms');
+                const allowedRoomTypes = $(this).data('allowed-room-types') || [];
+                const allowedRooms = $(this).data('allowed-rooms') || [];
 
-        if (allowAll == 1) {
-            $('#case1').prop('checked', true);
-        } else if (allowedRoomTypes.length > 0) {
-            $('#case2').prop('checked', true);
-            allowedRoomTypes.forEach(id => {
-                $('input[name="room_types[]"][value="' + id + '"]').prop('checked', true);
+                if (allowAll == 1) {
+                    $('#case1').prop('checked', true);
+                } else if (allowedRoomTypes.length > 0) {
+                    $('#case2').prop('checked', true);
+                    allowedRoomTypes.forEach(id => {
+                        $('input[name="room_types[]"][value="' + id + '"]').prop('checked', true);
+                    });
+                } else if (allowedRooms.length > 0) {
+                    $('#case3').prop('checked', true);
+                    allowedRooms.forEach(id => {
+                        $('input[name="rooms[]"][value="' + id + '"]').prop('checked', true);
+                    });
+                } else {
+                    $('#case1').prop('checked', true);
+                }
             });
-        } else if (allowedRooms.length > 0) {
-            $('#case3').prop('checked', true);
-            allowedRooms.forEach(id => {
-                $('input[name="rooms[]"][value="' + id + '"]').prop('checked', true);
-            });
-        } else {
-            $('#case1').prop('checked', true);
-        }
-    });
         });
     </script>
 @endpush
 <style scoped>
+    .d-block-mobi {
+        display: none;
+    }
+
+    /* Mobile: các nút nằm ngang trong 1 hàng */
+    @media (max-width: 768px) {
+        .d-block-mobi .action-buttons {
+            display: flex;
+            flex-wrap: nowrap;
+            justify-content: space-between;
+        }
+
+        .d-block-mobi .action-buttons .btn {
+            flex: 1;
+            /* nút tự dàn đều */
+            margin: 0 2px;
+            /* khoảng cách nhỏ */
+        }
+
+        .d-block-mobi {
+            display: block;
+        }
+    }
+
     switch {
         position: relative;
         display: inline-block;

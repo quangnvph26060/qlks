@@ -283,7 +283,7 @@
             }
 
             #dropdown-menu {
-                right: 10;
+                position: absolute; top: 100%; left: 76%; transform: translateX(-50%); min-width: 150px; z-index: 999;
             }
 
             .style-mobi {

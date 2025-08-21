@@ -9,7 +9,7 @@
             <div class="border">
                 <div class="card b-radius--10">
                     <div class="card-body p-0">
-                        <div class="table-responsive--sm table-responsive">
+                        <div class="table-responsive--sm">
                             <table class="table--light style--two table" id="data-table">
                                 <thead>
                                     <tr>
@@ -782,11 +782,30 @@
             }
         }
 
-        /* .form-check-group {
-                                                                                        display: flex;
-                                                                                        flex-wrap: wrap;
-                                                                                        gap: 10px;
-                                                                                    } */
+     
+                    .d-block-mobi {
+            display: none;
+        }
+
+        /* Mobile: các nút nằm ngang trong 1 hàng */
+        @media (max-width: 768px) {
+            .d-block-mobi .action-buttons {
+                display: flex;
+                flex-wrap: nowrap;
+                justify-content: space-between;
+            }
+
+            .d-block-mobi .action-buttons .btn {
+                flex: 1;
+                /* nút tự dàn đều */
+                margin: 0 2px;
+                /* khoảng cách nhỏ */
+            }
+
+            .d-block-mobi {
+                display: block;
+            }
+        }
 
         .form-check {
             margin-right: 15px;

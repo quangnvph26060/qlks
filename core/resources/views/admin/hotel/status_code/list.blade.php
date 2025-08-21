@@ -78,7 +78,7 @@
                         <tbody id="main-table-hotel">
                             @forelse($status_codes as $id => $item)
                                 <tr data-id="{{ $item->id }}" class="{{ $id % 2 !== 0 ? 'bg-white' : 'bg-gray' }}">
-                                    <td style="width:20px;">
+                                    <td style="width:20px;" class="d-none-mobi">
                                         <svg class="svg_menu_check_in" xmlns="http://www.w3.org/2000/svg" width="30"
                                             height="30" viewBox="0 0 21 21">
                                             <g fill="currentColor" fill-rule="evenodd">
@@ -112,22 +112,44 @@
                                         @endphp
                                         {{ $stt }}
                                     </td>
-                                    <td>
+                                    <td data-label="Mã trạng thái">
                                         {{ $item->status_code }}
                                     </td>
-                                    <td>
+                                    <td data-label="Tên trạng thái">
                                         {{ $item->status_name }}
                                     </td>
-                                    <td>
+                                    <td data-label="Ghi chú">
                                         {{ $item->note }}
                                     </td>
 
-                                    <td style="width:50px;text-align: center" class="status-hotel">
+                                    <td data-label="Trạng thái" style="width:50px;text-align: center" class="status-hotel">
                                         @if ($item->status_status == 1)
                                             <i class="fa fa-check" style="color:green;text-align: center"></i>
                                         @else
                                             <i class="fa fa-close" style="color:red;text-align: center"></i>
                                         @endif
+                                    </td>
+                                   <td class="d-block-mobi">
+                                                    <div class="action-buttons gap-2">
+                                                 @can(['admin.hotel.status.code.edit','admin.hotel.status.code.update'])
+                                                <div class="dropdown-item d-flex justify-content-center" style=" background: orange;color: white !important;border-radius: 4px;border: none;padding: 4px;"><a data-id="{{ $item->id }}"
+                                                        class="btn-edit-status" data-bs-toggle="modal"
+                                                        style=" background: orange;color: white !important;border-radius: 4px;border: none;padding: 4px;"
+                                                        data-bs-target="#status-code" >
+                                                        Sửa
+                                                    </a>
+                                                </div>
+                                            @endcan
+                                            @can('admin.hotel.status.code.delete')
+                                                <div class="dropdown-item booked_room_detail d-flex justify-content-center" style=" background: red;color: white !important;border-radius: 4px;border: none;padding: 4px;">
+                                                     <button
+                                                     style=" background: red;color: white !important;border-radius: 4px;border: none;padding: 4px;"
+                                                        class=" btn-delete icon-delete-room" data-id="{{ $item->id }}"
+                                                        data-modal_title="@lang('Xóa trạng thái')" type="button" data-pro="0"
+                                                        >Xóa
+                                                </div>
+                                            @endcan
+                                        </div>
                                     </td>
                                 </tr>
                             @empty
@@ -427,6 +449,29 @@
 
 @push('style')
     <style>
+         .d-block-mobi {
+        display: none;
+    }
+
+    /* Mobile: các nút nằm ngang trong 1 hàng */
+    @media (max-width: 768px) {
+        .d-block-mobi .action-buttons {
+            display: flex;
+            flex-wrap: nowrap;
+            justify-content: space-between;
+        }
+
+        .d-block-mobi .action-buttons .btn {
+            flex: 1;
+            /* nút tự dàn đều */
+            margin: 0 2px;
+            /* khoảng cách nhỏ */
+        }
+
+        .d-block-mobi {
+            display: block;
+        }
+    }
         .system-search-icon {
             position: absolute;
             left: 0;

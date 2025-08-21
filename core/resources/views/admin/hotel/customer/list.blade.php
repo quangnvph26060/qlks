@@ -26,9 +26,9 @@
                                 </thead>
                                 <tbody>
                                     @forelse($customers as $id => $customer)
-                                        <tr data-id="{{ $customer->id }}"
+                                        <tr  data-id="{{ $customer->id }}"
                                             class={{ $id % 2 !== 0 ? 'bg-white' : 'bg-gray' }}>
-                                            <td style="width:20px;">
+                                            <td class="d-none-mobi" style="width:20px;">
                                                 <svg class="svg_menu_check_in" xmlns="http://www.w3.org/2000/svg"
                                                     width="30" height="30" viewBox="0 0 21 21">
                                                     <g fill="currentColor" fill-rule="evenodd">
@@ -49,16 +49,18 @@
                                                         </div>
                                                     @endcan
                                                     @can('admin.hotel.customer.delete')
-                                                        <div class="dropdown-item booked_room_detail"> <button
+                                                        <div class="dropdown-item booked_room_detail"> 
+                                                            <button
                                                                 class=" btn-delete icon-delete-room"
                                                                 data-id="{{ $customer->id }}"
                                                                 data-modal_title="@lang('Xóa khách hàng')" type="button"
                                                                 data-pro="0">Xóa
+                                                            </button>
                                                         </div>
                                                     @endcan
                                                 </div>
                                             </td>
-                                            <td style="width:20px;text-align:right">
+                                            <td data-label="STT" style="width:20px;text-align:right">
                                                 @php
                                                     $stt =
                                                         $customers->total() -
@@ -67,22 +69,22 @@
                                                 @endphp
                                                 {{ $stt }}
                                             </td>
-                                            <td>
+                                            <td data-label="Mã KH">
                                                 {{ $customer->customer_code }}
                                             </td>
-                                            <td>
+                                            <td data-label="Tên KH">
                                                 {{ $customer->name }}
                                             </td>
-                                            <td style="text-align:right">
+                                            <td  data-label="SĐT"style="text-align:right">
                                                 {{ $customer->phone }}
                                             </td>
-                                            <td>
+                                            <td data-label="Email">
                                                 {{ $customer->email }}
                                             </td>
-                                            <td>
+                                            <td data-label="Địa chỉ">
                                                 {{ $customer->address }}
                                             </td>
-                                            <td>
+                                            <td class="d-none-mobi">
                                                 @php
                                                     $group = \App\Models\CustomerGroup::where(
                                                         'group_code',
@@ -92,7 +94,7 @@
                                                 @endphp
                                                 {{ $group }}
                                             </td>
-                                            <td>
+                                            <td class="d-none-mobi">
                                                 @php
                                                     $source = \App\Models\CustomerSource::where(
                                                         'source_code',
@@ -102,17 +104,40 @@
                                                 @endphp
                                                 {{ $source }}
                                             </td>
-                                            <td style="text-align:right;width:90px">
+                                            <td class="d-none-mobi"  style="text-align:right;width:90px">
                                                 {{ (new DateTime($customer->created_at))->format('d/m/Y') }}
                                             </td>
-                                            <td style="width:50px;text-align: center" class="status-hotel">
+                                            <td data-label="Tr.thái" style="width:50px;text-align: center" class="status-hotel">
                                                 @if ($customer->status == 1)
                                                     <i class="fa fa-check" style="color:green;text-align: center"></i>
                                                 @else
                                                     <i class="fa fa-close" style="color:red;text-align: center"></i>
                                                 @endif
                                             </td>
-
+                                              <td class="d-block-mobi">
+                                        <div class="action-buttons gap-2">
+                                                     @can(['admin.hotel.customer.edit', 'admin.hotel.customer.update'])
+                                                        <div class="dropdown-item d-flex justify-content-center"   style="background: orange;border-radius: 4px">
+                                                            <a data-id="{{ $customer->id }}"
+                                                                class="btn-edit-customer" data-bs-toggle="modal"
+                                                                data-bs-target="#edit-customer" style="color:white">
+                                                                Sửa
+                                                            </a>
+                                                        </div>
+                                                    @endcan
+                                                    @can('admin.hotel.customer.delete')
+                                                        <div class="dropdown-item booked_room_detail d-flex justify-content-center"   style="background: red;border-radius: 4px">
+                                                            <button
+                                                             style="color:white;background: red"
+                                                                class=" btn-delete icon-delete-room"
+                                                                data-id="{{ $customer->id }}"
+                                                                data-modal_title="@lang('Xóa khách hàng')" type="button"
+                                                                data-pro="0">Xóa
+                                                            </button>
+                                                        </div>
+                                                    @endcan
+                                                </div>
+                                            </td>
 
                                         </tr>
                                     @empty
@@ -842,6 +867,29 @@
     </script>
 @endpush
 <style scoped>
+      .d-block-mobi {
+            display: none;
+        }
+
+        /* Mobile: các nút nằm ngang trong 1 hàng */
+        @media (max-width: 768px) {
+            .d-block-mobi .action-buttons {
+                display: flex;
+                flex-wrap: nowrap;
+                justify-content: space-between;
+            }
+
+            .d-block-mobi .action-buttons .btn {
+                flex: 1;
+                /* nút tự dàn đều */
+                margin: 0 2px;
+                /* khoảng cách nhỏ */
+            }
+
+            .d-block-mobi {
+                display: block;
+            }
+        }
     @media (max-width: 768px) {
     .stack-mobile {
         flex-direction: column !important; /* đổi từ row sang column */

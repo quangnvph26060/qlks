@@ -59,7 +59,7 @@
                                                 <button class="btn btn-link btn-toggle" type="button"
                                                     onclick=" toggleRepresentatives('{{ $product->id }}', this)"></button>
                                             </td>
-                                            <td style="width:20px;">
+                                            <td style="width:20px;" class="d-none-mobi">
                                                 <svg class="svg_menu_check_in" xmlns="http://www.w3.org/2000/svg"
                                                     width="30" height="30" viewBox="0 0 21 21">
                                                     <g fill="currentColor" fill-rule="evenodd">
@@ -120,6 +120,23 @@
                                                     <i class="fa fa-close" style="color:red;text-align: center"></i>
                                                 @endif
                                             </td>
+                                            <td class="d-block-mobi mt-1">
+                                                <div class="action-buttons gap-2">
+                                                    <div class="dropdown-item d-flex justify-content-center" style=" background: orange;color: white !important;border-radius: 4px;border: none"><a
+                                                            href="{{ route('admin.product.edit', $product->id) }}"
+                                                            style=" background: orange;color: white !important;border-radius: 4px;border: none">
+                                                            Sửa
+                                                        </a>
+                                                    </div>
+
+                                                    <div class="dropdown-item booked_room_detail d-flex justify-content-center"  style=" background: red;color: white !important;border-radius: 4px;border: none"> <button
+                                                            class=" btn-delete icon-delete-room"
+                                                            data-id="{{ $product->id }}"
+                                                             style=" background: red;color: white !important;border-radius: 4px;border: none"
+                                                            data-modal_title="@lang('Xóa trạng thái')" type="button"
+                                                            data-pro="0"> Xoá</div>
+                                                </div>
+                                            </td>
                                         </tr>
                                         <tr class="collapse" id="rep-{{ $product->id }}">
                                             <td colspan="8">
@@ -178,11 +195,11 @@
                                 action="{{ route('admin.hotel.setup.product.search') }}">
                                 <div class="form-group position-relative">
                                     <input class="searchInput mb-2" name="source_code"
-                                        style="height: 35px;border: 1px solid rgb(121, 117, 117, 0.5);"
-                                        placeholder="Mã sản phẩm" value="{{ $sku ?? '' }}">
+                                        style="height: 35px;border: 1px solid rgb(121, 117, 117, 0.5);" placeholder="Mã sản phẩm"
+                                        value="{{ $sku ?? '' }}">
                                     <input class="searchInput" name="source_name"
-                                        style="height: 35px;border: 1px solid rgb(121, 117, 117, 0.5);"
-                                        placeholder="Tên sản phẩm" value="{{ $name ?? '' }}">
+                                        style="height: 35px;border: 1px solid rgb(121, 117, 117, 0.5);" placeholder="Tên sản phẩm"
+                                        value="{{ $name ?? '' }}">
                                     <a>
                                         <button type="submit" class="btn btn--primary">
                                             <i class="las la-search p-1"></i>
@@ -219,9 +236,9 @@
         .pagination .page-item .page-link,
         .pagination .page-item span {
             /* width: 22px !important;
-                        height: auto !important;
-                        background-color: #4634ff !important;
-                        color: white !important; */
+                            height: auto !important;
+                            background-color: #4634ff !important;
+                            color: white !important; */
         }
 
         #data-table td,
@@ -368,6 +385,30 @@
     <script src="{{ asset('assets/admin/js/vendor/sweetalert2@11.js') }}"></script>
 
     <style>
+        .d-block-mobi {
+            display: none;
+        }
+
+        /* Mobile: các nút nằm ngang trong 1 hàng */
+        @media (max-width: 768px) {
+            .d-block-mobi .action-buttons {
+                display: flex;
+                flex-wrap: nowrap;
+                justify-content: space-between;
+            }
+
+            .d-block-mobi .action-buttons .btn {
+                flex: 1;
+                /* nút tự dàn đều */
+                margin: 0 2px;
+                /* khoảng cách nhỏ */
+            }
+
+            .d-block-mobi {
+                display: block;
+            }
+        }
+
         @media (max-width: 767px) {
 
             .table-responsive--sm tr th,
@@ -424,11 +465,13 @@
             /* Điều chỉnh theo nhu cầu */
             opacity: 1;
         }
-@media (max-width: 767.98px) {
-    .searchInput {
-        width: 100% !important;
-    }
-}
+
+        @media (max-width: 767.98px) {
+            .searchInput {
+                width: 100% !important;
+            }
+        }
+
         .representatives-container {
             display: flex;
             align-items: center;
@@ -468,10 +511,11 @@
             /* Ẩn phần văn bản bị tràn */
             text-overflow: ellipsis;/
         }
-       @media (max-width: 767.98px) {
-         #ellipsis {
-              max-width: none !important;
-         }
-       }
+
+        @media (max-width: 767.98px) {
+            #ellipsis {
+                max-width: none !important;
+            }
+        }
     </style>
 @endpush

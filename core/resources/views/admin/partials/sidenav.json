@@ -97,6 +97,14 @@
                 "title": "Danh mục cơ sở vật chất",
                 "route_name": "admin.hotel.setup.facilities.all",
                 "menu_active": "admin.hotel.setup.facilities.all"
+            },
+             {
+                "keyword": [
+                    "Danh mục sản phẩm"
+                ],
+                "title": "Danh mục sản phẩm",
+                "route_name": "admin.hotel.setup.product.all",
+                "menu_active": "admin.hotel.setup.product.all"
             }
           
         ]
@@ -163,6 +171,14 @@
                 "title": "Cập nhật cơ sở vật chất phòng",
                 "route_name": "admin.hotel.room.facilities.all",
                 "menu_active": "admin.hotel.room.facilities.all"
+            },
+             {
+                "keyword": [
+                    "Cập nhật sản phẩm vào phòng"
+                ],
+                "title": "Cập nhật sản phẩm vào phòng",
+                "route_name": "admin.hotel.room.product.all",
+                "menu_active": "admin.hotel.room.product.all"
             }
         ]
     },
@@ -270,7 +286,7 @@
                 "route_name": "admin.warehouse.transfer.index",
                 "menu_active": "admin.warehouse.transfer.index"
             },
-              {
+            {
                 "keyword": [
                     "Tồn kho"
                 ],
@@ -278,23 +294,8 @@
                 "icon": "las la-dollar-sign",
                 "route_name": "admin.inventory.index",
                 "menu_active": "admin.warehouse.index"
-            },
-              {
-                "keyword": [
-                    "Cài đặt sản phẩm"
-                ],
-                "title": "Cài đặt sản phẩm",
-                "route_name": "admin.hotel.setup.product.all",
-                "menu_active": "admin.hotel.setup.product.all"
-            },
-            {
-                "keyword": [
-                    "Danh mục sản phẩm"
-                ],
-                "title": "Danh mục sản phẩm",
-                "route_name": "admin.hotel.room.product.all",
-                "menu_active": "admin.hotel.room.product.all"
             }
+            
         ]
     },
     "general_settings": {

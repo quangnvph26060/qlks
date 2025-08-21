@@ -14,7 +14,7 @@
         @endphp
 
         <tr data-id="{{ $warehouse->id }}">
-            <td data-label="Hành động" style="width:20px" data-label="Hành động">
+            <td data-label="Hành động" style="width:20px" data-label="Hành động" class="d-none-mobi">
                 <svg class="svg_menu_check_in" xmlns="http://www.w3.org/2000/svg" width="30" height="30"
                     viewBox="0 0 21 21">
                     <g fill="currentColor" fill-rule="evenodd">
@@ -25,24 +25,23 @@
                 </svg>
                 <div class="dropdown menu_dropdown_check_in" id="dropdown-menu" style="position:fixed">
                     <div class="dropdown-item booked_room_edit">
-                        <a href="javascript:void(0);" type="button"
-                            class="btn btn-sm btn-primary open-warehouse-modal"
-                             data-id="{{ $warehouse->id }}"
+                        <a href="javascript:void(0);" type="button" class="btn btn-sm btn-primary open-warehouse-modal"
+                            data-id="{{ $warehouse->id }}"
                             data-url="{{ route('admin.warehouse.transfer.show', $warehouse->id) }}">
                             Sửa
                         </a>
                     </div>
                     <div class="dropdown-item hotel_delete">
-                        <form method="POST" action="{{ route('admin.warehouse.transfer.destroy', $warehouse->id) }}" class="delete-warehouse-form">
+                        <form method="POST" action="{{ route('admin.warehouse.transfer.destroy', $warehouse->id) }}"
+                            class="delete-warehouse-form">
                             @csrf
                             @method('DELETE')
                             <button type="submit" class="btn btn-danger btn-sm">Xoá</button>
                         </form>
                     </div>
-                     <div class="dropdown-item booked_room_edit" style="padding: 3px 5px !important;">
+                    <div class="dropdown-item booked_room_edit" style="padding: 3px 5px !important;">
                         <a href="javascript:void(0);" type="button" style="padding: 5px 14px;  margin-top: -13px;"
-                            class="btn btn-sm btn-secondary open-warehouse-modal-print"
-                            data-id="{{ $warehouse->id }}"
+                            class="btn btn-sm btn-secondary open-warehouse-modal-print" data-id="{{ $warehouse->id }}"
                             data-url="{{ route('admin.warehouse.transfer.print', $warehouse->id) }}">
                             In
                         </a>
@@ -62,8 +61,8 @@
                 </div>
                 {{ $warehouse->reference_code }}
             </td>
-            <td data-label="Từ kho">{{ $warehouse->fromWarehouse->name ?? "" }}</td>
-              <td data-label="Đến kho">{{ $warehouse->toWarehouse->name ?? "" }}</td>
+            <td data-label="Từ kho">{{ $warehouse->fromWarehouse->name ?? '' }}</td>
+            <td data-label="Đến kho">{{ $warehouse->toWarehouse->name ?? '' }}</td>
             {{-- <td data-label="Số điện thoại">{{ $warehouse->supplier->phone ?? '' }}</td>
             <td data-label="Ngày tạo">{{ \Carbon\Carbon::parse($warehouse->created_at)->format('d/m/Y H:i') }}</td> --}}
             <td data-label="Trạng thái">
@@ -83,6 +82,33 @@
                     }
                 @endphp
                 <span class="badge {{ $badgeClass }}">{{ $statusText }}</span>
+            </td>
+            <td class="d-block-mobi">
+                <div class="action-buttons gap-2">
+                    <div class="dropdown-item booked_room_edit">
+                        <a href="javascript:void(0);" type="button" class="btn btn-sm btn-primary open-warehouse-modal"
+                            data-id="{{ $warehouse->id }}"
+                            data-url="{{ route('admin.warehouse.transfer.show', $warehouse->id) }}">
+                            Sửa
+                        </a>
+                    </div>
+                    <div class="dropdown-item hotel_delete">
+                        <form method="POST" action="{{ route('admin.warehouse.transfer.destroy', $warehouse->id) }}"
+                            class="delete-warehouse-form">
+                            @csrf
+                            @method('DELETE')
+                            <button type="submit" class="btn btn-danger btn-sm">Xoá</button>
+                        </form>
+                    </div>
+                    <div class="dropdown-item booked_room_edit">
+                        <a href="javascript:void(0);" type="button" style="padding: 5px 14px;"
+                            class="btn btn-sm btn-secondary open-warehouse-modal-print" data-id="{{ $warehouse->id }}"
+                            data-url="{{ route('admin.warehouse.transfer.print', $warehouse->id) }}">
+                            In
+                        </a>
+                    </div>
+
+                </div>
             </td>
 
         </tr>

@@ -4,7 +4,7 @@
         <tr data-id="{{ $room->id }}">
 
 
-            <td data-label="Hành động" style="width:20px">
+            <td data-label="Hành động" style="width:20px" class="d-none-mobi">
                 <svg class="svg_menu_check_in" xmlns="http://www.w3.org/2000/svg" width="30" height="30"
                     viewBox="0 0 21 21">
                     <g fill="currentColor" fill-rule="evenodd">
@@ -45,7 +45,8 @@
             <td data-label="Mã phòng">{{ $room->code }}</td>
             <td data-label="Loại phòng">{{ $room->roomType->name }}</td>
             <td data-label="Số phòng">{{ $room->room_number }}</td>
-            <th data-label="Cơ sở vật chất" class="d-flex justify-content-start" style="gap:5px">
+           
+            <td data-label="Cơ sở vật chất" class="d-flex justify-content-start" style="gap:5px">
                 @if ($room->facilities->count() > 0)
                     @foreach ($room->facilities as $item)
                         <span class="badge {{ getRandomColor() }}"
@@ -55,8 +56,30 @@
                     <p>Chưa có cơ sở vật chất nào </p>
                 @endif
 
-            </th>
+            </td>
+             <td class="d-block-mobi">
+                <div class="action-buttons gap-2">
+                    @can('admin.hotel.room.facilities.edit')
+                        <div class="dropdown-item booked_room_edit" style=" background: orange;color: white !important;    padding: 2px;border-radius: 4px;border: none">
+                            <a class="btn btn-sm btn-outline--primary btn-edit d-flex justify-content-center" data-id="{{ $room->id }}"
+                                style=" background: orange;color: white !important;border-radius: 4px;border: none" data-modal_title="@lang('Cập nhật cơ sở vật chất')"
+                                type="button">
+                                @lang('Sửa')
+                            </a>
+                        </div>
+                    @endcan
+                    @can('admin.hotel.room.facilities.delete')
+                        <div class="dropdown-item booked_room_detail d-flex justify-content-center" style=" background: red;    padding: 2px;color: white !important;border-radius: 4px;border: none">
+                            <button class=" btn-delete " data-id="{{ $room->id }}" data-modal_title="@lang('Xóa')"
+                                style=" background: red;color: white !important;border-radius: 4px;border: none"
+                                type="button">
+                                Xóa
+                            </button>
+                        </div>
+                    @endcan
+                </div>
 
+            </td>
         </tr>
         {{-- @endif --}}
     @endforeach

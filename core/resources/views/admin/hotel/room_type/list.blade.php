@@ -51,7 +51,7 @@
                                             </button>
                                         </td>
 
-                                        <td style="width:20px">
+                                        <td style="width:20px" class="d-none-mobi">
                                             <svg class="svg_menu_check_in" xmlns="http://www.w3.org/2000/svg" width="30"
                                                 height="30" viewBox="0 0 21 21">
                                                 <g fill="currentColor" fill-rule="evenodd">
@@ -121,14 +121,14 @@
                 <td data-label="Tên phòng" class="text-left">
                     {{ $type->room_number }}
                 </td>
-                <td data-label="Hướng phòng" class="text-left">
+                <td data-label="Hướng phòng" class="text-left d-none-mobi">
                     {{ optional($type->direction)->name }}
 
                 </td>
-                <td data-label="Số người" style="width: 10px;" class=" text-right">
+                <td data-label="Số người" style="width: 10px;" class=" text-right d-none-mobi">
                     {{ $type->total_adult }}
                 </td>
-                <td data-label="Số giường" style="width: 10px;" class=" text-right">
+                <td data-label="Số giường" style="width: 10px;" class=" text-right d-none-mobi">
                     {{ $type->beds }}
                 </td>
                 {{-- <td data-label="Hình ảnh">     
@@ -182,6 +182,51 @@
                         <i class="fa fa-close" style="color:red;text-align: center"></i>
                     @endif
 
+                </td>
+                <td class="d-block-mobi">
+                    <div class="action-buttons">
+                        @can('admin.hotel.room.type.edit')
+                            <div class="dropdown-item booked_room_edit"
+                                style="background-color: red;background-color: orange;
+                                border-radius: 4px;  display: flex; justify-content: center;">
+                                <a href="{{ route('admin.hotel.room.type.edit', $type->id) }}"
+                                    style="color:black;padding:5px;background-color: orange; color: white;">
+                                    Sửa
+                                </a>
+                            </div>
+                        @endcan
+                        @can('admin.hotel.room.type.status')
+                            @if ($type->status == 0)
+                                <div class="dropdown-item booked_room" style="background-color: #379037;border-radius: 4px">
+                                    <button class=" confirmationBtn btn-success"
+                                        style="background-color: #379037;border-radius: 4px;color:white"
+                                        data-action="{{ route('admin.hotel.room.type.status', $type->id) }}"
+                                        data-question="@lang('Bạn có chắc chắn muốn bật loại phòng này không?')">
+                                        Hoạt động
+                                    </button>
+                                </div>
+                            @else
+                                <div class="dropdown-item booked_room " style="background-color: red;border-radius: 4px">
+                                    <button class="confirmationBtn" style="background-color: red;border-radius: 4px;color:white"
+                                        data-action="{{ route('admin.hotel.room.type.status', $type->id) }}"
+                                        data-question="@lang('Bạn có chắc chắn muốn vô hiệu hóa loại phòng này không?')">
+                                        Tắt hoạt động
+                                    </button>
+                                </div>
+                            @endif
+                        @endcan
+                        @can('admin.hotel.room.type.delete')
+                            <div class="dropdown-item booked_room_detail"
+                                style="background-color: red;background-color: red;
+                                border-radius: 4px;  display: flex; justify-content: center;">
+
+
+                                <button style="background-color: red; color: white;"
+                                    class="btn-danger btn-delete icon-delete-room" data-id="{{ $type->id }}"
+                                    data-modal_title="@lang('Xóa trạng thái')" type="button" data-pro="0">Xóa
+                            </div>
+                        @endcan
+                    </div>
                 </td>
 
 
@@ -239,7 +284,8 @@
                                 @if ($type->facilities->count() > 0)
                                     <div class="float-inline-end">
                                         @foreach ($type->facilities as $facility)
-                                            <span class="badge {{ getRandomColor() }} m-1 p-1 rounded-pill text-bg-primary"
+                                            <span
+                                                class="badge {{ getRandomColor() }} m-1 p-1 rounded-pill text-bg-primary"
                                                 style="color:white !important">
                                                 {{ $facility->title }}
                                             </span>
@@ -679,7 +725,37 @@
 @endpush
 
 @push('style')
-    <style>
+    <style scoped>
+        /* Desktop giữ nguyên */
+        .action-buttons {
+            display: flex;
+            gap: 5px;
+        }
+
+        .d-block-mobi {
+            display: none;
+        }
+
+        /* Mobile: các nút nằm ngang trong 1 hàng */
+        @media (max-width: 768px) {
+            .d-block-mobi .action-buttons {
+                display: flex;
+                flex-wrap: nowrap;
+                justify-content: space-between;
+            }
+
+            .d-block-mobi .action-buttons .btn {
+                flex: 1;
+                /* nút tự dàn đều */
+                margin: 0 2px;
+                /* khoảng cách nhỏ */
+            }
+
+            .d-block-mobi {
+                display: block;
+            }
+        }
+
         .dropdown-hover .dropdown-menu-custom {
             display: none;
             position: absolute;
@@ -833,6 +909,10 @@
                 width: 100% !important;
             }
 
+            #data-table td {
+                height: auto !important;
+            }
+
             .dropdown {
                 order: 2;
             }
@@ -847,7 +927,7 @@
             }
 
             .svg_menu_check_in {
-              margin-top: -10px;
+                margin-top: -10px;
             }
 
         }

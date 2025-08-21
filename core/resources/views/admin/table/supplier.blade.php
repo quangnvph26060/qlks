@@ -5,7 +5,7 @@
             {{-- <button class="btn btn-link btn-toggle" type="button"
                 onclick=" toggleRepresentatives('{{ $item->id }}', this)"></button> --}}
         </td>
-        <td  data-label="Hành động" style="position: relative;">
+        <td  data-label="Hành động" style="position: relative;" class="d-none-mobi">
             <svg class="svg_menu_check_in" xmlns="http://www.w3.org/2000/svg" width="30" height="30"
                 viewBox="0 0 21 21" onclick="toggleDropdown(event, {{ $item->id }})" style="cursor: pointer;">
                 <g fill="currentColor" fill-rule="evenodd">
@@ -43,6 +43,29 @@
         <td  data-label="Email">{{ $item->email }}</td>
         <td  data-label="Số điện thoại">{{ $item->phone }}</td>
         <td  data-label="Địa chỉ">{{ $item->address }}</td>
+        <td class="d-block-mobi">
+            <div class="action-buttons gap-2">
+                 <div class="dropdown-item" style=" background: orange;color: white !important;border-radius: 4px;border: none">
+                    {{-- <a class="btn btn-sm btn-outline--primary cuModalBtn edit_supplier"
+                        href="{{ route('admin.supplier.edit', $item->id) }}" data-id="{{ $item->id }}"
+                        data-modal_title="@lang('Cập nhật danh mục')" type="button"
+                        style="color: black !important; border: none;">Sửa</a> --}}
+                    <a href="javascript:void(0)"  style=" background: orange;color: white !important;border-radius: 4px;border: none"class="btn btn-sm btn-outline--primary edit_supplier d-flex justify-content-center"
+                        data-id="{{ $item->id }}" data-route="{{ route('admin.supplier.edit', ['id' => ':id']) }}"
+                        data-modal_title="Cập nhật nhà cung cấp">
+                        Sửa
+                    </a>
+
+
+                </div>
+                <div class="dropdown-item booked_room_detail d-flex justify-content-center" style=" background: red;color: white !important;border-radius: 4px;border: none">
+                    <button class="btn-delete icon-delete-room"
+                    style=" background: red;color: white !important;border-radius: 4px;border: none" data-id="{{ $item->id }}"
+                        data-modal_title="@lang('Xóa khách hàng')" type="button"
+                        data-pro="{{ $item->products->count() }}">Xóa</button>
+                </div>
+            </div>
+        </td>
 
 
 

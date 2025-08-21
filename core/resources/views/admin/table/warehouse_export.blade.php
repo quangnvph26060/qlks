@@ -14,7 +14,7 @@
         @endphp
 
         <tr data-id="{{ $warehouse->id }}">
-            <td style="width:20px" data-label="Hành động">
+            <td style="width:20px" data-label="Hành động" class="d-none-mobi">
                 <svg class="svg_menu_check_in" xmlns="http://www.w3.org/2000/svg" width="30" height="30"
                     viewBox="0 0 21 21">
                     <g fill="currentColor" fill-rule="evenodd">
@@ -43,8 +43,7 @@
 
                     <div class="dropdown-item booked_room_edit" style="padding: 3px 5px !important;">
                         <a href="javascript:void(0);" type="button" style="padding: 5px 14px;  margin-top: -13px;"
-                            class="btn btn-sm btn-secondary open-warehouse-modal-print"
-                            data-id="{{ $warehouse->id }}"
+                            class="btn btn-sm btn-secondary open-warehouse-modal-print" data-id="{{ $warehouse->id }}"
                             data-url="{{ route('admin.warehouse.export.print', $warehouse->id) }}">
                             In
                         </a>
@@ -87,6 +86,34 @@
             </td>
 
             <td data-label="Tổng tiền" class="text-right">{{ showAmount($total) }}</td>
+            <td class="d-block-mobi">
+                <div class="action-buttons gap-2">
+                    <div class="dropdown-item booked_room_edit">
+                        <a href="javascript:void(0);" type="button" class="btn btn-sm btn-primary open-warehouse-modal"
+                            data-id="{{ $warehouse->id }}"
+                            data-url="{{ route('admin.warehouse.export.show', $warehouse->id) }}">
+                            Sửa
+                        </a>
+                    </div>
+
+                    <div class="dropdown-item hotel_delete">
+                        <form method="POST" action="{{ route('admin.warehouse.export.destroy', $warehouse->id) }}"
+                            class="delete-warehouse-form">
+                            @csrf
+                            @method('DELETE')
+                            <button type="submit" class="btn btn-danger btn-sm">Xoá</button>
+                        </form>
+                    </div>
+
+                    <div class="dropdown-item booked_room_edit">
+                        <a href="javascript:void(0);" type="button" style="padding: 5px 14px;"
+                            class="btn btn-sm btn-secondary open-warehouse-modal-print" data-id="{{ $warehouse->id }}"
+                            data-url="{{ route('admin.warehouse.export.print', $warehouse->id) }}">
+                            In
+                        </a>
+                    </div>
+                </div>
+            </td>
         </tr>
     @endforeach
 @else

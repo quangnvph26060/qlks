@@ -714,7 +714,7 @@ function loadRoomBookings(page = 1, data) {
                                                 <button class="btn btn-link btn-toggle" type="button"
                                                     onclick="toggleRepresentatives('${record['check_in_id']}', this)"></button>
                                             </td>
-                                            <td data-label="Hành động" class="text-center " style="width:10px">
+                                            <td data-label="Hành động" class="text-center d-none-mobi" style="width:10px">
                                                 <svg class="svg_menu_check_in" xmlns="http://www.w3.org/2000/svg" width="30" height="30" viewBox="0 0 21 21"><g fill="currentColor" fill-rule="evenodd"><circle cx="10.5" cy="10.5" r="1"/><circle cx="10.5" cy="5.5" r="1"/><circle cx="10.5" cy="15.5" r="1"/></g></svg>
                                                 <div class="dropdown menu_dropdown_check_in" id="dropdown-menu">
                                                     <div class="dropdown-item booked_room_edit" data-room-id="${record['check_in_id']}">Sửa </div>
@@ -733,6 +733,13 @@ function loadRoomBookings(page = 1, data) {
                                             <td data-label="Tổng tiền"class="text-right">${formatCurrency(totalPrice)}</td>
                                             <td data-label="Tổng đặt cọc"class="text-right">${formatCurrency(totalAmount)}</td>
                                             <td data-label="Tổng giảm giá"class="text-right">${formatCurrency(totalDiscount)}</td>
+                                            <td class="d-block-mobi">
+                                                <div class="action-buttons gap-2">
+                                                    <div class="dropdown-item booked_room_edit d-flex justify-content-center"  style=" background: orange;color: white;border-radius: 4px;" data-room-id="${record['check_in_id']}">Sửa </div>
+
+                                                    <div class="dropdown-item delete_check_in d-flex justify-content-center"   style=" background: red;color: white;border-radius: 4px;" data-room-id="${record['check_in_id']}">Xóa </div>
+                                                </div>
+                                            </td>
                                         </tr>
                                           <tr class="collapse ${currentView === 'viewModel' ? "show" : ""}" id="rep-${firstRecord['check_in_id']}">
                                     <td colspan="12">

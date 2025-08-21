@@ -36,46 +36,43 @@
     </div>
     @can('')
         @push('breadcrumb-plugins')
-         <div class="card-body mt-1">
-    <div class="row">
-        <div class="col-12">
-            <div class="d-flex flex-column flex-lg-row align-items-lg-center gap-2">
-                <!-- Nút Làm mới & Thêm -->
-                <div class="d-flex flex-wrap gap-2">
-                    <a href="{{ route('admin.hotel.room.amenities.all') }}">
-                        <button type="button" class="btn btn--primary" data-modal_title="Làm mới">
-                            <i class="fa fa-repeat p-1"></i>
-                        </button>
-                    </a>
-                    @can('admin.hotel.room.amenities.store')
-                        <button type="button" class="btn btn--primary btn-add">
-                            <i class="las la-plus p-1"></i>
-                        </button>
-                    @endcan
+            <div class="card-body mt-1">
+                <div class="row">
+                    <div class="col-12">
+                        <div class="d-flex flex-column flex-lg-row align-items-lg-center gap-2">
+                            <!-- Nút Làm mới & Thêm -->
+                            <div class="d-flex flex-wrap gap-2">
+                                <a href="{{ route('admin.hotel.room.amenities.all') }}">
+                                    <button type="button" class="btn btn--primary" data-modal_title="Làm mới">
+                                        <i class="fa fa-repeat p-1"></i>
+                                    </button>
+                                </a>
+                                @can('admin.hotel.room.amenities.store')
+                                    <button type="button" class="btn btn--primary btn-add">
+                                        <i class="las la-plus p-1"></i>
+                                    </button>
+                                @endcan
+                            </div>
+
+                            <!-- Form tìm kiếm -->
+                            <form class="d-flex flex-wrap flex-lg-nowrap align-items-center gap-2 mb-0" role="form"
+                                enctype="multipart/form-data" action="{{ route('admin.hotel.room.amenities.search') }}">
+                                <input class="form-control searchInput" name="code" placeholder="Mã phòng/Tên phòng"
+                                    value="{{ $code ?? '' }}">
+                                <select name="room_type_id" class="form-control choose" id="tim-loai-phong">
+                                    <option value="">--Chọn loại phòng--</option>
+                                    @foreach ($room_type as $type)
+                                        <option value="{{ $type->id }}">{{ $type->name }}</option>
+                                    @endforeach
+                                </select>
+                                <button type="submit" class="btn btn--primary">
+                                    <i class="las la-search p-1"></i>
+                                </button>
+                            </form>
+                        </div>
+                    </div>
                 </div>
-
-                <!-- Form tìm kiếm -->
-                <form class="d-flex flex-wrap flex-lg-nowrap align-items-center gap-2 mb-0"
-                      role="form" enctype="multipart/form-data"
-                      action="{{ route('admin.hotel.room.amenities.search') }}">
-                    <input class="form-control searchInput" name="code"
-                           placeholder="Mã phòng/Tên phòng"
-                           value="{{ $code ?? '' }}">
-                    <select name="room_type_id" class="form-control choose" id="tim-loai-phong">
-                        <option value="">--Chọn loại phòng--</option>
-                        @foreach ($room_type as $type)
-                            <option value="{{ $type->id }}">{{ $type->name }}</option>
-                        @endforeach
-                    </select>
-                    <button type="submit" class="btn btn--primary">
-                        <i class="las la-search p-1"></i>
-                    </button>
-                </form>
             </div>
-        </div>
-    </div>
-</div>
-
         @endpush
     @endcan
 
@@ -428,6 +425,29 @@
 
 @push('style')
     <style>
+            .d-block-mobi {
+            display: none;
+        }
+
+        /* Mobile: các nút nằm ngang trong 1 hàng */
+        @media (max-width: 768px) {
+            .d-block-mobi .action-buttons {
+                display: flex;
+                flex-wrap: nowrap;
+                justify-content: space-between;
+            }
+
+            .d-block-mobi .action-buttons .btn {
+                flex: 1;
+                /* nút tự dàn đều */
+                margin: 0 2px;
+                /* khoảng cách nhỏ */
+            }
+
+            .d-block-mobi {
+                display: block;
+            }
+        }
         .radio-container {
             display: flex;
             align-items: center;

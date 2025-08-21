@@ -19,8 +19,8 @@
                                     <!-- Input 1 -->
                                     <div class="mb-3">
                                         <label for="statusCode" class="form-label">Mã cơ sở vật chất</label>
-                                        <input type="text" class="form-control " value="{{$code}}" name="code"
-                                            id="add-code" placeholder="Nhập mã">
+                                        <input type="text" class="form-control " value="{{ $code }}"
+                                            name="code" id="add-code" placeholder="Nhập mã">
                                         <span class="invalid-feedback d-block" style="font-weight: 500"
                                             id="code_error"></span>
                                     </div>
@@ -35,8 +35,8 @@
                                     <div class="mb-3">
                                         <label for="note" class="form-label">Icon</label>
                                         <div class="input-group">
-                                            <input type="text" class="form-control iconPicker" id="icon" name="icon"
-                                                placeholder="Nhấn để chọn icon...">
+                                            <input type="text" class="form-control iconPicker" id="icon"
+                                                name="icon" placeholder="Nhấn để chọn icon...">
                                             <span class="input-group-text">
                                                 <i id="icon-preview" class=""></i>
                                             </span>
@@ -60,20 +60,20 @@
                 </div>
                 <div class="row">
                     <div class="col-md-12 col-sm-12 d-flex stack-mobile">
-                      <div>
-                          <a class="mr-1" href="{{ route('admin.hotel.setup.facilities.all') }}">
-                            <button class="btn btn--primary" data-modal_title="Làm mới">
-                                <i class="fa fa-repeat p-1"></i>
-                            </button>
-                        </a>
-                        <a>
-                            <button class="btn btn--primary" data-modal_title="Thêm mới cơ sở vật chất" type="button"
-                                id="btn-add-status" data-bs-toggle="modal" data-bs-target="#iconModal"
-                                style="margin-left:10px">
-                                <i class="las la-plus  p-1"></i>
-                            </button>
-                        </a>
-                      </div>
+                        <div>
+                            <a class="mr-1" href="{{ route('admin.hotel.setup.facilities.all') }}">
+                                <button class="btn btn--primary" data-modal_title="Làm mới">
+                                    <i class="fa fa-repeat p-1"></i>
+                                </button>
+                            </a>
+                            <a>
+                                <button class="btn btn--primary" data-modal_title="Thêm mới cơ sở vật chất" type="button"
+                                    id="btn-add-status" data-bs-toggle="modal" data-bs-target="#iconModal"
+                                    style="margin-left:10px">
+                                    <i class="las la-plus  p-1"></i>
+                                </button>
+                            </a>
+                        </div>
                         <form role="form" enctype="multipart/form-data"
                             action="{{ route('admin.hotel.setup.facilities.search') }}">
                             <div class="form-group position-relative mb-0">
@@ -126,7 +126,7 @@
                         <tbody id="main-table-hotel">
                             @forelse($facilities as $id => $item)
                                 <tr data-id="{{ $item->id }}">
-                                    <td style="width:20px;">
+                                    <td class="d-none-mobi" style="width:20px;">
                                         <svg class="svg_menu_check_in" xmlns="http://www.w3.org/2000/svg" width="30"
                                             height="30" viewBox="0 0 21 21">
                                             <g fill="currentColor" fill-rule="evenodd">
@@ -160,22 +160,41 @@
                                         @endphp
                                         {{ $stt }}
                                     </td>
-                                    <td>
+                                    <td data-label="Mã cơ sở vật chất">
                                         {{ $item->code }}
                                     </td>
-                                    <td>
+                                    <td data-label="Tên cơ sở vật chất">
                                         {{ $item->title }}
                                     </td>
-                                    <td>
-                                    {!! $item->icon !!}
-                                </td>
+                                    <td data-label="icon">
+                                        {!! $item->icon !!}
+                                    </td>
 
-                                    <td style="width:50px;text-align: center" class="status-hotel">
+                                    <td data-label="Trạng thái" style="width:50px;text-align: center"
+                                        class="status-hotel">
                                         @if ($item->status == 1)
                                             <i class="fa fa-check" style="color:green;text-align: center"></i>
                                         @else
                                             <i class="fa fa-close" style="color:red;text-align: center"></i>
                                         @endif
+                                    </td>
+                                    <td class="d-block-mobi">
+                                        <div class="action-buttons gap-2">
+                                            <div class="dropdown-item d-flex justify-content-center" style="background: orange;border-radius: 4px">
+                                                <a data-id="{{ $item->id }}"
+                                                    class="btn-edit-status" data-bs-toggle="modal"
+                                                    data-bs-target="#status-code" style="color:white">
+                                                    Sửa
+                                                </a>
+                                            </div>
+
+                                            <div class="dropdown-item booked_room_detail  d-flex justify-content-center" style="background: red;border-radius: 4px"> 
+                                                <button
+                                                 style="background: red;border-radius: 4px;color:white"
+                                                    class=" btn-delete icon-delete-room" data-id="{{ $item->id }}"
+                                                    data-modal_title="@lang('Xóa trạng thái')" type="button"
+                                                    data-pro="0">Xóa</div>
+                                        </div>
                                     </td>
                                 </tr>
                             @empty
@@ -234,7 +253,7 @@
 @endpush
 @push('script')
     <script>
-         (function($) {
+        (function($) {
             "use strict";
 
             $('#cuModal').on('shown.bs.modal', function(e) {
@@ -244,13 +263,13 @@
             $('.iconPicker').iconpicker().on('iconpickerSelected', function(e) {
                 $('.iconPicker').val(`<i class="${e.iconpickerValue}"></i>`);
             });
-             document.getElementById('add-code').addEventListener('input', function () {
-        this.value = this.value.toUpperCase();
-    });
+            document.getElementById('add-code').addEventListener('input', function() {
+                this.value = this.value.toUpperCase();
+            });
         })(jQuery);
         var code = "{{ $code }}";
-       
-        
+
+
         $(document).ready(function() {
             var formEconomyEdit = {
                 'code': {
@@ -291,7 +310,8 @@
                 $('#icon-preview').attr('class', '');
                 $('#code_error').text('');
                 $('#title_error').text('');
-                $('#btn-submit-status').attr('action', '{{ route('admin.hotel.setup.facilities.store') }}');
+                $('#btn-submit-status').attr('action',
+                '{{ route('admin.hotel.setup.facilities.store') }}');
                 $('#exampleModalLabel').text('Thêm mới');
                 $('#iconModal').modal('show');
 
@@ -434,6 +454,30 @@
 
 @push('style')
     <style>
+        .d-block-mobi {
+            display: none;
+        }
+
+        /* Mobile: các nút nằm ngang trong 1 hàng */
+        @media (max-width: 768px) {
+            .d-block-mobi .action-buttons {
+                display: flex;
+                flex-wrap: nowrap;
+                justify-content: space-between;
+            }
+
+            .d-block-mobi .action-buttons .btn {
+                flex: 1;
+                /* nút tự dàn đều */
+                margin: 0 2px;
+                /* khoảng cách nhỏ */
+            }
+
+            .d-block-mobi {
+                display: block;
+            }
+        }
+
         .system-search-icon {
             position: absolute;
             left: 0;
@@ -445,9 +489,10 @@
             place-items: center;
             color: #888;
         }
-#add-code {
-  text-transform: uppercase;
-}
+
+        #add-code {
+            text-transform: uppercase;
+        }
 
         .system-search-icon~.form-control {
             padding-left: 45px;
@@ -472,29 +517,31 @@
         }
     </style>
     <style scoped>
-    @media (max-width: 768px) {
-    .stack-mobile {
-        flex-direction: column !important; /* đổi từ row sang column */
-        gap: 8px; /* khoảng cách giữa các item */
-        padding-left: 5px !important;
-        padding-right: 5px !important;
-    }
+        @media (max-width: 768px) {
+            .stack-mobile {
+                flex-direction: column !important;
+                /* đổi từ row sang column */
+                gap: 8px;
+                /* khoảng cách giữa các item */
+                padding-left: 5px !important;
+                padding-right: 5px !important;
+            }
 
-    .stack-mobile > div,
-    .stack-mobile form {
-        width: 100% !important;
-    }
+            .stack-mobile>div,
+            .stack-mobile form {
+                width: 100% !important;
+            }
 
-    .stack-mobile input.searchInput {
-        width: 100% !important;
-        margin-left: 0 !important;
-        margin-top: 8px;
-    }
-.stack-mobile .btn-icon{
-    margin-top: 5px !important;
-}
-  
-}
+            .stack-mobile input.searchInput {
+                width: 100% !important;
+                margin-left: 0 !important;
+                margin-top: 8px;
+            }
 
-</style>
+            .stack-mobile .btn-icon {
+                margin-top: 5px !important;
+            }
+
+        }
+    </style>
 @endpush

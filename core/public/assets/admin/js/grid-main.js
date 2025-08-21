@@ -2073,7 +2073,7 @@ function initViewScriptGird() {
 
                             </td>
                             <td  data-label="Hình thức" class="hinh_thuc_mobi">
-                                <select id="bookingType" class="form-select" name="optionRoom" style="width: 93px; font-size:15px">
+                                <select id="bookingType" data-id="${roomId}" class="form-select" name="optionRoom" style="width: 93px; font-size:15px">
                                      <option value="ngay">Ngày</option>
                                      <option value="gio">Giờ</option>
                                 </select>

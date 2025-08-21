@@ -11,12 +11,12 @@
                     </button>
                 </a>
                 @can('admin.hotel.premium.service.save')
-                <a>
-                    <button class="btn btn--primary cuModalBtn" data-modal_title="@lang('Thêm mới dịch vụ')" type="button"
-                        style="margin-left:4px">
-                        <i class="las la-plus p-1"></i>
-                    </button>
-                </a>
+                    <a>
+                        <button class="btn btn--primary cuModalBtn" data-modal_title="@lang('Thêm mới dịch vụ')" type="button"
+                            style="margin-left:4px">
+                            <i class="las la-plus p-1"></i>
+                        </button>
+                    </a>
                 @endcan
                 <form role="form" enctype="multipart/form-data" action="{{ route('admin.hotel.premium.service.all') }}"
                     method="GET" id="searchForm" style="margin: 0px">
@@ -54,7 +54,7 @@
                         <thead>
                             <tr>
 
-                                    <th>@lang('Hành động')</th>
+                                <th>@lang('Hành động')</th>
 
                                 <th style="width:50px">@lang('STT')</th>
                                 <th>@lang('Mã dịch vụ')</th>
@@ -80,16 +80,16 @@
                                         <div class="dropdown menu_dropdown_check_in" id="dropdown-menu"
                                             style="position:fixed">
                                             @can('admin.hotel.premium.service.save')
-                                            <div class="dropdown-item">
-                                                <button class="btn btn-sm btn-outline--primary cuModalBtn edit-service"
-                                                    data-has_status="1" data-modal_title="@lang('Cập nhật dịch vụ')"
-                                                    data-resource="{{ $premiumService }}" type="button"
-                                                    style="    color: black !important;border: none;">
-                                                    Sửa
-                                                </button>
-                                                </a>
+                                                <div class="dropdown-item">
+                                                    <button class="btn btn-sm btn-outline--primary cuModalBtn edit-service"
+                                                        data-has_status="1" data-modal_title="@lang('Cập nhật dịch vụ')"
+                                                        data-resource="{{ $premiumService }}" type="button"
+                                                        style="    color: black !important;border: none;">
+                                                        Sửa
+                                                    </button>
+                                                    </a>
 
-                                            </div>
+                                                </div>
                                             @endcan
 
                                             <div class="dropdown-item booked_room_detail"> <button
@@ -99,25 +99,48 @@
 
                                         </div>
                                     </td>
-                                    <td style="text-align:right">
-
-                                        {{ $id + 1 }}</td>
-                                    <td>{{ $premiumService->code ?? 'Chưa có mã dịch vụ' }}</td>
-                                    <td>{{ __($premiumService->name) }}
+                                    <td data-label="STT" style="text-align:right">
+                                        {{ $id + 1 }}
+                                    </td>
+                                    <td data-label="Mã dịch vụ">{{ $premiumService->code ?? 'Chưa có mã dịch vụ' }}</td>
+                                    <td data-label="Tên dịch vụ">{{ __($premiumService->name) }}
                                     </td>
 
-                                    <td>
-                                     {{ $premiumService->cost}}
+                                    <td data-label="Giá">
+                                        {{ $premiumService->cost }}
                                     </td>
 
-                                    <td style="width:50px;text-align: center">
+                                    <td data-label="Trạng thái" style="width:50px;text-align: center">
                                         @if ($premiumService->status == 1)
                                             <i class="fa fa-check" style="color:green;text-align: center"></i>
                                         @else
                                             <i class="fa fa-close" style="color:red;text-align: center"></i>
                                         @endif
                                     </td>
+                                    <td class="d-block-mobi">
+                                        <div class="action-buttons gap-2">
+                                            @can('admin.hotel.premium.service.save')
+                                                <div
+                                                    class="dropdown-item"style="background: orange;border-radius: 4px;display: flex;">
+                                                    <button class="btn btn-sm btn-outline--primary cuModalBtn edit-service"
+                                                    style="background: orange;color:white !important;border:none;padding:5px"
+                                                        data-has_status="1" data-modal_title="@lang('Cập nhật dịch vụ')"
+                                                        data-resource="{{ $premiumService }}" type="button"
+                                                        style="    color: black !important;border: none;">
+                                                        Sửa
+                                                    </button>
+                                                </div>
+                                            @endcan
 
+                                            <div
+                                                class="dropdown-item booked_room_detail justify-content-center"style="background: red;border-radius: 4px;display: flex;">
+                                                <button class="btn-delete icon-delete-room"
+                                                 style="background: red;color:white !important;border:none;padding:5px"
+                                                    data-id="{{ $premiumService->id }}"
+                                                    data-modal_title="@lang('Xóa khách hàng')" type="button" data-pro="0">Xóa
+                                            </div>
+                                        </div>
+                                    </td>
                                 </tr>
                             @empty
                                 <tr>
@@ -150,8 +173,8 @@
                             <div class="form-group">
                                 <label> @lang('Mã dịch vụ')</label>
 
-                                <input class="form-control"  type="text" name="code" required value="{{ old('code') ?? $code ?? '' }}"
->
+                                <input class="form-control" type="text" name="code" required
+                                    value="{{ old('code') ?? ($code ?? '') }}">
 
                             </div>
                             <div class="form-group">
@@ -162,8 +185,8 @@
                             <div class="form-group">
                                 <label> @lang('Giá')</label>
                                 <div class="input-group">
-                                    <input class="form-control money-input" name="cost" required
-                                        type="text" value="{{ old('cost') }}">
+                                    <input class="form-control money-input" name="cost" required type="text"
+                                        value="{{ old('cost') }}">
                                     <span class="input-group-text"> {{ gs()->cur_text }}</span>
                                 </div>
                             </div>
@@ -192,6 +215,30 @@
     <link rel="stylesheet" href="{{ asset('assets/global/css/modal.css') }}">
 
     <style>
+        .d-block-mobi {
+            display: none;
+        }
+
+        /* Mobile: các nút nằm ngang trong 1 hàng */
+        @media (max-width: 768px) {
+            .d-block-mobi .action-buttons {
+                display: flex;
+                flex-wrap: nowrap;
+                justify-content: space-between;
+            }
+
+            .d-block-mobi .action-buttons .btn {
+                flex: 1;
+                /* nút tự dàn đều */
+                margin: 0 2px;
+                /* khoảng cách nhỏ */
+            }
+
+            .d-block-mobi {
+                display: block;
+            }
+        }
+
         .navbar__right {
             display: none;
         }
@@ -207,9 +254,9 @@
         .pagination .page-item .page-link,
         .pagination .page-item span {
             /* width: 22px !important;
-            height: auto !important;
-            background-color: #4634ff !important;
-            color: white !important; */
+                    height: auto !important;
+                    background-color: #4634ff !important;
+                    color: white !important; */
         }
 
         .pagination .page-item.active .page-link {
@@ -312,9 +359,8 @@
 @endpush
 @push('style')
     <style>
-      
-          .form-group{
-        margin-bottom: 0px !important;
-          }
+        .form-group {
+            margin-bottom: 0px !important;
+        }
     </style>
 @endpush

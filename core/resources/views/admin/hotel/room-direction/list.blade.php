@@ -21,7 +21,7 @@
                                     @forelse($roomDirection as $id => $item)
                                         <tr data-id="{{ $item->id }}" class={{ $id % 2 !== 0 ? 'bg-white' : 'bg-gray' }}>
 
-                                            <td style="width:20px;">
+                                            <td style="width:20px;" class="d-none-mobi">
                                                 <svg class="svg_menu_check_in" xmlns="http://www.w3.org/2000/svg"
                                                     width="30" height="30" viewBox="0 0 21 21">
                                                     <g fill="currentColor" fill-rule="evenodd">
@@ -52,17 +52,39 @@
                                                     @endcan
                                                 </div>
                                             </td>
-                                            <td>
+                                            <td data-label="STT">
                                                 {{ $id + 1 }}
                                             </td>
-                                            <td>
+                                            <td data-label="Mã hướng phòng">
                                                 {{ $item->code }}
                                             </td>
-                                            <td>
+                                            <td data-label="Hướng phòng">
                                                 {{ $item->name }}
                                             </td>
-                                            <td class="text-right">
+                                            <td data-label="Giá" class="text-right">
                                                 {{ number_format($item->price_offset, 0, ',', '.') }}
+                                            </td>   
+                                            <td class="d-block-mobi">
+                                        <div class="action-buttons gap-2">
+                                                     @can(['admin.hotel.customer.edit', 'admin.hotel.customer.update'])
+                                                        <div class="dropdown-item d-flex justify-content-center"    style=" background: orange;color: white !important;border-radius: 4px;border: none;padding: 4px;"><a data-id="{{ $item->id }}"
+                                                                data-code="{{ $item->code }}" data-name="{{ $item->name }}"
+                                                                data-price="{{ $item->price_offset }}"
+                                                                class="btn-edit-direction"    style=" background: orange;color: white !important;border-radius: 4px;border: none;padding: 4px;">
+                                                                Sửa
+                                                            </a>
+                                                        </div>
+                                                    @endcan
+                                                    @can('admin.hotel.direction.delete')
+                                                        <div class="dropdown-item booked_room_detail d-flex justify-content-center"    style=" background: red;color: white !important;border-radius: 4px;border: none;padding: 4px;"> <button style=" background: red;color: white !important;border-radius: 4px;border: none;padding: 4px;"
+                                                                class=" btn-delete icon-delete-room"
+                                                                data-id="{{ $item->id }}"
+                                                                
+                                                                data-modal_title="@lang('Xóa khách hàng')" type="button"
+                                                                data-pro="0">Xóa
+                                                        </div>
+                                                    @endcan
+                                                </div>
                                             </td>
 
                                         </tr>
@@ -184,6 +206,29 @@
     <link rel="stylesheet" href="{{ asset('assets/global/css/modal.css') }}">
 
     <style>
+         .d-block-mobi {
+        display: none;
+    }
+
+    /* Mobile: các nút nằm ngang trong 1 hàng */
+    @media (max-width: 768px) {
+        .d-block-mobi .action-buttons {
+            display: flex;
+            flex-wrap: nowrap;
+            justify-content: space-between;
+        }
+
+        .d-block-mobi .action-buttons .btn {
+            flex: 1;
+            /* nút tự dàn đều */
+            margin: 0 2px;
+            /* khoảng cách nhỏ */
+        }
+
+        .d-block-mobi {
+            display: block;
+        }
+    }
         .pagination .page-item .page-link,
         .pagination .page-item span {
             width: 22px !important;
