@@ -118,7 +118,7 @@
                 <td data-label="Mã phòng" class="text-left">
                     {{ $type->code }}
                 </td>
-                <td data-label="Tên phòng" class="text-left">
+                <td title="{{ $type->room_number }}" data-label="Tên phòng" class="text-left">
                     {{ $type->room_number }}
                 </td>
                 <td data-label="Hướng phòng" class="text-left d-none-mobi">

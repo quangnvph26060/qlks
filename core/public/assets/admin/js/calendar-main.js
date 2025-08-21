@@ -112,7 +112,9 @@ function initGridMain(data) {
                     data-price="${room['applied_price']['unit_price']}"
                     data-name="${room['room_number']}"
                     title="${room.room_number}">
-                        <span style="font-size:13px;font-weight:bold;" class="name_number"> ${room.room_number}</span>
+                        <span style="font-size:13px;font-weight:bold;line-height: normal;" class="name_number"> 
+                         ${room.room_number.length > 30 ? room.room_number.substring(0, 30) + "..." : room.room_number}
+                        </span>
                         <span class="mt-0" style="font-size:10px;font-weight:bold;" class="room-number-name"> ${room?.direction?.name ?? ""}</span>
                         <span class=" ${room.room_fix == 1 ? 'modal_fixroom' : 'modal_clean'}" style="font-size:10px;font-weight:600;cursor: pointer;">Tình trạng phòng: <span class="text-ttp"style="font-size:10px;font-weight:600;"> ${room.room_fix == 1 ? "🛠 Phòng đang sửa" : (room.is_clean ? "✨ Sạch" : "🚨 Chưa dọn")} </span></span>
                     </td>`;
@@ -699,32 +701,32 @@ function initGridMain(data) {
                 method: 'LETAN',
             },
             success: function (response) {
-               if (time) {
-                // Nếu time có giá trị thật → dùng luôn
-                result = time;
-            } else if (typeof date_booking !== 'undefined' && date_booking) {
-                // Nếu có date_booking → lấy ngày giờ từ đó
-                const date_yyyy = date_booking.getFullYear();
-                const date_mm = String(date_booking.getMonth() + 1).padStart(2, '0');
-                const date_dd = String(date_booking.getDate()).padStart(2, '0');
-                const date_hour = String(date_booking.getHours()).padStart(2, '0');
-                const date_minutes = String(date_booking.getMinutes()).padStart(2, '0');
+                if (time) {
+                    // Nếu time có giá trị thật → dùng luôn
+                    result = time;
+                } else if (typeof date_booking !== 'undefined' && date_booking) {
+                    // Nếu có date_booking → lấy ngày giờ từ đó
+                    const date_yyyy = date_booking.getFullYear();
+                    const date_mm = String(date_booking.getMonth() + 1).padStart(2, '0');
+                    const date_dd = String(date_booking.getDate()).padStart(2, '0');
+                    const date_hour = String(date_booking.getHours()).padStart(2, '0');
+                    const date_minutes = String(date_booking.getMinutes()).padStart(2, '0');
 
-                const formattedDates = `${date_yyyy}-${date_mm}-${date_dd}`;
-                const formattedTimes = `${date_hour}:${date_minutes}`;
+                    const formattedDates = `${date_yyyy}-${date_mm}-${date_dd}`;
+                    const formattedTimes = `${date_hour}:${date_minutes}`;
 
-                result = (formattedDates === currentdate) ? formattedTimes : "12:00";
-            } else {
-                // Nếu không có date_booking → dùng ngày giờ hiện tại
-                const now = new Date();
-                const date_hour = String(now.getHours()).padStart(2, '0');
-                const date_minutes = String(now.getMinutes()).padStart(2, '0');
-                result = (currentdate === now.toISOString().slice(0, 10))
-                    ? `${date_hour}:${date_minutes}`
-                    : "12:00";
-            }
-            
-                
+                    result = (formattedDates === currentdate) ? formattedTimes : "12:00";
+                } else {
+                    // Nếu không có date_booking → dùng ngày giờ hiện tại
+                    const now = new Date();
+                    const date_hour = String(now.getHours()).padStart(2, '0');
+                    const date_minutes = String(now.getMinutes()).padStart(2, '0');
+                    result = (currentdate === now.toISOString().slice(0, 10))
+                        ? `${date_hour}:${date_minutes}`
+                        : "12:00";
+                }
+
+
 
 
                 $('#list-booking-edit').empty();
@@ -783,8 +785,13 @@ function initGridMain(data) {
                                 <input type="checkbox">
                             </td>
 
-                            <td data-label="Tên phòng">
-                                <p class="room__name"> ${item.room['room_number']}</p>
+                            <td title="${item.room['room_number']}" data-label="Tên phòng">
+                                <p class="room__name">
+                                    ${item.room['room_number'].length > 30
+                                    ? item.room['room_number'].substring(0, 30) + "..."
+                                    : item.room['room_number']}
+                                </p>
+
                             </td>
                              <td data-label="Số lượng" class="so_luong_mobi">
                                 <input type="number" min="1" name="adult" class="form-control adult"  value="1"  >
@@ -998,8 +1005,13 @@ function initGridMain(data) {
                                                 <input type="checkbox">
                                             </td>
     
-                                            <td data-label="Tên phòng">
-                                                <p class="room__name"> ${room.room_number}</p>
+                                            <td title="${room.room_number}" data-label="Tên phòng">
+                                                <p class="room__name">
+                                                    ${room.room_number.length > 30
+                                                    ? room.room_number.substring(0, 30) + "..."
+                                                    : room.room_number}
+                                                </p>
+
                                             </td>
                                             <td data-label="Số lượng" class="so_luong_mobi">
                                                 <input type="number" min="1" name="adult" class="form-control adult"  value="${room.guest_count}"  style="margin-left: 16px;">
@@ -1516,8 +1528,13 @@ function initGridMain(data) {
                                                 <input type="checkbox">
                                             </td>
     
-                                            <td data-label="Tên phòng">
-                                                <p class="room__name"> ${room.room_number}</p>
+                                            <td title="${room.room_number}" data-label="Tên phòng">
+                                                <p class="room__name">
+                                                    ${room.room_number.length > 30
+                                                    ? room.room_number.substring(0, 30) + "..."
+                                                    : room.room_number}
+                                                </p>
+
                                             </td>
                                             <td data-label="Số lượng" class="so_luong_mobi">
                                                 <input type="number" min="1" name="adult" class="form-control adult"  value="${room.guest_count}"  style="margin-left: 16px;">
