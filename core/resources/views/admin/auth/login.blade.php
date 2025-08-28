@@ -93,9 +93,12 @@
                     </div>
                     {{-- <a href="{{ route('admin.password.reset') }}"
                         class="forget-text float-end text-dark">@lang('Quên mật khẩu?')</a> --}}
-                    <div class="checkbox-row d-flex align-items-center">
-                        <input type="checkbox" id="remember" class="me-2" />
+                    <div class="checkbox-row d-flex align-items-center justify-content-between">
+                      <div>
+                          <input type="checkbox" id="remember" class="me-2" />
                         <label for="remember" class="text-dark m-0">Lưu mật khẩu</label>
+                      </div>
+                        <a href="#" class="forgot-password">Quên mật khẩu</a>
                     </div>
                     <button type="submit" class="btn cmn-btn w-100">ĐĂNG NHẬP</button>
                 </form>
@@ -104,23 +107,38 @@
     </div>
     <script>
         const passwordInput = document.getElementById('passwordInput');
-  const togglePassword = document.getElementById('togglePassword');
-  const icon = togglePassword.querySelector('i');
+        const togglePassword = document.getElementById('togglePassword');
+        const icon = togglePassword.querySelector('i');
 
-  togglePassword.addEventListener('click', () => {
-    const type = passwordInput.getAttribute('type');
-    if (type === 'password') {
-      passwordInput.setAttribute('type', 'text');
-      icon.classList.remove('fa-eye');
-      icon.classList.add('fa-eye-slash');
-    } else {
-      passwordInput.setAttribute('type', 'password');
-      icon.classList.remove('fa-eye-slash');
-      icon.classList.add('fa-eye');
-    }
-  });
+        togglePassword.addEventListener('click', () => {
+            const type = passwordInput.getAttribute('type');
+            if (type === 'password') {
+                passwordInput.setAttribute('type', 'text');
+                icon.classList.remove('fa-eye');
+                icon.classList.add('fa-eye-slash');
+            } else {
+                passwordInput.setAttribute('type', 'password');
+                icon.classList.remove('fa-eye-slash');
+                icon.classList.add('fa-eye');
+            }
+        });
     </script>
     <style scoped>
+        .forgot-password {
+            text-decoration: none;
+            /* bỏ gạch chân mặc định */
+            color: #007bff;
+            /* màu xanh giống link */
+            font-weight: 500;
+        }
+
+        .forgot-password:hover {
+            text-decoration: underline;
+            /* thêm gạch chân khi hover */
+            color: #0056b3;
+            /* đổi màu khi hover (tùy chọn) */
+        }
+
         body,
         html {
             margin: 0;

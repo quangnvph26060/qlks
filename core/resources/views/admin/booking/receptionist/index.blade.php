@@ -8,15 +8,15 @@
                         đặt</span>
                 </button>
                 <div class="view-toggle w-100-mobi">
-
-                    <button id="gridViewBtn" onclick="changeView('calendar')" class="w-50-mobi">
-                        <span class="icon"><i class="fa-solid fa-sliders"></i></span> <span class="text d-block-mobi"
-                            style="display: none;">Lưới</span>
-                    </button>
                     <button id="tableViewBtn" onclick="changeView('grid')" class="w-50-mobi">
                         <span class="icon"> <i class="fa-solid fa-th-large"></i></span> <span class="text d-block-mobi"
                             style="display: none;">Sơ đồ</span>
                     </button>
+                    <button id="gridViewBtn" onclick="changeView('calendar')" class="w-50-mobi">
+                        <span class="icon"><i class="fa-solid fa-sliders"></i></span> <span class="text d-block-mobi"
+                            style="display: none;">Lưới</span>
+                    </button>
+
 
                 </div>
             </div>
@@ -1918,7 +1918,7 @@
         const buttons = document.querySelectorAll(".view-toggle button");
 
         // Lấy trạng thái lưu trữ từ LocalStorage, mặc định là 'list'
-        let savedView = localStorage.getItem('selectedView') || 'list';
+        let savedView = localStorage.getItem('selectedView') || 'grid';
         setActiveButton(savedView);
 
         buttons.forEach(button => {
@@ -1944,7 +1944,7 @@
     });
 
     document.addEventListener('DOMContentLoaded', function() {
-        let savedView = localStorage.getItem('selectedView') || 'list';
+        let savedView = localStorage.getItem('selectedView') || 'grid';
 
         changeView(savedView);
     });
@@ -1954,7 +1954,7 @@
         document.getElementById(view + 'View').style.display = 'block';
         loadScript(view);
 
-        let currentView = localStorage.getItem('selectedView') || 'list';
+        let currentView = localStorage.getItem('selectedView') || 'grid';
         if (currentView !== view) {
             console.log('load trang');
 
@@ -2108,13 +2108,15 @@
     }
 
     @media (max-width: 768px) {
-        .w-100-mobi{
+        .w-100-mobi {
             width: 100% !important;
         }
-         .w-50-mobi{
+
+        .w-50-mobi {
             width: 50% !important;
         }
-        .d-block-mobi{
+
+        .d-block-mobi {
             display: inline !important;
         }
     }
@@ -2242,12 +2244,15 @@
         z-index: 2000;
         padding: 20px;
     }
+
     @media (max-width: 768px) {
-    .filter-sidebar {
-        width: 80%;
-        right: -80%; /* nhớ chỉnh lại theo % để nó ẩn ra ngoài */
+        .filter-sidebar {
+            width: 80%;
+            right: -80%;
+            /* nhớ chỉnh lại theo % để nó ẩn ra ngoài */
+        }
     }
-}
+
     hr {
         margin: 5px !important;
     }

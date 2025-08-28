@@ -22,24 +22,24 @@
     <div style="align-items: baseline;" class="navbar__right">
 
 
-        <ul class="navbar__action-list d-flex justify-content-between">
+        <ul class="navbar__action-list d-flex justify-content-between ">
             <button type="button" class="res-sidebar-open-btn me-3 mb-3"><i class="las la-bars"></i></button>
             <div id="tabs" class="tab-container" style="display: flex; gap: 8px; margin-bottom: 10px;"></div>
             <div id="frame" style="position: relative;"></div>
-            <div class="d-flex" style="margin-bottom: 12px">
-                <li>
+            <div class="d-flex  " style="margin-bottom: 12px">
+                {{-- <li>
                     <a class="btn btn--danger booking-req me-2 me-md-3" style="white-space: nowrap;"
                         href="{{ route('admin.receptionist.booking.receptionist') }}">
                         Yêu cầu đặt phòng
                     </a>
-                </li>
+                </li> --}}
                 <li>
-                    <a class="btn btn--danger booking-req me-2 me-md-3"target="_blank" style="white-space: nowrap;"
+                    <a class="btn btn--danger booking-req me-2 me-md-3 d-hidden-mobi"target="_blank" style="white-space: nowrap;"
                         href="{{ route('admin.receptionist.booking.receptionist') }}">
                         Lễ tân
                     </a>
                 </li>
-                <li class="dropdown d-flex profile-dropdown">
+                <li class="dropdown  profile-dropdown d-hidden-mobi">
                     <button type="button" data-bs-toggle="dropdown" data-display="static" aria-haspopup="true"
                         aria-expanded="false">
                         <span class="navbar-user">
@@ -127,7 +127,9 @@
         color: aliceblue;
         cursor: pointer;
     }
-
+    .d-hidden-mobi{
+        display: none;
+    }
     .close-tab {
         background: red;
         color: white;
@@ -155,6 +157,9 @@
         .iframe-main {
             width: 100%;
         }
+         .d-hidden-mobi{
+            display: block;
+         }
     }
 
     .tab-container {

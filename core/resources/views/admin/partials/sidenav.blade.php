@@ -8,10 +8,65 @@
        <i class="las la-times"></i>
     </button>
     <div class="sidebar__inner">
-        <div class="sidebar__logo">
-            <a href="{{ route('admin.display') }}" class="sidebar__main-logo">
+        <div class="sidebar__logo d-none-mobi">
+            {{-- <a href="{{ route('admin.display') }}" class="sidebar__main-logo">
                 <img src="{{ siteLogo() }}" alt="image">
-            </a>
+            </a> --}}
+               <div class="d-flex" style="margin-bottom: 12px;margin-top: 12px">
+                {{-- <li>
+                    <a class="btn btn--danger booking-req me-2 me-md-3" style="white-space: nowrap;"
+                        href="{{ route('admin.receptionist.booking.receptionist') }}">
+                        Yêu cầu đặt phòng
+                    </a>
+                </li> --}}
+                <li>
+                    <a class="btn btn--danger booking-req me-2 me-md-3"target="_blank" style="white-space: nowrap;"
+                        href="{{ route('admin.receptionist.booking.receptionist') }}">
+                        Lễ tân
+                    </a>
+                </li>
+                <li class="dropdown d-flex profile-dropdown">
+                    <button type="button" data-bs-toggle="dropdown" data-display="static" aria-haspopup="true"
+                        aria-expanded="false" style="background: none">
+                        <span class="navbar-user">
+                            <span class="navbar-user__thumb"><img
+                                    src="{{ getImage(getFilePath('adminProfile') . '/' . auth()->guard('admin')->user()->image, getFileSize('adminProfile')) }}"
+                                    alt="image"></span>
+                            <span class="navbar-user__info">
+                                <span class="navbar-user__name">{{ auth()->guard('admin')->user()->username }}</span>
+                            </span>
+                            <span class="icon"><i class="las la-chevron-circle-down"></i></span>
+                        </span>
+                    </button>
+                    <div class="dropdown-menu dropdown-menu--sm p-0 border-0 box--shadow1 dropdown-menu-right">
+                        <a href="{{ route('admin.profile') }}"
+                            class="dropdown-menu__item d-flex align-items-center px-3 py-2">
+                            <i class="dropdown-menu__icon las la-user-circle"></i>
+                            <span class="dropdown-menu__caption">@lang('Hồ sơ')</span>
+                        </a>
+
+                        <a href="{{ route('admin.password') }}"
+                            class="dropdown-menu__item d-flex align-items-center px-3 py-2">
+                            <i class="dropdown-menu__icon las la-key"></i>
+                            <span class="dropdown-menu__caption">@lang('Mật khẩu')</span>
+                        </a>
+                        {{-- <a href="{{ route('admin.setting.system') }}"
+                            class="dropdown-menu__item d-flex align-items-center px-3 py-2">
+                            <i class="dropdown-menu__icon las la-cog"></i>
+
+                            <span class="dropdown-menu__caption">@lang('Thiết lập hệ thống')</span>
+                        </a> --}}
+                        <a href="{{ route('admin.logout') }}"
+                            class="dropdown-menu__item d-flex align-items-center px-3 py-2">
+                            <i class="dropdown-menu__icon las la-sign-out-alt"></i>
+                            <span class="dropdown-menu__caption">@lang('Đăng xuất')</span>
+                        </a>
+                    </div>
+                    <button type="button" class="breadcrumb-nav-open ms-2 d-none">
+                        <i class="las la-sliders-h"></i>
+                    </button>
+                </li>
+            </div>
         </div>
         <div class="sidebar__menu-wrapper">
 

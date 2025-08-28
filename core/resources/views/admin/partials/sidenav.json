@@ -12,21 +12,7 @@
         "title": "Danh Mục",
         "icon": "las la-city",
         "submenu": [
-            {
-                "keyword": [
-                    "Danh mục cơ sở",
-                    "Amenity"
-                ],
-                "title": "Danh mục cơ sở",
-                "route_name": "admin.hotel.setting.setup.hotel",
-                "menu_active": [
-                    "admin.hotel.setting.setup.hotel",
-                    "admin.hotel.setting.setup.status.hotel",
-                    "admin.hotel.setting.setup.add.hotel",
-                    "admin.hotel.setting.setup.edit.hotel",
-                    "admin.hotel.setting.setup.delete.hotel"
-                ]
-            },
+           
             {
                 "keyword": [
                     "Danh mục loại phòng"
@@ -47,16 +33,7 @@
                     "admin.hotel.room.type.edit"
                 ]
             },
-            {
-                "keyword": [
-                    "Danh mục dịch vụ",
-                    "Dịch vụ cao cấp",
-                    "Services"
-                ],
-                "title": "Danh mục dịch vụ",
-                "route_name": "admin.hotel.premium.service.all",
-                "menu_active": "admin.hotel.premium.service.all"
-            },
+           
            
             {
                 "keyword": [
@@ -84,28 +61,15 @@
             },
              {
                 "keyword": [
-                    "Danh mục tiện nghi"
+                    "Bảng giá"
                 ],
-                "title": "Danh mục tiện nghi",
-                "route_name": "admin.hotel.setup.amenities.all",
-                "menu_active": "admin.hotel.setup.amenities.all"
-            },
-            {
-                "keyword": [
-                    "Danh mục cơ sở vật chất"
-                ],
-                "title": "Danh mục cơ sở vật chất",
-                "route_name": "admin.hotel.setup.facilities.all",
-                "menu_active": "admin.hotel.setup.facilities.all"
-            },
-             {
-                "keyword": [
-                    "Danh mục sản phẩm"
-                ],
-                "title": "Danh mục sản phẩm",
-                "route_name": "admin.hotel.setup.product.all",
-                "menu_active": "admin.hotel.setup.product.all"
+                "title": "Bảng giá",
+                "icon": "las la-dollar-sign",
+                "route_name": "admin.manage.price.all",
+                "menu_active": "admin.manage.price.all"
             }
+           
+           
           
         ]
     },
@@ -259,6 +223,14 @@
                 "route_name": "admin.warehouse.warehouse",
                 "menu_active": "admin.warehouse.warehouse"
             },
+              {
+                "keyword": [
+                    "Danh mục sản phẩm"
+                ],
+                "title": "Danh mục sản phẩm",
+                "route_name": "admin.hotel.setup.product.all",
+                "menu_active": "admin.hotel.setup.product.all"
+            },
             {
                 "keyword": [
                     "Nhập hàng"
@@ -321,15 +293,7 @@
                 "route_name": "admin.manage.priceroomtype.all",
                 "menu_active": "admin.manage.priceroomtype.all"
             },
-            {
-                "keyword": [
-                    "Bảng giá"
-                ],
-                "title": "Bảng giá",
-                "icon": "las la-dollar-sign",
-                "route_name": "admin.manage.price.all",
-                "menu_active": "admin.manage.price.all"
-            },
+           
             {
                 "keyword": [
                     "Vai trò"
@@ -355,14 +319,7 @@
                 "route_name": "admin.hotel.setup.code.all",
                 "menu_active": "admin.hotel.setup.code.all"
             },
-            {
-                "keyword": [
-                    "Danh mục trạng thái"
-                ],
-                "title": "Danh mục trạng thái",
-                "route_name": "admin.hotel.status.code.all",
-                "menu_active": "admin.hotel.status.code.all"
-            },
+            
             {
                 "keyword": [
                     "Cài đặt hướng/view"
@@ -370,6 +327,54 @@
                 "title": "Cài đặt hướng/view",
                 "route_name": "admin.hotel.direction.all",
                 "menu_active": "admin.hotel.direction.all"
+            },{
+                "keyword": [
+                    "Danh mục trạng thái"
+                ],
+                "title": "Danh mục trạng thái",
+                "route_name": "admin.hotel.status.code.all",
+                "menu_active": "admin.hotel.status.code.all"
+            },
+             {
+                "keyword": [
+                    "Danh mục cơ sở",
+                    "Amenity"
+                ],
+                "title": "Danh mục cơ sở",
+                "route_name": "admin.hotel.setting.setup.hotel",
+                "menu_active": [
+                    "admin.hotel.setting.setup.hotel",
+                    "admin.hotel.setting.setup.status.hotel",
+                    "admin.hotel.setting.setup.add.hotel",
+                    "admin.hotel.setting.setup.edit.hotel",
+                    "admin.hotel.setting.setup.delete.hotel"
+                ]
+            },
+             {
+                "keyword": [
+                    "Danh mục dịch vụ",
+                    "Dịch vụ dịch vụ",
+                    "Services"
+                ],
+                "title": "Danh mục dịch vụ",
+                "route_name": "admin.hotel.premium.service.all",
+                "menu_active": "admin.hotel.premium.service.all"
+            },
+              {
+                "keyword": [
+                    "Danh mục tiện nghi"
+                ],
+                "title": "Danh mục tiện nghi",
+                "route_name": "admin.hotel.setup.amenities.all",
+                "menu_active": "admin.hotel.setup.amenities.all"
+            },
+            {
+                "keyword": [
+                    "Danh mục cơ sở vật chất"
+                ],
+                "title": "Danh mục cơ sở vật chất",
+                "route_name": "admin.hotel.setup.facilities.all",
+                "menu_active": "admin.hotel.setup.facilities.all"
             }
         ]
     },

@@ -57,9 +57,9 @@ class ManagePriceListController extends Controller
         try {
             $exists = RoomTypePrice::where('room_type_id', $validatedData['room_type_id'])
                 ->where('setup_pricing_id', $validatedData['setup_pricing_id'])
-                // ->where('unit_code', unitCode())
-                // ->where('subdomain', subdomain())
-                // ->where('price_validity_period', $validatedData['price_validity_period'])
+                 ->where('unit_code', unitCode())
+                 ->where('subdomain', subdomain())
+                 ->where('price_validity_period', $validatedData['price_validity_period'])
                 ->exists();
             if ($exists) {
                 $notify[] = ['error', 'Dữ liệu đã tồn tại.'];

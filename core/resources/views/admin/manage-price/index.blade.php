@@ -7,7 +7,7 @@
                     <tr>
                         <th>Mã loại Phòng</th>
                         <th class="small-column">Mã Giá</th>
-                        <th>Thời gian hiệu lực</th>
+                        <th>Giá áp dụng từ ngày</th>
                         <th>Đơn giá</th>
                         <th>Quá giờ</th>
                         <th>Quá người</th>
@@ -218,7 +218,7 @@
                             'func': function(value) {
                                 return checkRequired(value); // check trống
                             },
-                            'message': generateErrorMessage('P001', 'Thời gian hiệu lực')
+                            'message': generateErrorMessage('P001', 'Giá áp dụng từ ngày')
                         }, // viết tiếp điều kiện validate vào đây (validations)
                     ]
                 },
@@ -295,7 +295,7 @@
                                         <td data-label="Mã loại phòng"class="text-left"> ${element.room_type['code']} </td>
                                         <td data-label="Mã giá"class="text-left"> ${element.setup_pricing['price_code']} </td>
 
-                                        <td data-label="Thời gian hiệu lực"class="text-right">
+                                        <td data-label="Giá áp dụng từ ngày"class="text-right">
                                             ${formatDate(element.price_validity_period)}
                                         </td>
                                          <td data-label="Đơn giá"class="text-right">
