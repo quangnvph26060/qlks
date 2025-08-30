@@ -415,7 +415,7 @@ class UserController extends Controller
                         'round_time'        => 30,
                         'description'       => '',
                         'unit_code'         => 'COSO1',
-                        'subdomain'         => "quangdev",
+                         'subdomain' => $request->username,
                     ],
                     [
                         'price_code'        => 'GIAGIO',
@@ -424,7 +424,7 @@ class UserController extends Controller
                         'round_time'        => 30,
                         'description'       => '',
                         'unit_code'         => 'COSO1',
-                        'subdomain'         => "quangdev",
+                         'subdomain' => $request->username,
                     ],
                 ];
 
