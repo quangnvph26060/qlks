@@ -93,20 +93,20 @@
     @can('')
         @push('breadcrumb-plugins')
             <div class="d-flex" style="gap: 5px">
-              
+
                 <a class="btn mt-1 btn-sm btn--primary btn-submit-sync-price">
                     <i class="las la-sync"></i>
-                </a> 
-                  @can(['admin.manage.modalAdd','admin.manage.addPriceRoomType'])
+                </a>
+                @can(['admin.manage.modalAdd', 'admin.manage.addPriceRoomType'])
                     <button type="button" class="btn btn--primary btn-sm mt-1 btn-add">
                         <i class="las la-plus"></i>
                     </button>
-                 @endcan
+                @endcan
             </div>
         @endpush
     @endcan
     <div class="modal fade" id="pricingModal" tabindex="-1" aria-labelledby="pricingModalLabel" aria-hidden="true">
-       <div class="modal-dialog modal-lg modal-dialog-centered add-pricing">
+        <div class="modal-dialog modal-lg modal-dialog-centered add-pricing">
 
 
         </div>
@@ -146,7 +146,7 @@
             mode: "multiple",
             dateFormat: "Y-m-d",
         });
-           $(document).on('input', 'input[name="price_code"]', function() {
+        $(document).on('input', 'input[name="price_code"]', function() {
             this.value = this.value.toUpperCase();
         });
         $('.btn-submit-sync-price').on('click', function() {
@@ -230,13 +230,13 @@
                         dateFormat: "Y-m-d",
                     });
                 } else if (selectedValue === 'time') { // giờ
-                   
+
                     checkboxList.innerHTML = `
                         <input type="hidden"  name="price_requirement" class="form-control price_requirement_value" value="Giờ" placeholder="Nhập giờ">
                     `;
                     // checkboxList.innerHTML = `
-                    //     <input type="text"  name="price_requirement" class="form-control price_requirement_value" placeholder="Nhập giờ">
-                    // `;
+                //     <input type="text"  name="price_requirement" class="form-control price_requirement_value" placeholder="Nhập giờ">
+                // `;
                 } else if (selectedValue === 'rank') { // ngày đặc biệt
                     checkboxList.innerHTML = `
                              <label class="form-label">Chọn thứ:</label>
@@ -296,7 +296,7 @@
                         }, // viết tiếp điều kiện validate vào đây (validations)
                     ]
                 },
-                  'roundTime': { // passwword thì nên đặt là name trong input đó
+                'roundTime': { // passwword thì nên đặt là name trong input đó
                     'element': document.getElementById('roundTime'), // id trong input đó
                     'error': document.getElementById('roundTime_error'), // thẻ hiển thị lỗi
                     'validations': [{
@@ -313,8 +313,8 @@
                         },
                     ]
                 }
-               
-              
+
+
             }
 
             // function validateDate() {
@@ -364,11 +364,11 @@
                         $('#loading').hide();
                         $('.add-pricing').append(response.content);
                         formEconomyEdit.priceCode.element = document.getElementById(
-                        'priceCode');
+                            'priceCode');
                         formEconomyEdit.priceCode.error = document.getElementById(
                             'priceCode_error');
                         formEconomyEdit.priceName.element = document.getElementById(
-                        'priceName');
+                            'priceName');
                         formEconomyEdit.priceName.error = document.getElementById(
                             'priceName_error');
                         // formEconomyEdit.priceNote.element = document.getElementById(
@@ -379,9 +379,9 @@
                         // formEconomyEdit.startDate.error = document.getElementById('startDate_error');
                         // formEconomyEdit.endDate.element = document.getElementById('endDate');
                         // formEconomyEdit.endDate.error = document.getElementById('endDate_error');
-                   
+
                         formEconomyEdit.roundTime.element = document.getElementById(
-                        'roundTime');
+                            'roundTime');
                         formEconomyEdit.roundTime.error = document.getElementById(
                             'roundTime_error');
                         // formEconomyEdit.dayType.element = document.getElementById('dayType');
@@ -411,11 +411,11 @@
                         $('#loading').hide();
                         $('.add-pricing').append(data.content);
                         formEconomyEdit.priceCode.element = document.getElementById(
-                        'priceCode');
+                            'priceCode');
                         formEconomyEdit.priceCode.error = document.getElementById(
                             'priceCode_error');
                         formEconomyEdit.priceName.element = document.getElementById(
-                        'priceName');
+                            'priceName');
                         formEconomyEdit.priceName.error = document.getElementById(
                             'priceName_error');
                         // formEconomyEdit.priceNote.element = document.getElementById(
@@ -426,9 +426,9 @@
                         // formEconomyEdit.startDate.error = document.getElementById('startDate_error');
                         // formEconomyEdit.endDate.element = document.getElementById('endDate');
                         // formEconomyEdit.endDate.error = document.getElementById('endDate_error');
-                      
+
                         formEconomyEdit.roundTime.element = document.getElementById(
-                        'roundTime');
+                            'roundTime');
                         formEconomyEdit.roundTime.error = document.getElementById(
                             'roundTime_error');
                         // formEconomyEdit.dayType.element = document.getElementById('dayType');
@@ -464,9 +464,9 @@
                             success: function(data) {
                                 if (data.status === 'success') {
                                     rowToDelete.remove();
-                                    notify('success',data.message);
-                                }else if(data.status === 'error'){
-                                    notify('error',data.message);
+                                    notify('success', data.message);
+                                } else if (data.status === 'error') {
+                                    notify('error', data.message);
                                 }
                             },
                             error: function(xhr, status, error) {
@@ -515,7 +515,7 @@
                         var data = response.data;
                         var html = '';
 
-                        data.forEach((element, index)  => {
+                        data.forEach((element, index) => {
                             // Biến chứa dữ liệu cần định dạng
                             const priceRequirementData = element.price_requirement;
                             let formattedData;
@@ -528,10 +528,9 @@
 
 
                                 formattedData = dataArray.map(item => {
-                                    if(item == "Giờ"){
+                                    if (item == "Giờ") {
                                         return item;
-                                    }
-                                     else if(item.includes('-')) {
+                                    } else if (item.includes('-')) {
                                         // Xử lý định dạng cho ngày tháng
                                         const dates = item.split(',').map(dateStr => {
                                             const date = new Date(dateStr.trim());

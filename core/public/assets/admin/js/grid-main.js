@@ -198,7 +198,7 @@ function initGridMain(data, date) {
                     fullDateTime = `${selectedDate} ${hours}:${minutes}:${seconds}`;
 
                 }
-              //  console.log("fullDateTime" + fullDateTime);
+                //  console.log("fullDateTime" + fullDateTime);
                 let roomHTML = "";
                 Object.values(groupedRooms).forEach(group => {
                     roomHTML += `
@@ -337,13 +337,16 @@ function initGridMain(data, date) {
                                                     data-room-id = "${item?.id}" >Nhận phòng </div>
                                                     `
                                 : ""
-                            }
+                            }   
+                                          ${status_code == 2 && checkTime ? `<div class="dropdown-item delete-booked-room"
+                                             data-room-id ="${isBooking?.booking_id ?? isBooking?.check_in_id ?? ''}">
+                                            Xoá đặt phòng</div>` : ''}
                                         ${status_code == 2 && checkTime ? `<div class="dropdown-item check_in_room"
                                             data-id   = "${isBooking?.room_code}" 
                                             data-date ="${isBooking?.checkin_date}"
                                             data-book ="${isBooking?.booking_id ?? isBooking?.check_in_id ?? ''}">
-                                            Nhận phòng</div>` : ''
-                            }
+                                            Nhận phòng</div>` : ''}
+                                           
                                         ${status_code == 3 && checkTime ? `
                                                 <div class="dropdown-item add_product_service"  
                                                     data-room-id="${isBooking?.room_change_info ? isBooking?.room_change_info?.new_room_code : item?.id}" 
@@ -2431,6 +2434,69 @@ $('.booking-form-edit').on('submit', function (e) {
             });
         }
     }
+
+});
+$(document).off("click", ".delete-booked-room").on("click", ".delete-booked-room", function (e) {
+    e.stopPropagation();
+
+    var roomId = $(this).data('room-id');
+    var url = checkBookedRoomUrl.replace(':id', roomId);
+    $.ajax({
+        url: url,
+        type: 'POST',
+        success: function (response) {
+            if (response.status == 'success') {
+                // notify('success', response.success);
+                // loadRoomBookings();
+                Swal.fire({
+                    title: 'Bạn có chắc chắn muốn xóa đặt phòng này?',
+                    text: 'Bạn có chắc chắn muốn xóa đặt phòng này?',
+                    icon: 'warning',
+                    showCancelButton: true,
+                    confirmButtonText: 'Đồng ý',
+                    cancelButtonText: 'Hủy bỏ',
+                    reverseButtons: true
+                }).then((result) => {
+                    if (result.isConfirmed) {
+                        var url = deleteBookedRoomUrl.replace(':id', roomId);
+                        $.ajax({
+                            url: url,
+                            type: 'POST',
+                            success: function (response) {
+                                if (response.status == 'success') {
+                                    notify('success', response.message);
+                                    let selectedDate = $('#startDate').val();
+                                    initGridMain('', selectedDate);
+                                } else {
+                                    notify('error', response.message);
+                                }
+                            },
+                            error: function (error) {
+                                console.log('Error:', error);
+                            }
+                        });
+                    }
+                })
+            } else {
+                // notify('error', response.success);
+                Swal.fire({
+                    title: response.message,
+                    text: response.message,
+                    icon: 'warning',
+                    showCancelButton: true,
+                    confirmButtonText: 'Đồng ý',
+                    cancelButtonText: 'Hủy bỏ',
+                    reverseButtons: true
+                })
+            }
+        },
+        error: function (error) {
+            console.log('Error:', error);
+        }
+    });
+
+
+
 
 });
 // thanh toán

@@ -10,6 +10,7 @@ use App\Models\HotelConfiguration;
 use App\Models\HotelFacility;
 use App\Models\NotificationLog;
 use App\Models\Role;
+use App\Models\SetupPricing;
 use App\Models\Transaction;
 use App\Models\User;
 use Illuminate\Database\QueryException;
@@ -364,8 +365,31 @@ class UserController extends Controller
                     'slug' => Str::slug($request->hotel_homestay)
                 ]);
                 $permissionIds = [
-                    1, 2, 57, 275, 276, 277, 278, 279, 280, 281, 282, 283,
-                    284, 285, 286, 306, 73, 287, 288, 289, 290, 291, 292, 293, 294
+                    1,
+                    2,
+                    57,
+                    275,
+                    276,
+                    277,
+                    278,
+                    279,
+                    280,
+                    281,
+                    282,
+                    283,
+                    284,
+                    285,
+                    286,
+                    306,
+                    73,
+                    287,
+                    288,
+                    289,
+                    290,
+                    291,
+                    292,
+                    293,
+                    294
                 ];
 
                 // thêm vai trò
@@ -381,6 +405,31 @@ class UserController extends Controller
                             'permission_id' => $permissionId,
                         ]);
                     }
+                }
+                // thêm cài đặt tính giá theo Ngày và theo giờ
+                $data = [
+                    [
+                        'price_code'        => 'GIANGAY',
+                        'price_name'        => 'Giá ngày thứ',
+                        'price_requirement' => ['2', '3', '4', '5', '6', '7', '8'], // nên để mảng nếu cột cast json
+                        'round_time'        => 30,
+                        'description'       => '',
+                        'unit_code'         => 'COSO1',
+                        'subdomain'         => $request->username,
+                    ],
+                    [
+                        'price_code'        => 'GIAGIO',
+                        'price_name'        => 'Giá giờ',
+                        'price_requirement' => 'Giờ',
+                        'round_time'        => 30,
+                        'description'       => '',
+                        'unit_code'         => 'COSO1',
+                        'subdomain'         => $request->username,
+                    ],
+                ];
+
+                foreach ($data as $item) {
+                    SetupPricing::create($item);
                 }
             }
             DB::commit();
@@ -475,7 +524,7 @@ class UserController extends Controller
         $admin->password = Hash::make($request->password);
         $admin->save();
 
-        Log::info( $admin);
+        Log::info($admin);
         return response()->json([
             'success' => true,
             'message' => 'Đặt lại mật khẩu thành công cho ' . $admin->email,

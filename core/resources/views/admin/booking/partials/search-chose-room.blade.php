@@ -12,7 +12,7 @@
     </div>
     <div class="">
         <label for="">Chọn tên phòng</label>
-        <select class="form-select" id="selected-name-phong">
+        <select class="form-select selected-name-phong" id="selected-name-phong">
 
         </select>
     </div>
@@ -36,8 +36,10 @@
 </div>
 <style>
     @media (max-width: 768px) {
-    .response-mobi {
-        flex-direction: column;
+        .response-mobi {
+            flex-direction: column;
+        }
     }
-}
+
+  
 </style>

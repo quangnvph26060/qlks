@@ -19,22 +19,16 @@
                         Yêu cầu đặt phòng
                     </a>
                 </li> --}}
-                <li>
-                    <a class="btn btn--danger booking-req me-2 me-md-3"target="_blank" style="white-space: nowrap;"
-                        href="{{ route('admin.receptionist.booking.receptionist') }}">
-                        Lễ tân
-                    </a>
-                </li>
-                <li class="dropdown d-flex profile-dropdown">
+                  <li class="dropdown d-flex profile-dropdown">
                     <button type="button" data-bs-toggle="dropdown" data-display="static" aria-haspopup="true"
                         aria-expanded="false" style="background: none">
                         <span class="navbar-user">
                             <span class="navbar-user__thumb"><img
                                     src="{{ getImage(getFilePath('adminProfile') . '/' . auth()->guard('admin')->user()->image, getFileSize('adminProfile')) }}"
                                     alt="image"></span>
-                            <span class="navbar-user__info">
+                            {{-- <span class="navbar-user__info">
                                 <span class="navbar-user__name">{{ auth()->guard('admin')->user()->username }}</span>
-                            </span>
+                            </span> --}}
                             <span class="icon"><i class="las la-chevron-circle-down"></i></span>
                         </span>
                     </button>
@@ -66,6 +60,13 @@
                         <i class="las la-sliders-h"></i>
                     </button>
                 </li>
+                <li style="width: 120px;    list-style-type: none;">
+                    <a  class="btn btn--danger booking-req me-2 me-md-3"target="_blank" style="white-space: nowrap;width: 120px"
+                        href="{{ route('admin.receptionist.booking.receptionist') }}">
+                        Lễ tân
+                    </a>
+                </li>
+              
             </div>
         </div>
         <div class="sidebar__menu-wrapper">

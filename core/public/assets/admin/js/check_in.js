@@ -197,11 +197,15 @@ function showRoom(data = "", checkInDateValue = "", checkOutDateValue = "", sele
 
 
             data.room.forEach(function (item) {
+                let displayText = item.room_number;
+                if (displayText.length > 30) {
+                    displayText = displayText.substring(0, 30) + "...";
+                }
+
                 if (item.id == data.option_name_phong) {
-                    options +=
-                        `<option value="${item.id}" selected>${item.room_number}</option>`;
+                    options += `<option value="${item.id}" selected title="${item.room_number}">${displayText}</option>`;
                 } else {
-                    options += `<option value="${item.id}">${item.room_number}</option>`;
+                    options += `<option value="${item.id}" title="${item.room_number}">${displayText}</option>`;
                 }
             });
 
@@ -243,6 +247,12 @@ $('#selected-name-phong, #selected-hang-phong, #date-chon-phong-out, #date-chon-
             }
         });
         const checkInDateValue = $('#date-chon-phong-in').val();
+        let checkInDate = new Date($(this).val());
+        if (!isNaN(checkInDate.getTime())) {
+            checkInDate.setDate(checkInDate.getDate() + 1); // Thêm 1 ngày
+            let checkOutDate = checkInDate.toISOString().split('T')[0]; // Format YYYY-MM-DD
+            $("#date-chon-phong-out").val(checkOutDate);
+        }
         const checkOutDateValue = $('#date-chon-phong-out').val();
         showRoom(roomIds, checkInDateValue, checkOutDateValue, selectedOptionHangPhong, selectedOptionNamePhong,
             selectedOptionStatusPhong)

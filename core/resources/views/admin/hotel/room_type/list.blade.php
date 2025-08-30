@@ -89,6 +89,18 @@
                                                         @endif
 
                                                     </div>
+                                                    <div class="dropdown-item booked_room">
+
+                                                        <form method="POST"
+                                                            action="{{ route('admin.roomfix.booking.roomfix') }}">
+                                                            @csrf
+                                                            <input type="hidden" name="id" value="{{ $type->id }}">
+                                                            <button type="submit" >
+                                                                {{ $type->room_fix == 0 ? 'Sửa phòng' : 'Sửa phòng hoàn thành' }}
+                                                            </button>
+                                                        </form>
+
+                                                    </div>
                                                 @endcan
                                                 @can('admin.hotel.room.type.delete')
                                                     <div class="dropdown-item booked_room_detail"> <button
@@ -119,7 +131,7 @@
                     {{ $type->code }}
                 </td>
                 <td title="{{ $type->room_number }}" data-label="Tên phòng" class="text-left">
-                    {{ $type->room_number }}
+                    {{ \Illuminate\Support\Str::limit($type->room_number, 30) }}
                 </td>
                 <td data-label="Hướng phòng" class="text-left d-none-mobi">
                     {{ optional($type->direction)->name }}
@@ -207,7 +219,8 @@
                                 </div>
                             @else
                                 <div class="dropdown-item booked_room " style="background-color: red;border-radius: 4px">
-                                    <button class="confirmationBtn" style="background-color: red;border-radius: 4px;color:white"
+                                    <button class="confirmationBtn"
+                                        style="background-color: red;border-radius: 4px;color:white"
                                         data-action="{{ route('admin.hotel.room.type.status', $type->id) }}"
                                         data-question="@lang('Bạn có chắc chắn muốn vô hiệu hóa loại phòng này không?')">
                                         Tắt hoạt động

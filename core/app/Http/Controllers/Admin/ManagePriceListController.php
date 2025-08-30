@@ -15,6 +15,7 @@ use Illuminate\Support\Facades\DB;
 use Illuminate\Support\Facades\Validator;
 use Illuminate\Support\Facades\View;
 use Illuminate\Validation\Rule;
+use Illuminate\Validation\ValidationException;
 
 class ManagePriceListController extends Controller
 {
@@ -57,9 +58,9 @@ class ManagePriceListController extends Controller
         try {
             $exists = RoomTypePrice::where('room_type_id', $validatedData['room_type_id'])
                 ->where('setup_pricing_id', $validatedData['setup_pricing_id'])
-                 ->where('unit_code', unitCode())
-                 ->where('subdomain', subdomain())
-                 ->where('price_validity_period', $validatedData['price_validity_period'])
+                ->where('unit_code', unitCode())
+                ->where('subdomain', subdomain())
+                ->where('price_validity_period', $validatedData['price_validity_period'])
                 ->exists();
             if ($exists) {
                 $notify[] = ['error', 'Dữ liệu đã tồn tại.'];
@@ -318,13 +319,24 @@ class ManagePriceListController extends Controller
                     ->where('unit_code', unitCode())
                     ->where('subdomain', subdomain()),
             ],
+            'price_requirement' => [
+                'required',
+                function ($attribute, $value, $fail) {
+                    // Nếu là mảng và chỉ chứa 1 phần tử null -> lỗi
+                    if (is_array($value) && count($value) === 1 && is_null($value[0])) {
+                        $fail('Vui lòng chọn ít nhất một yêu cầu về giá.');
+                    }
+                },
+            ],
         ], [
+            'price_requirement.required' => 'Vui lòng chọn ít nhất một yêu cầu về giá.',
             'price_code.required' => 'Mã giá không được để trống.',
             'price_code.regex' => 'Mã giá chỉ được gồm chữ in hoa, số và dấu gạch ngang.',
             'price_code.unique' => 'Mã giá đã tồn tại.',
             'price_name.required' => 'Tên giá không được để trống.',
             'price_name.unique' => 'Tên giá đã tồn tại.',
         ]);
+
         $validatedData = $request->all();
         try {
 
@@ -360,7 +372,10 @@ class ManagePriceListController extends Controller
 
                 $priceRoomType->price_requirement = json_encode($priceRequirements);
             } else {
-                $priceRoomType->price_requirement = json_encode([]);
+                throw ValidationException::withMessages([
+                    'price_requirement' => 'Vui lòng nhập yêu cầu về giá.',
+                ]);
+                // $priceRoomType->price_requirement = json_encode([]);
             }
 
             $priceRoomType->save();
@@ -398,9 +413,9 @@ class ManagePriceListController extends Controller
         $request->validate([
             'price_code' => [
                 'required',
-                'regex:/^[A-Z0-9\-]+$/',
+                'regex:/^[A-Z0-9\-]+$/', // Chỉ cho phép chữ in hoa, số, dấu gạch ngang
                 Rule::unique('setup_pricing', 'price_code')
-                    ->ignore($id)
+                    ->ignore($id) // bỏ qua bản ghi hiện tại khi check trùng
                     ->where('unit_code', unitCode())
                     ->where('subdomain', subdomain()),
             ],
@@ -412,13 +427,24 @@ class ManagePriceListController extends Controller
                     ->where('unit_code', unitCode())
                     ->where('subdomain', subdomain()),
             ],
+            'price_requirement' => [
+                'required',
+                function ($attribute, $value, $fail) {
+                    // Nếu là mảng và chỉ chứa 1 phần tử null -> lỗi
+                    if (is_array($value) && count($value) === 1 && is_null($value[0])) {
+                        $fail('Vui lòng chọn ít nhất một yêu cầu về giá.');
+                    }
+                },
+            ],
         ], [
-            'price_code.required' => 'Mã giá không được để trống.',
-            'price_code.regex' => 'Mã giá chỉ được gồm chữ in hoa, số và dấu gạch ngang.',
-            'price_code.unique' => 'Mã giá đã tồn tại.',
-            'price_name.required' => 'Tên giá không được để trống.',
-            'price_name.unique' => 'Tên giá đã tồn tại.',
+            'price_requirement.required' => 'Vui lòng chọn ít nhất một yêu cầu về giá.',
+            'price_code.required'        => 'Mã giá không được để trống.',
+            'price_code.regex'           => 'Mã giá chỉ được gồm chữ in hoa, số và dấu gạch ngang.',
+            'price_code.unique'          => 'Mã giá đã tồn tại.',
+            'price_name.required'        => 'Tên giá không được để trống.',
+            'price_name.unique'          => 'Tên giá đã tồn tại.',
         ]);
+
 
         $validatedData = $request->all();
         try {
@@ -431,27 +457,27 @@ class ManagePriceListController extends Controller
             $priceRoomType->check_in_time        = $validatedData['check_in_time'] ?? "";
             $priceRoomType->check_out_time       = $validatedData['check_out_time'] ?? "";
             $priceRoomType->round_time           = $validatedData['round_time'];
-           if (!empty($validatedData['price_requirement'])) {
-            $rawRequirements = $validatedData['price_requirement'];
+            if (!empty($validatedData['price_requirement'])) {
+                $rawRequirements = $validatedData['price_requirement'];
 
-            // Normalize input to array
-            if (is_string($rawRequirements)) {
-                $rawRequirements = [$rawRequirements];
+                // Normalize input to array
+                if (is_string($rawRequirements)) {
+                    $rawRequirements = [$rawRequirements];
+                }
+
+                $priceRequirements = collect($rawRequirements)
+                    ->flatMap(function ($item) {
+                        return str_contains($item, ',') ? explode(',', $item) : [$item];
+                    })
+                    ->map(fn($v) => trim($v))
+                    ->filter()
+                    ->values()
+                    ->all();
+
+                $priceRoomType->price_requirement = json_encode($priceRequirements);
+            } else {
+                $priceRoomType->price_requirement = json_encode([]);
             }
-
-            $priceRequirements = collect($rawRequirements)
-                ->flatMap(function ($item) {
-                    return str_contains($item, ',') ? explode(',', $item) : [$item];
-                })
-                ->map(fn($v) => trim($v))
-                ->filter()
-                ->values()
-                ->all();
-
-            $priceRoomType->price_requirement = json_encode($priceRequirements);
-        } else {
-            $priceRoomType->price_requirement = json_encode([]);
-        }
             $priceRoomType->save();
             DB::commit();
 

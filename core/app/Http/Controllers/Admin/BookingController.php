@@ -390,7 +390,7 @@ class BookingController extends Controller
                 $dates = $this->getDates($request->checkInDate, $request->checkOutDate);
                 $pricesByDateAndRoomType = $this->getPricesBySetupPricingForMultipleDates($dates);
             }
-            $emptyRooms = Room::query()->active();
+            $emptyRooms = Room::query()->active()->where('room_fix',0);
             if ($request->method === 'change_room') {
                 $emptyRooms = $emptyRooms->whereNotIn('id', (array) $request->roomId);
             }
@@ -1000,7 +1000,7 @@ class BookingController extends Controller
         $pricesByRoomTypeId = $this->getPricesBySetupPricing($date);
 
         $rooms = Room::query()->active();
-
+        $rooms = $rooms->where('room_fix',0); // phòng khong sửa
         $rooms->when(!empty($room_type), function ($query) use ($room_type) {
             $query->whereIn('room_type_id', $room_type);
         });
@@ -1084,7 +1084,7 @@ class BookingController extends Controller
                     if (!empty($date)) {
                         $query->whereDate('start_date', '<=', $date)
                             ->whereDate('end_date', '>', Carbon::parse($date)->subDay())
-                            ->groupBy( 'room_id', 'start_date', 'end_date');
+                            ->groupBy('room_id', 'start_date', 'end_date');
                     }
                 },
                 'roomBookingHistory.roomStatus',
@@ -1429,7 +1429,11 @@ class BookingController extends Controller
                 $msg = ' ' . $room->room_number . ' đã được sửa';
             }
 
-            return response()->json(['status' => 'success', 'success' => $msg]);
+            if ($request->ajax()) {
+                return response()->json(['status' => 'success', 'success' => $msg]);
+            }
+
+            return redirect()->back()->with('success', $msg);
         } catch (\Illuminate\Database\Eloquent\ModelNotFoundException $e) {
 
             return ApiResponse::error('error', 404);

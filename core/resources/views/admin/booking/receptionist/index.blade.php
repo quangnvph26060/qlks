@@ -631,6 +631,8 @@
 @endpush
 
 <script>
+         var checkBookedRoomUrl = "{{ route('admin.booking.check-booked-room-del', ['id' => ':id']) }}"; // xoá đặt phòng
+    var deleteBookedRoomUrl = "{{ route('admin.booking.delete-booked-room', ['id' => ':id']) }}";
     var checkInUpdateUrl = "{{ route('admin.check.in.update') }}";
     var deleteCheckin = "{{ route('admin.check.in.delete') }}";
     var deleteRoomEdit = "{{ route('admin.room.booking.delete') }}";

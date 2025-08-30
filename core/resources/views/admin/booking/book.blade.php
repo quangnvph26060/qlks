@@ -206,28 +206,30 @@
     </script>
 
     <script>
-        $(document).ready(function() {
-            $("#date-chon-phong-in").on("change", function() {
-                let checkInDate = new Date($(this).val());
-                if (!isNaN(checkInDate.getTime())) {
-                    checkInDate.setDate(checkInDate.getDate() + 1); // Thêm 1 ngày
-                    let checkOutDate = checkInDate.toISOString().split('T')[0]; // Format YYYY-MM-DD
-                    $("#date-chon-phong-out").val(checkOutDate);
-                }
-            });
-        });
+        // $(document).ready(function() {
+        //     $("#date-chon-phong-in").on("change", function() {
+        //         let checkInDate = new Date($(this).val());
+        //         if (!isNaN(checkInDate.getTime())) {
+        //             checkInDate.setDate(checkInDate.getDate() + 1); // Thêm 1 ngày
+        //             let checkOutDate = checkInDate.toISOString().split('T')[0]; // Format YYYY-MM-DD
+        //             $("#date-chon-phong-out").val(checkOutDate);
+        //         }
+        //     });
+        // });
     </script>
 @endpush
 @push('style')
     <style scoped>
-         .d-block-mobi {
+        .d-block-mobi {
             display: none;
         }
- .data-table td {
+
+        .data-table td {
             height: 30px !important;
             overflow: hidden;
             white-space: nowrap;
         }
+
         /* Mobile: các nút nằm ngang trong 1 hàng */
         @media (max-width: 768px) {
             .d-block-mobi .action-buttons {
@@ -246,15 +248,17 @@
             .d-block-mobi {
                 display: block;
             }
-              .data-table td {
-                 height: auto !important;
-              }
+
+            .data-table td {
+                height: auto !important;
+            }
         }
+
         .table .background-tr {
             height: 37px;
         }
 
-       
+
 
         .dt-column-title {
             color: white !important;
@@ -408,8 +412,8 @@
         /* Khi màn hình lớn hơn 1200px (hoặc tùy bạn chọn kích thước) */
         @media screen and (min-height: 800px) {
             /* .modal-content {
-                            height: 100vh !important;
-                        } */
+                                height: 100vh !important;
+                            } */
 
             .custom-gap-lg {
                 gap: 4px !important;
@@ -417,15 +421,15 @@
 
             .table-responsive {
                 /* border: 1px solid gray;
-                            border-radius: 5px;
-                            height: 210px !important; */
+                                border-radius: 5px;
+                                height: 210px !important; */
             }
 
             /* #list-booking{
-                            border: 1px solid gray;
-                            border-radius: 5px;
-                            height: 210px !important;
-                        } */
+                                border: 1px solid gray;
+                                border-radius: 5px;
+                                height: 210px !important;
+                            } */
         }
 
         @media (max-width: 768px) {
