@@ -407,15 +407,15 @@ class UserController extends Controller
                     }
                 }
                 // thêm cài đặt tính giá theo Ngày và theo giờ
-                $data = [
+                 $data = [
                     [
                         'price_code'        => 'GIANGAY',
                         'price_name'        => 'Giá ngày thứ',
-                        'price_requirement' => ['2', '3', '4', '5', '6', '7', '8'], // nên để mảng nếu cột cast json
+                        'price_requirement' => json_encode(['2','3','4','5','6','7','8']), // nên để mảng nếu cột cast json
                         'round_time'        => 30,
                         'description'       => '',
                         'unit_code'         => 'COSO1',
-                        'subdomain'         => $request->username,
+                        'subdomain'         => "quangdev",
                     ],
                     [
                         'price_code'        => 'GIAGIO',
@@ -424,7 +424,7 @@ class UserController extends Controller
                         'round_time'        => 30,
                         'description'       => '',
                         'unit_code'         => 'COSO1',
-                        'subdomain'         => $request->username,
+                        'subdomain'         => "quangdev",
                     ],
                 ];
 
