@@ -153,15 +153,15 @@
                                 </tbody>
 
                             </table>
-                            <div class="d-flex justify-content-end mt-1" style="gap: 10px;">
-                                <p data-row="booked" class=" btn-dat-truoc  add-room-list" style="cursor: pointer">Lưu
-                                </p>
-                                <p type="button" data-row="booked" class="alert-paragraph close_modal_booked_room">Hủy</p>
-                            </div>
+
                         </div>
 
                     </div>
-
+                    <div class="d-flex justify-content-end mt-1" style="gap: 10px;">
+                        <p data-row="booked" class=" btn-dat-truoc  add-room-list" style="cursor: pointer">Lưu
+                        </p>
+                        <p type="button" data-row="booked" class="alert-paragraph close_modal_booked_room">Hủy</p>
+                    </div>
                 </div>
             </div>
         </div>
@@ -412,8 +412,8 @@
         /* Khi màn hình lớn hơn 1200px (hoặc tùy bạn chọn kích thước) */
         @media screen and (min-height: 800px) {
             /* .modal-content {
-                                height: 100vh !important;
-                            } */
+                                    height: 100vh !important;
+                                } */
 
             .custom-gap-lg {
                 gap: 4px !important;
@@ -421,15 +421,15 @@
 
             .table-responsive {
                 /* border: 1px solid gray;
-                                border-radius: 5px;
-                                height: 210px !important; */
+                                    border-radius: 5px;
+                                    height: 210px !important; */
             }
 
             /* #list-booking{
-                                border: 1px solid gray;
-                                border-radius: 5px;
-                                height: 210px !important;
-                            } */
+                                    border: 1px solid gray;
+                                    border-radius: 5px;
+                                    height: 210px !important;
+                                } */
         }
 
         @media (max-width: 768px) {

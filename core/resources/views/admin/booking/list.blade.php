@@ -106,7 +106,7 @@
                 <div class="modal-content" style="height: 100vh;">
                     @include('admin/booking/partials/search-chose-room')
                     <div class="table-responsive--md table-responsive">
-                        <div class="modal-body overflow-add-room">
+                        <div class="modal-body overflow-add-room    table-responsive--md">
                             <table class=" table--light style--two table">
                                 <thead>
                                     <tr>
@@ -124,14 +124,14 @@
                                 </tbody>
 
                             </table>
-                             <div class="d-flex justify-content-end mt-1" style="gap: 10px;">
+
+                        </div>
+                    </div>
+                    <div class="d-flex justify-content-end mt-1" style="gap: 10px;">
                         <p type="button" data-row="booked" class=" btn-dat-truoc  add-room-list">Lưu
                         </p>
                         <p type="button" data-row="booked" class="alert-paragraph close_modal_booked_room">Hủy</p>
                     </div>
-                        </div>
-                    </div>
-                   
                 </div>
             </div>
         </div>
@@ -209,7 +209,7 @@
 
 @push('style')
     <style scoped>
-          .d-block-mobi {
+        .d-block-mobi {
             display: none;
         }
 
@@ -232,6 +232,7 @@
                 display: block;
             }
         }
+
         .modal-content {
             height: 100vh !important;
         }
@@ -416,9 +417,11 @@
                 font-size: 12px;
                 /* Reduce font size on smaller screens */
             }
-              #show-room tr td {
+
+            #show-room tr td {
                 padding: 12px 2px !important;
-              }
+            }
+
             .table td,
             .table th {
                 padding: 5px;

@@ -340,14 +340,40 @@
             // });
             // btn-setupPrice
             $(document).on('click', '.btn-setupPrice', function() {
-                if (validateAllFields(formEconomyEdit)) {
-                    document.getElementById('btn-setupPrice-submit').submit();
+                let dayType = $('#dayType').val();
+                let isValid = true;
+
+                // Kiểm tra select
+                if (!dayType) {
+                    $('#dayType_error').text('Vui lòng chọn hình thức');
+                    isValid = false;
+                } else {
+                    $('#dayType_error').text('');
+                }
+
+
+                if ( validateAllFields(formEconomyEdit)) {
+                    if(isValid){
+                     document.getElementById('btn-setupPrice-submit').submit();
+                    }
                 }
             });
             // btn-setupPrice
             $(document).on('click', '.btn-setupPrice-edit', function() {
+                let dayType = $('#dayType').val();
+                let isValid = true;
+
+                // Kiểm tra select
+                if (!dayType) {
+                    $('#dayType_error').text('Vui lòng chọn hình thức');
+                    isValid = false;
+                } else {
+                    $('#dayType_error').text('');
+                }
                 if (validateAllFields(formEconomyEdit)) {
-                    document.getElementById('btn-setupPrice-submit-edit').submit();
+                    if(isValid){
+                        document.getElementById('btn-setupPrice-submit-edit').submit();
+                    }
                 }
             });
             // thêm
@@ -385,8 +411,8 @@
                         formEconomyEdit.roundTime.error = document.getElementById(
                             'roundTime_error');
                         // formEconomyEdit.dayType.element = document.getElementById('dayType');
-                        // formEconomyEdit.dayType.error = document.getElementById(
-                        // 'dayType_error');
+                        formEconomyEdit.dayType.error = document.getElementById(
+                            'dayType_error');
                     },
                     error: function(xhr, status, error) {
                         $('#loading').hide();
@@ -431,9 +457,9 @@
                             'roundTime');
                         formEconomyEdit.roundTime.error = document.getElementById(
                             'roundTime_error');
-                        // formEconomyEdit.dayType.element = document.getElementById('dayType');
-                        // formEconomyEdit.dayType.error = document.getElementById(
-                        // 'dayType_error');
+                        formEconomyEdit.dayType.element = document.getElementById('dayType');
+                        formEconomyEdit.dayType.error = document.getElementById(
+                            'dayType_error');
 
                     },
                     error: function(xhr, status, error) {
