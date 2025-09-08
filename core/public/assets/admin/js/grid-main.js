@@ -25,8 +25,8 @@ function calculateTotalPrice() {
     let totalDiscount = 0;
     let payment = 0;
     let service = 0;
-    $('#list-booking, #list-booking-edit, #list-booking-edit-letan').find('p#price').each(function () {
-        let priceString = $(this).attr('data-price');
+    $('#list-booking, #list-booking-edit, #list-booking-edit-letan').find('p#price, input#price').each(function () {
+       priceString = $(this).data('price');
         let price = parseFloat(priceString.replace(' VND', '').replace(',', '.'));
         totalPrice += price;
     });
@@ -96,7 +96,7 @@ function calculateTotalPrice() {
     // $('#total_deposit').text(formatCurrency(totalPrice));
     return totalPrice;
 }
-function formatCurrency(amount) {
+function formatCurrency(amount,showCurrency= '') {
     if (!amount || isNaN(amount)) {
         return '0' + showCurrency;
     }
@@ -854,6 +854,25 @@ function initViewScriptGird() {
                                 datePart = dateOnly;
                                 timePart = currentTime;
                             }
+                            // 🔥 kiểm tra xem đây có phải bản ghi cuối cùng của room_code
+                            const isLastRecord = item.rooms.filter(r => r.room_code === room.room_code).slice(-1)[0] === room;
+
+                            // nếu là bản ghi cuối -> bỏ readonly
+                            let checkoutReadonly = isLastRecord ? '' : 'readonly';
+                           let priceCell = isLastRecord
+    ? `<input type="text" 
+              id="price" 
+              class="form-control money-input" 
+              data-room-code="${room.room_code}" 
+              data-price="${room.total_amount}" 
+              value="${formatCurrency(room.total_amount)}">`
+    : `<input type="text" 
+              id="price"  
+              class="form-control money-input" 
+              data-price="${room.total_amount}" 
+              value="${formatCurrency(room.total_amount)}" 
+              readonly>`;
+
 
                             var tr = `
                                 <tr data-room-booking-id="${room.booking_id}" data-price="${room.total_amount}" data-room-id="${room.room_code}"  data-room-type-id="${room.room_type}" data-date="${formattedDates}">
@@ -876,19 +895,18 @@ function initViewScriptGird() {
                                     </td>
                                      <td>
                                         <div class="d-flex align-items-center justify-content-start" style="gap: 3px">
-                                           <input type="date" name="checkInDate" id="date-book-room" class="form-control date-book-room"  value="${datePart}" readonly>
-
-                                    <input type="time" name="checkInTime" id="time-book-room" class="form-control time-book-room"  value="${timePart}" style=" display: flex;justify-content: flex-start;width: 110px;padding: 1px 9px !important;">
+                                            <input type="date" name="checkInDate" id="date-book-room" class="form-control date-book-room"  data-original-date="${datePart}"  value="${datePart}" readonly>
+                                            <input type="time" name="checkInTime" id="time-book-room" class="form-control time-book-room"  value="${timePart}" style=" display: flex;justify-content: flex-start;width: 110px;padding: 1px 9px !important;">
                                         </div>
                                     </td>
                                     <td>
                                         <div class="d-flex align-items-center justify-content-start" style="gap: 3px">
-                                            <input type="date" name="checkOutDate"  class="form-control date-book-room" readonly value="${dateOut}">
-                                            <input type="time" name="checkOutTime" id="time-book-room" class="form-control time-book-room" value="${timeOut}"  value=""style=" display: flex;justify-content: flex-start;width: 110px;padding: 1px 9px !important;">
+                                            <input type="date" name="checkOutDate"  class="form-control date-book-room" data-original-date="${dateOut}"  ${checkoutReadonly} value="${dateOut}">
+                                            <input type="time" name="checkOutTime" id="time-book-room" data-original-time="${timeOut}"  class="form-control time-book-room" value="${timeOut}"  value=""style=" display: flex;justify-content: flex-start;width: 110px;padding: 1px 9px !important;">
                                         </div>
                                     </td>
                                     <td>
-                                         <p id="price" class="d-flex justify-content-center" data-price="${room.total_amount}">${formatCurrency(room.total_amount)}</p>
+                                        ${priceCell}
                                     </td>
                                     <td>
                                       <input type="text" class="form-control deposit number-input money-input"
@@ -1009,6 +1027,43 @@ function initViewScriptGird() {
             }
         });
     }
+    function validateCheckout(input) {
+        let $row = $(input).closest("tr");
+
+        // Lấy giá trị checkin
+        let checkInDate = $row.find("input[name='checkInDate']").val();
+        let checkInTime = $row.find("input[name='checkInTime']").val();
+
+        // Lấy giá trị checkout
+        let checkOutDate = $row.find("input[name='checkOutDate']").val();
+        let checkOutTime = $row.find("input[name='checkOutTime']").val();
+
+        // Lấy giá trị gốc ban đầu (lưu trong data attribute khi render)
+        let originalDate = $(input).data("original-date");
+        let originalTime = $(input).data("original-time");
+
+        // Convert sang Date object
+        let checkIn = new Date(checkInDate + "T" + checkInTime);
+        let checkOut = new Date(checkOutDate + "T" + checkOutTime);
+
+        // So sánh
+        if (checkOut < checkIn) {
+            alert("Ngày giờ trả phòng không được nhỏ hơn ngày giờ nhận phòng!");
+
+            // Reset về ban đầu
+            if ($(input).attr("name") === "checkOutDate") {
+                $(input).val(originalDate);
+            } else {
+                $(input).val(originalTime);
+            }
+        }
+    }
+
+    // Gắn sự kiện cho cả date + time
+    $(document).on("change", "input[name='checkOutDate'], input[name='checkOutTime']", function () {
+        validateCheckout(this);
+    });
+
     $(document).ready(function () {
         $(document).off("click", ".room_change").on("click", ".room_change", function (e) {
             e.stopPropagation();

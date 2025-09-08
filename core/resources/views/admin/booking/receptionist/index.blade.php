@@ -631,7 +631,7 @@
 @endpush
 
 <script>
-         var checkBookedRoomUrl = "{{ route('admin.booking.check-booked-room-del', ['id' => ':id']) }}"; // xoá đặt phòng
+    var checkBookedRoomUrl = "{{ route('admin.booking.check-booked-room-del', ['id' => ':id']) }}"; // xoá đặt phòng
     var deleteBookedRoomUrl = "{{ route('admin.booking.delete-booked-room', ['id' => ':id']) }}";
     var checkInUpdateUrl = "{{ route('admin.check.in.update') }}";
     var deleteCheckin = "{{ route('admin.check.in.delete') }}";
@@ -1509,6 +1509,12 @@
                     }
                 });
                 const checkInDateValue = $('#date-chon-phong-in').val();
+                let checkInDate = new Date($(this).val());
+                if (!isNaN(checkInDate.getTime())) {
+                    checkInDate.setDate(checkInDate.getDate() + 1); // Thêm 1 ngày
+                    let checkOutDate = checkInDate.toISOString().split('T')[0]; // Format YYYY-MM-DD
+                    $("#date-chon-phong-out").val(checkOutDate);
+                }
                 const checkOutDateValue = $('#date-chon-phong-out').val();
 
                 showRoom(roomIds, checkInDateValue, checkOutDateValue, selectedOptionHangPhong,
