@@ -27,7 +27,9 @@ function calculateTotalPrice() {
     let service = 0;
     $('#list-booking, #list-booking-edit, #list-booking-edit-letan').find('p#price, input#price').each(function () {
        priceString = $(this).data('price');
-        let price = parseFloat(priceString.replace(' VND', '').replace(',', '.'));
+       
+       let price = parseFloat($(this).data('price')) || 
+            parseFloat($(this).val().replace(/[^\d]/g, ''));
         totalPrice += price;
     });
     $('#list-booking, #list-booking-edit, #list-booking-edit-letan').find('input.deposit').each(function () {
@@ -94,7 +96,14 @@ function calculateTotalPrice() {
     //  $('#total_balance').text(formatCurrency(totalPrice));
 
     // $('#total_deposit').text(formatCurrency(totalPrice));
-    return totalPrice;
+    return {
+        totalPrice,
+        totalDeposit,
+        totalDiscount,
+        payment,
+        service,
+        totalBalance: totalPrice - totalDeposit - totalDiscount - payment
+    };
 }
 function formatCurrency(amount,showCurrency= '') {
     if (!amount || isNaN(amount)) {
@@ -788,7 +797,7 @@ function initViewScriptGird() {
                     $('[id="date-book-room-booking-edit"]').val(formattedDates);
                     $('.pageModal').text('Nhận phòng');
 
-
+                     $('#list-booking').empty();
 
                     let totalPrice, total_deposit_amount, total_deposit_discount = 0;
                     var tbody = $('#list-booking-edit-letan');
@@ -860,18 +869,18 @@ function initViewScriptGird() {
                             // nếu là bản ghi cuối -> bỏ readonly
                             let checkoutReadonly = isLastRecord ? '' : 'readonly';
                            let priceCell = isLastRecord
-    ? `<input type="text" 
-              id="price" 
-              class="form-control money-input" 
-              data-room-code="${room.room_code}" 
-              data-price="${room.total_amount}" 
-              value="${formatCurrency(room.total_amount)}">`
-    : `<input type="text" 
-              id="price"  
-              class="form-control money-input" 
-              data-price="${room.total_amount}" 
-              value="${formatCurrency(room.total_amount)}" 
-              readonly>`;
+                            ? `<input type="text" 
+                                    id="price" 
+                                    class="form-control money-input" 
+                                    data-room-code="${room.room_code}" 
+                                    data-price="${room.total_amount}" 
+                                    value="${formatCurrency(room.total_amount)}">`
+                            : `<input type="text" 
+                                    id="price"  
+                                    class="form-control money-input" 
+                                    data-price="${room.total_amount}" 
+                                    value="${formatCurrency(room.total_amount)}" 
+                                    readonly>`;
 
 
                             var tr = `
@@ -912,13 +921,15 @@ function initViewScriptGird() {
                                       <input type="text" class="form-control deposit number-input money-input"
                                         value="${new Intl.NumberFormat('vi-VN').format(room.deposit_amount)}"
                                         name="deposit"  placeholder="0"
-                                        oninput="formatMoneyInput(this)">
+                                        >
         
                                     </td>
                                     <td>
                                           <input type="text" class="form-control discount number-input-discount money-input"
                                           value="${new Intl.NumberFormat('vi-VN').format(room.discount)}"
-                                            name="discount"  placeholder="0"     oninput="formatMoneyInput(this)">
+                                            name="discount"  placeholder="0"     
+                                           
+                                            >
                                     </td>
                                     <td>
                                         <input type="text" name="note_room" class="form-control note_room" value="" id="note" value="${room.note}">
@@ -931,89 +942,30 @@ function initViewScriptGird() {
                     });
 
                     totalPrice = calculateTotalPrice();
-                    $('.total_deposit').text(formatCurrency(total_deposit_amount));
-                    $('.total_discount').text(formatCurrency(total_deposit_discount));
+                    console.log(totalPrice);
+                    
+                    $('.total_deposit').text(formatCurrency(totalPrice.total_deposit_amount));
+                    $('.total_discount').text(formatCurrency(totalPrice.total_deposit_discount));
 
-                    $('.total_amount').text(formatCurrency(totalPrice));
-                    $('.total_balance').text(formatCurrency(totalPrice));
-                    let totalDeposit = 0;
-                    let totalBalance = 0;
-
+                    $('.total_amount').text(formatCurrency(totalPrice.totalPrice));
+                    $('.total_balance').text(formatCurrency(totalPrice.totalPrice));
                     function calculateDepositAndBalance() {
-                        let rowTotal = 0;
-
-                        $('tr').each(function () {
-                            $(this).find('input.deposit').each(function () {
-                                let depositValue = $(this).val()
-                                    .replace(/[,.]/g, '');
-                                let numericDeposit = parseInt(
-                                    depositValue) || 0;
-                                rowTotal += numericDeposit;
-                            });
-                        });
-                        $('.total_deposit').text(formatCurrency(rowTotal));
-
-                        let priceString = $('.total_discount').text();
-                        let price = parseInt(priceString.replace(/\./g, '')) || 0;
-
-                        totalBalance = totalPrice - rowTotal - price;
-                        $('.total_balance').text(formatCurrency(totalBalance));
-                        //  $('.total_deposit').text(formatCurrency(price));
+                       totalPrice = calculateTotalPrice();
+                        $('.total_balance').text(formatCurrency(totalPrice.totalBalance));
                     }
-
                     // Chạy khi trang load
                     $(document).ready(function () {
                         calculateDepositAndBalance();
                     });
+                    // tiền cọc
                     $(document).on('blur', 'input.deposit', function () {
-                        let rowTotal = 0;
-                        $('tr').each(function () {
-                            $(this).find('input.deposit').each(function () {
-                                let depositValue = $(this).val().replace(/[,.]/g, '');
-                                let numericDeposit = parseInt(depositValue) || 0;
-                                rowTotal += numericDeposit;
-                            });
-                        });
-
-                        $('.total_deposit').text(formatCurrency(rowTotal));
-
-                        let priceString = $('.total_discount').text();
-                        let price = parseInt(priceString.replace(/\./g, ""), 10);
-                        price = isNaN(price) ? 0 : price;
-
-                        let total_amount = $('.total_amount').text();
-
-                        let total_amount_price = parseInt(total_amount.replace(/\./g, '')) || 0;
-                        total_amount_price = isNaN(total_amount_price) ? 0 : total_amount_price;
-
-                        totalBalance = total_amount_price - rowTotal - price;
-
-
-
-                        $('.total_balance').text(formatCurrency(totalBalance));
+                          totalPrice = calculateTotalPrice();
+                        $('.total_balance').text(formatCurrency(totalPrice.totalBalance));
                     });
-
+                    // giảm giá
                     $(document).on('blur', 'input.discount', function () {
-                        let rowTotal = 0;
-                        $('tr').each(function () {
-                            $(this).find('input.discount').each(function () {
-                                let depositValue = $(this).val().replace(/[,.]/g, '');
-                                let numericDeposit = parseInt(depositValue) || 0;
-                                rowTotal += numericDeposit;
-                            });
-                        });
-                        $('.total_discount').text(formatCurrency(rowTotal));
-                        let priceString = $('.total_deposit').text();
-
-                        let price = parseInt(priceString.replace(/\./g, ""), 10);
-                        price = isNaN(price) ? 0 : price;
-                        let total_amount = $('.total_amount').text();
-                        let total_amount_price = parseInt(total_amount.replace(/\./g, '')) || 0;
-                        total_amount_price = isNaN(total_amount_price) ? 0 : total_amount_price;
-                        totalBalance = total_amount_price - rowTotal - price;
-
-
-                        $('.total_balance').text(formatCurrency(totalBalance));
+                        totalPrice = calculateTotalPrice();
+                        $('.total_balance').text(formatCurrency(totalPrice.totalBalance));
                     });
                     $('#addBookedRoom').modal('hide');
                     $('#loading').hide();
@@ -1027,6 +979,7 @@ function initViewScriptGird() {
             }
         });
     }
+
     function validateCheckout(input) {
         let $row = $(input).closest("tr");
 
@@ -1333,10 +1286,10 @@ function initViewScriptGird() {
                                                 <p id="price" class="d-flex justify-content-center" data-price="${room.total_amount}">${formatCurrency(room.total_amount)}</p>
                                             </td>
                                             <td data-label="Tiền cọc">
-                                                <input type="text" class="form-control deposit number-input money-input"  name="deposit" value="${formatCurrencyEdit(room.deposit_amount)}" placeholder="0">
+                                                <input type="text" class="form-control deposit number-input money-input" readonly name="deposit" value="${formatCurrencyEdit(room.deposit_amount)}" placeholder="0">
                                             </td>
                                               <td data-label="Giảm giá">
-                                                <input type="text" class="form-control discount number-input-discount money-input"   name="discount" value="${formatCurrencyEdit(room.discount ?? 0)}" placeholder="0">
+                                                <input type="text" class="form-control discount number-input-discount money-input"readonly   name="discount" value="${formatCurrencyEdit(room.discount ?? 0)}" placeholder="0">
                                             </td>
                                             <td data-label="Ghi chú">
                                                 <input type="text" name="note_room" class="form-control note_room" value="${room.note}" id="note">
@@ -1357,74 +1310,27 @@ function initViewScriptGird() {
                             // tổng tiền dịch vụ 
                             let intValueService = parseInt($('#total_service').val().replace(/\./g, ''));
 
-
+                          
+                                
                             $('.total_service_display').text(formatCurrency(intValueService));
 
 
 
-                            $('.total_deposit').text(formatCurrency(total_deposit_amount));
+                            $('.total_deposit').text(formatCurrency(totalPrice.total_deposit_amount));
                             //$('.total_discount').text(formatCurrency(total_deposit_discount));
 
 
-                            $('.total_amount').text(formatCurrency(totalPrice));
-                            $('.total_balance').text(formatCurrency(totalPrice));
+                            $('.total_amount').text(formatCurrency(totalPrice.totalPrice));
+                            $('.total_balance').text(formatCurrency(totalPrice.totalPrice + totalPrice.service));
                             $('#loading').hide();
                             let totalDeposit = 0;
                             let totalBalance = 0;
 
                             function calculateDepositAndBalance() {
-                                let rowTotal = 0;
-                                let payment = 0;
-                                let service = 0;
-                                // đặt cọc
-                                $('tr').each(function () {
-                                    $(this).find('input.deposit').each(function () {
-                                        let depositValue = $(this).val()
-                                            .replace(/[,.]/g, '');
-                                        let numericDeposit = parseInt(
-                                            depositValue) || 0;
-                                        rowTotal += numericDeposit;
-                                    });
-                                });
-                                // giảm giá
-                                $('tr').each(function () {
-                                    $(this).find('input.payment').each(function () {
-                                        let depositValue = $(this).val()
-                                            .replace(/[,.]/g, '');
-                                        let numericDeposit = parseInt(
-                                            depositValue) || 0;
-                                        payment = numericDeposit;
-                                    });
-                                });
-                                //dịch vụ
-                                $('tr').each(function () {
-                                    $(this).find('input.total_service').each(function () {
-                                        let totalServiceValue = $(this).val()
-                                            .replace(/[,.]/g, '');
+                              
+                                 totalPrice = calculateTotalPrice();
 
-
-                                        let numericDeposit = parseInt(
-                                            totalServiceValue) || 0;
-                                        service += numericDeposit;
-                                    });
-                                });
-
-                                $('.total_service_display').text(formatCurrency(service));
-                                let serviceString = $('.total_service_display').text();
-                                let service_payment = parseInt(serviceString.replace(/\./g, '')) || 0;
-                                $('.total_deposit').text(formatCurrency(rowTotal));
-
-                                let priceString = $('.total_discount').text();
-                                let price = parseInt(priceString.replace(/\./g, '')) || 0;
-
-
-                                $('.total_payment').text(formatCurrency(payment));
-
-                                let paymentString = $('.total_payment').text();
-                                let total_payment = parseInt(paymentString.replace(/\./g, '')) || 0;
-
-
-                                totalBalance = totalPrice - rowTotal - price - total_payment + service_payment;
+                                totalBalance = (totalPrice.totalPrice - (totalPrice.totalDeposit + totalPrice.totalDiscount))  + totalPrice.service - totalPrice.payment;
 
                                 if (totalBalance > 0) {
                                     $('#checkout_room').prop('disabled', true);
@@ -1438,7 +1344,7 @@ function initViewScriptGird() {
 
 
                                 $('.total_balance').text(formatCurrency(totalBalance));
-
+                                
                             }
 
                             // Chạy khi trang load
@@ -1448,80 +1354,15 @@ function initViewScriptGird() {
 
                             // đặt cọc
                             $(document).on('blur', 'input.deposit', function () {
-                                let rowTotal = 0;
-                                $('tr').each(function () {
-                                    $(this).find('input.deposit').each(function () {
-                                        let depositValue = $(this).val().replace(/[,.]/g, '');
-                                        let numericDeposit = parseInt(depositValue) || 0;
-                                        rowTotal += numericDeposit;
-                                    });
-                                });
-
-                                let total_deposit = $('.total_deposit').text();
-                                let total_deposit_price = parseInt(total_deposit.replace(/\./g, '')) || 0;
-
-                                if (total_deposit_price == rowTotal) {
-                                    return;
-                                }
-                                $('.total_deposit').text(formatCurrency(rowTotal));
-
-                                let priceString = $('.total_discount').text();
-                                let price = parseInt(priceString.replace(/\./g, ""), 10);
-                                price = isNaN(price) ? 0 : price;
-                                // tiền phòng
-                                let total_amount = $('.total_amount').text();
-                                let total_amount_price = parseInt(total_amount.replace(/\./g, '')) || 0;
-                                total_amount_price = isNaN(total_amount_price) ? 0 : total_amount_price;
-                                // giảm giá
-                                let total_discount = $('.total_discount').text();
-                                let total_discount_price = parseInt(total_discount.replace(/\./g, '')) || 0;
-                                // đã thanh toán
-                                let total_payment = $('.total_payment').text();
-                                let total_payment_price = parseInt(total_payment.replace(/\./g, '')) || 0;
-                                // tiên dich vụ
-                                let total_service = $('.total_service_display').text();
-                                let total_service_price = parseInt(total_service.replace(/\./g, '')) || 0;
-                                totalBalance = total_amount_price + total_service_price - rowTotal - price - total_discount_price - total_payment_price;
-                                console.log('đặt cọc:' + totalBalance);
-                                $('.total_balance').text(formatCurrency(totalBalance));
+                                 totalPrice = calculateTotalPrice();
+                                 totalBalance =(totalPrice.totalPrice - (totalPrice.totalDeposit + totalPrice.totalDiscount))  + totalPrice.service - totalPrice.payment;
+                                 $('.total_balance').text(formatCurrency(totalBalance));
                             });
                             // giảm giá
                             $(document).on('blur', 'input.discount', function () {
-                                let rowTotal = 0;
-                                $('tr').each(function () {
-                                    $(this).find('input.discount').each(function () {
-                                        let depositValue = $(this).val().replace(/[,.]/g, '');
-                                        let numericDeposit = parseInt(depositValue) || 0;
-                                        rowTotal += numericDeposit;
-                                    });
-                                });
-                                let total_payment = $('.total_payment').text();
-                                let total_payment_price = parseInt(total_payment.replace(/\./g, '')) || 0;
-                                if (total_payment_price == rowTotal) {
-                                    return;
-                                }
-                                $('.total_discount').text(formatCurrency(rowTotal));
-                                let priceString = $('.total_deposit').text();
-
-                                let price = parseInt(priceString.replace(/\./g, ""), 10);
-                                price = isNaN(price) ? 0 : price;
-                                let total_amount = $('.total_amount').text();
-                                let total_amount_price = parseInt(total_amount.replace(/\./g, '')) || 0;
-                                total_amount_price = isNaN(total_amount_price) ? 0 : total_amount_price;
-                                // giảm giá
-                                let total_discount = $('.total_discount').text();
-                                let total_discount_price = parseInt(total_discount.replace(/\./g, '')) || 0;
-                                // đã thanh toán
-
-                                // tiên dich vụ
-                                let total_service = $('.total_service_display').text();
-                                let total_service_price = parseInt(total_service.replace(/\./g, '')) || 0;
-
-                                // tính số dư 
-                                totalBalance = total_amount_price - rowTotal - price - total_discount_price - total_payment_price + total_service_price;
-
-                                console.log('giảm giá:' + totalBalance);
-                                $('.total_balance').text(formatCurrency(totalBalance));
+                                totalPrice = calculateTotalPrice();
+                                   totalBalance = (totalPrice.totalPrice - (totalPrice.totalDeposit + totalPrice.totalDiscount))  + totalPrice.service - totalPrice.payment;
+                                 $('.total_balance').text(formatCurrency(totalBalance));
                             });
                             // khách thanh toán
                             $(document).on('blur', 'input.css-main-input-pttt', function () {
@@ -1532,34 +1373,10 @@ function initViewScriptGird() {
                                     let numericDeposit = parseInt(depositValue) || 0;
                                     rowTotal += numericDeposit;
                                 });
-
-                                // Cập nhật phần hiển thị tổng (không cập nhật lại input đang nhập)
-                                $('.total_entered_deposit').text(formatCurrency(rowTotal));
-                                console.log(rowTotal);
-
-                                // Lấy giá trị tiền đã cọc
-                                let priceString = $('.total_deposit').text();
-                                let price = parseInt(priceString.replace(/\./g, "")) || 0;
-
-                                // Tổng tiền cần thanh toán
-                                let total_amount = $('.total_amount').text();
-                                let total_amount_price = parseInt(total_amount.replace(/\./g, '')) || 0;
-
-
-                                let total_discount = $('.total_discount').text();
-                                let total_discount_price = parseInt(total_discount.replace(/\./g, '')) || 0;
-
-                                let total_payment = $('.total_payment').text();
-                                let total_payment_price = parseInt(total_payment.replace(/\./g, '')) || 0;
-                                // tiên dich vụ
-                                let total_service = $('.total_service_display').text();
-                                let total_service_price = parseInt(total_service.replace(/\./g, '')) || 0;
-                                // Tính số dư
-                                let totalBalance = total_amount_price - rowTotal - price - total_discount_price - total_payment_price + total_service_price;
-                                console.log(' thanh toán:' + totalBalance);
+                                   totalPrice = calculateTotalPrice();
+                                   let kq = (totalPrice.totalPrice - (totalPrice.totalDeposit + totalPrice.totalDiscount))  + totalPrice.service - totalPrice.payment;
+                                    totalBalance = kq - rowTotal;
                                 if (totalBalance > 0) {
-
-
                                     $('#checkout_room').prop('disabled', true);
                                     $('#print_sales_invoice').prop('disabled', true);
                                     $('#print_invoice').prop('disabled', true);
@@ -1570,7 +1387,8 @@ function initViewScriptGird() {
                                     $('#print_sales_invoice').prop('disabled', false);
                                     $('#print_invoice').prop('disabled', false);
                                 }
-                                $('.total_balance').text(formatCurrency(totalBalance));
+
+                                    $('.total_balance').text(formatCurrency(totalBalance));
                             });
 
                         });
@@ -1742,36 +1560,17 @@ function initViewScriptGird() {
 
 
 
-                            $('.total_deposit').text(formatCurrency(total_deposit_amount));
+                            $('.total_deposit').text(formatCurrency(totalPrice.total_deposit_amount));
 
 
-                            //$('.total_discount').text(formatCurrency(total_deposit_discount));
 
-                            $('.total_amount').text(formatCurrency(totalPrice));
-                            $('.total_balance').text(formatCurrency(totalPrice));
+                            $('.total_amount').text(formatCurrency(totalPrice.totalPrice));
+                            $('.total_balance').text(formatCurrency(totalPrice.totalPrice));
                             $('#loading').hide();
-                            let totalDeposit = 0;
-                            let totalBalance = 0;
 
                             function calculateDepositAndBalance() {
-                                let rowTotal = 0;
-
-                                $('tr').each(function () {
-                                    $(this).find('input.deposit').each(function () {
-                                        let depositValue = $(this).val()
-                                            .replace(/[,.]/g, '');
-                                        let numericDeposit = parseInt(
-                                            depositValue) || 0;
-                                        rowTotal += numericDeposit;
-                                    });
-                                });
-                                $('.total_deposit').text(formatCurrency(rowTotal));
-
-                                let priceString = $('.total_discount').text();
-                                let price = parseInt(priceString.replace(/\./g, '')) || 0;
-
-                                totalBalance = totalPrice - rowTotal - price;
-                                $('.total_balance').text(formatCurrency(totalBalance));
+                                totalPrice = calculateTotalPrice();
+                                $('.total_balance').text(formatCurrency(totalPrice.totalBalance));
                                 //  $('.total_deposit').text(formatCurrency(price));
                             }
 
@@ -1780,53 +1579,13 @@ function initViewScriptGird() {
                                 calculateDepositAndBalance();
                             });
                             $(document).on('blur', 'input.deposit', function () {
-                                let rowTotal = 0;
-                                $('tr').each(function () {
-                                    $(this).find('input.deposit').each(function () {
-                                        let depositValue = $(this).val().replace(/[,.]/g, '');
-                                        let numericDeposit = parseInt(depositValue) || 0;
-                                        rowTotal += numericDeposit;
-                                    });
-                                });
-
-                                $('.total_deposit').text(formatCurrency(rowTotal));
-
-                                let priceString = $('.total_discount').text();
-                                let price = parseInt(priceString.replace(/\./g, ""), 10);
-                                price = isNaN(price) ? 0 : price;
-
-                                let total_amount = $('.total_amount').text();
-                                let total_amount_price = parseInt(total_amount.replace(/\./g, '')) || 0;
-                                total_amount_price = isNaN(total_amount_price) ? 0 : total_amount_price;
-
-                                totalBalance = total_amount_price - rowTotal - price;
-
-
-
-                                $('.total_balance').text(formatCurrency(totalBalance));
+                                totalPrice = calculateTotalPrice();
+                                $('.total_balance').text(formatCurrency(totalPrice.totalBalance));
                             });
 
                             $(document).on('blur', 'input.discount', function () {
-                                let rowTotal = 0;
-                                $('tr').each(function () {
-                                    $(this).find('input.discount').each(function () {
-                                        let depositValue = $(this).val().replace(/[,.]/g, '');
-                                        let numericDeposit = parseInt(depositValue) || 0;
-                                        rowTotal += numericDeposit;
-                                    });
-                                });
-                                $('.total_discount').text(formatCurrency(rowTotal));
-                                let priceString = $('.total_deposit').text();
-
-                                let price = parseInt(priceString.replace(/\./g, ""), 10);
-                                price = isNaN(price) ? 0 : price;
-                                let total_amount = $('.total_amount').text();
-                                let total_amount_price = parseInt(total_amount.replace(/\./g, '')) || 0;
-                                total_amount_price = isNaN(total_amount_price) ? 0 : total_amount_price;
-                                totalBalance = total_amount_price - rowTotal - price;
-
-
-                                $('.total_balance').text(formatCurrency(totalBalance));
+                                totalPrice = calculateTotalPrice();
+                                $('.total_balance').text(formatCurrency(totalPrice.totalBalance));
                             });
 
 
@@ -2151,12 +1910,13 @@ function initViewScriptGird() {
                                 </div>
                             </td>
                            <td data-label="Tiền phòng">
-                                <p id="price" class="d-flex justify-content-center"
-                                data-price="${totalPrice ?? 0}">
-                                ${totalPrice != null
-                                    ? formatCurrency(totalPrice)
-                                    : 0}
-                                </p>
+                              <input type="text" 
+                                id="price"
+                                class="form-control money-input d-flex justify-content-center"
+                                data-price="${totalPrice ?? 0}"
+                                value="${totalPrice != null ? formatCurrency(totalPrice) : 0}"
+                                readonly>
+
                             </td>
 
                             <td data-label="Tiền cọc">
@@ -2180,44 +1940,14 @@ function initViewScriptGird() {
                         totalPrice = calculateTotalPrice();
 
                         $('#loading').hide();
-                        let totalDeposit = 0;
-                        let totalBalance = 0;
+                      
                         $('tr').find('input.deposit').on('blur', function () {
-                            let rowTotal = 0;
-                            $('tr').each(function () {
-                                $(this).find('input.deposit').each(function () {
-                                    let depositValue = $(this).val()
-                                        .replace(/[,.]/g, '');
-                                    let numericDeposit = parseInt(
-                                        depositValue) || 0;
-                                    rowTotal += numericDeposit;
-                                });
-                            });
-                            $('.total_deposit').text(formatCurrency(rowTotal));
-                            let priceString = $('.total_discount').text();
-                            let price = parseInt(priceString.replace(/\./g, ""), 10);
-                            price = isNaN(price) ? 0 : price;
-                            totalBalance = totalPrice - rowTotal - price;
-                            $('.total_balance').text(formatCurrency(totalBalance));
+                           totalPrice = calculateTotalPrice();
+                            $('.total_balance').text(formatCurrency(totalPrice.totalBalance));
                         });
                         $('tr').find('input.discount').on('blur', function () {
-                            let rowTotal = 0;
-                            $('tr').each(function () {
-                                $(this).find('input.discount').each(function () {
-                                    let depositValue = $(this).val()
-                                        .replace(/[,.]/g, '');
-                                    let numericDeposit = parseInt(
-                                        depositValue) || 0;
-                                    rowTotal += numericDeposit;
-                                });
-                            });
-
-                            $('.total_discount').text(formatCurrency(rowTotal));
-                            let priceString = $('.total_deposit').text();
-                            let price = parseInt(priceString.replace(/\./g, ""), 10);
-                            price = isNaN(price) ? 0 : price;
-                            totalBalance = totalPrice - rowTotal - price;
-                            $('.total_balance').text(formatCurrency(totalBalance));
+                            totalPrice = calculateTotalPrice();
+                            $('.total_balance').text(formatCurrency(totalPrice.totalBalance));
                         });
 
                         $('#addRoomModal').modal('hide');
