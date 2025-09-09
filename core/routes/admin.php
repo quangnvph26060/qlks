@@ -502,7 +502,7 @@ Route::middleware('admin', 'adminPermission')->prefix('admin')->group(function (
             Route::get('serviceproduct/{id}', 'bookingserviceproduct')->name('serviceproduct');
 
             Route::get('show-room', 'showRoom')->name('showRoom');
-
+            Route::post('sum-price-room', 'sumPriceRoom')->name('sumPriceRoom');
 
             Route::post('check-room-booking', 'checkRoomBooking')->name('checkRoomBooking');
             // xóa đặt phòng

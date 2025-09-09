@@ -656,6 +656,7 @@
     var deleteService = "{{ route('admin.hotel.premium.service.delete-service') }}";
     var showCurrency = "{{ format_currency() }}";
     var printSalesInvoice = "{{ route('admin.booking.payment.print.invoice', ['id' => '__ID__']) }}";
+    var sumPriceRoom = '{{ route('admin.booking.sumPriceRoom') }}';
     const date_booking = new Date();
     const date_yyyy = date_booking.getFullYear();
     const date_mm = String(date_booking.getMonth() + 1).padStart(2, '0');

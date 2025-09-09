@@ -201,7 +201,7 @@
         var roomBook = "{{ route('admin.room.book') }}";
         var CheckInUrl = "{{ route('admin.room.booked.check.in') }}";
         var deleteCheckin = '{{ route('admin.check.in.delete') }}';
-
+        var sumPriceRoom = '{{ route('admin.booking.sumPriceRoom') }}';
         var delCheckCheckInUrl = "{{ route('admin.booking.check-check-in-del', ['id' => ':id']) }}";
         var deleteCheckInUrl = "{{ route('admin.booking.delete-check-in', ['id' => ':id']) }}";
     </script>

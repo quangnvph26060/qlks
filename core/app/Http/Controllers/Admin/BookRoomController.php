@@ -519,6 +519,7 @@ class BookRoomController extends Controller
                     })
                     ->first();
                 // / cần check /
+                Log::info($checkRoom);
                 if ($checkRoom) {
                     DB::rollBack();
 

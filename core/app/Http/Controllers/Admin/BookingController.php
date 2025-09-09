@@ -390,7 +390,7 @@ class BookingController extends Controller
                 $dates = $this->getDates($request->checkInDate, $request->checkOutDate);
                 $pricesByDateAndRoomType = $this->getPricesBySetupPricingForMultipleDates($dates);
             }
-            $emptyRooms = Room::query()->active()->where('room_fix',0);
+            $emptyRooms = Room::query()->active()->where('room_fix', 0);
             if ($request->method === 'change_room') {
                 $emptyRooms = $emptyRooms->whereNotIn('id', (array) $request->roomId);
             }
@@ -999,7 +999,7 @@ class BookingController extends Controller
         $pricesByRoomTypeId = $this->getPricesBySetupPricing($date);
 
         $rooms = Room::query()->active();
-        $rooms = $rooms->where('room_fix',0); // phòng khong sửa
+        $rooms = $rooms->where('room_fix', 0); // phòng khong sửa
         $rooms->when(!empty($room_type), function ($query) use ($room_type) {
             $query->whereIn('room_type_id', $room_type);
         });
@@ -1969,5 +1969,31 @@ class BookingController extends Controller
             return response()->json(['status' => 'success', 'msg' => 'Cập nhật thành công']);
         }
         return response()->json(['status' => 'success', 'data' => $receiptsPayment]);
+    }
+    public function sumPriceRoom(Request $request)
+    {
+        $dates = $request->dates;
+        $room = Room::where('id', $request->room_id)->first();
+        if (!$room) {
+            return response()->json(['status' => 'error', 'message' => 'Room not found'], 404);
+        }
+
+        $targetRoomTypeId = $room->room_type_id;
+        $pricesByDateAndRoomType = $this->getPricesBySetupPricingForMultipleDates($dates);
+        $totalPrice = 0;
+
+        // Lặp qua từng ngày
+        foreach ($pricesByDateAndRoomType as $date => $rooms) {
+            // Kiểm tra room_type_id tồn tại trong ngày
+            if (isset($rooms[$targetRoomTypeId])) {
+                $totalPrice += floatval($rooms[$targetRoomTypeId]['unit_price']);
+            }
+        }
+
+        return response()->json([
+            'status' => 'success',
+            'total_price' => $totalPrice,
+            'data' => $pricesByDateAndRoomType
+        ]);
     }
 }

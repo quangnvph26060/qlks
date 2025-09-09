@@ -27,7 +27,6 @@ function calculateTotalPrice() {
     let service = 0;
     $('#list-booking, #list-booking-edit, #list-booking-edit-letan').find('p#price, input#price').each(function () {
        priceString = $(this).data('price');
-       
        let price = parseFloat($(this).data('price')) || 
             parseFloat($(this).val().replace(/[^\d]/g, ''));
         totalPrice += price;
@@ -1000,7 +999,7 @@ function initViewScriptGird() {
         let checkOut = new Date(checkOutDate + "T" + checkOutTime);
 
         // So sánh
-        if (checkOut < checkIn) {
+        if (checkOut <= checkIn) {
             alert("Ngày giờ trả phòng không được nhỏ hơn ngày giờ nhận phòng!");
 
             // Reset về ban đầu
@@ -1009,14 +1008,59 @@ function initViewScriptGird() {
             } else {
                 $(input).val(originalTime);
             }
+            return;
         }
+         let dates = [];
+    let current = new Date(checkIn);
+    while (current < checkOut) {
+        dates.push(current.toISOString().split("T")[0]); // yyyy-mm-dd
+        current.setDate(current.getDate() + 1);
+    }
+    $.ajax({
+        url: sumPriceRoom,
+        type: "POST",
+        data: {
+            dates: dates,
+            room_id: $row.data("room-id"),
+        },
+        success: function (res) {
+            // Cập nhật lại giá phòng sau khi server trả về 123123
+            let priceInput = $row.find("#price");
+            priceInput.val(formatCurrency(res.total_price));
+            priceInput.data('price', res.total_price);
+            priceInput.attr('data-price', res.total_price);
+            $row.data('price', res.total_price);
+            $row.attr('data-price', res.total_price);
+            calculateTotalPrice(); // cập nhật lại tổng tiền
+        },
+        error: function () {
+            alert("Có lỗi khi tính giá tiền!");
+        }
+    });
     }
 
     // Gắn sự kiện cho cả date + time
-    $(document).on("change", "input[name='checkOutDate'], input[name='checkOutTime']", function () {
+    $(document).on("change", "input[name='checkOutDate'], input[name='checkOutTime']", function (e) {
+        e.preventDefault(); // Ngăn form submit
+        e.stopPropagation();
         validateCheckout(this);
     });
+    $(document).on('blur', 'input#price', function () {
+    let input = $(this);
+    let rawVal = input.val();
 
+    // Bỏ hết ký tự không phải số
+    let numericVal = parseFloat(rawVal.replace(/[^\d]/g, '')) || 0;
+
+    // Cập nhật data-price
+    input.data('price', numericVal);
+    input.attr('data-price', numericVal);
+    let row = input.closest('tr');
+    row.data('price', numericVal);
+    row.attr('data-price', numericVal);
+    calculateTotalPrice(); // cập nhật lại tổng tiền
+
+});
     $(document).ready(function () {
         $(document).off("click", ".room_change").on("click", ".room_change", function (e) {
             e.stopPropagation();
@@ -2988,8 +3032,10 @@ $('.booking-form-pttt').on('submit', function (e) {
                 initGridMain('', selectedDate);
             } else {
                 notify('error', response.success);
-                $('#input_pttt_error').text(response.errors['amount'] ?? "");
-                $('#select-option-pttt_error1').text(response.errors['payment_pttt'] ?? "");
+                 notify('error', response.error);
+               $('#input_pttt_error').text(response.errors && response.errors['amount'] ? response.errors['amount'] : "");
+
+                $('#select-option-pttt_error1').text(response.errors && response.errors['payment_pttt'] ? response.errors['amount'] : "");
             }
         },
     });
