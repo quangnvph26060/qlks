@@ -469,7 +469,7 @@ class BookRoomController extends Controller
     }
     public function roomBookToCheckIn(Request $request)
     {
-        Log::info($request->all());
+       
         DB::beginTransaction();
         try {
             $validator = Validator::make($request->all(), [
@@ -1048,6 +1048,7 @@ class BookRoomController extends Controller
                         $check_in->note           = $room['note'];
                         $check_in->user_source    = $customer['customer_sourece'] ?? $request->customer_source;
                         $check_in->unit_code      =  unitCode();
+                        $check_in->subdomain      =  subdomain();
                         $check_in->created_by     = $admin_id;
                         $check_in->save();
                         saveRoomStatusHistory($room['room'], $room['dateIn'], $room['dateOut'], 3);
@@ -1103,6 +1104,7 @@ class BookRoomController extends Controller
                     $check_in_new->note           = $room['note'];
                     $check_in_new->user_source    = $customer['customer_sourece'] ?? $request->customer_source;
                     $check_in_new->unit_code      =  unitCode();
+                    $check_in_new->subdomain      =  subdomain();
                     $check_in_new->created_by     = $admin_id;
                     $check_in_new->save();
                     bookingActionRecord($check_in_new->id, $admin_id, $room['room'], 'Nhận phòng', 'check_in');

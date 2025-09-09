@@ -804,9 +804,10 @@
             let totalPrice = 0;
             let totalDeposit = 0;
             let totalDiscount = 0;
-            $('#list-booking, #list-booking-edit').find('p#price').each(function() {
-                let priceString = $(this).attr('data-price');
-                let price = parseFloat(priceString.replace(' VND', '').replace(',', '.'));
+            $('#list-booking, #list-booking-edit').find('p#price, input#price').each(function() {
+                priceString = $(this).data('price');
+                let price = parseFloat($(this).data('price')) ||
+                    parseFloat($(this).val().replace(/[^\d]/g, ''));
                 totalPrice += price;
             });
             $('#list-booking, #list-booking-edit').find('input.deposit').each(function() {
@@ -854,7 +855,12 @@
 
             //  $('#total_balance').text(formatCurrency(totalPrice));
             // $('#total_deposit').text(formatCurrency(totalPrice));
-            return totalPrice;
+            return {
+                totalPrice,
+                totalDeposit,
+                totalDiscount,
+                totalBalance: totalPrice - totalDeposit - totalDiscount 
+            };
         }
 
         function formatDate(inputDate) {
@@ -867,14 +873,14 @@
 
         function formatCurrency(amount) {
             if (!amount || isNaN(amount)) {
-                return '0 VND'; // Nếu amount không hợp lệ, trả về 0 VND
+                return '0'; // Nếu amount không hợp lệ, trả về 0 VND
             }
 
             const parts = parseFloat(amount).toFixed(2).toString().split('.');
             const integerPart = parts[0];
             const formattedInteger = integerPart.replace(/\B(?=(\d{3})+(?!\d))/g, '.');
 
-            return formattedInteger + ' VND';
+            return formattedInteger + ' ';
         }
 
         function getCurrentDate() {
@@ -1402,7 +1408,12 @@
                                     </div>
                                 </td>
                                 <td data-label="Tiền phòng">
-                                     <p id="price" data-price="${item.room['applied_price']['unit_price']}">${formatCurrency(item.room['applied_price']['unit_price'])}</p>
+                                    <input type="text" 
+                                    id="price"  
+                                    class="form-control money-input" 
+                                    data-price="${item.room['applied_price']['unit_price']}" 
+                                    value="${formatCurrency(item.room['applied_price']['unit_price'])}" 
+                                    readonly>
                                 </td>
                                 <td data-label="Tiền cọc">
                                       <input type="text" class="form-control deposit number-input money-input"  name="deposit"  placeholder="0">
@@ -1435,43 +1446,16 @@
                         $('#loading').hide();
                         let totalDeposit = 0;
                         let totalBalance = 0;
+                        // tiền cọc
                         $('tr').find('input.deposit').on('blur', function() {
-                            let rowTotal = 0;
-                            $('tr').each(function() {
-                                $(this).find('input.deposit').each(function() {
-                                    let depositValue = $(this).val()
-                                        .replace(/[,.]/g, '');
-                                    let numericDeposit = parseInt(
-                                        depositValue) || 0;
-                                    rowTotal += numericDeposit;
-                                });
-                            });
-
-                            $('.total_deposit').text(formatCurrency(rowTotal));
-                            let priceString = $('.total_discount').text();
-                            let price = parseInt(priceString.replace(/\./g, ""), 10);
-                            price = isNaN(price) ? 0 : price;
-                            totalBalance = totalPrice - rowTotal - price;
-                            $('.total_balance').text(formatCurrency(totalBalance));
+                           totalPrice = calculateTotalPrice();
+                            
+                            $('.total_balance').text(formatCurrency(totalPrice.totalBalance));
                         });
+                        // giảm giá
                         $('tr').find('input.discount').on('blur', function() {
-                            let rowTotal = 0;
-                            $('tr').each(function() {
-                                $(this).find('input.discount').each(function() {
-                                    let depositValue = $(this).val()
-                                        .replace(/[,.]/g, '');
-                                    let numericDeposit = parseInt(
-                                        depositValue) || 0;
-                                    rowTotal += numericDeposit;
-                                });
-                            });
-
-                            $('.total_discount').text(formatCurrency(rowTotal));
-                            let priceString = $('.total_deposit').text();
-                            let price = parseInt(priceString.replace(/\./g, ""), 10);
-                            price = isNaN(price) ? 0 : price;
-                            totalBalance = totalPrice - rowTotal - price;
-                            $('.total_balance').text(formatCurrency(totalBalance));
+                            totalPrice = calculateTotalPrice();
+                            $('.total_balance').text(formatCurrency(totalPrice.totalBalance));
                         });
 
                         $('#addRoomModal').modal('hide');
@@ -1552,8 +1536,7 @@
         });
 
         function showRoom(data = "", checkInDateValue = "", checkOutDateValue = "", selectedOptionHangPhong =
-            "",
-            selectedOptionNamePhong = "", selectedOptionStatusPhong = "") {
+            "", selectedOptionNamePhong = "", selectedOptionStatusPhong = "") {
             $('#loading').show();
             $('[id="date-chon-phong-in"]').val(checkInDateValue);
             $('[id="date-chon-phong-out"]').val(checkOutDateValue);

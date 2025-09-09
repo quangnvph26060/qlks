@@ -505,7 +505,6 @@ class BookingController extends Controller
                         }
                     }
 
-
                     if (isset($pricesByDateAndRoomType[$date][$room->room_type_id])) {
                         $appliedPrice = $pricesByDateAndRoomType[$date][$room->room_type_id]->unit_price;
                     }
