@@ -1977,6 +1977,23 @@ class BookingController extends Controller
         if (!$room) {
             return response()->json(['status' => 'error', 'message' => 'Room not found'], 404);
         }
+        $checkDates = array_slice($dates, 1);
+
+        $checkRoom = RoomStatusHistory::where('room_id', $room['id'])
+            ->whereIn('status_code', [2, 3])
+            ->whereIn(DB::raw('DATE(start_date)'), $checkDates)
+            ->first();
+
+        if ($checkRoom) {
+            // Lấy khoảng ngày của record trùng
+            $overlapStart = Carbon::parse($checkRoom->start_date)->format('d/m/Y');
+            $overlapEnd   = Carbon::parse($checkRoom->end_date)->format('d/m/Y');
+
+            return response()->json([
+                'status' => 'error',
+                'error' => 'Phòng ' . $room['room_number'] . ' đã được đặt trong khoảng ' . $overlapStart . ' - ' . $overlapEnd,
+            ]);
+        }
 
         $targetRoomTypeId = $room->room_type_id;
         $pricesByDateAndRoomType = $this->getPricesBySetupPricingForMultipleDates($dates);

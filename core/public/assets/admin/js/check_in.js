@@ -507,7 +507,10 @@ function addRoomInBooking(data, list) {
                                     </td>
 
                                      <td data-label="Tiền phòng">
-                                        <input type="text" id="price" class="form-control money-input" data-room-code="${roomId}" data-price="${item.room['applied_price']['unit_price']}" value="${formatCurrency(item.room['applied_price']['unit_price'])}" readonly>
+                                        <input type="text" id="price" class="form-control money-input" data-room-code="${roomId}" 
+                                        data-original-price="${item.room['applied_price']['unit_price']}" 
+                                        data-price="${item.room['applied_price']['unit_price']}" 
+                                        value="${formatCurrency(item.room['applied_price']['unit_price'])}" readonly>
                                     </td>
 
                                     <td data-label="Tiền cọc">
@@ -611,7 +614,9 @@ function validateCheckout(input) {
     // Lấy giá trị gốc ban đầu (lưu trong data attribute khi render)
     let originalDate = $(input).data("original-date");
     let originalTime = $(input).data("original-time");
-
+    let priceInput = $row.find("#price");           // tìm input price trong row đó
+    let originalPrice = priceInput.data("original-price");
+        
     // Convert sang Date object
     let checkIn = new Date(checkInDate + "T" + checkInTime);
     let checkOut = new Date(checkOutDate + "T" + checkOutTime);
@@ -642,14 +647,29 @@ function validateCheckout(input) {
             room_id: $row.data("room-id"),
         },
         success: function (res) {
-            // Cập nhật lại giá phòng sau khi server trả về 123123
-            let priceInput = $row.find("#price");
-            priceInput.val(formatCurrency(res.total_price));
-            priceInput.data('price', res.total_price);
-            priceInput.attr('data-price', res.total_price);
-            $row.data('price', res.total_price);
-            $row.attr('data-price', res.total_price);
-            calculateTotalPrice(); // cập nhật lại tổng tiền
+            if (res.status == 'success') {
+                priceInput.val(formatCurrency(res.total_price));
+                priceInput.data('price', res.total_price);
+                priceInput.attr('data-price', res.total_price);
+                $row.data('price', res.total_price);
+                $row.attr('data-price', res.total_price);
+                calculateTotalPrice(); // cập nhật lại tổng tiền
+            } else {
+                notify('error', res.error);
+                priceInput.val(formatCurrency(originalPrice)); // hiển thị lại giá
+                priceInput.data("price", originalPrice);
+                priceInput.attr("data-price", originalPrice);
+                $row.data('price', originalPrice);
+                $row.attr('data-price', originalPrice);
+                if ($(input).attr("name") === "checkOutDate") {
+                    $(input).val(originalDate);
+                } else {
+                    $(input).val(originalTime);
+                }
+                calculateTotalPrice(); // cập nhật lại tổng tiền
+                return;
+
+            }
         },
         error: function () {
             alert("Có lỗi khi tính giá tiền!");
@@ -658,8 +678,14 @@ function validateCheckout(input) {
 }
 
 // Gắn sự kiện cho cả date + time
-$(document).on("change", "input[name='checkOutDate'], input[name='checkOutTime']", function (e) {
-    e.preventDefault(); // Ngăn form submit
+ $(document).on("change", "input[name='checkOutDate']", function (e) {
+    e.preventDefault();
+    e.stopPropagation();
+    validateCheckout(this);
+});
+
+$(document).on("change", "input[name='checkOutTime']", function (e) {
+    e.preventDefault();
     e.stopPropagation();
     validateCheckout(this);
 });
@@ -1870,7 +1896,7 @@ $('.booking-form').on('submit', function (e) {
         var roomId = $(this).data('room-id');
         var priceRoom = $(this).data('price');
         console.log(priceRoom);//123123
-        
+
         var roomBookingId = $(this).data('room-booking-id');
         var roomTypeId = $(this).data('room-type-id');
         var checkInDate = $(this).find('input[name="checkInDate"]').val();
