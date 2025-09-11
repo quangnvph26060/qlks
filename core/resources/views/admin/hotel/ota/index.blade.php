@@ -12,7 +12,7 @@
                                 <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Đóng"></button>
                             </div>
                             <div class="modal-body">
-                                <div class="vstack gap-4">
+                                <div class="vstack gap-1">
                                     <input type="hidden" value="{{ $hotels->id }}" name="hotel_id">
                                     <input type="hidden" name="id" id="editId">
 
@@ -100,7 +100,9 @@
                                                                     id="room{{ $room->id }}"
                                                                     @if (isset($ota) && is_array($ota->allowed_rooms) && in_array((string) $room->id, $ota->allowed_rooms)) checked @endif>
                                                                 <label class="form-check-label" for="room"
-                                                                    style="color: #000000">{{ $room->room_number }}</label>
+                                                                    title="{{ $room->room_number }}"
+                                                                    style="color: #000000">
+                                                                    {{ \Illuminate\Support\Str::limit($room->room_number, 30) }}</label>
                                                             </div>
                                                         @endforeach
                                                     </div>
@@ -404,6 +406,20 @@
 <style scoped>
     .d-block-mobi {
         display: none;
+    }
+
+    .modal-dialog {
+        max-width: 95%;
+        /* modal không bao giờ vượt quá 95% chiều ngang */
+        width: auto;
+        /* tự động co giãn theo nội dung */
+    }
+
+    .modal-content {
+        max-height: 80vh !important;
+        /* không vượt quá 90% chiều cao màn hình */
+        overflow-y: auto !important;
+        /* thêm scroll khi nội dung quá dài */
     }
 
     /* Mobile: các nút nằm ngang trong 1 hàng */
