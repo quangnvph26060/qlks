@@ -185,32 +185,32 @@ trait HasTodayPrice
             }
 
             // Lấy giá theo room_type_id tương ứng
-            // $pricesByRoomTypeId = [];
-
-            // foreach ($allRoomTypePrices as $roomTypeId => $prices) {
-            //     $priceForToday = $prices->first(fn($price) => in_array($price->setup_pricing_id, $setupPricingIdsForToday));
-            //     $pricesByRoomTypeId[$roomTypeId] = $priceForToday ?: $prices->first();
-            // }
-
-            // $result[$date] = $pricesByRoomTypeId;
             $pricesByRoomTypeId = [];
 
-            $today = \Carbon\Carbon::parse($date)->toDateString();
-
             foreach ($allRoomTypePrices as $roomTypeId => $prices) {
-                // Lọc ra tất cả record có ngày hiệu lực <= hôm nay
-                $pastOrToday = $prices->filter(fn($p) => $p->price_validity_period <= $today);
-
-                if ($pastOrToday->isNotEmpty()) {
-                    // Lấy bản ghi gần nhất nhưng không vượt quá hôm nay
-                    $pricesByRoomTypeId[$roomTypeId] = $pastOrToday->sortByDesc('price_validity_period')->first();
-                } else {
-                    // Nếu không có bản ghi nào <= hôm nay thì lấy bản ghi cũ nhất (tương lai xa nhất về trước)
-                    $pricesByRoomTypeId[$roomTypeId] = $prices->sortBy('price_validity_period')->first();
-                }
+                $priceForToday = $prices->first(fn($price) => in_array($price->setup_pricing_id, $setupPricingIdsForToday));
+                $pricesByRoomTypeId[$roomTypeId] = $priceForToday ?: $prices->first();
             }
 
             $result[$date] = $pricesByRoomTypeId;
+            // $pricesByRoomTypeId = [];
+
+            // $today = \Carbon\Carbon::parse($date)->toDateString();
+
+            // foreach ($allRoomTypePrices as $roomTypeId => $prices) {
+            //     // Lọc ra tất cả record có ngày hiệu lực <= hôm nay
+            //     $pastOrToday = $prices->filter(fn($p) => $p->price_validity_period <= $today);
+
+            //     if ($pastOrToday->isNotEmpty()) {
+            //         // Lấy bản ghi gần nhất nhưng không vượt quá hôm nay
+            //         $pricesByRoomTypeId[$roomTypeId] = $pastOrToday->sortByDesc('price_validity_period')->first();
+            //     } else {
+            //         // Nếu không có bản ghi nào <= hôm nay thì lấy bản ghi cũ nhất (tương lai xa nhất về trước)
+            //         $pricesByRoomTypeId[$roomTypeId] = $prices->sortBy('price_validity_period')->first();
+            //     }
+            // }
+
+            // $result[$date] = $pricesByRoomTypeId;
         }
 
         return $result;
@@ -282,32 +282,32 @@ trait HasTodayPrice
             }
 
             // Lấy giá theo room_type_id tương ứng
-            // $pricesByRoomTypeId = [];
-
-            // foreach ($allRoomTypePrices as $roomTypeId => $prices) {
-            //     $priceForToday = $prices->first(fn($price) => in_array($price->setup_pricing_id, $setupPricingIdsForToday));
-            //     $pricesByRoomTypeId[$roomTypeId] = $priceForToday ?: $prices->first();
-            // }
-
-            // $result[$date] = $pricesByRoomTypeId;
             $pricesByRoomTypeId = [];
 
-            $today = \Carbon\Carbon::parse($date)->toDateString();
-
             foreach ($allRoomTypePrices as $roomTypeId => $prices) {
-                // Lọc ra tất cả record có ngày hiệu lực <= hôm nay
-                $pastOrToday = $prices->filter(fn($p) => $p->price_validity_period <= $today);
-
-                if ($pastOrToday->isNotEmpty()) {
-                    // Lấy bản ghi gần nhất nhưng không vượt quá hôm nay
-                    $pricesByRoomTypeId[$roomTypeId] = $pastOrToday->sortByDesc('price_validity_period')->first();
-                } else {
-                    // Nếu không có bản ghi nào <= hôm nay thì lấy bản ghi cũ nhất (tương lai xa nhất về trước)
-                    $pricesByRoomTypeId[$roomTypeId] = $prices->sortBy('price_validity_period')->first();
-                }
+                $priceForToday = $prices->first(fn($price) => in_array($price->setup_pricing_id, $setupPricingIdsForToday));
+                $pricesByRoomTypeId[$roomTypeId] = $priceForToday ?: $prices->first();
             }
 
             $result[$date] = $pricesByRoomTypeId;
+            // $pricesByRoomTypeId = [];
+
+            // $today = \Carbon\Carbon::parse($date)->toDateString();
+
+            // foreach ($allRoomTypePrices as $roomTypeId => $prices) {
+            //     // Lọc ra tất cả record có ngày hiệu lực <= hôm nay
+            //     $pastOrToday = $prices->filter(fn($p) => $p->price_validity_period <= $today);
+
+            //     if ($pastOrToday->isNotEmpty()) {
+            //         // Lấy bản ghi gần nhất nhưng không vượt quá hôm nay
+            //         $pricesByRoomTypeId[$roomTypeId] = $pastOrToday->sortByDesc('price_validity_period')->first();
+            //     } else {
+            //         // Nếu không có bản ghi nào <= hôm nay thì lấy bản ghi cũ nhất (tương lai xa nhất về trước)
+            //         $pricesByRoomTypeId[$roomTypeId] = $prices->sortBy('price_validity_period')->first();
+            //     }
+            // }
+
+            // $result[$date] = $pricesByRoomTypeId;
         }
 
         return $result;

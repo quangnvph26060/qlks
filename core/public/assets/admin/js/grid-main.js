@@ -26,9 +26,8 @@ function calculateTotalPrice() {
     let payment = 0;
     let service = 0;
     $('#list-booking, #list-booking-edit, #list-booking-edit-letan').find('p#price, input#price').each(function () {
-       priceString = $(this).data('price');
-       
-       let price = parseFloat($(this).data('price')) || 
+        priceString = $(this).data('price');
+        let price = parseFloat($(this).data('price')) ||
             parseFloat($(this).val().replace(/[^\d]/g, ''));
         totalPrice += price;
     });
@@ -105,7 +104,7 @@ function calculateTotalPrice() {
         totalBalance: totalPrice - totalDeposit - totalDiscount - payment
     };
 }
-function formatCurrency(amount,showCurrency= '') {
+function formatCurrency(amount, showCurrency = '') {
     if (!amount || isNaN(amount)) {
         return '0' + showCurrency;
     }
@@ -797,7 +796,7 @@ function initViewScriptGird() {
                     $('[id="date-book-room-booking-edit"]').val(formattedDates);
                     $('.pageModal').text('Nhận phòng');
 
-                     $('#list-booking').empty();
+                    $('#list-booking').empty();
 
                     let totalPrice, total_deposit_amount, total_deposit_discount = 0;
                     var tbody = $('#list-booking-edit-letan');
@@ -868,16 +867,18 @@ function initViewScriptGird() {
 
                             // nếu là bản ghi cuối -> bỏ readonly
                             let checkoutReadonly = isLastRecord ? '' : 'readonly';
-                           let priceCell = isLastRecord
-                            ? `<input type="text" 
+                            let priceCell = isLastRecord
+                                ? `<input type="text" 
                                     id="price" 
                                     class="form-control money-input" 
                                     data-room-code="${room.room_code}" 
+                                    data-original-price="${room.total_amount}"
                                     data-price="${room.total_amount}" 
                                     value="${formatCurrency(room.total_amount)}">`
-                            : `<input type="text" 
+                                : `<input type="text" 
                                     id="price"  
                                     class="form-control money-input" 
+                                     data-original-price="${room.total_amount}"
                                     data-price="${room.total_amount}" 
                                     value="${formatCurrency(room.total_amount)}" 
                                     readonly>`;
@@ -943,14 +944,14 @@ function initViewScriptGird() {
 
                     totalPrice = calculateTotalPrice();
                     console.log(totalPrice);
-                    
+
                     $('.total_deposit').text(formatCurrency(totalPrice.total_deposit_amount));
                     $('.total_discount').text(formatCurrency(totalPrice.total_deposit_discount));
 
                     $('.total_amount').text(formatCurrency(totalPrice.totalPrice));
                     $('.total_balance').text(formatCurrency(totalPrice.totalPrice));
                     function calculateDepositAndBalance() {
-                       totalPrice = calculateTotalPrice();
+                        totalPrice = calculateTotalPrice();
                         $('.total_balance').text(formatCurrency(totalPrice.totalBalance));
                     }
                     // Chạy khi trang load
@@ -959,7 +960,7 @@ function initViewScriptGird() {
                     });
                     // tiền cọc
                     $(document).on('blur', 'input.deposit', function () {
-                          totalPrice = calculateTotalPrice();
+                        totalPrice = calculateTotalPrice();
                         $('.total_balance').text(formatCurrency(totalPrice.totalBalance));
                     });
                     // giảm giá
@@ -979,7 +980,6 @@ function initViewScriptGird() {
             }
         });
     }
-
     function validateCheckout(input) {
         let $row = $(input).closest("tr");
 
@@ -994,13 +994,16 @@ function initViewScriptGird() {
         // Lấy giá trị gốc ban đầu (lưu trong data attribute khi render)
         let originalDate = $(input).data("original-date");
         let originalTime = $(input).data("original-time");
-
+        let priceInput = $row.find("#price");           // tìm input price trong row đó
+        let originalPrice = priceInput.data("original-price");
+        
+        
         // Convert sang Date object
         let checkIn = new Date(checkInDate + "T" + checkInTime);
         let checkOut = new Date(checkOutDate + "T" + checkOutTime);
 
         // So sánh
-        if (checkOut < checkIn) {
+        if (checkOut <= checkIn) {
             alert("Ngày giờ trả phòng không được nhỏ hơn ngày giờ nhận phòng!");
 
             // Reset về ban đầu
@@ -1009,14 +1012,85 @@ function initViewScriptGird() {
             } else {
                 $(input).val(originalTime);
             }
+            return;
         }
+        let dates = [];
+        let current = new Date(checkIn);
+        while (current < checkOut) {
+            dates.push(current.toISOString().split("T")[0]); // yyyy-mm-dd
+            current.setDate(current.getDate() + 1);
+        }
+        $.ajax({
+            url: sumPriceRoom,
+            type: "POST",
+            data: {
+                dates: dates,
+                room_id: $row.data("room-id"),
+            },
+            success: function (res) { 
+                if (res.status == 'success') {
+                   
+                    priceInput.val(formatCurrency(res.total_price));
+                    priceInput.data('price', res.total_price);
+                    priceInput.attr('data-price', res.total_price);
+                    $row.data('price', res.total_price);
+                    $row.attr('data-price', res.total_price);
+                    calculateTotalPrice(); // cập nhật lại tổng tiền
+                } else {
+                    notify('error', res.error);
+                    priceInput.val(formatCurrency(originalPrice)); // hiển thị lại giá
+                    priceInput.data("price", originalPrice);
+                    priceInput.attr("data-price", originalPrice);
+                    $row.data('price', originalPrice);
+                    $row.attr('data-price', originalPrice);
+                    if ($(input).attr("name") === "checkOutDate") {
+                        $(input).val(originalDate);
+                    } else {
+                        $(input).val(originalTime);
+                    }
+                      calculateTotalPrice(); // cập nhật lại tổng tiền
+                    return;
+                   
+                 
+                }
+
+
+            },
+            error: function () {
+                alert("Có lỗi khi tính giá tiền!");
+            }
+        });
     }
 
     // Gắn sự kiện cho cả date + time
-    $(document).on("change", "input[name='checkOutDate'], input[name='checkOutTime']", function () {
-        validateCheckout(this);
-    });
+   $(document).on("change", "input[name='checkOutDate']", function (e) {
+    e.preventDefault();
+    e.stopPropagation();
+    validateCheckout(this);
+});
 
+$(document).on("change", "input[name='checkOutTime']", function (e) {
+    e.preventDefault();
+    e.stopPropagation();
+    validateCheckout(this);
+});
+
+    $(document).on('blur', 'input#price', function () {
+        let input = $(this);
+        let rawVal = input.val();
+
+        // Bỏ hết ký tự không phải số
+        let numericVal = parseFloat(rawVal.replace(/[^\d]/g, '')) || 0;
+
+        // Cập nhật data-price
+        input.data('price', numericVal);
+        input.attr('data-price', numericVal);
+        let row = input.closest('tr');
+        row.data('price', numericVal);
+        row.attr('data-price', numericVal);
+        calculateTotalPrice(); // cập nhật lại tổng tiền
+
+    });
     $(document).ready(function () {
         $(document).off("click", ".room_change").on("click", ".room_change", function (e) {
             e.stopPropagation();
@@ -1310,8 +1384,8 @@ function initViewScriptGird() {
                             // tổng tiền dịch vụ 
                             let intValueService = parseInt($('#total_service').val().replace(/\./g, ''));
 
-                          
-                                
+
+
                             $('.total_service_display').text(formatCurrency(intValueService));
 
 
@@ -1327,10 +1401,10 @@ function initViewScriptGird() {
                             let totalBalance = 0;
 
                             function calculateDepositAndBalance() {
-                              
-                                 totalPrice = calculateTotalPrice();
 
-                                totalBalance = (totalPrice.totalPrice - (totalPrice.totalDeposit + totalPrice.totalDiscount))  + totalPrice.service - totalPrice.payment;
+                                totalPrice = calculateTotalPrice();
+
+                                totalBalance = (totalPrice.totalPrice - (totalPrice.totalDeposit + totalPrice.totalDiscount)) + totalPrice.service - totalPrice.payment;
 
                                 if (totalBalance > 0) {
                                     $('#checkout_room').prop('disabled', true);
@@ -1344,7 +1418,7 @@ function initViewScriptGird() {
 
 
                                 $('.total_balance').text(formatCurrency(totalBalance));
-                                
+
                             }
 
                             // Chạy khi trang load
@@ -1354,15 +1428,15 @@ function initViewScriptGird() {
 
                             // đặt cọc
                             $(document).on('blur', 'input.deposit', function () {
-                                 totalPrice = calculateTotalPrice();
-                                 totalBalance =(totalPrice.totalPrice - (totalPrice.totalDeposit + totalPrice.totalDiscount))  + totalPrice.service - totalPrice.payment;
-                                 $('.total_balance').text(formatCurrency(totalBalance));
+                                totalPrice = calculateTotalPrice();
+                                totalBalance = (totalPrice.totalPrice - (totalPrice.totalDeposit + totalPrice.totalDiscount)) + totalPrice.service - totalPrice.payment;
+                                $('.total_balance').text(formatCurrency(totalBalance));
                             });
                             // giảm giá
                             $(document).on('blur', 'input.discount', function () {
                                 totalPrice = calculateTotalPrice();
-                                   totalBalance = (totalPrice.totalPrice - (totalPrice.totalDeposit + totalPrice.totalDiscount))  + totalPrice.service - totalPrice.payment;
-                                 $('.total_balance').text(formatCurrency(totalBalance));
+                                totalBalance = (totalPrice.totalPrice - (totalPrice.totalDeposit + totalPrice.totalDiscount)) + totalPrice.service - totalPrice.payment;
+                                $('.total_balance').text(formatCurrency(totalBalance));
                             });
                             // khách thanh toán
                             $(document).on('blur', 'input.css-main-input-pttt', function () {
@@ -1373,9 +1447,9 @@ function initViewScriptGird() {
                                     let numericDeposit = parseInt(depositValue) || 0;
                                     rowTotal += numericDeposit;
                                 });
-                                   totalPrice = calculateTotalPrice();
-                                   let kq = (totalPrice.totalPrice - (totalPrice.totalDeposit + totalPrice.totalDiscount))  + totalPrice.service - totalPrice.payment;
-                                    totalBalance = kq - rowTotal;
+                                totalPrice = calculateTotalPrice();
+                                let kq = (totalPrice.totalPrice - (totalPrice.totalDeposit + totalPrice.totalDiscount)) + totalPrice.service - totalPrice.payment;
+                                totalBalance = kq - rowTotal;
                                 if (totalBalance > 0) {
                                     $('#checkout_room').prop('disabled', true);
                                     $('#print_sales_invoice').prop('disabled', true);
@@ -1388,7 +1462,7 @@ function initViewScriptGird() {
                                     $('#print_invoice').prop('disabled', false);
                                 }
 
-                                    $('.total_balance').text(formatCurrency(totalBalance));
+                                $('.total_balance').text(formatCurrency(totalBalance));
                             });
 
                         });
@@ -1940,9 +2014,9 @@ function initViewScriptGird() {
                         totalPrice = calculateTotalPrice();
 
                         $('#loading').hide();
-                      
+
                         $('tr').find('input.deposit').on('blur', function () {
-                           totalPrice = calculateTotalPrice();
+                            totalPrice = calculateTotalPrice();
                             $('.total_balance').text(formatCurrency(totalPrice.totalBalance));
                         });
                         $('tr').find('input.discount').on('blur', function () {
@@ -2988,8 +3062,10 @@ $('.booking-form-pttt').on('submit', function (e) {
                 initGridMain('', selectedDate);
             } else {
                 notify('error', response.success);
-                $('#input_pttt_error').text(response.errors['amount'] ?? "");
-                $('#select-option-pttt_error1').text(response.errors['payment_pttt'] ?? "");
+                notify('error', response.error);
+                $('#input_pttt_error').text(response.errors && response.errors['amount'] ? response.errors['amount'] : "");
+
+                $('#select-option-pttt_error1').text(response.errors && response.errors['payment_pttt'] ? response.errors['amount'] : "");
             }
         },
     });

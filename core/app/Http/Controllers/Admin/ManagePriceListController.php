@@ -516,7 +516,7 @@ class ManagePriceListController extends Controller
 
         $isDuplicate = RoomTypePrice::where('room_type_id', $validatedData['room_type_id'])
             ->where('setup_pricing_id', $validatedData['setup_pricing_id'])
-            // ->where('price_validity_period', $validatedData['price_validity_period'])
+             ->where('price_validity_period', $validatedData['price_validity_period'])
             // ->where('unit_code', unitCode())
             // ->where('subdomain', subdomain())
             ->where('id', '!=', $id) // Loại trừ bản ghi hiện tại

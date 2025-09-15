@@ -167,7 +167,7 @@ class ApipublicController extends Controller
         $dates = $this->getDates($checkInDate, $checkOutDate);
         $pricesByRoomTypeId = $this->getPricesBySetupPricingForMultipleDatesApi($dates);
         $rooms = Room::withoutTenant()->where('subdomain', $hotelFacility->subdomain)->where('unit_code', $hotelFacility->ma_coso)->where('room_fix', 0)->active();
-        $rooms->select('id', 'room_number', 'room_type_id', 'main_image', 'is_clean', 'total_adult', 'total_child', 'beds', 'description', 'area', 'direction');
+        $rooms->select('id', 'room_number', 'room_type_id', 'main_image', 'is_clean', 'total_adult', 'total_child', 'beds', 'description', 'area', 'direction_id');
 
         if (!empty($searchRoomNumber)) {
             $rooms->where('room_number', 'like', '%' . $searchRoomNumber . '%');

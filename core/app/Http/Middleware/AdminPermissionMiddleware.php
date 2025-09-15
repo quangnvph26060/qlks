@@ -51,29 +51,30 @@ class AdminPermissionMiddleware
             'admin.warehouse.export.update', //  xác nhận trạng thái phiếu xuất hàng
             'admin.warehouse.export.destroy.warehouse.item',  // xoá sản phẩm trong chi tiết phiếu xuất khi chưa xác nhận
             'admin.warehouse.transfer.index', // trang điều chuyển
-             'admin.warehouse.transfer.store', // thêm điều chuyển
-             'admin.warehouse.transfer.show', // chi tiết điều chuyển
-             'admin.warehouse.transfer.destroy',// xoá phiếu điều chuyển
-             'admin.warehouse.transfer.update',// xác nhận trạng thái phiếu điểu chuyển
-             'admin.inventory.index', // trang tồn kho
-             'admin.inventory.get', // api tồn kho 
-             'admin.warehouse.export.print', // in phiếu xuất 
-             'admin.warehouse.export.update.import.slipe', // chỉnh sửa phiếu xuất
-             'admin.warehouse.print',// in phiếu nhập 
-             'admin.warehouse.transfer.update.import.slipe', // chỉnh sửa phiếu điều chuyển  
-             'admin.warehouse.transfer.check-stock', // check trong kho đó sản phẩm còn bao nhiêu
-             'admin.warehouse.transfer.print', // in phiếu điều chuyển
-             'admin.hotel.room.product.admin.warehouse.get-products-by-warehouse',
-             'admin.warehouse.import.store', // import phiếu nhập
-             'admin.warehouse.get.logs', // chi tiết phiếu nhập ai là ngươiuf tạo, cập nhật
-             'admin.warehouse.export.get.logs',// chi tiết phiếu  xuất ai là ngươiuf tạo, cập nhật
-             'admin.warehouse.transfer.get.logs', // chi tiết phiếu  điều chuyển ai là ngươiuf tạo, cập nhật
-             'admin.supplier.update',
-             'admin.hotel.customer.search', // tìm kiếm danh mục khách hàng 
-             'admin.hotel.customer.source.search', // tìm kiếm danh mục nguồn khách
-             'admin.hotel.customer.check',
-             'admin.hotel.room.amenities.search',
-             'admin.hotel.room.product.search'
+            'admin.warehouse.transfer.store', // thêm điều chuyển
+            'admin.warehouse.transfer.show', // chi tiết điều chuyển
+            'admin.warehouse.transfer.destroy',// xoá phiếu điều chuyển
+            'admin.warehouse.transfer.update',// xác nhận trạng thái phiếu điểu chuyển
+            'admin.inventory.index', // trang tồn kho
+            'admin.inventory.get', // api tồn kho 
+            'admin.warehouse.export.print', // in phiếu xuất 
+            'admin.warehouse.export.update.import.slipe', // chỉnh sửa phiếu xuất
+            'admin.warehouse.print',// in phiếu nhập 
+            'admin.warehouse.transfer.update.import.slipe', // chỉnh sửa phiếu điều chuyển  
+            'admin.warehouse.transfer.check-stock', // check trong kho đó sản phẩm còn bao nhiêu
+            'admin.warehouse.transfer.print', // in phiếu điều chuyển
+            'admin.hotel.room.product.admin.warehouse.get-products-by-warehouse',
+            'admin.warehouse.import.store', // import phiếu nhập
+            'admin.warehouse.get.logs', // chi tiết phiếu nhập ai là ngươiuf tạo, cập nhật
+            'admin.warehouse.export.get.logs',// chi tiết phiếu  xuất ai là ngươiuf tạo, cập nhật
+            'admin.warehouse.transfer.get.logs', // chi tiết phiếu  điều chuyển ai là ngươiuf tạo, cập nhật
+            'admin.supplier.update',
+            'admin.hotel.customer.search', // tìm kiếm danh mục khách hàng 
+            'admin.hotel.customer.source.search', // tìm kiếm danh mục nguồn khách
+            'admin.hotel.customer.check',
+            'admin.hotel.room.amenities.search',
+            'admin.hotel.room.product.search',
+            'admin.booking.sumPriceRoom'
         ];
         /*
             'admin.revenue' => 'Danh thu trong màn thông kế'

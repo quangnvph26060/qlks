@@ -10,14 +10,14 @@ document.addEventListener('input', function (e) {
 
 function formatCurrency(amount) {
     if (!amount || isNaN(amount)) {
-        return '0 VND'; // Nếu amount không hợp lệ, trả về 0 VND
+        return '0'; // Nếu amount không hợp lệ, trả về 0 VND
     }
 
     const parts = parseFloat(amount).toFixed(2).toString().split('.');
     const integerPart = parts[0];
     const formattedInteger = integerPart.replace(/\B(?=(\d{3})+(?!\d))/g, '.');
 
-    return formattedInteger + ' VND';
+    return formattedInteger;
 }
 function showCustomer(value = "", option_customer_source = "") {
     $('#loading').show();
@@ -114,9 +114,11 @@ function calculateTotalPrice() {
     let totalPrice = 0;
     let totalDeposit = 0;
     let totalDiscount = 0;
-    $('#list-booking, #list-booking-edit').find('p#price').each(function () {
-        let priceString = $(this).attr('data-price');
-        let price = parseFloat(priceString.replace(' VND', '').replace(',', '.'));
+    $('#list-booking, #list-booking-edit').find('p#price, input#price').each(function () {
+       priceString = $(this).data('price');
+       let price = parseFloat($(this).data('price')) || 
+            parseFloat($(this).val().replace(/[^\d]/g, ''));
+            
         totalPrice += price;
     });
     $('#list-booking, #list-booking-edit').find('input.deposit').each(function () {
@@ -164,7 +166,12 @@ function calculateTotalPrice() {
 
     //  $('#total_balance').text(formatCurrency(totalPrice));
     // $('#total_deposit').text(formatCurrency(totalPrice));
-    return totalPrice;
+     return {
+        totalPrice,
+        totalDeposit,
+        totalDiscount,
+        totalBalance: totalPrice - totalDeposit - totalDiscount
+    };
 }
 function countBookings() {
     let bookingList = document.getElementById("list-booking");
