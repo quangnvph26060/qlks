@@ -34,21 +34,18 @@ class CustomerController extends Controller
     public function store(Request $request)
     {
         try {
-            $request->validate([
-                'customer_code' => 'required|string',
-                'name'          => 'required|string',
-                'email'         => [
-                    'nullable',
-                    'email',
-                    Rule::unique('customers')->where(function ($query) {
-                        return $query->where('subdomain', subdomain())
-                            ->where('unit_code', unitCode());
-                    })
-                ],
-            ], [
-                'email.unique' => 'Email đã tồn tại trong hệ thống.',
-            ]);
+            $email = trim($request->email ?? '');
+            if ($email !== '') {
+                $exists = Customer::where('email', $email)
+                    ->where('subdomain', subdomain())
+                    ->where('unit_code', unitCode())
+                    ->exists();
 
+                if ($exists) {
+                    $notify[] = ['error', 'Email đã tồn tại trong hệ thống.'];
+                    return back()->withNotify($notify)->withInput();
+                }
+            }
             $customer = new Customer();
             $customer->customer_code = $request->customer_code;
             $customer->name          = $request->name;
@@ -96,10 +93,17 @@ class CustomerController extends Controller
             'name' => 'required|string',
             // 'phone' => 'required|numeric',
         ]);
+
         $customer = Customer::find($id);
+        if (!$customer) {
+            $notify[] = ['error', 'Không tìm thấy khách hàng'];
+            return back()->withNotify($notify);
+        }
+        $email = trim($request->email ?? '');
         $code = $customer->customer_code;
         $bookings = RoomBooking::where('customer_code', $code)->where('unit_code', unitCode())->first();
         if ($bookings) {
+            Log::info('Khách hàng đang có đơn hàng, không thể cập nhật');
             if ($request->customer_code == $customer->customer_code) {
                 $customer->phone = $request->phone ?? '';
                 $customer->email = $request->email ?? '';
@@ -111,10 +115,23 @@ class CustomerController extends Controller
                 // $customer->unit_code =  $request->unit_code;
                 $customer->save();
                 $notify[] = ['success', 'Cập nhật khách hàng thành công'];
+                return back()->withNotify($notify)->withInput();
             } else {
                 $notify[] = ['error', 'Khách hàng đang có đơn hàng, không thể cập nhật'];
+                return back()->withNotify($notify)->withInput();
             }
         } else {
+             Log::info('Khách hàng');
+            $exists = Customer::where('email', $email)
+                ->where('subdomain', subdomain())
+                ->where('unit_code', unitCode())
+                ->where('id', '<>', $id)
+                ->exists();
+
+            if ($exists) {
+                $notify[] = ['error', 'Email đã tồn tại trong hệ thống.'];
+                return back()->withNotify($notify)->withInput();
+            }
             $customer->customer_code = $request->customer_code;
             $customer->name = $request->name;
             $customer->phone = $request->phone ?? '';
