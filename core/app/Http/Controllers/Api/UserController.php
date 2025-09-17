@@ -364,6 +364,7 @@ class UserController extends Controller
                     'hotel_name' => $request->hotel_homestay,
                     'slug' => Str::slug($request->hotel_homestay)
                 ]);
+                // vai trò lễ tân
                 $permissionIds = [
                     1,
                     2,
@@ -390,9 +391,9 @@ class UserController extends Controller
                     292,
                     293,
                     294,
-                    227, // trang lễ tân
+                    227,
                     301,
-                    302
+                    302,
 
                 ];
 
