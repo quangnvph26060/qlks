@@ -74,7 +74,10 @@ class AdminPermissionMiddleware
             'admin.hotel.customer.check',
             'admin.hotel.room.amenities.search',
             'admin.hotel.room.product.search',
-            'admin.booking.sumPriceRoom'
+            'admin.booking.sumPriceRoom',
+            'admin.booking.room-booking-history', //Thông tin lễ tân
+            'admin.hotel.premium.service.get-all-service', //Trang sản phẩm & dịch vụ
+
         ];
         /*
             'admin.revenue' => 'Danh thu trong màn thông kế'

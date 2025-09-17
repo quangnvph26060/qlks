@@ -389,7 +389,11 @@ class UserController extends Controller
                     291,
                     292,
                     293,
-                    294
+                    294,
+                    227, // trang lễ tân
+                    301,
+                    302
+
                 ];
 
                 // thêm vai trò

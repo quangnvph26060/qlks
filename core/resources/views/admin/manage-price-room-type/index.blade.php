@@ -350,11 +350,17 @@
                 } else {
                     $('#dayType_error').text('');
                 }
+                let checked = document.querySelectorAll('input[name="price_requirement[]"]:checked');
+                if (checked.length === 0) {
+                      $('#dayType_error').text('Vui lòng chọn hình thức');
+                    isValid = false;
+                } else {
+                    $('#dayType_error').text('');
+                }
 
-
-                if ( validateAllFields(formEconomyEdit)) {
-                    if(isValid){
-                     document.getElementById('btn-setupPrice-submit').submit();
+                if (validateAllFields(formEconomyEdit)) {
+                    if (isValid) {
+                        document.getElementById('btn-setupPrice-submit').submit();
                     }
                 }
             });
@@ -370,8 +376,15 @@
                 } else {
                     $('#dayType_error').text('');
                 }
+                 let checked = document.querySelectorAll('input[name="price_requirement[]"]:checked');
+                if (checked.length === 0) {
+                      $('#dayType_error').text('Vui lòng chọn hình thức');
+                    isValid = false;
+                } else {
+                    $('#dayType_error').text('');
+                }
                 if (validateAllFields(formEconomyEdit)) {
-                    if(isValid){
+                    if (isValid) {
                         document.getElementById('btn-setupPrice-submit-edit').submit();
                     }
                 }
