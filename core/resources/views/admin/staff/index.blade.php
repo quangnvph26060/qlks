@@ -62,11 +62,11 @@
                                                                 @endcan
 
                                                                 @can('admin.staff.login')
-                                                                    <a class="dropdown-item"
+                                                                    {{-- <a class="dropdown-item"
                                                                         href="{{ route('admin.staff.login', $staff->id) }}"
                                                                         target="_blank">
                                                                         <i class="las la-sign-in-alt"></i> @lang('Đăng nhập')
-                                                                    </a>
+                                                                    </a> --}}
                                                                 @endcan
                                                             </div>
                                                         </div>
