@@ -117,7 +117,9 @@ Route::namespace('Api')->name('api.')->group(function () {
         Route::get('/rooms/{hotel}', [ApipublicController::class, 'getRooms']);
         Route::get('/get-hotels', [ApipublicController::class, 'getHotels']);
         Route::get('/get-invoice', [ApipublicController::class, 'getInvoice']);
-      
+        Route::post('/book-room', [ApipublicController::class, 'book']);
+        Route::post('room-booking/{id}',[ApipublicController::class, 'roomBookingInfo']);
+        Route::post('delete-booked-room/{id}',[ApipublicController::class, 'deleteRoomBooking']);
         Route::get('/roomss', function () {
             return '123';
         });

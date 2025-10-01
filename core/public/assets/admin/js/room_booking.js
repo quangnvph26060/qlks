@@ -324,7 +324,7 @@ $('#selected-name-phong, #selected-hang-phong, #date-chon-phong-out, #date-chon-
         });
         const checkInDateValue = $('#date-chon-phong-in').val();
 
-      
+
         let checkInDate = new Date($(this).val());
         if (!isNaN(checkInDate.getTime())) {
             checkInDate.setDate(checkInDate.getDate() + 1); // Thêm 1 ngày
@@ -651,43 +651,19 @@ function addRoomInBooking(data, list) {
                     }
                 })
                 totalPrice = calculateTotalPrice();
+              
 
                 $('#loading').hide();
                 let totalDeposit = 0;
                 let totalBalance = 0;
                 $('tr').find('input.deposit').on('blur', function () {
-                    let rowTotal = 0;
-                    $('tr').each(function () {
-                        $(this).find('input.deposit').each(function () {
-                            let depositValue = $(this).val().replace(/[,.]/g, '');
-                            let numericDeposit = parseInt(depositValue) || 0;
-                            rowTotal += numericDeposit;
-                        });
-                    });
-
-                    $('.total_deposit').text(formatCurrency(rowTotal));
-                    let priceString = $('.total_discount').text();
-                    let price = parseInt(priceString.replace(/\./g, ""), 10);
-                    price = isNaN(price) ? 0 : price;
-                    totalBalance = totalPrice - rowTotal - price;
-                    $('.total_balance').text(formatCurrency(totalBalance));
+                    totalPrice = calculateTotalPrice();
+                 
+                    $('.total_balance').text(formatCurrency(totalPrice.totalBalance));
                 });
                 $('tr').find('input.discount').on('blur', function () {
-                    let rowTotal = 0;
-                    $('tr').each(function () {
-                        $(this).find('input.discount').each(function () {
-                            let depositValue = $(this).val().replace(/[,.]/g, '');
-                            let numericDeposit = parseInt(depositValue) || 0;
-                            rowTotal += numericDeposit;
-                        });
-                    });
-
-                    $('.total_discount').text(formatCurrency(rowTotal));
-                    let priceString = $('.total_deposit').text();
-                    let price = parseInt(priceString.replace(/\./g, ""), 10);
-                    price = isNaN(price) ? 0 : price;
-                    totalBalance = totalPrice - rowTotal - price;
-                    $('.total_balance').text(formatCurrency(totalBalance));
+                   totalPrice = calculateTotalPrice();
+                    $('.total_balance').text(formatCurrency(totalPrice.totalBalance));
                 });
 
                 $('#addRoomModal').modal('hide');
