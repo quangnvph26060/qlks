@@ -997,7 +997,7 @@ class BookRoomController extends Controller
             'admin'                  => $admin,
             'customerSourse'         => $customerSourse,
             'option_customer_source' => $customer->group_code ?? $booking->user_source,
-            'option_admin'           => $is_admin['name'],
+            'option_admin'           => $is_admin['name'] ??"",
             'pageModal'              => $pageModal,
         ]);
     }

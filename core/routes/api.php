@@ -113,16 +113,17 @@ Route::namespace('Api')->name('api.')->group(function () {
     });
     // api public
     Route::middleware('check.api.token')->group(function () {
-        // routes/api.php
         Route::get('/rooms/{hotel}', [ApipublicController::class, 'getRooms']);
         Route::get('/get-hotels', [ApipublicController::class, 'getHotels']);
         Route::get('/get-invoice', [ApipublicController::class, 'getInvoice']);
         Route::post('/book-room', [ApipublicController::class, 'book']);
+        Route::post('/book-room-edit', [ApipublicController::class, 'bookEdit']);
+        Route::post('/update-price-room', [ApipublicController::class, 'updatePriceRoomHotel']);
         Route::post('room-booking/{id}',[ApipublicController::class, 'roomBookingInfo']);
-        Route::post('delete-booked-room/{id}',[ApipublicController::class, 'deleteRoomBooking']);
-        Route::get('/roomss', function () {
-            return '123';
-        });
+        Route::delete('delete-booked-room/{id}',[ApipublicController::class, 'deleteRoomBooking']);
+        // Route::get('/roomss', function () {
+        //     return '123';
+        // });
     });
 });
 

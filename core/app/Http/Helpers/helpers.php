@@ -393,6 +393,40 @@ function saveRoomStatusHistory($room_id, $start_date, $end_date, $status_code)
         ]);
     }
 }
+function saveRoomStatusHistoryApi($room_id, $start_date, $end_date, $status_code, $subdomain)
+{
+
+    $existingRecords = RoomStatusHistory::where('room_id', $room_id)
+        ->where(function ($query) use ($start_date, $end_date) {
+            $query->whereBetween('start_date', [$start_date, $end_date])
+                ->orWhereBetween('end_date', [$start_date, $end_date])
+                ->orWhere(function ($q) use ($start_date, $end_date) {
+                    $q->where('start_date', '<=', $start_date)
+                        ->where('end_date', '>=', $end_date);
+                });
+        })
+        ->get();
+
+    if ($existingRecords->isNotEmpty()) {
+        $existingRecords->each(function ($record) use ($status_code, $start_date, $end_date) {
+            $record->update([
+                'start_date'  => $start_date,
+                'end_date'    => $end_date,
+                'status_code' => $status_code
+            ]);
+        });
+    } else {
+        RoomStatusHistory::create([
+            'room_id'     => $room_id,
+            'start_date'  => $start_date,
+            'end_date'    => $end_date,
+            'unit_code'   =>   "COSO1", //unitCode()
+            'subdomain'   => $subdomain,
+            'created_at'  => now(),
+            'status_code' => $status_code
+        ]);
+    }
+}
 function savePayment($booking_id, $checkin_id, $room_price, $payment_method, $admin)
 {
     return ReceiptAndPayment::create([
@@ -830,7 +864,39 @@ function bookingActionRecord($bookingId, $admin, $room, $remark, $action_table)
     $action->subdomain     = subdomain();
     $action->save();
 }
+function bookingActionRecordApi($bookingId, $admin, $room, $remark, $action_table,$subdomain)
+{
+    // Tự động lấy mã nếu remark chưa được truyền vào
+    Log::info($bookingId);
+    $code = null;
+    switch ($action_table) {
+        case 'room_booking':
+            $booking = RoomBooking::find($bookingId);
+            $code = $booking?->booking_id;
+            break;
 
+        case 'check_in':
+            $checkIn = CheckIn::find($bookingId);
+            $code = $checkIn?->check_in_id;
+            break;
+
+        default:
+            $code = null;
+            break;
+    }
+
+
+    $action = new BookingActionHistory();
+    $action->booking_id    = $code;
+    $action->remark        = $remark;
+    $action->admin_id      = $admin;
+    $action->room_id       = $room;
+    $action->action_time   = now();
+    $action->action_table  = $action_table;
+    $action->unit_code       = "COSO1"; //unitCode()
+    $action->subdomain       = $subdomain; //subdomain();
+    $action->save();
+}
 function getSelectedRooms($bookedRooms, $numberOfRooms)
 {
     asort($bookedRooms);
