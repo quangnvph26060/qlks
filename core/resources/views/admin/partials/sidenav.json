@@ -1,4 +1,13 @@
 {
+    "getDataTravelViet": {
+        "keyword": [
+            "Lấy Dữ Liệu TravelViet"
+        ],
+        "title": "Lấy Dữ Liệu TravelViet",
+        "icon": "menu-icon las la-cloud-download-alt",
+        "route_name": "admin.travelviet.index",
+        "menu_active": "admin.travelviet.index"
+    },
     "dashboard": {
         "keyword": [
             "Dashboard"

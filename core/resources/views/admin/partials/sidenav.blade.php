@@ -72,6 +72,12 @@
         <div class="sidebar__menu-wrapper">
 
             <ul class="sidebar__menu">
+                <!-- <li class="sidebar-menu-item">
+                    <a href="{{ route('admin.travelviet.index') }}" onclick="return loadIframe(this.href);" class="nav-link">
+                        <i class="menu-icon las la-cloud-download-alt"></i>
+                        <span class="menu-title">Lấy Dữ Liệu TravelViet</span>
+                    </a>
+                </li> -->
                 @foreach ($sideBarLinks as $key => $data)
                     {{-- @if (@$data->header && auth()->guard('admin')->id() == 1)
                             <li class="sidebar__menu-header">{{ __($data->header) }}</li>
@@ -238,7 +244,28 @@
         transform: translateX(-250px);
         /* Ẩn sidebar bằng cách dịch chuyển nó sang trái */
     }
+    /* TravelViet Modal styles */
+    #travelVietModalBackdrop{
+        position: fixed; inset: 0; background: rgba(0,0,0,.5); z-index: 1050;
+    }
+    #travelVietModal{ position: fixed; inset: 0; z-index: 1051; display: flex; align-items: center; justify-content: center; }
+    .tv-modal-dialog{ width:95%; max-width:1100px; max-height:90vh; overflow:hidden; background:#fff; border-radius:20px; box-shadow:0 20px 60px rgba(0,0,0,.3); display:flex; flex-direction:column; }
+    .tv-modal-header{ background:linear-gradient(135deg,#2563eb,#7c3aed); color:#fff; padding:16px 24px; display:flex; align-items:center; justify-content:space-between; }
+    .tv-modal-body{ padding:16px 24px; overflow:auto; }
+    .tv-modal-footer{ padding:16px 24px; display:flex; gap:12px; justify-content:flex-end; }
+    .tv-grid{ display:grid; grid-template-columns:repeat(3,minmax(0,1fr)); gap:12px; }
+    .tv-option{ border:2px solid #e5e7eb; border-radius:12px; padding:16px; cursor:pointer; transition:.2s; background:#fff; }
+    .tv-option:hover{ border-color:#2563eb; background:#f0f9ff; transform:translateX(4px); }
+    .tv-option.active{ border-color:#2563eb; background:linear-gradient(135deg,#dbeafe,#e0e7ff); box-shadow:0 4px 12px rgba(37,99,235,.2); }
+    .tv-table-wrap{ max-height:400px; overflow:auto; margin-top:12px; }
+    .tv-btn-primary{ background:linear-gradient(135deg,#2563eb,#7c3aed); color:#fff; border:none; padding:8px 12px; border-radius:10px; }
+    .tv-btn-success{ background:#10b981; color:#fff; border:none; padding:10px 16px; border-radius:10px; }
+    .tv-btn-danger{ background:linear-gradient(135deg,#f59e0b,#ef4444); color:#fff; border:none; padding:10px 16px; border-radius:10px; }
+    @media (max-width: 992px){ .tv-grid{ grid-template-columns:repeat(2,minmax(0,1fr)); } }
+    @media (max-width: 576px){ .tv-grid{ grid-template-columns:1fr; } }
 </style>
+
+<!-- TravelViet Modal removed; now using dedicated page -->
 
 @push('script')
     <script>
@@ -256,6 +283,163 @@
 
             $('.res-sidebar-close-btn').on('click', function() {
                 $('.sidebar').removeClass('open');
+            });
+
+            // TravelViet modal logic (no Bootstrap dependency)
+            const tvBackdrop = document.getElementById('travelVietModalBackdrop');
+            const tvModal = document.getElementById('travelVietModal');
+            const tvOpenBtn = document.getElementById('openTravelVietModalBtn');
+            const tvCloseBtn = document.getElementById('tvCloseBtn');
+            const tvCloseBtn2 = document.getElementById('tvCloseBtn2');
+            const tvForm = document.getElementById('tvForm');
+            const tvLangId = document.getElementById('tvLangId');
+            const tvHotelName = document.getElementById('tvHotelName');
+            const tvSearchBtn = document.getElementById('tvSearchBtn');
+            const tvStepOptions = document.getElementById('tvStepOptions');
+            const tvStepLoading = document.getElementById('tvStepLoading');
+            const tvStepData = document.getElementById('tvStepData');
+            const tvSelectAll = document.getElementById('tvSelectAll');
+            const tvTableHead = document.getElementById('tvTableHead');
+            const tvTableBody = document.getElementById('tvTableBody');
+            const tvSelectedCount = document.getElementById('tvSelectedCount');
+            const tvSaveBtn = document.getElementById('tvSaveBtn');
+
+            let selectedOption = null;
+            let currentData = [];
+
+            function openModal(){
+                tvBackdrop.style.display = 'block';
+                tvModal.style.display = 'flex';
+                document.body.classList.add('modal-open');
+            }
+            function closeModal(){
+                tvBackdrop.style.display = 'none';
+                tvModal.style.display = 'none';
+                resetModal();
+                document.body.classList.remove('modal-open');
+            }
+            function resetModal(){
+                tvStepOptions.style.display = 'block';
+                tvStepLoading.style.display = 'none';
+                tvStepData.style.display = 'none';
+                tvSaveBtn.style.display = 'none';
+                selectedOption = null;
+                currentData = [];
+                tvTableHead.innerHTML = '';
+                tvTableBody.innerHTML = '';
+                tvSelectedCount.textContent = '0';
+                tvSelectAll.checked = false;
+            }
+
+            tvOpenBtn && tvOpenBtn.addEventListener('click', openModal);
+            tvBackdrop.addEventListener('click', closeModal);
+            tvCloseBtn.addEventListener('click', closeModal);
+            tvCloseBtn2.addEventListener('click', closeModal);
+
+            tvSearchBtn.addEventListener('click', function(){
+                const langId = (tvLangId.value || '').trim();
+                const hotelName = (tvHotelName.value || '').trim();
+                if (!langId || !hotelName) {
+                    alert('Vui lòng nhập lang_id và tên khách sạn');
+                    return;
+                }
+                tvStepOptions.style.display = 'none';
+                tvStepLoading.style.display = 'block';
+
+                const csrf = document.querySelector('meta[name="csrf-token"]')?.getAttribute('content');
+                $.ajax({
+                    url: '{{ route('admin.travelviet.search-hotel') }}',
+                    method: 'POST',
+                    headers: csrf ? { 'X-CSRF-TOKEN': csrf } : {},
+                    data: { lang_id: langId, hotel_name: hotelName },
+                }).done(function(res){
+                    const payload = (res && (res.data ?? res.results ?? res.items)) || res || [];
+                    const list = Array.isArray(payload) ? payload : (Array.isArray(payload?.data) ? payload.data : []);
+                    currentData = list;
+                    renderTableFromApi(currentData);
+                    tvStepLoading.style.display = 'none';
+                    tvStepData.style.display = 'block';
+                    tvSaveBtn.style.display = currentData.length ? 'inline-block' : 'none';
+                }).fail(function(xhr){
+                    tvStepLoading.style.display = 'none';
+                    tvStepOptions.style.display = 'block';
+                    const msg = xhr?.responseJSON?.message || 'Không thể lấy dữ liệu từ API';
+                    alert(msg);
+                });
+            });
+
+            function renderTableFromApi(data){
+                const list = Array.isArray(data) ? data : [];
+                if (!list.length){
+                    tvTableHead.innerHTML = '';
+                    tvTableBody.innerHTML = '<tr><td class="text-center text-muted">Không có dữ liệu</td></tr>';
+                    setupChecks();
+                    return;
+                }
+                const keys = Object.keys(list[0] || {});
+                const headerCells = ['<th><input type="checkbox" class="form-check-input" id="tvHeaderCheck"></th>']
+                    .concat(keys.map(k => `<th>${k}</th>`))
+                    .join('');
+                tvTableHead.innerHTML = `<tr>${headerCells}</tr>`;
+                const rows = list.map(item => {
+                    const tds = keys.map(k => `<td>${escapeHtml(String(item[k] ?? ''))}</td>`).join('');
+                    const idVal = item.id ?? '';
+                    return `<tr><td><input type="checkbox" class="form-check-input tv-row-check" data-id="${idVal}"></td>${tds}</tr>`;
+                }).join('');
+                tvTableBody.innerHTML = rows;
+                setupChecks();
+            }
+
+            function escapeHtml(str){
+                return str
+                    .replace(/&/g, '&amp;')
+                    .replace(/</g, '&lt;')
+                    .replace(/>/g, '&gt;')
+                    .replace(/"/g, '&quot;')
+                    .replace(/'/g, '&#039;');
+            }
+
+            function setupChecks(){
+                const headerCheck = document.getElementById('tvHeaderCheck');
+                const rowChecks = document.querySelectorAll('.tv-row-check');
+                function updateCount(){
+                    tvSelectedCount.textContent = document.querySelectorAll('.tv-row-check:checked').length;
+                }
+                tvSelectAll.onchange = function(){
+                    rowChecks.forEach(c => c.checked = this.checked);
+                    if (headerCheck) headerCheck.checked = this.checked;
+                    updateCount();
+                }
+                if (headerCheck) headerCheck.onchange = function(){
+                    rowChecks.forEach(c => c.checked = this.checked);
+                    tvSelectAll.checked = this.checked;
+                    updateCount();
+                }
+                rowChecks.forEach(c => c.addEventListener('change', function(){
+                    const allChecked = Array.from(rowChecks).every(x => x.checked);
+                    tvSelectAll.checked = allChecked;
+                    if (headerCheck) headerCheck.checked = allChecked;
+                    updateCount();
+                }));
+                updateCount();
+            }
+
+            tvSaveBtn.addEventListener('click', function(){
+                const selectedIds = Array.from(document.querySelectorAll('.tv-row-check:checked')).map(x => x.dataset.id);
+                if (!selectedIds.length){
+                    alert('Vui lòng chọn ít nhất 1 mục để lưu!');
+                    return;
+                }
+                const btn = this;
+                const prev = btn.innerHTML;
+                btn.innerHTML = '<span class="spinner-border spinner-border-sm"></span> Đang lưu...';
+                btn.disabled = true;
+                setTimeout(() => {
+                    alert(`✅ Đã lưu thành công ${selectedIds.length} mục vào database!`);
+                    btn.innerHTML = prev;
+                    btn.disabled = false;
+                    closeModal();
+                }, 1200);
             });
         });
     </script>

@@ -75,6 +75,11 @@ class AdminPermissionMiddleware
             'admin.hotel.room.amenities.search',
             'admin.hotel.room.product.search',
             'admin.booking.sumPriceRoom',
+            'admin.travelviet.index', // lấy dữ liệu travelviet
+            'admin.travelviet.search-hotel', // lấy dữ liệu travelviet
+            'admin.travelviet.search-roomtypes', // lấy dữ liệu travelviet
+            'admin.travelviet.search-rooms', // lấy dữ liệu travelviet
+            'admin.travelviet.save', // lưu dữ liệu travelviet
             // 'admin.booking.room-booking-history', //Thông tin lễ tân
             // 'admin.hotel.premium.service.get-all-service', //Trang sản phẩm & dịch vụ
 

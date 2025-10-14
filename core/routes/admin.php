@@ -6,6 +6,7 @@ use App\Http\Controllers\Admin\PriceController;
 use App\Http\Controllers\Admin\TransactionController;
 use Illuminate\Support\Facades\Route;
 use App\Http\Controllers\Admin\RoomImportExportController;
+use App\Http\Controllers\Admin\TravelVietController;
 
 
 
@@ -37,6 +38,12 @@ Route::namespace('Auth')->group(function () {
 });
 
 Route::middleware('admin', 'adminPermission')->prefix('admin')->group(function () {
+    // TravelViet API proxy + page
+    Route::get('travelviet', [TravelVietController::class, 'index'])->name('travelviet.index');
+    Route::post('travelviet/search-hotel', [TravelVietController::class, 'searchHotel'])->name('travelviet.search-hotel');
+    Route::post('travelviet/search-roomtypes', [TravelVietController::class, 'searchRoomTypes'])->name('travelviet.search-roomtypes');
+    Route::post('travelviet/search-rooms', [TravelVietController::class, 'searchRooms'])->name('travelviet.search-rooms');
+    Route::post('travelviet/save', [TravelVietController::class, 'saveSelection'])->name('travelviet.save');
     Route::prefix('fee')->name('fee.')->group(function () {
         Route::get('', [FeeController::class, 'index'])->name('index');
         Route::post('update', [FeeController::class, 'update'])->name('update');
@@ -597,7 +604,7 @@ Route::middleware('admin', 'adminPermission')->prefix('admin')->group(function (
         Route::get('delayed/checkout', 'delayedCheckouts')->name('delayed.booking.checkout');
         Route::get('receptionist', 'Receptionist')->name('receptionist.booking.receptionist');
         Route::get('user-clean-room', 'listUserCleanRoom')->name('listUserCleanRoom.booking.listUserCleanRoom');
-        Route::get('user-room-fix', action: 'listUserFixRoom')->name('listUserFixRoom.booking.listUserFixRoom');
+        Route::get('user-room-fix', 'listUserFixRoom')->name('listUserFixRoom.booking.listUserFixRoom');
         Route::get('housekeeping-maintenance-room', 'viewHousekeepingMaintenance')->name('viewHousekeepingMaintenance.booking.viewHousekeepingMaintenance');
         Route::get('booking-action-history', 'bookingActionHistory')->name('bookingActionHistory.booking.bookingActionHistory');
         Route::get('get-booking-action-history', 'getbookingActionHistory')->name('getbookingActionHistory.booking.getbookingActionHistory');
@@ -873,8 +880,8 @@ Route::middleware('admin', 'adminPermission')->prefix('admin')->group(function (
     // Report room status
     Route::controller('ManageReportController')->prefix('manage')->name('manage.')->group(function () {
 
-        Route::get('periodic-report', action: 'periodicReport')->name('periodic.report');
-        Route::get('room-status', action: 'rommStatus')->name('room.status');
+        Route::get('periodic-report', 'periodicReport')->name('periodic.report');
+        Route::get('room-status', 'rommStatus')->name('room.status');
         Route::get('room-status-history', 'roomStatusHistory')->name('room.status.history');
     });
 });
