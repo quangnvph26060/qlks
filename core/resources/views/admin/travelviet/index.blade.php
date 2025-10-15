@@ -3,14 +3,11 @@
 @section('content')
 <div class="container-fluid px-3 px-sm-0">
     <div class="card">
-        <div class="card-header d-flex align-items-center justify-content-between">
-            <h5 class="mb-0">TravelViet - Tìm kiếm và đồng bộ</h5>
-        </div>
         <div class="card-body">
             <form id="tvFormPage" class="row g-3" onsubmit="return false;">
                 <div class="col-md-7">
                     <label for="pHotelName" class="form-label">Tên khách sạn</label>
-                    <input type="text" class="form-control" id="pHotelName" placeholder="Nhập tên khách sạn...">
+                    <input type="text" class="form-control" id="pHotelName" value="{{ hf('ten_coso') }}" placeholder="Nhập tên khách sạn..." disabled>
                 </div>
                 <div class="col-md-5 d-flex align-items-end gap-2">
                     <button class="btn btn--primary" id="btnHotel">Lấy thông tin khách sạn</button>
