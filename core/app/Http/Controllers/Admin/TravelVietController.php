@@ -121,7 +121,6 @@ class TravelVietController extends Controller
             'lang_id' => 'required',
             'hotel_name' => 'required|string',
         ]);
-
         $langId = $request->input('lang_id');
         $hotelName = $request->input('hotel_name');
 
