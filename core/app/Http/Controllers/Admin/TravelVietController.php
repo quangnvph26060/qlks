@@ -26,7 +26,7 @@ class TravelVietController extends Controller
     {
         $token = env('TRAVELVIET_TOKEN');
         if (empty($token)) {
-            \Log::error('TravelViet API: Missing TRAVELVIET_TOKEN in environment');
+            Log::error('TravelViet API: Missing TRAVELVIET_TOKEN in environment');
             return response()->json([
                 'message' => 'Cấu hình API chưa đầy đủ. Vui lòng liên hệ quản trị viên để cấu hình TRAVELVIET_TOKEN.',
                 'error_code' => 'MISSING_TOKEN'
@@ -36,7 +36,7 @@ class TravelVietController extends Controller
         $baseUrl = rtrim(env('TRAVELVIET_BASE_URL', 'http://127.0.0.1:8000'), '/');
         $url = $baseUrl . "/api/{$langId}/{$endpoint}/" . rawurlencode($hotelName);
 
-        \Log::info("TravelViet API Request{$operation}", [
+        Log::info("TravelViet API Request{$operation}", [
             'url' => $url,
             'hotel_name' => $hotelName,
             'lang_id' => $langId
@@ -49,7 +49,7 @@ class TravelVietController extends Controller
                 ->get($url);
 
             if (!$response->ok()) {
-                \Log::error("TravelViet API Error{$operation}", [
+                Log::error("TravelViet API Error{$operation}", [
                     'status' => $response->status(),
                     'body' => $response->body(),
                     'url' => $url
@@ -75,7 +75,7 @@ class TravelVietController extends Controller
             }
 
             $data = $response->json();
-            \Log::info("TravelViet API Success{$operation}", [
+            Log::info("TravelViet API Success{$operation}", [
                 'data_count' => is_array($data) ? count($data) : 'unknown',
                 'data' => $data,
                 'url' => $url,
@@ -88,7 +88,7 @@ class TravelVietController extends Controller
                 'data' => $data,
             ]);
         } catch (\Illuminate\Http\Client\ConnectionException $e) {
-            \Log::error("TravelViet API Connection Error{$operation}", [
+            Log::error("TravelViet API Connection Error{$operation}", [
                 'error' => $e->getMessage(),
                 'url' => $url
             ]);
@@ -97,7 +97,7 @@ class TravelVietController extends Controller
                 'error_code' => 'CONNECTION_ERROR'
             ], 500);
         } catch (\Throwable $e) {
-            \Log::error("TravelViet API Unexpected Error{$operation}", [
+            Log::error("TravelViet API Unexpected Error{$operation}", [
                 'error' => $e->getMessage(),
                 'trace' => $e->getTraceAsString()
             ]);
