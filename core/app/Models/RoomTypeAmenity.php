@@ -13,6 +13,8 @@ class RoomTypeAmenity extends Model
     protected $fillable = [
         'room_id',
         'amenities_id',
+        'unit_code',
+        'subdomain',
         'created_at',
         'updated_at',
 

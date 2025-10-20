@@ -2,7 +2,9 @@
 
 namespace App\Http\Controllers\Admin;
 
+use App\Models\Amenity;
 use App\Models\RoomImage;
+use App\Models\RoomTypeAmenity;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Http;
 use App\Http\Controllers\Controller;
@@ -239,7 +241,7 @@ class TravelVietController extends Controller
             //$roomData['list_uti'] danh sách tiện ích amenities
             //$roomData['list_array_image'] danh sách ảnh  room_images
             //lang_room_direction hướng phòng
-
+           
             // ✅ Kiểm tra dữ liệu đầu vào
             if (empty($roomData['lang_room_name'])) {
                 throw new \Exception("Thiếu tên phòng (lang_room_name)");
@@ -306,13 +308,52 @@ class TravelVietController extends Controller
                 $room->subdomain     = subdomain();
                 $room->unit_code     = unitCode();
                 $room->save();
-                // ✅ Nếu có danh sách ảnh thì thêm vào room_images
+                //  Nếu có danh sách ảnh thì thêm vào room_images
                 if (!empty($roomData['list_array_image']) && is_array($roomData['list_array_image'])) {
                     foreach ($roomData['list_array_image'] as $imageUrl) {
                         if (!empty($imageUrl)) {
                             RoomImage::create([
                                 'room_id'     => $room->id,
                                 'image'   => $imageUrl,
+                            ]);
+                        }
+                    }
+                }
+                // Thêm danh sách tiện ích (amenities)
+                if (!empty($roomData['list_uti']) && is_array($roomData['list_uti'])) {
+                    foreach ($roomData['list_uti'] as $uti) {
+                        $title = $uti['uti_title'] ?? null;
+                        if (empty($title)) continue;
+
+                        // Kiểm tra tiện ích có tồn tại chưa
+                        $amenity = Amenity::where('title', $title)->first();
+
+                        if (!$amenity) {
+                            do {
+                                $amenityCode = getTrx(12);
+                            } while (Amenity::where('code', $amenityCode)->exists());
+
+                            $amenity = new Amenity();
+                            $amenity->code = $amenityCode;
+                            $amenity->title = $title;
+                            $amenity->icon = $uti['uti_image'] ?? null;
+                            $amenity->status = 1;
+                            $amenity->subdomain = subdomain();
+                            $amenity->unit_code = unitCode();
+                            $amenity->save();
+                        }
+
+                        // Gắn vào bảng trung gian room_amenities
+                        $exists = RoomTypeAmenity::where('room_id', $room->id)
+                            ->where('amenities_id', $amenity->id)
+                            ->exists();
+
+                        if (!$exists) {
+                            RoomTypeAmenity::create([
+                                'room_id' => $room->id,
+                                'amenities_id' => $amenity->id,
+                                'subdomain' => subdomain(),
+                                'unit_code' => unitCode(),
                             ]);
                         }
                     }
