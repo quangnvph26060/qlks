@@ -2,9 +2,15 @@
 
 namespace App\Http\Controllers\Admin;
 
+use App\Models\RoomImage;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Http;
 use App\Http\Controllers\Controller;
+use App\Models\HotelConfiguration;
+use App\Models\Room;
+use App\Models\RoomDirection;
+use App\Models\RoomType;
+use Illuminate\Support\Facades\Log;
 
 class TravelVietController extends Controller
 {
@@ -48,7 +54,7 @@ class TravelVietController extends Controller
                     'body' => $response->body(),
                     'url' => $url
                 ]);
-                
+
                 $errorMessage = 'Không thể kết nối đến API TravelViet';
                 if ($response->status() === 400) {
                     $responseData = $response->json();
@@ -60,7 +66,7 @@ class TravelVietController extends Controller
                 } elseif ($response->status() >= 500) {
                     $errorMessage = 'Lỗi server API TravelViet';
                 }
-                
+
                 return response()->json([
                     'message' => $errorMessage,
                     'status' => $response->status(),
@@ -76,7 +82,7 @@ class TravelVietController extends Controller
                 'hotel_name' => $hotelName,
                 'lang_id' => $langId
             ]);
-            
+
             return response()->json([
                 'ok' => true,
                 'data' => $data,
@@ -146,24 +152,180 @@ class TravelVietController extends Controller
             'kind' => 'required|string|in:hotel,roomtypes,rooms',
             'items' => 'required|array',
         ]);
-        // TODO: Persist $validated['items'] into database as needed
         switch ($validated['kind']) {
             case 'hotel':
-              // map fields -> Hotel model
-              // Hotel::upsert($rows, ['external_id'], [...columns...]);
-              break;
+                // map fields -> Hotel model
+                // Hotel::upsert($rows, ['external_id'], [...columns...]);
+                foreach ($validated['items'] as $hotelData) {
+                    $this->updateHotelData($hotelData);
+                }
+                break;
             case 'roomtypes':
-              // map fields -> RoomType model
-              break;
+                foreach ($validated['items'] as $hotelData) {
+                    $this->updateRoomTypeHotel($hotelData);
+                }
+                break;
             case 'rooms':
-              // map fields -> Room model
-              break;
-          }
+                foreach ($validated['items'] as $hotelData) {
+                    $this->updateRoomHotel($hotelData);
+                }
+                break;
+        }
         return response()->json([
             'ok' => true,
             'saved' => count($validated['items']),
         ]);
     }
+    /**
+     * cập nhật dữ liệu khách sạn
+     * @param array $hotelData
+     * @return bool
+     */
+    private function updateHotelData(array $hotelData)
+    {
+        // Map TravelViet hotel data to local Hotel model field
+        $mappedData = [
+            'main_image' => $hotelData['hotel_image'] ?? null,
+            'address' => $hotelData['lang_hotel_address'] ?? null,
+            'hotel_name' => $hotelData['lang_hotel_name'] ?? null,
+            'slug' => $hotelData['lang_hotel_slug'] ?? null,
+            'latitude' => $hotelData['rel_latitude'] ?? null,
+            'longitude' => $hotelData['rel_longitude'] ?? null,
+            'province' => getProvinceName($hotelData['province_id']),
+        ];
+        $updated = HotelConfiguration::where('hotel_name', $hotelData['lang_hotel_name'] ?? null)
+            ->update($mappedData);
+        return $updated;
+    }
+    /**
+     * cập nhật loại phòng
+     * @param array $roomTypeData
+     * @return void
+     */
+    private function updateRoomTypeHotel(array $roomTypeData)
+    {
+        // Lấy tên loại phòng
+        $name = $roomTypeData['lang_cate_name'] ?? null;
+        if (empty($name)) return;
+
+        // Kiểm tra xem loại phòng đã tồn tại chưa
+        $exists = RoomType::where('name', $name)->exists();
+
+        if (!$exists) {
+            // Sinh mã code duy nhất
+            do {
+                $code = getTrx(12);
+            } while (RoomType::where('code', $code)->exists());
+
+            // Tạo mới bản ghi
+            $newRoomType = new RoomType();
+            $newRoomType->code = $code;
+            $newRoomType->status = 1;
+            $newRoomType->name = $name;
+            $newRoomType->subdomain = subdomain();
+            $newRoomType->unit_code = unitCode();
+            $newRoomType->save();
+        }
+    }
+
+    /**
+     * cập nhật phòng
+     * @param array $roomData
+     * @return void
+     */
+    private function updateRoomHotel(array $roomData)
+    {
+        try {
+            //$roomData['list_uti'] danh sách tiện ích amenities
+            //$roomData['list_array_image'] danh sách ảnh  room_images
+            //lang_room_direction hướng phòng
+
+            // ✅ Kiểm tra dữ liệu đầu vào
+            if (empty($roomData['lang_room_name'])) {
+                throw new \Exception("Thiếu tên phòng (lang_room_name)");
+            }
+
+            // ✅ Xử lý hướng phòng
+            $roomDirectionName = $roomData['lang_room_direction'] ?? '';
+            $room_directions = RoomDirection::where('name', $roomDirectionName)->first();
+
+            if (!$room_directions) {
+                do {
+                    $code = getTrx(12);
+                } while (RoomDirection::where('code', $code)->exists());
+
+                $room_directions = new RoomDirection();
+                $room_directions->code        = $code;
+                $room_directions->name        = $roomDirectionName;
+                $room_directions->subdomain   = subdomain();
+                $room_directions->unit_code   = unitCode();
+                $room_directions->save();
+            }
+
+            // ✅ Loại phòng
+            $roomTypeName = $roomData['lang_cate_room'] ?? null;
+            if (empty($roomTypeName)) {
+                throw new \Exception("Thiếu loại phòng (lang_cate_room)");
+            }
+
+            $room_type = RoomType::where('name', $roomTypeName)->first();
+
+            if (!$room_type) {
+                // Sinh mã code duy nhất
+                do {
+                    $code = getTrx(12);
+                } while (RoomType::where('code', $code)->exists());
+
+                $room_type = new RoomType();
+                $room_type->code = $code;
+                $room_type->status = 1;
+                $room_type->name = $roomTypeName;
+                $room_type->subdomain = subdomain();
+                $room_type->unit_code = unitCode();
+                $room_type->save();
+            }
+
+            // ✅ Kiểm tra phòng đã tồn tại chưa
+            $check_room = Room::where('room_number', $roomData['lang_room_name'])->first();
+
+            if (!$check_room) {
+                do {
+                    $code = getTrx(12);
+                } while (Room::where('code', $code)->exists());
+
+                $room = new Room();
+                $room->code          = $code;
+                $room->room_type_id  = $room_type->id;
+                $room->room_number   = $roomData['lang_room_name'] ?? null;
+                $room->main_image    = $roomData['room_image'] ?? null;
+                $room->total_adult   = $roomData['room_person'] ?? 0;
+                $room->area          = $roomData['room_acreage'] ?? null;
+                $room->description   = $roomData['lang_room_des'] ?? null;
+                $room->beds          = $roomData['lang_room_bed'] ?? null;
+                $room->direction_id  = $room_directions->id;
+                $room->subdomain     = subdomain();
+                $room->unit_code     = unitCode();
+                $room->save();
+                // ✅ Nếu có danh sách ảnh thì thêm vào room_images
+                if (!empty($roomData['list_array_image']) && is_array($roomData['list_array_image'])) {
+                    foreach ($roomData['list_array_image'] as $imageUrl) {
+                        if (!empty($imageUrl)) {
+                            RoomImage::create([
+                                'room_id'     => $room->id,
+                                'image'   => $imageUrl,
+                            ]);
+                        }
+                    }
+                }
+            }
+        } catch (\Throwable $e) {
+            // Ghi log lỗi cụ thể để debug
+            Log::error("Lỗi khi cập nhật phòng: " . $e->getMessage(), [
+                'room_name' => $roomData['lang_room_name'] ?? null,
+                'data' => $roomData,
+                'file' => $e->getFile(),
+                'line' => $e->getLine(),
+            ]);
+        }
+    }
 }
-
-
