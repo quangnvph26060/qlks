@@ -351,7 +351,9 @@
                     $('#dayType_error').text('');
                 }
                 let checked = document.querySelectorAll('input[name="price_requirement[]"]:checked');
-                if (checked.length === 0) {
+                   let filledInputs = Array.from(document.querySelectorAll('input[name="price_requirement[]"]'))
+                        .filter(i => i.type !== 'checkbox' && i.value.trim() !== '');
+                if (checked.length === 0 && filledInputs.length === 0) {
                       $('#dayType_error').text('Vui lòng chọn hình thức');
                     isValid = false;
                 } else {
@@ -377,7 +379,10 @@
                     $('#dayType_error').text('');
                 }
                  let checked = document.querySelectorAll('input[name="price_requirement[]"]:checked');
-                if (checked.length === 0) {
+                let filledInputs = Array.from(document.querySelectorAll('input[name="price_requirement[]"]'))
+                        .filter(i => i.type !== 'checkbox' && i.value.trim() !== '');
+                    
+                if (checked.length === 0 && filledInputs.length === 0) {
                       $('#dayType_error').text('Vui lòng chọn hình thức');
                     isValid = false;
                 } else {
