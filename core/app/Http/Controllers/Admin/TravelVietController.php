@@ -375,15 +375,18 @@ class TravelVietController extends Controller
                             'room_type_id' => $room_type->id ?? null
                         ]);
                         
-                        // ✅ Tạo hoặc lấy SetupPricing cho ngày hiện tại (chỉ tạo 1 lần cho tất cả)
+                        // ✅ Tạo hoặc lấy SetupPricing cho từng phòng riêng biệt
+                        $roomName = $roomData['lang_room_name'] ?? 'Unknown';
+                        $priceName = 'giá bên travel - ' . $roomName;
+                        
                         $setupPricing = SetupPricing::where('price_requirement', json_encode([$currentDate]))
-                            ->where('price_name', 'giá bên travel')
+                            ->where('price_name', $priceName)
                             ->where('subdomain', subdomain())
                             ->where('unit_code', unitCode())
                             ->first();
                         
                         if (!$setupPricing) {
-                            Log::info('Tạo SetupPricing mới cho ngày: ' . $currentDate);
+                            Log::info('Tạo SetupPricing mới cho phòng: ' . $roomName);
                             
                             // Tạo SetupPricing mới
                             do {
@@ -394,9 +397,9 @@ class TravelVietController extends Controller
                             
                             $setupPricingData = [
                                 'price_code' => $priceCode,
-                                'price_name' => 'giá bên travel',
+                                'price_name' => $priceName,
                                 'price_requirement' => json_encode([$currentDate]),
-                                'description' => 'Giá từ TravelViet',
+                                'description' => 'Giá từ TravelViet - ' . $roomName,
                                 'subdomain' => subdomain(),
                                 'unit_code' => unitCode(),
                             ];
@@ -407,7 +410,7 @@ class TravelVietController extends Controller
                             
                             Log::info('SetupPricing created successfully', ['id' => $setupPricing->id]);
                         } else {
-                            Log::info('SetupPricing đã tồn tại', ['id' => $setupPricing->id]);
+                            Log::info('SetupPricing đã tồn tại cho phòng: ' . $roomName, ['id' => $setupPricing->id]);
                         }
                         
                         // ✅ Tạo hoặc cập nhật RoomTypePrice (mỗi room_type_id sẽ có 1 bản ghi riêng)
