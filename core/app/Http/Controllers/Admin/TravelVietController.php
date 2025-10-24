@@ -5,6 +5,7 @@ namespace App\Http\Controllers\Admin;
 use App\Models\Amenity;
 use App\Models\RoomImage;
 use App\Models\RoomTypeAmenity;
+use App\Models\RoomTypePrice;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Http;
 use App\Http\Controllers\Controller;
@@ -354,6 +355,38 @@ class TravelVietController extends Controller
                                 'amenities_id' => $amenity->id,
                                 'subdomain' => subdomain(),
                                 'unit_code' => unitCode(),
+                            ]);
+                        }
+                    }
+                }
+
+                // ✅ Xử lý giá phòng theo ngày (list_date_price)
+                if (!empty($roomData['list_date_price']) && is_array($roomData['list_date_price'])) {
+                    foreach ($roomData['list_date_price'] as $priceData) {
+                        $priceDate = $priceData['pri_date'] ?? null;
+                        $price = $priceData['pri_price'] ?? null;
+                        $currency = $priceData['lang_type_money'] ?? 'VND';
+                        
+                        if (empty($priceDate) || empty($price)) continue;
+
+                        // Kiểm tra xem đã có giá cho ngày này chưa
+                        $existingPrice = RoomTypePrice::where('room_type_id', $room_type->id)
+                            ->where('price_validity_period', $priceDate)
+                            ->first();
+
+                        if (!$existingPrice) {
+                            // Tạo bản ghi giá mới
+                            RoomTypePrice::create([
+                                'room_type_id' => $room_type->id,
+                                'unit_price' => $price,
+                                'price_validity_period' => $priceDate,
+                                'subdomain' => subdomain(),
+                                'unit_code' => unitCode(),
+                            ]);
+                        } else {
+                            // Cập nhật giá nếu đã tồn tại
+                            $existingPrice->update([
+                                'unit_price' => $price,
                             ]);
                         }
                     }
