@@ -375,13 +375,15 @@ class TravelVietController extends Controller
                             'room_type_id' => $room_type->id ?? null
                         ]);
                         
-                        // ✅ Tạo hoặc lấy SetupPricing cho ngày hiện tại
+                        // ✅ Tạo hoặc lấy SetupPricing cho ngày hiện tại (chỉ tạo 1 lần cho tất cả)
                         $setupPricing = SetupPricing::where('price_requirement', json_encode([$currentDate]))
                             ->where('price_name', 'giá bên travel')
+                            ->where('subdomain', subdomain())
+                            ->where('unit_code', unitCode())
                             ->first();
                         
                         if (!$setupPricing) {
-                            Log::info('Tạo SetupPricing mới');
+                            Log::info('Tạo SetupPricing mới cho ngày: ' . $currentDate);
                             
                             // Tạo SetupPricing mới
                             do {
@@ -408,13 +410,15 @@ class TravelVietController extends Controller
                             Log::info('SetupPricing đã tồn tại', ['id' => $setupPricing->id]);
                         }
                         
-                        // ✅ Tạo hoặc cập nhật RoomTypePrice
+                        // ✅ Tạo hoặc cập nhật RoomTypePrice (mỗi room_type_id sẽ có 1 bản ghi riêng)
                         $existingPrice = RoomTypePrice::where('room_type_id', $room_type->id)
                             ->where('setup_pricing_id', $setupPricing->id)
+                            ->where('subdomain', subdomain())
+                            ->where('unit_code', unitCode())
                             ->first();
 
                         if (!$existingPrice) {
-                            Log::info('Tạo RoomTypePrice mới');
+                            Log::info('Tạo RoomTypePrice mới cho room_type_id: ' . $room_type->id);
                             
                             $roomTypePriceData = [
                                 'room_type_id' => $room_type->id,
@@ -431,7 +435,7 @@ class TravelVietController extends Controller
                             
                             Log::info('RoomTypePrice created successfully', ['id' => $roomTypePrice->id]);
                         } else {
-                            Log::info('Cập nhật RoomTypePrice hiện có');
+                            Log::info('Cập nhật RoomTypePrice hiện có cho room_type_id: ' . $room_type->id);
                             
                             $existingPrice->update([
                                 'unit_price' => $price,
