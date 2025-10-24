@@ -6,6 +6,7 @@ use App\Models\Amenity;
 use App\Models\RoomImage;
 use App\Models\RoomTypeAmenity;
 use App\Models\RoomTypePrice;
+use App\Models\SetupPricing;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Http;
 use App\Http\Controllers\Controller;
@@ -300,12 +301,13 @@ class TravelVietController extends Controller
                 $room->code          = $code;
                 $room->room_type_id  = $room_type->id;
                 $room->room_number   = $roomData['lang_room_name'] ?? null;
-                $room->main_image    = $roomData['room_image'] ?? null;
+                $room->main_image    = $roomData['room_image'] ?? '';
                 $room->total_adult   = $roomData['room_person'] ?? 0;
                 $room->area          = $roomData['room_acreage'] ?? null;
                 $room->description   = $roomData['lang_room_des'] ?? null;
                 $room->beds          = $roomData['lang_room_bed'] ?? null;
                 $room->direction_id  = $room_directions->id;
+                $room->room_fix      = 0;
                 $room->subdomain     = subdomain();
                 $room->unit_code     = unitCode();
                 $room->save();
@@ -359,36 +361,93 @@ class TravelVietController extends Controller
                         }
                     }
                 }
-
-                // ✅ Xử lý giá phòng theo ngày (list_date_price)
-                if (!empty($roomData['list_date_price']) && is_array($roomData['list_date_price'])) {
-                    foreach ($roomData['list_date_price'] as $priceData) {
-                        $priceDate = $priceData['pri_date'] ?? null;
-                        $price = $priceData['pri_price'] ?? null;
-                        $currency = $priceData['lang_type_money'] ?? 'VND';
+                // ✅ Xử lý giá phòng (price_room)
+                if (isset($roomData['price_room']) && $roomData['price_room'] !== null) {
+                    try {
+                        $price = $roomData['price_room'];
+                        $currency = $roomData['lang_type_money'] ?? 'VND';
+                        $currentDate = date('Y-m-d');
                         
-                        if (empty($priceDate) || empty($price)) continue;
-
-                        // Kiểm tra xem đã có giá cho ngày này chưa
+                        Log::info('Bắt đầu xử lý giá phòng', [
+                            'price' => $price,
+                            'currency' => $currency,
+                            'currentDate' => $currentDate,
+                            'room_type_id' => $room_type->id ?? null
+                        ]);
+                        
+                        // ✅ Tạo hoặc lấy SetupPricing cho ngày hiện tại
+                        $setupPricing = SetupPricing::where('price_requirement', json_encode([$currentDate]))
+                            ->where('price_name', 'giá bên travel')
+                            ->first();
+                        
+                        if (!$setupPricing) {
+                            Log::info('Tạo SetupPricing mới');
+                            
+                            // Tạo SetupPricing mới
+                            do {
+                                $priceCode = getTrx(8);
+                            } while (SetupPricing::where('price_code', $priceCode)->exists());
+                            
+                            Log::info('Generated price_code', ['price_code' => $priceCode]);
+                            
+                            $setupPricingData = [
+                                'price_code' => $priceCode,
+                                'price_name' => 'giá bên travel',
+                                'price_requirement' => json_encode([$currentDate]),
+                                'description' => 'Giá từ TravelViet',
+                                'subdomain' => subdomain(),
+                                'unit_code' => unitCode(),
+                            ];
+                            
+                            Log::info('SetupPricing data to create', $setupPricingData);
+                            
+                            $setupPricing = SetupPricing::create($setupPricingData);
+                            
+                            Log::info('SetupPricing created successfully', ['id' => $setupPricing->id]);
+                        } else {
+                            Log::info('SetupPricing đã tồn tại', ['id' => $setupPricing->id]);
+                        }
+                        
+                        // ✅ Tạo hoặc cập nhật RoomTypePrice
                         $existingPrice = RoomTypePrice::where('room_type_id', $room_type->id)
-                            ->where('price_validity_period', $priceDate)
+                            ->where('setup_pricing_id', $setupPricing->id)
                             ->first();
 
                         if (!$existingPrice) {
-                            // Tạo bản ghi giá mới
-                            RoomTypePrice::create([
+                            Log::info('Tạo RoomTypePrice mới');
+                            
+                            $roomTypePriceData = [
                                 'room_type_id' => $room_type->id,
+                                'setup_pricing_id' => $setupPricing->id,
                                 'unit_price' => $price,
-                                'price_validity_period' => $priceDate,
+                                'price_validity_period' => $currentDate,
                                 'subdomain' => subdomain(),
                                 'unit_code' => unitCode(),
-                            ]);
+                            ];
+                            
+                            Log::info('RoomTypePrice data to create', $roomTypePriceData);
+                            
+                            $roomTypePrice = RoomTypePrice::create($roomTypePriceData);
+                            
+                            Log::info('RoomTypePrice created successfully', ['id' => $roomTypePrice->id]);
                         } else {
-                            // Cập nhật giá nếu đã tồn tại
+                            Log::info('Cập nhật RoomTypePrice hiện có');
+                            
                             $existingPrice->update([
                                 'unit_price' => $price,
                             ]);
+                            
+                            Log::info('RoomTypePrice updated successfully');
                         }
+                        
+                    } catch (\Exception $e) {
+                        Log::error('Lỗi khi xử lý giá phòng: ' . $e->getMessage(), [
+                            'room_name' => $roomData['lang_room_name'] ?? null,
+                            'price' => $roomData['price_room'] ?? null,
+                            'file' => $e->getFile(),
+                            'line' => $e->getLine(),
+                            'trace' => $e->getTraceAsString()
+                        ]);
                     }
                 }
             }
