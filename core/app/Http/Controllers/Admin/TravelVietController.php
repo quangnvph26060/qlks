@@ -109,28 +109,44 @@ class TravelVietController extends Controller
         }
     }
     public function randomToken(Request $request)
-    {
-        try {
-            $id = $request->id;
+{
+    $id = $request->id;
 
-            if (!$id) {
-                return response()->json(['success' => false, 'message' => 'Thiếu ID']);
-            }
-
-            // Tạo random token 10 ký tự
-            $token = Str::random(30);
-
-            // Lưu vào DB
-            HotelConfiguration::where('id', $id)->update(['bearer_token' => $token]);
-
-            Log::info('Random bearer token', ['id' => $id, 'token' => $token]);
-
-            return response()->json(['success' => true, 'token' => $token]);
-        } catch (\Throwable $e) {
-            Log::error('Random Token Error', ['error' => $e->getMessage()]);
-            return response()->json(['success' => false, 'message' => 'Lỗi hệ thống']);
-        }
+    if (!$id) {
+        return response()->json(['success' => false, 'message' => 'Thiếu ID']);
     }
+
+    // Tạo token random 30 ký tự
+    $token = Str::random(30);
+
+    try {
+        // Cập nhật DB
+        $updated = HotelConfiguration::where('id', $id)->update(['bearer_token' => $token]);
+
+        if (!$updated) {
+            return response()->json(['success' => false, 'message' => 'Cập nhật DB thất bại']);
+        }
+    } catch (\Throwable $e) {
+        // Ghi log lỗi nhưng không phá vỡ JSON
+        Log::error('Lỗi cập nhật bearer token', [
+            'id' => $id,
+            'token' => $token,
+            'error' => $e->getMessage()
+        ]);
+        return response()->json(['success' => false, 'message' => 'Lỗi cập nhật token']);
+    }
+
+    // Log token thành công (tách try/catch nếu muốn)
+    try {
+        Log::info('Random bearer token', ['id' => $id, 'token' => $token]);
+    } catch (\Throwable $e) {
+        // Chỉ log, không trả lỗi cho client
+        // Optional: bạn có thể gửi alert admin nếu cần
+    }
+
+    // Trả JSON thành công
+    return response()->json(['success' => true, 'token' => $token]);
+}
     public function searchHotel(Request $request)
     {
         $request->validate([
