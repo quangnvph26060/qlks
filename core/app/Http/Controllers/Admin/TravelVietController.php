@@ -15,7 +15,7 @@ use App\Models\Room;
 use App\Models\RoomDirection;
 use App\Models\RoomType;
 use Illuminate\Support\Facades\Log;
-
+use Illuminate\Support\Str;
 class TravelVietController extends Controller
 {
     public function index()
@@ -26,9 +26,8 @@ class TravelVietController extends Controller
     /**
      * Helper method to make API calls to TravelViet
      */
-    private function makeTravelVietApiCall($endpoint, $langId, $hotelName, $operation = '')
+    private function makeTravelVietApiCall($endpoint, $langId, $token, $operation = '')
     {
-        $token = env('TRAVELVIET_TOKEN');
         if (empty($token)) {
             Log::error('TravelViet API: Missing TRAVELVIET_TOKEN in environment');
             return response()->json([
@@ -38,16 +37,15 @@ class TravelVietController extends Controller
         }
 
         $baseUrl = rtrim(env('TRAVELVIET_BASE_URL', 'http://127.0.0.1:8000'), '/');
-        $url = $baseUrl . "/api/{$langId}/{$endpoint}/" . rawurlencode($hotelName);
+        $url = $baseUrl . "/api/{$langId}/{$endpoint}/";
 
         Log::info("TravelViet API Request{$operation}", [
             'url' => $url,
-            'hotel_name' => $hotelName,
             'lang_id' => $langId
         ]);
 
         try {
-            $response = Http::withToken($token)
+            $response = Http::withToken($token) // Gửi token từ DB
                 ->acceptJson()
                 ->timeout(30)
                 ->get($url);
@@ -83,7 +81,6 @@ class TravelVietController extends Controller
                 'data_count' => is_array($data) ? count($data) : 'unknown',
                 'data' => $data,
                 'url' => $url,
-                'hotel_name' => $hotelName,
                 'lang_id' => $langId
             ]);
 
@@ -111,43 +108,65 @@ class TravelVietController extends Controller
             ], 500);
         }
     }
+    public function randomToken(Request $request)
+    {
+        try {
+            $id = $request->id;
 
+            if (!$id) {
+                return response()->json(['success' => false, 'message' => 'Thiếu ID']);
+            }
+
+            // Tạo random token 10 ký tự
+            $token = Str::random(30);
+
+            // Lưu vào DB
+            HotelConfiguration::where('id', $id)->update(['bearer_token' => $token]);
+
+            Log::info('Random bearer token', ['id' => $id, 'token' => $token]);
+
+            return response()->json(['success' => true, 'token' => $token]);
+        } catch (\Throwable $e) {
+            Log::error('Random Token Error', ['error' => $e->getMessage()]);
+            return response()->json(['success' => false, 'message' => 'Lỗi hệ thống']);
+        }
+    }
     public function searchHotel(Request $request)
     {
         $request->validate([
             'lang_id' => 'required',
-            'hotel_name' => 'required|string',
+            'bearer_token' => 'required|string',
         ]);
 
         $langId = $request->input('lang_id');
-        $hotelName = $request->input('hotel_name');
+        $hotelToken = $request->input('bearer_token');
 
-        return $this->makeTravelVietApiCall('khach-san/tim-theo-ten', $langId, $hotelName, ' - Hotel Search');
+        return $this->makeTravelVietApiCall('khach-san/thong-tin-khach-san', $langId, $hotelToken, ' - Hotel Search');
     }
 
     public function searchRoomTypes(Request $request)
     {
         $request->validate([
             'lang_id' => 'required',
-            'hotel_name' => 'required|string',
+            'bearer_token' => 'required|string',
         ]);
         $langId = $request->input('lang_id');
-        $hotelName = $request->input('hotel_name');
+          $hotelToken = $request->input('bearer_token');
 
-        return $this->makeTravelVietApiCall('khach-san/danh-muc-phong-theo-ten', $langId, $hotelName, ' - Room Types');
+        return $this->makeTravelVietApiCall('khach-san/danh-muc-phong', $langId, $hotelToken, ' - Room Types');
     }
 
     public function searchRooms(Request $request)
     {
         $request->validate([
             'lang_id' => 'required',
-            'hotel_name' => 'required|string',
+            'bearer_token' => 'required|string',
         ]);
 
         $langId = $request->input('lang_id');
-        $hotelName = $request->input('hotel_name');
+           $hotelToken = $request->input('bearer_token');
 
-        return $this->makeTravelVietApiCall('khach-san/danh-sach-phong-theo-ten', $langId, $hotelName, ' - Rooms');
+        return $this->makeTravelVietApiCall('khach-san/danh-sach-phong', $langId, $hotelToken, ' - Rooms');
     }
 
     public function saveSelection(Request $request)
@@ -187,6 +206,7 @@ class TravelVietController extends Controller
      */
     private function updateHotelData(array $hotelData)
     {
+        $token =HotelConfiguration::where('hotel_facility_id', hf('id'))->value('bearer_token');
         // Map TravelViet hotel data to local Hotel model field
         $mappedData = [
             'main_image' => $hotelData['hotel_image'] ?? null,
@@ -197,7 +217,7 @@ class TravelVietController extends Controller
             'longitude' => $hotelData['rel_longitude'] ?? null,
             'province' => getProvinceName($hotelData['province_id']),
         ];
-        $updated = HotelConfiguration::where('hotel_name', $hotelData['lang_hotel_name'] ?? null)
+        $updated = HotelConfiguration::where('bearer_token', $token ?? null)
             ->update($mappedData);
         return $updated;
     }
@@ -243,7 +263,7 @@ class TravelVietController extends Controller
             //$roomData['list_uti'] danh sách tiện ích amenities
             //$roomData['list_array_image'] danh sách ảnh  room_images
             //lang_room_direction hướng phòng
-           
+
             // ✅ Kiểm tra dữ liệu đầu vào
             if (empty($roomData['lang_room_name'])) {
                 throw new \Exception("Thiếu tên phòng (lang_room_name)");
@@ -367,34 +387,34 @@ class TravelVietController extends Controller
                         $price = $roomData['price_room'];
                         $currency = $roomData['lang_type_money'] ?? 'VND';
                         $currentDate = date('Y-m-d');
-                        
+
                         Log::info('Bắt đầu xử lý giá phòng', [
                             'price' => $price,
                             'currency' => $currency,
                             'currentDate' => $currentDate,
                             'room_type_id' => $room_type->id ?? null
                         ]);
-                        
+
                         // ✅ Tạo hoặc lấy SetupPricing cho từng phòng riêng biệt
                         $roomName = $roomData['lang_room_name'] ?? 'Unknown';
                         $priceName = 'giá bên travel - ' . $roomName;
-                        
+
                         $setupPricing = SetupPricing::where('price_requirement', json_encode([$currentDate]))
                             ->where('price_name', $priceName)
                             ->where('subdomain', subdomain())
                             ->where('unit_code', unitCode())
                             ->first();
-                        
+
                         if (!$setupPricing) {
                             Log::info('Tạo SetupPricing mới cho phòng: ' . $roomName);
-                            
+
                             // Tạo SetupPricing mới
                             do {
                                 $priceCode = getTrx(8);
                             } while (SetupPricing::where('price_code', $priceCode)->exists());
-                            
+
                             Log::info('Generated price_code', ['price_code' => $priceCode]);
-                            
+
                             $setupPricingData = [
                                 'price_code' => $priceCode,
                                 'price_name' => $priceName,
@@ -403,16 +423,16 @@ class TravelVietController extends Controller
                                 'subdomain' => subdomain(),
                                 'unit_code' => unitCode(),
                             ];
-                            
+
                             Log::info('SetupPricing data to create', $setupPricingData);
-                            
+
                             $setupPricing = SetupPricing::create($setupPricingData);
-                            
+
                             Log::info('SetupPricing created successfully', ['id' => $setupPricing->id]);
                         } else {
                             Log::info('SetupPricing đã tồn tại cho phòng: ' . $roomName, ['id' => $setupPricing->id]);
                         }
-                        
+
                         // ✅ Tạo hoặc cập nhật RoomTypePrice (mỗi room_type_id sẽ có 1 bản ghi riêng)
                         $existingPrice = RoomTypePrice::where('room_type_id', $room_type->id)
                             ->where('setup_pricing_id', $setupPricing->id)
@@ -422,7 +442,7 @@ class TravelVietController extends Controller
 
                         if (!$existingPrice) {
                             Log::info('Tạo RoomTypePrice mới cho room_type_id: ' . $room_type->id);
-                            
+
                             $roomTypePriceData = [
                                 'room_type_id' => $room_type->id,
                                 'setup_pricing_id' => $setupPricing->id,
@@ -431,22 +451,21 @@ class TravelVietController extends Controller
                                 'subdomain' => subdomain(),
                                 'unit_code' => unitCode(),
                             ];
-                            
+
                             Log::info('RoomTypePrice data to create', $roomTypePriceData);
-                            
+
                             $roomTypePrice = RoomTypePrice::create($roomTypePriceData);
-                            
+
                             Log::info('RoomTypePrice created successfully', ['id' => $roomTypePrice->id]);
                         } else {
                             Log::info('Cập nhật RoomTypePrice hiện có cho room_type_id: ' . $room_type->id);
-                            
+
                             $existingPrice->update([
                                 'unit_price' => $price,
                             ]);
-                            
+
                             Log::info('RoomTypePrice updated successfully');
                         }
-                        
                     } catch (\Exception $e) {
                         Log::error('Lỗi khi xử lý giá phòng: ' . $e->getMessage(), [
                             'room_name' => $roomData['lang_room_name'] ?? null,

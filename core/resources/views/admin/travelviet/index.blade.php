@@ -49,22 +49,29 @@
     <div class="container-fluid px-3 px-sm-0">
         <div class="card">
             <div class="card-body">
-                <form id="tvFormPage" class="row g-3" onsubmit="return false;">
+                <form id="tvFormPage" class="row g-3">
                     <div class="col-md-7">
-                        <label for="pHotelName" class="form-label">Tên khách sạn</label>
-                      <input type="text" 
-                        class="form-control" 
-                        id="pHotelName"
-                        value="{{ \App\Models\HotelConfiguration::where('hotel_facility_id', hf('id'))->value('hotel_name') ?? '' }}"
-                        placeholder="Nhập tên khách sạn...">
+                        <div class="input-group">
+                            <input type="text" class="form-control" name="bearer_token" id="pHotelName"
+                                value="{{ \App\Models\HotelConfiguration::where('hotel_facility_id', hf('id'))->value('bearer_token') ?? '' }}"
+                                readonly>
+
+                            <button class="btn btn-outline-secondary" type="button" id="btnCopyToken" title="Copy token">
+                                <i class="bi bi-clipboard"></i>
+                            </button>
+                        </div>
+                        <input type="hidden" class="form-control" name="id" id="hotelConfigId"
+                            value="{{ \App\Models\HotelConfiguration::where('hotel_facility_id', hf('id'))->value('id') ?? '' }}">
                     </div>
                     <div class="col-md-5 d-flex align-items-end gap-2">
-                        <button class="btn btn--primary" id="btnHotel">Lấy thông tin khách sạn</button>
-                        <button class="btn btn--success" id="btnRoomTypes">Lấy danh sách loại phòng</button>
-                        <button class="btn btn--info" id="btnRooms">Lấy danh sách phòng</button>
+                        <button type="button" id="btnGetToken" class="btn btn--primary">Tạo mới access token</button>
                     </div>
                 </form>
-
+                <div class="col-md-5 d-flex align-items-end gap-2">
+                    <button class="btn btn--primary" id="btnHotel">Lấy thông tin khách sạn</button>
+                    <button class="btn btn--success" id="btnRoomTypes">Lấy danh sách loại phòng</button>
+                    <button class="btn btn--info" id="btnRooms">Lấy danh sách phòng</button>
+                </div>
                 <div class="mt-3">
                     <div id="tvLoading" class="d-none text-center py-3">
                         <div class="spinner-border" role="status"></div>
@@ -122,6 +129,75 @@
                     .replace(/\"/g, '&quot;')
                     .replace(/'/g, '&#039;');
             }
+            document.getElementById('btnCopyToken').addEventListener('click', function() {
+                 const input = document.getElementById('pHotelName');
+                const token = input.value.trim();
+                
+                if (!token) {
+                    alert('Chưa có token để copy');
+                    return;
+                }
+
+                // Nếu navigator.clipboard hỗ trợ
+                if (navigator.clipboard && navigator.clipboard.writeText) {
+                    navigator.clipboard.writeText(token).then(() => {
+                        this.innerHTML = '<i class="bi bi-check2"></i>';
+                        setTimeout(() => {
+                            this.innerHTML = '<i class="bi bi-clipboard"></i>';
+                        }, 1500);
+                    }).catch(err => {
+                        alert('Không copy được token: ' + err);
+                    });
+                } else {
+                    // fallback cho trình duyệt cũ
+                    input.select();
+                    input.setSelectionRange(0, 99999); // cho mobile
+                    try {
+                        document.execCommand('copy');
+                        this.innerHTML = '<i class="bi bi-check2"></i>';
+                        setTimeout(() => {
+                            this.innerHTML = '<i class="bi bi-clipboard"></i>';
+                        }, 1500);
+                    } catch (err) {
+                        alert('Trình duyệt không hỗ trợ copy token');
+                    }
+                    window.getSelection().removeAllRanges();
+                }
+            });
+
+            document.getElementById('btnGetToken').addEventListener('click', function() {
+                const btn = this;
+                btn.disabled = true;
+                btn.innerText = 'Đang tạo...';
+
+                fetch('{{ route('admin.travelviet.randomToken') }}', {
+                        method: 'POST',
+                        headers: {
+                            'Content-Type': 'application/json',
+                            'X-CSRF-TOKEN': '{{ csrf_token() }}'
+                        },
+                        body: JSON.stringify({
+                            id: document.getElementById('hotelConfigId').value
+                        })
+                    })
+                    .then(res => res.json())
+                    .then(data => {
+                        if (data.success) {
+                            document.getElementById('pHotelName').value = data.token;
+                            alert('Tạo token thành công!');
+                        } else {
+                            alert('Không tạo được token: ' + data.message);
+                        }
+                    })
+                    .catch(err => {
+                        console.error(err);
+                        alert('Lỗi hệ thống');
+                    })
+                    .finally(() => {
+                        btn.disabled = false;
+                        btn.innerText = 'Lấy token';
+                    });
+            });
 
             function render(data) {
                 // Xử lý dữ liệu từ API TravelViet
@@ -310,7 +386,7 @@
                 } else {
                     // Bảng cho khách sạn (logic cũ)
                     importantFields = {
-                        'hotel_name': 'Tên khách sạn',
+                        'lang_hotel_name': 'Tên khách sạn',
                         'lang_hotel_address': 'Địa chỉ',
                         'lang_province_name': 'Tỉnh/Thành phố',
                         'hotel_image': 'Hình ảnh'
@@ -331,9 +407,9 @@
                             let align = 'left'; // mặc định căn trái
 
                             // Xử lý mapping các trường từ API
-                            if (key === 'hotel_name') {
+                            if (key === 'lang_hotel_name') {
                                 // Lấy hotel_name từ request (tên tìm kiếm)
-                                value = window.currentSearchHotelName || item.hotel_name || '';
+                                value = window.currentSearchHotelName || item.lang_hotel_name || '';
                                 align = 'left';
                             } else if (key === 'lang_hotel_address') {
                                 value = item.lang_hotel_address ?? '';
@@ -384,8 +460,8 @@
 
             function call(endpoint, kind) {
                 const lang = 'en';
-                const hotel = (pHotelName.value || '').trim();
-                if (!hotel) {
+                const token = (pHotelName.value || '').trim();
+                if (!token) {
                     alert('Vui lòng nhập tên khách sạn');
                     return;
                 }
@@ -396,7 +472,7 @@
                 currentKind = kind;
                 // console.log('Set currentKind to:', currentKind);
 
-                window.currentSearchHotelName = hotel;
+              //  window.currentSearchHotelName = hotel;
 
                 setTitle(kind);
                 setLoading(true);
@@ -409,13 +485,13 @@
                     },
                     data: {
                         lang_id: lang,
-                        hotel_name: hotel
+                        bearer_token: token
                     },
                 }).done(function(res) {
                     // Lưu tên khách sạn chính xác từ API response để sử dụng cho các API call khác
-                    if (res?.data?.hotel?.lang_hotel_name) {
-                        window.currentHotelName = res.data.hotel.lang_hotel_name;
-                    }
+                    // if (res?.data?.hotel?.lang_hotel_name) {
+                    //     window.currentHotelName = res.data.hotel.lang_hotel_name;
+                    // }
 
                     // console.log('API Response for', kind, ':', res);
                     // console.log('Data to render:', res?.data ?? res);
@@ -438,19 +514,17 @@
                 call("{{ route('admin.travelviet.search-hotel') }}", 'hotel');
             });
             btnRoomTypes.addEventListener('click', function() {
-                // Sử dụng tên khách sạn gốc từ input (không dùng lang_hotel_name)
-                const hotelName = (pHotelName.value || '').trim();
-                if (!hotelName) {
-                    alert('Vui lòng nhập tên khách sạn và tìm khách sạn trước khi lấy danh sách loại phòng');
+                const token = (pHotelName.value || '').trim();
+                if (!token) {
+                    alert('Sai access token');
                     return;
                 }
                 call("{{ route('admin.travelviet.search-roomtypes') }}", 'roomtypes');
             });
             btnRooms.addEventListener('click', function() {
-                // Sử dụng tên khách sạn gốc từ input (không dùng lang_hotel_name)
-                const hotelName = (pHotelName.value || '').trim();
-                if (!hotelName) {
-                    alert('Vui lòng nhập tên khách sạn và tìm khách sạn trước khi lấy danh sách phòng');
+                const token = (pHotelName.value || '').trim();
+                if (!token) {
+                    alert('Sai access token');
                     return;
                 }
                 call("{{ route('admin.travelviet.search-rooms') }}", 'rooms');
@@ -485,7 +559,7 @@
             }
 
             pSaveBtn.addEventListener('click', function() {
-             
+
                 const selected = Array.from(document.querySelectorAll('.p-row-check:checked')).map(x => {
                     try {
                         return JSON.parse(x.dataset.json);
@@ -539,7 +613,7 @@
                     if (currentKind === 'rooms') itemType = 'phòng';
                     alert(
                         `✅ Đã lưu thành công ${res?.saved ?? selected.length} ${itemType} vào database!`
-                        );
+                    );
                     // Reset selection
                     document.querySelectorAll('.p-row-check:checked').forEach(cb => cb.checked = false);
                     document.getElementById('pSelectAll').checked = false;

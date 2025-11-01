@@ -44,6 +44,9 @@ Route::middleware('admin', 'adminPermission')->prefix('admin')->group(function (
     Route::post('travelviet/search-roomtypes', [TravelVietController::class, 'searchRoomTypes'])->name('travelviet.search-roomtypes');
     Route::post('travelviet/search-rooms', [TravelVietController::class, 'searchRooms'])->name('travelviet.search-rooms');
     Route::post('travelviet/save', [TravelVietController::class, 'saveSelection'])->name('travelviet.save');
+    Route::post('/admin/travelviet/random-token', [TravelVietController::class, 'randomToken'])
+    ->name('travelviet.randomToken');
+
     Route::prefix('fee')->name('fee.')->group(function () {
         Route::get('', [FeeController::class, 'index'])->name('index');
         Route::post('update', [FeeController::class, 'update'])->name('update');
