@@ -130,9 +130,9 @@
                     .replace(/'/g, '&#039;');
             }
             document.getElementById('btnCopyToken').addEventListener('click', function() {
-                 const input = document.getElementById('pHotelName');
+                const input = document.getElementById('pHotelName');
                 const token = input.value.trim();
-                
+
                 if (!token) {
                     alert('Chưa có token để copy');
                     return;
@@ -180,8 +180,17 @@
                             id: document.getElementById('hotelConfigId').value
                         })
                     })
-                    .then(res => res.json())
+                    .then(async res => {
+                        const text = await res.text(); // Lấy raw text từ server
+                        try {
+                            return JSON.parse(text); // Thử parse JSON
+                        } catch (e) {
+                            throw new Error('Server trả về không phải JSON:\n' + text);
+                        }
+                    })
                     .then(data => {
+                        console.log(data);
+
                         if (data.success) {
                             document.getElementById('pHotelName').value = data.token;
                             alert('Tạo token thành công!');
@@ -191,13 +200,14 @@
                     })
                     .catch(err => {
                         console.error(err);
-                        alert('Lỗi hệ thống');
+                        alert('Lỗi hệ thống:\n' + err.message);
                     })
                     .finally(() => {
                         btn.disabled = false;
                         btn.innerText = 'Lấy token';
                     });
             });
+
 
             function render(data) {
                 // Xử lý dữ liệu từ API TravelViet
@@ -472,7 +482,7 @@
                 currentKind = kind;
                 // console.log('Set currentKind to:', currentKind);
 
-              //  window.currentSearchHotelName = hotel;
+                //  window.currentSearchHotelName = hotel;
 
                 setTitle(kind);
                 setLoading(true);
