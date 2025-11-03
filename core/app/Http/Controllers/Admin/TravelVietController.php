@@ -16,6 +16,7 @@ use App\Models\RoomDirection;
 use App\Models\RoomType;
 use Illuminate\Support\Facades\Log;
 use Illuminate\Support\Str;
+
 class TravelVietController extends Controller
 {
     public function index()
@@ -109,44 +110,44 @@ class TravelVietController extends Controller
         }
     }
     public function randomToken(Request $request)
-{
-    $id = $request->id;
+    {
+        $id = $request->id;
 
-    if (!$id) {
-        return response()->json(['success' => false, 'message' => 'Thiếu ID']);
-    }
-
-    // Tạo token random 30 ký tự
-    $token = Str::random(30);
-
-    try {
-        // Cập nhật DB
-        $updated = HotelConfiguration::where('id', $id)->update(['bearer_token' => $token]);
-
-        if (!$updated) {
-            return response()->json(['success' => false, 'message' => 'Cập nhật DB thất bại']);
+        if (!$id) {
+            return response()->json(['success' => false, 'message' => 'Thiếu ID']);
         }
-    } catch (\Throwable $e) {
-        // Ghi log lỗi nhưng không phá vỡ JSON
-        Log::error('Lỗi cập nhật bearer token', [
-            'id' => $id,
-            'token' => $token,
-            'error' => $e->getMessage()
-        ]);
-        return response()->json(['success' => false, 'message' => 'Lỗi cập nhật token']);
-    }
 
-    // Log token thành công (tách try/catch nếu muốn)
-    try {
-        Log::info('Random bearer token', ['id' => $id, 'token' => $token]);
-    } catch (\Throwable $e) {
-        // Chỉ log, không trả lỗi cho client
-        // Optional: bạn có thể gửi alert admin nếu cần
-    }
+        // Tạo token random 30 ký tự
+        $token = Str::random(30);
 
-    // Trả JSON thành công
-    return response()->json(['success' => true, 'token' => $token]);
-}
+        try {
+            // Cập nhật DB
+            $updated = HotelConfiguration::where('id', $id)->update(['bearer_token' => $token]);
+
+            if (!$updated) {
+                return response()->json(['success' => false, 'message' => 'Cập nhật DB thất bại']);
+            }
+        } catch (\Throwable $e) {
+            // Ghi log lỗi nhưng không phá vỡ JSON
+            Log::error('Lỗi cập nhật bearer token', [
+                'id' => $id,
+                'token' => $token,
+                'error' => $e->getMessage()
+            ]);
+            return response()->json(['success' => false, 'message' => 'Lỗi cập nhật token']);
+        }
+
+        // Log token thành công (tách try/catch nếu muốn)
+        try {
+            Log::info('Random bearer token', ['id' => $id, 'token' => $token]);
+        } catch (\Throwable $e) {
+            // Chỉ log, không trả lỗi cho client
+            // Optional: bạn có thể gửi alert admin nếu cần
+        }
+
+        // Trả JSON thành công
+        return response()->json(['success' => true, 'token' => $token]);
+    }
     public function searchHotel(Request $request)
     {
         $request->validate([
@@ -167,7 +168,7 @@ class TravelVietController extends Controller
             'bearer_token' => 'required|string',
         ]);
         $langId = $request->input('lang_id');
-          $hotelToken = $request->input('bearer_token');
+        $hotelToken = $request->input('bearer_token');
 
         return $this->makeTravelVietApiCall('khach-san/danh-muc-phong', $langId, $hotelToken, ' - Room Types');
     }
@@ -180,7 +181,7 @@ class TravelVietController extends Controller
         ]);
 
         $langId = $request->input('lang_id');
-           $hotelToken = $request->input('bearer_token');
+        $hotelToken = $request->input('bearer_token');
 
         return $this->makeTravelVietApiCall('khach-san/danh-sach-phong', $langId, $hotelToken, ' - Rooms');
     }
@@ -222,7 +223,7 @@ class TravelVietController extends Controller
      */
     private function updateHotelData(array $hotelData)
     {
-        $token =HotelConfiguration::where('hotel_facility_id', hf('id'))->value('bearer_token');
+        $token = HotelConfiguration::where('hotel_facility_id', hf('id'))->value('bearer_token');
         // Map TravelViet hotel data to local Hotel model field
         $mappedData = [
             'main_image' => $hotelData['hotel_image'] ?? null,
@@ -326,15 +327,24 @@ class TravelVietController extends Controller
             }
 
             // ✅ Kiểm tra phòng đã tồn tại chưa
-            $check_room = Room::where('room_number', $roomData['lang_room_name'])->first();
+            $check_room = Room::where('code', $roomData['room_code'])->first();
 
-            if (!$check_room) {
-                do {
-                    $code = getTrx(12);
-                } while (Room::where('code', $code)->exists());
-
+            if ($check_room) {
+                // ====== CẬP NHẬT PHÒNG ĐÃ CÓ ======
+                $check_room->update([
+                    'room_type_id' => $room_type->id,
+                    'room_number'  => $roomData['lang_room_name'] ?? null,
+                    'main_image'   => $roomData['room_image'] ?? '',
+                    'total_adult'  => $roomData['room_person'] ?? 0,
+                    'area'         => $roomData['room_acreage'] ?? null,
+                    'description'  => $roomData['lang_room_des'] ?? null,
+                    'beds'         => $roomData['lang_room_bed'] ?? null,
+                    'direction_id' => $room_directions->id,
+                ]);
+                $room = $check_room;
+            } else {
                 $room = new Room();
-                $room->code          = $code;
+                $room->code          = $roomData['room_code'];;
                 $room->room_type_id  = $room_type->id;
                 $room->room_number   = $roomData['lang_room_name'] ?? null;
                 $room->main_image    = $roomData['room_image'] ?? '';
@@ -347,150 +357,152 @@ class TravelVietController extends Controller
                 $room->subdomain     = subdomain();
                 $room->unit_code     = unitCode();
                 $room->save();
-                //  Nếu có danh sách ảnh thì thêm vào room_images
-                if (!empty($roomData['list_array_image']) && is_array($roomData['list_array_image'])) {
-                    foreach ($roomData['list_array_image'] as $imageUrl) {
-                        if (!empty($imageUrl)) {
-                            RoomImage::create([
-                                'room_id'     => $room->id,
-                                'image'   => $imageUrl,
-                            ]);
-                        }
-                    }
-                }
-                // Thêm danh sách tiện ích (amenities)
-                if (!empty($roomData['list_uti']) && is_array($roomData['list_uti'])) {
-                    foreach ($roomData['list_uti'] as $uti) {
-                        $title = $uti['uti_title'] ?? null;
-                        if (empty($title)) continue;
+            }
 
-                        // Kiểm tra tiện ích có tồn tại chưa
-                        $amenity = Amenity::where('title', $title)->first();
 
-                        if (!$amenity) {
-                            do {
-                                $amenityCode = getTrx(12);
-                            } while (Amenity::where('code', $amenityCode)->exists());
-
-                            $amenity = new Amenity();
-                            $amenity->code = $amenityCode;
-                            $amenity->title = $title;
-                            $amenity->icon = $uti['uti_image'] ?? null;
-                            $amenity->status = 1;
-                            $amenity->subdomain = subdomain();
-                            $amenity->unit_code = unitCode();
-                            $amenity->save();
-                        }
-
-                        // Gắn vào bảng trung gian room_amenities
-                        $exists = RoomTypeAmenity::where('room_id', $room->id)
-                            ->where('amenities_id', $amenity->id)
-                            ->exists();
-
-                        if (!$exists) {
-                            RoomTypeAmenity::create([
-                                'room_id' => $room->id,
-                                'amenities_id' => $amenity->id,
-                                'subdomain' => subdomain(),
-                                'unit_code' => unitCode(),
-                            ]);
-                        }
-                    }
-                }
-                // ✅ Xử lý giá phòng (price_room)
-                if (isset($roomData['price_room']) && $roomData['price_room'] !== null) {
-                    try {
-                        $price = $roomData['price_room'];
-                        $currency = $roomData['lang_type_money'] ?? 'VND';
-                        $currentDate = date('Y-m-d');
-
-                        Log::info('Bắt đầu xử lý giá phòng', [
-                            'price' => $price,
-                            'currency' => $currency,
-                            'currentDate' => $currentDate,
-                            'room_type_id' => $room_type->id ?? null
-                        ]);
-
-                        // ✅ Tạo hoặc lấy SetupPricing cho từng phòng riêng biệt
-                        $roomName = $roomData['lang_room_name'] ?? 'Unknown';
-                        $priceName = 'giá bên travel - ' . $roomName;
-
-                        $setupPricing = SetupPricing::where('price_requirement', json_encode([$currentDate]))
-                            ->where('price_name', $priceName)
-                            ->where('subdomain', subdomain())
-                            ->where('unit_code', unitCode())
-                            ->first();
-
-                        if (!$setupPricing) {
-                            Log::info('Tạo SetupPricing mới cho phòng: ' . $roomName);
-
-                            // Tạo SetupPricing mới
-                            do {
-                                $priceCode = getTrx(8);
-                            } while (SetupPricing::where('price_code', $priceCode)->exists());
-
-                            Log::info('Generated price_code', ['price_code' => $priceCode]);
-
-                            $setupPricingData = [
-                                'price_code' => $priceCode,
-                                'price_name' => $priceName,
-                                'price_requirement' => json_encode([$currentDate]),
-                                'description' => 'Giá từ TravelViet - ' . $roomName,
-                                'subdomain' => subdomain(),
-                                'unit_code' => unitCode(),
-                            ];
-
-                            Log::info('SetupPricing data to create', $setupPricingData);
-
-                            $setupPricing = SetupPricing::create($setupPricingData);
-
-                            Log::info('SetupPricing created successfully', ['id' => $setupPricing->id]);
-                        } else {
-                            Log::info('SetupPricing đã tồn tại cho phòng: ' . $roomName, ['id' => $setupPricing->id]);
-                        }
-
-                        // ✅ Tạo hoặc cập nhật RoomTypePrice (mỗi room_type_id sẽ có 1 bản ghi riêng)
-                        $existingPrice = RoomTypePrice::where('room_type_id', $room_type->id)
-                            ->where('setup_pricing_id', $setupPricing->id)
-                            ->where('subdomain', subdomain())
-                            ->where('unit_code', unitCode())
-                            ->first();
-
-                        if (!$existingPrice) {
-                            Log::info('Tạo RoomTypePrice mới cho room_type_id: ' . $room_type->id);
-
-                            $roomTypePriceData = [
-                                'room_type_id' => $room_type->id,
-                                'setup_pricing_id' => $setupPricing->id,
-                                'unit_price' => $price,
-                                'price_validity_period' => $currentDate,
-                                'subdomain' => subdomain(),
-                                'unit_code' => unitCode(),
-                            ];
-
-                            Log::info('RoomTypePrice data to create', $roomTypePriceData);
-
-                            $roomTypePrice = RoomTypePrice::create($roomTypePriceData);
-
-                            Log::info('RoomTypePrice created successfully', ['id' => $roomTypePrice->id]);
-                        } else {
-                            Log::info('Cập nhật RoomTypePrice hiện có cho room_type_id: ' . $room_type->id);
-
-                            $existingPrice->update([
-                                'unit_price' => $price,
-                            ]);
-
-                            Log::info('RoomTypePrice updated successfully');
-                        }
-                    } catch (\Exception $e) {
-                        Log::error('Lỗi khi xử lý giá phòng: ' . $e->getMessage(), [
-                            'room_name' => $roomData['lang_room_name'] ?? null,
-                            'price' => $roomData['price_room'] ?? null,
-                            'file' => $e->getFile(),
-                            'line' => $e->getLine(),
-                            'trace' => $e->getTraceAsString()
+            //  Nếu có danh sách ảnh thì thêm vào room_images
+            if (!empty($roomData['list_array_image']) && is_array($roomData['list_array_image'])) {
+                foreach ($roomData['list_array_image'] as $imageUrl) {
+                    if (!empty($imageUrl)) {
+                        RoomImage::create([
+                            'room_id'     => $room->id,
+                            'image'   => $imageUrl,
                         ]);
                     }
+                }
+            }
+            // Thêm danh sách tiện ích (amenities)
+            if (!empty($roomData['list_uti']) && is_array($roomData['list_uti'])) {
+                foreach ($roomData['list_uti'] as $uti) {
+                    $title = $uti['uti_title'] ?? null;
+                    if (empty($title)) continue;
+
+                    // Kiểm tra tiện ích có tồn tại chưa
+                    $amenity = Amenity::where('title', $title)->first();
+
+                    if (!$amenity) {
+                        do {
+                            $amenityCode = getTrx(12);
+                        } while (Amenity::where('code', $amenityCode)->exists());
+
+                        $amenity = new Amenity();
+                        $amenity->code = $amenityCode;
+                        $amenity->title = $title;
+                        $amenity->icon = $uti['uti_image'] ?? null;
+                        $amenity->status = 1;
+                        $amenity->subdomain = subdomain();
+                        $amenity->unit_code = unitCode();
+                        $amenity->save();
+                    }
+
+                    // Gắn vào bảng trung gian room_amenities
+                    $exists = RoomTypeAmenity::where('room_id', $room->id)
+                        ->where('amenities_id', $amenity->id)
+                        ->exists();
+
+                    if (!$exists) {
+                        RoomTypeAmenity::create([
+                            'room_id' => $room->id,
+                            'amenities_id' => $amenity->id,
+                            'subdomain' => subdomain(),
+                            'unit_code' => unitCode(),
+                        ]);
+                    }
+                }
+            }
+            // ✅ Xử lý giá phòng (price_room)
+            if (isset($roomData['price_room']) && $roomData['price_room'] !== null) {
+                try {
+                    $price = $roomData['price_room'];
+                    $currency = $roomData['lang_type_money'] ?? 'VND';
+                    $currentDate = date('Y-m-d');
+
+                    Log::info('Bắt đầu xử lý giá phòng', [
+                        'price' => $price,
+                        'currency' => $currency,
+                        'currentDate' => $currentDate,
+                        'room_type_id' => $room_type->id ?? null
+                    ]);
+
+                    // ✅ Tạo hoặc lấy SetupPricing cho từng phòng riêng biệt
+                    $roomName = $roomData['lang_room_name'] ?? 'Unknown';
+                    $priceName = 'giá bên travel - ' . $roomName;
+
+                    $setupPricing = SetupPricing::where('price_requirement', json_encode([$currentDate]))
+                        ->where('price_name', $priceName)
+                        ->where('subdomain', subdomain())
+                        ->where('unit_code', unitCode())
+                        ->first();
+
+                    if (!$setupPricing) {
+                        Log::info('Tạo SetupPricing mới cho phòng: ' . $roomName);
+
+                        // Tạo SetupPricing mới
+                        do {
+                            $priceCode = getTrx(8);
+                        } while (SetupPricing::where('price_code', $priceCode)->exists());
+
+                        Log::info('Generated price_code', ['price_code' => $priceCode]);
+
+                        $setupPricingData = [
+                            'price_code' => $priceCode,
+                            'price_name' => $priceName,
+                            'price_requirement' => json_encode([$currentDate]),
+                            'description' => 'Giá từ TravelViet - ' . $roomName,
+                            'subdomain' => subdomain(),
+                            'unit_code' => unitCode(),
+                        ];
+
+                        Log::info('SetupPricing data to create', $setupPricingData);
+
+                        $setupPricing = SetupPricing::create($setupPricingData);
+
+                        Log::info('SetupPricing created successfully', ['id' => $setupPricing->id]);
+                    } else {
+                        Log::info('SetupPricing đã tồn tại cho phòng: ' . $roomName, ['id' => $setupPricing->id]);
+                    }
+
+                    // ✅ Tạo hoặc cập nhật RoomTypePrice (mỗi room_type_id sẽ có 1 bản ghi riêng)
+                    $existingPrice = RoomTypePrice::where('room_type_id', $room_type->id)
+                        ->where('setup_pricing_id', $setupPricing->id)
+                        ->where('subdomain', subdomain())
+                        ->where('unit_code', unitCode())
+                        ->first();
+
+                    if (!$existingPrice) {
+                        Log::info('Tạo RoomTypePrice mới cho room_type_id: ' . $room_type->id);
+
+                        $roomTypePriceData = [
+                            'room_type_id' => $room_type->id,
+                            'setup_pricing_id' => $setupPricing->id,
+                            'unit_price' => $price,
+                            'price_validity_period' => $currentDate,
+                            'subdomain' => subdomain(),
+                            'unit_code' => unitCode(),
+                        ];
+
+                        Log::info('RoomTypePrice data to create', $roomTypePriceData);
+
+                        $roomTypePrice = RoomTypePrice::create($roomTypePriceData);
+
+                        Log::info('RoomTypePrice created successfully', ['id' => $roomTypePrice->id]);
+                    } else {
+                        Log::info('Cập nhật RoomTypePrice hiện có cho room_type_id: ' . $room_type->id);
+
+                        $existingPrice->update([
+                            'unit_price' => $price,
+                        ]);
+
+                        Log::info('RoomTypePrice updated successfully');
+                    }
+                } catch (\Exception $e) {
+                    Log::error('Lỗi khi xử lý giá phòng: ' . $e->getMessage(), [
+                        'room_name' => $roomData['lang_room_name'] ?? null,
+                        'price' => $roomData['price_room'] ?? null,
+                        'file' => $e->getFile(),
+                        'line' => $e->getLine(),
+                        'trace' => $e->getTraceAsString()
+                    ]);
                 }
             }
         } catch (\Throwable $e) {
