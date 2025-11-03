@@ -469,7 +469,7 @@
             }
 
             function call(endpoint, kind) {
-                const lang = 'en';
+                const lang = 'vn';
                 const token = (pHotelName.value || '').trim();
                 if (!token) {
                     alert('Vui lòng nhập tên khách sạn');
@@ -509,6 +509,7 @@
 
                     render(res?.data ?? res);
                 }).fail(function(xhr) {
+                
                     const msg = xhr?.responseJSON?.message || 'Không thể lấy dữ liệu từ API';
                     alert(msg);
                     // Clear previous table
